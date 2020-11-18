@@ -1,0 +1,3 @@
+include ':primer-sdk-android'
+include ':example'
+rootProject.name = "My Application"
