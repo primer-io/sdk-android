@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun renderCheckout(token: String) {
         Log.i("primer.ExampleApp", "Creating checkout with token: $token")
         checkout = PrimerCheckout(this, token)
-        checkout.show()
+        addContentView(checkout.mount(), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 
     private fun onError(error: VolleyError) {
