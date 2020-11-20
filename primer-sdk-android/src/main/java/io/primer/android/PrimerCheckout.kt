@@ -1,6 +1,7 @@
 package io.primer.android
 
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import io.primer.android.logging.Logger
 import io.primer.android.ui.main.CheckoutView
@@ -8,12 +9,13 @@ import io.primer.android.ui.main.CheckoutView
 class PrimerCheckout(private val context: Context, private val clientToken: String) {
     private val log = Logger("primer")
 
-    fun mount() : View {
+    fun show() {
         log("Mounting...")
         log("Creating Layout")
 
-        val view = CheckoutView(context)
+        val intent = Intent(context, CheckoutSheetActivity::class.java)
 
-        return view
+        intent.putExtra("token", clientToken)
+        context.startActivity(intent)
     }
 }

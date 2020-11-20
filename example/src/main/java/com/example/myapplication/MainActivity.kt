@@ -43,7 +43,8 @@ class MainActivity : AppCompatActivity() {
     private fun renderCheckout(token: String) {
         Log.i("primer.ExampleApp", "Creating checkout with token: $token")
         checkout = PrimerCheckout(this, token)
-        addContentView(checkout.mount(), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        checkout.show()
+//        addContentView(checkout.mount(), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 
     private fun onError(error: VolleyError) {

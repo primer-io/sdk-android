@@ -49,7 +49,6 @@ class CheckoutView(context: Context): CoordinatorLayout(context) {
 
     val params = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, 100) as CoordinatorLayout.LayoutParams
 
-    behaviour
     params.behavior = behaviour
     sheet.layoutParams = params
     sheet.requestLayout()
