@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primer_overlay">#1D000000</color>
+    <color name="primer_overlay">#99000000</color>
+    <color name="primer_sheet_bg">#FFFFFFFF</color>
+    <color name="primer_text_color_default">#FF000000</color>
 </resources>

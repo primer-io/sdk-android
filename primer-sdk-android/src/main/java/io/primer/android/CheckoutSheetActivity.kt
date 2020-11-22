@@ -1,12 +1,18 @@
 package io.primer.android
 
-import android.app.Activity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import io.primer.android.logging.Logger
+import io.primer.android.ui.main.CheckoutSheetFragment
+import io.primer.android.ui.main.CheckoutSheetFragmentListener
+import io.primer.android.ui.main.CheckoutSheetFragmentPublisher
 
-class CheckoutSheetActivity : Activity() {
+class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragmentListener {
   private val log = Logger("checkout-activity")
-  private var primer: Primer? = null
+
+  override fun onDismissed() {
+    log("DISMISED")
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -14,8 +20,14 @@ class CheckoutSheetActivity : Activity() {
 
     val token = intent.getStringExtra("token")
 
-    if (token != null) {
-      primer = Primer(this, token)
+    supportFragmentManager.let {
+      val fragment = CheckoutSheetFragment.newInstance(Bundle()).apply {
+        show(it, tag)
+      }
+
+      fragment.register(this)
+
+      // TODO: initialize view model
     }
   }
 }

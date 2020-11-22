@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         queue.add(
             JsonObjectRequest(
                 Request.Method.POST,
-                "http://10.0.2.2/token",
+                "http://192.168.0.105/token",
                 null,
                 { response -> renderCheckout(response.getString("clientToken")) },
                 { error -> onError(error) }
@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         Log.i("primer.ExampleApp", "Creating checkout with token: $token")
         checkout = PrimerCheckout(this, token)
         checkout.show()
-//        addContentView(checkout.mount(), ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 
     private fun onError(error: VolleyError) {
