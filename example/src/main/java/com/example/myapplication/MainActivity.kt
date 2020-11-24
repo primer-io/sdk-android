@@ -2,19 +2,17 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import io.primer.android.PrimerCheckout
+import io.primer.android.UniversalCheckout
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var checkout: PrimerCheckout
+    private lateinit var checkout: UniversalCheckout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderCheckout(token: String) {
         Log.i("primer.ExampleApp", "Creating checkout with token: $token")
-        checkout = PrimerCheckout(this, token)
+        checkout = UniversalCheckout(this, token)
         checkout.show()
     }
 

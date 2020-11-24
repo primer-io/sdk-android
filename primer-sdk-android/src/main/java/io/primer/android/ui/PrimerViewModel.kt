@@ -1,4 +1,4 @@
-package io.primer.android
+package io.primer.android.ui
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData

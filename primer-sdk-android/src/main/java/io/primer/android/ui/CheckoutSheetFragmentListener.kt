@@ -1,4 +1,4 @@
-package io.primer.android.ui.main
+package io.primer.android.ui
 
 interface CheckoutSheetFragmentListener {
   fun onDismissed()

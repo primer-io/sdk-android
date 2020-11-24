@@ -61,10 +61,13 @@ public class CameraViewController implements CameraErrorListener,
         AnalyzerLoopErrorListener, CoroutineScope {
 
     private final FragmentActivity activity;
+    private final View root;
     private final Logger log = new Logger("camera-controller");
 
-    public CameraViewController(FragmentActivity activity) {
+    public CameraViewController(FragmentActivity activity, View root) {
         this.activity = activity;
+        this.root = root;
+        onCreate();
     }
 
     private enum State {
@@ -125,23 +128,19 @@ public class CameraViewController implements CameraErrorListener,
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public void onCreate(View layout) {
-        log.info(this.activity == null ? "Activity is null???" : "Should be OK");
+    private void onCreate() {
+        scanView = root.findViewById(R.id.scanView);
 
-        scanView = layout.findViewById(R.id.scanView);
+        cameraPreview = root.findViewById(R.id.cameraPreviewHolder);
+        viewFinderWindow = root.findViewById(R.id.viewFinderWindow);
+        viewFinderBackground = root.findViewById(R.id.viewFinderBackground);
+        viewFinderBorder = root.findViewById(R.id.viewFinderBorder);
+        processingOverlay = root.findViewById(R.id.processing_overlay);
 
-        log.info(scanView == null ? "View is null :think:" : "View is not null :DD");
+        flashButtonView = root.findViewById(R.id.flashButtonView);
+        ImageView closeButtonView = root.findViewById(R.id.closeButtonView);
 
-        cameraPreview = layout.findViewById(R.id.cameraPreviewHolder);
-        viewFinderWindow = layout.findViewById(R.id.viewFinderWindow);
-        viewFinderBackground = layout.findViewById(R.id.viewFinderBackground);
-        viewFinderBorder = layout.findViewById(R.id.viewFinderBorder);
-        processingOverlay = layout.findViewById(R.id.processing_overlay);
-
-        flashButtonView = layout.findViewById(R.id.flashButtonView);
-        ImageView closeButtonView = layout.findViewById(R.id.closeButtonView);
-
-        cardPanTextView = layout.findViewById(R.id.cardPanTextView);
+        cardPanTextView = root.findViewById(R.id.cardPanTextView);
 
         closeButtonView.setOnClickListener(v -> userCancelScan());
         flashButtonView.setOnClickListener(v -> setFlashlightState(!cameraAdapter.isTorchOn()));
@@ -222,10 +221,6 @@ public class CameraViewController implements CameraErrorListener,
     private void startScan() {
         // ensure the cameraPreview view has rendered.
         cameraPreview.post(() -> {
-            // Track scan statistics for health check
-//            Stats.INSTANCE.startScan(new EmptyJavaContinuation<>());
-
-            // Tell the background where to draw a hole for the viewfinder window
             viewFinderBackground.setViewFinderRect(ViewExtensionsKt.asRect(viewFinderWindow));
 
             // Create a camera adapter and bind it to this activity.

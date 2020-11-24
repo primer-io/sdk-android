@@ -1,4 +1,4 @@
-package io.primer.android.ui.main
+package io.primer.android.ui
 
 import android.content.Context
 import android.content.DialogInterface
@@ -8,25 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.primer.android.ui.CameraViewController
 import io.primer.android.R
 import io.primer.android.logging.Logger
 
-class CheckoutSheetFragment : BottomSheetDialogFragment(), CheckoutSheetFragmentPublisher {
+class CheckoutSheetFragment : BottomSheetDialogFragment(),
+  CheckoutSheetFragmentPublisher {
   private val log = Logger("checkout-fragment")
   private var listener: CheckoutSheetFragmentListener? = null
   private var cameraViewController: CameraViewController? = null;
-
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    log("onActivityCreated")
-    super.onActivityCreated(savedInstanceState)
-  }
-
-  override fun onAttach(context: Context) {
-    log("onAttach")
-    super.onAttach(context)
-    cameraViewController = CameraViewController(activity)
-  }
 
   override fun onDestroy() {
     super.onDestroy()
@@ -64,7 +53,7 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(), CheckoutSheetFragment
 
     val view = inflater.inflate(R.layout.activity_checkout_sheet, container, false)
 
-    cameraViewController?.onCreate(view)
+    cameraViewController = CameraViewController(activity, view)
 
     val button = view?.findViewById<AppCompatTextView>(R.id.scan_card_button)
 
