@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
-        <activity android:name=".CheckoutSheetActivity" android:theme="@style/Theme.AppCompat.CheckoutSheet" />
+        <activity android:name=".ui.CheckoutSheetActivity" android:theme="@style/Theme.AppCompat.CheckoutSheet" />
     </application>
 
 </manifest>

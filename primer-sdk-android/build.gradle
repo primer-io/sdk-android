@@ -19,7 +19,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -43,6 +43,9 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation('com.getbouncer:cardscan-ui:2.0.0054') {
+        exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-serialization-runtime-jvm'
+    }
     implementation 'com.android.volley:volley:1.1.1'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

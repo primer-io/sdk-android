@@ -3,6 +3,7 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import io.primer.android.logging.Logger
+import io.primer.android.ui.CheckoutSheetActivity
 
 class PrimerCheckout(private val context: Context, private val clientToken: String) {
     private val log = Logger("primer")

@@ -6,11 +6,13 @@
     android:paddingBottom="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_download"
+        android:id="@+id/scan_card_button"
         style="@style/BottomSheetItem"
-        android:text="Download"
+        android:text="Scan Card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <include layout="@layout/card_scan_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

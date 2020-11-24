@@ -1,11 +1,11 @@
-package io.primer.android
+package io.primer.android.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.primer.android.logging.Logger
 import io.primer.android.ui.main.CheckoutSheetFragment
 import io.primer.android.ui.main.CheckoutSheetFragmentListener
-import io.primer.android.ui.main.CheckoutSheetFragmentPublisher
+
 
 class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragmentListener {
   private val log = Logger("checkout-activity")
@@ -16,7 +16,6 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragmentListener
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_checkout_sheet)
 
     val token = intent.getStringExtra("token")
 

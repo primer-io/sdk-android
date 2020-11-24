@@ -2,4 +2,37 @@
 <resources>
     <dimen name="list_item_spacing">16dp</dimen>
     <dimen name="list_item_spacing_half">8dp</dimen>
+
+<!--  Card Scanner Things  -->
+    <dimen name="bouncerViewFinderMargin" description="The minimum distance between the edge of the screen and the view finder window">16dp</dimen>
+    <item name="bouncerViewFinderVerticalBias" format="float" type="dimen" description="The vertical position of the view finder. Lower numbers shift the view finder towards the top of the screen">0.5</item>
+    <item name="bouncerViewFinderHorizontalBias" format="float" type="dimen" description="The horizontal position of the view finder. Lower numbers shift the view finder towards the left of the screen">0.5</item>
+    <dimen name="bouncerButtonMargin">24dp</dimen>
+    <dimen name="bouncerCardDetailsMargin" description="The minimum vertical and horizontal distance between the card details (number, expiry, name) and the border of the view finder window">12dp</dimen>
+
+    <dimen name="bouncerInstructionsMargin" description="The minimum amount of space surrounding the instructions text above the view finder window">16dp</dimen>
+    <dimen name="bouncerSecurityMargin" description="The minimum amount of space surrounding the security notification text below the view finder window">16dp</dimen>
+    <dimen name="bouncerSecurityIconMargin" description="The distance between the security notification lock icon and the security notification text">4dp</dimen>
+
+    <item name="bouncerNotFoundOutlineWidth" type="integer" description="The width of the border around the view finder window when no card is present">1</item>
+    <item name="bouncerFoundOutlineWidth" type="integer" description="The width of the border around the view finder window when a card has been found and the scan has started">5</item>
+    <item name="bouncerCorrectOutlineWidth" type="integer" description="The width of the border around the view finder window when the scan completes">10</item>
+    <item name="bouncerWrongOutlineWidth" type="integer" description="The width of the border around the view finder window when a card has been found but does not match the required card">10</item>
+
+    <dimen name="bouncerPanTextSize" description="The size of the card number text displayed in the middle of the view finder window">20sp</dimen>
+    <item name="bouncerPanStrokeSize" format="float" type="dimen" description="The size of the outline of the card number text displayed in the middle of the view finder window">2.5</item>
+
+    <dimen name="bouncerNameTextSize" description="The size of the cardholder name text displayed in the middle of the view finder window">16sp</dimen>
+    <item name="bouncerNameStrokeSize" format="float" type="dimen" description="The size of the outline of the cardholder name text displayed in the middle of the view finder window">2.5</item>
+
+    <dimen name="bouncerExpiryTextSize" description="The size of the expiry text displayed in the middle of the view finder window">16sp</dimen>
+    <item name="bouncerExpiryStrokeSize" format="float" type="dimen" description="The size of the outline of the expiry text displayed in the middle of the view finder window">2.5</item>
+
+    <dimen name="bouncerInstructionsTextSize" description="The size of the instructions text above the view finder window">22sp</dimen>
+    <dimen name="bouncerSecurityTextSize" description="The size of the security text below the view finder window">14sp</dimen>
+
+    <dimen name="bouncerLogoMargin" description="The minimum amount of space surrounding the logo">16dp</dimen>
+    <item name="bouncerIconStrokeWidth" type="integer" description="The width of the lines of the close and torch buttons">2</item>
+
+    <dimen name="bouncerDebugWindowWidth" description="The width of the debug window">192dp</dimen>
 </resources>

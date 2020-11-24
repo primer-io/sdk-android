@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scanView"
+        android:visibility="invisible"
+        android:background="@color/bouncerNotFoundBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:id="@+id/cameraPreviewHolder"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.getbouncer.scan.ui.ViewFinderBackground
+            android:id="@+id/viewFinderBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:backgroundColor="@color/bouncerNotFoundBackground" />
+
+        <FrameLayout
+            android:id="@+id/viewFinderWindow"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/bouncerViewFinderMargin"
+            android:layout_marginEnd="@dimen/bouncerViewFinderMargin"
+            android:layout_marginTop="@dimen/bouncerViewFinderMargin"
+            android:layout_marginBottom="@dimen/bouncerViewFinderMargin"
+            android:background="@drawable/bouncer_card_background_not_found"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="@dimen/bouncerViewFinderVerticalBias"
+            app:layout_constraintHorizontal_bias="@dimen/bouncerViewFinderHorizontalBias"
+            app:layout_constraintDimensionRatio="H,200:126">
+
+            <ImageView
+                android:id="@+id/viewFinderBorder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bouncer_card_border_not_found"
+                android:background="@drawable/bouncer_card_border_not_found"
+                android:contentDescription="@string/bouncer_card_view_finder_description" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/instructionsTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/bouncer_card_scan_instructions"
+            android:textColor="@color/bouncerInstructionsColorDark"
+            android:textSize="@dimen/bouncerInstructionsTextSize"
+            android:gravity="center"
+            android:layout_margin="@dimen/bouncerInstructionsMargin"
+            app:layout_constraintBottom_toTopOf="@id/viewFinderWindow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/securityIconView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:contentDescription="@string/bouncer_security_description"
+            android:src="@drawable/bouncer_lock_dark"
+            android:layout_marginEnd="@dimen/bouncerSecurityIconMargin"
+            android:layout_marginRight="@dimen/bouncerSecurityIconMargin"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintTop_toTopOf="@id/securityTextView"
+            app:layout_constraintBottom_toBottomOf="@id/securityTextView"
+            app:layout_constraintStart_toStartOf="@id/viewFinderWindow"
+            app:layout_constraintEnd_toStartOf="@id/securityTextView" />
+
+        <TextView
+            android:id="@+id/securityTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bouncer_card_scan_security"
+            android:textSize="@dimen/bouncerSecurityTextSize"
+            android:textColor="@color/bouncerSecurityColorDark"
+            android:layout_margin="@dimen/bouncerSecurityMargin"
+            app:layout_constraintTop_toBottomOf="@id/viewFinderWindow"
+            app:layout_constraintStart_toEndOf="@id/securityIconView"
+            app:layout_constraintEnd_toEndOf="@id/viewFinderWindow" />
+
+        <LinearLayout
+            android:id="@+id/cardDetailsView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/bouncerCardDetailsMargin"
+            android:layout_marginEnd="@dimen/bouncerCardDetailsMargin"
+            app:layout_constraintTop_toTopOf="@id/viewFinderWindow"
+            app:layout_constraintBottom_toBottomOf="@id/viewFinderWindow"
+            app:layout_constraintStart_toStartOf="@id/viewFinderWindow"
+            app:layout_constraintEnd_toEndOf="@id/viewFinderWindow" >
+
+            <TextView
+                android:id="@+id/cardPanTextView"
+                android:textColor="@color/bouncerCardPanColor"
+                android:textSize="@dimen/bouncerPanTextSize"
+                android:shadowColor="@color/bouncerCardPanOutlineColor"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="2.5"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/closeButtonView"
+            android:src="@drawable/bouncer_close_button_dark"
+            android:contentDescription="@string/bouncer_close_button_description"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/flashButtonView"
+            android:src="@drawable/bouncer_flash_off_dark"
+            android:contentDescription="@string/bouncer_close_button_description"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/cardscanLogo"
+            android:src="@drawable/bouncer_logo_dark_background"
+            android:contentDescription="@string/bouncer_cardscan_logo"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/bouncerButtonMargin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/processing_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            android:background="@color/bouncerProcessingBackground" >
+
+            <ProgressBar
+                android:id="@+id/processing_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bouncer_processing_card"
+                android:textColor="@color/bouncerProcessingText"
+                android:textSize="@dimen/bouncerPanTextSize"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/processing_spinner" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
