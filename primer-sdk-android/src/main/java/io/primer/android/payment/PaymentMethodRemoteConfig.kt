@@ -1,4 +1,4 @@
-package io.primer.android.payment_methods
+package io.primer.android.payment
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -8,5 +8,5 @@ import java.util.*
 data class PaymentMethodRemoteConfig(
   val id: String? = null,
   val type: String,
-  val options: JsonObject? = JsonObject(content = Collections.emptyMap())
+  val options: JsonObject = JsonObject(content = Collections.emptyMap())
 )

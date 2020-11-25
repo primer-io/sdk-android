@@ -1,6 +1,6 @@
 package io.primer.android.session
 
-import io.primer.android.payment_methods.PaymentMethodRemoteConfig
+import io.primer.android.payment.PaymentMethodRemoteConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
