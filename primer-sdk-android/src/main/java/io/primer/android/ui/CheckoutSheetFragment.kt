@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
+import io.primer.android.payment.CurrencyFormatter
 
 class CheckoutSheetFragment : BottomSheetDialogFragment(),
   CheckoutSheetFragmentPublisher {
@@ -53,11 +54,13 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
         view.findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_pay)
 
         viewModel.amount.let {
-          if (it == null) {
+          val amount = CurrencyFormatter.format(it)
+
+          if (amount == null) {
             view.findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
           } else {
             // TODO: format the amount nicely
-            view.findViewById<TextView>(R.id.primer_sheet_title_detail).setText(it.currency + " " + it.value)
+            view.findViewById<TextView>(R.id.primer_sheet_title_detail).setText(amount)
           }
         }
       }
