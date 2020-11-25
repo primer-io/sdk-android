@@ -13,14 +13,12 @@ class SessionFactory(api: IAPIClient, token: ClientToken) {
     api.get(
       token.configurationURL,
       {
-        apiSuccessResponse ->
         log("Created session")
-        callback(ClientSession.fromJSON(apiSuccessResponse.data))
+        callback(ClientSession.fromJSON(it.data))
       },
       {
-        apiErrorResponse ->
         // TODO: Figure out what to do with the error here
-        log("FAIL :( " + apiErrorResponse.data.description)
+        log("FAIL :( " + it.data.description)
       }
     )
   }

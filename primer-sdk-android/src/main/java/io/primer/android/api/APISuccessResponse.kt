@@ -1,5 +1,6 @@
 package io.primer.android.api
 
+import okhttp3.Response
 import org.json.JSONObject
 
 data class APISuccessResponse(
@@ -7,7 +8,10 @@ data class APISuccessResponse(
   val data: JSONObject
 ) {
   companion object {
-    fun create(data: JSONObject): APISuccessResponse {
+    fun create(response: Response): APISuccessResponse {
+      val content = response.body?.string() ?: "{}"
+      val data = JSONObject(content)
+
       return APISuccessResponse(
         statusCode = 200,
         data = data,

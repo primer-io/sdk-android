@@ -1,9 +1,11 @@
 package io.primer.android.api
 
-import com.android.volley.VolleyError
 import io.primer.android.logging.Logger
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import okhttp3.Response
+import okhttp3.ResponseBody
+import java.io.IOException
 import java.lang.Exception
 import java.util.*
 
@@ -35,27 +37,31 @@ data class APIErrorResponse(
   companion object {
     private val format = Json { ignoreUnknownKeys = true }
     private val log = Logger("api-error")
+    private val DEFAULT_ERROR_ELEMENT = format.parseToJsonElement(
+      "{\"description\":\"Unknown Client Error\"}"
+    )
 
-    fun create(e: VolleyError?): APIErrorResponse {
-      val statusCode = e?.networkResponse?.statusCode ?: -1
-      val bytes = e?.networkResponse?.data
-      val serialized = if (bytes == null) null else String(bytes)
-      val element = getErrorFromContent(serialized)
+    fun create(response: Response): APIErrorResponse {
 
       return APIErrorResponse(
-        statusCode = statusCode,
-        format.decodeFromJsonElement(element)
+        statusCode = response.code,
+        format.decodeFromJsonElement(getErrorFromContent(response.body))
       )
     }
 
-    private fun getErrorFromContent(content: String?): JsonObject {
-      val defaultElement = format.parseToJsonElement(
-        "{\"description\":\"Unknown Client Error\"}"
+    fun create(e: IOException?): APIErrorResponse {
+      return APIErrorResponse(
+        statusCode = -1,
+        format.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
       )
+    }
 
-      if (content == null) {
-        return defaultElement.jsonObject
+    private fun getErrorFromContent(body: ResponseBody?): JsonObject {
+      if (body == null) {
+        return DEFAULT_ERROR_ELEMENT.jsonObject
       }
+
+      val content = body.string()
 
       try {
         val json = format.parseToJsonElement(content).jsonObject
@@ -73,7 +79,7 @@ data class APIErrorResponse(
         log.warn(content)
       }
 
-      return defaultElement.jsonObject
+      return DEFAULT_ERROR_ELEMENT.jsonObject
     }
   }
 }

@@ -32,7 +32,7 @@ class CheckoutSheetActivity : AppCompatActivity(),
 
     config = format.decodeFromString(serializer(), serialized!!)
 
-    viewModel.initialize(this, config)
+    viewModel.initialize(config)
 
     supportFragmentManager.let {
       log("Showing checkout sheet")

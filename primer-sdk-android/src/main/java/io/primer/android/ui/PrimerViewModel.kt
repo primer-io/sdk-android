@@ -28,12 +28,12 @@ class PrimerViewModel: ViewModel() {
 
   val loading: MutableLiveData<Boolean> = MutableLiveData(true)
 
-  fun initialize(context: Context, config: CheckoutConfig) {
+  fun initialize(config: CheckoutConfig) {
     this.config = config
 
     val token = ClientToken(config.clientToken)
     // TODO: remove the reliance on context here
-    val api = APIClient(context, token)
+    val api = APIClient(token)
 
     val sessionFactory = SessionFactory(api, token)
 
