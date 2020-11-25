@@ -13,15 +13,21 @@ class UniversalCheckout {
     private val config: CheckoutConfig
     private val format = Json { ignoreUnknownKeys = true }
 
+    enum class UXMode {
+        CHECKOUT, ADD_PAYMENT_METHOD,
+    }
+
     constructor(
         context: Context,
         clientToken: String,
+        uxMode: UXMode = UXMode.CHECKOUT,
         amount: Int? = null,
         currency: String? = null,
     ) : this(
         context,
         CheckoutConfig.create(
             clientToken = clientToken,
+            uxMode = uxMode,
             amount = amount,
             currency = currency
         )

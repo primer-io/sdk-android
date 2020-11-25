@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderCheckout(token: String) {
         Log.i("primer.ExampleApp", "Creating checkout with token: $token")
-        checkout = UniversalCheckout(this, token)
+        checkout = UniversalCheckout(this, token, uxMode = UniversalCheckout.UXMode.ADD_PAYMENT_METHOD)
         checkout.show()
     }
 

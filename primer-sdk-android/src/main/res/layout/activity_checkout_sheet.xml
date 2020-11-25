@@ -3,14 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="8dp">
+    style="@style/Primer.CheckoutSheet">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/scan_card_button"
-        style="@style/BottomSheetItem"
-        android:text="Scan Card"
-        app:layout_constraintEnd_toEndOf="parent"
+    <LinearLayout
+        android:id="@+id/primer_sheet_title_layout"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
+        <TextView
+            android:id="@+id/primer_sheet_title"
+            style="@style/Primer.Text.Title"
+            />
+        <TextView
+            android:id="@+id/primer_sheet_title_detail"
+            android:layout_marginStart="@dimen/primer_text_word_spacing"
+            style="@style/Primer.Text.Title"
+            />
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/primer_sheet_payment_methods_list"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

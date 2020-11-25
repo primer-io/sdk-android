@@ -1,7 +1,9 @@
 <resources>
-    <string name="scan_card">Scan Card</string>
+    <string name="prompt_pay" description="Text displayed next to the amount to prompt the customer to pay">Pay</string>
+    <string name="prompt_add_new_card" description="Text displayed to prompt the customer to add a card">Add a new card</string>
 
-<!--  Card Scanner Things  -->
+    <!--  Card Scanner Things: ignore this for now  -->
+    <string name="scan_card">Scan Card</string>
     <string name="bouncer_card_scan_instructions" description="Text displayed above the scan window, instructing the user how to scan card">Scan Your Card</string>
     <string name="bouncer_card_scan_security" description="Security notification displayed below the scan window">Your card info is secure</string>
     <string name="bouncer_scanned_wrong_card" description="Text displayed above the scan window when the wrong card is scanned">Card doesn\'t match</string>

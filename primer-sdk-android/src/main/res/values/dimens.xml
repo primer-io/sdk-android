@@ -1,7 +1,12 @@
 <?xml version="1.0"?>
 <resources>
-    <dimen name="list_item_spacing">16dp</dimen>
-    <dimen name="list_item_spacing_half">8dp</dimen>
+<!--  General layout things  -->
+    <item name="primer_checkout_sheet_padding_vert" type="dimen">14dp</item>
+    <item name="primer_checkout_sheet_padding_horiz" type="dimen">22dp</item>
+
+<!--  Text stuff  -->
+    <item name="primer_text_size_title" type="dimen">20sp</item>
+    <item name="primer_text_word_spacing" type="dimen">8sp</item>
 
 <!--  Card Scanner Things  -->
     <dimen name="bouncerViewFinderMargin" description="The minimum distance between the edge of the screen and the view finder window">16dp</dimen>

@@ -8,11 +8,22 @@
         <item name="android:windowMinWidthMajor">100%</item>
         <item name="android:windowMinWidthMinor">100%</item>
     </style>
-    <style name="BottomSheetItem">
-        <item name="android:textSize">20sp</item>
-        <item name="android:drawablePadding">20dp</item>
-        <item name="android:layout_width">0dp</item>
+    <style name="Primer"/>
+    <style name="Primer.CheckoutSheet">
+        <item name="android:paddingTop">@dimen/primer_checkout_sheet_padding_vert</item>
+        <item name="android:paddingBottom">@dimen/primer_checkout_sheet_padding_vert</item>
+        <item name="android:paddingLeft">@dimen/primer_checkout_sheet_padding_horiz</item>
+        <item name="android:paddingRight">@dimen/primer_checkout_sheet_padding_horiz</item>
+    </style>
+    <style name="Primer.Text">
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">15dp</item>
+        <item name="android:textColor">@color/primer_text_color_default</item>
+        <item name="fontWeight">400</item>
+    </style>
+    <style name="Primer.Text.Title">
+        <item name="android:textSize">@dimen/primer_text_size_title</item>
+        <item name="fontWeight">500</item>
     </style>
 </resources>
