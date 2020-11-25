@@ -6,12 +6,6 @@
     android:paddingBottom="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/primer_checkout_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/scan_card_button"
         style="@style/BottomSheetItem"
         android:text="Scan Card"
