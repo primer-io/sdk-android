@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Lifecycle
@@ -17,6 +18,8 @@ import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
 import io.primer.android.payment.CurrencyFormatter
+import io.primer.android.payment.PaymentMethod
+import io.primer.android.payment.PaymentMethodFactory
 
 class CheckoutSheetFragment : BottomSheetDialogFragment(),
   CheckoutSheetFragmentPublisher {
@@ -35,6 +38,25 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
     viewModel.loading.observe(this, {
       // TODO: hide loading spinner + show UX
+    })
+
+    viewModel.paymentMethods.observe(this, {
+      log("Payment methods changed!")
+      log(it.toString())
+
+      val view = requireView()
+//      val container = view.findViewById<LinearLayout>(R.id.primer_sheet_payment_methods_list)
+      val container = view.findViewById<ViewGroup>(R.id.primer_sheet_payment_methods_list)
+      val factory = PaymentMethodFactory(viewModel)
+
+      it.forEach {
+        val method = factory.create(it)
+
+        if (method != null) {
+          method.renderPreview(container)
+        }
+      }
+
     })
   }
 

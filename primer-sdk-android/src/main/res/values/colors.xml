@@ -3,6 +3,7 @@
     <color name="primer_overlay">#99000000</color>
     <color name="primer_sheet_bg">@android:color/white</color>
     <color name="primer_text_color_default">@android:color/black</color>
+    <color name="primer_border_color">#FFBEC2C4</color>
 
 <!-- Card Scanner Things -->
     <color name="bouncerProcessingBackground">#AA000000</color>

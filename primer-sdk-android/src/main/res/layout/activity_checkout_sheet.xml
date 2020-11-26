@@ -28,8 +28,9 @@
     <LinearLayout
         android:id="@+id/primer_sheet_payment_methods_list"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/primer_list_margin"
         app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

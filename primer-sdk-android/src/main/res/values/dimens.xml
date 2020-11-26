@@ -1,12 +1,21 @@
 <?xml version="1.0"?>
 <resources>
 <!--  General layout things  -->
-    <item name="primer_checkout_sheet_padding_vert" type="dimen">14dp</item>
-    <item name="primer_checkout_sheet_padding_horiz" type="dimen">22dp</item>
+    <item name="primer_checkout_sheet_padding_vert" type="dimen">22dp</item>
+    <item name="primer_checkout_sheet_padding_horiz" type="dimen">14dp</item>
+
+<!--  General Style stuff  -->
+    <item name="primer_corner_radius" type="dimen">6dp</item>
+    <item name="primer_border_width" type="dimen">1dp</item>
+    <item name="primer_list_margin" type="dimen">13dp</item>
 
 <!--  Text stuff  -->
     <item name="primer_text_size_title" type="dimen">20sp</item>
+    <item name="primer_text_size_detail" type="dimen">18sp</item>
     <item name="primer_text_word_spacing" type="dimen">8sp</item>
+
+<!--  Payment methods  -->
+    <item name="primer_payment_method_preview_button_height" type="dimen">50dp</item>
 
 <!--  Card Scanner Things  -->
     <dimen name="bouncerViewFinderMargin" description="The minimum distance between the edge of the screen and the view finder window">16dp</dimen>

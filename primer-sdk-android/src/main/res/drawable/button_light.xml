@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+<!--     TODO: Fix this shit ripple animation   -->
+        <ripple android:color="@color/primer_border_color" />
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/primer_corner_radius"/>
+            <stroke android:width="@dimen/primer_border_width" android:color="@color/primer_border_color"/>
+        </shape>
+    </item>
+    <item >
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/primer_corner_radius"/>
+            <stroke android:width="@dimen/primer_border_width" android:color="@color/primer_border_color"/>
+        </shape>
+    </item>
+</selector>

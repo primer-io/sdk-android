@@ -27,7 +27,6 @@ class CheckoutSheetActivity : AppCompatActivity(),
 
     // Initialize the view model
     val viewModel = ViewModelProvider(this).get(PrimerViewModel::class.java)
-//    val viewModel = defaultViewModelProviderFactory.create(PrimerViewModel::class.java)
     val serialized = intent.getStringExtra("config")
 
     config = format.decodeFromString(serializer(), serialized!!)

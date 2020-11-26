@@ -9,6 +9,14 @@
         <item name="android:windowMinWidthMinor">100%</item>
     </style>
     <style name="Primer"/>
+    <style name="Primer.PaymentMethod" />
+    <style name="Primer.PaymentMethod.Preview">
+        <item name="android:layout_marginTop">@dimen/primer_list_margin</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/button_light</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/primer_payment_method_preview_button_height</item>
+    </style>
     <style name="Primer.CheckoutSheet">
         <item name="android:paddingTop">@dimen/primer_checkout_sheet_padding_vert</item>
         <item name="android:paddingBottom">@dimen/primer_checkout_sheet_padding_vert</item>
@@ -20,6 +28,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/primer_text_color_default</item>
+        <item name="android:textSize">@dimen/primer_text_size_detail</item>
         <item name="fontWeight">400</item>
     </style>
     <style name="Primer.Text.Title">
