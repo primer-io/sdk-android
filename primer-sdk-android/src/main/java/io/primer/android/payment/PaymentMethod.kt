@@ -1,11 +1,12 @@
 package io.primer.android.payment
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import io.primer.android.logging.Logger
 import io.primer.android.ui.PrimerViewModel
 
-abstract class PaymentMethod(viewModel: PrimerViewModel): ITokenizable {
-  protected val viewModel: PrimerViewModel = viewModel
+abstract class PaymentMethod(protected val viewModel: PrimerViewModel): ITokenizable {
 
   protected val config: PaymentMethodRemoteConfig?
     get() {

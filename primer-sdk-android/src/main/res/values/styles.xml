@@ -16,6 +16,8 @@
         <item name="android:background">@drawable/button_light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/primer_payment_method_preview_button_height</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
     <style name="Primer.CheckoutSheet">
         <item name="android:paddingTop">@dimen/primer_checkout_sheet_padding_vert</item>

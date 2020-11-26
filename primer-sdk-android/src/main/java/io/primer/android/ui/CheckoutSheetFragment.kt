@@ -2,6 +2,10 @@ package io.primer.android.ui
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.ColorStateList
+import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,27 +40,22 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
     viewModel = ViewModelProvider(this.requireActivity()).get(PrimerViewModel::class.java)
 
-    viewModel.loading.observe(this, {
+    viewModel.loading.observe(this, { loading ->
       // TODO: hide loading spinner + show UX
     })
 
-    viewModel.paymentMethods.observe(this, {
-      log("Payment methods changed!")
-      log(it.toString())
-
+    viewModel.paymentMethods.observe(this, { items ->
       val view = requireView()
-//      val container = view.findViewById<LinearLayout>(R.id.primer_sheet_payment_methods_list)
       val container = view.findViewById<ViewGroup>(R.id.primer_sheet_payment_methods_list)
       val factory = PaymentMethodFactory(viewModel)
 
-      it.forEach {
-        val method = factory.create(it)
+      items.forEach { config ->
+        val method = factory.create(config)
 
         if (method != null) {
           method.renderPreview(container)
         }
       }
-
     })
   }
 
@@ -75,8 +74,8 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
       UniversalCheckout.UXMode.CHECKOUT -> {
         view.findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_pay)
 
-        viewModel.amount.let {
-          val amount = CurrencyFormatter.format(it)
+        viewModel.amount.let { amount ->
+          val amount = CurrencyFormatter.format(amount)
 
           if (amount == null) {
             view.findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
