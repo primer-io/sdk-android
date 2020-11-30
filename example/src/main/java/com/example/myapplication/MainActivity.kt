@@ -8,9 +8,7 @@ import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import io.primer.android.IClientTokenProvider
-import io.primer.android.IUniversalCheckoutListener
-import io.primer.android.UniversalCheckout
+import io.primer.android.*
 
 class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalCheckoutListener {
     override fun createToken(callback: (String) -> Unit) {
@@ -39,6 +37,11 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
         setSupportActionBar(findViewById(R.id.toolbar))
 
         UniversalCheckout.initialize(this)
+        UniversalCheckout.loadPaymentMethods(listOf(
+            PaymentMethod.Card(),
+            PaymentMethod.GooglePay(buttonColor = "white"),
+            PaymentMethod.PayPal(buttonColor = "blue")
+        ))
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             renderCheckout()

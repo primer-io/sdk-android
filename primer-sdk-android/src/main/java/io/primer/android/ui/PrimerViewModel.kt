@@ -8,7 +8,7 @@ import io.primer.android.api.APIClient
 import io.primer.android.api.IAPIClient
 import io.primer.android.logging.Logger
 import io.primer.android.payment.MonetaryAmount
-import io.primer.android.payment.PaymentMethod
+import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodRemoteConfig
 import io.primer.android.session.ClientSession
 import io.primer.android.session.ClientToken
@@ -16,7 +16,7 @@ import io.primer.android.session.SessionFactory
 import org.json.JSONObject
 import java.util.*
 
-class PrimerViewModel: ViewModel() {
+internal class PrimerViewModel: ViewModel() {
   private val log = Logger("view-model")
   private var config: CheckoutConfig? = null
   private var session: ClientSession? = null
@@ -39,14 +39,14 @@ class PrimerViewModel: ViewModel() {
   val paymentMethods: MutableLiveData<List<PaymentMethodRemoteConfig>> =
     MutableLiveData(Collections.emptyList())
 
-  fun tokenize(method: PaymentMethod) {
+  fun tokenize(method: PaymentMethodDescriptor) {
     val json = JSONObject()
 
     json.put("paymentInstrument", method.toPaymentInstrument())
 
     val url = "$pciUrl/payment-instruments"
 
-    log("Starting tokenization of: ${method.id}")
+    log("Starting tokenization of: ${method.identifier}")
 
     this.api?.post(
       url,

@@ -1,39 +1,34 @@
 package io.primer.android.ui
 
-import android.content.Context
 import android.content.DialogInterface
-import android.content.res.ColorStateList
-import android.graphics.drawable.AnimatedImageDrawable
-import android.graphics.drawable.AnimatedVectorDrawable
-import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
 import io.primer.android.payment.CurrencyFormatter
-import io.primer.android.payment.PaymentMethod
-import io.primer.android.payment.PaymentMethodFactory
+import io.primer.android.payment.PaymentMethodDescriptor
 
-class CheckoutSheetFragment : BottomSheetDialogFragment(),
-  CheckoutSheetFragmentPublisher {
-
+class CheckoutSheetFragment : BottomSheetDialogFragment() {
   private val log = Logger("checkout-fragment")
-  private var listener: CheckoutSheetFragmentListener? = null
+  private val listeners: MutableList<CheckoutSheetListener> = ArrayList()
   private lateinit var viewModel: PrimerViewModel
 
-  override fun register(listener: CheckoutSheetFragmentListener) {
-    this.listener = listener
+  interface CheckoutSheetListener {
+    fun onPaymentMethodSelected(type: String)
+    fun onSheetDismissed()
+  }
+
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+    if (activity is CheckoutSheetListener) {
+      listeners.add(activity as CheckoutSheetListener)
+    }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,13 +43,17 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
     viewModel.paymentMethods.observe(this, { items ->
       val view = requireView()
       val container = view.findViewById<ViewGroup>(R.id.primer_sheet_payment_methods_list)
-      val factory = PaymentMethodFactory(viewModel)
+      val factory = PaymentMethodDescriptor.Factory(viewModel)
 
       items.forEach { config ->
-        val method = factory.create(config)
+        val paymentMethod = factory.create(config)
 
-        if (method != null) {
-          method.renderPreview(container)
+        if (paymentMethod != null) {
+          val button = paymentMethod.createButton(container)
+
+          button.setOnClickListener {
+            this.onPaymentMethodSelected(config.type)
+          }
         }
       }
     })
@@ -76,8 +75,8 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
       UniversalCheckout.UXMode.CHECKOUT -> {
         view.findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_pay)
 
-        viewModel.amount.let { amount ->
-          val amount = CurrencyFormatter.format(amount)
+        viewModel.amount.let { amt ->
+          val amount = CurrencyFormatter.format(amt)
 
           if (amount == null) {
             view.findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
@@ -97,7 +96,15 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
-    this.listener?.onDismissed()
+    listeners.forEach {
+      it.onSheetDismissed()
+    }
+  }
+
+  private fun onPaymentMethodSelected(type: String) {
+    listeners.forEach {
+      it.onPaymentMethodSelected(type)
+    }
   }
 
   companion object {

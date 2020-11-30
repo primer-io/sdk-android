@@ -1,19 +1,24 @@
 package io.primer.android
 
-class DeferredToken(provider: IClientTokenProvider) {
+class DeferredToken(private val provider: IClientTokenProvider) {
+  private var loading = false
   private var value: String? = null
   private var observer: ((String) -> Unit)? = null
 
   init {
-    provider.createToken { token ->
-      value = token
-      onValue()
-    }
+    load()
   }
 
   fun observe(observer: ((String) -> Unit)) {
     this.observer = observer
     onValue()
+  }
+
+  private fun load() {
+    provider.createToken { token ->
+      value = token
+      onValue()
+    }
   }
 
   private fun onValue() {
