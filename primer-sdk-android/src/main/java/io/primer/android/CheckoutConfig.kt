@@ -17,7 +17,7 @@ data class CheckoutConfig private constructor(
       amount: Int? = null
     ): CheckoutConfig {
       return CheckoutConfig(
-        clientToken = clientToken,
+        clientToken,
         uxMode = uxMode,
         amount = MonetaryAmount.create(currency = currency, value = amount)
       )

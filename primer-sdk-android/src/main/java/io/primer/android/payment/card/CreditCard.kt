@@ -1,6 +1,5 @@
 package io.primer.android.payment.card
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
@@ -12,6 +11,7 @@ import kotlin.collections.HashMap
 
 class CreditCard(viewModel: PrimerViewModel) : PaymentMethod(viewModel) {
   override val id = "PAYMENT_CARD"
+
   private val log = Logger("payment-method.$id")
 
   override val isVaultable: Boolean
@@ -32,6 +32,6 @@ class CreditCard(viewModel: PrimerViewModel) : PaymentMethod(viewModel) {
   }
 
   private fun onPreviewClicked(view: View) {
-    // TODO: Show the card form and collect details
+    log("Payment method clicked!")
   }
 }

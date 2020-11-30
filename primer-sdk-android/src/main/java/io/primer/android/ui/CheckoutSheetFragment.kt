@@ -27,6 +27,7 @@ import io.primer.android.payment.PaymentMethodFactory
 
 class CheckoutSheetFragment : BottomSheetDialogFragment(),
   CheckoutSheetFragmentPublisher {
+
   private val log = Logger("checkout-fragment")
   private var listener: CheckoutSheetFragmentListener? = null
   private lateinit var viewModel: PrimerViewModel
@@ -60,7 +61,8 @@ class CheckoutSheetFragment : BottomSheetDialogFragment(),
   }
 
   override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     log("onCreateView")

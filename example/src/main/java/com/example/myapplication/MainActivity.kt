@@ -8,40 +8,47 @@ import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import io.primer.android.IClientTokenProvider
+import io.primer.android.IUniversalCheckoutListener
 import io.primer.android.UniversalCheckout
 
+class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalCheckoutListener {
+    override fun createToken(callback: (String) -> Unit) {
+        val queue = Volley.newRequestQueue(this)
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var checkout: UniversalCheckout
+        Log.i("primer.ExampleApp","Creating token")
+
+        queue.add(
+            JsonObjectRequest(
+                Request.Method.POST,
+                "http://100.65.23.18/token",
+                null,
+                { response -> callback(response.getString("clientToken")) },
+                { error -> onError(error) }
+            )
+        )
+    }
+
+    override fun onTokenizationResult() {
+        Log.i("primer.ExampleApp", "Tokenization finished!")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        UniversalCheckout.initialize(this)
+
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            loadCheckout()
+            renderCheckout()
         }
     }
 
-    private fun loadCheckout() {
-        val queue = Volley.newRequestQueue(this)
+    private fun renderCheckout() {
+        Log.i("primer.ExampleApp", "Creating checkout")
 
-        queue.add(
-            JsonObjectRequest(
-                Request.Method.POST,
-                "http://192.168.0.105/token",
-                null,
-                { response -> renderCheckout(response.getString("clientToken")) },
-                { error -> onError(error) }
-            )
-        )
-    }
-
-    private fun renderCheckout(token: String) {
-        Log.i("primer.ExampleApp", "Creating checkout with token: $token")
-        checkout = UniversalCheckout(this, token, uxMode = UniversalCheckout.UXMode.CHECKOUT, amount = 3500, currency = "SEK")
-        checkout.show()
+        UniversalCheckout.show(this)
     }
 
     private fun onError(error: VolleyError) {

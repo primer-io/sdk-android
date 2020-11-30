@@ -7,45 +7,73 @@ import io.primer.android.ui.CheckoutSheetActivity
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 
-class UniversalCheckout {
+class UniversalCheckout private constructor(
+    private val context: Context,
+    authTokenProvider: IClientTokenProvider,
+) {
     private val log = Logger("primer")
-    private val context: Context
-    private val config: CheckoutConfig
-    private val format = Json { ignoreUnknownKeys = true }
+    private val json = Json { ignoreUnknownKeys = true }
+    private val token = DeferredToken(authTokenProvider)
+
+    private var listener: IUniversalCheckoutListener? = null
 
     enum class UXMode {
         CHECKOUT, ADD_PAYMENT_METHOD,
     }
 
-    constructor(
-        context: Context,
-        clientToken: String,
-        uxMode: UXMode = UXMode.CHECKOUT,
+    fun show(
+        listener: IUniversalCheckoutListener,
+        uxMode: UXMode? = null,
         amount: Int? = null,
         currency: String? = null,
-    ) : this(
-        context,
-        CheckoutConfig.create(
-            clientToken = clientToken,
-            uxMode = uxMode,
-            amount = amount,
-            currency = currency
-        )
-    )
-
-    private constructor(context: Context, config: CheckoutConfig) {
-        this.context = context;
-        this.config = config;
-    }
-
-    fun show() {
+    ) {
         log("Starting checkout activity")
 
-        val intent = Intent(context, CheckoutSheetActivity::class.java)
-        val serialized = format.encodeToString(serializer(), config)
+        this.listener = listener
 
-        intent.putExtra("config", serialized)
+        token.observe {
+            val config = CheckoutConfig.create(
+                clientToken = it,
+                uxMode = uxMode ?: UXMode.CHECKOUT,
+                amount = amount,
+                currency = currency
+            )
 
-        context.startActivity(intent)
+            val intent = Intent(context, CheckoutSheetActivity::class.java)
+
+            intent.putExtra("config", json.encodeToString(serializer(), config))
+
+            context.startActivity(intent)
+        }
+    }
+
+    fun destroy() {
+        this.listener = null
+    }
+
+    companion object {
+        private var instance: UniversalCheckout? = null
+
+        fun initialize(context: Context, authTokenProvider: IClientTokenProvider) {
+            instance = instance ?: UniversalCheckout(context, authTokenProvider)
+        }
+
+        fun initialize(context: Context) {
+            initialize(context, context as IClientTokenProvider)
+        }
+
+        fun show(
+            listener: IUniversalCheckoutListener,
+            uxMode: UXMode? = null,
+            amount: Int? = null,
+            currency: String? = null,
+        ) {
+            instance?.show(listener, uxMode, amount, currency)
+        }
+
+        fun destroy() {
+            instance?.destroy()
+            instance = null
+        }
     }
 }
