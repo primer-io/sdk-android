@@ -9,19 +9,13 @@ import java.io.IOException
 import java.lang.Exception
 import java.util.*
 
-data class APIErrorResponse(
-  val statusCode: Int,
-  val data: APIError
+@Serializable
+data class APIError(
+  val description: String,
+  val errorId: String? = null,
+  val diagnosticsId: String? = null,
+  val validationErrors: List<ValidationError> = Collections.emptyList()
 ) {
-
-  @Serializable
-  data class APIError(
-    val description: String,
-    val errorId: String? = null,
-    val diagnosticsId: String? = null,
-    val validationErrors: List<ValidationError> = Collections.emptyList()
-  )
-
   @Serializable
   data class ValidationErrorDetail(
     val path: String,
@@ -41,19 +35,12 @@ data class APIErrorResponse(
       "{\"description\":\"Unknown Client Error\"}"
     )
 
-    fun create(response: Response): APIErrorResponse {
-
-      return APIErrorResponse(
-        statusCode = response.code,
-        format.decodeFromJsonElement(getErrorFromContent(response.body))
-      )
+    fun create(response: Response): APIError {
+      return format.decodeFromJsonElement(getErrorFromContent(response.body))
     }
 
-    fun create(e: IOException?): APIErrorResponse {
-      return APIErrorResponse(
-        statusCode = -1,
-        format.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
-      )
+    fun create(e: IOException?): APIError {
+      return format.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
     }
 
     private fun getErrorFromContent(body: ResponseBody?): JsonObject {

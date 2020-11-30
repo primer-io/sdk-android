@@ -18,28 +18,15 @@ class APIClient(token: ClientToken) : IAPIClient {
   private val handler = Handler(Looper.getMainLooper())
   private var clientToken = token
 
-  override fun get(
-    url: String,
-    callback: ((APISuccessResponse) -> Unit),
-    onError: ((APIErrorResponse) -> Unit)
-  ) {
-    this.request(Request.Builder().get().url(url), callback, onError)
+  override fun get(url: String): Observable {
+    return this.request(Request.Builder().get().url(url))
   }
 
-  override fun post(
-    url: String,
-    body: JSONObject?,
-    callback: ((APISuccessResponse) -> Unit),
-    onError: ((APIErrorResponse) -> Unit)
-  ) {
-    this.request(Request.Builder().post(toRequestBody(body)).url(url), callback, onError)
+  override fun post(url: String, body: JSONObject?): Observable {
+    return this.request(Request.Builder().post(toRequestBody(body)).url(url))
   }
 
-  private fun request(
-    builder: Request.Builder,
-    callback: ((APISuccessResponse) -> Unit),
-    onError: ((APIErrorResponse) -> Unit)
-  ) {
+  private fun request(builder: Request.Builder): Observable {
     val request = builder
       .addHeader("Content-Type", "application/json")
       .addHeader("Primer-SDK-Version", "1.0.0-beta.0")
@@ -47,23 +34,31 @@ class APIClient(token: ClientToken) : IAPIClient {
       .addHeader("Primer-Client-Token", clientToken.accessToken)
       .build()
 
+    val observable = Observable()
+
     client.newCall(request).enqueue(object: Callback {
       override fun onFailure(call: Call, e: IOException) {
         handler.post {
-          onError(APIErrorResponse.create(e))
+          observable.setError(APIError.create(e))
         }
       }
 
       override fun onResponse(call: Call, response: Response) {
         handler.post {
           if (response.code != 200) {
-            onError(APIErrorResponse.create(response))
+            observable.setError(APIError.create(response))
           } else {
-            callback(APISuccessResponse.create(response))
+            observable.setSuccess(getJSON(response))
           }
         }
       }
     })
+
+    return observable
+  }
+
+  private fun getJSON(response: Response): JSONObject {
+    return JSONObject(response.body?.string() ?: "{}")
   }
 
   private fun toRequestBody(json: JSONObject?): RequestBody {

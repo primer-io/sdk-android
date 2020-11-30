@@ -1,25 +1,17 @@
 package io.primer.android.ui
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import io.primer.android.CheckoutConfig
-import io.primer.android.PaymentMethod
-import io.primer.android.api.APIClient
 import io.primer.android.logging.Logger
-import io.primer.android.session.ClientToken
-import io.primer.android.session.SessionFactory
+import io.primer.android.model.Model
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 
 class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.CheckoutSheetListener {
   private val log = Logger("checkout-activity")
   private val format = Json { ignoreUnknownKeys = true }
-  private lateinit var config: CheckoutConfig
-  private lateinit var paymentMethods: List<PaymentMethod>;
+  private lateinit var model: Model
 
   override fun onPaymentMethodSelected(type: String) {
     log("Payment method selected! - $type")
@@ -32,18 +24,38 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.Checkou
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
+    // Unmarshal the configuration from the intent
+    initializeModel()
+
     // Initialize the view model
-    val viewModel = ViewModelProvider(this).get(PrimerViewModel::class.java)
+    initializeViewModel()
 
-    config = unmarshal("config")
-    paymentMethods = unmarshal("paymentMethods")
+    // Open the bottom sheet
+    openSheet()
+  }
 
-    log("Loaded intent data:")
-    log(paymentMethods.toString())
-    log(config.toString())
+  private inline fun <reified T> unmarshal(name: String): T {
+    val serialized = intent.getStringExtra(name)
+    val decoded = format.decodeFromString<T>(serializer(), serialized!!)
+    return decoded
+  }
 
-    viewModel.initialize(config)
+  private fun initializeModel() {
+    model = Model(
+      unmarshal("config"),
+      unmarshal("paymentMethods")
+    )
+  }
 
+  private fun initializeViewModel() {
+    val factory = PrimerViewModelFactory(model)
+    val provider = ViewModelProvider(this, factory)
+    val viewModel = provider.get(PrimerViewModel::class.java)
+
+    viewModel.initialize()
+  }
+
+  private fun openSheet() {
     supportFragmentManager.let {
       log("Showing checkout sheet")
 
@@ -51,11 +63,5 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.Checkou
         show(it, tag)
       }
     }
-  }
-
-  private inline fun <reified T> unmarshal(name: String): T {
-    val serialized = intent.getStringExtra(name)
-    val decoded = format.decodeFromString<T>(serializer(), serialized!!)
-    return decoded
   }
 }

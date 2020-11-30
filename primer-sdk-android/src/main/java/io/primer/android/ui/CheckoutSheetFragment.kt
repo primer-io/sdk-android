@@ -71,11 +71,11 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    when (viewModel.uxMode) {
+    when (viewModel.uxMode.value) {
       UniversalCheckout.UXMode.CHECKOUT -> {
         view.findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_pay)
 
-        viewModel.amount.let { amt ->
+        viewModel.amount.value.let { amt ->
           val amount = CurrencyFormatter.format(amt)
 
           if (amount == null) {
