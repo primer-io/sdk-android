@@ -42,9 +42,7 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
     })
 
     viewModel.paymentMethods.observe(this, { items ->
-      val view = requireView()
-      val container = view.findViewById<ViewGroup>(R.id.primer_sheet_payment_methods_list)
-      val factory = PaymentMethodDescriptor.Factory(viewModel)
+      val container: ViewGroup = findViewById(R.id.primer_sheet_payment_methods_list)
 
       items.forEach { pm ->
         val button = pm.createButton(container)
@@ -53,6 +51,15 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
           this.onPaymentMethodSelected(pm.identifier)
         }
       }
+    })
+
+    viewModel.amount.observe(this, {
+      findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setAmount(it)
+    })
+
+
+    viewModel.uxMode.observe(this, {
+      findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
     })
   }
 
@@ -63,32 +70,6 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
   ): View? {
     log("onCreateView")
     return inflater.inflate(R.layout.activity_checkout_sheet, container, false)
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    when (viewModel.uxMode.value) {
-      UniversalCheckout.UXMode.CHECKOUT -> {
-        view.findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_pay)
-
-        viewModel.amount.value.let { amt ->
-          val amount = CurrencyFormatter.format(amt)
-
-          if (amount == null) {
-            view.findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
-          } else {
-            // TODO: format the amount nicely
-            view.findViewById<TextView>(R.id.primer_sheet_title_detail).setText(amount)
-          }
-        }
-      }
-      UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> {
-        view.findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_add_new_card)
-        view.findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
-
-      }
-    }
   }
 
   override fun onDismiss(dialog: DialogInterface) {
@@ -102,6 +83,10 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
     listeners.forEach {
       it.onPaymentMethodSelected(type)
     }
+  }
+
+  private fun <T: View> findViewById(id: Int): T {
+    return requireView().findViewById(id)
   }
 
   companion object {

@@ -1,0 +1,9 @@
+package io.primer.android.viewmodel
+
+enum class ViewStatus {
+  INITIALIZING,
+  SELECT_PAYMENT_METHOD,
+  PAYMENT_METHOD_SELECTED,
+  VIEW_SAVED_PAYMENT_METHODS,
+  EDIT_SAVED_PAYMENT_METHODS
+}

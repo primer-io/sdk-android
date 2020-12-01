@@ -19,6 +19,7 @@ internal class PrimerViewModel(
 
   val loading: MutableLiveData<Boolean> = MutableLiveData(true)
 
+  // Select Payment Method
   val paymentMethods: MutableLiveData<List<PaymentMethodDescriptor>> =
     MutableLiveData(Collections.emptyList())
 

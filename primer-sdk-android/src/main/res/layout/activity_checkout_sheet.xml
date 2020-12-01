@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     style="@style/Primer.CheckoutSheet">
 
-    <LinearLayout
+    <io.primer.android.ui.SelectPaymentMethodTitle
         android:id="@+id/primer_sheet_title_layout"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
@@ -23,7 +23,7 @@
             android:layout_marginStart="@dimen/primer_text_word_spacing"
             style="@style/Primer.Text.Title"
             />
-    </LinearLayout>
+    </io.primer.android.ui.SelectPaymentMethodTitle>
 
     <LinearLayout
         android:id="@+id/primer_sheet_payment_methods_list"

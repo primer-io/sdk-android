@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
         setSupportActionBar(findViewById(R.id.toolbar))
 
         UniversalCheckout.initialize(this)
+
         UniversalCheckout.loadPaymentMethods(listOf(
             PaymentMethod.Card(),
             PaymentMethod.GooglePay(buttonColor = "white"),
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
     private fun renderCheckout() {
         Log.i("primer.ExampleApp", "Creating checkout")
 
-        UniversalCheckout.show(this)
+        UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.CHECKOUT, amount = 1234, currency = "EUR")
     }
 
     private fun onError(error: VolleyError) {
