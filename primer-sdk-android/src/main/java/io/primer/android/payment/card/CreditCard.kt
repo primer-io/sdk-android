@@ -3,18 +3,19 @@ package io.primer.android.payment.card
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
+import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.VaultCapability
-import io.primer.android.ui.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import kotlin.collections.HashMap
 
-internal class CreditCard(viewModel: PrimerViewModel, config: PaymentMethodRemoteConfig):
-  PaymentMethodDescriptor(viewModel, config) {
+internal class CreditCard(viewModel: PrimerViewModel, config: PaymentMethodRemoteConfig, options: PaymentMethod.Card):
+  PaymentMethodDescriptor(viewModel, config, options) {
   override val identifier = PAYMENT_CARD_IDENTIFIER
 
   private val log = Logger("payment-method.$identifier")

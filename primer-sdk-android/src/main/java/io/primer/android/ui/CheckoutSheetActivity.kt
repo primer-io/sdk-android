@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
 import io.primer.android.model.json
+import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.serialization.serializer
 
 class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.CheckoutSheetListener {

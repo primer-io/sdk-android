@@ -13,6 +13,7 @@ import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
 import io.primer.android.payment.CurrencyFormatter
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.viewmodel.PrimerViewModel
 
 class CheckoutSheetFragment : BottomSheetDialogFragment() {
   private val log = Logger("checkout-fragment")
@@ -45,15 +46,11 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
       val container = view.findViewById<ViewGroup>(R.id.primer_sheet_payment_methods_list)
       val factory = PaymentMethodDescriptor.Factory(viewModel)
 
-      items.forEach { config ->
-        val paymentMethod = factory.create(config)
+      items.forEach { pm ->
+        val button = pm.createButton(container)
 
-        if (paymentMethod != null) {
-          val button = paymentMethod.createButton(container)
-
-          button.setOnClickListener {
-            this.onPaymentMethodSelected(config.type)
-          }
+        button.setOnClickListener {
+          this.onPaymentMethodSelected(pm.identifier)
         }
       }
     })

@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,8 +19,10 @@ internal class PrimerViewModel(
 
   val loading: MutableLiveData<Boolean> = MutableLiveData(true)
 
-  val paymentMethods: MutableLiveData<List<PaymentMethodRemoteConfig>> =
+  val paymentMethods: MutableLiveData<List<PaymentMethodDescriptor>> =
     MutableLiveData(Collections.emptyList())
+
+  val selectedPaymentMethod: MutableLiveData<PaymentMethodDescriptor?> = MutableLiveData(null)
 
   val uxMode: MutableLiveData<UniversalCheckout.UXMode> = MutableLiveData(model.config.uxMode)
 
@@ -34,8 +36,9 @@ internal class PrimerViewModel(
     model.getConfiguration().observe {
       if (it is Observable.ObservableSuccessEvent) {
         val session: ClientSession = it.cast()
+        val resolver = PaymentMethodDescriptorResolver(this, model.configuredPaymentMethods, session.paymentMethods)
 
-        paymentMethods.value = session.paymentMethods
+        paymentMethods.value = resolver.resolve()
         loading.value = false
       }
     }

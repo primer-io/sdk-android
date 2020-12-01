@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
