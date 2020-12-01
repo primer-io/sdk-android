@@ -1,5 +1,7 @@
 package io.primer.android.ui
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
@@ -30,6 +34,23 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
     if (activity is CheckoutSheetListener) {
       listeners.add(activity as CheckoutSheetListener)
     }
+  }
+
+//  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+//    val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+//
+//    dialog.behavior.skipCollapsed = true
+//    dialog.behavior.isHideable = false
+//
+//    return dialog
+//  }
+
+  @SuppressLint("RestrictedApi")
+  override fun setupDialog(dialog: Dialog, style: Int) {
+    super.setupDialog(dialog, style)
+
+    dialog.setCanceledOnTouchOutside(false)
+    (dialog as BottomSheetDialog).behavior.isHideable = false
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +89,6 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    log("onCreateView")
     return inflater.inflate(R.layout.activity_checkout_sheet, container, false)
   }
 
