@@ -22,7 +22,7 @@ class Model(
   private val session: ClientSession
     get() = clientSession!!
   
-  fun initialize(): Observable {
+  fun getConfiguration(): Observable {
     return api.get(clientToken.configurationUrl).observe {
       when (it) {
         is Observable.ObservableSuccessEvent -> {

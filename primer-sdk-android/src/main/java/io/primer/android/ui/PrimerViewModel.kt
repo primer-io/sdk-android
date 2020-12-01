@@ -9,6 +9,7 @@ import io.primer.android.model.Model
 import io.primer.android.payment.MonetaryAmount
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodRemoteConfig
+import io.primer.android.session.ClientSession
 import java.util.*
 
 internal class PrimerViewModel(
@@ -30,9 +31,12 @@ internal class PrimerViewModel(
   }
 
   fun initialize() {
-    model.initialize().observe {
+    model.getConfiguration().observe {
       if (it is Observable.ObservableSuccessEvent) {
+        val session: ClientSession = it.cast()
 
+        paymentMethods.value = session.paymentMethods
+        loading.value = false
       }
     }
   }
