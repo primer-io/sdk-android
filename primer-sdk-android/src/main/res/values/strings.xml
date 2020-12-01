@@ -3,6 +3,9 @@
     <string name="prompt_add_new_card" description="Text displayed to prompt the customer to add a card">Add a new card</string>
     <string name="prompt_pay_with_card">Pay by card</string>
 
+<!-- Form things -->
+    <string name="card_holder_name_hint">Cardholder name</string>
+
     <!--  Card Scanner Things: ignore this for now  -->
     <string name="scan_card">Scan Card</string>
     <string name="bouncer_card_scan_instructions" description="Text displayed above the scan window, instructing the user how to scan card">Scan Your Card</string>

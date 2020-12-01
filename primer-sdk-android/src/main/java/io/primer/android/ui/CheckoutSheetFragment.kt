@@ -3,6 +3,7 @@ package io.primer.android.ui
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.ViewStatus
 
 class CheckoutSheetFragment : BottomSheetDialogFragment() {
   private val log = Logger("checkout-fragment")
@@ -31,8 +33,12 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
 
     viewModel = ViewModelProvider(this.requireActivity()).get(PrimerViewModel::class.java)
 
-    viewModel.loading.observe(this, { loading ->
-      // TODO: hide loading spinner + show UX
+    viewModel.viewStatus.observe(this, { status ->
+      when (status) {
+        ViewStatus.SELECT_PAYMENT_METHOD -> transition(R.id.screen_initializing, R.id.screen_select_payment_method)
+        ViewStatus.PAYMENT_METHOD_SELECTED -> transition(R.id.screen_select_payment_method, R.id.screen_payment_method_form)
+        null -> {}
+      }
     })
 
     viewModel.paymentMethods.observe(this, { items ->
@@ -51,17 +57,9 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
       findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setAmount(it)
     })
 
-
     viewModel.uxMode.observe(this, {
       findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
     })
-//
-//    viewModel.sheetVisible.observe(this, { visible ->
-//      if (!visible) {
-//        log("Trying to stop activity")
-//        activity?.finish()
-//      }
-//    })
   }
 
   override fun onCreateView(
@@ -75,6 +73,14 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
     viewModel.setSheetDismissed(true)
+  }
+
+  private fun transition(from: Int, to: Int) {
+    val fromView = findViewById<View>(from)
+    val toView = findViewById<View>(to)
+
+    fromView.visibility = View.GONE
+    toView.visibility = View.VISIBLE
   }
 
   private fun <T: View> findViewById(id: Int): T {

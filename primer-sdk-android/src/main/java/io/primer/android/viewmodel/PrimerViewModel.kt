@@ -19,7 +19,7 @@ internal class PrimerViewModel(
 
   val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
 
-  val loading: MutableLiveData<Boolean> = MutableLiveData(true)
+  val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
   // Select Payment Method
   val paymentMethods: MutableLiveData<List<PaymentMethodDescriptor>> =
@@ -47,10 +47,14 @@ internal class PrimerViewModel(
     model.getConfiguration().observe {
       if (it is Observable.ObservableSuccessEvent) {
         val session: ClientSession = it.cast()
-        val resolver = PaymentMethodDescriptorResolver(this, model.configuredPaymentMethods, session.paymentMethods)
+        val resolver = PaymentMethodDescriptorResolver(
+          this,
+          model.configuredPaymentMethods,
+          session.paymentMethods
+        )
 
         paymentMethods.value = resolver.resolve()
-        loading.value = false
+        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
       }
     }
   }

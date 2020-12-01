@@ -37,7 +37,7 @@ internal class CreditCard(
   }
 
   override fun createButton(container: ViewGroup): View {
-    View.inflate(container.context, R.layout.pm_credit_card_layout, container)
+    View.inflate(container.context, R.layout.pm_credit_card_button_layout, container)
 
     val button = container.findViewById<View>(R.id.card_preview_button)
 

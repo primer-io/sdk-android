@@ -6,35 +6,8 @@
     android:layout_height="wrap_content"
     style="@style/Primer.CheckoutSheet">
 
-    <io.primer.android.ui.SelectPaymentMethodTitle
-        android:id="@+id/primer_sheet_title_layout"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
-        <TextView
-            android:id="@+id/primer_sheet_title"
-            style="@style/Primer.Text.Title"
-            />
-        <TextView
-            android:id="@+id/primer_sheet_title_detail"
-            android:layout_marginStart="@dimen/primer_text_word_spacing"
-            style="@style/Primer.Text.Title"
-            />
-    </io.primer.android.ui.SelectPaymentMethodTitle>
+    <include android:id="@+id/screen_initializing" layout="@layout/screen_initializing" />
+    <include android:visibility="gone" android:id="@+id/screen_select_payment_method" layout="@layout/screen_select_payment_method" />
+    <include android:visibility="gone" android:id="@+id/screen_payment_method_form" layout="@layout/screen_payment_method_form" />
 
-    <LinearLayout
-        android:id="@+id/primer_sheet_payment_methods_list"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/primer_list_margin"
-        app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>
