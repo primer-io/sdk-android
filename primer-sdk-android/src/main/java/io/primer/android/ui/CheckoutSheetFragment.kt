@@ -7,43 +7,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
-import io.primer.android.payment.CurrencyFormatter
-import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.viewmodel.PrimerViewModel
 
 class CheckoutSheetFragment : BottomSheetDialogFragment() {
   private val log = Logger("checkout-fragment")
-  private val listeners: MutableList<CheckoutSheetListener> = ArrayList()
   private lateinit var viewModel: PrimerViewModel
-
-  interface CheckoutSheetListener {
-    fun onPaymentMethodSelected(type: String)
-    fun onSheetDismissed()
-  }
-
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    if (activity is CheckoutSheetListener) {
-      listeners.add(activity as CheckoutSheetListener)
-    }
-  }
-
-//  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//    val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-//
-//    dialog.behavior.skipCollapsed = true
-//    dialog.behavior.isHideable = false
-//
-//    return dialog
-//  }
 
   @SuppressLint("RestrictedApi")
   override fun setupDialog(dialog: Dialog, style: Int) {
@@ -69,7 +42,7 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
         val button = pm.createButton(container)
 
         button.setOnClickListener {
-          this.onPaymentMethodSelected(pm.identifier)
+          viewModel.setSelectedPaymentMethod(pm)
         }
       }
     })
@@ -82,6 +55,13 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
     viewModel.uxMode.observe(this, {
       findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
     })
+//
+//    viewModel.sheetVisible.observe(this, { visible ->
+//      if (!visible) {
+//        log("Trying to stop activity")
+//        activity?.finish()
+//      }
+//    })
   }
 
   override fun onCreateView(
@@ -94,15 +74,7 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
 
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
-    listeners.forEach {
-      it.onSheetDismissed()
-    }
-  }
-
-  private fun onPaymentMethodSelected(type: String) {
-    listeners.forEach {
-      it.onPaymentMethodSelected(type)
-    }
+    viewModel.setSheetDismissed(true)
   }
 
   private fun <T: View> findViewById(id: Int): T {

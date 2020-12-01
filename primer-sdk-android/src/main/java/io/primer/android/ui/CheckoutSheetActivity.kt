@@ -1,9 +1,6 @@
 package io.primer.android.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.logging.Logger
@@ -13,17 +10,10 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.serialization.serializer
 
-class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.CheckoutSheetListener {
+class CheckoutSheetActivity : AppCompatActivity() {
   private val log = Logger("checkout-activity")
   private lateinit var model: Model
-
-  override fun onPaymentMethodSelected(type: String) {
-    log("Payment method selected! - $type")
-  }
-
-  override fun onSheetDismissed() {
-    log("Sheet dismissed!")
-  }
+  private lateinit var viewModel: PrimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -33,6 +23,7 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.Checkou
 
     // Initialize the view model
     initializeViewModel()
+    attachViewModelListeners()
 
     // Open the bottom sheet
     openSheet()
@@ -40,8 +31,7 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.Checkou
 
   private inline fun <reified T> unmarshal(name: String): T {
     val serialized = intent.getStringExtra(name)
-    val decoded = json.decodeFromString<T>(serializer(), serialized!!)
-    return decoded
+    return json.decodeFromString<T>(serializer(), serialized!!)
   }
 
   private fun initializeModel() {
@@ -54,9 +44,24 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.Checkou
   private fun initializeViewModel() {
     val factory = PrimerViewModelFactory(model)
     val provider = ViewModelProvider(this, factory)
-    val viewModel = provider.get(PrimerViewModel::class.java)
+
+    viewModel = provider.get(PrimerViewModel::class.java)
 
     viewModel.initialize()
+  }
+
+  private fun attachViewModelListeners() {
+    viewModel.selectedPaymentMethod.observe(this, {
+      log("Selected payment method changed: ${it?.identifier ?: "none"}")
+    })
+
+    viewModel.sheetDismissed.observe(this, { dismissed ->
+      log("Sheet dismissed changed: $dismissed")
+
+      if (dismissed) {
+        finish()
+      }
+    })
   }
 
   private fun openSheet() {

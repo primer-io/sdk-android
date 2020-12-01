@@ -17,6 +17,8 @@ internal class PrimerViewModel(
 ): ViewModel() {
   private val log = Logger("view-model")
 
+  val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
+
   val loading: MutableLiveData<Boolean> = MutableLiveData(true)
 
   // Select Payment Method
@@ -28,6 +30,14 @@ internal class PrimerViewModel(
   val uxMode: MutableLiveData<UniversalCheckout.UXMode> = MutableLiveData(model.config.uxMode)
 
   val amount: MutableLiveData<MonetaryAmount?> = MutableLiveData(model.config.amount)
+
+  fun setSheetDismissed(dismissed: Boolean) {
+    sheetDismissed.value = dismissed
+  }
+
+  fun setSelectedPaymentMethod(pm: PaymentMethodDescriptor) {
+    selectedPaymentMethod.value = pm
+  }
 
   fun tokenize(paymentMethod: PaymentMethodDescriptor) {
     model.tokenize(paymentMethod)

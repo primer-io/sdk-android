@@ -12,7 +12,7 @@
     <TextView
         style="@style/Primer.Text"
         android:layout_gravity="center"
-        android:text="Pay with card"
+        android:text="@string/prompt_pay_with_card"
         android:drawablePadding="10dp"
         app:drawableStartCompat="@drawable/credit_card_icon"
         />

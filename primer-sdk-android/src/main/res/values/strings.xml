@@ -1,6 +1,7 @@
 <resources>
     <string name="prompt_pay" description="Text displayed next to the amount to prompt the customer to pay">Pay</string>
     <string name="prompt_add_new_card" description="Text displayed to prompt the customer to add a card">Add a new card</string>
+    <string name="prompt_pay_with_card">Pay by card</string>
 
     <!--  Card Scanner Things: ignore this for now  -->
     <string name="scan_card">Scan Card</string>
