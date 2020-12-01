@@ -3,8 +3,8 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import io.primer.android.logging.Logger
+import io.primer.android.model.json
 import io.primer.android.ui.CheckoutSheetActivity
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 
 class UniversalCheckout private constructor(
@@ -12,7 +12,6 @@ class UniversalCheckout private constructor(
     authTokenProvider: IClientTokenProvider,
 ) {
     private val log = Logger("primer")
-    private val json = Json { ignoreUnknownKeys = true }
     private val token = DeferredToken(authTokenProvider)
     private var paymentMethods: List<PaymentMethod> = ArrayList()
 

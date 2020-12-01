@@ -15,7 +15,7 @@ class Model(
   val configuredPaymentMethods: List<PaymentMethod>
 ) {
   private val log = Logger("model")
-  private val clientToken = ClientToken(config.clientToken)
+  private val clientToken = ClientToken.fromString(config.clientToken)
   private val api = APIClient(clientToken)
   private var clientSession: ClientSession? = null
 
@@ -23,16 +23,16 @@ class Model(
     get() = clientSession!!
   
   fun initialize(): Observable {
-    return api.get(clientToken.configurationURL).observe {
+    return api.get(clientToken.configurationUrl).observe {
       when (it) {
-        is Observable.SuccessResult -> {
-          log("Success! - ${it.data}")
-          clientSession = ClientSession.fromJSON(it.data)
+        is Observable.ObservableSuccessEvent -> {
+          clientSession = it.cast()
+          log("Success! - " + clientSession.toString())
         }
-        is Observable.ErrorResult -> {
+        is Observable.ObservableErrorEvent -> {
           log("Noooo! - ${it.error.description}")
         }
-        is Observable.PendingResult -> {
+        is Observable.ObservableLoadingEvent -> {
           log("still loading...")
         }
       }

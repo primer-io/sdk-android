@@ -31,7 +31,7 @@ internal class PrimerViewModel(
 
   fun initialize() {
     model.initialize().observe {
-      if (it is Observable.SuccessResult) {
+      if (it is Observable.ObservableSuccessEvent) {
 
       }
     }

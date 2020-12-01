@@ -5,12 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
-import kotlinx.serialization.json.Json
+import io.primer.android.model.json
 import kotlinx.serialization.serializer
 
 class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.CheckoutSheetListener {
   private val log = Logger("checkout-activity")
-  private val format = Json { ignoreUnknownKeys = true }
   private lateinit var model: Model
 
   override fun onPaymentMethodSelected(type: String) {
@@ -36,7 +35,7 @@ class CheckoutSheetActivity : AppCompatActivity(), CheckoutSheetFragment.Checkou
 
   private inline fun <reified T> unmarshal(name: String): T {
     val serialized = intent.getStringExtra(name)
-    val decoded = format.decodeFromString<T>(serializer(), serialized!!)
+    val decoded = json.decodeFromString<T>(serializer(), serialized!!)
     return decoded
   }
 

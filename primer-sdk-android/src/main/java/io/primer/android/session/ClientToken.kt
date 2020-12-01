@@ -1,35 +1,30 @@
 package io.primer.android.session
 
 import android.util.Base64
-import org.json.JSONObject
+import io.primer.android.model.json
+import kotlinx.serialization.Serializable
+import java.lang.IllegalArgumentException
 
-class ClientToken(token: String) {
-    private var decoded = getTokenPayload(token)
+@Serializable
+data class ClientToken(
+    val configurationUrl: String,
+    val accessToken: String,
+) {
+    companion object {
+        fun fromString(encoded: String): ClientToken {
+            val tokens = encoded.split(".")
 
-    val configurationURL: String
-        get() = this.decoded.getString("configurationUrl")
+            for (elm in tokens) {
+                val bytes = Base64.decode(elm, Base64.DEFAULT)
+                val decoded = String(bytes)
 
-    val coreURL: String
-        get() = this.decoded.getString("coreUrl")
-
-    val pciURL: String
-        get() = this.decoded.getString("pciUrl")
-
-    val accessToken: String
-        get() = this.decoded.getString("accessToken")
-
-    private fun getTokenPayload(token: String): JSONObject {
-        val tokens = token.split(".")
-
-        for (elm in tokens) {
-            val bytes = Base64.decode(elm, Base64.DEFAULT)
-            val decoded = String(bytes)
-
-            if (decoded.contains("\"accessToken\":")) {
-                return JSONObject(decoded)
+                if (decoded.contains("\"accessToken\":")) {
+                    return json.decodeFromString(serializer(), decoded)
+                }
             }
-        }
 
-        return JSONObject("null")
+            // TODO: clean this up
+            throw IllegalArgumentException()
+        }
     }
 }

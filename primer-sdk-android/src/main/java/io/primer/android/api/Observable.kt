@@ -1,5 +1,7 @@
 package io.primer.android.api
 
+import io.primer.android.model.json
+import kotlinx.serialization.serializer
 import org.json.JSONObject
 
 class Observable {
@@ -7,30 +9,34 @@ class Observable {
     LOADING, SUCCESS, ERROR
   }
 
-  abstract class ObservableResult(val status: Status)
+  abstract class ObservableEvent(val status: Status)
 
-  class PendingResult(): ObservableResult(Status.LOADING)
-  class SuccessResult(val data: JSONObject): ObservableResult(Status.SUCCESS)
-  class ErrorResult(val error: APIError): ObservableResult(Status.ERROR)
+  class ObservableLoadingEvent(): ObservableEvent(Status.LOADING)
+  class ObservableErrorEvent(val error: APIError): ObservableEvent(Status.ERROR)
+  class ObservableSuccessEvent(val data: JSONObject): ObservableEvent(Status.SUCCESS) {
+    inline fun <reified T> cast(): T {
+      return json.decodeFromString(serializer(), data.toString())
+    }
+  }
 
-  private val observers: MutableList<((ObservableResult) -> Unit)> = ArrayList()
-  private var result: ObservableResult = PendingResult()
+  private val observers: MutableList<((ObservableEvent) -> Unit)> = ArrayList()
+  private var result: ObservableEvent = ObservableLoadingEvent()
 
-  fun observe(observer: ((ObservableResult) -> Unit)): Observable {
+  fun observe(observer: ((ObservableEvent) -> Unit)): Observable {
     observers.add(observer)
     observer(result)
     return this
   }
 
   fun setSuccess(data: JSONObject) {
-    setResult(SuccessResult(data))
+    setResult(ObservableSuccessEvent(data))
   }
 
   fun setError(error: APIError) {
-    setResult(ErrorResult(error))
+    setResult(ObservableErrorEvent(error))
   }
 
-  private fun setResult(result: ObservableResult) {
+  private fun setResult(result: ObservableEvent) {
     this.result = result
     observers.forEach {
       it(result)

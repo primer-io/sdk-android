@@ -1,6 +1,7 @@
 package io.primer.android.api
 
 import io.primer.android.logging.Logger
+import io.primer.android.model.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import okhttp3.Response
@@ -29,18 +30,17 @@ data class APIError(
   )
 
   companion object {
-    private val format = Json { ignoreUnknownKeys = true }
     private val log = Logger("api-error")
-    private val DEFAULT_ERROR_ELEMENT = format.parseToJsonElement(
+    private val DEFAULT_ERROR_ELEMENT = json.parseToJsonElement(
       "{\"description\":\"Unknown Client Error\"}"
     )
 
     fun create(response: Response): APIError {
-      return format.decodeFromJsonElement(getErrorFromContent(response.body))
+      return json.decodeFromJsonElement(getErrorFromContent(response.body))
     }
 
     fun create(e: IOException?): APIError {
-      return format.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
+      return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
     }
 
     private fun getErrorFromContent(body: ResponseBody?): JsonObject {
@@ -51,15 +51,15 @@ data class APIError(
       val content = body.string()
 
       try {
-        val json = format.parseToJsonElement(content).jsonObject
-        if (json.containsKey("error")) {
-          return json["error"]!!.jsonObject
+        val element = json.parseToJsonElement(content).jsonObject
+        if (element.containsKey("error")) {
+          return element["error"]!!.jsonObject
         }
 
-        if (json.containsKey("message")) {
-          val message = json["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
+        if (element.containsKey("message")) {
+          val message = element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
           val jsonString = "{\"description\": \"$message\"}"
-          return format.parseToJsonElement(jsonString).jsonObject
+          return json.parseToJsonElement(jsonString).jsonObject
         }
       } catch (ex: Exception) {
         log.warn("Failed to decode json response")
