@@ -11,8 +11,12 @@ import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 
-internal class GooglePay(viewModel: PrimerViewModel, config: PaymentMethodRemoteConfig, options: PaymentMethod.PayPal):
-  PaymentMethodDescriptor(viewModel, config, options) {
+internal class GooglePay(
+  viewModel: PrimerViewModel,
+  config: PaymentMethodRemoteConfig,
+  private val options: PaymentMethod.GooglePay
+  ): PaymentMethodDescriptor(viewModel, config) {
+
   override val identifier: String
     get() = GOOGLE_PAY_IDENTIFIER
 

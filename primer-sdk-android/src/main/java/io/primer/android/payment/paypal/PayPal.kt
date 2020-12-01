@@ -11,8 +11,11 @@ import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 
-internal class PayPal(viewModel: PrimerViewModel, config: PaymentMethodRemoteConfig, options: PaymentMethod.PayPal):
-  PaymentMethodDescriptor(viewModel, config, options) {
+internal class PayPal(
+  viewModel: PrimerViewModel,
+  config: PaymentMethodRemoteConfig,
+  private val options: PaymentMethod.PayPal
+): PaymentMethodDescriptor(viewModel, config) {
   override val identifier: String
     get() = PAYPAL_IDENTIFIER
 

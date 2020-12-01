@@ -14,8 +14,12 @@ import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import kotlin.collections.HashMap
 
-internal class CreditCard(viewModel: PrimerViewModel, config: PaymentMethodRemoteConfig, options: PaymentMethod.Card):
-  PaymentMethodDescriptor(viewModel, config, options) {
+internal class CreditCard(
+  viewModel: PrimerViewModel,
+  config: PaymentMethodRemoteConfig,
+  private val options: PaymentMethod.Card
+  ): PaymentMethodDescriptor(viewModel, config) {
+
   override val identifier = PAYMENT_CARD_IDENTIFIER
 
   private val log = Logger("payment-method.$identifier")
