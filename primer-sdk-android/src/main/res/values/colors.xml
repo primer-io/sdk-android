@@ -6,6 +6,8 @@
     <color name="primer_text_color_default">@android:color/black</color>
     <color name="primer_input_placeholder">#8A000000</color>
     <color name="primer_input_border">#6B000000</color>
+    <color name="primer_app_primary">#2C98F0</color>
+    <color name="primer_input_border_disabled">#2B000000</color>
 
 <!-- Card Scanner Things -->
     <color name="bouncerProcessingBackground">#AA000000</color>

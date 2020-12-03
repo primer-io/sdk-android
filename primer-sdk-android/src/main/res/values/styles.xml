@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.AppCompat.PrimerUniversalCheckout">
+    <style name="Theme.AppCompat.PrimerUniversalCheckout" parent="Theme.AppCompat">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowMinWidthMajor">100%</item>
         <item name="android:windowMinWidthMinor">100%</item>
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@color/primer_app_primary</item>
+<!--        <item name="bottomSheetDialogTheme">@style/Primer.BottomSheet</item>-->
     </style>
 
-
     <style name="Primer" />
+
+    <style name="Primer.BottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/Primer.BottomSheetModal</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+    </style>
+
+    <style name="Primer.BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 
     <style name="Primer.Text">
         <item name="android:fontFamily">@font/roboto</item>
@@ -26,8 +42,14 @@
         <item name="fontWeight">500</item>
     </style>
 
-    <style name="Primer.FormInput">
-
+    <style name="Primer.FormInput" />
+    <style name="Primer.FormInput.Layout" parent="Widget.Design.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColorHint">@color/primer_input_placeholder</item>
     </style>
-
+    <style name="Primer.FormInput.Input" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorControlActivated">@color/primer_app_primary</item>
+    </style>
 </resources>

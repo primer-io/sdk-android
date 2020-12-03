@@ -9,37 +9,43 @@
     >
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Primer.FormInput.Layout"
         android:id="@+id/card_form_cardholder_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:hint="@string/card_holder_name_hint"
-        android:textColorHint="@color/primer_input_placeholder"
         >
         <com.google.android.material.textfield.TextInputEditText
+            android:theme="@style/Primer.FormInput.Input"
             android:id="@+id/card_form_cardholder_name_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:maxLines="1"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/card_form_card_number"
+    <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/primer_input_spacing_vert"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Primer.FormInput.Layout"
+        android:id="@+id/card_form_card_number"
         android:hint="@string/card_number_hint"
-        android:textColorHint="@color/primer_input_placeholder"
-        app:boxStrokeColor="@color/primer_input_border"
-        app:boxBackgroundMode="outline"
-        app:boxStrokeWidth="1dp"
         >
         <com.google.android.material.textfield.TextInputEditText
+            android:theme="@style/Primer.FormInput.Input"
             android:id="@+id/card_form_card_number_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/primer_input_spacing_vert"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,33 +54,35 @@
         android:baselineAligned="false"
         >
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Primer.FormInput.Layout"
             android:id="@+id/card_form_card_expiry"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="@dimen/primer_input_spacing_horiz"
             android:hint="@string/card_expiry_hint"
-            android:textColorHint="@color/primer_input_placeholder"
-            app:boxStrokeColor="@color/primer_input_border"
-            app:boxBackgroundMode="filled"
             >
             <com.google.android.material.textfield.TextInputEditText
+                android:theme="@style/Primer.FormInput.Input"
                 android:id="@+id/card_form_card_expiry_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="@dimen/primer_input_spacing_horiz"
+            />
+
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Primer.FormInput.Layout"
             android:id="@+id/card_form_card_cvv"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/card_cvv_hint"
-            android:textColorHint="@color/primer_input_placeholder"
-            app:boxStrokeColor="@color/primer_input_border"
-            app:boxBackgroundMode="filled"
             >
             <com.google.android.material.textfield.TextInputEditText
+                android:theme="@style/Primer.FormInput.Input"
                 android:id="@+id/card_form_card_cvv_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -2,11 +2,16 @@ package io.primer.android.ui
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.Handler
+import android.os.Looper
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,10 +29,13 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
 
     dialog.setCanceledOnTouchOutside(false)
     (dialog as BottomSheetDialog).behavior.isHideable = false
+
+//    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.Primer_BottomSheet)
     viewModel = ViewModelProvider(this.requireActivity()).get(PrimerViewModel::class.java)
   }
 

@@ -5,11 +5,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application>
+    <application >
         <activity
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
             android:name=".ui.CheckoutSheetActivity"
             android:label=""
+            android:windowSoftInputMode="adjustResize"
             />
     </application>
 
