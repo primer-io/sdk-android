@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.AppCompat.CheckoutSheetActivity">
+    <style name="Theme.AppCompat.PrimerUniversalCheckout">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
@@ -8,23 +8,10 @@
         <item name="android:windowMinWidthMajor">100%</item>
         <item name="android:windowMinWidthMinor">100%</item>
     </style>
-    <style name="Primer"/>
-    <style name="Primer.PaymentMethod" />
-    <style name="Primer.PaymentMethod.Preview">
-        <item name="android:layout_marginTop">@dimen/primer_list_margin</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:background">@drawable/button_light</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/primer_payment_method_preview_button_height</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-    </style>
-    <style name="Primer.CheckoutSheet">
-        <item name="android:paddingTop">@dimen/primer_checkout_sheet_padding_vert</item>
-        <item name="android:paddingBottom">@dimen/primer_checkout_sheet_padding_vert</item>
-        <item name="android:paddingLeft">@dimen/primer_checkout_sheet_padding_horiz</item>
-        <item name="android:paddingRight">@dimen/primer_checkout_sheet_padding_horiz</item>
-    </style>
+
+
+    <style name="Primer" />
+
     <style name="Primer.Text">
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:layout_width">wrap_content</item>
@@ -33,8 +20,14 @@
         <item name="android:textSize">@dimen/primer_text_size_detail</item>
         <item name="fontWeight">400</item>
     </style>
+
     <style name="Primer.Text.Title">
         <item name="android:textSize">@dimen/primer_text_size_title</item>
         <item name="fontWeight">500</item>
     </style>
+
+    <style name="Primer.FormInput">
+
+    </style>
+
 </resources>

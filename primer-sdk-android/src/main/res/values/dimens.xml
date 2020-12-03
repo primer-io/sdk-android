@@ -11,6 +11,8 @@
 
 <!--  Forms  -->
     <item name="primer_input_height" type="dimen">34dp</item>
+    <item name="primer_input_spacing_vert" type="dimen">21dp</item>
+    <item name="primer_input_spacing_horiz" type="dimen">28dp</item>
 
 <!--  Text stuff  -->
     <item name="primer_text_size_title" type="dimen">20sp</item>

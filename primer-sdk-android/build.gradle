@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation('com.getbouncer:cardscan-ui:2.0.0054') {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-serialization-runtime-jvm'
     }
@@ -64,8 +64,8 @@ dependencies {
 
     testImplementation 'junit:junit:4.+'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
 repositories {

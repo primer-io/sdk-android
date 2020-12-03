@@ -6,10 +6,8 @@ import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.logging.Logger
+import io.primer.android.payment.*
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodRemoteConfig
-import io.primer.android.payment.PaymentMethodType
-import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import kotlin.collections.HashMap
@@ -24,6 +22,9 @@ internal class CreditCard(
 
   private val log = Logger("payment-method.$identifier")
 
+  override val selectedBehaviour: SelectedPaymentMethodBehaviour
+    get() = NewFragmentBehaviour(CardFormFragment::newInstance)
+
   override val type: PaymentMethodType
     get() = PaymentMethodType.FORM
 
@@ -37,10 +38,7 @@ internal class CreditCard(
   }
 
   override fun createButton(container: ViewGroup): View {
-    View.inflate(container.context, R.layout.pm_credit_card_button_layout, container)
-
-    val button = container.findViewById<View>(R.id.card_preview_button)
-
-    return button
+    View.inflate(container.context, R.layout.payment_method_button_card, container)
+    return container.findViewById<View>(R.id.card_preview_button)
   }
 }

@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout
-    android:id="@+id/card_preview_button"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Primer.PaymentMethod.Preview"
+    android:id="@+id/card_preview_button"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center"
+    android:layout_marginTop="@dimen/primer_list_margin"
+    android:orientation="horizontal"
+    android:background="@drawable/button_light"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/primer_payment_method_preview_button_height"
     >
     <TextView
         style="@style/Primer.Text"
-        android:layout_gravity="center"
         android:text="@string/prompt_pay_with_card"
+        android:layout_gravity="center"
         android:drawablePadding="10dp"
         app:drawableStartCompat="@drawable/credit_card_icon"
         />

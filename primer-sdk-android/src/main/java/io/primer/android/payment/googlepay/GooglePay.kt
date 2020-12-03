@@ -4,10 +4,8 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.PaymentMethod
+import io.primer.android.payment.*
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodRemoteConfig
-import io.primer.android.payment.PaymentMethodType
-import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 
@@ -16,6 +14,9 @@ internal class GooglePay(
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.GooglePay
   ): PaymentMethodDescriptor(viewModel, config) {
+
+  override val selectedBehaviour: SelectedPaymentMethodBehaviour
+    get() = NoopBehaviour()
 
   override val identifier: String
     get() = GOOGLE_PAY_IDENTIFIER

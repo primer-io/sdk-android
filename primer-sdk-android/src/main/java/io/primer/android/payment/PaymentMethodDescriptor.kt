@@ -18,6 +18,8 @@ internal abstract class PaymentMethodDescriptor(
 
   abstract val identifier: String
 
+  abstract val selectedBehaviour: SelectedPaymentMethodBehaviour
+
   abstract val type: PaymentMethodType
 
   abstract val vaultCapability: VaultCapability

@@ -3,8 +3,11 @@
     <string name="prompt_add_new_card" description="Text displayed to prompt the customer to add a card">Add a new card</string>
     <string name="prompt_pay_with_card">Pay by card</string>
 
-<!-- Form things -->
+    <!-- Form things -->
     <string name="card_holder_name_hint">Cardholder name</string>
+    <string name="card_number_hint">Card number</string>
+    <string name="card_expiry_hint">Expiry date</string>
+    <string name="card_cvv_hint">CVV</string>
 
     <!--  Card Scanner Things: ignore this for now  -->
     <string name="scan_card">Scan Card</string>
@@ -33,5 +36,7 @@
     <string name="bouncer_close_button_description" description="Text used to close the scan window">Close</string>
     <string name="bouncer_torch_button_description" description="Text used to turn on the camera torch">Torch</string>
     <string name="bouncer_card_view_finder_description" description="Accessibility description of the view finder window">card view finder</string>
-    <string name="bouncer_processing_card" >Processing</string>
+    <string name="bouncer_processing_card">Processing</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

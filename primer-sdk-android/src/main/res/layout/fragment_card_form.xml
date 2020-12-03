@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    >
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/card_form_cardholder_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/card_holder_name_hint"
+        android:textColorHint="@color/primer_input_placeholder"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/card_form_cardholder_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/card_form_card_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/card_number_hint"
+        android:textColorHint="@color/primer_input_placeholder"
+        app:boxStrokeColor="@color/primer_input_border"
+        app:boxBackgroundMode="outline"
+        app:boxStrokeWidth="1dp"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/card_form_card_number_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        >
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/card_form_card_expiry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/primer_input_spacing_horiz"
+            android:hint="@string/card_expiry_hint"
+            android:textColorHint="@color/primer_input_placeholder"
+            app:boxStrokeColor="@color/primer_input_border"
+            app:boxBackgroundMode="filled"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_card_expiry_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/card_form_card_cvv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/card_cvv_hint"
+            android:textColorHint="@color/primer_input_placeholder"
+            app:boxStrokeColor="@color/primer_input_border"
+            app:boxBackgroundMode="filled"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_card_cvv_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+</LinearLayout>
