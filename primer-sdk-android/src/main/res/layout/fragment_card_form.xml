@@ -19,6 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:inputType="textPersonName"
+            android:imeOptions="actionNext"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,6 +40,8 @@
             android:id="@+id/card_form_card_number_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
+            android:imeOptions="actionNext"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,6 +69,8 @@
                 android:id="@+id/card_form_card_expiry_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="date"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -86,8 +92,28 @@
                 android:id="@+id/card_form_card_cvv_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionDone"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/primer_input_spacing_vert" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        >
+        <Button
+            android:id="@+id/card_form_submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pay"
+            android:background="@color/primer_app_primary" />
     </LinearLayout>
 
 </LinearLayout>
