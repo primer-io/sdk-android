@@ -2,10 +2,11 @@ package io.primer.android.payment
 
 import androidx.fragment.app.Fragment
 import io.primer.android.R
+import io.primer.android.model.Model
 
-abstract class SelectedPaymentMethodBehaviour
+internal abstract class SelectedPaymentMethodBehaviour
 
-class NewFragmentBehaviour(private val factory: (() -> Fragment)): SelectedPaymentMethodBehaviour() {
+internal class NewFragmentBehaviour(private val factory: (() -> Fragment)): SelectedPaymentMethodBehaviour() {
   fun execute(parent: Fragment) {
     val fragment = factory()
 
@@ -16,4 +17,4 @@ class NewFragmentBehaviour(private val factory: (() -> Fragment)): SelectedPayme
   }
 }
 
-class NoopBehaviour : SelectedPaymentMethodBehaviour()
+internal class NoopBehaviour : SelectedPaymentMethodBehaviour()

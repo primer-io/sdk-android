@@ -1,6 +1,6 @@
 package io.primer.android.payment
 
-enum class PaymentMethodType {
+internal enum class PaymentMethodType {
   /**
    * The FORM type represents a payment method where the form is created and controlled by Primer
    */

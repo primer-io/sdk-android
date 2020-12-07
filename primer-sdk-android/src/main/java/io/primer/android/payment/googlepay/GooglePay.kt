@@ -30,8 +30,4 @@ internal class GooglePay(
   override fun createButton(container: ViewGroup): View {
     TODO("Not yet implemented")
   }
-
-  override fun toPaymentInstrument(): JSONObject {
-    TODO("Not yet implemented")
-  }
 }

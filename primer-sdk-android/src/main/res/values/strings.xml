@@ -4,10 +4,12 @@
     <string name="prompt_pay_with_card">Pay by card</string>
 
     <!-- Form things -->
-    <string name="card_holder_name_hint">Cardholder name</string>
-    <string name="card_number_hint">Card number</string>
-    <string name="card_expiry_hint">Expiry date</string>
-    <string name="card_cvv_hint">CVV</string>
+    <string name="card_holder_name">Cardholder name</string>
+    <string name="card_number">Card number</string>
+    <string name="card_expiry">Expiry date</string>
+    <string name="card_cvv">CVV</string>
+    <string name="form_error_required">%1$s is required</string>
+    <string name="form_error_invalid">%1$s is invalid</string>
 
     <!--  Card Scanner Things: ignore this for now  -->
     <string name="scan_card">Scan Card</string>

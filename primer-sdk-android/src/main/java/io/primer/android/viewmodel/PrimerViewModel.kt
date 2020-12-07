@@ -2,19 +2,16 @@ package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.primer.android.UniversalCheckout
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.api.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
-import io.primer.android.payment.MonetaryAmount
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodRemoteConfig
 import io.primer.android.session.ClientSession
 import java.util.*
 
-internal class PrimerViewModel(
-  private val model: Model
-): ViewModel() {
+internal class PrimerViewModel: BaseViewModel() {
   private val log = Logger("view-model")
 
   val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -22,14 +19,13 @@ internal class PrimerViewModel(
   val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
   // Select Payment Method
-  val paymentMethods: MutableLiveData<List<PaymentMethodDescriptor>> =
-    MutableLiveData(Collections.emptyList())
+  val paymentMethods = MutableLiveData(Collections.emptyList<PaymentMethodDescriptor>())
 
-  val selectedPaymentMethod: MutableLiveData<PaymentMethodDescriptor?> = MutableLiveData(null)
+  val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
 
-  val uxMode: MutableLiveData<UniversalCheckout.UXMode> = MutableLiveData(model.config.uxMode)
+  val uxMode = MutableLiveData(model?.config?.uxMode)
 
-  val amount: MutableLiveData<MonetaryAmount?> = MutableLiveData(model.config.amount)
+  val amount = MutableLiveData(model?.config?.amount)
 
   fun setSheetDismissed(dismissed: Boolean) {
     sheetDismissed.value = dismissed
@@ -39,23 +35,53 @@ internal class PrimerViewModel(
     selectedPaymentMethod.value = pm
   }
 
-  fun tokenize(paymentMethod: PaymentMethodDescriptor) {
-    model.tokenize(paymentMethod)
-  }
+  override fun initialize(model: Model) {
+    super.initialize(model)
 
-  fun initialize() {
-    model.getConfiguration().observe {
-      if (it is Observable.ObservableSuccessEvent) {
-        val session: ClientSession = it.cast()
-        val resolver = PaymentMethodDescriptorResolver(
-          this,
-          model.configuredPaymentMethods,
-          session.paymentMethods
-        )
+    uxMode.value = model.config.uxMode
+    amount.value = model.config.amount
 
-        paymentMethods.value = resolver.resolve()
-        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+    requireModel().apply {
+      getConfiguration().observe {
+        if (it is Observable.ObservableSuccessEvent) {
+          val session: ClientSession = it.cast()
+          val resolver = PaymentMethodDescriptorResolver(
+            this@PrimerViewModel,
+            configuredPaymentMethods,
+            session.paymentMethods
+          )
+
+          paymentMethods.value = resolver.resolve()
+          viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+        }
       }
+    }
+
+//    requireModel().getConfiguration().observe {
+//      log("Observed thing " + it.status.name)
+//      if (it is Observable.ObservableSuccessEvent) {
+//        val session: ClientSession = it.cast()
+//        val resolver = PaymentMethodDescriptorResolver(
+//          this,
+//          model.configuredPaymentMethods,
+//          session.paymentMethods
+//        )
+//
+//        paymentMethods.value = resolver.resolve()
+//        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+//      }
+//    }
+  }
+//
+//  class ProviderFactory() : ViewModelProvider.Factory {
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//      return PrimerViewModel() as T
+//    }
+//  }
+
+  companion object {
+    fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
+      return ViewModelProvider(owner).get(PrimerViewModel::class.java)
     }
   }
 }

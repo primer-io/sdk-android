@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.logging.Logger
+import io.primer.android.model.Model
 import io.primer.android.viewmodel.PrimerViewModel
 
 /**
@@ -15,7 +16,7 @@ import io.primer.android.viewmodel.PrimerViewModel
  * Use the [SelectPaymentMethodFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SelectPaymentMethodFragment : Fragment() {
+internal class SelectPaymentMethodFragment : Fragment() {
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
@@ -30,7 +31,7 @@ class SelectPaymentMethodFragment : Fragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    viewModel = ViewModelProvider(this.requireActivity()).get(PrimerViewModel::class.java)
+    viewModel = PrimerViewModel.getInstance(requireActivity())
 
     viewModel.paymentMethods.observe(this, { items ->
       val container: ViewGroup = findViewById(R.id.primer_sheet_payment_methods_list)
@@ -49,7 +50,9 @@ class SelectPaymentMethodFragment : Fragment() {
     })
 
     viewModel.uxMode.observe(this, {
-      findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
+      if (it != null) {
+        findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
+      }
     })
   }
 

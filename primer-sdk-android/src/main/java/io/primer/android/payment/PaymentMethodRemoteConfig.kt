@@ -5,7 +5,7 @@ import kotlinx.serialization.json.JsonObject
 import java.util.*
 
 @Serializable
-data class PaymentMethodRemoteConfig(
+internal data class PaymentMethodRemoteConfig(
   val id: String? = null,
   val type: String,
   val options: JsonObject = JsonObject(content = Collections.emptyMap())

@@ -4,7 +4,7 @@ import io.primer.android.payment.MonetaryAmount
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CheckoutConfig private constructor(
+internal data class CheckoutConfig private constructor(
   val clientToken: String,
   val uxMode: UniversalCheckout.UXMode,
   val amount: MonetaryAmount? = null,

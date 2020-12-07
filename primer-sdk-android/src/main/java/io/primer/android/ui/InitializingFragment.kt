@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 
 /**
@@ -13,7 +12,7 @@ import io.primer.android.R
  * Use the [InitializingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class InitializingFragment : Fragment() {
+internal class InitializingFragment : Fragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
   }

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import java.lang.IllegalArgumentException
 
 @Serializable
-data class ClientToken(
+internal data class ClientToken(
     val configurationUrl: String,
     val accessToken: String,
 ) {

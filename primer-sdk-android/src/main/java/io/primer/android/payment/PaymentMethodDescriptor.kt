@@ -10,11 +10,14 @@ import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.googlepay.GooglePay
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.viewmodel.PrimerViewModel
+import org.json.JSONObject
+import java.util.*
+import kotlin.collections.HashMap
 
 internal abstract class PaymentMethodDescriptor(
   protected val viewModel: PrimerViewModel,
   protected val config: PaymentMethodRemoteConfig
-  ): ITokenizable {
+  ) {
 
   abstract val identifier: String
 
@@ -25,6 +28,20 @@ internal abstract class PaymentMethodDescriptor(
   abstract val vaultCapability: VaultCapability
 
   abstract fun createButton(container: ViewGroup): View
+
+  protected val values: MutableMap<String, String> = HashMap()
+
+  fun setTokenizableValue(key: String, value: String) {
+    values[key] = value
+  }
+
+  open fun validate(): List<SyncValidationError> {
+    return Collections.emptyList()
+  }
+
+  open fun toPaymentInstrument(): JSONObject {
+    return JSONObject(values.toMap())
+  }
 
   class Factory(private val viewModel: PrimerViewModel) {
     fun create(config: PaymentMethodRemoteConfig, options: PaymentMethod): PaymentMethodDescriptor? {

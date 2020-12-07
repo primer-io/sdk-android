@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
 @Serializable
-data class ClientSession(
+internal data class ClientSession(
     val pciUrl: String,
     val coreUrl: String,
     val paymentMethods: List<PaymentMethodRemoteConfig>

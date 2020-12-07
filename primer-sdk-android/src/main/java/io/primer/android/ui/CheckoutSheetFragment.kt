@@ -2,24 +2,19 @@ package io.primer.android.ui
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.*
-import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.logging.Logger
+import io.primer.android.model.Model
 import io.primer.android.viewmodel.PrimerViewModel
 
-class CheckoutSheetFragment : BottomSheetDialogFragment() {
+internal class CheckoutSheetFragment : BottomSheetDialogFragment() {
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
 
@@ -29,14 +24,17 @@ class CheckoutSheetFragment : BottomSheetDialogFragment() {
 
     dialog.setCanceledOnTouchOutside(false)
     (dialog as BottomSheetDialog).behavior.isHideable = false
-
-//    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.Primer_BottomSheet)
-    viewModel = ViewModelProvider(this.requireActivity()).get(PrimerViewModel::class.java)
+    setStyle(STYLE_NORMAL, R.style.Primer_BottomSheet)
+
+    activity?.let {
+      viewModel = ViewModelProviders.of(it).get(PrimerViewModel::class.java)
+    }
+
+//    viewModel = PrimerViewModel.getInstance(requireActivity())
   }
 
   override fun onCreateView(

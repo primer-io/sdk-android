@@ -5,7 +5,7 @@ import java.lang.IllegalArgumentException
 import java.util.*
 
 @Serializable
-class MonetaryAmount private constructor(
+internal class MonetaryAmount private constructor(
   val value: Int,
   val currency: String
 ) {

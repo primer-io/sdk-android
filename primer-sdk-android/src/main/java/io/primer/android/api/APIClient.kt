@@ -12,7 +12,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 
-class APIClient(token: ClientToken) : IAPIClient {
+internal class APIClient(token: ClientToken) : IAPIClient {
   private val log = Logger("api-client")
   private val client = OkHttpClient()
   private val handler = Handler(Looper.getMainLooper())
@@ -36,23 +36,27 @@ class APIClient(token: ClientToken) : IAPIClient {
 
     val observable = Observable()
 
-    client.newCall(request).enqueue(object: Callback {
-      override fun onFailure(call: Call, e: IOException) {
-        handler.post {
-          observable.setError(APIError.create(e))
-        }
-      }
-
-      override fun onResponse(call: Call, response: Response) {
-        handler.post {
-          if (response.code != 200) {
-            observable.setError(APIError.create(response))
-          } else {
-            observable.setSuccess(getJSON(response))
+    val thread = Thread {
+      client.newCall(request).enqueue(object: Callback {
+        override fun onFailure(call: Call, e: IOException) {
+          handler.post {
+            observable.setError(APIError.create(e))
           }
         }
-      }
-    })
+
+        override fun onResponse(call: Call, response: Response) {
+          handler.post {
+            if (response.code != 200) {
+              observable.setError(APIError.create(response))
+            } else {
+              observable.setSuccess(getJSON(response))
+            }
+          }
+        }
+      })
+    }
+
+    thread.start()
 
     return observable
   }

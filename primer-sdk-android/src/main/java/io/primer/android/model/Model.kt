@@ -5,12 +5,12 @@ import io.primer.android.PaymentMethod
 import io.primer.android.api.APIClient
 import io.primer.android.api.Observable
 import io.primer.android.logging.Logger
-import io.primer.android.payment.ITokenizable
+import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.session.ClientSession
 import io.primer.android.session.ClientToken
 import org.json.JSONObject
 
-class Model(
+internal class Model(
   val config: CheckoutConfig,
   val configuredPaymentMethods: List<PaymentMethod>
 ) {
@@ -39,10 +39,12 @@ class Model(
     }
   }
 
-  fun tokenize(tokenizable: ITokenizable): Observable {
+  fun tokenize(tokenizable: PaymentMethodDescriptor): Observable {
     val json = JSONObject()
 
     json.put("paymentInstrument", tokenizable.toPaymentInstrument())
+
+    log("Tokenizing: " + json.toString())
 
     val url = "${session.pciUrl}/payment-instruments"
 

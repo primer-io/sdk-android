@@ -3,7 +3,7 @@ package io.primer.android.payment
 import java.text.NumberFormat
 import java.util.*
 
-class CurrencyFormatter private constructor() {
+internal class CurrencyFormatter private constructor() {
   companion object {
     fun format(amount: MonetaryAmount?): String? {
       if (amount == null) {
