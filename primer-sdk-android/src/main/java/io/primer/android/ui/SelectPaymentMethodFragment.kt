@@ -5,10 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.model.Model
 import io.primer.android.viewmodel.PrimerViewModel
 
 /**

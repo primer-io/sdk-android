@@ -12,7 +12,7 @@ import io.primer.android.payment.SyncValidationError
 import org.json.JSONObject
 import java.util.*
 
-internal class TokenizationViewModel : BaseViewModel() {
+internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
   private var paymentMethod: PaymentMethodDescriptor? = null
 
   val status = MutableLiveData(TokenizationStatus.NONE)
@@ -39,7 +39,7 @@ internal class TokenizationViewModel : BaseViewModel() {
   fun tokenize() {
     paymentMethod.let { pm ->
       if (pm != null) {
-        requireModel().tokenize(pm).observe {
+        model.tokenize(pm).observe {
           when (it) {
             is Observable.ObservableLoadingEvent -> { status.value = TokenizationStatus.LOADING }
             is Observable.ObservableSuccessEvent -> {
@@ -65,11 +65,11 @@ internal class TokenizationViewModel : BaseViewModel() {
     }
   }
 
-//  class ProviderFactory : ViewModelProvider.Factory {
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//      return TokenizationViewModel() as T
-//    }
-//  }
+  class ProviderFactory(private val model: Model) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      return TokenizationViewModel(model) as T
+    }
+  }
 
   companion object {
     fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {

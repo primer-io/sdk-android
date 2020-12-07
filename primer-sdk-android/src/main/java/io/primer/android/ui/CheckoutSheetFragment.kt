@@ -5,13 +5,10 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.model.Model
 import io.primer.android.viewmodel.PrimerViewModel
 
 internal class CheckoutSheetFragment : BottomSheetDialogFragment() {
@@ -29,12 +26,7 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setStyle(STYLE_NORMAL, R.style.Primer_BottomSheet)
-
-    activity?.let {
-      viewModel = ViewModelProviders.of(it).get(PrimerViewModel::class.java)
-    }
-
-//    viewModel = PrimerViewModel.getInstance(requireActivity())
+    viewModel = PrimerViewModel.getInstance(requireActivity())
   }
 
   override fun onCreateView(

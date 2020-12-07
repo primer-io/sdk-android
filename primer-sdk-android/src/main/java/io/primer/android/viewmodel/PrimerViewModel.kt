@@ -11,7 +11,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.session.ClientSession
 import java.util.*
 
-internal class PrimerViewModel: BaseViewModel() {
+internal class PrimerViewModel(model: Model): BaseViewModel(model) {
   private val log = Logger("view-model")
 
   val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -23,9 +23,9 @@ internal class PrimerViewModel: BaseViewModel() {
 
   val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
 
-  val uxMode = MutableLiveData(model?.config?.uxMode)
+  val uxMode = MutableLiveData(model.config.uxMode)
 
-  val amount = MutableLiveData(model?.config?.amount)
+  val amount = MutableLiveData(model.config.amount)
 
   fun setSheetDismissed(dismissed: Boolean) {
     sheetDismissed.value = dismissed
@@ -35,49 +35,27 @@ internal class PrimerViewModel: BaseViewModel() {
     selectedPaymentMethod.value = pm
   }
 
-  override fun initialize(model: Model) {
-    super.initialize(model)
+  override fun initialize() {
+    model.getConfiguration().observe {
+      if (it is Observable.ObservableSuccessEvent) {
+        val session: ClientSession = it.cast()
+        val resolver = PaymentMethodDescriptorResolver(
+          this@PrimerViewModel,
+          model.configuredPaymentMethods,
+          session.paymentMethods
+        )
 
-    uxMode.value = model.config.uxMode
-    amount.value = model.config.amount
-
-    requireModel().apply {
-      getConfiguration().observe {
-        if (it is Observable.ObservableSuccessEvent) {
-          val session: ClientSession = it.cast()
-          val resolver = PaymentMethodDescriptorResolver(
-            this@PrimerViewModel,
-            configuredPaymentMethods,
-            session.paymentMethods
-          )
-
-          paymentMethods.value = resolver.resolve()
-          viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
-        }
+        paymentMethods.value = resolver.resolve()
+        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
       }
     }
-
-//    requireModel().getConfiguration().observe {
-//      log("Observed thing " + it.status.name)
-//      if (it is Observable.ObservableSuccessEvent) {
-//        val session: ClientSession = it.cast()
-//        val resolver = PaymentMethodDescriptorResolver(
-//          this,
-//          model.configuredPaymentMethods,
-//          session.paymentMethods
-//        )
-//
-//        paymentMethods.value = resolver.resolve()
-//        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
-//      }
-//    }
   }
-//
-//  class ProviderFactory() : ViewModelProvider.Factory {
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//      return PrimerViewModel() as T
-//    }
-//  }
+
+  class ProviderFactory(private val model: Model) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+      return PrimerViewModel(model) as T
+    }
+  }
 
   companion object {
     fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {

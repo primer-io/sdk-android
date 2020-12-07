@@ -3,7 +3,6 @@ package io.primer.android.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
@@ -26,10 +25,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     // Unmarshal the configuration from the intent
-    initializeModel()
+    model = Model(
+      unmarshal("config"),
+      unmarshal("paymentMethods")
+    )
 
-    viewModel = initializeViewModel(PrimerViewModel::class.java)
-    tokenizationViewModel = initializeViewModel(TokenizationViewModel::class.java)
+    viewModel = initializeViewModel(PrimerViewModel.ProviderFactory(model), PrimerViewModel::class.java)
+    tokenizationViewModel = initializeViewModel(TokenizationViewModel.ProviderFactory(model), TokenizationViewModel::class.java)
 
     sheet = CheckoutSheetFragment.newInstance()
 
@@ -44,29 +46,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     return json.decodeFromString<T>(serializer(), serialized!!)
   }
 
-  private fun initializeModel() {
-    model = Model(
-      unmarshal("config"),
-      unmarshal("paymentMethods")
-    )
-  }
+  private fun <T: BaseViewModel> initializeViewModel(factory: ViewModelProvider.Factory, modelCls: Class<T>): T {
+    val vm = ViewModelProvider(this, factory).get(modelCls)
 
-  private fun <T: BaseViewModel> initializeViewModel(modelCls: Class<T>): T {
-    val vm = ViewModelProvider(this).get(modelCls)
-
-    vm.initialize(model)
+    vm.initialize()
 
     return vm
   }
-
-
-//  private fun <T: BaseViewModel> initializeViewModel(factory: ViewModelProvider.Factory, modelCls: Class<T>): T {
-//    val vm = ViewModelProvider(this, factory).get(modelCls)
-//
-//    vm.initialize(model)
-//
-//    return vm
-//  }
 
   private fun attachViewModelListeners() {
     viewModel.viewStatus.observe(this, {
