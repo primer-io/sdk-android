@@ -2,7 +2,7 @@ package io.primer.android.logging
 
 import android.util.Log
 
-class Logger(private val tag: String) {
+internal class Logger(private val tag: String) {
   operator fun invoke(message: String) {
     info(message)
   }

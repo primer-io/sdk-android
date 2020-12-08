@@ -3,6 +3,8 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import io.primer.android.logging.Logger
+import io.primer.android.model.DeferredToken
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.json
 import io.primer.android.ui.CheckoutSheetActivity
 import kotlinx.serialization.serializer

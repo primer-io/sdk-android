@@ -2,7 +2,7 @@ package io.primer.android.model
 
 import org.json.JSONObject
 
-interface IAPIClient {
+internal interface IAPIClient {
   fun get(url: String): Observable
   fun post(url: String, body: JSONObject?): Observable
 }

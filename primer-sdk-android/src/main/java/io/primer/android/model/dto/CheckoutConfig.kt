@@ -1,6 +1,6 @@
-package io.primer.android
+package io.primer.android.model.dto
 
-import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.UniversalCheckout
 import kotlinx.serialization.Serializable
 
 @Serializable

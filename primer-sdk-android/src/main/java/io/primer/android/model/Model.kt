@@ -1,14 +1,14 @@
 package io.primer.android.model
 
-import io.primer.android.CheckoutConfig
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.PaymentMethod
+import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
-
-internal const val GET_PAYMENT_METHODS_ENDPOINT = "/payment-instruments"
 
 internal class Model(
   val config: CheckoutConfig,
@@ -40,7 +40,9 @@ internal class Model(
   }
 
   fun getVaultedPaymentMethods(): Observable {
-    return api.get(session.pciUrl + GET_PAYMENT_METHODS_ENDPOINT)
+    return api.get(
+      APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
+    )
   }
 
   fun tokenize(tokenizable: PaymentMethodDescriptor): Observable {
@@ -48,10 +50,14 @@ internal class Model(
 
     json.put("paymentInstrument", tokenizable.toPaymentInstrument())
 
-    log("Tokenizing: " + json.toString())
+    if (config.uxMode == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+      json.put("tokenType", TokenType.MULTI_USE.name)
+      json.put("paymentFlow", "VAULT")
+    }
 
-    val url = "${session.pciUrl}/payment-instruments"
-
-    return api.post(url, json)
+    return api.post(
+      APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS),
+      json
+    )
   }
 }
