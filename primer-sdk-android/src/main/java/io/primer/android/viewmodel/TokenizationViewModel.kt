@@ -15,6 +15,8 @@ import java.util.*
 internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
   private var paymentMethod: PaymentMethodDescriptor? = null
 
+  val submitted = MutableLiveData<Boolean>(false)
+
   val status = MutableLiveData(TokenizationStatus.NONE)
 
   val error = MutableLiveData<APIError?>(null)
@@ -37,6 +39,12 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
   }
 
   fun tokenize() {
+    submitted.value = true
+
+    if (validationErrors.value?.isNotEmpty() == true) {
+      return
+    }
+
     paymentMethod.let { pm ->
       if (pm != null) {
         model.tokenize(pm).observe {

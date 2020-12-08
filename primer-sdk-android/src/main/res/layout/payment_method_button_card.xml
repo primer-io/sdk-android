@@ -15,7 +15,7 @@
     >
     <TextView
         style="@style/Primer.Text"
-        android:text="@string/prompt_pay_with_card"
+        android:text="@string/pay_with_card_hint"
         android:layout_gravity="center"
         android:drawablePadding="10dp"
         app:drawableStartCompat="@drawable/credit_card_icon"

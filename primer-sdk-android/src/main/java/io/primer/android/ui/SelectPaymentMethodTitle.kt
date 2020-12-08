@@ -26,25 +26,8 @@ internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? =
   }
 
   private fun update() {
-    when (uxMode) {
-      UniversalCheckout.UXMode.CHECKOUT -> {
-        findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_pay)
-
-        amount.let { amt ->
-          val amount = CurrencyFormatter.format(amt)
-
-          if (amount == null) {
-            findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
-          } else {
-            findViewById<TextView>(R.id.primer_sheet_title_detail).text = amount
-          }
-        }
-      }
-      UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> {
-        findViewById<TextView>(R.id.primer_sheet_title).setText(R.string.prompt_add_new_card)
-        findViewById<TextView>(R.id.primer_sheet_title_detail).visibility = View.GONE
-
-      }
-    }
+    findViewById<TextView>(R.id.primer_sheet_title).setText(
+      PayAmountText.generate(context, uxMode, amount)
+    )
   }
 }

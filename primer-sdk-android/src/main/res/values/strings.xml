@@ -1,7 +1,7 @@
 <resources>
-    <string name="prompt_pay" description="Text displayed next to the amount to prompt the customer to pay">Pay</string>
-    <string name="prompt_add_new_card" description="Text displayed to prompt the customer to add a card">Add a new card</string>
-    <string name="prompt_pay_with_card">Pay by card</string>
+    <string name="pay_amount" description="Text displayed next to the amount to prompt the customer to pay">Pay %1$s</string>
+    <string name="add_new_card_hint" description="Text displayed to prompt the customer to add a card">Add a new card</string>
+    <string name="pay_with_card_hint">Pay by card</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>

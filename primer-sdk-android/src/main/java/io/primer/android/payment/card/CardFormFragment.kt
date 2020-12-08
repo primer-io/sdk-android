@@ -16,8 +16,11 @@ import io.primer.android.R
 import io.primer.android.api.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
+import io.primer.android.payment.SyncValidationError
+import io.primer.android.ui.PayAmountText
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -26,10 +29,11 @@ import io.primer.android.viewmodel.TokenizationViewModel
  */
 internal class CardFormFragment : Fragment() {
   private val log = Logger("card-form")
-  private lateinit var cardholderNameInput: TextInputEditText
-  private lateinit var cardNumberInput: TextInputEditText
-  private lateinit var cardExpiryInput: TextInputEditText
-  private lateinit var cardCvvInput: TextInputEditText
+//  private lateinit var cardholderNameInput: TextInputEditText
+//  private lateinit var cardNumberInput: TextInputEditText
+//  private lateinit var cardExpiryInput: TextInputEditText
+//  private lateinit var cardCvvInput: TextInputEditText
+  private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: Button
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
@@ -68,24 +72,39 @@ internal class CardFormFragment : Fragment() {
       log(it.toString())
     })
 
+    viewModel.uxMode.observe(viewLifecycleOwner, {
+      submitButton.setText(PayAmountText.generate(
+        requireContext(), viewModel.uxMode.value, viewModel.amount.value)
+      )
+    })
+
+    tokenizationViewModel.validationErrors.observe(viewLifecycleOwner, {
+      setValidationErrors()
+    })
+    tokenizationViewModel.submitted.observe(viewLifecycleOwner, {
+      setValidationErrors()
+    })
+
     tokenizationViewModel.reset(viewModel.selectedPaymentMethod.value)
 
-    cardholderNameInput = view.findViewById(R.id.card_form_cardholder_name_input)
-    cardNumberInput = view.findViewById(R.id.card_form_card_number_input)
-    cardExpiryInput = view.findViewById(R.id.card_form_card_expiry_input)
-    cardCvvInput = view.findViewById(R.id.card_form_card_cvv_input)
-    submitButton = view.findViewById(R.id.card_form_submit_button)
+    inputs = mapOf(
+      CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name_input),
+      CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number_input),
+      CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry_input),
+      CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
+    )
 
-    cardholderNameInput.addTextChangedListener(createTextWatcher("name"))
-    cardNumberInput.addTextChangedListener(createTextWatcher("number"))
-    cardExpiryInput.addTextChangedListener(createTextWatcher("date"))
-    cardCvvInput.addTextChangedListener(createTextWatcher("cvv"))
+    inputs.entries.forEach {
+      it.value.addTextChangedListener(createTextWatcher(it.key))
+    }
+
+    submitButton = view.findViewById(R.id.card_form_submit_button)
 
     submitButton.setOnClickListener {
       tokenizationViewModel.tokenize()
     }
 
-    focusInput(cardholderNameInput)
+    focusInput(inputs[CARD_NAME_FILED_NAME]!!)
   }
 
   private fun focusInput(input: View) {
@@ -112,6 +131,27 @@ internal class CardFormFragment : Fragment() {
 
         tokenizationViewModel.setTokenizableValue(name, s.toString())
       }
+    }
+  }
+
+  private fun setValidationErrors() {
+    if (tokenizationViewModel.submitted.value != true) {
+      return
+    }
+
+    val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
+
+    inputs.entries.forEach {
+      setValidationErrorState(it.value, errors.find { err -> err.name == it.key })
+    }
+  }
+
+  private fun setValidationErrorState(input: TextInputEditText, error: SyncValidationError?) {
+    if (error == null) {
+      input.error = null
+    } else {
+      val ctx = requireContext()
+      input.error = ctx.getString(error.errorId, ctx.getString(error.fieldId))
     }
   }
 

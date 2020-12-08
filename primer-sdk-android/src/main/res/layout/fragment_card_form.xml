@@ -112,7 +112,6 @@
             android:id="@+id/card_form_submit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pay"
             android:background="@color/primer_app_primary" />
     </LinearLayout>
 

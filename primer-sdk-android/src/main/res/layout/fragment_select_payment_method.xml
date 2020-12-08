@@ -19,11 +19,6 @@
             android:id="@+id/primer_sheet_title"
             style="@style/Primer.Text.Title"
             />
-        <TextView
-            android:id="@+id/primer_sheet_title_detail"
-            android:layout_marginStart="@dimen/primer_text_word_spacing"
-            style="@style/Primer.Text.Title"
-            />
     </io.primer.android.ui.SelectPaymentMethodTitle>
 
     <LinearLayout
