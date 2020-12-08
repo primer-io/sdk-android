@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import io.primer.android.model.APIError
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.Observable
 import io.primer.android.model.Model
 import io.primer.android.payment.PaymentMethodDescriptor

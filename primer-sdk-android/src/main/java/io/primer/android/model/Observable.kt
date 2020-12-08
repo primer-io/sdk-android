@@ -1,5 +1,6 @@
 package io.primer.android.model
 
+import io.primer.android.model.dto.APIError
 import kotlinx.serialization.decodeFromString
 import org.json.JSONObject
 

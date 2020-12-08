@@ -3,6 +3,7 @@ package io.primer.android.model
 import android.os.Handler
 import android.os.Looper
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.ClientToken
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
