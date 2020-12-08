@@ -4,7 +4,7 @@ import io.primer.android.model.dto.APIError
 import kotlinx.serialization.decodeFromString
 import org.json.JSONObject
 
-class Observable {
+internal class Observable {
   enum class Status {
     LOADING, SUCCESS, ERROR
   }
@@ -16,7 +16,6 @@ class Observable {
   class ObservableSuccessEvent(val data: JSONObject): ObservableEvent(Status.SUCCESS) {
     inline fun <reified T> cast(): T {
       return json.decodeFromString(data.toString())
-//      return json.decodeFromString(serializer(), data.toString())
     }
 
     inline fun <reified T> cast(key: String, defaultValue: T): T {

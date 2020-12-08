@@ -13,7 +13,7 @@ import java.io.IOException
 import java.util.*
 
 @Serializable
-data class APIError(
+internal data class APIError(
   val description: String,
   val errorId: String? = null,
   val diagnosticsId: String? = null,

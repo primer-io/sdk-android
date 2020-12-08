@@ -26,10 +26,6 @@ import java.util.*
  */
 internal class CardFormFragment : Fragment() {
   private val log = Logger("card-form")
-//  private lateinit var cardholderNameInput: TextInputEditText
-//  private lateinit var cardNumberInput: TextInputEditText
-//  private lateinit var cardExpiryInput: TextInputEditText
-//  private lateinit var cardCvvInput: TextInputEditText
   private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: Button
   private lateinit var viewModel: PrimerViewModel
@@ -46,7 +42,6 @@ internal class CardFormFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
     viewModel = PrimerViewModel.getInstance(requireActivity())
     tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
-
 
     tokenizationViewModel.status.observe(viewLifecycleOwner, {
       log("Tokenization status changed: ${it.name}")
@@ -67,6 +62,22 @@ internal class CardFormFragment : Fragment() {
     tokenizationViewModel.validationErrors.observe(viewLifecycleOwner, {
       log("Validation errors changed!")
       log(it.toString())
+    })
+
+
+    viewModel.keyboardVisible.observe(viewLifecycleOwner, { visible ->
+      val hasFocus = inputs.entries.any { it.value.isFocused }
+
+      log("Visibility changed! hasFocus: $hasFocus, visible: $visible")
+
+      if (hasFocus && !visible) {
+        inputs.entries.forEach {
+          log("Clearing focus for ${it.key}")
+          it.value.clearFocus()
+        }
+      } else if (visible && !hasFocus) {
+        focusFirstInput()
+      }
     })
 
     viewModel.uxMode.observe(viewLifecycleOwner, {
@@ -101,10 +112,13 @@ internal class CardFormFragment : Fragment() {
       tokenizationViewModel.tokenize()
     }
 
-    focusInput(inputs[CARD_NAME_FILED_NAME]!!)
+    focusFirstInput()
   }
 
-  private fun focusInput(input: View) {
+
+  private fun focusFirstInput() {
+    val input = inputs.get(CARD_NAME_FILED_NAME) ?: return
+
     input.requestFocus()
 
     val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

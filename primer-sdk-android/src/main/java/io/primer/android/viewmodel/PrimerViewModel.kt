@@ -15,6 +15,8 @@ import java.util.*
 internal class PrimerViewModel(model: Model): BaseViewModel(model) {
   private val log = Logger("view-model")
 
+  val keyboardVisible = MutableLiveData(false)
+
   val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
 
   val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)

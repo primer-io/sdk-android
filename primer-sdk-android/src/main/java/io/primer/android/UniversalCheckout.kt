@@ -6,7 +6,6 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.DeferredToken
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.json
-import io.primer.android.ui.CheckoutSheetActivity
 import kotlinx.serialization.serializer
 
 class UniversalCheckout private constructor(

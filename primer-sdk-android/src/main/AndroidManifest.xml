@@ -7,7 +7,7 @@
     <application >
         <activity
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
-            android:name=".ui.CheckoutSheetActivity"
+            android:name=".CheckoutSheetActivity"
             android:label=""
             android:windowSoftInputMode="adjustResize"
             />

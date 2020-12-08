@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +8,9 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.Model
 import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.ui.CheckoutSheetFragment
+import io.primer.android.ui.InitializingFragment
+import io.primer.android.ui.SelectPaymentMethodFragment
 import io.primer.android.viewmodel.BaseViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel

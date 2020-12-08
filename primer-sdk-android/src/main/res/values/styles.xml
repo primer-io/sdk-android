@@ -10,7 +10,6 @@
         <item name="colorPrimary">@android:color/black</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/primer_app_primary</item>
-        <item name="bottomSheetDialogTheme">@style/Primer.BottomSheet</item>
     </style>
 
     <style name="Primer" />
