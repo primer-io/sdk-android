@@ -1,6 +1,7 @@
 package io.primer.android.api
 
 import io.primer.android.model.json
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.serializer
 import org.json.JSONObject
 
@@ -15,7 +16,22 @@ class Observable {
   class ObservableErrorEvent(val error: APIError): ObservableEvent(Status.ERROR)
   class ObservableSuccessEvent(val data: JSONObject): ObservableEvent(Status.SUCCESS) {
     inline fun <reified T> cast(): T {
-      return json.decodeFromString(serializer(), data.toString())
+      return json.decodeFromString(data.toString())
+//      return json.decodeFromString(serializer(), data.toString())
+    }
+
+    inline fun <reified T> cast(key: String, defaultValue: T): T {
+      if (!data.has(key)) {
+        return defaultValue
+      }
+
+      val serialized = if (defaultValue is List<*>) {
+        data.getJSONArray(key).toString()
+      } else {
+        data.getJSONObject(key).toString()
+      }
+
+      return json.decodeFromString(serialized)
     }
   }
 

@@ -10,6 +10,8 @@ import io.primer.android.session.ClientSession
 import io.primer.android.session.ClientToken
 import org.json.JSONObject
 
+internal const val GET_PAYMENT_METHODS_ENDPOINT = "/payment-instruments"
+
 internal class Model(
   val config: CheckoutConfig,
   val configuredPaymentMethods: List<PaymentMethod>
@@ -37,6 +39,10 @@ internal class Model(
         }
       }
     }
+  }
+
+  fun getVaultedPaymentMethods(): Observable {
+    return api.get(session.pciUrl + GET_PAYMENT_METHODS_ENDPOINT)
   }
 
   fun tokenize(tokenizable: PaymentMethodDescriptor): Observable {
