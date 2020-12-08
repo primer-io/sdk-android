@@ -43,9 +43,6 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation('com.getbouncer:cardscan-ui:2.0.0054') {
-        exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-serialization-runtime-jvm'
-    }
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'

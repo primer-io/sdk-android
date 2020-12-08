@@ -10,7 +10,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Primer.FormInput.Layout"
-        android:id="@+id/card_form_cardholder_name"
         android:hint="@string/card_holder_name"
         >
         <com.google.android.material.textfield.TextInputEditText
@@ -32,7 +31,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Primer.FormInput.Layout"
-        android:id="@+id/card_form_card_number"
         android:hint="@string/card_number"
         >
         <com.google.android.material.textfield.TextInputEditText
@@ -59,7 +57,6 @@
         >
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Primer.FormInput.Layout"
-            android:id="@+id/card_form_card_expiry"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:hint="@string/card_expiry"
@@ -82,7 +79,6 @@
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Primer.FormInput.Layout"
-            android:id="@+id/card_form_card_cvv"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:hint="@string/card_cvv"

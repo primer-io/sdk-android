@@ -82,7 +82,6 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
   companion object {
     fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
       return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
-//      return ViewModelProvider(owner, ProviderFactory(model)).get(TokenizationViewModel::class.java)
     }
   }
 }

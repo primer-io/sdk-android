@@ -1,4 +1,4 @@
-package io.primer.android.session
+package io.primer.android.model.dto
 
 import android.util.Base64
 import io.primer.android.model.json

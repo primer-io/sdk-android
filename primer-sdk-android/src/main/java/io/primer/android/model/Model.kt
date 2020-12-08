@@ -6,8 +6,8 @@ import io.primer.android.api.APIClient
 import io.primer.android.api.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.session.ClientSession
-import io.primer.android.session.ClientToken
+import io.primer.android.model.dto.ClientSession
+import io.primer.android.model.dto.ClientToken
 import org.json.JSONObject
 
 internal const val GET_PAYMENT_METHODS_ENDPOINT = "/payment-instruments"

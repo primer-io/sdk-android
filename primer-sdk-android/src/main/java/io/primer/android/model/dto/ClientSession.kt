@@ -1,4 +1,4 @@
-package io.primer.android.session
+package io.primer.android.model.dto
 
 import io.primer.android.model.json
 import io.primer.android.payment.PaymentMethodRemoteConfig
