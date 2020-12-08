@@ -2,7 +2,6 @@ package io.primer.android.payment
 
 import androidx.fragment.app.Fragment
 import io.primer.android.R
-import io.primer.android.model.Model
 
 internal abstract class SelectedPaymentMethodBehaviour
 

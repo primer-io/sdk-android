@@ -1,7 +1,6 @@
 package io.primer.android.payment
 
 import kotlinx.serialization.Serializable
-import java.lang.IllegalArgumentException
 import java.util.*
 
 @Serializable

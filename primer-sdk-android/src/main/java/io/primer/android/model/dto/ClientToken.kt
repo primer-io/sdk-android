@@ -3,7 +3,6 @@ package io.primer.android.model.dto
 import android.util.Base64
 import io.primer.android.model.json
 import kotlinx.serialization.Serializable
-import java.lang.IllegalArgumentException
 
 @Serializable
 internal data class ClientToken(

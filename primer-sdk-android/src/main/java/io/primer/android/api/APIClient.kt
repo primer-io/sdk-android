@@ -2,9 +2,8 @@ package io.primer.android.api
 
 import android.os.Handler
 import android.os.Looper
-import io.primer.android.model.dto.ClientToken
-
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.ClientToken
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody

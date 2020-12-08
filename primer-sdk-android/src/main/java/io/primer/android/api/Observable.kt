@@ -2,7 +2,6 @@ package io.primer.android.api
 
 import io.primer.android.model.json
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.serializer
 import org.json.JSONObject
 
 class Observable {

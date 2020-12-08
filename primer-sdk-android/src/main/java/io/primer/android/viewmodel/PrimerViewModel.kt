@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.api.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodToken
-import io.primer.android.model.dto.ClientSession
 import java.util.*
 
 internal class PrimerViewModel(model: Model): BaseViewModel(model) {

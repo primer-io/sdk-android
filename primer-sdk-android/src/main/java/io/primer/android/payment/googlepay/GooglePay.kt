@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import io.primer.android.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.payment.*
-import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.viewmodel.PrimerViewModel
-import org.json.JSONObject
 
 internal class GooglePay(
   viewModel: PrimerViewModel,

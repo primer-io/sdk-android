@@ -7,12 +7,8 @@ import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.payment.*
-import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.viewmodel.PrimerViewModel
-import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
-import kotlin.collections.HashMap
-import kotlin.math.exp
 
 internal const val CARD_NAME_FILED_NAME = "cardholderName"
 internal const val CARD_NUMBER_FIELD_NAME = "number"
