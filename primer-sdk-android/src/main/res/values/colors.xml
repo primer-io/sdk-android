@@ -9,6 +9,10 @@
     <color name="primer_app_primary">#2C98F0</color>
     <color name="primer_input_border_disabled">#2B000000</color>
 
+    <color name="primer_button_primary">@color/primer_app_primary</color>
+    <color name="primer_button_primary_fg">@android:color/white</color>
+    <color name="primer_button_disabled">#1F000000</color>
+
 <!-- Card Scanner Things -->
     <color name="bouncerProcessingBackground">#AA000000</color>
     <color name="bouncerProcessingText">@android:color/white</color>

@@ -135,11 +135,13 @@ internal class CardFormFragment : Fragment() {
   }
 
   private fun setValidationErrors() {
+    val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
+
+    submitButton.isEnabled = errors.isEmpty()
+
     if (tokenizationViewModel.submitted.value != true) {
       return
     }
-
-    val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
 
     inputs.entries.forEach {
       setValidationErrorState(it.value, errors.find { err -> err.name == it.key })

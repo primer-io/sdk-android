@@ -106,13 +106,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
+        android:gravity="center"
         >
         <Button
             android:id="@+id/card_form_submit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/primer_app_primary" />
+            android:textColor="@color/primer_button_primary_fg"
+            android:background="@drawable/button_primary_bg"
+            android:elevation="@dimen/primer_button_elevation"
+            android:paddingEnd="@dimen/primer_button_padding_horiz"
+            android:paddingStart="@dimen/primer_button_padding_horiz" />
     </LinearLayout>
 
 </LinearLayout>

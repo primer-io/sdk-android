@@ -27,6 +27,7 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
 
   fun reset(pm: PaymentMethodDescriptor? = null) {
     paymentMethod = pm;
+    submitted.value = false
     status.value = TokenizationStatus.NONE
     error.value = null
     result.value = null
@@ -45,23 +46,22 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
       return
     }
 
-    paymentMethod.let { pm ->
-      if (pm != null) {
-        model.tokenize(pm).observe {
-          when (it) {
-            is Observable.ObservableLoadingEvent -> { status.value = TokenizationStatus.LOADING }
-            is Observable.ObservableSuccessEvent -> {
-              result.value = it.data
-              status.value = TokenizationStatus.SUCCESS
-            }
-            is Observable.ObservableErrorEvent -> {
-              error.value = it.error
-              status.value = TokenizationStatus.ERROR
-            }
+    paymentMethod?.let { pm ->
+      model.tokenize(pm).observe {
+        when (it) {
+          is Observable.ObservableLoadingEvent -> { status.value = TokenizationStatus.LOADING }
+          is Observable.ObservableSuccessEvent -> {
+            result.value = it.data
+            status.value = TokenizationStatus.SUCCESS
+          }
+          is Observable.ObservableErrorEvent -> {
+            error.value = it.error
+            status.value = TokenizationStatus.ERROR
           }
         }
       }
     }
+
   }
 
   fun setTokenizableValue(key: String, value: String) {
