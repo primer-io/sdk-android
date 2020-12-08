@@ -1,4 +1,4 @@
-package io.primer.android.payment
+package io.primer.android.model.dto
 
 data class SyncValidationError(
   val name: String,

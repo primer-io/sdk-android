@@ -2,8 +2,6 @@ package io.primer.android.model
 
 import io.primer.android.CheckoutConfig
 import io.primer.android.PaymentMethod
-import io.primer.android.api.APIClient
-import io.primer.android.api.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken

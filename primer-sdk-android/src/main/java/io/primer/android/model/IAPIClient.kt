@@ -1,4 +1,4 @@
-package io.primer.android.api
+package io.primer.android.model
 
 import org.json.JSONObject
 

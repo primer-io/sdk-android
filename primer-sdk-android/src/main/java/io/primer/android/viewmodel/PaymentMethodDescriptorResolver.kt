@@ -2,7 +2,7 @@ package io.primer.android.viewmodel
 
 import io.primer.android.PaymentMethod
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PaymentMethodRemoteConfig
 
 internal class PaymentMethodDescriptorResolver(
   viewModel: PrimerViewModel,

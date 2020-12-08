@@ -1,5 +1,6 @@
 package io.primer.android.payment
 
+import io.primer.android.model.dto.MonetaryAmount
 import java.text.NumberFormat
 import java.util.*
 

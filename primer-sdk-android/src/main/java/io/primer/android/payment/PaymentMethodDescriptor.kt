@@ -6,6 +6,8 @@ import io.primer.android.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
+import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.googlepay.GooglePay
 import io.primer.android.payment.paypal.PayPal

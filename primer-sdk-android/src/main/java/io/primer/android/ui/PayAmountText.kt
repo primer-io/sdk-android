@@ -4,7 +4,7 @@ import android.content.Context
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.payment.CurrencyFormatter
-import io.primer.android.payment.MonetaryAmount
+import io.primer.android.model.dto.MonetaryAmount
 
 internal class PayAmountText {
   companion object {

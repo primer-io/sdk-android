@@ -1,6 +1,6 @@
 package io.primer.android
 
-import io.primer.android.payment.MonetaryAmount
+import io.primer.android.model.dto.MonetaryAmount
 import kotlinx.serialization.Serializable
 
 @Serializable

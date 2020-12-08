@@ -1,4 +1,4 @@
-package io.primer.android.payment
+package io.primer.android.model.dto
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject

@@ -1,7 +1,6 @@
-package io.primer.android.api
+package io.primer.android.model
 
 import io.primer.android.logging.Logger
-import io.primer.android.model.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement

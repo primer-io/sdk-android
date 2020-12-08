@@ -1,6 +1,5 @@
 package io.primer.android.model.dto
 
-import io.primer.android.payment.PaymentMethodRemoteConfig
 import kotlinx.serialization.Serializable
 
 @Serializable

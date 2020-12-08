@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.payment.SyncValidationError
+import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.ui.PayAmountText
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
