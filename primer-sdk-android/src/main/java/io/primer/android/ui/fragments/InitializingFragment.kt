@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

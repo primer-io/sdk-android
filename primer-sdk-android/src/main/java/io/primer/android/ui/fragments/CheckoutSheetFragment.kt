@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android.ui.fragments
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -7,14 +7,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.logging.Logger
+import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
 
-internal class CheckoutSheetFragment : BottomSheetDialogFragment(), KeyboardVisibilityEvent.OnChangedListener {
+internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
+  KeyboardVisibilityEvent.OnChangedListener {
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
   private lateinit var keyboardVisibilityEvent: KeyboardVisibilityEvent
@@ -62,10 +63,6 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(), KeyboardVisi
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
     viewModel.setSheetDismissed(true)
-  }
-
-  private fun <T : View> findViewById(id: Int): T {
-    return requireView().findViewById(id)
   }
 
   companion object {

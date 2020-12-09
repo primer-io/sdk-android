@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.viewmodel.PrimerViewModel
 
-class ViewVaultedPaymentMethodsFragment: Fragment() {
+class VaultedPaymentMethodsFragment: Fragment() {
   private lateinit var viewModel: PrimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +30,8 @@ class ViewVaultedPaymentMethodsFragment: Fragment() {
   }
 
   companion object {
-    fun newInstance() : ViewVaultedPaymentMethodsFragment {
-      return ViewVaultedPaymentMethodsFragment()
+    fun newInstance() : VaultedPaymentMethodsFragment {
+      return VaultedPaymentMethodsFragment()
     }
   }
 }

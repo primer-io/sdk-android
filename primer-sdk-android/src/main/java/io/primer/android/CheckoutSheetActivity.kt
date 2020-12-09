@@ -8,10 +8,10 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.Model
 import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.ui.CheckoutSheetFragment
-import io.primer.android.ui.InitializingFragment
-import io.primer.android.ui.SelectPaymentMethodFragment
-import io.primer.android.ui.ViewVaultedPaymentMethodsFragment
+import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.fragments.InitializingFragment
+import io.primer.android.ui.fragments.SelectPaymentMethodFragment
+import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.BaseViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -63,7 +63,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
       val fragment = when (it) {
         ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
         ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
-        ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> ViewVaultedPaymentMethodsFragment.newInstance()
+        ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
         else -> null
       }
 

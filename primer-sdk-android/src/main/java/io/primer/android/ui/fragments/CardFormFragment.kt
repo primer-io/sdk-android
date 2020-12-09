@@ -1,4 +1,4 @@
-package io.primer.android.payment.card
+package io.primer.android.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -14,6 +14,10 @@ import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
+import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
+import io.primer.android.payment.card.CARD_NAME_FILED_NAME
+import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.ui.PayAmountText
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -129,17 +133,11 @@ internal class CardFormFragment : Fragment() {
   private fun createTextWatcher(name: String) : TextWatcher {
     log("Add textWatcher to $name")
     return object: TextWatcher {
-      override fun afterTextChanged(s: Editable?) {
-        log("afterTextChanged: $name : ${s.toString()}")
-      }
+      override fun afterTextChanged(s: Editable?) {}
 
-      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        log("beforeTextChanged: $name : ${s.toString()}")
-      }
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        log("onTextChanged: $name : ${s.toString()}")
-
         tokenizationViewModel.setTokenizableValue(name, s.toString())
       }
     }

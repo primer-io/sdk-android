@@ -1,4 +1,4 @@
-package io.primer.android.ui
+package io.primer.android.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.logging.Logger
+import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.viewmodel.PrimerViewModel
 
 /**
