@@ -27,24 +27,42 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="Primer.Button" />
+    <style name="Primer.Button.Text">
+        <item name="borderWidth">0dp</item>
+        <item name="backgroundColor">@android:color/transparent</item>
+        <item name="android:textColor">@color/primer_app_primary</item>
+        <item name="textAllCaps">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="Primer.Button.Text.Danger" parent="Primer.Button.Text">
+        <item name="android:textColor">@color/primer_app_danger</item>
+    </style>
+
     <style name="Primer.Text">
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/primer_text_color_default</item>
-        <item name="android:textSize">@dimen/primer_text_size_detail</item>
+        <item name="android:textSize">@dimen/primer_text_size_md</item>
         <item name="fontWeight">400</item>
+    </style>
+
+    <style name="Primer.Text.Small" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_sm</item>
+    </style>
+
+
+    <style name="Primer.Text.Title" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_title</item>
+        <item name="fontWeight">500</item>
     </style>
 
     <style name="Primer.Text.Button">
         <item name="android:textColor">@color/primer_app_primary</item>
         <item name="textAllCaps">true</item>
         <item name="lineHeight">36dp</item>
-    </style>
-
-    <style name="Primer.Text.Title">
-        <item name="android:textSize">@dimen/primer_text_size_title</item>
-        <item name="fontWeight">500</item>
     </style>
 
     <style name="Primer.FormInput.Layout" parent="Widget.Design.TextInputLayout">

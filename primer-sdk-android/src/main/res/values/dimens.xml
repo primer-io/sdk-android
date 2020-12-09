@@ -17,7 +17,8 @@
 
 <!--  Text stuff  -->
     <item name="primer_text_size_title" type="dimen">20sp</item>
-    <item name="primer_text_size_detail" type="dimen">18sp</item>
+    <item name="primer_text_size_md" type="dimen">18sp</item>
+    <item name="primer_text_size_sm" type="dimen">16sp</item>
 
     <!--  Payment methods  -->
     <item name="primer_payment_method_preview_button_height" type="dimen">50dp</item>

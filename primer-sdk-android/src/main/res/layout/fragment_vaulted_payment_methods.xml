@@ -4,69 +4,94 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
+    android:clipChildren="false"
     >
+
     <LinearLayout
         android:id="@+id/primer_view_vaulted_payment_methods_header"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="24dp"
         >
         <ImageButton
             android:id="@+id/vaulted_payment_methods_go_back"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/go_back_description"
             android:src="@drawable/icon_go_back"
-            android:backgroundTint="@android:color/transparent"
+            android:background="@drawable/icon_button"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
             />
-        <TextView
-            style="@style/Primer.Text.Title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/other_ways_to_pay"
-            android:layout_weight="1"
-            />
-        <TextView
-            android:id="@+id/edit_vaulted_payment_methods"
-            style="@style/Primer.Text.Button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/edit"
-            />
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="32dp"
+            android:paddingEnd="11dp"
+            >
+            <TextView
+                style="@style/Primer.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/other_ways_to_pay"
+                android:layout_weight="1"
+                />
+            <Button
+                android:id="@+id/edit_vaulted_payment_methods"
+                style="@style/Primer.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit"
+                android:gravity="center_vertical|end"
+                />
+        </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/primer_edit_vaulted_payment_methods_header"
         android:visibility="gone"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         >
         <ImageButton
             android:id="@+id/edit_vaulted_payment_methods_go_back"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/go_back_description"
             android:src="@drawable/icon_go_back"
-            android:backgroundTint="@android:color/transparent"
+            android:background="@drawable/icon_button"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
             />
-        <TextView
-            style="@style/Primer.Text.Title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/edit_saved_payment_methods"
-            android:layout_weight="1"
-            />
-        <TextView
-            android:id="@+id/edit_vaulted_payment_methods_done"
-            style="@style/Primer.Text.Button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/done"
-            />
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="32dp"
+            android:paddingEnd="11dp"
+            >
+            <TextView
+                style="@style/Primer.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_saved_payment_methods"
+                android:layout_weight="1"
+                />
+            <Button
+                android:id="@+id/edit_vaulted_payment_methods_done"
+                style="@style/Primer.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/done"
+                android:gravity="center_vertical|end"
+                />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -74,15 +99,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp"
+        android:clipChildren="false"
         />
 
-    <TextView
-        style="@style/Primer.Text.Button"
+    <Button
+        style="@style/Primer.Button.Text"
         android:id="@+id/vaulted_payment_methods_add_card"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_card"
-        android:layout_marginStart="44dp"
+        android:layout_marginStart="62dp"
+        android:gravity="start|center_vertical"
         />
 </LinearLayout>

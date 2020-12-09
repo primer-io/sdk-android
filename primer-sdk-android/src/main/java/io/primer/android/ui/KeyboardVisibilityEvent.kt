@@ -55,8 +55,6 @@ internal object KeyboardVisibilityEvent {
       override fun onGlobalLayout() {
         val nextIsVisible = isKeyboardVisible(contentView)
 
-        log("GLOBAL LAYOUT! $isVisible -> $nextIsVisible")
-
         if (nextIsVisible == isVisible) {
           return
         }
