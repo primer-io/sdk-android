@@ -1,5 +1,6 @@
 package io.primer.android.viewmodel
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -55,10 +56,9 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model) {
         model.getVaultedPaymentMethods().observe { vault ->
           when (vault) {
             is Observable.ObservableSuccessEvent -> {
-              log("GOT PAYMENT METHODS! " + vault.data.toString())
               vaultedPaymentMethods.value = vault.cast(key = "data", defaultValue = Collections.emptyList())
               paymentMethods.value = resolver.resolve()
-              viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+              viewStatus.value = getInitialViewStatus()
             }
             is Observable.ObservableErrorEvent -> log("Failed to get payment methods " + vault.error.description)
             is Observable.ObservableLoadingEvent -> log("Loading payment methods...")
@@ -66,6 +66,14 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model) {
         }
       }
     }
+  }
+
+  private fun getInitialViewStatus(): ViewStatus {
+    if (vaultedPaymentMethods.value?.isNotEmpty() == true) {
+      return ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+    }
+
+    return ViewStatus.SELECT_PAYMENT_METHOD
   }
 
   class ProviderFactory(private val model: Model) : ViewModelProvider.Factory {

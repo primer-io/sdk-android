@@ -9,6 +9,7 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalCheckoutListener {
     override fun createToken(callback: (String) -> Unit) {
@@ -16,11 +17,15 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
 
         Log.i("primer.ExampleApp","Creating token")
 
+        val body = JSONObject()
+
+        body.put("customerId", "will-123")
+
         queue.add(
             JsonObjectRequest(
                 Request.Method.POST,
                 "http://100.65.23.18/token",
-                null,
+                body,
                 { response -> callback(response.getString("clientToken")) },
                 { error -> onError(error) }
             )
@@ -52,7 +57,7 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
     private fun renderCheckout() {
         Log.i("primer.ExampleApp", "Creating checkout")
 
-        UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.CHECKOUT, amount = 1234, currency = "EUR")
+        UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.ADD_PAYMENT_METHOD, amount = 1234, currency = "EUR")
     }
 
     private fun onError(error: VolleyError) {

@@ -36,6 +36,12 @@
         <item name="fontWeight">400</item>
     </style>
 
+    <style name="Primer.Text.Button">
+        <item name="android:textColor">@color/primer_app_primary</item>
+        <item name="textAllCaps">true</item>
+        <item name="lineHeight">36dp</item>
+    </style>
+
     <style name="Primer.Text.Title">
         <item name="android:textSize">@dimen/primer_text_size_title</item>
         <item name="fontWeight">500</item>
