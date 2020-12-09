@@ -26,7 +26,7 @@ class VaultedPaymentMethodsFragment: Fragment() {
     savedInstanceState: Bundle?
   ): View? {
     // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_view_vaulted_payment_methods, container, false)
+    return inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
   }
 
   companion object {
