@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,8 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
     behavior.isHideable = false
     behavior.isDraggable = false
+
+    dialog.setOnKeyListener(this::onKeyPress)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +66,24 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
     viewModel.setSheetDismissed(true)
+  }
+
+  private fun onKeyPress(dialog: DialogInterface, keyCode: Int, event: KeyEvent?): Boolean {
+    val isBackKeyUp = keyCode == KeyEvent.KEYCODE_BACK && event?.action == KeyEvent.ACTION_DOWN
+
+    if (!isBackKeyUp) {
+      return false
+    }
+
+    val canGoBack = childFragmentManager.backStackEntryCount > 0
+
+    if (canGoBack) {
+      childFragmentManager.popBackStack()
+    } else {
+      dialog.dismiss()
+    }
+
+    return true
   }
 
   companion object {

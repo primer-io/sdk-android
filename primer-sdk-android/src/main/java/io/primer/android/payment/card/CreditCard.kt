@@ -31,7 +31,7 @@ internal class CreditCard(
   private val log = Logger("payment-method.$identifier")
 
   override val selectedBehaviour: SelectedPaymentMethodBehaviour
-    get() = NewFragmentBehaviour(CardFormFragment::newInstance)
+    get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
 
   override val type: PaymentMethodType
     get() = PaymentMethodType.FORM

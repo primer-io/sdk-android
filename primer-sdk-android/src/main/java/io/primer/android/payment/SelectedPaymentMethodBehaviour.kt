@@ -5,14 +5,21 @@ import io.primer.android.R
 
 internal abstract class SelectedPaymentMethodBehaviour
 
-internal class NewFragmentBehaviour(private val factory: (() -> Fragment)): SelectedPaymentMethodBehaviour() {
+internal class NewFragmentBehaviour(
+  private val factory: (() -> Fragment),
+  private val returnToPreviousOnBack: Boolean = false
+): SelectedPaymentMethodBehaviour() {
   fun execute(parent: Fragment) {
     val fragment = factory()
+    val transaction = parent.childFragmentManager.beginTransaction()
 
-    parent.childFragmentManager.beginTransaction()
-      .setCustomAnimations(R.anim.default_transition_in, R.anim.default_transition_out)
-      .replace(R.id.checkout_sheet_content, fragment)
-      .commit()
+    if (returnToPreviousOnBack) {
+      transaction.addToBackStack(null)
+    }
+
+    transaction.setCustomAnimations(R.anim.default_transition_in, R.anim.default_transition_out)
+    transaction.replace(R.id.checkout_sheet_content, fragment)
+    transaction.commit()
   }
 }
 

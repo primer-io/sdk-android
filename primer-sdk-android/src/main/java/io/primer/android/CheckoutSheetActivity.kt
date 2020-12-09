@@ -1,6 +1,8 @@
 package io.primer.android
 
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -92,7 +94,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
   }
 
   private fun openFragment(fragment: Fragment) {
-    openFragment(NewFragmentBehaviour { fragment })
+    openFragment(NewFragmentBehaviour({ fragment }))
   }
 
   private fun openFragment(behaviour: NewFragmentBehaviour) {
