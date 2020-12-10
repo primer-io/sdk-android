@@ -1,5 +1,6 @@
 package io.primer.android.payment.paypal
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.PAYPAL_IDENTIFIER
@@ -25,7 +26,7 @@ internal class PayPal(
   override val vaultCapability: VaultCapability
     get() = VaultCapability.SINGLE_USE_AND_VAULT
 
-  override fun createButton(container: ViewGroup): View {
+  override fun createButton(context: Context): View {
     TODO("Not yet implemented")
   }
 }

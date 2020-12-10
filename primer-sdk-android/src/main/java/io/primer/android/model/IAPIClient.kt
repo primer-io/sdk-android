@@ -5,4 +5,5 @@ import org.json.JSONObject
 internal interface IAPIClient {
   fun get(url: String): Observable
   fun post(url: String, body: JSONObject?): Observable
+  fun delete(url: String): Observable
 }

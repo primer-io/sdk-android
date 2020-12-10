@@ -26,6 +26,10 @@ internal class APIClient(token: ClientToken) : IAPIClient {
     return this.request(Request.Builder().post(toRequestBody(body)).url(url))
   }
 
+  override fun delete(url: String): Observable {
+    return this.request(Request.Builder().delete().url(url))
+  }
+
   private fun request(builder: Request.Builder): Observable {
     val request = builder
       .addHeader("Content-Type", "application/json")

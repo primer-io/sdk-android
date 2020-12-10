@@ -12,6 +12,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
+import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
@@ -20,7 +21,9 @@ import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.ui.PayAmountText
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.ViewStatus
 import java.util.*
 
 /**
@@ -35,6 +38,12 @@ internal class CardFormFragment : Fragment() {
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    viewModel = PrimerViewModel.getInstance(requireActivity())
+    tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
+  }
+
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
@@ -44,22 +53,24 @@ internal class CardFormFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    viewModel = PrimerViewModel.getInstance(requireActivity())
-    tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
 
     tokenizationViewModel.status.observe(viewLifecycleOwner, {
-      log("Tokenization status changed: ${it.name}")
+      if (it == TokenizationStatus.SUCCESS) {
+        onSuccess()
+      }
     })
 
     tokenizationViewModel.error.observe(viewLifecycleOwner, {
       if (it != null) {
-        log("Tokenization error: ${it.description}")
+        // TODO: handle error message
       }
     })
 
     tokenizationViewModel.result.observe(viewLifecycleOwner, {
       if (it != null) {
-        log("Tokenization result: ${it.toString()}")
+        if (viewModel.uxMode.value == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+          viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+        }
       }
     })
 
@@ -85,8 +96,11 @@ internal class CardFormFragment : Fragment() {
     })
 
     viewModel.uxMode.observe(viewLifecycleOwner, {
-      submitButton.setText(PayAmountText.generate(
-        requireContext(), viewModel.uxMode.value, viewModel.amount.value)
+      submitButton.setText(
+        when (it) {
+          UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
+          UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(requireContext(), viewModel.amount.value)
+        }
       )
     })
 
@@ -119,6 +133,10 @@ internal class CardFormFragment : Fragment() {
     focusFirstInput()
   }
 
+  private fun onSuccess() {
+    // TODO: handle checkout flow here
+    viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+  }
 
   private fun focusFirstInput() {
     val input = inputs.get(CARD_NAME_FILED_NAME) ?: return

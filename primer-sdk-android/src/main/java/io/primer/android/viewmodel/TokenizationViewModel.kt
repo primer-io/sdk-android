@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.Observable
 import io.primer.android.model.Model
+import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.model.dto.SyncValidationError
 import org.json.JSONObject
@@ -61,7 +62,11 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
         }
       }
     }
+  }
 
+  // TODO: move this to vault view model ??
+  fun deleteToken(token: PaymentMethodToken) {
+    model.deleteToken(token)
   }
 
   fun setTokenizableValue(key: String, value: String) {

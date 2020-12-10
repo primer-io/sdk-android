@@ -38,7 +38,7 @@ internal class VaultedPaymentMethodView(context: Context, private val attributes
     mIcon.setImageDrawable(
       ResourcesCompat.getDrawable(mView.context.resources, attributes.icon, null)
     )
-    mDescription.text = attributes.description
+    mDescription.text = attributes.getDescription(context)
     setEditable(false)
   }
 

@@ -8,6 +8,7 @@
     android:gravity="center"
     android:background="@android:color/white"
     android:clipChildren="true"
+    android:layout_marginBottom="6dp"
     >
     <ImageView
         android:id="@+id/item_icon_left"
@@ -27,7 +28,6 @@
         android:background="@drawable/list_item_normal"
         android:paddingStart="16dp"
         android:paddingEnd="11dp"
-        android:layout_marginBottom="6dp"
         >
         <TextView
             android:id="@+id/item_description"
@@ -35,7 +35,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Mastercard 1234"
             />
         <Button
             android:id="@+id/item_delete_button"

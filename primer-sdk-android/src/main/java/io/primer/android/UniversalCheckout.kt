@@ -2,6 +2,9 @@ package io.primer.android
 
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.LifecycleOwner
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.DeferredToken
 import io.primer.android.model.dto.CheckoutConfig
@@ -35,6 +38,12 @@ class UniversalCheckout private constructor(
         log("Starting checkout activity")
 
         this.listener = listener
+
+//        EventBus.subscribe(context as LifecycleOwner, object : EventBus.EventListener {
+//            override fun onEvent(e: CheckoutEvent) {
+//                log("Checkout event from UniversalCheckout!!! ${e.type.name}")
+//            }
+//        })
 
         token.observe {
             val config = CheckoutConfig.create(

@@ -1,13 +1,14 @@
 <resources>
-    <string name="pay_amount" description="Text displayed next to the amount to prompt the customer to pay">Pay %1$s</string>
-    <string name="add_new_card_hint" description="Text displayed to prompt the customer to add a card">Add a new card</string>
-    <string name="pay_with_card_hint">Pay by card</string>
+    <string name="pay_amount">Pay %1$s</string>
+    <string name="add_new_payment_method">Add a payment method</string>
+    <string name="pay_by_card">Pay by card</string>
     <string name="other_ways_to_pay">Other ways to pay</string>
     <string name="edit_saved_payment_methods">Edit saved cards</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="delete">Delete</string>
     <string name="add_card">Add card</string>
+    <string name="card_network_fallback">Card</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>

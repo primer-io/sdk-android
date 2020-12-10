@@ -9,17 +9,22 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.R
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
+import io.primer.android.logging.Logger
 import io.primer.android.payment.PAYMENT_CARD_TYPE
 import io.primer.android.payment.TokenAttributes
-import io.primer.android.ui.SavedPaymentMethodView
 import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import java.util.*
 import kotlin.collections.ArrayList
 
 class VaultedPaymentMethodsFragment: Fragment() {
+  private val log = Logger("vaulted-payment-methods")
   private lateinit var viewModel: PrimerViewModel
+  private lateinit var tokenizationViewModel: TokenizationViewModel
   private lateinit var list: ViewGroup
   private lateinit var readOnlyHeader: ViewGroup
   private lateinit var editHeader: ViewGroup
@@ -29,6 +34,8 @@ class VaultedPaymentMethodsFragment: Fragment() {
     super.onCreate(savedInstanceState)
 
     viewModel = PrimerViewModel.getInstance(requireActivity())
+    tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
+
   }
 
   override fun onCreateView(
@@ -46,20 +53,34 @@ class VaultedPaymentMethodsFragment: Fragment() {
     editHeader = view.findViewById(R.id.primer_edit_vaulted_payment_methods_header)
 
     viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner, { paymentMethods ->
+      views.forEach {
+        list.removeView(it.getView())
+      }
+
+      views.clear()
+
       paymentMethods.forEach { pm ->
         val attributes = TokenAttributes.create(pm)
 
         attributes?.let { attrs ->
           val pmView = VaultedPaymentMethodView(requireContext(), attrs)
 
+          pmView.setOnDeleteListener {
+            tokenizationViewModel.deleteToken(pm)
+          }
+
           views.add(pmView)
           list.addView(pmView.getView())
         }
       }
+
+      if (views.isEmpty()) {
+        gotoSelectPaymentMethod()
+      }
     })
 
     view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
-      viewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+      gotoSelectPaymentMethod()
     }
 
     view.findViewById<View>(R.id.vaulted_payment_methods_add_card).setOnClickListener {
@@ -79,6 +100,10 @@ class VaultedPaymentMethodsFragment: Fragment() {
     view.findViewById<View>(R.id.edit_vaulted_payment_methods_done).setOnClickListener {
       setEditing(false)
     }
+  }
+
+  private fun gotoSelectPaymentMethod() {
+    viewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
   }
 
   private fun setEditing(isEditing: Boolean) {

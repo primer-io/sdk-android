@@ -27,16 +27,31 @@ internal class SelectPaymentMethodFragment : Fragment() {
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
 
+  override fun onResume() {
+    super.onResume()
+    log("Fragment Resumed!")
+  }
+
+  override fun onPause() {
+    super.onPause()
+    log("fragment Paused!")
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     viewModel = PrimerViewModel.getInstance(requireActivity())
+  }
 
-    viewModel.paymentMethods.observe(this, { items ->
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    viewModel.paymentMethods.observe(viewLifecycleOwner, { items ->
       val container: ViewGroup = findViewById(R.id.primer_sheet_payment_methods_list)
 
       items.forEach { pm ->
-        val button = pm.createButton(container)
+        val button = pm.createButton(requireContext())
+
+        container.addView(button)
 
         button.setOnClickListener {
           viewModel.setSelectedPaymentMethod(pm)
@@ -44,11 +59,11 @@ internal class SelectPaymentMethodFragment : Fragment() {
       }
     })
 
-    viewModel.amount.observe(this, {
+    viewModel.amount.observe(viewLifecycleOwner, {
       findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setAmount(it)
     })
 
-    viewModel.uxMode.observe(this, {
+    viewModel.uxMode.observe(viewLifecycleOwner, {
       if (it != null) {
         findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
       }

@@ -1,5 +1,6 @@
 package io.primer.android.payment
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.GOOGLE_PAY_IDENTIFIER
@@ -29,7 +30,7 @@ internal abstract class PaymentMethodDescriptor(
 
   abstract val vaultCapability: VaultCapability
 
-  abstract fun createButton(container: ViewGroup): View
+  abstract fun createButton(context: Context): View
 
   protected val values: MutableMap<String, String> = HashMap()
 

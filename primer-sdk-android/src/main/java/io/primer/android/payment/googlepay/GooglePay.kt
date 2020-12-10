@@ -1,5 +1,6 @@
 package io.primer.android.payment.googlepay
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.GOOGLE_PAY_IDENTIFIER
@@ -26,7 +27,7 @@ internal class GooglePay(
   override val type: PaymentMethodType
     get() = PaymentMethodType.SIMPLE_BUTTON
 
-  override fun createButton(container: ViewGroup): View {
+  override fun createButton(context: Context): View {
     TODO("Not yet implemented")
   }
 }

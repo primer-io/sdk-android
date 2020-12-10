@@ -1,10 +1,12 @@
 package io.primer.android.payment.card
 
+import android.content.Context
 import android.view.View
-import android.view.ViewGroup
+import android.widget.TextView
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
+import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
@@ -39,9 +41,17 @@ internal class CreditCard(
   override val vaultCapability: VaultCapability
     get() = VaultCapability.SINGLE_USE_AND_VAULT
 
-  override fun createButton(container: ViewGroup): View {
-    View.inflate(container.context, R.layout.payment_method_button_card, container)
-    return container.findViewById(R.id.card_preview_button)
+  override fun createButton(context: Context): View {
+    val button = View.inflate(context, R.layout.payment_method_button_card, null)
+    val text = button.findViewById<TextView>(R.id.card_preview_button_text)
+
+    text.text = when (viewModel.uxMode.value) {
+      UniversalCheckout.UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
+      UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
+      else -> ""
+    }
+
+    return button
   }
 
   override fun toPaymentInstrument(): JSONObject {

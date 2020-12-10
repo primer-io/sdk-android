@@ -1,11 +1,15 @@
 package io.primer.android.model
 
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.PaymentMethod
 import io.primer.android.UniversalCheckout
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.*
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
@@ -55,9 +59,43 @@ internal class Model(
       json.put("paymentFlow", "VAULT")
     }
 
-    return api.post(
-      APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS),
-      json
+    val url = APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
+
+    return api.post(url, json).observe {
+      when (it) {
+        is Observable.ObservableSuccessEvent -> { handleTokenizationResult(it) }
+        is Observable.ObservableErrorEvent -> { handleTokenizationResult(it) }
+      }
+    }
+  }
+
+  fun deleteToken(token: PaymentMethodToken): Observable {
+    val url = APIEndpoint.get(
+      session,
+      APIEndpoint.Target.PCI,
+      APIEndpoint.DELETE_TOKEN,
+      params = mapOf("id" to token.token)
     )
+
+    return api.delete(url).observe {
+      if (it is Observable.ObservableSuccessEvent) {
+        log("TOKEN DELETED! " + it.data.toString())
+        EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(token))
+      }
+    }
+  }
+
+  private fun handleTokenizationResult(e: Observable.ObservableSuccessEvent) {
+    val token: PaymentMethodToken = e.cast()
+
+    EventBus.broadcast(CheckoutEvent.TokenizationSuccess(token))
+
+    if (token.tokenType == TokenType.MULTI_USE) {
+      EventBus.broadcast(CheckoutEvent.TokenAddedToVault(token))
+    }
+  }
+
+  private fun handleTokenizationResult(e: Observable.ObservableErrorEvent) {
+    EventBus.broadcast(CheckoutEvent.TokenizationError(e.error))
   }
 }

@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.model.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
@@ -13,8 +15,9 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.model.dto.PaymentMethodToken
 import java.util.*
 
-internal class PrimerViewModel(model: Model): BaseViewModel(model) {
+internal class PrimerViewModel(model: Model): BaseViewModel(model), EventBus.EventListener {
   private val log = Logger("view-model")
+  private lateinit var subscription: EventBus.SubscriptionHandle
 
   val keyboardVisible = MutableLiveData(false)
 
@@ -66,6 +69,13 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model) {
         }
       }
     }
+
+    subscription = EventBus.subscribe(this)
+  }
+
+  override fun onCleared() {
+    super.onCleared()
+    subscription.unregister()
   }
 
   private fun getInitialViewStatus(): ViewStatus {
@@ -85,6 +95,19 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model) {
   companion object {
     fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
       return ViewModelProvider(owner).get(PrimerViewModel::class.java)
+    }
+  }
+
+  override fun onEvent(e: CheckoutEvent) {
+    when (e) {
+      is CheckoutEvent.TokenRemovedFromVault -> {
+        log("REmoving TOKEN :DDD")
+        vaultedPaymentMethods.value = vaultedPaymentMethods.value?.filter { it.token != e.data.token }
+      }
+      is CheckoutEvent.TokenAddedToVault -> {
+        log("Adding TOKEN :DDD")
+        vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(e.data)
+      }
     }
   }
 }
