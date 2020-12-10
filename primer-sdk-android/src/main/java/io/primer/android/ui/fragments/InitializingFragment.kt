@@ -13,9 +13,6 @@ import io.primer.android.R
  * create an instance of this fragment.
  */
 internal class InitializingFragment : Fragment() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-  }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,

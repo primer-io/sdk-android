@@ -70,7 +70,7 @@ internal class APIClient(token: ClientToken) : IAPIClient {
   }
 
   private fun toRequestBody(json: JSONObject?): RequestBody {
-    val stringified = if (json == null) "{}" else json.toString();
+    val stringified = json?.toString() ?: "{}"
     val mediaType = "application/json".toMediaType()
     return stringified.toRequestBody(mediaType)
   }

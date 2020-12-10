@@ -27,7 +27,7 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
   val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
   fun reset(pm: PaymentMethodDescriptor? = null) {
-    paymentMethod = pm;
+    paymentMethod = pm
     submitted.value = false
     status.value = TokenizationStatus.NONE
     error.value = null

@@ -96,12 +96,10 @@ internal class CardFormFragment : Fragment() {
     })
 
     viewModel.uxMode.observe(viewLifecycleOwner, {
-      submitButton.setText(
-        when (it) {
-          UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
-          UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(requireContext(), viewModel.amount.value)
-        }
-      )
+      submitButton.text = when (it) {
+        UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
+        UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(requireContext(), viewModel.amount.value)
+      }
     })
 
     tokenizationViewModel.validationErrors.observe(viewLifecycleOwner, {

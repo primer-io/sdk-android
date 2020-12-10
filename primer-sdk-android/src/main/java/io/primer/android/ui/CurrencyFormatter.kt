@@ -8,7 +8,7 @@ internal class CurrencyFormatter private constructor() {
   companion object {
     fun format(amount: MonetaryAmount?): String? {
       if (amount == null) {
-        return null;
+        return null
       }
 
       val format = NumberFormat.getCurrencyInstance()
