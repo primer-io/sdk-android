@@ -17,6 +17,7 @@
     <string name="card_cvv">CVV</string>
     <string name="form_error_required">%1$s is required</string>
     <string name="form_error_invalid">%1$s is invalid</string>
+    <string name="payment_method_error">Choose another payment method</string>
 
     <!-- Accessibility -->
     <string name="go_back_description">go back</string>

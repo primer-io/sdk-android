@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -93,6 +92,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/primer_input_spacing_vert" />
 
+    <TextView
+        android:id="@+id/card_form_error_message"
+        style="@style/Primer.Text.Danger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -104,7 +109,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:animateLayoutChanges="true"
             android:background="@drawable/button_primary_bg"
             android:elevation="@dimen/primer_button_elevation"
             android:paddingStart="@dimen/primer_button_padding_horiz"

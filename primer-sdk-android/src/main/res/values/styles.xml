@@ -60,6 +60,11 @@
     </style>
 
 
+    <style name="Primer.Text.Danger" parent="Primer.Text">
+        <item name="android:textColor">@color/primer_app_danger</item>
+    </style>
+
+
     <style name="Primer.Text.Title" parent="Primer.Text">
         <item name="android:textSize">@dimen/primer_text_size_title</item>
         <item name="fontWeight">500</item>

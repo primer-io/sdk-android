@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
@@ -25,6 +28,8 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 import java.util.*
 
 /**
@@ -36,6 +41,9 @@ internal class CardFormFragment : Fragment() {
   private val log = Logger("card-form")
   private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: ViewGroup
+  private lateinit var submitButtonText: TextView
+  private lateinit var submitButtonLoading: ProgressBar
+  private lateinit var errorText: TextView
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
 
@@ -49,58 +57,28 @@ internal class CardFormFragment : Fragment() {
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    return inflater.inflate(R.layout.fragment_card_form, container, false)
+    return inflater.inflate(R.layout.fragment_card_form, container, false) as ViewGroup
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    tokenizationViewModel.status.observe(viewLifecycleOwner, {
-      when (it) {
-        TokenizationStatus.SUCCESS -> onSuccess()
-        TokenizationStatus.LOADING -> toggleLoading(true)
-        TokenizationStatus.ERROR -> onError()
-        else -> {
-        }
-      }
-    })
+    // Assign UI vars
+    inputs = mapOf(
+      CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name_input),
+      CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number_input),
+      CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry_input),
+      CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
+    )
+    submitButton = view.findViewById(R.id.card_form_submit_button)
+    submitButtonText = view.findViewById(R.id.card_form_submit_button_txt)
+    submitButtonLoading = view.findViewById(R.id.card_form_submit_button_loading)
+    errorText = view.findViewById(R.id.card_form_error_message)
 
-    tokenizationViewModel.error.observe(viewLifecycleOwner, {
-      if (it != null) {
-        // TODO: handle error message
-      }
-    })
-
-    tokenizationViewModel.result.observe(viewLifecycleOwner, {
-      if (it != null) {
-        if (viewModel.uxMode.value == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
-          viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-        }
-      }
-    })
-
-    viewModel.keyboardVisible.observe(viewLifecycleOwner, { visible ->
-      val hasFocus = inputs.entries.any { it.value.isFocused }
-
-      if (hasFocus && !visible) {
-        inputs.entries.forEach {
-          it.value.clearFocus()
-        }
-      } else if (visible && !hasFocus) {
-        focusFirstInput()
-      }
-    })
-
-    viewModel.uxMode.observe(viewLifecycleOwner, {
-      view.findViewById<TextView>(R.id.card_form_submit_button_txt).text = when (it) {
-        UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
-        UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
-          requireContext(),
-          viewModel.amount.value
-        )
-        else -> ""
-      }
-    })
+    // Attach view model observers
+    tokenizationViewModel.status.observe(viewLifecycleOwner, this::onStatusChanged)
+    tokenizationViewModel.error.observe(viewLifecycleOwner, this::onErrorChanged)
+    tokenizationViewModel.result.observe(viewLifecycleOwner, this::onResultChanged)
 
     tokenizationViewModel.validationErrors.observe(viewLifecycleOwner, {
       setValidationErrors()
@@ -109,48 +87,43 @@ internal class CardFormFragment : Fragment() {
       setValidationErrors()
     })
 
+    viewModel.keyboardVisible.observe(viewLifecycleOwner, this::onKeyboardVisibilityChanged)
+    viewModel.uxMode.observe(viewLifecycleOwner, this::onUXModeChanged)
+
     tokenizationViewModel.reset(viewModel.selectedPaymentMethod.value)
 
-    inputs = mapOf(
-      CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name_input),
-      CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number_input),
-      CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry_input),
-      CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
-    )
+    // Attach input event listeners
 
+    // input masks
     inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())
     inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(TextInputMask.CardNumber())
 
+    // text change listeners
     inputs.entries.forEach {
       it.value.addTextChangedListener(createTextWatcher(it.key))
     }
 
-    submitButton = view.findViewById(R.id.card_form_submit_button)
-
+    // Click listeners
     submitButton.setOnClickListener {
       tokenizationViewModel.tokenize()
     }
 
-    focusFirstInput()
-
+    // IME action listeners
     inputs[CARD_CVV_FIELD_NAME]?.setOnEditorActionListener { v, c, e ->
       submitButton.performClick()
     }
-  }
 
-  private fun onSuccess() {
-    // TODO: handle checkout flow here
-    toggleLoading(false)
-    viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-  }
-
-  private fun onError() {
-    toggleLoading(false)
+    // grab focus to display the keyboard
+    focusFirstInput()
   }
 
   private fun toggleLoading(on: Boolean) {
-    requireView().findViewById<View>(R.id.card_form_submit_button_loading).visibility =
-      if (on) View.VISIBLE else View.GONE
+    if (on) {
+      errorText.visibility = View.GONE
+      submitButtonLoading.visibility = View.VISIBLE
+    } else {
+      submitButtonLoading.visibility = View.GONE
+    }
   }
 
   private fun focusFirstInput() {
@@ -195,6 +168,52 @@ internal class CardFormFragment : Fragment() {
     } else {
       val ctx = requireContext()
       input.error = ctx.getString(error.errorId, ctx.getString(error.fieldId))
+    }
+  }
+
+  private fun onStatusChanged(status: TokenizationStatus) {
+    when (status) {
+      TokenizationStatus.LOADING -> toggleLoading(true)
+      else -> toggleLoading(false)
+    }
+  }
+
+  private fun onErrorChanged(error: APIError?) {
+    if (error == null) {
+      return
+    }
+
+    errorText.visibility = View.VISIBLE
+    errorText.text = requireContext().getText(R.string.payment_method_error)
+  }
+
+  private fun onResultChanged(data: JSONObject?) {
+    if (data != null) {
+      if (viewModel.uxMode.value == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+        viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+      }
+    }
+  }
+
+  private fun onKeyboardVisibilityChanged(visible: Boolean) {
+    val hasFocus = inputs.entries.any { it.value.isFocused }
+
+    if (hasFocus && !visible) {
+      inputs.entries.forEach {
+        it.value.clearFocus()
+      }
+    } else if (visible && !hasFocus) {
+      focusFirstInput()
+    }
+  }
+
+  private fun onUXModeChanged(mode: UniversalCheckout.UXMode) {
+    submitButtonText.text = when (mode) {
+      UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
+      UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
+        requireContext(),
+        viewModel.amount.value
+      )
     }
   }
 
