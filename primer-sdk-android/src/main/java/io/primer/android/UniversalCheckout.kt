@@ -2,7 +2,6 @@ package io.primer.android
 
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.LifecycleOwner
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -19,7 +18,12 @@ class UniversalCheckout private constructor(
     private val token = DeferredToken(authTokenProvider)
     private var paymentMethods: List<PaymentMethod> = ArrayList()
 
-    private var listener: IUniversalCheckoutListener? = null
+    private var listener: EventListener? = null
+    private var subscription: EventBus.SubscriptionHandle? = null
+
+    interface EventListener {
+        fun onCheckoutEvent(e: CheckoutEvent)
+    }
 
     enum class UXMode {
         CHECKOUT, ADD_PAYMENT_METHOD,
@@ -30,7 +34,7 @@ class UniversalCheckout private constructor(
     }
 
     fun show(
-        listener: IUniversalCheckoutListener,
+        listener: EventListener,
         uxMode: UXMode? = null,
         amount: Int? = null,
         currency: String? = null,
@@ -38,12 +42,13 @@ class UniversalCheckout private constructor(
         log("Starting checkout activity")
 
         this.listener = listener
-
-//        EventBus.subscribe(context as LifecycleOwner, object : EventBus.EventListener {
-//            override fun onEvent(e: CheckoutEvent) {
-//                log("Checkout event from UniversalCheckout!!! ${e.type.name}")
-//            }
-//        })
+        this.subscription = EventBus.subscribe(object : EventBus.EventListener {
+            override fun onEvent(e: CheckoutEvent) {
+                if (e.public) {
+                    handleEvent(e)
+                }
+            }
+        })
 
         token.observe {
             val config = CheckoutConfig.create(
@@ -63,7 +68,12 @@ class UniversalCheckout private constructor(
     }
 
     fun destroy() {
-        this.listener = null
+        this.subscription?.unregister()
+        this.subscription = null
+    }
+
+    private fun handleEvent(e: CheckoutEvent) {
+        listener?.onCheckoutEvent(e)
     }
 
     companion object {
@@ -73,7 +83,8 @@ class UniversalCheckout private constructor(
          * Initializes the Primer SDK with the Application context and a client token Provider
          */
         fun initialize(context: Context, authTokenProvider: IClientTokenProvider) {
-            instance = instance ?: UniversalCheckout(context, authTokenProvider)
+            destroy()
+            instance = UniversalCheckout(context, authTokenProvider)
         }
 
 
@@ -96,7 +107,7 @@ class UniversalCheckout private constructor(
          * Show the checkout sheet and attach a listener which will receive callback events
          */
         fun show(
-            listener: IUniversalCheckoutListener,
+            listener: EventListener,
             uxMode: UXMode? = null,
             amount: Int? = null,
             currency: String? = null,

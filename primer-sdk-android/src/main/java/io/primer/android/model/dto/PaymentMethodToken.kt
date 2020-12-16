@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
 @Serializable
-internal data class PaymentMethodToken(
+data class PaymentMethodToken(
   val token: String,
   val analyticsId: String,
   val tokenType: TokenType,

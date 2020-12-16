@@ -7,8 +7,10 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
@@ -125,6 +127,10 @@ internal class CardFormFragment : Fragment() {
     }
 
     focusFirstInput()
+
+    inputs[CARD_CVV_FIELD_NAME]?.setOnEditorActionListener { v, c, e ->
+      submitButton.performClick()
+    }
   }
 
   private fun onSuccess() {
@@ -133,7 +139,7 @@ internal class CardFormFragment : Fragment() {
   }
 
   private fun focusFirstInput() {
-    val input = inputs.get(CARD_NAME_FILED_NAME) ?: return
+    val input = inputs[CARD_NAME_FILED_NAME] ?: return
 
     input.requestFocus()
 
