@@ -23,16 +23,16 @@ internal class VaultedPaymentMethodView(context: Context, private val attributes
 
 
   private val mDelete: Button
-    get () = mView.findViewById(R.id.item_delete_button)
+    get() = mView.findViewById(R.id.item_delete_button)
 
   private val mIcon: ImageView
-    get () = mView.findViewById(R.id.item_icon_left)
+    get() = mView.findViewById(R.id.item_icon_left)
 
   private val mContentLayout: ViewGroup
-    get () = mView.findViewById(R.id.item_content_layout)
+    get() = mView.findViewById(R.id.item_content_layout)
 
   private val mDescription: TextView
-    get () = mView.findViewById(R.id.item_description)
+    get() = mView.findViewById(R.id.item_description)
 
   init {
     mIcon.setImageDrawable(

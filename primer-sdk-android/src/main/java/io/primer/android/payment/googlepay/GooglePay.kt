@@ -2,7 +2,6 @@ package io.primer.android.payment.googlepay
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import io.primer.android.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -13,7 +12,7 @@ internal class GooglePay(
   viewModel: PrimerViewModel,
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.GooglePay
-  ): PaymentMethodDescriptor(viewModel, config) {
+) : PaymentMethodDescriptor(viewModel, config) {
 
   override val selectedBehaviour: SelectedPaymentMethodBehaviour
     get() = NoopBehaviour()

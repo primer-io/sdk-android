@@ -49,7 +49,7 @@ internal object KeyboardVisibilityEvent {
     lifecycleOwner: LifecycleOwner,
     listener: OnChangedListener,
   ) {
-    val layoutListener = object: ViewTreeObserver.OnGlobalLayoutListener {
+    val layoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
       private var isVisible = false
 
       override fun onGlobalLayout() {

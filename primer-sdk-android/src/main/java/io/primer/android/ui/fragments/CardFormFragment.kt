@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -62,7 +60,8 @@ internal class CardFormFragment : Fragment() {
         TokenizationStatus.SUCCESS -> onSuccess()
         TokenizationStatus.LOADING -> toggleLoading(true)
         TokenizationStatus.ERROR -> onError()
-        else -> {}
+        else -> {
+        }
       }
     })
 
@@ -95,7 +94,10 @@ internal class CardFormFragment : Fragment() {
     viewModel.uxMode.observe(viewLifecycleOwner, {
       view.findViewById<TextView>(R.id.card_form_submit_button_txt).text = when (it) {
         UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
-        UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(requireContext(), viewModel.amount.value)
+        UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
+          requireContext(),
+          viewModel.amount.value
+        )
         else -> ""
       }
     })
@@ -147,7 +149,8 @@ internal class CardFormFragment : Fragment() {
   }
 
   private fun toggleLoading(on: Boolean) {
-    requireView().findViewById<View>(R.id.card_form_submit_button_loading).visibility = if (on) View.VISIBLE else View.GONE
+    requireView().findViewById<View>(R.id.card_form_submit_button_loading).visibility =
+      if (on) View.VISIBLE else View.GONE
   }
 
   private fun focusFirstInput() {
@@ -160,8 +163,8 @@ internal class CardFormFragment : Fragment() {
     imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
   }
 
-  private fun createTextWatcher(name: String) : TextWatcher {
-    return object: TextWatcher {
+  private fun createTextWatcher(name: String): TextWatcher {
+    return object : TextWatcher {
       override fun afterTextChanged(s: Editable?) {}
 
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

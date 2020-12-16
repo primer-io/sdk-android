@@ -6,11 +6,6 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.*
-import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.ClientSession
-import io.primer.android.model.dto.ClientToken
-import io.primer.android.model.dto.PaymentMethodToken
-import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
 
@@ -25,7 +20,7 @@ internal class Model(
 
   private val session: ClientSession
     get() = clientSession!!
-  
+
   fun getConfiguration(): Observable {
     return api.get(clientToken.configurationUrl).observe {
       when (it) {
@@ -63,8 +58,12 @@ internal class Model(
 
     return api.post(url, json).observe {
       when (it) {
-        is Observable.ObservableSuccessEvent -> { handleTokenizationResult(it) }
-        is Observable.ObservableErrorEvent -> { handleTokenizationResult(it) }
+        is Observable.ObservableSuccessEvent -> {
+          handleTokenizationResult(it)
+        }
+        is Observable.ObservableErrorEvent -> {
+          handleTokenizationResult(it)
+        }
       }
     }
   }

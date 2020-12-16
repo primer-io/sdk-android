@@ -29,15 +29,15 @@ internal class CardNumberFormatter private constructor(
     }
   }
 
-  fun getValue() : String {
+  fun getValue(): String {
     return value.replace(INVALID_CHARACTER, "")
   }
 
-  fun isEmpty() : Boolean {
+  fun isEmpty(): Boolean {
     return getValue().isEmpty()
   }
 
-  fun isValid() : Boolean {
+  fun isValid(): Boolean {
     if (isEmpty()) {
       return false
     }
@@ -49,11 +49,11 @@ internal class CardNumberFormatter private constructor(
     return isLuhnValid()
   }
 
-  fun getCVVLength() : Int {
+  fun getCVVLength(): Int {
     return meta.cvvLength
   }
 
-  private fun isLuhnValid() : Boolean {
+  private fun isLuhnValid(): Boolean {
     val digits = value.substring(0, value.lastIndex)
     var checksum = value.substring(value.lastIndex).toInt()
 

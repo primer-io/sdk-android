@@ -8,7 +8,8 @@ import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.MonetaryAmount
 
-internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? = null): LinearLayout(context, attrs) {
+internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? = null) :
+  LinearLayout(context, attrs) {
   private var uxMode: UniversalCheckout.UXMode? = null
   private var amount: MonetaryAmount? = null
 

@@ -1,8 +1,6 @@
 package io.primer.android
 
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -36,8 +34,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
       unmarshal("paymentMethods")
     )
 
-    viewModel = initializeViewModel(PrimerViewModel.ProviderFactory(model), PrimerViewModel::class.java)
-    tokenizationViewModel = initializeViewModel(TokenizationViewModel.ProviderFactory(model), TokenizationViewModel::class.java)
+    viewModel =
+      initializeViewModel(PrimerViewModel.ProviderFactory(model), PrimerViewModel::class.java)
+    tokenizationViewModel = initializeViewModel(
+      TokenizationViewModel.ProviderFactory(model),
+      TokenizationViewModel::class.java
+    )
 
     sheet = CheckoutSheetFragment.newInstance()
 
@@ -52,7 +54,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     return json.decodeFromString<T>(serializer(), serialized!!)
   }
 
-  private fun <T: BaseViewModel> initializeViewModel(factory: ViewModelProvider.Factory, modelCls: Class<T>): T {
+  private fun <T : BaseViewModel> initializeViewModel(
+    factory: ViewModelProvider.Factory,
+    modelCls: Class<T>
+  ): T {
     val vm = ViewModelProvider(this, factory).get(modelCls)
 
     vm.initialize()

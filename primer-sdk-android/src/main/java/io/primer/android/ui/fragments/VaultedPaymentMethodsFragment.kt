@@ -13,9 +13,8 @@ import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
-import kotlin.collections.ArrayList
 
-class VaultedPaymentMethodsFragment: Fragment() {
+class VaultedPaymentMethodsFragment : Fragment() {
   private val log = Logger("vaulted-payment-methods")
   private var mEditing = false
   private lateinit var viewModel: PrimerViewModel
@@ -113,7 +112,7 @@ class VaultedPaymentMethodsFragment: Fragment() {
   }
 
   companion object {
-    fun newInstance() : VaultedPaymentMethodsFragment {
+    fun newInstance(): VaultedPaymentMethodsFragment {
       return VaultedPaymentMethodsFragment()
     }
   }

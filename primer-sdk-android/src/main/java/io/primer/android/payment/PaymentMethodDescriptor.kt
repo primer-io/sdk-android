@@ -2,7 +2,6 @@ package io.primer.android.payment
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import io.primer.android.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PAYPAL_IDENTIFIER
@@ -20,7 +19,7 @@ import kotlin.collections.HashMap
 internal abstract class PaymentMethodDescriptor(
   protected val viewModel: PrimerViewModel,
   protected val config: PaymentMethodRemoteConfig
-  ) {
+) {
 
   abstract val identifier: String
 
@@ -47,7 +46,10 @@ internal abstract class PaymentMethodDescriptor(
   }
 
   class Factory(private val viewModel: PrimerViewModel) {
-    fun create(config: PaymentMethodRemoteConfig, options: PaymentMethod): PaymentMethodDescriptor? {
+    fun create(
+      config: PaymentMethodRemoteConfig,
+      options: PaymentMethod
+    ): PaymentMethodDescriptor? {
       // TODO: hate this - think of a better way
       return when (config.type) {
         PAYMENT_CARD_IDENTIFIER -> CreditCard(viewModel, config, options as PaymentMethod.Card)

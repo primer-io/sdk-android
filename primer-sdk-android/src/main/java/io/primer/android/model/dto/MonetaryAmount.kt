@@ -9,7 +9,7 @@ internal class MonetaryAmount private constructor(
   val currency: String
 ) {
   companion object {
-    fun create(currency: String? = null, value: Int? = null): MonetaryAmount?  {
+    fun create(currency: String? = null, value: Int? = null): MonetaryAmount? {
       if (currency == null || value == null) {
         return null
       }

@@ -9,17 +9,17 @@ internal class CardType(type: Type, val gaps: List<Int>) {
     val lengths: List<Int>,
     lower: String,
     upper: String?,
-    val cvvLength : Int = 3,
+    val cvvLength: Int = 3,
   ) : Comparable<Descriptor> {
     private val weight: Int = lower.length
     private val min = lower.padEnd(8, '0')
     private val max = (upper ?: lower).padEnd(8, '9')
 
-    override fun compareTo(other: Descriptor) : Int {
+    override fun compareTo(other: Descriptor): Int {
       return weight - other.weight
     }
 
-    fun matches(bin: String) : Boolean {
+    fun matches(bin: String): Boolean {
       return bin.padEnd(8, '0') in min..max
     }
   }

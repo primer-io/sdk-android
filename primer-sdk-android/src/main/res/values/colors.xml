@@ -11,6 +11,6 @@
     <color name="primer_button_primary_fg">@android:color/white</color>
     <color name="primer_button_disabled">#1F000000</color>
 
-<!-- Card Scanner Things -->
+    <!-- Card Scanner Things -->
 
 </resources>

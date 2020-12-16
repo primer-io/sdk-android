@@ -1,21 +1,20 @@
 package io.primer.android.viewmodel
 
-import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.Observable
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
+import io.primer.android.model.Observable
 import io.primer.android.model.dto.ClientSession
-import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.payment.PaymentMethodDescriptor
 import java.util.*
 
-internal class PrimerViewModel(model: Model): BaseViewModel(model), EventBus.EventListener {
+internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.EventListener {
   private val log = Logger("view-model")
   private lateinit var subscription: EventBus.SubscriptionHandle
 
@@ -59,7 +58,8 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model), EventBus.Eve
         model.getVaultedPaymentMethods().observe { vault ->
           when (vault) {
             is Observable.ObservableSuccessEvent -> {
-              vaultedPaymentMethods.value = vault.cast(key = "data", defaultValue = Collections.emptyList())
+              vaultedPaymentMethods.value =
+                vault.cast(key = "data", defaultValue = Collections.emptyList())
               paymentMethods.value = resolver.resolve()
               viewStatus.value = getInitialViewStatus()
             }
@@ -102,7 +102,8 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model), EventBus.Eve
     when (e) {
       is CheckoutEvent.TokenRemovedFromVault -> {
         log("REmoving TOKEN :DDD")
-        vaultedPaymentMethods.value = vaultedPaymentMethods.value?.filter { it.token != e.data.token }
+        vaultedPaymentMethods.value =
+          vaultedPaymentMethods.value?.filter { it.token != e.data.token }
       }
       is CheckoutEvent.TokenAddedToVault -> {
         log("Adding TOKEN :DDD")

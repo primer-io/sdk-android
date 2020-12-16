@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_preview_button"
-    android:clickable="true"
-    android:focusable="true"
-    android:layout_marginTop="@dimen/primer_list_margin"
-    android:orientation="horizontal"
-    android:background="@drawable/button_light"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/primer_list_margin"
+    android:background="@drawable/button_light"
+    android:clickable="true"
+    android:focusable="true"
     android:gravity="center"
-    >
+    android:orientation="horizontal">
+
     <TextView
-        style="@style/Primer.Text"
         android:id="@+id/card_preview_button_text"
-        android:text="@string/pay_by_card"
-        android:gravity="center"
-        android:drawablePadding="10dp"
-        android:layout_height="@dimen/primer_payment_method_preview_button_height"
+        style="@style/Primer.Text"
         android:layout_width="wrap_content"
-        app:drawableStartCompat="@drawable/credit_card_icon"
-        />
+        android:layout_height="@dimen/primer_payment_method_preview_button_height"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:text="@string/pay_by_card"
+        app:drawableStartCompat="@drawable/credit_card_icon" />
 </LinearLayout>

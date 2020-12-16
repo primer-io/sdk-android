@@ -1,21 +1,21 @@
 <?xml version="1.0"?>
 <resources>
-<!--  General layout things  -->
+    <!--  General layout things  -->
     <item name="primer_checkout_sheet_padding_vert" type="dimen">22dp</item>
     <item name="primer_checkout_sheet_padding_horiz" type="dimen">14dp</item>
 
-<!--  General Style stuff  -->
+    <!--  General Style stuff  -->
     <item name="primer_corner_radius" type="dimen">6dp</item>
     <item name="primer_border_width" type="dimen">1dp</item>
     <item name="primer_list_margin" type="dimen">13dp</item>
 
-<!--  Forms  -->
+    <!--  Forms  -->
     <item name="primer_input_spacing_vert" type="dimen">21dp</item>
     <item name="primer_input_spacing_horiz" type="dimen">28dp</item>
     <item name="primer_button_elevation" type="dimen">2dp</item>
     <item name="primer_button_padding_horiz" type="dimen">16dp</item>
 
-<!--  Text stuff  -->
+    <!--  Text stuff  -->
     <item name="primer_text_size_title" type="dimen">20sp</item>
     <item name="primer_text_size_md" type="dimen">18sp</item>
     <item name="primer_text_size_sm" type="dimen">16sp</item>
@@ -23,6 +23,6 @@
     <!--  Payment methods  -->
     <item name="primer_payment_method_preview_button_height" type="dimen">50dp</item>
 
-<!--  Card Scanner Things  -->
+    <!--  Card Scanner Things  -->
 
 </resources>

@@ -70,7 +70,7 @@ internal class SelectPaymentMethodFragment : Fragment() {
     })
   }
 
-  private fun <T: View> findViewById(id: Int): T {
+  private fun <T : View> findViewById(id: Int): T {
     return requireView().findViewById(id)
   }
 

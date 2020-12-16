@@ -1,97 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Primer.FormInput.Layout"
-        android:hint="@string/card_holder_name"
-        >
+        android:hint="@string/card_holder_name">
+
         <com.google.android.material.textfield.TextInputEditText
-            android:theme="@style/Primer.FormInput.Input"
             android:id="@+id/card_form_cardholder_name_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:inputType="textPersonName"
             android:imeOptions="actionNext"
-            />
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:theme="@style/Primer.FormInput.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/primer_input_spacing_vert"
-        />
+        android:minHeight="@dimen/primer_input_spacing_vert" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Primer.FormInput.Layout"
-        android:hint="@string/card_number"
-        >
+        android:hint="@string/card_number">
+
         <com.google.android.material.textfield.TextInputEditText
-            android:theme="@style/Primer.FormInput.Input"
             android:id="@+id/card_form_card_number_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:digits="0123456789 "
             android:imeOptions="actionNext"
-            />
+            android:inputType="number"
+            android:theme="@style/Primer.FormInput.Input" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/primer_input_spacing_vert"
-        />
+        android:minHeight="@dimen/primer_input_spacing_vert" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:baselineAligned="false"
-        >
+        android:orientation="horizontal">
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Primer.FormInput.Layout"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:hint="@string/card_expiry"
-            >
+            android:hint="@string/card_expiry">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:theme="@style/Primer.FormInput.Input"
                 android:id="@+id/card_form_card_expiry_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:digits="0123456789/ "
                 android:imeOptions="actionNext"
                 android:inputType="date"
-                android:digits="0123456789/ "
-                />
+                android:theme="@style/Primer.FormInput.Input" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:minHeight="@dimen/primer_input_spacing_horiz"
-            />
+            android:minHeight="@dimen/primer_input_spacing_horiz" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Primer.FormInput.Layout"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:hint="@string/card_cvv"
-            >
+            android:hint="@string/card_cvv">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:theme="@style/Primer.FormInput.Input"
                 android:id="@+id/card_form_card_cvv_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 android:maxLength="4"
-                />
+                android:theme="@style/Primer.FormInput.Input" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
@@ -103,43 +96,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        >
+        android:gravity="center">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            style="@style/Widget.AppCompat.Button"
             android:id="@+id/card_form_submit_button"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:animateLayoutChanges="true"
             android:background="@drawable/button_primary_bg"
             android:elevation="@dimen/primer_button_elevation"
-            android:paddingEnd="@dimen/primer_button_padding_horiz"
             android:paddingStart="@dimen/primer_button_padding_horiz"
-            android:animateLayoutChanges="true"
-            android:layout_gravity="center"
-            >
-            <TextView android:id="@+id/card_form_submit_button_txt"
+            android:paddingEnd="@dimen/primer_button_padding_horiz">
+
+            <TextView
+                android:id="@+id/card_form_submit_button_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:textColor="@color/primer_button_primary_fg"
-                />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ProgressBar
-                android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent"
                 android:id="@+id/card_form_submit_button_loading"
                 android:layout_width="22dp"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/card_form_submit_button_txt"
-                android:visibility="gone"
                 android:layout_marginStart="6dp"
+                android:layout_toEndOf="@id/card_form_submit_button_txt"
+                android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/card_form_submit_button_txt"
-                app:layout_constraintTop_toTopOf="parent"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 

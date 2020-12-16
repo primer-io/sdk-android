@@ -28,7 +28,7 @@ internal class CreditCard(
   viewModel: PrimerViewModel,
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.Card
-  ): PaymentMethodDescriptor(viewModel, config) {
+) : PaymentMethodDescriptor(viewModel, config) {
 
   override val identifier = PAYMENT_CARD_IDENTIFIER
 
@@ -60,7 +60,10 @@ internal class CreditCard(
     val json = JSONObject()
 
     json.put(CARD_NAME_FILED_NAME, values[CARD_NAME_FILED_NAME]?.trim() ?: "")
-    json.put(CARD_NUMBER_FIELD_NAME, values[CARD_NUMBER_FIELD_NAME]?.replace("\\s".toRegex(), "") ?: "")
+    json.put(
+      CARD_NUMBER_FIELD_NAME,
+      values[CARD_NUMBER_FIELD_NAME]?.replace("\\s".toRegex(), "") ?: ""
+    )
     json.put(CARD_CVV_FIELD_NAME, values[CARD_CVV_FIELD_NAME] ?: "")
 
     val expiry = ExpiryDateFormatter.fromString(values[CARD_EXPIRY_FIELD_NAME] ?: "")
@@ -77,37 +80,79 @@ internal class CreditCard(
     val name = getSanitizedValue(CARD_NAME_FILED_NAME)
 
     if (name.isEmpty()) {
-      errors.add(SyncValidationError(name = CARD_NAME_FILED_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_holder_name))
+      errors.add(
+        SyncValidationError(
+          name = CARD_NAME_FILED_NAME,
+          errorId = R.string.form_error_required,
+          fieldId = R.string.card_holder_name
+        )
+      )
     }
 
     val number = CardNumberFormatter.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
 
     if (number.isEmpty()) {
-      errors.add(SyncValidationError(name = CARD_NUMBER_FIELD_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_number))
+      errors.add(
+        SyncValidationError(
+          name = CARD_NUMBER_FIELD_NAME,
+          errorId = R.string.form_error_required,
+          fieldId = R.string.card_number
+        )
+      )
     } else if (!number.isValid()) {
-      errors.add(SyncValidationError(name = CARD_NUMBER_FIELD_NAME, errorId = R.string.form_error_invalid, fieldId = R.string.card_number))
+      errors.add(
+        SyncValidationError(
+          name = CARD_NUMBER_FIELD_NAME,
+          errorId = R.string.form_error_invalid,
+          fieldId = R.string.card_number
+        )
+      )
     }
 
     val cvv = getSanitizedValue(CARD_CVV_FIELD_NAME)
 
     if (cvv.isEmpty()) {
-      errors.add(SyncValidationError(name = CARD_CVV_FIELD_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_cvv))
+      errors.add(
+        SyncValidationError(
+          name = CARD_CVV_FIELD_NAME,
+          errorId = R.string.form_error_required,
+          fieldId = R.string.card_cvv
+        )
+      )
     } else if (cvv.length != number.getCVVLength()) {
-      errors.add(SyncValidationError(name = CARD_CVV_FIELD_NAME, errorId = R.string.form_error_invalid, fieldId = R.string.card_cvv))
+      errors.add(
+        SyncValidationError(
+          name = CARD_CVV_FIELD_NAME,
+          errorId = R.string.form_error_invalid,
+          fieldId = R.string.card_cvv
+        )
+      )
     }
 
     val expiry = ExpiryDateFormatter.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
 
     if (expiry.isEmpty()) {
-      errors.add(SyncValidationError(name = CARD_EXPIRY_FIELD_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_expiry))
+      errors.add(
+        SyncValidationError(
+          name = CARD_EXPIRY_FIELD_NAME,
+          errorId = R.string.form_error_required,
+          fieldId = R.string.card_expiry
+        )
+      )
     } else if (!expiry.isValid()) {
-      errors.add(SyncValidationError(name = CARD_EXPIRY_FIELD_NAME, errorId = R.string.form_error_invalid, fieldId = R.string.card_expiry))
+      errors.add(
+        SyncValidationError(
+          name = CARD_EXPIRY_FIELD_NAME,
+          errorId = R.string.form_error_invalid,
+          fieldId = R.string.card_expiry
+        )
+      )
     }
 
     return errors
   }
 
-  private fun getSanitizedValue(key: String) : String {
+  private fun getSanitizedValue(key: String): String {
     return values[key]?.trim() ?: ""
   }
 }

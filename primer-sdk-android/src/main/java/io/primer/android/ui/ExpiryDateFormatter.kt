@@ -1,4 +1,5 @@
 package io.primer.android.ui
+
 import io.primer.android.logging.Logger
 import java.util.*
 import kotlin.math.min
@@ -105,7 +106,7 @@ internal class ExpiryDateFormatter(
       }
     }
 
-    private fun tokenize(value: String) : List<String> {
+    private fun tokenize(value: String): List<String> {
       val sanitized = value.replace(INVALID_CHARACTER, "").trim()
 
       var tokens: List<String>
@@ -122,7 +123,7 @@ internal class ExpiryDateFormatter(
       }
 
       tokens = tokens.filter { it.isNotEmpty() }
-      tokens =  tokens.subList(0, min(tokens.size, 2))
+      tokens = tokens.subList(0, min(tokens.size, 2))
 
       return tokens
     }
@@ -147,7 +148,7 @@ internal class ExpiryDateFormatter(
       }
 
       if (sanitized.matches(INVALID_MONTH)) {
-        return sanitized.replaceRange(1,2, "2")
+        return sanitized.replaceRange(1, 2, "2")
       }
 
       if (sanitized == "00") {

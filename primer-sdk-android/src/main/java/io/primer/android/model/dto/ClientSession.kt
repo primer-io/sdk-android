@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class ClientSession(
-    val pciUrl: String,
-    val coreUrl: String,
-    val paymentMethods: List<PaymentMethodRemoteConfig>
+  val pciUrl: String,
+  val coreUrl: String,
+  val paymentMethods: List<PaymentMethodRemoteConfig>
 )

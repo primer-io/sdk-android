@@ -8,7 +8,7 @@ internal abstract class SelectedPaymentMethodBehaviour
 internal class NewFragmentBehaviour(
   private val factory: (() -> Fragment),
   private val returnToPreviousOnBack: Boolean = false
-): SelectedPaymentMethodBehaviour() {
+) : SelectedPaymentMethodBehaviour() {
   fun execute(parent: Fragment) {
     val fragment = factory()
     val transaction = parent.childFragmentManager.beginTransaction()

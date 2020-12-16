@@ -12,8 +12,8 @@ internal class Observable {
   abstract class ObservableEvent(val status: Status)
 
   class ObservableLoadingEvent : ObservableEvent(Status.LOADING)
-  class ObservableErrorEvent(val error: APIError): ObservableEvent(Status.ERROR)
-  class ObservableSuccessEvent(val data: JSONObject): ObservableEvent(Status.SUCCESS) {
+  class ObservableErrorEvent(val error: APIError) : ObservableEvent(Status.ERROR)
+  class ObservableSuccessEvent(val data: JSONObject) : ObservableEvent(Status.SUCCESS) {
     inline fun <reified T> cast(): T {
       return json.decodeFromString(data.toString())
     }

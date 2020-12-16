@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.AppCompat.PrimerUniversalCheckout" parent="Theme.AppCompat">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -32,6 +33,7 @@
     </style>
 
     <style name="Primer.Button" />
+
     <style name="Primer.Button.Text">
         <item name="borderWidth">0dp</item>
         <item name="backgroundColor">@android:color/transparent</item>
@@ -68,6 +70,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColorHint">@color/primer_input_placeholder</item>
     </style>
+
     <style name="Primer.FormInput.Input" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@android:color/black</item>
         <item name="colorControlActivated">@color/primer_app_primary</item>

@@ -2,7 +2,6 @@ package io.primer.android.payment.paypal
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import io.primer.android.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -13,7 +12,7 @@ internal class PayPal(
   viewModel: PrimerViewModel,
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.PayPal
-): PaymentMethodDescriptor(viewModel, config) {
+) : PaymentMethodDescriptor(viewModel, config) {
   override val identifier: String
     get() = PAYPAL_IDENTIFIER
 

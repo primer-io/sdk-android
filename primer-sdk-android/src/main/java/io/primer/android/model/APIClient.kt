@@ -41,7 +41,7 @@ internal class APIClient(token: ClientToken) : IAPIClient {
     val observable = Observable()
 
     val thread = Thread {
-      client.newCall(request).enqueue(object: Callback {
+      client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
           handler.post {
             observable.setError(APIError.create(e))

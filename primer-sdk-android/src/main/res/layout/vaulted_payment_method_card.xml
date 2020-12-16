@@ -1,49 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
+    android:layout_marginBottom="6dp"
     android:background="@android:color/white"
     android:clipChildren="true"
-    android:layout_marginBottom="6dp"
-    >
+    android:gravity="center"
+    android:orientation="horizontal">
+
     <ImageView
         android:id="@+id/item_icon_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/credit_card_icon"
         android:background="@drawable/icon_button"
         android:scaleType="fitCenter"
-        />
+        android:src="@drawable/credit_card_icon" />
+
     <LinearLayout
         android:id="@+id/item_content_layout"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
+        android:layout_weight="1"
         android:background="@drawable/list_item_normal"
         android:paddingStart="16dp"
-        android:paddingEnd="11dp"
-        >
+        android:paddingEnd="11dp">
+
         <TextView
             android:id="@+id/item_description"
             style="@style/Primer.Text.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/item_delete_button"
             style="@style/Primer.Button.Text.Danger"
-            android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/delete"
+            android:background="@android:color/transparent"
             android:gravity="center_vertical|end"
-            />
+            android:text="@string/delete" />
     </LinearLayout>
 </LinearLayout>

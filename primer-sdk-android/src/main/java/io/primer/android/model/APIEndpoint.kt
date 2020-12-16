@@ -15,7 +15,7 @@ internal class APIEndpoint {
       target: Target,
       pathname: String,
       params: Map<String, String>? = null
-    ) : String {
+    ): String {
       val baseUrl = if (target == Target.PCI) session.pciUrl else session.coreUrl
       var url = "$baseUrl$pathname"
 
