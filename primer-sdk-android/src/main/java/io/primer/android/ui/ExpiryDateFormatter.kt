@@ -1,6 +1,5 @@
 package io.primer.android.ui
 import io.primer.android.logging.Logger
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
 
@@ -12,7 +11,7 @@ private val THREE_OR_FOUR_DIGITS = Regex("^[0-9]{3,4}$")
 private val SEPARATOR_CHAR = Regex("[\\s/-]+")
 private val INVALID_MONTH = Regex("^1[3-9].*")
 
-internal class ExpiryDate(
+internal class ExpiryDateFormatter(
   private var month: String = "",
   private var year: String = "",
   private var separator: Boolean = false
@@ -68,9 +67,9 @@ internal class ExpiryDate(
   }
 
   companion object {
-    fun fromString(value: String, autoInsert: Boolean = false): ExpiryDate {
+    fun fromString(value: String, autoInsert: Boolean = false): ExpiryDateFormatter {
       val tokens = tokenize(value)
-      val exp = ExpiryDate()
+      val exp = ExpiryDateFormatter()
 
       if (tokens.isEmpty()) {
         return exp

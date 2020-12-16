@@ -3,7 +3,7 @@ package io.primer.android.ui
 import android.text.Editable
 import android.text.TextWatcher
 
-abstract class BaseTextInputMask : TextWatcher {
+internal abstract class TextInputMask : TextWatcher {
   private var deleting: Boolean = false
   private var editing: Boolean = false
 
@@ -33,4 +33,16 @@ abstract class BaseTextInputMask : TextWatcher {
   }
 
   abstract fun mask(value: String, deleting: Boolean): String
+
+  class CardNumber : TextInputMask() {
+    override fun mask(value: String, deleting: Boolean): String {
+      return CardNumberFormatter.fromString(value).toString()
+    }
+  }
+
+  class ExpiryDate : TextInputMask() {
+    override fun mask(value: String, deleting: Boolean): String {
+      return ExpiryDateFormatter.fromString(value, autoInsert = !deleting).toString()
+    }
+  }
 }

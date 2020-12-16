@@ -90,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:imeOptions="actionDone"
+                android:maxLength="4"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 

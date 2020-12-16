@@ -19,9 +19,8 @@ import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
-import io.primer.android.ui.CardNumberTextInputMask
-import io.primer.android.ui.ExpiryDateTextInputMask
 import io.primer.android.ui.PayAmountText
+import io.primer.android.ui.TextInputMask
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -112,8 +111,8 @@ internal class CardFormFragment : Fragment() {
       CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
     )
 
-    inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(ExpiryDateTextInputMask())
-    inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(CardNumberTextInputMask())
+    inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())
+    inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(TextInputMask.CardNumber())
 
     inputs.entries.forEach {
       it.value.addTextChangedListener(createTextWatcher(it.key))

@@ -3,19 +3,29 @@ package io.primer.android.ui
 import io.primer.android.logging.Logger
 
 private val INVALID_CHARACTER = Regex("[^0-9]")
+private val ENDS_WITH_WHITESPACE = Regex(".+\\s$")
 
-internal class CardNumber private constructor(private val value: String) {
+internal class CardNumberFormatter private constructor(
+  private val value: String,
+  private val autoInsert: Boolean,
+) {
   private val meta = CardType.lookup(value)
   private val log = Logger("card-nummber")
 
   override fun toString(): String {
-    return buildString {
+    val formatted = buildString {
       value.forEachIndexed { index, c ->
         append(c)
         if (meta.gaps.contains(index + 1)) {
           append(' ')
         }
       }
+    }
+
+    return if (!autoInsert && formatted.endsWith(' ')) {
+      formatted.trim()
+    } else {
+      formatted
     }
   }
 
@@ -65,8 +75,8 @@ internal class CardNumber private constructor(private val value: String) {
   }
 
   companion object {
-    fun fromString(str: String): CardNumber {
-      return CardNumber(str.replace(INVALID_CHARACTER, ""))
+    fun fromString(str: String, autoInsert: Boolean = false): CardNumberFormatter {
+      return CardNumberFormatter(str.replace(INVALID_CHARACTER, ""), autoInsert)
     }
   }
 }
