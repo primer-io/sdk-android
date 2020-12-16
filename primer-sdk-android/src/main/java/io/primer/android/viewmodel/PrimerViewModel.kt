@@ -106,7 +106,9 @@ internal class PrimerViewModel(model: Model): BaseViewModel(model), EventBus.Eve
       }
       is CheckoutEvent.TokenAddedToVault -> {
         log("Adding TOKEN :DDD")
-        vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(e.data)
+        if (vaultedPaymentMethods.value?.find { it.analyticsId == e.data.analyticsId } == null) {
+          vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(e.data)
+        }
       }
     }
   }

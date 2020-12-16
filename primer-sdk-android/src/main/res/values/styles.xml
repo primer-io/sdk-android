@@ -12,6 +12,10 @@
         <item name="colorAccent">@color/primer_app_primary</item>
     </style>
 
+    <style name="Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent">
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
     <style name="Primer" />
 
     <style name="Primer.BottomSheet" parent="Theme.Design.Light.BottomSheetDialog">

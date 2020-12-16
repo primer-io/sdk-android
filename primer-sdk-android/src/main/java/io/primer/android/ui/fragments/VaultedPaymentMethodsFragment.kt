@@ -4,25 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.R
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.payment.PAYMENT_CARD_TYPE
 import io.primer.android.payment.TokenAttributes
 import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
-import java.util.*
 import kotlin.collections.ArrayList
 
 class VaultedPaymentMethodsFragment: Fragment() {
   private val log = Logger("vaulted-payment-methods")
+  private var mEditing = false
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
   private lateinit var list: ViewGroup
@@ -70,6 +65,7 @@ class VaultedPaymentMethodsFragment: Fragment() {
           }
 
           views.add(pmView)
+          pmView.setEditable(mEditing)
           list.addView(pmView.getView())
         }
       }
@@ -107,6 +103,8 @@ class VaultedPaymentMethodsFragment: Fragment() {
   }
 
   private fun setEditing(isEditing: Boolean) {
+    mEditing = isEditing
+
     views.forEach {
       it.setEditable(isEditing)
     }

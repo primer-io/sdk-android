@@ -65,8 +65,8 @@ internal class CreditCard(
 
     val expiry = ExpiryDateFormatter.fromString(values[CARD_EXPIRY_FIELD_NAME] ?: "")
 
-    json.put(CARD_EXPIRY_MONTH_FIELD_NAME, expiry.getYear())
-    json.put(CARD_EXPIRY_YEAR_FIELD_NAME, expiry.getMonth())
+    json.put(CARD_EXPIRY_MONTH_FIELD_NAME, expiry.getMonth())
+    json.put(CARD_EXPIRY_YEAR_FIELD_NAME, expiry.getYear())
 
     return json
   }

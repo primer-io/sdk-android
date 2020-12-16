@@ -7,9 +7,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -37,7 +37,7 @@ import java.util.*
 internal class CardFormFragment : Fragment() {
   private val log = Logger("card-form")
   private lateinit var inputs: Map<String, TextInputEditText>
-  private lateinit var submitButton: Button
+  private lateinit var submitButton: ViewGroup
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
 
@@ -58,8 +58,11 @@ internal class CardFormFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     tokenizationViewModel.status.observe(viewLifecycleOwner, {
-      if (it == TokenizationStatus.SUCCESS) {
-        onSuccess()
+      when (it) {
+        TokenizationStatus.SUCCESS -> onSuccess()
+        TokenizationStatus.LOADING -> toggleLoading(true)
+        TokenizationStatus.ERROR -> onError()
+        else -> {}
       }
     })
 
@@ -90,7 +93,7 @@ internal class CardFormFragment : Fragment() {
     })
 
     viewModel.uxMode.observe(viewLifecycleOwner, {
-      submitButton.text = when (it) {
+      view.findViewById<TextView>(R.id.card_form_submit_button_txt).text = when (it) {
         UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
         UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(requireContext(), viewModel.amount.value)
         else -> ""
@@ -135,7 +138,16 @@ internal class CardFormFragment : Fragment() {
 
   private fun onSuccess() {
     // TODO: handle checkout flow here
+    toggleLoading(false)
     viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+  }
+
+  private fun onError() {
+    toggleLoading(false)
+  }
+
+  private fun toggleLoading(on: Boolean) {
+    requireView().findViewById<View>(R.id.card_form_submit_button_loading).visibility = if (on) View.VISIBLE else View.GONE
   }
 
   private fun focusFirstInput() {
@@ -149,7 +161,6 @@ internal class CardFormFragment : Fragment() {
   }
 
   private fun createTextWatcher(name: String) : TextWatcher {
-    log("Add textWatcher to $name")
     return object: TextWatcher {
       override fun afterTextChanged(s: Editable?) {}
 
