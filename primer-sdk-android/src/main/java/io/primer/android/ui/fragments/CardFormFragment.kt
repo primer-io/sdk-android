@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
@@ -20,16 +19,14 @@ import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
-import io.primer.android.ui.DateInputFilter
-import io.primer.android.ui.DateInputTextWatcher
-import io.primer.android.ui.MaskedInputFilter
+import io.primer.android.ui.CardNumberTextInputMask
+import io.primer.android.ui.ExpiryDateTextInputMask
 import io.primer.android.ui.PayAmountText
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import java.util.*
-import kotlin.math.exp
 
 /**
  * A simple [Fragment] subclass.
@@ -58,8 +55,6 @@ internal class CardFormFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-
-    DateInputTextWatcher.attach(view.findViewById(R.id.card_form_card_expiry_input))
 
     tokenizationViewModel.status.observe(viewLifecycleOwner, {
       if (it == TokenizationStatus.SUCCESS) {
@@ -116,6 +111,9 @@ internal class CardFormFragment : Fragment() {
       CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry_input),
       CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
     )
+
+    inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(ExpiryDateTextInputMask())
+    inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(CardNumberTextInputMask())
 
     inputs.entries.forEach {
       it.value.addTextChangedListener(createTextWatcher(it.key))

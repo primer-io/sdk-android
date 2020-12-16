@@ -11,9 +11,12 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.*
+import io.primer.android.ui.CardNumber
+import io.primer.android.ui.ExpiryDate
 import io.primer.android.ui.fragments.CardFormFragment
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
+import kotlin.math.exp
 
 internal const val CARD_NAME_FILED_NAME = "cardholderName"
 internal const val CARD_NUMBER_FIELD_NAME = "number"
@@ -61,60 +64,51 @@ internal class CreditCard(
     json.put(CARD_NUMBER_FIELD_NAME, values[CARD_NUMBER_FIELD_NAME]?.replace("\\s".toRegex(), "") ?: "")
     json.put(CARD_CVV_FIELD_NAME, values[CARD_CVV_FIELD_NAME] ?: "")
 
-    // TODO fix this after masking
-    val expiration = values[CARD_EXPIRY_FIELD_NAME] ?: ""
+    val expiry = ExpiryDate.fromString(values[CARD_EXPIRY_FIELD_NAME] ?: "")
 
-    val month = expiration.substring(0, minOf(expiration.length, 2))
-    var year = if (expiration.length > 2) expiration.substring(2) else ""
-
-    if (year.length == 2) {
-      year = "20$year"
-    }
-
-    json.put(CARD_EXPIRY_MONTH_FIELD_NAME, month)
-    json.put(CARD_EXPIRY_YEAR_FIELD_NAME, year)
+    json.put(CARD_EXPIRY_MONTH_FIELD_NAME, expiry.getYear())
+    json.put(CARD_EXPIRY_YEAR_FIELD_NAME, expiry.getMonth())
 
     return json
   }
 
   override fun validate(): List<SyncValidationError> {
     val errors = ArrayList<SyncValidationError>()
-    val data = toPaymentInstrument()
 
-    // TODO: Better card field validation
-
-    val name = data[CARD_NAME_FILED_NAME] as String
+    val name = getSanitizedValue(CARD_NAME_FILED_NAME)
 
     if (name.isEmpty()) {
       errors.add(SyncValidationError(name = CARD_NAME_FILED_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_holder_name))
     }
 
-    val number = data[CARD_NUMBER_FIELD_NAME] as String
+    val number = CardNumber.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
 
     if (number.isEmpty()) {
       errors.add(SyncValidationError(name = CARD_NUMBER_FIELD_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_number))
-    } else if (number.length < 16) {
+    } else if (!number.isValid()) {
       errors.add(SyncValidationError(name = CARD_NUMBER_FIELD_NAME, errorId = R.string.form_error_invalid, fieldId = R.string.card_number))
     }
 
-    val cvv = data[CARD_CVV_FIELD_NAME] as String
+    val cvv = getSanitizedValue(CARD_CVV_FIELD_NAME)
 
     if (cvv.isEmpty()) {
       errors.add(SyncValidationError(name = CARD_CVV_FIELD_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_cvv))
-    } else if (cvv.length < 3) {
+    } else if (cvv.length != number.getCVVLength()) {
       errors.add(SyncValidationError(name = CARD_CVV_FIELD_NAME, errorId = R.string.form_error_invalid, fieldId = R.string.card_cvv))
     }
 
-    val date = values[CARD_EXPIRY_FIELD_NAME] ?: ""
-    val month = data[CARD_EXPIRY_MONTH_FIELD_NAME] as String
-    val year = data[CARD_EXPIRY_YEAR_FIELD_NAME] as String
+    val expiry = ExpiryDate.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
 
-    if (date.trim().isEmpty()) {
+    if (expiry.isEmpty()) {
       errors.add(SyncValidationError(name = CARD_EXPIRY_FIELD_NAME, errorId = R.string.form_error_required, fieldId = R.string.card_expiry))
-    } else if (month.isEmpty() || year.isEmpty()) {
+    } else if (!expiry.isValid()) {
       errors.add(SyncValidationError(name = CARD_EXPIRY_FIELD_NAME, errorId = R.string.form_error_invalid, fieldId = R.string.card_expiry))
     }
 
     return errors
+  }
+
+  private fun getSanitizedValue(key: String) : String {
+    return values[key]?.trim() ?: ""
   }
 }
