@@ -9,9 +9,10 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
+import io.primer.android.events.CheckoutEvent
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalCheckoutListener {
+class MainActivity : AppCompatActivity(), IClientTokenProvider, UniversalCheckout.EventListener {
     override fun createToken(callback: (String) -> Unit) {
         val queue = Volley.newRequestQueue(this)
 
@@ -32,8 +33,8 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
         )
     }
 
-    override fun onTokenizationResult() {
-        Log.i("primer.ExampleApp", "Tokenization finished!")
+    override fun onCheckoutEvent(e: CheckoutEvent) {
+        Log.i("primer.ExampleApp", "Checkout event! ${e.type.name}")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +50,9 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, IUniversalChecko
             PaymentMethod.PayPal(buttonColor = "blue")
         ))
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
+        UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.ADD_PAYMENT_METHOD, amount = 1234, currency = "EUR")
+
+        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             renderCheckout()
         }
     }
