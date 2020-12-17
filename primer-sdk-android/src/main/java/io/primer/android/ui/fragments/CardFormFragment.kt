@@ -1,16 +1,17 @@
 package io.primer.android.ui.fragments
 
+import android.animation.LayoutTransition
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.transition.Transition
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
@@ -28,7 +29,6 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
-import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
 import java.util.*
 
@@ -39,6 +39,7 @@ import java.util.*
  */
 internal class CardFormFragment : Fragment() {
   private val log = Logger("card-form")
+  private lateinit var mRoot: ViewGroup
   private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: ViewGroup
   private lateinit var submitButtonText: TextView
@@ -56,8 +57,9 @@ internal class CardFormFragment : Fragment() {
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_card_form, container, false) as ViewGroup
+  ): View {
+    mRoot = inflater.inflate(R.layout.fragment_card_form, container, false) as ViewGroup
+    return mRoot
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,7 +121,7 @@ internal class CardFormFragment : Fragment() {
 
   private fun toggleLoading(on: Boolean) {
     if (on) {
-      errorText.visibility = View.GONE
+      errorText.visibility = View.INVISIBLE
       submitButtonLoading.visibility = View.VISIBLE
     } else {
       submitButtonLoading.visibility = View.GONE
@@ -128,11 +130,9 @@ internal class CardFormFragment : Fragment() {
 
   private fun focusFirstInput() {
     val input = inputs[CARD_NAME_FILED_NAME] ?: return
-
-    input.requestFocus()
-
     val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
+    input.requestFocus()
     imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
   }
 
@@ -183,8 +183,8 @@ internal class CardFormFragment : Fragment() {
       return
     }
 
-    errorText.visibility = View.VISIBLE
     errorText.text = requireContext().getText(R.string.payment_method_error)
+    errorText.visibility = View.VISIBLE
   }
 
   private fun onResultChanged(data: JSONObject?) {

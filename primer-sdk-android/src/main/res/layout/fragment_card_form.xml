@@ -65,11 +65,6 @@
                 android:theme="@style/Primer.FormInput.Input" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:minHeight="@dimen/primer_input_spacing_horiz" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Primer.FormInput.Layout"
             android:layout_width="0dp"
@@ -88,15 +83,15 @@
 
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/primer_input_spacing_vert" />
-
     <TextView
         android:id="@+id/card_form_error_message"
         style="@style/Primer.Text.Danger"
+        android:visibility="invisible"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
