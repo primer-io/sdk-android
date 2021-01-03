@@ -7,7 +7,7 @@ import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.DeferredToken
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.CheckoutDismissReason
+import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
 
@@ -42,6 +42,8 @@ class UniversalCheckout private constructor(
   ) {
     log("Starting checkout activity")
 
+    subscription?.unregister()
+
     this.listener = listener
     this.subscription = EventBus.subscribe(this)
 
@@ -60,10 +62,6 @@ class UniversalCheckout private constructor(
 
       context.startActivity(intent)
     }
-  }
-
-  private fun showProgressIndicator(visible: Boolean) {
-    EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
   }
 
   private fun destroy() {
@@ -120,21 +118,21 @@ class UniversalCheckout private constructor(
      * Dismiss the checkout
      */
     fun dismiss() {
-      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutDismissReason.DISMISSED))
+      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_CLIENT))
     }
 
     /**
      * Toggle the loading screen
      */
     fun showProgressIndicator(visible: Boolean) {
-      instance?.showProgressIndicator(visible)
+      EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
     }
 
     /**
      * Show a success screen then dismiss
      */
-    fun showSuccess() {
-      EventBus.broadcast(CheckoutEvent.ShowSuccess())
+    fun showSuccess(dismissDelay: Int = 3000) {
+      EventBus.broadcast(CheckoutEvent.ShowSuccess(dismissDelay))
     }
 
     /**

@@ -1,5 +1,5 @@
 package io.primer.android.model.dto
 
-data class CheckoutDismissInfo(
-  val reason: CheckoutDismissReason
+data class CheckoutExitInfo(
+  val reason: CheckoutExitReason
 )

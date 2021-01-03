@@ -8,7 +8,8 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
-import io.primer.android.model.dto.CheckoutDismissInfo
+import io.primer.android.model.dto.CheckoutExitInfo
+import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.ui.fragments.*
@@ -24,6 +25,7 @@ import kotlinx.serialization.serializer
 internal class CheckoutSheetActivity : AppCompatActivity() {
   private val log = Logger("checkout-activity")
   private var subscription: EventBus.SubscriptionHandle? = null
+  private var exited = false
   private lateinit var model: Model
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
@@ -100,22 +102,41 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     subscription = EventBus.subscribe {
       when (it) {
         is CheckoutEvent.DismissInternal -> {
-          EventBus.broadcast(CheckoutEvent.Dismissed(CheckoutDismissInfo(it.data)))
-          finish()
+          onExit(it.data)
         }
         is CheckoutEvent.ShowSuccess -> {
-          openFragment(SuccessFragment.newInstance())
+          openFragment(SuccessFragment.newInstance(it.delay))
+        }
+        is CheckoutEvent.ToggleProgressIndicator -> {
+          onToggleProgressIndicator(it.data)
         }
       }
     }
   }
 
-  private fun openFragment(fragment: Fragment) {
-    openFragment(NewFragmentBehaviour({ fragment }))
+  private fun onExit(reason: CheckoutExitReason) {
+    if (!exited) {
+      log("Exiting!")
+      exited = true
+      EventBus.broadcast(CheckoutEvent.Exit(CheckoutExitInfo(reason)))
+      finish()
+    }
+  }
+
+  private fun openFragment(fragment: Fragment, returnToPreviousOnBack: Boolean = false) {
+    openFragment(NewFragmentBehaviour({ fragment }, returnToPreviousOnBack))
   }
 
   private fun openFragment(behaviour: NewFragmentBehaviour) {
     behaviour.execute(sheet)
+  }
+
+  private fun onToggleProgressIndicator(visible: Boolean) {
+    if (visible) {
+      openFragment(ProgressIndicatorFragment.newInstance(), true)
+    } else {
+      sheet.childFragmentManager.popBackStack()
+    }
   }
 
   override fun onDestroy() {

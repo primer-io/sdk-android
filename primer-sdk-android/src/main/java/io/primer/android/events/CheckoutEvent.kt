@@ -1,8 +1,8 @@
 package io.primer.android.events
 
 import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.CheckoutDismissInfo
-import io.primer.android.model.dto.CheckoutDismissReason
+import io.primer.android.model.dto.CheckoutExitInfo
+import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.PaymentMethodToken
 
 abstract class CheckoutEvent(
@@ -24,10 +24,10 @@ abstract class CheckoutEvent(
   class TokenRemovedFromVault(val data: PaymentMethodToken) :
     PublicCheckoutEvent(CheckoutEventType.TOKEN_REMOVED_FROM_VAULT)
 
-  class Dismissed(val data: CheckoutDismissInfo) :
-    PublicCheckoutEvent(CheckoutEventType.DISMISS)
+  class Exit(val data: CheckoutExitInfo) :
+    PublicCheckoutEvent(CheckoutEventType.EXIT)
 
   class ToggleProgressIndicator(val data: Boolean) : PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
-  class DismissInternal(val data: CheckoutDismissReason) : PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
-  class ShowSuccess : PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
+  class DismissInternal(val data: CheckoutExitReason) : PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
+  class ShowSuccess(val delay: Int = 3000) : PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
 }

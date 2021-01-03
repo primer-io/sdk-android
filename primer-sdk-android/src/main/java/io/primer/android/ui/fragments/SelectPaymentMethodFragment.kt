@@ -27,16 +27,6 @@ internal class SelectPaymentMethodFragment : Fragment() {
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
 
-  override fun onResume() {
-    super.onResume()
-    log("Fragment Resumed!")
-  }
-
-  override fun onPause() {
-    super.onPause()
-    log("fragment Paused!")
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     viewModel = PrimerViewModel.getInstance(requireActivity())

@@ -14,8 +14,8 @@ import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.CheckoutDismissInfo
-import io.primer.android.model.dto.CheckoutDismissReason
+import io.primer.android.model.dto.CheckoutExitInfo
+import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
 
@@ -69,8 +69,8 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
-    EventBus.broadcast(CheckoutEvent.Dismissed(
-      CheckoutDismissInfo(CheckoutDismissReason.DISMISSED_BY_USER))
+    EventBus.broadcast(CheckoutEvent.DismissInternal(
+      CheckoutExitReason.DISMISSED_BY_USER)
     )
   }
 
@@ -88,7 +88,7 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
     if (canGoBack) {
       childFragmentManager.popBackStackImmediate()
     } else {
-      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutDismissReason.DISMISSED_BY_USER))
+      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_USER))
       dialog.dismiss()
     }
 
