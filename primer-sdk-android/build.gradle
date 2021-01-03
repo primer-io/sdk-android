@@ -73,3 +73,35 @@ repositories {
         url "https://kotlin.bintray.com/kotlinx"
     }
 }
+
+subprojects {
+    tasks.withType(Javadoc).all { enabled = false }
+}
+
+ext {
+    userOrganisation = 'primer-io'
+
+    bintrayRepo = 'Android'
+    bintrayName = 'io.primer.android'
+
+    publishedGroupId = 'io.primer.android'
+    libraryName = 'android'
+    artifact = 'android'
+
+    libraryDescription = 'Primer SDK for Android'
+
+    siteUrl = 'https://github.com/primer-io/primer-sdk-android'
+    gitUrl = 'https://github.com/primer-io/primer-sdk-android.git'
+
+    libraryVersion = '1.0.0-beta.0'
+
+    developerId = 'primer'
+    developerName = 'Primer Developers'
+    developerEmail = 'developers@primerapi.com'
+
+    licenseName = 'MIT'
+    licenseUrl = 'https://tldrlegal.com/license/mit-license#fulltext'
+    allLicenses = ["MIT"]
+}
+
+apply from: 'publish.gradle'
