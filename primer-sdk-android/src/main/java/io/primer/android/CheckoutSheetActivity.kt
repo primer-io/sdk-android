@@ -4,14 +4,17 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
+import io.primer.android.model.dto.CheckoutDismissInfo
 import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.ui.fragments.*
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
-import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.BaseViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -20,6 +23,7 @@ import kotlinx.serialization.serializer
 
 internal class CheckoutSheetActivity : AppCompatActivity() {
   private val log = Logger("checkout-activity")
+  private var subscription: EventBus.SubscriptionHandle? = null
   private lateinit var model: Model
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
@@ -45,13 +49,15 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
     attachViewModelListeners()
 
+    attachEventListeners()
+
     // Open the bottom sheet
     openSheet()
   }
 
   private inline fun <reified T> unmarshal(name: String): T {
     val serialized = intent.getStringExtra(name)
-    return json.decodeFromString<T>(serializer(), serialized!!)
+    return json.decodeFromString(serializer(), serialized!!)
   }
 
   private fun <T : BaseViewModel> initializeViewModel(
@@ -88,14 +94,20 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         }
       }
     })
+  }
 
-    viewModel.sheetDismissed.observe(this, { dismissed ->
-      log("Sheet dismissed changed: $dismissed")
-
-      if (dismissed) {
-        finish()
+  private fun attachEventListeners() {
+    subscription = EventBus.subscribe {
+      when (it) {
+        is CheckoutEvent.DismissInternal -> {
+          EventBus.broadcast(CheckoutEvent.Dismissed(CheckoutDismissInfo(it.data)))
+          finish()
+        }
+        is CheckoutEvent.ShowSuccess -> {
+          openFragment(SuccessFragment.newInstance())
+        }
       }
-    })
+    }
   }
 
   private fun openFragment(fragment: Fragment) {
@@ -104,6 +116,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
   private fun openFragment(behaviour: NewFragmentBehaviour) {
     behaviour.execute(sheet)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    subscription?.unregister()
+    subscription = null
   }
 
   private fun openSheet() {

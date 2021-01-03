@@ -39,7 +39,6 @@ import java.util.*
  */
 internal class CardFormFragment : Fragment() {
   private val log = Logger("card-form")
-  private lateinit var mRoot: ViewGroup
   private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: ViewGroup
   private lateinit var submitButtonText: TextView
@@ -58,8 +57,7 @@ internal class CardFormFragment : Fragment() {
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
-    mRoot = inflater.inflate(R.layout.fragment_card_form, container, false) as ViewGroup
-    return mRoot
+    return inflater.inflate(R.layout.fragment_card_form, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -20,7 +20,7 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
 
   val keyboardVisible = MutableLiveData(false)
 
-  val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
+//  val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
 
   val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
@@ -36,9 +36,9 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
 
   val amount = MutableLiveData(model.config.amount)
 
-  fun setSheetDismissed(dismissed: Boolean) {
-    sheetDismissed.value = dismissed
-  }
+//  fun setSheetDismissed(dismissed: Boolean) {
+//    sheetDismissed.value = dismissed
+//  }
 
   fun setSelectedPaymentMethod(pm: PaymentMethodDescriptor) {
     selectedPaymentMethod.value = pm

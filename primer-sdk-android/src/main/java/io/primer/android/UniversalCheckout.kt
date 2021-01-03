@@ -7,13 +7,14 @@ import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.DeferredToken
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.CheckoutDismissReason
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
 
 class UniversalCheckout private constructor(
   private val context: Context,
   authTokenProvider: IClientTokenProvider,
-) {
+): EventBus.EventListener {
   private val log = Logger("primer")
   private val token = DeferredToken(authTokenProvider)
   private var paymentMethods: List<PaymentMethod> = ArrayList()
@@ -29,11 +30,11 @@ class UniversalCheckout private constructor(
     CHECKOUT, ADD_PAYMENT_METHOD,
   }
 
-  fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
+  private fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
     this.paymentMethods = paymentMethods
   }
 
-  fun show(
+  private fun show(
     listener: EventListener,
     uxMode: UXMode? = null,
     amount: Int? = null,
@@ -42,13 +43,7 @@ class UniversalCheckout private constructor(
     log("Starting checkout activity")
 
     this.listener = listener
-    this.subscription = EventBus.subscribe(object : EventBus.EventListener {
-      override fun onEvent(e: CheckoutEvent) {
-        if (e.public) {
-          handleEvent(e)
-        }
-      }
-    })
+    this.subscription = EventBus.subscribe(this)
 
     token.observe {
       val config = CheckoutConfig.create(
@@ -67,13 +62,19 @@ class UniversalCheckout private constructor(
     }
   }
 
-  fun destroy() {
+  private fun showProgressIndicator(visible: Boolean) {
+    EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
+  }
+
+  private fun destroy() {
     this.subscription?.unregister()
     this.subscription = null
   }
 
-  private fun handleEvent(e: CheckoutEvent) {
-    listener?.onCheckoutEvent(e)
+  override fun onEvent(e: CheckoutEvent) {
+    if (e.public) {
+      listener?.onCheckoutEvent(e)
+    }
   }
 
   companion object {
@@ -113,6 +114,27 @@ class UniversalCheckout private constructor(
       currency: String? = null,
     ) {
       instance?.show(listener, uxMode, amount, currency)
+    }
+
+    /**
+     * Dismiss the checkout
+     */
+    fun dismiss() {
+      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutDismissReason.DISMISSED))
+    }
+
+    /**
+     * Toggle the loading screen
+     */
+    fun showProgressIndicator(visible: Boolean) {
+      instance?.showProgressIndicator(visible)
+    }
+
+    /**
+     * Show a success screen then dismiss
+     */
+    fun showSuccess() {
+      EventBus.broadcast(CheckoutEvent.ShowSuccess())
     }
 
     /**

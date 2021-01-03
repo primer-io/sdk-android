@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, UniversalCheckou
         queue.add(
             JsonObjectRequest(
                 Request.Method.POST,
-                "http://100.65.23.18/token",
+                "http://192.168.0.107/token",
                 body,
                 { response -> callback(response.getString("clientToken")) },
                 { error -> onError(error) }
@@ -50,16 +50,15 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, UniversalCheckou
             PaymentMethod.PayPal(buttonColor = "blue")
         ))
 
-        UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.ADD_PAYMENT_METHOD, amount = 1234, currency = "EUR")
+        showCheckout()
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            renderCheckout()
+            showCheckout()
         }
     }
 
-    private fun renderCheckout() {
+    private fun showCheckout() {
         Log.i("primer.ExampleApp", "Creating checkout")
-
         UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.ADD_PAYMENT_METHOD, amount = 1234, currency = "EUR")
     }
 

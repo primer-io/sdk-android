@@ -11,7 +11,11 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.CheckoutDismissInfo
+import io.primer.android.model.dto.CheckoutDismissReason
 import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
 
@@ -65,7 +69,9 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
   override fun onDismiss(dialog: DialogInterface) {
     super.onDismiss(dialog)
-    viewModel.setSheetDismissed(true)
+    EventBus.broadcast(CheckoutEvent.Dismissed(
+      CheckoutDismissInfo(CheckoutDismissReason.DISMISSED_BY_USER))
+    )
   }
 
   private fun onKeyPress(dialog: DialogInterface, keyCode: Int, event: KeyEvent?): Boolean {
@@ -82,6 +88,7 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
     if (canGoBack) {
       childFragmentManager.popBackStackImmediate()
     } else {
+      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutDismissReason.DISMISSED_BY_USER))
       dialog.dismiss()
     }
 

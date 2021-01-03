@@ -60,7 +60,7 @@
     </style>
 
 
-    <style name="Primer.Text.Danger" parent="Primer.Text">
+    <style name="Primer.Text.Small.Danger" parent="Primer.Text.Small">
         <item name="android:textColor">@color/primer_app_danger</item>
     </style>
 
