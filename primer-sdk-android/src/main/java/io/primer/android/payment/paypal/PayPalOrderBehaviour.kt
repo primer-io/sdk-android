@@ -1,6 +1,8 @@
 package io.primer.android.payment.paypal
 
 import android.net.Uri
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -23,7 +25,6 @@ internal class PayPalOrderBehaviour(
       tokenizationViewModel?.createPayPalOrder(id = it, returnUrl = returnUrl, cancelUrl = cancelUrl)?.observe { e ->
         when (e) {
           is Observable.ObservableSuccessEvent -> {
-            log("ORDER: " + e.data.toString())
             callback(e.data.getString("approvalUrl"))
           }
         }

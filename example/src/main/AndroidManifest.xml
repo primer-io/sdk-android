@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="io.primer.android.WebviewInteropActivity"
+        <activity android:name="io.primer.android.WebBrowserInteropActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

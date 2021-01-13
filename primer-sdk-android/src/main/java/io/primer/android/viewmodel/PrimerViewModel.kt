@@ -103,12 +103,10 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
   override fun onEvent(e: CheckoutEvent) {
     when (e) {
       is CheckoutEvent.TokenRemovedFromVault -> {
-        log("REmoving TOKEN :DDD")
         vaultedPaymentMethods.value =
           vaultedPaymentMethods.value?.filter { it.token != e.data.token }
       }
       is CheckoutEvent.TokenAddedToVault -> {
-        log("Adding TOKEN :DDD")
         if (vaultedPaymentMethods.value?.find { it.analyticsId == e.data.analyticsId } == null) {
           vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(e.data)
         }

@@ -1,16 +1,11 @@
 package io.primer.android.payment
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import io.primer.android.R
-import io.primer.android.WebviewInteropActivity
 import io.primer.android.WebviewInteropRegister
-import io.primer.android.model.Observable
-import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 
 internal abstract class SelectedPaymentMethodBehaviour

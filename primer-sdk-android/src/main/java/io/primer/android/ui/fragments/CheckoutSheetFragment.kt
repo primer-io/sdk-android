@@ -82,8 +82,6 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
     val canGoBack = childFragmentManager.backStackEntryCount > 0
 
-    log("Can go back? $canGoBack - ${childFragmentManager.backStackEntryCount}")
-
     if (canGoBack) {
       childFragmentManager.popBackStackImmediate()
     } else {

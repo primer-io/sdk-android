@@ -2,6 +2,8 @@ package io.primer.android.model
 
 import android.os.Handler
 import android.os.Looper
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.ClientToken
@@ -62,7 +64,11 @@ internal class APIClient(token: ClientToken) : IAPIClient {
 
     thread.start()
 
-    return observable
+    return observable.observe {
+      if (it is Observable.ObservableErrorEvent) {
+        EventBus.broadcast(CheckoutEvent.ApiError(it.error))
+      }
+    }
   }
 
   private fun getJSON(response: Response): JSONObject {

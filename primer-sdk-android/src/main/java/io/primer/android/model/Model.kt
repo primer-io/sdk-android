@@ -26,13 +26,6 @@ internal class Model(
       when (it) {
         is Observable.ObservableSuccessEvent -> {
           clientSession = it.cast()
-          log("Success! - " + clientSession.toString())
-        }
-        is Observable.ObservableErrorEvent -> {
-          log("Noooo! - ${it.error.description}")
-        }
-        is Observable.ObservableLoadingEvent -> {
-          log("still loading...")
         }
       }
     }
@@ -78,7 +71,6 @@ internal class Model(
 
     return api.delete(url).observe {
       if (it is Observable.ObservableSuccessEvent) {
-        log("TOKEN DELETED! " + it.data.toString())
         EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(token))
       }
     }

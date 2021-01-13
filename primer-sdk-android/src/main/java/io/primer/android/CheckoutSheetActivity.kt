@@ -40,8 +40,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    log("On create !!")
-
     // Unmarshal the configuration from the intent
     model = Model(
       unmarshal("config"),
@@ -81,15 +79,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     return vm
   }
 
-  override fun onActivityReenter(resultCode: Int, data: Intent?) {
-    super.onActivityReenter(resultCode, data)
-    log("Activity Re enter!")
-  }
-
   override fun onResume() {
     super.onResume()
-    log("Activity Resumed!")
-    handleWebviewCallbacks()
+    WebviewInteropRegister.invokeAll()
   }
 
   private fun attachViewModelListeners() {
@@ -169,9 +161,5 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         show(it, tag)
       }
     }
-  }
-
-  private fun handleWebviewCallbacks() {
-    WebviewInteropRegister.invokeAll()
   }
 }

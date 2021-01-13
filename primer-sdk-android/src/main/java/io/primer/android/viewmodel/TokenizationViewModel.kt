@@ -54,18 +54,15 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
       when (it) {
         is Observable.ObservableLoadingEvent -> {
           status.value = TokenizationStatus.LOADING
-          log("Loading...")
         }
         is Observable.ObservableSuccessEvent -> {
           result.value = it.data
           status.value = TokenizationStatus.SUCCESS
-          log("Tokenize Success!")
           log(it.data.toString())
         }
         is Observable.ObservableErrorEvent -> {
           error.value = it.error
           status.value = TokenizationStatus.ERROR
-          log("Tokenize Error!")
           log(it.error.toString())
         }
       }

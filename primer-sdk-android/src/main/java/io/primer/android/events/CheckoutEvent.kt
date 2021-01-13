@@ -27,6 +27,8 @@ abstract class CheckoutEvent(
   class Exit(val data: CheckoutExitInfo) :
     PublicCheckoutEvent(CheckoutEventType.EXIT)
 
+  class ApiError(val data: APIError) : PublicCheckoutEvent(CheckoutEventType.API_ERROR)
+
   class ToggleProgressIndicator(val data: Boolean) : PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
   class DismissInternal(val data: CheckoutExitReason) : PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
   class ShowSuccess(val delay: Int = 3000) : PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
