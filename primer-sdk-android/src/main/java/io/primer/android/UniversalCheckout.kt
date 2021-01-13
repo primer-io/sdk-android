@@ -47,6 +47,8 @@ class UniversalCheckout private constructor(
     this.listener = listener
     this.subscription = EventBus.subscribe(this)
 
+    WebviewInteropRegister.init(context.packageName)
+
     token.observe {
       val config = CheckoutConfig.create(
         clientToken = it,
@@ -86,6 +88,13 @@ class UniversalCheckout private constructor(
       instance = UniversalCheckout(context, authTokenProvider)
     }
 
+    fun showSavedPaymentMethods(listener: UniversalCheckout.EventListener) {
+      return show(listener, UXMode.ADD_PAYMENT_METHOD)
+    }
+
+    fun showCheckout(listener: EventListener, amount: Int, currency: String) {
+      return show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
+    }
 
     /**
      * Initializes the Primer SDK with the Application context. This method assumes that
@@ -100,18 +109,6 @@ class UniversalCheckout private constructor(
      */
     fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
       instance?.loadPaymentMethods(paymentMethods)
-    }
-
-    /**
-     * Show the checkout sheet and attach a listener which will receive callback events
-     */
-    fun show(
-      listener: EventListener,
-      uxMode: UXMode? = null,
-      amount: Int? = null,
-      currency: String? = null,
-    ) {
-      instance?.show(listener, uxMode, amount, currency)
     }
 
     /**
@@ -141,6 +138,19 @@ class UniversalCheckout private constructor(
     fun destroy() {
       instance?.destroy()
       instance = null
+    }
+
+
+    /**
+     * Show the checkout sheet and attach a listener which will receive callback events
+     */
+    private fun show(
+      listener: EventListener,
+      uxMode: UXMode,
+      amount: Int? = null,
+      currency: String? = null,
+    ) {
+      instance?.show(listener, uxMode, amount, currency)
     }
   }
 }

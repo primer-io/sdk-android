@@ -1,6 +1,9 @@
 package io.primer.android
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -12,12 +15,15 @@ import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.ui.fragments.*
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
+import io.primer.android.viewmodel.*
 import io.primer.android.viewmodel.BaseViewModel
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
@@ -33,6 +39,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    log("On create !!")
 
     // Unmarshal the configuration from the intent
     model = Model(
@@ -73,6 +81,17 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     return vm
   }
 
+  override fun onActivityReenter(resultCode: Int, data: Intent?) {
+    super.onActivityReenter(resultCode, data)
+    log("Activity Re enter!")
+  }
+
+  override fun onResume() {
+    super.onResume()
+    log("Activity Resumed!")
+    handleWebviewCallbacks()
+  }
+
   private fun attachViewModelListeners() {
     viewModel.viewStatus.observe(this, {
       val fragment = when (it) {
@@ -88,11 +107,11 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     })
 
     viewModel.selectedPaymentMethod.observe(this, { pm ->
-      if (pm != null) {
-        val behaviour = pm.selectedBehaviour
-
-        if (behaviour is NewFragmentBehaviour) {
-          openFragment(behaviour)
+      pm?.let {
+        when (val behaviour = it.selectedBehaviour) {
+          is NewFragmentBehaviour -> openFragment(behaviour)
+          is WebBrowserIntentBehaviour -> behaviour.execute(this, tokenizationViewModel)
+          else -> {}
         }
       }
     })
@@ -116,7 +135,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
   private fun onExit(reason: CheckoutExitReason) {
     if (!exited) {
-      log("Exiting!")
       exited = true
       EventBus.broadcast(CheckoutEvent.Exit(CheckoutExitInfo(reason)))
       finish()
@@ -147,10 +165,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
   private fun openSheet() {
     supportFragmentManager.let {
-      log("Showing checkout sheet")
       sheet.apply {
         show(it, tag)
       }
     }
+  }
+
+  private fun handleWebviewCallbacks() {
+    WebviewInteropRegister.invokeAll()
   }
 }

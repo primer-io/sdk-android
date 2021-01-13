@@ -39,7 +39,6 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
     behavior.isHideable = false
     behavior.isDraggable = false
-
     dialog.setOnKeyListener(this::onKeyPress)
   }
 

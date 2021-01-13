@@ -84,6 +84,10 @@ internal class Model(
     }
   }
 
+  fun post(pathname: String, body: JSONObject? = null): Observable {
+    return api.post(APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname), body)
+  }
+
   private fun handleTokenizationResult(e: Observable.ObservableSuccessEvent) {
     val token: PaymentMethodToken = e.cast()
 

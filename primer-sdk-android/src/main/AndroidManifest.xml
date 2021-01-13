@@ -5,11 +5,21 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
+        <activity android:name=".WebviewInteropActivity" android:label="" android:theme="@android:style/Theme.NoDisplay"></activity>
         <activity
             android:name=".CheckoutSheetActivity"
             android:label=""
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <data android:scheme="primer_android" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

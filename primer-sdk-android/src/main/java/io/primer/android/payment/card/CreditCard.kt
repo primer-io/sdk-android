@@ -59,14 +59,14 @@ internal class CreditCard(
   override fun toPaymentInstrument(): JSONObject {
     val json = JSONObject()
 
-    json.put(CARD_NAME_FILED_NAME, values[CARD_NAME_FILED_NAME]?.trim() ?: "")
+    json.put(CARD_NAME_FILED_NAME, getStringValue(CARD_NAME_FILED_NAME).trim())
     json.put(
       CARD_NUMBER_FIELD_NAME,
-      values[CARD_NUMBER_FIELD_NAME]?.replace("\\s".toRegex(), "") ?: ""
+      getStringValue(CARD_NUMBER_FIELD_NAME).replace("\\s".toRegex(), "")
     )
-    json.put(CARD_CVV_FIELD_NAME, values[CARD_CVV_FIELD_NAME] ?: "")
+    json.put(CARD_CVV_FIELD_NAME, getStringValue(CARD_CVV_FIELD_NAME))
 
-    val expiry = ExpiryDateFormatter.fromString(values[CARD_EXPIRY_FIELD_NAME] ?: "")
+    val expiry = ExpiryDateFormatter.fromString(getStringValue(CARD_EXPIRY_FIELD_NAME))
 
     json.put(CARD_EXPIRY_MONTH_FIELD_NAME, expiry.getMonth())
     json.put(CARD_EXPIRY_YEAR_FIELD_NAME, expiry.getYear())
@@ -153,6 +153,6 @@ internal class CreditCard(
   }
 
   private fun getSanitizedValue(key: String): String {
-    return values[key]?.trim() ?: ""
+    return getStringValue(key).trim()
   }
 }

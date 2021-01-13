@@ -6,11 +6,13 @@ import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodToken
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 internal abstract class TokenAttributes private constructor(
   token: PaymentMethodToken,
-  @DrawableRes val icon: Int
+  @DrawableRes val icon: Int,
+  val iconScale: Float = 1.0f
 ) {
   val id = token.token
 
@@ -36,11 +38,20 @@ internal abstract class TokenAttributes private constructor(
     }
   }
 
+  internal class PayPalBillingAgreementAttributes(token: PaymentMethodToken): TokenAttributes(token, R.drawable.icon_paypal_sm) {
+    private val log = Logger("paypal")
+
+    override fun getDescription(context: Context): String {
+      return data["externalPayerInfo"]?.jsonObject?.get("email")?.jsonPrimitive?.contentOrNull ?: "PayPal"
+    }
+  }
+
   companion object {
     fun create(token: PaymentMethodToken): TokenAttributes? {
       // TODO: hate this - change it
       return when (token.paymentInstrumentType) {
         PAYMENT_CARD_TYPE -> PaymentCardAttributes(token)
+        PAYPAL_BILLING_AGREEMENT_TYPE -> PayPalBillingAgreementAttributes(token)
         else -> null
       }
     }

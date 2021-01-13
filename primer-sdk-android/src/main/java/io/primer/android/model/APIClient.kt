@@ -33,7 +33,7 @@ internal class APIClient(token: ClientToken) : IAPIClient {
   private fun request(builder: Request.Builder): Observable {
     val request = builder
       .addHeader("Content-Type", "application/json")
-      .addHeader("Primer-SDK-Version", "1.0.0-beta.0")
+      .addHeader("Primer-SDK-Version", "1.0.0-beta.1")
       .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
       .addHeader("Primer-Client-Token", clientToken.accessToken)
       .build()

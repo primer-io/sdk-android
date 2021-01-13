@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, UniversalCheckou
 
     override fun onCheckoutEvent(e: CheckoutEvent) {
         Log.i("primer.ExampleApp", "Checkout event! ${e.type.name}")
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +62,7 @@ class MainActivity : AppCompatActivity(), IClientTokenProvider, UniversalCheckou
 
     private fun showCheckout() {
         Log.i("primer.ExampleApp", "Creating checkout")
-        UniversalCheckout.show(this, uxMode = UniversalCheckout.UXMode.ADD_PAYMENT_METHOD, amount = 1234, currency = "EUR")
+        UniversalCheckout.showSavedPaymentMethods(this)
     }
 
     private fun onError(error: VolleyError) {

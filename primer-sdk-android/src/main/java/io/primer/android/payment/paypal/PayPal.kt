@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import io.primer.android.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
+import io.primer.android.R
+import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.*
 import io.primer.android.viewmodel.PrimerViewModel
@@ -17,7 +19,11 @@ internal class PayPal(
     get() = PAYPAL_IDENTIFIER
 
   override val selectedBehaviour: SelectedPaymentMethodBehaviour
-    get() = NoopBehaviour()
+    get() = if (viewModel.uxMode.value == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+      PayPalBillingAgreementBehaviour(this, viewModel)
+    } else {
+      PayPalOrderBehaviour(this)
+    }
 
   override val type: PaymentMethodType
     get() = PaymentMethodType.SIMPLE_BUTTON
@@ -26,6 +32,6 @@ internal class PayPal(
     get() = VaultCapability.SINGLE_USE_AND_VAULT
 
   override fun createButton(context: Context): View {
-    TODO("Not yet implemented")
+    return View.inflate(context, R.layout.payment_method_button_paypal, null)
   }
 }

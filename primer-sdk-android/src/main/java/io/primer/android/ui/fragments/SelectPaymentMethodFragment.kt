@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationStatus
+import io.primer.android.viewmodel.TokenizationViewModel
 
 /**
  * A simple [Fragment] subclass.
@@ -26,10 +30,12 @@ internal class SelectPaymentMethodFragment : Fragment() {
 
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
+  private lateinit var tokenizationViewModel: TokenizationViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     viewModel = PrimerViewModel.getInstance(requireActivity())
+    tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,8 +44,9 @@ internal class SelectPaymentMethodFragment : Fragment() {
     viewModel.paymentMethods.observe(viewLifecycleOwner, { items ->
       val container: ViewGroup = findViewById(R.id.primer_sheet_payment_methods_list)
 
-      items.forEach { pm ->
+      items.forEachIndexed { i, pm ->
         val button = pm.createButton(requireContext())
+        button.layoutParams = createLayoutParams(i == 0)
 
         container.addView(button)
 
@@ -47,6 +54,8 @@ internal class SelectPaymentMethodFragment : Fragment() {
           viewModel.setSelectedPaymentMethod(pm)
         }
       }
+
+      container.requestLayout()
     })
 
     viewModel.amount.observe(viewLifecycleOwner, {
@@ -62,6 +71,19 @@ internal class SelectPaymentMethodFragment : Fragment() {
 
   private fun <T : View> findViewById(id: Int): T {
     return requireView().findViewById(id)
+  }
+
+  private fun createLayoutParams(isFirst: Boolean): LinearLayout.LayoutParams {
+    val params = LinearLayout.LayoutParams(
+      LinearLayout.LayoutParams.MATCH_PARENT,
+      LinearLayout.LayoutParams.WRAP_CONTENT
+    )
+
+    if (!isFirst) {
+      params.topMargin = 13
+    }
+
+    return params
   }
 
   companion object {

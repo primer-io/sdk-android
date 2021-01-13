@@ -18,7 +18,7 @@ import kotlin.collections.HashMap
 
 internal abstract class PaymentMethodDescriptor(
   protected val viewModel: PrimerViewModel,
-  protected val config: PaymentMethodRemoteConfig
+  val config: PaymentMethodRemoteConfig
 ) {
 
   abstract val identifier: String
@@ -31,10 +31,18 @@ internal abstract class PaymentMethodDescriptor(
 
   abstract fun createButton(context: Context): View
 
-  protected val values: MutableMap<String, String> = HashMap()
+  protected val values: JSONObject = JSONObject()
+
+  protected fun getStringValue(key: String): String {
+    return values.optString(key)
+  }
 
   fun setTokenizableValue(key: String, value: String) {
-    values[key] = value
+    values.put(key, value)
+  }
+
+  fun setTokenizableValue(key: String, value: JSONObject) {
+    values.put(key, value)
   }
 
   open fun validate(): List<SyncValidationError> {
@@ -42,7 +50,7 @@ internal abstract class PaymentMethodDescriptor(
   }
 
   open fun toPaymentInstrument(): JSONObject {
-    return JSONObject(values.toMap())
+    return values
   }
 
   class Factory(private val viewModel: PrimerViewModel) {

@@ -105,7 +105,9 @@ internal class CardFormFragment : Fragment() {
 
     // Click listeners
     submitButton.setOnClickListener {
-      tokenizationViewModel.tokenize()
+      if (tokenizationViewModel.isValid()) {
+        tokenizationViewModel.tokenize()
+      }
     }
 
     // IME action listeners

@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginBottom
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.payment.TokenAttributes
@@ -38,6 +39,9 @@ internal class VaultedPaymentMethodView(context: Context, private val attributes
     mIcon.setImageDrawable(
       ResourcesCompat.getDrawable(mView.context.resources, attributes.icon, null)
     )
+    mIcon.scaleType = ImageView.ScaleType.CENTER_CROP
+    mIcon.scaleX = attributes.iconScale
+    mIcon.scaleY = attributes.iconScale
     mDescription.text = attributes.getDescription(context)
     setEditable(false)
   }
