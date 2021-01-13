@@ -13,7 +13,7 @@ import kotlinx.serialization.serializer
 
 class UniversalCheckout private constructor(
   private val context: Context,
-  authTokenProvider: IClientTokenProvider,
+  authTokenProvider: ClientTokenProvider,
 ): EventBus.EventListener {
   private val log = Logger("primer")
   private val token = DeferredToken(authTokenProvider)
@@ -26,7 +26,7 @@ class UniversalCheckout private constructor(
     fun onCheckoutEvent(e: CheckoutEvent)
   }
 
-  enum class UXMode {
+  internal enum class UXMode {
     CHECKOUT, ADD_PAYMENT_METHOD,
   }
 
@@ -83,7 +83,7 @@ class UniversalCheckout private constructor(
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
-    fun initialize(context: Context, authTokenProvider: IClientTokenProvider) {
+    fun initialize(context: Context, authTokenProvider: ClientTokenProvider) {
       destroy()
       instance = UniversalCheckout(context, authTokenProvider)
     }
@@ -101,7 +101,7 @@ class UniversalCheckout private constructor(
      * the context also implements the IClientTokenProvider interface
      */
     fun initialize(context: Context) {
-      initialize(context, context as IClientTokenProvider)
+      initialize(context, context as ClientTokenProvider)
     }
 
     /**
@@ -128,8 +128,8 @@ class UniversalCheckout private constructor(
     /**
      * Show a success screen then dismiss
      */
-    fun showSuccess(dismissDelay: Int = 3000) {
-      EventBus.broadcast(CheckoutEvent.ShowSuccess(dismissDelay))
+    fun showSuccess(autoDismissDelay: Int = 3000) {
+      EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay))
     }
 
     /**

@@ -1,5 +1,5 @@
 package io.primer.android
 
-interface IClientTokenProvider {
+interface ClientTokenProvider {
   fun createToken(callback: ((String) -> Unit))
 }

@@ -1,8 +1,6 @@
 package com.example.myapplication
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +12,7 @@ import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity(), IClientTokenProvider, UniversalCheckout.EventListener {
+class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout.EventListener {
     override fun createToken(callback: (String) -> Unit) {
         val queue = Volley.newRequestQueue(this)
 
