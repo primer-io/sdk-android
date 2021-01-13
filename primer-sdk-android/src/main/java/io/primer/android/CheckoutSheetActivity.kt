@@ -1,9 +1,6 @@
 package io.primer.android
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,13 +14,8 @@ import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.ui.fragments.*
-import io.primer.android.ui.fragments.CheckoutSheetFragment
-import io.primer.android.ui.fragments.InitializingFragment
-import io.primer.android.ui.fragments.SelectPaymentMethodFragment
-import io.primer.android.viewmodel.*
 import io.primer.android.viewmodel.BaseViewModel
 import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
@@ -103,7 +95,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         when (val behaviour = it.selectedBehaviour) {
           is NewFragmentBehaviour -> openFragment(behaviour)
           is WebBrowserIntentBehaviour -> behaviour.execute(this, tokenizationViewModel)
-          else -> {}
+          else -> {
+          }
         }
       }
     })

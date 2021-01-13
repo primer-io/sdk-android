@@ -15,7 +15,9 @@ internal object EventBus {
     subscribers.add(l)
 
     return object : SubscriptionHandle {
-      override fun unregister() { subscribers.remove(l) }
+      override fun unregister() {
+        subscribers.remove(l)
+      }
     }
   }
 

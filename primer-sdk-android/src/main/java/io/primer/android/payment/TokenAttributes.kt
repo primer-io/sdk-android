@@ -38,11 +38,13 @@ internal abstract class TokenAttributes private constructor(
     }
   }
 
-  internal class PayPalBillingAgreementAttributes(token: PaymentMethodToken): TokenAttributes(token, R.drawable.icon_paypal_sm) {
+  internal class PayPalBillingAgreementAttributes(token: PaymentMethodToken) :
+    TokenAttributes(token, R.drawable.icon_paypal_sm) {
     private val log = Logger("paypal")
 
     override fun getDescription(context: Context): String {
-      return data["externalPayerInfo"]?.jsonObject?.get("email")?.jsonPrimitive?.contentOrNull ?: "PayPal"
+      return data["externalPayerInfo"]?.jsonObject?.get("email")?.jsonPrimitive?.contentOrNull
+        ?: "PayPal"
     }
   }
 

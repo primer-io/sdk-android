@@ -12,7 +12,6 @@ import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
 import org.json.JSONObject
 import java.util.*
 

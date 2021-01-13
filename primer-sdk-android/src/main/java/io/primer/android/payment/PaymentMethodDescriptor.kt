@@ -14,7 +14,6 @@ import io.primer.android.payment.paypal.PayPal
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import java.util.*
-import kotlin.collections.HashMap
 
 internal abstract class PaymentMethodDescriptor(
   protected val viewModel: PrimerViewModel,

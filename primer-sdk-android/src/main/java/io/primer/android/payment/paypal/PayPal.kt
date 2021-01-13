@@ -7,7 +7,10 @@ import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.payment.*
+import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PrimerViewModel
 
 internal class PayPal(

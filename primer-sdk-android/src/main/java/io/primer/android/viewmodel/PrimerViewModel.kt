@@ -7,13 +7,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.APIEndpoint
 import io.primer.android.model.Model
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.payment.PaymentMethodDescriptor
-import org.json.JSONObject
 import java.util.*
 
 internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.EventListener {

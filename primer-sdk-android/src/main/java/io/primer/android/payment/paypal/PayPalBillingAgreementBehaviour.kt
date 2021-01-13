@@ -20,7 +20,11 @@ internal class PayPalBillingAgreementBehaviour(
 
   override fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit)) {
     paypal.config.id?.let {
-      tokenizationViewModel?.createPayPalBillingAgreement(id = it, returnUrl = returnUrl, cancelUrl = cancelUrl)?.observe { e ->
+      tokenizationViewModel?.createPayPalBillingAgreement(
+        id = it,
+        returnUrl = returnUrl,
+        cancelUrl = cancelUrl
+      )?.observe { e ->
         when (e) {
           is Observable.ObservableSuccessEvent -> {
             callback(e.data.getString("approvalUrl"))

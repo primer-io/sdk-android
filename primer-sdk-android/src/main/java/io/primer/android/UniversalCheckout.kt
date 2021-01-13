@@ -14,7 +14,7 @@ import kotlinx.serialization.serializer
 class UniversalCheckout private constructor(
   private val context: Context,
   authTokenProvider: ClientTokenProvider,
-): EventBus.EventListener {
+) : EventBus.EventListener {
   private val log = Logger("primer")
   private val token = DeferredToken(authTokenProvider)
   private var paymentMethods: List<PaymentMethod> = ArrayList()

@@ -5,7 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
-        <activity android:name=".WebBrowserInteropActivity" android:label="" android:theme="@android:style/Theme.NoDisplay"></activity>
+        <activity
+            android:name=".WebBrowserInteropActivity"
+            android:label=""
+            android:theme="@android:style/Theme.NoDisplay"></activity>
         <activity
             android:name=".CheckoutSheetActivity"
             android:label=""

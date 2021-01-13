@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/paypal_preview_button"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,11 +10,12 @@
     android:focusable="true"
     android:gravity="center"
     android:orientation="horizontal">
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="@dimen/primer_payment_method_preview_button_height"
-        android:src="@drawable/icon_paypal"
         android:scaleType="center"
         android:scaleX="0.65"
-        android:scaleY="0.65"/>
+        android:scaleY="0.65"
+        android:src="@drawable/icon_paypal" />
 </LinearLayout>

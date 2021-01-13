@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginBottom
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.payment.TokenAttributes
