@@ -9,7 +9,6 @@ import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CreditCard
-import io.primer.android.payment.googlepay.GooglePay
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
@@ -61,7 +60,6 @@ internal abstract class PaymentMethodDescriptor(
       return when (config.type) {
         PAYMENT_CARD_IDENTIFIER -> CreditCard(viewModel, config, options as PaymentMethod.Card)
         PAYPAL_IDENTIFIER -> PayPal(viewModel, config, options as PaymentMethod.PayPal)
-        GOOGLE_PAY_IDENTIFIER -> GooglePay(viewModel, config, options as PaymentMethod.GooglePay)
         else -> null
       }
     }

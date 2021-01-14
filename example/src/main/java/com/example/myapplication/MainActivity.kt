@@ -47,8 +47,7 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
 
         UniversalCheckout.loadPaymentMethods(listOf(
             PaymentMethod.Card(),
-            PaymentMethod.GooglePay(buttonColor = "white"),
-            PaymentMethod.PayPal(buttonColor = "blue")
+            PaymentMethod.PayPal()
         ))
 
         showCheckout()
