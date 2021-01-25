@@ -22,7 +22,6 @@ internal class NewFragmentBehaviour(
       transaction.addToBackStack(null)
     }
 
-    transaction.setCustomAnimations(R.anim.default_transition_in, R.anim.default_transition_out)
     transaction.replace(R.id.checkout_sheet_content, fragment)
     transaction.commit()
   }
