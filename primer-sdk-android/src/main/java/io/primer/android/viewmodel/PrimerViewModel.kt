@@ -64,7 +64,6 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
               viewStatus.value = getInitialViewStatus()
             }
             is Observable.ObservableErrorEvent -> log("Failed to get payment methods " + vault.error.description)
-            is Observable.ObservableLoadingEvent -> log("Loading payment methods...")
           }
         }
       }

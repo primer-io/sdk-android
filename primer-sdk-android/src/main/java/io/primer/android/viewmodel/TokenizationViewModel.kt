@@ -57,12 +57,10 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
         is Observable.ObservableSuccessEvent -> {
           result.value = it.data
           status.value = TokenizationStatus.SUCCESS
-          log(it.data.toString())
         }
         is Observable.ObservableErrorEvent -> {
           error.value = it.error
           status.value = TokenizationStatus.ERROR
-          log(it.error.toString())
         }
       }
     }
@@ -105,6 +103,16 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
     body.put("cancelUrl", cancelUrl)
 
     return model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)
+  }
+
+  fun createGoCardlessMandate(id: String, bankDetails: JSONObject, customerDetails: JSONObject) : Observable {
+    val body = JSONObject()
+
+    body.put("id", id)
+    body.put("bankDetails", bankDetails)
+    body.put("userDetails", customerDetails)
+
+    return model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)
   }
 
 

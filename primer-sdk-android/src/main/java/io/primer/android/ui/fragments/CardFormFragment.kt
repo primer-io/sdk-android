@@ -21,6 +21,7 @@ import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
+import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
 import io.primer.android.viewmodel.PrimerViewModel
@@ -127,11 +128,7 @@ internal class CardFormFragment : Fragment() {
   }
 
   private fun focusFirstInput() {
-    val input = inputs[CARD_NAME_FILED_NAME] ?: return
-    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-    input.requestFocus()
-    imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+    FieldFocuser.focus(inputs[CARD_NAME_FILED_NAME])
   }
 
   private fun createTextWatcher(name: String): TextWatcher {

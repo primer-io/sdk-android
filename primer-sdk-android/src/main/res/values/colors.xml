@@ -3,6 +3,7 @@
     <color name="primer_border_color">#FFBEC2C4</color>
     <color name="primer_underline_color">#6B000000</color>
     <color name="primer_text_color_default">@android:color/black</color>
+    <color name="primer_text_color_muted">#808080</color>
     <color name="primer_input_placeholder">#8A000000</color>
     <color name="primer_app_primary">#2C98F0</color>
     <color name="primer_app_danger">#FFEB001B</color>

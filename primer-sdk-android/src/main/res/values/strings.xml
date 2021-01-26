@@ -2,6 +2,7 @@
     <string name="pay_amount">Pay %1$s</string>
     <string name="add_new_payment_method">Add a payment method</string>
     <string name="pay_by_card">Pay by card</string>
+    <string name="add_bank_account">Add bank account</string>
     <string name="other_ways_to_pay">Other ways to pay</string>
     <string name="edit_saved_payment_methods">Edit saved cards</string>
     <string name="edit">Edit</string>
@@ -10,6 +11,7 @@
     <string name="add_card">Add card</string>
     <string name="card_network_fallback">Card</string>
     <string name="success_text">Success!</string>
+    <string name="bank_account">Bank Account</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>
@@ -19,9 +21,28 @@
     <string name="form_error_required">%1$s is required</string>
     <string name="form_error_invalid">%1$s is invalid</string>
     <string name="payment_method_error">Choose another payment method</string>
+    <string name="sepa_core_description">SEPA Core Direct Debit Mandate.</string>
+    <string name="iban">IBAN</string>
+    <string name="confirm_dd_mandate">Confirm mandate</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="address_line_1">Address</string>
+    <string name="address_line_2">Address (extended)</string>
+    <string name="address_city">City</string>
+    <string name="address_state">State</string>
+    <string name="address_country_code">Country</string>
+    <string name="address_postal_code">Postal Code</string>
+    <string name="dd_mandate_error">Please check that all of your information is correct</string>
+
+    <!-- Navigation -->
+    <string name="cancel">Cancel</string>
+    <string name="next">Next</string>
+    <string name="confirm">Confirm</string>
 
     <!-- Accessibility -->
     <string name="go_back_description">go back</string>
     <string name="success_icon_description">success</string>
 
+    <!--  Legal  -->
+    <string name="dd_mandate_legal">By signing this mandate form, you authorise (A) %1$s to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %1$s.</string>
 </resources>

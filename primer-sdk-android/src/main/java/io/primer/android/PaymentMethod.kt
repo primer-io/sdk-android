@@ -13,4 +13,20 @@ sealed class PaymentMethod(val identifier: String) {
   class PayPal : io.primer.android.PaymentMethod(
     PAYPAL_IDENTIFIER
   )
+
+  @Serializable
+  class GoCardless(
+    val companyName: String,
+    val companyAddress: String,
+    val customerName: String,
+    val customerEmail: String,
+    val customerAddressLine1: String,
+    val customerAddressLine2: String? = null,
+    val customerAddressCity: String,
+    val customerAddressState: String? = null,
+    val customerAddressCountryCode: String,
+    val customerAddressPostalCode: String,
+  ) : io.primer.android.PaymentMethod(
+    GOCARDLESS_IDENTIFIER
+  )
 }

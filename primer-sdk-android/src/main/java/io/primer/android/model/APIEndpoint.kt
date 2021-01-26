@@ -12,6 +12,7 @@ internal class APIEndpoint {
     const val CREATE_PAYPAL_BILLING_AGREEMENT = "/paypal/billing-agreements/create-agreement"
     const val CONFIRM_PAYPAL_BILLING_AGREEMENT = "/paypal/billing-agreements/confirm-agreement"
     const val CREATE_PAYPAL_ORDER = "/paypal/orders/create"
+    const val CREATE_GOCARDLESS_MANDATE = "/gocardless/mandates"
 
     fun get(
       session: ClientSession,

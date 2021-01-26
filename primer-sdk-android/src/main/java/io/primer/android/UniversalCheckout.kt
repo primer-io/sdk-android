@@ -40,8 +40,6 @@ class UniversalCheckout private constructor(
     amount: Int? = null,
     currency: String? = null,
   ) {
-    log("Starting checkout activity")
-
     subscription?.unregister()
 
     this.listener = listener

@@ -59,6 +59,14 @@
         <item name="android:textSize">@dimen/primer_text_size_sm</item>
     </style>
 
+    <style name="Primer.Text.Small.Muted" parent="Primer.Text.Small">
+        <item name="android:textColor">@color/primer_text_color_muted</item>
+    </style>
+
+    <style name="Primer.Text.SmallPrint" parent="Primer.Text">
+        <item name="android:textColor">@color/primer_text_color_muted</item>
+        <item name="android:textSize">@dimen/primer_text_size_xs</item>
+    </style>
 
     <style name="Primer.Text.Small.Danger" parent="Primer.Text.Small">
         <item name="android:textColor">@color/primer_app_danger</item>

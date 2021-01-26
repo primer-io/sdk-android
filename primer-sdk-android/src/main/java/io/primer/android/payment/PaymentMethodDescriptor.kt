@@ -2,13 +2,15 @@ package io.primer.android.payment
 
 import android.content.Context
 import android.view.View
-import io.primer.android.GOOGLE_PAY_IDENTIFIER
+import io.primer.android.*
+import io.primer.android.GOCARDLESS_IDENTIFIER
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PAYPAL_IDENTIFIER
-import io.primer.android.PaymentMethod
+import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CreditCard
+import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
@@ -18,7 +20,6 @@ internal abstract class PaymentMethodDescriptor(
   protected val viewModel: PrimerViewModel,
   val config: PaymentMethodRemoteConfig
 ) {
-
   abstract val identifier: String
 
   abstract val selectedBehaviour: SelectedPaymentMethodBehaviour
@@ -52,6 +53,8 @@ internal abstract class PaymentMethodDescriptor(
   }
 
   class Factory(private val viewModel: PrimerViewModel) {
+    private val log = Logger("payment-method-descriptor-factory")
+
     fun create(
       config: PaymentMethodRemoteConfig,
       options: PaymentMethod
@@ -60,6 +63,7 @@ internal abstract class PaymentMethodDescriptor(
       return when (config.type) {
         PAYMENT_CARD_IDENTIFIER -> CreditCard(viewModel, config, options as PaymentMethod.Card)
         PAYPAL_IDENTIFIER -> PayPal(viewModel, config, options as PaymentMethod.PayPal)
+        GOCARDLESS_IDENTIFIER -> GoCardless(viewModel, config, options as PaymentMethod.GoCardless)
         else -> null
       }
     }

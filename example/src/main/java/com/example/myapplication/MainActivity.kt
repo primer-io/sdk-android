@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +12,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
+import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout.EventListener {
@@ -36,6 +39,21 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
     override fun onCheckoutEvent(e: CheckoutEvent) {
         Log.i("primer.ExampleApp", "Checkout event! ${e.type.name}")
 
+        when(e) {
+            is CheckoutEvent.TokenAddedToVault -> {
+                Log.i("primer.ExampleApp","Customer added a new payment method!")
+                Log.i("primer.ExampleApp", e.data.token)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    UniversalCheckout.showSuccess(autoDismissDelay = 2000)
+                }, 500)
+            }
+            is CheckoutEvent.Exit -> {
+                if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
+                    Log.i("primer.ExampleApp", "Awesome")
+                }
+            }
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,19 +65,24 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
 
         UniversalCheckout.loadPaymentMethods(listOf(
             PaymentMethod.Card(),
-            PaymentMethod.PayPal()
+            PaymentMethod.GoCardless(
+                companyName = "Luko AB",
+                companyAddress = "123 French St, Francetown, France, FR3NCH",
+                customerName = "Will Knowles",
+                customerEmail = "will.jk01@gmail.com",
+                customerAddressPostalCode = "864918",
+                customerAddressLine1 = "123 Fake St",
+                customerAddressCity = "Paris",
+                customerAddressCountryCode = "FR"
+            ),
         ))
 
-        showCheckout()
+        UniversalCheckout.showSavedPaymentMethods(this)
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            showCheckout()
+            Log.i("primer.ExampleApp", "Creating checkout")
+            UniversalCheckout.showSavedPaymentMethods(this)
         }
-    }
-
-    private fun showCheckout() {
-        Log.i("primer.ExampleApp", "Creating checkout")
-        UniversalCheckout.showSavedPaymentMethods(this)
     }
 
     private fun onError(error: VolleyError) {

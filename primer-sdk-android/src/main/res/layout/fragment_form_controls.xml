@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.AppCompat.Button"
+    android:id="@+id/form_button"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/button_primary_bg"
+    android:elevation="@dimen/primer_button_elevation"
+    android:paddingStart="@dimen/primer_button_padding_horiz"
+    android:paddingEnd="@dimen/primer_button_padding_horiz"
+    android:layout_marginTop="32dp"
+    android:layout_gravity="center_horizontal"
+    >
+
+    <TextView
+        android:id="@+id/form_button_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primer_button_primary_fg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <ProgressBar
+        android:id="@+id/form_button_loading"
+        android:layout_width="22dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/form_button_txt"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
