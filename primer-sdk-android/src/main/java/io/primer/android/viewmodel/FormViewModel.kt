@@ -1,12 +1,10 @@
 package io.primer.android.viewmodel
 
-import android.text.InputType
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
-import io.primer.android.ui.fragments.FormSummaryFragment
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -52,7 +50,7 @@ data class FormState(
   val isValid: Boolean = false,
 )
 
-internal class FormViewModel: ViewModel() {
+internal class FormViewModel : ViewModel() {
   private class Validator(private val field: FormField) {
     fun validate(value: String): SyncValidationError? {
       val normalized = (value ?: "").trim()
@@ -114,7 +112,8 @@ internal class FormViewModel: ViewModel() {
 
   var fieldValues: MutableMap<String, String> = HashMap()
 
-  val errors: MutableLiveData<MutableMap<String, SyncValidationError?>> = MutableLiveData(Collections.emptyMap())
+  val errors: MutableLiveData<MutableMap<String, SyncValidationError?>> =
+    MutableLiveData(Collections.emptyMap())
 
   val button: MutableLiveData<ButtonState?> = MutableLiveData()
 
@@ -170,7 +169,8 @@ internal class FormViewModel: ViewModel() {
 
   private fun validate(name: String) {
     val error = getField(name)?.let { Validator(it).validate(fieldValues[name] ?: "") }
-    val nextErrors = errors.value?.let { HashMap(it).apply { set(name, error) } } ?: Collections.emptyMap()
+    val nextErrors =
+      errors.value?.let { HashMap(it).apply { set(name, error) } } ?: Collections.emptyMap()
 
     errors.value = nextErrors
 

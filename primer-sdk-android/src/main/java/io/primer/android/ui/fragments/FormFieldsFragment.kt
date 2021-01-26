@@ -2,16 +2,12 @@ package io.primer.android.ui.fragments
 
 import android.os.Bundle
 import android.text.Editable
-import android.text.Layout
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
@@ -64,7 +60,8 @@ class FormFieldsFragment : Fragment() {
             if (value == null) {
               inputField.error = null
             } else {
-              inputField.error = requireContext().getString(value.errorId, requireContext().getString(value.fieldId))
+              inputField.error =
+                requireContext().getString(value.errorId, requireContext().getString(value.fieldId))
             }
           }
         }
@@ -99,7 +96,7 @@ class FormFieldsFragment : Fragment() {
     FieldFocuser.focus(focused?.findViewById(R.id.form_input_field))
   }
 
-  private fun createInput(field: FormField) : TextInputLayout {
+  private fun createInput(field: FormField): TextInputLayout {
     val id = View.generateViewId()
     val inputLayout = View.inflate(requireContext(), R.layout.form_input, null) as TextInputLayout
     val inputField = inputLayout.findViewById<TextInputEditText>(R.id.form_input_field)
@@ -112,7 +109,10 @@ class FormFieldsFragment : Fragment() {
     inputField.addTextChangedListener(createWatcher(field.name))
     inputField.text = SpannableStringBuilder(viewModel.getValue(field.name))
 
-    inputLayout.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+    inputLayout.layoutParams = ViewGroup.LayoutParams(
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      LinearLayout.LayoutParams.WRAP_CONTENT
+    )
 
     return inputLayout
   }

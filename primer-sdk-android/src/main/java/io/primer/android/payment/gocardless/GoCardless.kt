@@ -2,19 +2,11 @@ package io.primer.android.payment.gocardless
 
 import android.content.Context
 import android.view.View
-import android.widget.TextView
 import io.primer.android.GOCARDLESS_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.*
-import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
-import io.primer.android.payment.SelectedPaymentMethodBehaviour
-import io.primer.android.payment.VaultCapability
-import io.primer.android.ui.fragments.CardFormFragment
 import io.primer.android.ui.fragments.GoCardlessFragment
 import io.primer.android.viewmodel.PrimerViewModel
 
@@ -34,7 +26,7 @@ internal class GoCardless(
     get() = PaymentMethodType.FORM
 
   override val vaultCapability: VaultCapability
-    get () = VaultCapability.VAULT_ONLY
+    get() = VaultCapability.VAULT_ONLY
 
   override fun createButton(context: Context): View {
     return View.inflate(context, R.layout.payment_method_button_direct_debit, null)

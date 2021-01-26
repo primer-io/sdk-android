@@ -105,7 +105,11 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
     return model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)
   }
 
-  fun createGoCardlessMandate(id: String, bankDetails: JSONObject, customerDetails: JSONObject) : Observable {
+  fun createGoCardlessMandate(
+    id: String,
+    bankDetails: JSONObject,
+    customerDetails: JSONObject
+  ): Observable {
     val body = JSONObject()
 
     body.put("id", id)

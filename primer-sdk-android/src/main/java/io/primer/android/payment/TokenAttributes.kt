@@ -2,7 +2,6 @@ package io.primer.android.payment
 
 import android.content.Context
 import androidx.annotation.DrawableRes
-import io.primer.android.GOCARDLESS_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodToken
@@ -49,14 +48,14 @@ internal abstract class TokenAttributes private constructor(
     }
   }
 
-  internal class GoCardlessMandateAttributes(token: PaymentMethodToken):
+  internal class GoCardlessMandateAttributes(token: PaymentMethodToken) :
     TokenAttributes(token, R.drawable.icon_bank) {
     private val log = Logger("go-cardless")
     override fun getDescription(context: Context): String {
       val ref = data["gocardlessMandateId"]?.jsonPrimitive?.contentOrNull ?: ""
       return context.getString(R.string.bank_account) + " $ref"
-     }
     }
+  }
 
   companion object {
     fun create(token: PaymentMethodToken): TokenAttributes? {

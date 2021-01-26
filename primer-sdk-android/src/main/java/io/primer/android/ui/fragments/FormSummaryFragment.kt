@@ -1,8 +1,6 @@
 package io.primer.android.ui.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,7 +70,7 @@ class FormSummaryFragment : Fragment() {
     }
   }
 
-  private fun createItem(item: InteractiveSummaryItem) : View {
+  private fun createItem(item: InteractiveSummaryItem): View {
     val view = View.inflate(requireContext(), R.layout.form_summary_item, null)
 
     view.findViewById<ImageView>(R.id.form_summary_item_icon).setImageDrawable(
@@ -101,7 +99,10 @@ class FormSummaryFragment : Fragment() {
     TextViewCompat.setTextAppearance(view, item.styleId)
 
     if (!isFirst) {
-      val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+      val params = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      )
       params.topMargin = 12
       view.layoutParams = params
     }

@@ -5,20 +5,15 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.viewmodel.*
-import io.primer.android.viewmodel.FormViewModel
 import org.json.JSONObject
 import java.util.*
 
@@ -34,12 +29,12 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddress
 
 class GoCardlessFragment : Fragment() {
   private val log = Logger("go-cardless-fragment")
-  private lateinit var viewModel : FormViewModel
-  private lateinit var primerViewModel : PrimerViewModel
+  private lateinit var viewModel: FormViewModel
+  private lateinit var primerViewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
 
   private val options: PaymentMethod.GoCardless
-      get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
+    get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -258,7 +253,12 @@ class GoCardlessFragment : Fragment() {
     })
   }
 
-  private fun prepareView(title: FormTitleState? = null, fields: List<FormField> = Collections.emptyList(), button: ButtonState? = null, summary: FormSummaryState? = null) {
+  private fun prepareView(
+    title: FormTitleState? = null,
+    fields: List<FormField> = Collections.emptyList(),
+    button: ButtonState? = null,
+    summary: FormSummaryState? = null
+  ) {
     viewModel.title.value = title
     viewModel.fields.value = fields
     viewModel.summary.value = summary
@@ -293,7 +293,7 @@ class GoCardlessFragment : Fragment() {
 
   private fun formatCustomerDetails(): JSONObject {
     return JSONObject().apply {
-      putIfNotEmpty(this,"email", DD_FIELD_NAME_CUSTOMER_EMAIL)
+      putIfNotEmpty(this, "email", DD_FIELD_NAME_CUSTOMER_EMAIL)
       putIfNotEmpty(this, "addressLine1", DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1)
       putIfNotEmpty(this, "addressLine2", DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_2)
       putIfNotEmpty(this, "city", DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY)
@@ -304,7 +304,8 @@ class GoCardlessFragment : Fragment() {
       val name = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME)
       val tokens = name.trim().split(Regex("\\s+"))
 
-      val firstName = if (tokens.size == 1) tokens.first() else tokens.subList(0, tokens.lastIndex).joinToString(" ")
+      val firstName = if (tokens.size == 1) tokens.first() else tokens.subList(0, tokens.lastIndex)
+        .joinToString(" ")
       val lastName = if (tokens.size == 1) "" else tokens.last()
 
       put("firstName", firstName)

@@ -2,10 +2,10 @@ package io.primer.android.payment
 
 import android.content.Context
 import android.view.View
-import io.primer.android.*
 import io.primer.android.GOCARDLESS_IDENTIFIER
 import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PAYPAL_IDENTIFIER
+import io.primer.android.PaymentMethod
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError

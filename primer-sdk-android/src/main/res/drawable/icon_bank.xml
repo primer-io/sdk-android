@@ -3,19 +3,19 @@
     android:height="22dp"
     android:viewportWidth="20"
     android:viewportHeight="22">
-  <path
-      android:pathData="M5,9.5H2V16.5H5V9.5Z"
-      android:fillColor="#2D50E6"/>
-  <path
-      android:pathData="M11.5,9.5H8.5V16.5H11.5V9.5Z"
-      android:fillColor="#2D50E6"/>
-  <path
-      android:pathData="M20,18.5H0V21.5H20V18.5Z"
-      android:fillColor="#2D50E6"/>
-  <path
-      android:pathData="M18,9.5H15V16.5H18V9.5Z"
-      android:fillColor="#2D50E6"/>
-  <path
-      android:pathData="M10,0.5L0,5.5V7.5H20V5.5L10,0.5Z"
-      android:fillColor="#2D50E6"/>
+    <path
+        android:fillColor="#2D50E6"
+        android:pathData="M5,9.5H2V16.5H5V9.5Z" />
+    <path
+        android:fillColor="#2D50E6"
+        android:pathData="M11.5,9.5H8.5V16.5H11.5V9.5Z" />
+    <path
+        android:fillColor="#2D50E6"
+        android:pathData="M20,18.5H0V21.5H20V18.5Z" />
+    <path
+        android:fillColor="#2D50E6"
+        android:pathData="M18,9.5H15V16.5H18V9.5Z" />
+    <path
+        android:fillColor="#2D50E6"
+        android:pathData="M10,0.5L0,5.5V7.5H20V5.5L10,0.5Z" />
 </vector>

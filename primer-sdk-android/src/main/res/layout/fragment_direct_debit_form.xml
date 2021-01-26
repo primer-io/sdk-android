@@ -1,53 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_direct_debit_form">
+    android:id="@+id/fragment_direct_debit_form"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_direct_debit_title_content"
+        android:name="io.primer.android.ui.fragments.FormTitleFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:name="io.primer.android.ui.fragments.FormTitleFragment"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/fragment_direct_debit_form_content"
-        app:layout_constraintTop_toBottomOf="@id/fragment_direct_debit_title_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        >
+        app:layout_constraintTop_toBottomOf="@id/fragment_direct_debit_title_content">
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_direct_debit_form_fields"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:name="io.primer.android.ui.fragments.FormFieldsFragment"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_direct_debit_form_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:name="io.primer.android.ui.fragments.FormSummaryFragment"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_direct_debit_form_errors"
-        app:layout_constraintTop_toBottomOf="@id/fragment_direct_debit_form_content"
+        android:name="io.primer.android.ui.fragments.FormErrorFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="io.primer.android.ui.fragments.FormErrorFragment"
-        />
+        app:layout_constraintTop_toBottomOf="@id/fragment_direct_debit_form_content" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_direct_debit_form_controls"
+        android:name="io.primer.android.ui.fragments.FormControlsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/fragment_direct_debit_form_errors"
-        android:name="io.primer.android.ui.fragments.FormControlsFragment"
-        />
+        app:layout_constraintTop_toBottomOf="@id/fragment_direct_debit_form_errors" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
