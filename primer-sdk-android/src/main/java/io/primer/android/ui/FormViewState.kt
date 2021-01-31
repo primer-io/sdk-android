@@ -66,7 +66,7 @@ data class ButtonState(
 data class InteractiveSummaryItem(
   val name: String,
   val iconId: Int,
-  val label: String,
+  val getLabel: (() -> String),
 )
 
 data class TextSummaryItem(

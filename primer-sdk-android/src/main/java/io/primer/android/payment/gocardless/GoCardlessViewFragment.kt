@@ -112,10 +112,10 @@ class GoCardlessViewFragment: FormFragment() {
   private fun showSummaryView() {
     showFormScene(
       SummaryViewState(
-        customerName = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME),
-        customerAddress = formatCustomerAddress(),
+        getCustomerName = { viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME) },
+        getCustomerAddress = { formatCustomerAddress() },
         companyAddress = options.companyAddress,
-        bankDetails = viewModel.getValue(DD_FIELD_NAME_IBAN),
+        getBankDetails = { viewModel.getValue(DD_FIELD_NAME_IBAN) },
         legalText = requireContext().getString(R.string.dd_mandate_legal, options.companyName)
       ),
       submitFormListener,

@@ -4,9 +4,9 @@ import io.primer.android.R
 import io.primer.android.ui.*
 
 class SummaryViewState(
-  val customerName: String,
-  val customerAddress: String,
-  val bankDetails: String,
+  val getCustomerName: () -> String,
+  val getCustomerAddress: () -> String,
+  val getBankDetails: () -> String,
   val companyAddress: String,
   val legalText: String,
 ) : GoCardlessFormSceneState(
@@ -22,17 +22,17 @@ class SummaryViewState(
       InteractiveSummaryItem(
         name = "customer",
         iconId = R.drawable.icon_user,
-        label = customerName,
+        getLabel = getCustomerName,
       ),
       InteractiveSummaryItem(
         name = "address",
         iconId = R.drawable.icon_location_pin,
-        label = customerAddress,
+        getLabel = getCustomerAddress,
       ),
       InteractiveSummaryItem(
         name = "bank",
         iconId = R.drawable.icon_bank,
-        label = bankDetails,
+        getLabel = getBankDetails,
       )
     ),
     text = listOf(

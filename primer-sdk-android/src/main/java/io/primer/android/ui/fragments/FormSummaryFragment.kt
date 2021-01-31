@@ -19,6 +19,7 @@ import io.primer.android.ui.TextSummaryItem
 internal class FormSummaryFragment : FormChildFragment() {
   private lateinit var layout: ViewGroup
   private val log = Logger("form-summary-fragment")
+  private val updaters : MutableList<() -> Unit> = ArrayList()
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -43,17 +44,21 @@ internal class FormSummaryFragment : FormChildFragment() {
   }
 
   private fun hideView() {
+    updaters.clear()
     layout.removeAllViews()
     layout.visibility = View.GONE
   }
 
   private fun showView(state: FormSummaryState) {
+    updaters.clear()
     layout.removeAllViews()
     layout.visibility = View.VISIBLE
 
     state.items.forEach {
       layout.addView(createItem(it))
     }
+
+    updateAllViews()
 
     if (state.items.isNotEmpty() && state.text.isNotEmpty()) {
       layout.addView(createSpacer())
@@ -64,6 +69,15 @@ internal class FormSummaryFragment : FormChildFragment() {
     }
   }
 
+  override fun onResume() {
+    super.onResume()
+    updateAllViews()
+  }
+
+  private fun updateAllViews() {
+    updaters.forEach { it() }
+  }
+
   private fun createItem(item: InteractiveSummaryItem): View {
     val view = View.inflate(requireContext(), R.layout.form_summary_item, null)
 
@@ -71,7 +85,9 @@ internal class FormSummaryFragment : FormChildFragment() {
       ResourcesCompat.getDrawable(requireActivity().resources, item.iconId, null)
     )
 
-    view.findViewById<TextView>(R.id.form_summary_item_text).setText(item.label)
+    updaters.add {
+      view.findViewById<TextView>(R.id.form_summary_item_text).setText(item.getLabel())
+    }
 
     view.setOnClickListener {
       dispatchFormEvent(FormActionEvent.SummaryItemPress(item.name))
