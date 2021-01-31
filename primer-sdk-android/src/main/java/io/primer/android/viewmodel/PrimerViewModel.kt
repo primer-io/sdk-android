@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -60,8 +61,16 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
             is Observable.ObservableSuccessEvent -> {
               vaultedPaymentMethods.value =
                 vault.cast(key = "data", defaultValue = Collections.emptyList())
-              paymentMethods.value = resolver.resolve()
-              viewStatus.value = getInitialViewStatus()
+
+              val descriptors = resolver.resolve()
+
+              paymentMethods.value = descriptors
+
+              if (model.config.uxMode == UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD) {
+                selectedPaymentMethod.value = descriptors.first()
+              } else {
+                viewStatus.value = getInitialViewStatus()
+              }
             }
             is Observable.ObservableErrorEvent -> log("Failed to get payment methods " + vault.error.description)
           }

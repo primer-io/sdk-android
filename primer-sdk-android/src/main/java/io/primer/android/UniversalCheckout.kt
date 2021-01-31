@@ -27,7 +27,7 @@ class UniversalCheckout private constructor(
   }
 
   internal enum class UXMode {
-    CHECKOUT, ADD_PAYMENT_METHOD,
+    CHECKOUT, ADD_PAYMENT_METHOD, STANDALONE_PAYMENT_METHOD,
   }
 
   private fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
@@ -92,6 +92,11 @@ class UniversalCheckout private constructor(
 
     fun showCheckout(listener: EventListener, amount: Int, currency: String) {
       return show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
+    }
+
+    fun showStandalone(listener: EventListener, paymentMethod: PaymentMethod) {
+      instance?.loadPaymentMethods(listOf(paymentMethod))
+      show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
     }
 
     /**

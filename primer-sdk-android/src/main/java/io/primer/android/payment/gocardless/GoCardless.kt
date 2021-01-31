@@ -5,6 +5,7 @@ import android.view.View
 import io.primer.android.GOCARDLESS_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
+import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.*
 import io.primer.android.viewmodel.PrimerViewModel
@@ -19,7 +20,7 @@ internal class GoCardless(
     get() = GOCARDLESS_IDENTIFIER
 
   override val selectedBehaviour: SelectedPaymentMethodBehaviour
-    get() = NewFragmentBehaviour(GoCardlessViewFragment::newInstance, returnToPreviousOnBack = true)
+    get() = NewFragmentBehaviour(GoCardlessViewFragment::newInstance, returnToPreviousOnBack = viewModel.uxMode.value != UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD)
 
   override val type: PaymentMethodType
     get() = PaymentMethodType.FORM

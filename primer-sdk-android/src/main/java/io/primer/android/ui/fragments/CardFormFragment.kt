@@ -207,6 +207,7 @@ internal class CardFormFragment : Fragment() {
         requireContext(),
         viewModel.amount.value
       )
+      else -> ""
     }
   }
 
