@@ -20,11 +20,12 @@ internal class FormViewModel : ViewModel() {
   val button: MutableLiveData<ButtonState?> = MutableLiveData()
   val summary: MutableLiveData<FormSummaryState?> = MutableLiveData()
   val error: MutableLiveData<FormErrorState?> = MutableLiveData()
-  val validationErrors: MutableLiveData<Map<String, SyncValidationError?>> = MutableLiveData(HashMap())
+  val validationErrors: MutableLiveData<Map<String, SyncValidationError?>> =
+    MutableLiveData(HashMap())
   val values: MutableMap<String, String> = HashMap()
   val initialValues: MutableMap<String, String> = HashMap()
 
-  fun setState(state : FormViewState) {
+  fun setState(state: FormViewState) {
     title.value = state.title
     fields.value = state.fields
     button.value = state.button
@@ -54,7 +55,7 @@ internal class FormViewModel : ViewModel() {
     return values[key] ?: ""
   }
 
-  fun getError(name: String) : SyncValidationError? {
+  fun getError(name: String): SyncValidationError? {
     return validationErrors.value?.get(name)
   }
 

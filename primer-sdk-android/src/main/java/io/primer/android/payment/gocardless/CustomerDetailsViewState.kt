@@ -6,7 +6,7 @@ import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormField
 import io.primer.android.ui.FormTitleState
 
-class CustomerDetailsViewState: GoCardlessFormSceneState(
+class CustomerDetailsViewState : GoCardlessFormSceneState(
   Scene.CUSTOMER,
   title = FormTitleState(
     titleId = R.string.confirm_dd_mandate,

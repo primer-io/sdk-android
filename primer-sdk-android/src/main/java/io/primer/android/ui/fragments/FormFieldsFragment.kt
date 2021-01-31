@@ -8,16 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.FormField
-import io.primer.android.ui.FormViewState
-import io.primer.android.viewmodel.FormViewModel
 
 internal class FormFieldsFragment : FormChildFragment() {
   private lateinit var layout: ViewGroup
@@ -55,7 +51,10 @@ internal class FormFieldsFragment : FormChildFragment() {
             val inputLayout = layout.findViewById<TextInputLayout>(id)
             val inputField = inputLayout.findViewById<TextInputEditText>(R.id.form_input_field)
 
-            inputField.error = if (value == null) null else requireContext().getString(value.errorId, requireContext().getString(value.fieldId))
+            inputField.error = if (value == null) null else requireContext().getString(
+              value.errorId,
+              requireContext().getString(value.fieldId)
+            )
           }
         }
       }

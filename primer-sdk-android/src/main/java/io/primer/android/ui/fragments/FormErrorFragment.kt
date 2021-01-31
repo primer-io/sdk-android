@@ -5,10 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
-import io.primer.android.viewmodel.FormViewModel
 
 internal class FormErrorFragment : FormChildFragment() {
   override fun onCreateView(
@@ -26,7 +23,8 @@ internal class FormErrorFragment : FormChildFragment() {
       view.visibility = if (it == null) View.GONE else View.VISIBLE
 
       it?.let { state ->
-        view.findViewById<TextView>(R.id.form_error_text).text = requireContext().getText(state.labelId)
+        view.findViewById<TextView>(R.id.form_error_text).text =
+          requireContext().getText(state.labelId)
       }
     }
   }

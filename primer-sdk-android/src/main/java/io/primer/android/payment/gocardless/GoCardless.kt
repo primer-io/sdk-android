@@ -7,7 +7,6 @@ import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.*
-import io.primer.android.ui.fragments.FormFragment
 import io.primer.android.viewmodel.PrimerViewModel
 
 internal class GoCardless(

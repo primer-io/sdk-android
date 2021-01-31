@@ -5,11 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.viewmodel.FormViewModel
 
 internal class FormTitleFragment : FormChildFragment() {
   private val log = Logger("form-title-fragment")

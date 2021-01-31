@@ -19,7 +19,7 @@ import io.primer.android.ui.TextSummaryItem
 internal class FormSummaryFragment : FormChildFragment() {
   private lateinit var layout: ViewGroup
   private val log = Logger("form-summary-fragment")
-  private val updaters : MutableList<() -> Unit> = ArrayList()
+  private val updaters: MutableList<() -> Unit> = ArrayList()
 
   override fun onCreateView(
     inflater: LayoutInflater,

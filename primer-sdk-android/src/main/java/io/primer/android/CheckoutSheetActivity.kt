@@ -1,7 +1,6 @@
 package io.primer.android
 
 import android.os.Bundle
-import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider

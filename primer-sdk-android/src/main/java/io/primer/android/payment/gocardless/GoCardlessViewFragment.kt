@@ -1,10 +1,7 @@
 package io.primer.android.payment.gocardless
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.PaymentMethod
 import io.primer.android.R
@@ -13,7 +10,6 @@ import io.primer.android.model.Observable
 import io.primer.android.model.dto.APIError
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormErrorState
-import io.primer.android.ui.FormViewState
 import io.primer.android.ui.fragments.FormActionEvent
 import io.primer.android.ui.fragments.FormActionListener
 import io.primer.android.ui.fragments.FormFragment
@@ -32,7 +28,7 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE = "customerAddressState"
 internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE = "customerAddressCountryCode"
 internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddressPostalCode"
 
-class GoCardlessViewFragment: FormFragment() {
+class GoCardlessViewFragment : FormFragment() {
   private val log = Logger("gc-form-view")
   private lateinit var viewModel: FormViewModel
   private lateinit var primerViewModel: PrimerViewModel
@@ -60,7 +56,7 @@ class GoCardlessViewFragment: FormFragment() {
 
   private val submitFormListener = object : FormActionListener {
     override fun onFormAction(e: FormActionEvent) {
-      when(e) {
+      when (e) {
         is FormActionEvent.SubmitPressed -> onSubmitPressed(e)
         is FormActionEvent.SummaryItemPress -> onSummaryItemPress(e)
       }
@@ -87,17 +83,19 @@ class GoCardlessViewFragment: FormFragment() {
     tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
 
     viewModel.setState(
-      IBANViewState(mapOf(
-        DD_FIELD_NAME_IBAN to "FR1420041010050500013M02606", // TODO: remove this
-        DD_FIELD_NAME_CUSTOMER_EMAIL to options.customerEmail,
-        DD_FIELD_NAME_CUSTOMER_NAME to options.customerName,
-        DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1 to options.customerAddressLine1,
-        DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_2 to (options.customerAddressLine2 ?: ""),
-        DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY to options.customerAddressCity,
-        DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE to (options.customerAddressState ?: ""),
-        DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE to options.customerAddressCountryCode,
-        DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE to options.customerAddressPostalCode,
-      ))
+      IBANViewState(
+        mapOf(
+          DD_FIELD_NAME_IBAN to "FR1420041010050500013M02606", // TODO: remove this
+          DD_FIELD_NAME_CUSTOMER_EMAIL to options.customerEmail,
+          DD_FIELD_NAME_CUSTOMER_NAME to options.customerName,
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1 to options.customerAddressLine1,
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_2 to (options.customerAddressLine2 ?: ""),
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY to options.customerAddressCity,
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE to (options.customerAddressState ?: ""),
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE to options.customerAddressCountryCode,
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE to options.customerAddressPostalCode,
+        )
+      )
     )
     setOnFormActionListener(firstPageListener)
   }
@@ -204,8 +202,6 @@ class GoCardlessViewFragment: FormFragment() {
 
       put("firstName", firstName)
       put("lastName", lastName)
-
-      log(this.toString())
     }
   }
 
