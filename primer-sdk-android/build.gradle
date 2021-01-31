@@ -3,6 +3,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath "org.koin:koin-gradle-plugin:$koin_version"
     }
 }
 
@@ -11,6 +12,7 @@ plugins {
     id 'com.android.library'
 }
 
+apply plugin: 'koin'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 
@@ -61,7 +63,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2'
     implementation 'com.hbb20:ccp:2.4.5'
-
+    implementation "org.koin:koin-core:$koin_version"
+    implementation "org.koin:koin-androidx-scope:$koin_version"
 
     testImplementation 'junit:junit:4.+'
 

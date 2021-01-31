@@ -10,10 +10,12 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
+import org.koin.dsl.koinApplication
 
 class UniversalCheckout private constructor(
   private val context: Context,
   authTokenProvider: ClientTokenProvider,
+  private val theme: UniversalCheckoutTheme? = null,
 ) : EventBus.EventListener {
   private val log = Logger("primer")
   private val token = DeferredToken(authTokenProvider)
@@ -21,6 +23,7 @@ class UniversalCheckout private constructor(
 
   private var listener: EventListener? = null
   private var subscription: EventBus.SubscriptionHandle? = null
+
 
   interface EventListener {
     fun onCheckoutEvent(e: CheckoutEvent)
@@ -52,7 +55,8 @@ class UniversalCheckout private constructor(
         clientToken = it,
         uxMode = uxMode ?: UXMode.CHECKOUT,
         amount = amount,
-        currency = currency
+        currency = currency,
+        theme = theme,
       )
 
       val intent = Intent(context, CheckoutSheetActivity::class.java)
@@ -81,9 +85,9 @@ class UniversalCheckout private constructor(
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
-    fun initialize(context: Context, authTokenProvider: ClientTokenProvider) {
+    fun initialize(context: Context, authTokenProvider: ClientTokenProvider, theme: UniversalCheckoutTheme? = null) {
       destroy()
-      instance = UniversalCheckout(context, authTokenProvider)
+      instance = UniversalCheckout(context, authTokenProvider, theme = theme)
     }
 
     fun showSavedPaymentMethods(listener: UniversalCheckout.EventListener) {
@@ -103,8 +107,8 @@ class UniversalCheckout private constructor(
      * Initializes the Primer SDK with the Application context. This method assumes that
      * the context also implements the IClientTokenProvider interface
      */
-    fun initialize(context: Context) {
-      initialize(context, context as ClientTokenProvider)
+    fun initialize(context: Context, theme: UniversalCheckoutTheme? = null) {
+      initialize(context, context as ClientTokenProvider, theme)
     }
 
     /**

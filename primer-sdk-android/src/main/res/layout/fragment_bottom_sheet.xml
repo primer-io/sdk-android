@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<io.primer.android.ui.components.NestedScrollViewSurface xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white">
+    >
 
     <FrameLayout
         android:id="@+id/checkout_sheet_content"
@@ -11,6 +11,6 @@
         android:paddingLeft="@dimen/primer_checkout_sheet_padding_horiz"
         android:paddingTop="@dimen/primer_checkout_sheet_padding_vert"
         android:paddingRight="@dimen/primer_checkout_sheet_padding_horiz"
-        android:paddingBottom="@dimen/primer_checkout_sheet_padding_vert"></FrameLayout>
+        android:paddingBottom="@dimen/primer_checkout_sheet_padding_vert"/>
 
-</androidx.core.widget.NestedScrollView>
+</io.primer.android.ui.components.NestedScrollViewSurface>

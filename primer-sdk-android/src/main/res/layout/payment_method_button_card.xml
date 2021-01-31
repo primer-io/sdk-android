@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.primer.android.ui.components.ButtonDefaultLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_preview_button"
     android:layout_width="match_parent"
@@ -20,4 +20,4 @@
         android:gravity="center"
         android:text="@string/pay_by_card"
         app:drawableStartCompat="@drawable/credit_card_icon" />
-</LinearLayout>
+</io.primer.android.ui.components.ButtonDefaultLayout>

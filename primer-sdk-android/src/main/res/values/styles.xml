@@ -77,10 +77,6 @@
         <item name="android:textSize">@dimen/primer_text_size_xs</item>
     </style>
 
-    <style name="Primer.Text.Small.Danger" parent="Primer.Text.Small">
-        <item name="android:textColor">@color/primer_app_danger</item>
-    </style>
-
     <style name="Primer.Text.Title" parent="Primer.Text.Large">
         <item name="fontWeight">500</item>
     </style>

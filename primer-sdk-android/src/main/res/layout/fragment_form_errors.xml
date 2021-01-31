@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <io.primer.android.ui.components.TextViewDanger
         android:id="@+id/form_error_text"
-        style="@style/Primer.Text.Small.Danger"
+        style="@style/Primer.Text.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

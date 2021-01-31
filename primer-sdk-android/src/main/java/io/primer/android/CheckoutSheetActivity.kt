@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -19,6 +20,8 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.loadKoinModules
 
 internal class CheckoutSheetActivity : AppCompatActivity() {
   private val log = Logger("checkout-activity")
@@ -31,6 +34,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    DIAppContext.init(
+      this,
+      config = unmarshal("config"),
+      paymentMethods = unmarshal("paymentMethods"),
+    )
+
 
     // Unmarshal the configuration from the intent
     model = Model(
