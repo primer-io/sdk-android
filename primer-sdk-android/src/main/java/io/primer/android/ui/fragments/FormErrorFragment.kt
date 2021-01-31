@@ -10,9 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.viewmodel.FormViewModel
 
-class FormErrorFragment : Fragment() {
-  private lateinit var viewModel: FormViewModel
-
+internal class FormErrorFragment : FormChildFragment() {
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -24,13 +22,11 @@ class FormErrorFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
-
-    viewModel.errorId.observe(viewLifecycleOwner) {
+    viewModel.error.observe(viewLifecycleOwner) {
       view.visibility = if (it == null) View.GONE else View.VISIBLE
 
-      it?.let { id ->
-        view.findViewById<TextView>(R.id.form_error_text).text = requireContext().getText(id)
+      it?.let { state ->
+        view.findViewById<TextView>(R.id.form_error_text).text = requireContext().getText(state.labelId)
       }
     }
   }

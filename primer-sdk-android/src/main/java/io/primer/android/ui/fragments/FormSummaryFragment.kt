@@ -10,17 +10,13 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.viewmodel.FormSummaryState
-import io.primer.android.viewmodel.FormViewModel
-import io.primer.android.viewmodel.InteractiveSummaryItem
-import io.primer.android.viewmodel.TextSummaryItem
+import io.primer.android.ui.FormSummaryState
+import io.primer.android.ui.InteractiveSummaryItem
+import io.primer.android.ui.TextSummaryItem
 
-class FormSummaryFragment : Fragment() {
-  private lateinit var viewModel: FormViewModel
+internal class FormSummaryFragment : FormChildFragment() {
   private lateinit var layout: ViewGroup
   private val log = Logger("form-summary-fragment")
 
@@ -36,8 +32,6 @@ class FormSummaryFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     layout = view.findViewById(R.id.form_summary_fragment)
-
-    viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
 
     viewModel.summary.observe(viewLifecycleOwner) {
       if (it == null) {
@@ -80,7 +74,7 @@ class FormSummaryFragment : Fragment() {
     view.findViewById<TextView>(R.id.form_summary_item_text).setText(item.label)
 
     view.setOnClickListener {
-      viewModel.onSummaryItemPressed(item.name)
+      dispatchFormEvent(FormActionEvent.SummaryItemPress(item.name))
     }
 
     return view

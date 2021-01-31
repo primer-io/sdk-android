@@ -6,16 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.viewmodel.ButtonState
-import io.primer.android.viewmodel.FormState
-import io.primer.android.viewmodel.FormViewModel
+import io.primer.android.ui.ButtonState
 
-class FormControlsFragment : Fragment() {
-  private lateinit var viewModel: FormViewModel
+internal class FormControlsFragment : FormChildFragment() {
   private val log = Logger("form-controls")
 
   override fun onCreateView(
@@ -29,8 +24,6 @@ class FormControlsFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
-
     viewModel.button.observe(viewLifecycleOwner) {
       it?.let { state ->
         val buttonText = view.findViewById<TextView>(R.id.form_button_txt)
@@ -38,20 +31,20 @@ class FormControlsFragment : Fragment() {
 
         buttonText.text = requireContext().getString(state.labelId)
         buttonLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
-        view.isEnabled = isViewEnabled(viewModel.meta.value, it)
+        view.isEnabled = isViewEnabled(viewModel.isValid.value ?: true, it)
       }
     }
 
-    viewModel.meta.observe(viewLifecycleOwner) {
+    viewModel.isValid.observe(viewLifecycleOwner) {
       view.isEnabled = isViewEnabled(it, viewModel.button.value)
     }
 
     view.setOnClickListener {
-      viewModel.onButtonPress()
+      dispatchFormEvent(FormActionEvent.SubmitPressed())
     }
   }
 
-  private fun isViewEnabled(form: FormState?, button: ButtonState?): Boolean {
-    return form?.isValid == true && button?.loading == false
+  private fun isViewEnabled(isValid: Boolean, button: ButtonState?): Boolean {
+    return isValid && button?.loading == false
   }
 }

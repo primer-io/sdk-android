@@ -15,11 +15,11 @@ import com.google.android.material.textfield.TextInputLayout
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.FieldFocuser
-import io.primer.android.viewmodel.FormField
+import io.primer.android.ui.FormField
+import io.primer.android.ui.FormViewState
 import io.primer.android.viewmodel.FormViewModel
 
-class FormFieldsFragment : Fragment() {
-  private lateinit var viewModel: FormViewModel
+internal class FormFieldsFragment : FormChildFragment() {
   private lateinit var layout: ViewGroup
   private val fieldIds: MutableMap<String, Int> = HashMap()
   private val log = Logger("form-fields")
@@ -37,8 +37,6 @@ class FormFieldsFragment : Fragment() {
 
     layout = view.findViewById(R.id.fragment_form_fields)
 
-    viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
-
     viewModel.fields.observe(viewLifecycleOwner) {
       if (it.isEmpty()) {
         hideView()
@@ -47,8 +45,8 @@ class FormFieldsFragment : Fragment() {
       }
     }
 
-    viewModel.errors.observe(viewLifecycleOwner) { errors ->
-      if (viewModel.meta.value?.submitted == true) {
+    viewModel.validationErrors.observe(viewLifecycleOwner) { errors ->
+      if (viewModel.submitted.value == true) {
         errors.forEach {
           val key = it.key
           val value = it.value
@@ -57,12 +55,7 @@ class FormFieldsFragment : Fragment() {
             val inputLayout = layout.findViewById<TextInputLayout>(id)
             val inputField = inputLayout.findViewById<TextInputEditText>(R.id.form_input_field)
 
-            if (value == null) {
-              inputField.error = null
-            } else {
-              inputField.error =
-                requireContext().getString(value.errorId, requireContext().getString(value.fieldId))
-            }
+            inputField.error = if (value == null) null else requireContext().getString(value.errorId, requireContext().getString(value.fieldId))
           }
         }
       }
@@ -124,13 +117,12 @@ class FormFieldsFragment : Fragment() {
       }
 
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        viewModel.setFieldValue(name, s.toString())
+        viewModel.setValue(name, s.toString())
       }
 
       override fun afterTextChanged(s: Editable?) {
         /* no-op */
       }
-
     }
   }
 }

@@ -11,9 +11,8 @@ import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.viewmodel.FormViewModel
 
-class FormTitleFragment : Fragment() {
+internal class FormTitleFragment : FormChildFragment() {
   private val log = Logger("form-title-fragment")
-  private lateinit var viewModel: FormViewModel
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -25,8 +24,6 @@ class FormTitleFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-
-    viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
 
     viewModel.title.observe(viewLifecycleOwner) {
       val titleView = view.findViewById<TextView>(R.id.form_title)
