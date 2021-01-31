@@ -6,6 +6,7 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.ui.*
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
@@ -14,7 +15,7 @@ internal class FormViewModel : ViewModel() {
   private val log = Logger("form-view-model")
 
   val title: MutableLiveData<FormTitleState> = MutableLiveData()
-  val fields: MutableLiveData<List<FormField>> = MutableLiveData(Collections.emptyList())
+  val fields: MutableLiveData<List<FormField>> = MutableLiveData(ArrayList())
   val submitted: MutableLiveData<Boolean> = MutableLiveData(false)
   val isValid: MutableLiveData<Boolean> = MutableLiveData(true)
   val button: MutableLiveData<ButtonState?> = MutableLiveData()

@@ -3,6 +3,7 @@ package io.primer.android.ui
 import io.primer.android.R
 import io.primer.android.model.dto.SyncValidationError
 import java.util.*
+import kotlin.collections.ArrayList
 
 internal class Validator(private val field: FormField) {
   fun validate(value: String): SyncValidationError? {
@@ -50,13 +51,21 @@ data class FormTitleState(
 data class FormField(
   val name: String,
   val labelId: Int,
-  val inputType: Int,
+  val inputType: Type,
   val required: Boolean = true,
   val autoFocus: Boolean = false,
   val minLength: Int = 0,
   val maxLength: Int = Int.MAX_VALUE,
   val minWordCount: Int = 0,
-)
+) {
+  enum class Type {
+    TEXT,
+    POSTAL_ADDRESS,
+    PERSON_NAME,
+    EMAIL,
+    COUNTRY_CODE,
+  }
+}
 
 data class ButtonState(
   val labelId: Int,
@@ -92,7 +101,7 @@ data class FormErrorState(
 
 open class FormViewState(
   val title: FormTitleState? = null,
-  val fields: List<FormField> = Collections.emptyList(),
+  val fields: List<FormField> = ArrayList(),
   val button: ButtonState? = null,
   val summary: FormSummaryState? = null,
   val initialValues: Map<String, String>? = null,

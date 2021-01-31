@@ -63,6 +63,11 @@
         <item name="android:textSize">@dimen/primer_text_size_title</item>
     </style>
 
+    <style name="Primer.Text.FormLabelSmall">
+        <item name="android:textColor">@color/primer_text_color_muted</item>
+        <item name="android:textSize">11dp</item>
+    </style>
+
     <style name="Primer.Text.Small.Muted" parent="Primer.Text.Small">
         <item name="android:textColor">@color/primer_text_color_muted</item>
     </style>

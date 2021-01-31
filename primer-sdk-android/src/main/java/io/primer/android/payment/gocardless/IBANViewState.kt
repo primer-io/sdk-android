@@ -17,7 +17,7 @@ class IBANViewState(initialValues: Map<String, String>? = null) : GoCardlessForm
     FormField(
       name = DD_FIELD_NAME_IBAN,
       labelId = R.string.iban,
-      inputType = InputType.TYPE_CLASS_TEXT,
+      inputType = FormField.Type.TEXT,
       required = true,
       autoFocus = true,
       minLength = 15

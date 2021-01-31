@@ -17,14 +17,14 @@ class CustomerDetailsViewState : GoCardlessFormSceneState(
       labelId = R.string.name,
       required = true,
       autoFocus = true,
-      inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME,
+      inputType = FormField.Type.PERSON_NAME,
       minWordCount = 2,
     ),
     FormField(
       name = DD_FIELD_NAME_CUSTOMER_EMAIL,
       labelId = R.string.email,
       required = true,
-      inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
+      inputType = FormField.Type.EMAIL,
     ),
   ),
   button = ButtonState(

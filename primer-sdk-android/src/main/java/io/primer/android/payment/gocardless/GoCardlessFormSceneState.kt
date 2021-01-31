@@ -2,11 +2,12 @@ package io.primer.android.payment.gocardless
 
 import io.primer.android.ui.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 abstract class GoCardlessFormSceneState(
   val scene: Scene,
   title: FormTitleState? = null,
-  fields: List<FormField> = Collections.emptyList(),
+  fields: List<FormField> = ArrayList(),
   button: ButtonState? = null,
   summary: FormSummaryState? = null,
   initialValues: Map<String, String>? = null,
