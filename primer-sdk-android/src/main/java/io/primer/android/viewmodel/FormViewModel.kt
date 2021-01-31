@@ -55,11 +55,7 @@ internal class FormViewModel : ViewModel() {
     return values[key] ?: ""
   }
 
-  fun getError(name: String): SyncValidationError? {
-    return validationErrors.value?.get(name)
-  }
-
-  fun validate(key: String) {
+  private fun validate(key: String) {
     fields.value?.find { it.name == key }?.let {
       val validator = Validator(it)
       val value = getValue(key)
@@ -73,7 +69,7 @@ internal class FormViewModel : ViewModel() {
     isValid.value = validationErrors.value?.filter { it.value != null }?.isEmpty() ?: true
   }
 
-  fun setSubmitted(value: Boolean) {
-    this.submitted.value = value
+  fun setLoading(loading: Boolean) {
+    button.value = button.value?.copy(loading = loading)
   }
 }

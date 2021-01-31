@@ -97,9 +97,12 @@ internal class FormFieldsFragment : FormChildFragment() {
     fieldIds[field.name] = id
 
     inputField.inputType = field.inputType
-    inputField.hint = requireContext().getString(field.labelId)
     inputField.addTextChangedListener(createWatcher(field.name))
     inputField.text = SpannableStringBuilder(viewModel.getValue(field.name))
+
+    val hintText = requireContext().getString(field.labelId)
+
+    inputLayout.hint = hintText
 
     inputLayout.layoutParams = ViewGroup.LayoutParams(
       ViewGroup.LayoutParams.MATCH_PARENT,

@@ -60,8 +60,15 @@ data class FormField(
 
 data class ButtonState(
   val labelId: Int,
+  val placement: Placement = Placement.CENTER,
   val loading: Boolean = false,
-)
+) {
+  enum class Placement {
+    LEFT,
+    CENTER,
+    RIGHT,
+  }
+}
 
 data class InteractiveSummaryItem(
   val name: String,

@@ -25,6 +25,7 @@ class IBANViewState(initialValues: Map<String, String>? = null) : GoCardlessForm
   ),
   button = ButtonState(
     labelId = R.string.next,
+    placement = ButtonState.Placement.RIGHT,
   ),
   initialValues = initialValues,
 )

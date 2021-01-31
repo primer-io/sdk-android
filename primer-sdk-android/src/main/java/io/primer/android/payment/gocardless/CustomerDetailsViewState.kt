@@ -29,5 +29,6 @@ class CustomerDetailsViewState : GoCardlessFormSceneState(
   ),
   button = ButtonState(
     labelId = R.string.confirm,
+    placement = ButtonState.Placement.LEFT,
   )
 )

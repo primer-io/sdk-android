@@ -28,6 +28,8 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE = "customerAddressState"
 internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE = "customerAddressCountryCode"
 internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddressPostalCode"
 
+// FR1420041010050500013M02606
+
 class GoCardlessViewFragment : FormFragment() {
   private val log = Logger("gc-form-view")
   private lateinit var viewModel: FormViewModel
@@ -85,7 +87,7 @@ class GoCardlessViewFragment : FormFragment() {
     viewModel.setState(
       IBANViewState(
         mapOf(
-          DD_FIELD_NAME_IBAN to "FR1420041010050500013M02606", // TODO: remove this
+          DD_FIELD_NAME_IBAN to "",
           DD_FIELD_NAME_CUSTOMER_EMAIL to options.customerEmail,
           DD_FIELD_NAME_CUSTOMER_NAME to options.customerName,
           DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1 to options.customerAddressLine1,
@@ -162,10 +164,7 @@ class GoCardlessViewFragment : FormFragment() {
     val bankDetails = formatBankDetails()
     val customerDetails = formatCustomerDetails()
 
-    viewModel.button.value = ButtonState(
-      labelId = R.string.confirm,
-      loading = true
-    )
+    viewModel.setLoading(true)
 
     primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
       tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {
@@ -229,11 +228,7 @@ class GoCardlessViewFragment : FormFragment() {
   private fun onTokenizeSuccess() {}
 
   private fun onTokenizeError(error: APIError) {
-    viewModel.button.value = ButtonState(
-      labelId = R.string.confirm,
-      loading = false
-    )
-
+    viewModel.setLoading(false)
     viewModel.error.value = FormErrorState(labelId = R.string.dd_mandate_error)
   }
 
