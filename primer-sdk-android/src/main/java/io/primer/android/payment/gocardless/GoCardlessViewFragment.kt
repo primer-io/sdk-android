@@ -88,7 +88,7 @@ class GoCardlessViewFragment : FormFragment() {
     viewModel.setState(
       IBANViewState(
         mapOf(
-          DD_FIELD_NAME_IBAN to "FR1420041010050500013M02606",
+          DD_FIELD_NAME_IBAN to "",
           DD_FIELD_NAME_CUSTOMER_EMAIL to options.customerEmail,
           DD_FIELD_NAME_CUSTOMER_NAME to options.customerName,
           DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1 to options.customerAddressLine1,
