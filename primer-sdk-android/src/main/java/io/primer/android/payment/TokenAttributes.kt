@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import io.primer.android.R
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 internal abstract class TokenAttributes private constructor(
-  token: PaymentMethodToken,
+  token: PaymentMethodTokenInternal,
   @DrawableRes val icon: Int,
   val iconScale: Float = 1.0f
 ) {
@@ -20,7 +20,7 @@ internal abstract class TokenAttributes private constructor(
 
   abstract fun getDescription(context: Context): String
 
-  internal class PaymentCardAttributes(token: PaymentMethodToken) :
+  internal class PaymentCardAttributes(token: PaymentMethodTokenInternal) :
     TokenAttributes(token, R.drawable.credit_card_icon) {
     private val log = Logger("payment-card")
 
@@ -38,7 +38,7 @@ internal abstract class TokenAttributes private constructor(
     }
   }
 
-  internal class PayPalBillingAgreementAttributes(token: PaymentMethodToken) :
+  internal class PayPalBillingAgreementAttributes(token: PaymentMethodTokenInternal) :
     TokenAttributes(token, R.drawable.icon_paypal_sm) {
     private val log = Logger("paypal")
 
@@ -48,7 +48,7 @@ internal abstract class TokenAttributes private constructor(
     }
   }
 
-  internal class GoCardlessMandateAttributes(token: PaymentMethodToken) :
+  internal class GoCardlessMandateAttributes(token: PaymentMethodTokenInternal) :
     TokenAttributes(token, R.drawable.icon_bank) {
     private val log = Logger("go-cardless")
     override fun getDescription(context: Context): String {
@@ -58,7 +58,7 @@ internal abstract class TokenAttributes private constructor(
   }
 
   companion object {
-    fun create(token: PaymentMethodToken): TokenAttributes? {
+    fun create(token: PaymentMethodTokenInternal): TokenAttributes? {
       // TODO: hate this - change it
       return when (token.paymentInstrumentType) {
         PAYMENT_CARD_TYPE -> PaymentCardAttributes(token)

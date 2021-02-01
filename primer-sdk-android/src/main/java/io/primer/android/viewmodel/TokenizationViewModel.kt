@@ -8,9 +8,8 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.Model
 import io.primer.android.model.Observable
-import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
@@ -73,7 +72,7 @@ internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
   }
 
   // TODO: move this to vault view model ??
-  fun deleteToken(token: PaymentMethodToken) {
+  fun deleteToken(token: PaymentMethodTokenInternal) {
     model.deleteToken(token)
   }
 

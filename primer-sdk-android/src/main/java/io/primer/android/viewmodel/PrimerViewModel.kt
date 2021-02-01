@@ -13,7 +13,8 @@ import io.primer.android.model.Model
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PaymentMethodTokenAdapter
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -33,7 +34,7 @@ internal class PrimerViewModel : BaseViewModel(), EventBus.EventListener, DIAppC
   val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
   // Vaulted Payment Methods
-  val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodToken>>(Collections.emptyList())
+  val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(Collections.emptyList())
 
   // Select Payment Method
   val paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(Collections.emptyList())
@@ -107,7 +108,7 @@ internal class PrimerViewModel : BaseViewModel(), EventBus.EventListener, DIAppC
       }
       is CheckoutEvent.TokenAddedToVault -> {
         if (vaultedPaymentMethods.value?.find { it.analyticsId == e.data.analyticsId } == null) {
-          vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(e.data)
+          vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(PaymentMethodTokenAdapter.externalToInternal(e.data))
         }
       }
     }

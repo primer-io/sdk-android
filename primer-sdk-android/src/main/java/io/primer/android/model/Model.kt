@@ -61,7 +61,7 @@ internal class Model(
     }
   }
 
-  fun deleteToken(token: PaymentMethodToken): Observable {
+  fun deleteToken(token: PaymentMethodTokenInternal): Observable {
     val url = APIEndpoint.get(
       session,
       APIEndpoint.Target.PCI,
@@ -71,7 +71,7 @@ internal class Model(
 
     return api.delete(url).observe {
       if (it is Observable.ObservableSuccessEvent) {
-        EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(token))
+        EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(PaymentMethodTokenAdapter.internalToExternal(token)))
       }
     }
   }
@@ -81,12 +81,12 @@ internal class Model(
   }
 
   private fun handleTokenizationResult(e: Observable.ObservableSuccessEvent) {
-    val token: PaymentMethodToken = e.cast()
+    val token: PaymentMethodTokenInternal = e.cast()
 
-    EventBus.broadcast(CheckoutEvent.TokenizationSuccess(token))
+    EventBus.broadcast(CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token)))
 
     if (token.tokenType == TokenType.MULTI_USE) {
-      EventBus.broadcast(CheckoutEvent.TokenAddedToVault(token))
+      EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token)))
     }
   }
 
