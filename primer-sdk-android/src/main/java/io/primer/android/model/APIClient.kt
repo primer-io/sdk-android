@@ -2,6 +2,7 @@ package io.primer.android.model
 
 import android.os.Handler
 import android.os.Looper
+import io.primer.android.BuildConfig
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -35,7 +36,7 @@ internal class APIClient(token: ClientToken) : IAPIClient {
   private fun request(builder: Request.Builder): Observable {
     val request = builder
       .addHeader("Content-Type", "application/json")
-      .addHeader("Primer-SDK-Version", "1.0.0-beta.2")
+      .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
       .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
       .addHeader("Primer-Client-Token", clientToken.accessToken)
       .build()
