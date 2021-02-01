@@ -12,8 +12,10 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
+import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
@@ -27,6 +29,8 @@ import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 import java.util.*
 
 /**
@@ -34,7 +38,8 @@ import java.util.*
  * Use the [CardFormFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-internal class CardFormFragment : Fragment() {
+@KoinApiExtension
+internal class CardFormFragment : Fragment(), DIAppComponent {
   private val log = Logger("card-form")
   private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: ViewGroup
@@ -43,6 +48,7 @@ internal class CardFormFragment : Fragment() {
   private lateinit var errorText: TextView
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
+  private val checkoutConfig: CheckoutConfig by inject()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -85,7 +91,7 @@ internal class CardFormFragment : Fragment() {
     })
 
     viewModel.keyboardVisible.observe(viewLifecycleOwner, this::onKeyboardVisibilityChanged)
-    viewModel.uxMode.observe(viewLifecycleOwner, this::onUXModeChanged)
+    onUXModeChanged(checkoutConfig.uxMode)
 
     tokenizationViewModel.reset(viewModel.selectedPaymentMethod.value)
 
@@ -108,7 +114,7 @@ internal class CardFormFragment : Fragment() {
     }
 
     // IME action listeners
-    inputs[CARD_CVV_FIELD_NAME]?.setOnEditorActionListener { v, c, e ->
+    inputs[CARD_CVV_FIELD_NAME]?.setOnEditorActionListener { _, _, _ ->
       submitButton.performClick()
     }
 
@@ -182,7 +188,7 @@ internal class CardFormFragment : Fragment() {
 
   private fun onResultChanged(data: JSONObject?) {
     if (data != null) {
-      if (viewModel.uxMode.value == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+      if (checkoutConfig.uxMode == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
         viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
       }
     }
@@ -205,7 +211,7 @@ internal class CardFormFragment : Fragment() {
       UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
       UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
         requireContext(),
-        viewModel.amount.value
+        checkoutConfig.amount
       )
       else -> ""
     }

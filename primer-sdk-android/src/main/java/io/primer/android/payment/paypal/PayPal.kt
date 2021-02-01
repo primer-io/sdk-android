@@ -6,23 +6,30 @@ import io.primer.android.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
+import io.primer.android.di.DIAppComponent
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PrimerViewModel
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
+@KoinApiExtension
 internal class PayPal(
   viewModel: PrimerViewModel,
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.PayPal
-) : PaymentMethodDescriptor(viewModel, config) {
+) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+  private  val checkoutConfig: CheckoutConfig by inject()
+
   override val identifier: String
     get() = PAYPAL_IDENTIFIER
 
   override val selectedBehaviour: SelectedPaymentMethodBehaviour
-    get() = if (viewModel.uxMode.value == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+    get() = if (checkoutConfig.uxMode == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
       PayPalBillingAgreementBehaviour(this, viewModel)
     } else {
       PayPalOrderBehaviour(this)

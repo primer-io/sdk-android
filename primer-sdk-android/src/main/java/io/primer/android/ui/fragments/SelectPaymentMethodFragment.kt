@@ -7,17 +7,22 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import io.primer.android.R
+import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
 /**
  * A simple [Fragment] subclass.
  * Use the [SelectPaymentMethodFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-internal class SelectPaymentMethodFragment : Fragment() {
+@KoinApiExtension
+internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
@@ -29,6 +34,7 @@ internal class SelectPaymentMethodFragment : Fragment() {
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
+  private val checkoutConfig: CheckoutConfig by inject()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -56,15 +62,8 @@ internal class SelectPaymentMethodFragment : Fragment() {
       container.requestLayout()
     })
 
-    viewModel.amount.observe(viewLifecycleOwner, {
-      findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setAmount(it)
-    })
-
-    viewModel.uxMode.observe(viewLifecycleOwner, {
-      if (it != null) {
-        findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(it)
-      }
-    })
+    findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setAmount(checkoutConfig.amount)
+    findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).setUXMode(checkoutConfig.uxMode)
   }
 
   private fun <T : View> findViewById(id: Int): T {

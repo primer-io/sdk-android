@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import androidx.core.graphics.BlendModeColorFilterCompat
@@ -19,9 +20,29 @@ class ButtonDefaultLayout(ctx: Context, attrs: AttributeSet? = null): LinearLayo
   private val theme: UniversalCheckoutTheme by inject()
 
   init {
-    background = GradientDrawable().apply {
-      cornerRadius = theme.buttonCornerRadius
-      setColor(theme.buttonDefaultColor)
-    }
+    background = RippleDrawable(
+      ColorStateList(
+        arrayOf(IntArray(0)),
+        IntArray(1) { theme.buttonDefaultBorderColor },
+      ),
+      GradientDrawable().apply {
+        cornerRadius = theme.buttonCornerRadius
+        color = ColorStateList(
+          arrayOf(
+            IntArray(1) { android.R.attr.state_enabled },
+            IntArray(1) { -android.R.attr.state_enabled }
+          ),
+          IntArray(2) {
+            when (it) {
+              0 -> theme.buttonDefaultColor
+              1 -> theme.buttonDefaultColorDisabled
+              else -> theme.buttonDefaultColor
+            }
+          }
+        )
+        setStroke(1, theme.buttonDefaultBorderColor)
+      },
+      null
+    )
   }
 }

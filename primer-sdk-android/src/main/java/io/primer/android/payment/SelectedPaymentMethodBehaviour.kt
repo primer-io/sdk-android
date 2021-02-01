@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.WebviewInteropRegister
 import io.primer.android.viewmodel.TokenizationViewModel
+import org.koin.core.component.KoinApiExtension
 
 internal abstract class SelectedPaymentMethodBehaviour
 
@@ -27,6 +28,7 @@ internal class NewFragmentBehaviour(
   }
 }
 
+@KoinApiExtension
 internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehaviour() {
   protected var tokenizationViewModel: TokenizationViewModel? = null
 

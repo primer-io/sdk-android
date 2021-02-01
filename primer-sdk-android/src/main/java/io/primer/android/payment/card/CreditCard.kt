@@ -7,7 +7,9 @@ import io.primer.android.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UniversalCheckout
+import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.*
@@ -16,6 +18,8 @@ import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
 internal const val CARD_NAME_FILED_NAME = "cardholderName"
 internal const val CARD_NUMBER_FIELD_NAME = "number"
@@ -24,11 +28,14 @@ internal const val CARD_CVV_FIELD_NAME = "cvv"
 internal const val CARD_EXPIRY_MONTH_FIELD_NAME = "expirationMonth"
 internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 
+@KoinApiExtension
 internal class CreditCard(
   viewModel: PrimerViewModel,
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.Card
-) : PaymentMethodDescriptor(viewModel, config) {
+) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+
+  private val checkoutConfig: CheckoutConfig by inject()
 
   override val identifier = PAYMENT_CARD_IDENTIFIER
 
@@ -47,7 +54,7 @@ internal class CreditCard(
     val button = View.inflate(context, R.layout.payment_method_button_card, null)
     val text = button.findViewById<TextView>(R.id.card_preview_button_text)
 
-    text.text = when (viewModel.uxMode.value) {
+    text.text = when (checkoutConfig.uxMode) {
       UniversalCheckout.UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
       UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
       else -> ""

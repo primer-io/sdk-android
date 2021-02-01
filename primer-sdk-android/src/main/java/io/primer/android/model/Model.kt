@@ -2,20 +2,18 @@ package io.primer.android.model
 
 import io.primer.android.PaymentMethod
 import io.primer.android.UniversalCheckout
+import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.*
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
-internal class Model(
-  val config: CheckoutConfig,
-  val configuredPaymentMethods: List<PaymentMethod>
-) {
+internal class Model(private val api: IAPIClient, private val clientToken: ClientToken, private val config: CheckoutConfig) {
   private val log = Logger("model")
-  private val clientToken = ClientToken.fromString(config.clientToken)
-  private val api = APIClient(clientToken)
   private var clientSession: ClientSession? = null
 
   private val session: ClientSession
@@ -37,6 +35,7 @@ internal class Model(
     )
   }
 
+  @KoinApiExtension
   fun tokenize(tokenizable: PaymentMethodDescriptor): Observable {
     val json = JSONObject()
 

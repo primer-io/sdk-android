@@ -4,24 +4,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import io.primer.android.PaymentMethod
 import io.primer.android.UniversalCheckout
+import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
 import io.primer.android.model.Observable
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.payment.PaymentMethodDescriptor
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 import java.util.*
 
-internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.EventListener {
+@KoinApiExtension
+internal class PrimerViewModel : BaseViewModel(), EventBus.EventListener, DIAppComponent {
   private val log = Logger("view-model")
   private lateinit var subscription: EventBus.SubscriptionHandle
 
-  val keyboardVisible = MutableLiveData(false)
+  private val model: Model by inject()
+  private val checkoutConfig: CheckoutConfig by inject()
+  private val configuredPaymentMethods: List<PaymentMethod> by inject()
 
-//  val sheetDismissed: MutableLiveData<Boolean> = MutableLiveData(false)
+  val keyboardVisible = MutableLiveData(false)
 
   val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
@@ -32,14 +40,6 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
   val paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(Collections.emptyList())
 
   val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
-
-  val uxMode = MutableLiveData(model.config.uxMode)
-
-  val amount = MutableLiveData(model.config.amount)
-
-//  fun setSheetDismissed(dismissed: Boolean) {
-//    sheetDismissed.value = dismissed
-//  }
 
   fun setSelectedPaymentMethod(pm: PaymentMethodDescriptor) {
     selectedPaymentMethod.value = pm
@@ -52,7 +52,7 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
         val session: ClientSession = config.cast()
         val resolver = PaymentMethodDescriptorResolver(
           this,
-          model.configuredPaymentMethods,
+          configuredPaymentMethods,
           session.paymentMethods
         )
 
@@ -66,7 +66,7 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
 
               paymentMethods.value = descriptors
 
-              if (model.config.uxMode == UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD) {
+              if (checkoutConfig.uxMode == UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD) {
                 selectedPaymentMethod.value = descriptors.first()
               } else {
                 viewStatus.value = getInitialViewStatus()
@@ -92,12 +92,6 @@ internal class PrimerViewModel(model: Model) : BaseViewModel(model), EventBus.Ev
     }
 
     return ViewStatus.SELECT_PAYMENT_METHOD
-  }
-
-  class ProviderFactory(private val model: Model) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-      return PrimerViewModel(model) as T
-    }
   }
 
   companion object {

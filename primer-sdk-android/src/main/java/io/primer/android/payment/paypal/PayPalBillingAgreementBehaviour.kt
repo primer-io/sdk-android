@@ -7,7 +7,9 @@ import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 internal class PayPalBillingAgreementBehaviour(
   private val paypal: PayPal,
   private val viewModel: PrimerViewModel,

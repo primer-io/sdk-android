@@ -28,6 +28,7 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.dsl.koinApplication
 
+@KoinApiExtension
 internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
   KeyboardVisibilityEvent.OnChangedListener {
   private val log = Logger("checkout-fragment")

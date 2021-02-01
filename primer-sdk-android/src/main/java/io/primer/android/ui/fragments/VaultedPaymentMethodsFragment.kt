@@ -13,7 +13,9 @@ import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 class VaultedPaymentMethodsFragment : Fragment() {
   private val log = Logger("vaulted-payment-methods")
   private var mEditing = false

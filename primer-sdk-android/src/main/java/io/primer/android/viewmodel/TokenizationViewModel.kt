@@ -4,20 +4,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.Model
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 import java.util.*
 
-internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
+@KoinApiExtension
+internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
   private val log = Logger("tokenization-view-model")
   private var paymentMethod: PaymentMethodDescriptor? = null
+  private val model: Model by inject()
+  private val checkoutConfig: CheckoutConfig by inject()
 
   val submitted = MutableLiveData(false)
 
@@ -97,8 +104,8 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
   fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String): Observable {
     val body = JSONObject()
     body.put("paymentMethodConfigId", id)
-    body.put("amount", model.config.amount?.value)
-    body.put("currencyCode", model.config.amount?.currency)
+    body.put("amount", checkoutConfig.amount?.value)
+    body.put("currencyCode", checkoutConfig.amount?.currency)
     body.put("returnUrl", returnUrl)
     body.put("cancelUrl", cancelUrl)
 
@@ -117,13 +124,6 @@ internal class TokenizationViewModel(model: Model) : BaseViewModel(model) {
     body.put("userDetails", customerDetails)
 
     return model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)
-  }
-
-
-  class ProviderFactory(private val model: Model) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-      return TokenizationViewModel(model) as T
-    }
   }
 
   companion object {

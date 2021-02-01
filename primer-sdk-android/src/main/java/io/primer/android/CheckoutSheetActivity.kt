@@ -21,13 +21,14 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.context.loadKoinModules
 
+@KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity() {
   private val log = Logger("checkout-activity")
   private var subscription: EventBus.SubscriptionHandle? = null
   private var exited = false
-  private lateinit var model: Model
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
   private lateinit var sheet: CheckoutSheetFragment
@@ -41,17 +42,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
       paymentMethods = unmarshal("paymentMethods"),
     )
 
-
-    // Unmarshal the configuration from the intent
-    model = Model(
-      unmarshal("config"),
-      unmarshal("paymentMethods")
-    )
-
     viewModel =
-      initializeViewModel(PrimerViewModel.ProviderFactory(model), PrimerViewModel::class.java)
+      initializeViewModel(PrimerViewModel::class.java)
     tokenizationViewModel = initializeViewModel(
-      TokenizationViewModel.ProviderFactory(model),
       TokenizationViewModel::class.java
     )
 
@@ -71,10 +64,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
   }
 
   private fun <T : BaseViewModel> initializeViewModel(
-    factory: ViewModelProvider.Factory,
     modelCls: Class<T>
   ): T {
-    val vm = ViewModelProvider(this, factory).get(modelCls)
+    val vm = ViewModelProvider(this).get(modelCls)
 
     vm.initialize()
 

@@ -16,7 +16,10 @@ class UniversalCheckoutTheme private constructor(
 
   // Button Colors
   @ColorInt val buttonPrimaryColor: Int,
+  @ColorInt val buttonPrimaryColorDisabled: Int,
   @ColorInt val buttonDefaultColor: Int,
+  @ColorInt val buttonDefaultColorDisabled: Int,
+  @ColorInt val buttonDefaultBorderColor: Int,
 
   // Text Colors
   @ColorInt val textDefaultColor: Int,
@@ -37,7 +40,10 @@ class UniversalCheckoutTheme private constructor(
       inputCornerRadius: Float? = null,
       @ColorInt backgroundColor: Int? = null,
       @ColorInt buttonPrimaryColor: Int? = null,
+      @ColorInt buttonPrimaryColorDisabled: Int? = null,
       @ColorInt buttonDefaultColor: Int? = null,
+      @ColorInt buttonDefaultColorDisabled: Int? = null,
+      @ColorInt buttonDefaultBorderColor: Int? = null,
       @ColorInt textDefaultColor: Int? = null,
       @ColorInt textDangerColor: Int? = null,
       @ColorInt textMutedColor: Int? = null,
@@ -49,7 +55,10 @@ class UniversalCheckoutTheme private constructor(
         inputCornerRadius = inputCornerRadius ?: 12.0f,
         backgroundColor = backgroundColor ?: Color.WHITE,
         buttonPrimaryColor = buttonPrimaryColor ?: Color.parseColor("#FF2C98F0"),
+        buttonPrimaryColorDisabled = buttonPrimaryColorDisabled ?: Color.parseColor("#1F000000"),
         buttonDefaultColor = buttonDefaultColor ?: Color.WHITE,
+        buttonDefaultColorDisabled = buttonDefaultColorDisabled ?: Color.parseColor("#8FBEC2C4"),
+        buttonDefaultBorderColor = buttonDefaultBorderColor ?: Color.parseColor("#FFBEC2C4"),
         textDefaultColor = textDefaultColor ?: Color.parseColor("#FF000000"),
         textDangerColor = textDangerColor ?: Color.parseColor("#FFEB001B"),
         textMutedColor = textMutedColor ?: Color.parseColor("#FF808080"),
