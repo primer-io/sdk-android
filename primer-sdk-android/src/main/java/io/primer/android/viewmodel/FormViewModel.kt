@@ -21,7 +21,7 @@ internal class FormViewModel : ViewModel() {
   val button: MutableLiveData<ButtonState?> = MutableLiveData()
   val summary: MutableLiveData<FormSummaryState?> = MutableLiveData()
   val error: MutableLiveData<FormErrorState?> = MutableLiveData()
-  val validationErrors: MutableLiveData<Map<String, SyncValidationError?>> =
+  val validationErrors: MutableLiveData<MutableMap<String, SyncValidationError?>> =
     MutableLiveData(HashMap())
   val values: MutableMap<String, String> = HashMap()
   val initialValues: MutableMap<String, String> = HashMap()
@@ -61,7 +61,7 @@ internal class FormViewModel : ViewModel() {
       val validator = Validator(it)
       val value = getValue(key)
       validator.validate(value).let { error ->
-        validationErrors.value = HashMap(validationErrors.value).apply {
+        validationErrors.value = HashMap(validationErrors.value ?: HashMap()).apply {
           set(key, error)
         }
       }

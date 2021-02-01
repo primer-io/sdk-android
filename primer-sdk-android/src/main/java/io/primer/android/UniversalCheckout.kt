@@ -10,6 +10,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
+import org.koin.core.component.KoinApiExtension
 import org.koin.dsl.koinApplication
 
 class UniversalCheckout private constructor(
@@ -37,6 +38,7 @@ class UniversalCheckout private constructor(
     this.paymentMethods = paymentMethods
   }
 
+  @KoinApiExtension
   private fun show(
     listener: EventListener,
     uxMode: UXMode? = null,
@@ -90,14 +92,17 @@ class UniversalCheckout private constructor(
       instance = UniversalCheckout(context, authTokenProvider, theme = theme)
     }
 
+    @KoinApiExtension
     fun showSavedPaymentMethods(listener: UniversalCheckout.EventListener) {
       return show(listener, UXMode.ADD_PAYMENT_METHOD)
     }
 
+    @KoinApiExtension
     fun showCheckout(listener: EventListener, amount: Int, currency: String) {
       return show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
     }
 
+    @KoinApiExtension
     fun showStandalone(listener: EventListener, paymentMethod: PaymentMethod) {
       instance?.loadPaymentMethods(listOf(paymentMethod))
       show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
@@ -151,6 +156,7 @@ class UniversalCheckout private constructor(
     /**
      * Show the checkout sheet and attach a listener which will receive callback events
      */
+    @KoinApiExtension
     private fun show(
       listener: EventListener,
       uxMode: UXMode,

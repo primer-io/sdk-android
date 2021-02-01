@@ -3,10 +3,12 @@ package io.primer.android
 import android.net.Uri
 import io.primer.android.logging.Logger
 import io.primer.android.payment.WebBrowserIntentBehaviour
+import org.koin.core.component.KoinApiExtension
 import java.util.*
 import kotlin.collections.HashMap
 
 internal class WebviewInteropRegister {
+  @KoinApiExtension
   data class Callback(
     val id: String,
     val cancelUrl: String,
@@ -15,6 +17,7 @@ internal class WebviewInteropRegister {
     var result: Uri? = null,
   )
 
+  @KoinApiExtension
   companion object {
     private val log = Logger("WebviewInteropActivity")
     private val callbacks: MutableMap<String, Callback> = HashMap()
