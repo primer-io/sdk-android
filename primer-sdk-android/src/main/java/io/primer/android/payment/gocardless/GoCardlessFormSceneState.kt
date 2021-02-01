@@ -1,8 +1,6 @@
 package io.primer.android.payment.gocardless
 
 import io.primer.android.ui.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 abstract class GoCardlessFormSceneState(
   val scene: Scene,

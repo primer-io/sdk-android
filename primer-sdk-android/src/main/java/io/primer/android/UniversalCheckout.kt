@@ -11,7 +11,6 @@ import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
 import org.koin.core.component.KoinApiExtension
-import org.koin.dsl.koinApplication
 
 class UniversalCheckout private constructor(
   private val context: Context,
@@ -87,7 +86,11 @@ class UniversalCheckout private constructor(
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
-    fun initialize(context: Context, authTokenProvider: ClientTokenProvider, theme: UniversalCheckoutTheme? = null) {
+    fun initialize(
+      context: Context,
+      authTokenProvider: ClientTokenProvider,
+      theme: UniversalCheckoutTheme? = null
+    ) {
       destroy()
       instance = UniversalCheckout(context, authTokenProvider, theme = theme)
     }

@@ -1,6 +1,5 @@
 package io.primer.android.payment.gocardless
 
-import android.text.InputType
 import io.primer.android.R
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormField

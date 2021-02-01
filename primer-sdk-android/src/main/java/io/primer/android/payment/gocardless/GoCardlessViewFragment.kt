@@ -8,7 +8,6 @@ import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.APIError
-import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormErrorState
 import io.primer.android.ui.fragments.FormActionEvent
 import io.primer.android.ui.fragments.FormActionListener

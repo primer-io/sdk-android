@@ -2,8 +2,6 @@ package io.primer.android.ui
 
 import io.primer.android.R
 import io.primer.android.model.dto.SyncValidationError
-import java.util.*
-import kotlin.collections.ArrayList
 
 internal class Validator(private val field: FormField) {
   fun validate(value: String): SyncValidationError? {

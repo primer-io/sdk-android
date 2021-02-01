@@ -5,9 +5,6 @@ import androidx.lifecycle.ViewModel
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.ui.*
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 internal class FormViewModel : ViewModel() {

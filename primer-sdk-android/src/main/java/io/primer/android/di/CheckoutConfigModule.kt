@@ -15,6 +15,6 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, pms: List<PaymentM
     single { config.theme }
     single { ClientToken.fromString(get<CheckoutConfig>().clientToken) }
     single<IAPIClient> { APIClient(get()) }
-    single { Model(get(),get(),get()) }
+    single { Model(get(), get(), get()) }
   }
 }

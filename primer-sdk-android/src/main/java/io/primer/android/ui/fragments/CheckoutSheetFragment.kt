@@ -3,8 +3,6 @@ package io.primer.android.ui.fragments
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -13,20 +11,13 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
-import io.primer.android.di.DIAppComponent
-import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
-import org.koin.android.ext.android.inject
-import org.koin.core.Koin
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.KoinComponent
-import org.koin.dsl.koinApplication
 
 @KoinApiExtension
 internal class CheckoutSheetFragment : BottomSheetDialogFragment(),

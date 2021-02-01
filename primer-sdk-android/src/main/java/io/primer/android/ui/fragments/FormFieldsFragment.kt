@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.marginBottom
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
@@ -63,7 +62,7 @@ internal class FormFieldsFragment : FormChildFragment() {
       }
 
       private fun listenerToTextWatcher(l: InputChangeListener): TextWatcher {
-        return object: TextWatcher {
+        return object : TextWatcher {
           override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
           override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

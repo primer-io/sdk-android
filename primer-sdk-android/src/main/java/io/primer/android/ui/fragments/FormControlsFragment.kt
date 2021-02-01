@@ -6,10 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.ButtonState
@@ -36,8 +34,11 @@ internal class FormControlsFragment : FormChildFragment() {
         val buttonText = layout.findViewById<TextView>(R.id.form_button_txt)
         val buttonLoading = layout.findViewById<ProgressBar>(R.id.form_button_loading)
 
-        layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
-          gravity = when(state.placement) {
+        layout.layoutParams = FrameLayout.LayoutParams(
+          FrameLayout.LayoutParams.WRAP_CONTENT,
+          FrameLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+          gravity = when (state.placement) {
             ButtonState.Placement.LEFT -> Gravity.START
             ButtonState.Placement.RIGHT -> Gravity.END
             else -> Gravity.CENTER_HORIZONTAL

@@ -1,7 +1,6 @@
 package io.primer.android
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.annotation.ColorInt
 import kotlinx.serialization.Serializable
 

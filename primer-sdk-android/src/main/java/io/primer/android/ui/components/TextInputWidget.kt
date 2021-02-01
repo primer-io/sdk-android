@@ -6,12 +6,12 @@ import android.util.AttributeSet
 import com.google.android.material.textfield.TextInputLayout
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CheckoutConfig
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class TextInputWidget(ctx: Context, attrs:AttributeSet? = null) : TextInputLayout(ctx, attrs), DIAppComponent {
+class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) : TextInputLayout(ctx, attrs),
+  DIAppComponent {
   private val theme: UniversalCheckoutTheme by inject()
 
   init {

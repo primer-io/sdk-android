@@ -8,7 +8,6 @@ import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.Model
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
@@ -20,9 +19,7 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.context.loadKoinModules
 
 @KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity() {

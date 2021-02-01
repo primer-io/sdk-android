@@ -1,7 +1,6 @@
 package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.di.DIAppComponent

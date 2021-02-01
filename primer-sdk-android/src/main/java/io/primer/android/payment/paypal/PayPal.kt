@@ -23,7 +23,7 @@ internal class PayPal(
   config: PaymentMethodRemoteConfig,
   private val options: PaymentMethod.PayPal
 ) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
-  private  val checkoutConfig: CheckoutConfig by inject()
+  private val checkoutConfig: CheckoutConfig by inject()
 
   override val identifier: String
     get() = PAYPAL_IDENTIFIER

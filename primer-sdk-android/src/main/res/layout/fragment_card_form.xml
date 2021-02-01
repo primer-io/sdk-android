@@ -35,7 +35,7 @@
             android:digits="0123456789 "
             android:imeOptions="actionNext"
             android:inputType="number"
-            android:theme="@style/Primer.FormInput.Input"/>
+            android:theme="@style/Primer.FormInput.Input" />
     </io.primer.android.ui.components.TextInputWidget>
 
     <Space
