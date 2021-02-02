@@ -1,8 +1,23 @@
 package io.primer.android
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.annotation.ColorInt
 import kotlinx.serialization.Serializable
+
+private const val BUTTON_CORNER_RADIUS_DEFAULT = 12.0f
+private const val INPUT_CORNER_RADIUS_DEFAULT = 12.0f
+private const val BACKGROUND_COLOR_DEFAULT = "#FFFFFFFF"
+private const val BUTTON_PRIMARY_COLOR_DEFAULT = "#FF2C98F0"
+private const val BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT = "#8FBEC2C4"
+private const val BUTTON_DEFAULT_COLOR_DEFAULT = "#FFFFFFFF"
+private const val BUTTON_DEFAULT_BORDER_COLOR_DEFAULT = "#FFBEC2C4"
+private const val BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT = "#8FBEC2C4"
+private const val TEXT_DEFAULT_COLOR_DEFAULT = "#FF000000"
+private const val TEXT_DANGER_COLOR_DEFAULT = "#FFEB001B"
+private const val TEXT_MUTED_COLOR_DEFAULT = "#FF808080"
+private const val PRIMARY_COLOR_DEFAULT = "#FF2C98F0"
+private const val INPUT_BACKGROUND_COLOR_DEFAULT = "#FFFFFFFF"
 
 @Serializable
 class UniversalCheckoutTheme private constructor(
@@ -39,11 +54,13 @@ class UniversalCheckoutTheme private constructor(
 //  }
 
   enum class WindowMode {
-    SHEET,
+    BOTTOM_SHEET,
     FULL_HEIGHT,
   }
 
   companion object {
+    private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
+
     fun getDefault(): UniversalCheckoutTheme {
       return create()
     }
@@ -51,36 +68,42 @@ class UniversalCheckoutTheme private constructor(
     fun create(
       buttonCornerRadius: Float? = null,
       inputCornerRadius: Float? = null,
-      @ColorInt backgroundColor: Int? = null,
-      @ColorInt buttonPrimaryColor: Int? = null,
-      @ColorInt buttonPrimaryColorDisabled: Int? = null,
-      @ColorInt buttonDefaultColor: Int? = null,
-      @ColorInt buttonDefaultColorDisabled: Int? = null,
-      @ColorInt buttonDefaultBorderColor: Int? = null,
-      @ColorInt textDefaultColor: Int? = null,
-      @ColorInt textDangerColor: Int? = null,
-      @ColorInt textMutedColor: Int? = null,
-      @ColorInt primaryColor: Int? = null,
-      @ColorInt inputBackgroundColor: Int? = null,
+      backgroundColor: String? = null,
+      buttonPrimaryColor: String? = null,
+      buttonPrimaryColorDisabled: String? = null,
+      buttonDefaultColor: String? = null,
+      buttonDefaultColorDisabled: String? = null,
+      buttonDefaultBorderColor: String? = null,
+      textDefaultColor: String? = null,
+      textDangerColor: String? = null,
+      textMutedColor: String? = null,
+      primaryColor: String? = null,
+      inputBackgroundColor: String? = null,
 //      inputStyle: InputStyle? = null,
-      windowMode: WindowMode? = null,
+      windowMode: WindowMode = WindowMode.BOTTOM_SHEET,
     ): UniversalCheckoutTheme {
       return UniversalCheckoutTheme(
-        buttonCornerRadius = buttonCornerRadius ?: 12.0f,
-        inputCornerRadius = inputCornerRadius ?: 12.0f,
-        backgroundColor = backgroundColor ?: Color.WHITE,
-        buttonPrimaryColor = buttonPrimaryColor ?: Color.parseColor("#FF2C98F0"),
-        buttonPrimaryColorDisabled = buttonPrimaryColorDisabled ?: Color.parseColor("#1F000000"),
-        buttonDefaultColor = buttonDefaultColor ?: Color.WHITE,
-        buttonDefaultColorDisabled = buttonDefaultColorDisabled ?: Color.parseColor("#8FBEC2C4"),
-        buttonDefaultBorderColor = buttonDefaultBorderColor ?: Color.parseColor("#FFBEC2C4"),
-        textDefaultColor = textDefaultColor ?: Color.parseColor("#FF000000"),
-        textDangerColor = textDangerColor ?: Color.parseColor("#FFEB001B"),
-        textMutedColor = textMutedColor ?: Color.parseColor("#FF808080"),
-        primaryColor = primaryColor ?: Color.parseColor("#FF2C98F0"),
-        inputBackgroundColor = inputBackgroundColor ?: Color.parseColor("#FFFFFFFF"),
+        buttonCornerRadius = buttonCornerRadius ?: BUTTON_CORNER_RADIUS_DEFAULT,
+        inputCornerRadius = inputCornerRadius ?: INPUT_CORNER_RADIUS_DEFAULT,
+        backgroundColor = hexToColorInt(backgroundColor, BACKGROUND_COLOR_DEFAULT),
+        buttonPrimaryColor = hexToColorInt(buttonPrimaryColor, BUTTON_PRIMARY_COLOR_DEFAULT),
+        buttonPrimaryColorDisabled = hexToColorInt(buttonPrimaryColorDisabled, BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT ),
+        buttonDefaultColor = hexToColorInt(buttonDefaultColor, BUTTON_DEFAULT_COLOR_DEFAULT),
+        buttonDefaultColorDisabled = hexToColorInt(buttonDefaultColorDisabled, BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT),
+        buttonDefaultBorderColor = hexToColorInt(buttonDefaultBorderColor, BUTTON_DEFAULT_BORDER_COLOR_DEFAULT),
+        textDefaultColor = hexToColorInt(textDefaultColor, TEXT_DEFAULT_COLOR_DEFAULT),
+        textDangerColor = hexToColorInt(textDangerColor, TEXT_DANGER_COLOR_DEFAULT),
+        textMutedColor = hexToColorInt(textMutedColor, TEXT_MUTED_COLOR_DEFAULT),
+        primaryColor = hexToColorInt(primaryColor, PRIMARY_COLOR_DEFAULT),
+        inputBackgroundColor = hexToColorInt(inputBackgroundColor, INPUT_BACKGROUND_COLOR_DEFAULT),
 //        inputStyle = inputStyle ?: InputStyle.DEFAULT,
-        windowMode = windowMode ?: WindowMode.SHEET,
+        windowMode = windowMode,
+      )
+    }
+
+    private fun hexToColorInt(hex: String?, defaultValue: String): Int {
+      return Color.parseColor(
+        if (hex?.matches(HEX_PATTERN) == true) hex else defaultValue
       )
     }
   }
