@@ -28,7 +28,21 @@ class UniversalCheckoutTheme private constructor(
   // General theme
   @ColorInt val primaryColor: Int,
   @ColorInt val inputBackgroundColor: Int,
+
+  // Android specific
+//  val inputStyle: InputStyle,
+  val windowMode: WindowMode,
 ) {
+//  enum class InputStyle {
+//    DEFAULT,
+//    OUTLINE,
+//  }
+
+  enum class WindowMode {
+    SHEET,
+    FULL_HEIGHT,
+  }
+
   companion object {
     fun getDefault(): UniversalCheckoutTheme {
       return create()
@@ -48,6 +62,8 @@ class UniversalCheckoutTheme private constructor(
       @ColorInt textMutedColor: Int? = null,
       @ColorInt primaryColor: Int? = null,
       @ColorInt inputBackgroundColor: Int? = null,
+//      inputStyle: InputStyle? = null,
+      windowMode: WindowMode? = null,
     ): UniversalCheckoutTheme {
       return UniversalCheckoutTheme(
         buttonCornerRadius = buttonCornerRadius ?: 12.0f,
@@ -62,7 +78,9 @@ class UniversalCheckoutTheme private constructor(
         textDangerColor = textDangerColor ?: Color.parseColor("#FFEB001B"),
         textMutedColor = textMutedColor ?: Color.parseColor("#FF808080"),
         primaryColor = primaryColor ?: Color.parseColor("#FF2C98F0"),
-        inputBackgroundColor = (inputBackgroundColor ?: Color.parseColor("#FFFFFFFF"))
+        inputBackgroundColor = inputBackgroundColor ?: Color.parseColor("#FFFFFFFF"),
+//        inputStyle = inputStyle ?: InputStyle.DEFAULT,
+        windowMode = windowMode ?: WindowMode.SHEET,
       )
     }
   }

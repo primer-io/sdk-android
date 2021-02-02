@@ -9,6 +9,7 @@ import io.primer.android.di.DIAppComponent
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
+
 @KoinApiExtension
 class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) : TextInputLayout(ctx, attrs),
   DIAppComponent {

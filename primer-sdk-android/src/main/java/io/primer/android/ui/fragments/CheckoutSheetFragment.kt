@@ -1,29 +1,39 @@
 package io.primer.android.ui.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
+import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
+import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
+
 
 @KoinApiExtension
 internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
-  KeyboardVisibilityEvent.OnChangedListener {
+  KeyboardVisibilityEvent.OnChangedListener, DIAppComponent {
   private val log = Logger("checkout-fragment")
   private lateinit var viewModel: PrimerViewModel
+  private val theme: UniversalCheckoutTheme by inject()
 
   override fun onKeyboardVisibilityChanged(visible: Boolean) {
     viewModel.keyboardVisible.value = visible
@@ -39,6 +49,7 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
 
     behavior.isHideable = false
     behavior.isDraggable = false
+
     dialog.setOnKeyListener(this::onKeyPress)
   }
 
@@ -64,6 +75,13 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
       viewLifecycleOwner,
       this
     )
+  }
+
+  override fun onStart() {
+    super.onStart()
+    if (theme.windowMode == UniversalCheckoutTheme.WindowMode.FULL_HEIGHT) {
+      setFullHeight()
+    }
   }
 
   override fun onDismiss(dialog: DialogInterface) {
@@ -92,6 +110,25 @@ internal class CheckoutSheetFragment : BottomSheetDialogFragment(),
     }
 
     return true
+  }
+
+  private fun setFullHeight() {
+    dialog?.findViewById<View>(R.id.design_bottom_sheet)?.let {
+      it.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+    }
+
+    view?.let { view ->
+      view.parent?.let { viewParent ->
+
+        view.post {
+          val parent = viewParent as View
+          val params = parent.layoutParams as CoordinatorLayout.LayoutParams
+          val behavior = params.behavior as BottomSheetBehavior<*>
+
+          behavior.peekHeight = view.measuredHeight
+        }
+      }
+    }
   }
 
   companion object {
