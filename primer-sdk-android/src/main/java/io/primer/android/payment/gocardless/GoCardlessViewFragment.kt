@@ -199,6 +199,7 @@ class GoCardlessViewFragment : FormFragment() {
     val customerDetails = formatCustomerDetails()
 
     viewModel.setLoading(true)
+    viewModel.error.value = null
 
     primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
       tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {

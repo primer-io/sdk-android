@@ -28,6 +28,7 @@ internal class FormViewModel : ViewModel() {
     fields.value = state.fields
     button.value = state.button
     summary.value = state.summary
+    error.value = null
 
     state.initialValues?.let {
       setInitialValues(it)
