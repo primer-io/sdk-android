@@ -3,10 +3,11 @@ package io.primer.android.payment.gocardless
 import io.primer.android.R
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormField
+import io.primer.android.ui.FormProgressState
 import io.primer.android.ui.FormTitleState
 
 
-class IBANViewState(buttonLabelId: Int, initialValues: Map<String, String>? = null) : GoCardlessFormSceneState(
+class IBANViewState(buttonLabelId: Int, showProgress: Boolean, initialValues: Map<String, String>? = null) : GoCardlessFormSceneState(
   scene = Scene.IBAN,
   title = FormTitleState(
     titleId = R.string.add_bank_account,
@@ -25,5 +26,6 @@ class IBANViewState(buttonLabelId: Int, initialValues: Map<String, String>? = nu
   button = ButtonState(
     labelId = buttonLabelId,
   ),
+  progress = if (showProgress) FormProgressState(current = 1, max = 5) else null,
   initialValues = initialValues,
 )

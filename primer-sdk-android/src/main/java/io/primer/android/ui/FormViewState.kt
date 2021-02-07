@@ -97,10 +97,16 @@ data class FormErrorState(
   val labelId: Int
 )
 
+data class FormProgressState(
+  val current: Int,
+  val max: Int,
+)
+
 open class FormViewState(
   val title: FormTitleState? = null,
   val fields: List<FormField> = ArrayList(),
   val button: ButtonState? = null,
   val summary: FormSummaryState? = null,
   val initialValues: Map<String, String>? = null,
+  val progress: FormProgressState? = null
 )

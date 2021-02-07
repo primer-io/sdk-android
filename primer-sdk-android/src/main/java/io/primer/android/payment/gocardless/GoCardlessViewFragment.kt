@@ -53,6 +53,7 @@ class GoCardlessViewFragment : FormFragment() {
     showFormScene(
       IBANViewState(
         buttonLabelId = R.string.next,
+        showProgress = true,
         mapOf(
           DD_FIELD_NAME_IBAN to "",
           DD_FIELD_NAME_CUSTOMER_EMAIL to (options.customerEmail ?: ""),
@@ -136,7 +137,7 @@ class GoCardlessViewFragment : FormFragment() {
   }
 
   private fun showIBANView(buttonLabelId: Int) {
-    showFormScene(IBANViewState(buttonLabelId))
+    showFormScene(IBANViewState(buttonLabelId, showProgress = false))
   }
 
   private fun showSummaryView() {
@@ -154,19 +155,19 @@ class GoCardlessViewFragment : FormFragment() {
 
   private fun showCustomerEmailView(buttonLabelId: Int) {
     showFormScene(
-      CustomerEmailViewState(buttonLabelId),
+      CustomerEmailViewState(buttonLabelId, showProgress = !readyToTokenize),
     )
   }
 
   private fun showCustomerNameView(buttonLabelId: Int) {
     showFormScene(
-      CustomerNameViewState(buttonLabelId),
+      CustomerNameViewState(buttonLabelId, showProgress = !readyToTokenize),
     )
   }
 
   private fun showAddressView(buttonLabelId: Int) {
     showFormScene(
-      CustomerAddressViewState(buttonLabelId),
+      CustomerAddressViewState(buttonLabelId, showProgress = !readyToTokenize),
     )
   }
 

@@ -3,9 +3,10 @@ package io.primer.android.payment.gocardless
 import io.primer.android.R
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormField
+import io.primer.android.ui.FormProgressState
 import io.primer.android.ui.FormTitleState
 
-class CustomerEmailViewState(buttonLabelId: Int) : GoCardlessFormSceneState(
+class CustomerEmailViewState(buttonLabelId: Int, showProgress: Boolean) : GoCardlessFormSceneState(
   Scene.CUSTOMER_EMAIL,
   title = FormTitleState(
     titleId = R.string.enter_email,
@@ -21,5 +22,6 @@ class CustomerEmailViewState(buttonLabelId: Int) : GoCardlessFormSceneState(
   ),
   button = ButtonState(
     labelId = buttonLabelId,
-  )
+  ),
+  progress = if (showProgress) FormProgressState(current = 3, max = 5) else null,
 )

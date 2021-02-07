@@ -2,11 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_form_errors"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_marginBottom="@dimen/primer_form_title_margin"
+    >
 
     <io.primer.android.ui.components.TextViewDanger
         android:id="@+id/form_error_text"
         style="@style/Primer.Text.Small"
+        android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

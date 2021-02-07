@@ -8,12 +8,14 @@ abstract class GoCardlessFormSceneState(
   fields: List<FormField> = ArrayList(),
   button: ButtonState? = null,
   summary: FormSummaryState? = null,
+  progress: FormProgressState? = null,
   initialValues: Map<String, String>? = null,
 ) : FormViewState(
   title = title,
   fields = fields,
   button = button,
   summary = summary,
+  progress = progress,
   initialValues = initialValues,
 ) {
   enum class Scene {

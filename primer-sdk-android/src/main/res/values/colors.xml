@@ -7,6 +7,7 @@
     <color name="primer_input_placeholder">#8A000000</color>
     <color name="primer_app_background">#FFFFFFFF</color>
     <color name="primer_app_primary">#FF2C98F0</color>
+    <color name="primer_app_primary_muted">#402C98F0</color>
     <color name="primer_app_danger">#FFEB001B</color>
 
     <color name="primer_button_primary">@color/primer_app_primary</color>

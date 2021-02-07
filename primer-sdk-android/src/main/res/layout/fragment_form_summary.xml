@@ -3,4 +3,6 @@
     android:id="@+id/form_summary_fragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"></LinearLayout>
+    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/primer_form_title_margin"
+    />

@@ -18,6 +18,7 @@ internal class FormViewModel : ViewModel() {
   val button: MutableLiveData<ButtonState?> = MutableLiveData()
   val summary: MutableLiveData<FormSummaryState?> = MutableLiveData()
   val error: MutableLiveData<FormErrorState?> = MutableLiveData()
+  val progress: MutableLiveData<FormProgressState?> = MutableLiveData()
   val validationErrors: MutableLiveData<MutableMap<String, SyncValidationError?>> =
     MutableLiveData(HashMap())
   val values: MutableMap<String, String> = HashMap()
@@ -28,6 +29,7 @@ internal class FormViewModel : ViewModel() {
     fields.value = state.fields
     button.value = state.button
     summary.value = state.summary
+    progress.value = state.progress
     error.value = null
 
     state.initialValues?.let {
