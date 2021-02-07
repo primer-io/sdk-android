@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Space
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
@@ -60,10 +59,6 @@ internal class FormSummaryFragment : FormChildFragment() {
 
     updateAllViews()
 
-    if (state.items.isNotEmpty() && state.text.isNotEmpty()) {
-      layout.addView(createSpacer())
-    }
-
     state.text.forEachIndexed { index, content ->
       layout.addView(createTextView(content, isFirst = index == 0))
     }
@@ -96,26 +91,20 @@ internal class FormSummaryFragment : FormChildFragment() {
     return view
   }
 
-  private fun createSpacer(): View {
-    val spacer = Space(requireContext())
-    spacer.minimumHeight = 12
-    return spacer
-  }
-
   private fun createTextView(item: TextSummaryItem, isFirst: Boolean = false): TextView {
     val view = TextView(requireContext())
     view.id = View.generateViewId()
     view.text = item.content
     TextViewCompat.setTextAppearance(view, item.styleId)
 
-    if (!isFirst) {
-      val params = LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.MATCH_PARENT,
-        LinearLayout.LayoutParams.WRAP_CONTENT
-      )
-      params.topMargin = 12
-      view.layoutParams = params
-    }
+    val params = LinearLayout.LayoutParams(
+      LinearLayout.LayoutParams.MATCH_PARENT,
+      LinearLayout.LayoutParams.WRAP_CONTENT
+    )
+
+    params.topMargin = if (isFirst) 64 else 28
+
+    view.layoutParams = params
 
     return view
   }

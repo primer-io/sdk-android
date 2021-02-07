@@ -49,7 +49,7 @@ internal abstract class TokenAttributes private constructor(
   }
 
   internal class GoCardlessMandateAttributes(token: PaymentMethodTokenInternal) :
-    TokenAttributes(token, R.drawable.icon_bank) {
+    TokenAttributes(token, R.drawable.ic_bank) {
     private val log = Logger("go-cardless")
     override fun getDescription(context: Context): String {
       val ref = data["gocardlessMandateId"]?.jsonPrimitive?.contentOrNull ?: ""

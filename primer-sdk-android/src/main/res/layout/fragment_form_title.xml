@@ -43,7 +43,7 @@
 
     <TextView
         android:id="@+id/form_title_description"
-        style="@style/Primer.Text.Large"
+        style="@style/Primer.Text.SubTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/primer_form_title_margin" />

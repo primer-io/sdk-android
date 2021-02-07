@@ -18,7 +18,8 @@ abstract class GoCardlessFormSceneState(
 ) {
   enum class Scene {
     IBAN,
-    CUSTOMER,
+    CUSTOMER_NAME,
+    CUSTOMER_EMAIL,
     ADDRESS,
     SUMMARY,
   }

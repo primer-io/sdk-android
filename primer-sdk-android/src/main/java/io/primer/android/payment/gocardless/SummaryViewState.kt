@@ -5,6 +5,7 @@ import io.primer.android.ui.*
 
 class SummaryViewState(
   val getCustomerName: () -> String,
+  val getCustomerEmail: () -> String,
   val getCustomerAddress: () -> String,
   val getBankDetails: () -> String,
   val companyAddress: String,
@@ -20,18 +21,23 @@ class SummaryViewState(
   summary = FormSummaryState(
     items = listOf(
       InteractiveSummaryItem(
-        name = "customer",
-        iconId = R.drawable.icon_user,
+        name = "customer-name",
+        iconId = R.drawable.ic_person,
         getLabel = getCustomerName,
       ),
       InteractiveSummaryItem(
+        name = "customer-email",
+        iconId = R.drawable.ic_mail,
+        getLabel = getCustomerEmail,
+      ),
+      InteractiveSummaryItem(
         name = "address",
-        iconId = R.drawable.icon_location_pin,
+        iconId = R.drawable.ic_location_pin,
         getLabel = getCustomerAddress,
       ),
       InteractiveSummaryItem(
         name = "bank",
-        iconId = R.drawable.icon_bank,
+        iconId = R.drawable.ic_bank,
         getLabel = getBankDetails,
       )
     ),

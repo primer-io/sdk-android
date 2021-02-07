@@ -37,6 +37,10 @@
     <string name="dd_cancel_message">Do you want to cancel adding a bank account?</string>
     <string name="data_will_be_lost">Your data will be erased</string>
 
+    <string name="enter_name">Enter your name</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="first_last_name">First and last name</string>
+
     <!-- Navigation -->
     <string name="cancel">Cancel</string>
     <string name="next">Next</string>

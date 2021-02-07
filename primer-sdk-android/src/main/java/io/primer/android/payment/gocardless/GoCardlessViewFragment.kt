@@ -80,7 +80,8 @@ class GoCardlessViewFragment : FormFragment() {
     private fun onSummaryItemPress(e: FormActionEvent.SummaryItemPress) {
       when (e.name) {
         "bank" -> showIBANView()
-        "customer" -> showCustomerView()
+        "customer-name" -> showCustomerNameView()
+        "customer-email" -> showCustomerEmailView()
         "address" -> showAddressView()
       }
     }
@@ -122,6 +123,7 @@ class GoCardlessViewFragment : FormFragment() {
     showFormScene(
       SummaryViewState(
         getCustomerName = { viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME) },
+        getCustomerEmail = { viewModel.getValue(DD_FIELD_NAME_CUSTOMER_EMAIL) },
         getCustomerAddress = { formatCustomerAddress() },
         companyAddress = options.companyAddress,
         getBankDetails = { viewModel.getValue(DD_FIELD_NAME_IBAN) },
@@ -131,9 +133,16 @@ class GoCardlessViewFragment : FormFragment() {
     )
   }
 
-  private fun showCustomerView() {
+  private fun showCustomerEmailView() {
     showFormScene(
-      CustomerDetailsViewState(),
+      CustomerEmailViewState(),
+      backToPreviousListener
+    )
+  }
+
+  private fun showCustomerNameView() {
+    showFormScene(
+      CustomerNameViewState(),
       backToPreviousListener
     )
   }
