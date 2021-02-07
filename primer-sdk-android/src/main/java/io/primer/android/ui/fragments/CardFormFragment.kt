@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -43,6 +44,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
   private val log = Logger("card-form")
   private lateinit var inputs: Map<String, TextInputEditText>
   private lateinit var submitButton: ViewGroup
+  private lateinit var goBackButton: ImageView
   private lateinit var submitButtonText: TextView
   private lateinit var submitButtonLoading: ProgressBar
   private lateinit var errorText: TextView
@@ -74,6 +76,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
       CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
     )
     submitButton = view.findViewById(R.id.card_form_submit_button)
+    goBackButton = view.findViewById(R.id.card_form_go_back)
     submitButtonText = view.findViewById(R.id.card_form_submit_button_txt)
     submitButtonLoading = view.findViewById(R.id.card_form_submit_button_loading)
     errorText = view.findViewById(R.id.card_form_error_message)
@@ -113,8 +116,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
       }
     }
 
+    goBackButton.setOnClickListener {
+      parentFragmentManager.popBackStack()
+    }
+
     // IME action listeners
-    inputs[CARD_CVV_FIELD_NAME]?.setOnEditorActionListener { _, _, _ ->
+    inputs[CARD_NAME_FILED_NAME]?.setOnEditorActionListener { _, _, _ ->
       submitButton.performClick()
     }
 
@@ -132,7 +139,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
   }
 
   private fun focusFirstInput() {
-    FieldFocuser.focus(inputs[CARD_NAME_FILED_NAME])
+    FieldFocuser.focus(inputs[CARD_NUMBER_FIELD_NAME])
   }
 
   private fun createTextWatcher(name: String): TextWatcher {
@@ -208,7 +215,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
   private fun onUXModeChanged(mode: UniversalCheckout.UXMode) {
     submitButtonText.text = when (mode) {
-      UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.add_card)
+      UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.confirm)
       UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
         requireContext(),
         checkoutConfig.amount

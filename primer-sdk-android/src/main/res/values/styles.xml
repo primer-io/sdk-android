@@ -78,7 +78,8 @@
     </style>
 
     <style name="Primer.Text.Title" parent="Primer.Text.Large">
-        <item name="fontWeight">500</item>
+
+<!--        <item name="android:textFontWeight">500</item>-->
     </style>
 
     <style name="Primer.FormInput.Layout" parent="Widget.Design.TextInputLayout">

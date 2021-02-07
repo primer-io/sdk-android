@@ -5,24 +5,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <io.primer.android.ui.components.TextInputWidget
-        style="@style/Primer.FormInput.Layout"
-        android:hint="@string/card_holder_name">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/card_form_cardholder_name_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="textPersonName"
-            android:maxLines="1"
-            android:theme="@style/Primer.FormInput.Input" />
-    </io.primer.android.ui.components.TextInputWidget>
-
-    <Space
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/primer_input_spacing_vert" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/primer_form_title_margin"
+        >
+        <ImageView
+            android:id="@+id/card_form_go_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/go_back_description"
+            android:src="@drawable/icon_go_back"
+            android:layout_marginEnd="24dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Primer.Text.Title"
+            android:text="@string/enter_card_details"
+            />
+    </LinearLayout>
 
     <io.primer.android.ui.components.TextInputWidget
         style="@style/Primer.FormInput.Layout"
@@ -75,13 +81,37 @@
                 android:id="@+id/card_form_card_cvv_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:inputType="number"
                 android:maxLength="4"
                 android:theme="@style/Primer.FormInput.Input" />
         </io.primer.android.ui.components.TextInputWidget>
 
     </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/primer_input_spacing_vert" />
+
+    <io.primer.android.ui.components.TextInputWidget
+        style="@style/Primer.FormInput.Layout"
+        android:hint="@string/card_holder_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/card_form_cardholder_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:theme="@style/Primer.FormInput.Input" />
+    </io.primer.android.ui.components.TextInputWidget>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/primer_input_spacing_vert" />
 
     <io.primer.android.ui.components.TextViewDanger
         android:id="@+id/card_form_error_message"
