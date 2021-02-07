@@ -24,6 +24,7 @@ internal class NewFragmentBehaviour(
     }
 
     transaction.replace(R.id.checkout_sheet_content, fragment)
+
     transaction.commit()
   }
 }

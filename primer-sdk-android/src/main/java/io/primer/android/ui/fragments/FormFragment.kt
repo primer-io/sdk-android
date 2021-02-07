@@ -13,12 +13,16 @@ import io.primer.android.viewmodel.FormViewModel
 
 enum class FormActionType {
   SUBMIT_PRESS,
-  SUMMARY_ITEM_PRESS
+  SUMMARY_ITEM_PRESS,
+  GO_BACK,
+  CANCEL,
 }
 
 sealed class FormActionEvent(val type: FormActionType) {
   class SubmitPressed : FormActionEvent(FormActionType.SUBMIT_PRESS)
   class SummaryItemPress(val name: String) : FormActionEvent(FormActionType.SUMMARY_ITEM_PRESS)
+  class GoBack : FormActionEvent(FormActionType.GO_BACK)
+  class Cancel : FormActionEvent(FormActionType.CANCEL)
 }
 
 interface FormActionListenerOwner {

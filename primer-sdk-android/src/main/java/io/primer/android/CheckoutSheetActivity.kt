@@ -85,7 +85,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
       }
 
       if (fragment != null) {
-        openFragment(fragment)
+        openFragment(fragment, true)
       }
     })
 

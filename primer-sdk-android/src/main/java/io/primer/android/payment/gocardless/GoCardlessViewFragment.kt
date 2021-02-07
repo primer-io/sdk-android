@@ -1,5 +1,6 @@
 package io.primer.android.payment.gocardless
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import io.primer.android.ui.fragments.FormFragment
 import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
@@ -43,16 +45,20 @@ class GoCardlessViewFragment : FormFragment() {
 
   private val firstPageListener = object : FormActionListener {
     override fun onFormAction(e: FormActionEvent) {
-      if (e is FormActionEvent.SubmitPressed) {
-        showSummaryView()
+      when (e) {
+        is FormActionEvent.SubmitPressed -> showSummaryView()
+        is FormActionEvent.Cancel -> onCancel()
+        is FormActionEvent.GoBack -> backToPreviousView()
       }
     }
   }
 
   private val backToPreviousListener = object : FormActionListener {
     override fun onFormAction(e: FormActionEvent) {
-      if (e is FormActionEvent.SubmitPressed) {
-        backToPreviousView()
+      when (e) {
+        is FormActionEvent.Cancel -> onCancel()
+        is FormActionEvent.GoBack -> backToPreviousView()
+        is FormActionEvent.SubmitPressed -> backToPreviousView()
       }
     }
   }
@@ -60,6 +66,8 @@ class GoCardlessViewFragment : FormFragment() {
   private val submitFormListener = object : FormActionListener {
     override fun onFormAction(e: FormActionEvent) {
       when (e) {
+        is FormActionEvent.Cancel -> onCancel()
+        is FormActionEvent.GoBack -> backToPreviousView()
         is FormActionEvent.SubmitPressed -> onSubmitPressed(e)
         is FormActionEvent.SummaryItemPress -> onSummaryItemPress(e)
       }
@@ -139,6 +147,22 @@ class GoCardlessViewFragment : FormFragment() {
 
   private fun backToPreviousView() {
     parentFragmentManager.popBackStack()
+  }
+
+  private fun onCancel() {
+    AlertDialog.Builder(context).apply {
+      setTitle(R.string.dd_cancel_message)
+      setMessage(R.string.data_will_be_lost)
+      setPositiveButton(R.string.confirm) { _, _ ->
+        onConfirmCancel()
+      }
+      setNegativeButton(R.string.cancel) { _, _, -> }
+      show()
+    }
+  }
+
+  private fun onConfirmCancel() {
+    primerViewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
   }
 
   private fun showFormScene(state: GoCardlessFormSceneState, actionListener: FormActionListener) {

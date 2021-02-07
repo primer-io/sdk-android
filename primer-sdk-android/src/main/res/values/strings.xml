@@ -34,6 +34,8 @@
     <string name="address_country_code">Country</string>
     <string name="address_postal_code">Postal Code</string>
     <string name="dd_mandate_error">Please check that all of your information is correct</string>
+    <string name="dd_cancel_message">Do you want to cancel adding a bank account?</string>
+    <string name="data_will_be_lost">Your data will be erased</string>
 
     <!-- Navigation -->
     <string name="cancel">Cancel</string>
