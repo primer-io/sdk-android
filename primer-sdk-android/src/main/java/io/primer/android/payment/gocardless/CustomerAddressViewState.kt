@@ -8,7 +8,7 @@ import io.primer.android.ui.FormTitleState
 class CustomerAddressViewState : GoCardlessFormSceneState(
   Scene.ADDRESS,
   title = FormTitleState(
-    titleId = R.string.confirm_dd_mandate,
+    titleId = R.string.enter_address,
   ),
   fields = listOf(
     FormField(
@@ -25,15 +25,15 @@ class CustomerAddressViewState : GoCardlessFormSceneState(
       inputType = FormField.Type.POSTAL_ADDRESS,
     ),
     FormField(
-      name = DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY,
-      labelId = R.string.address_city,
+      name = DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE,
+      labelId = R.string.address_postal_code,
       required = true,
       inputType = FormField.Type.TEXT,
     ),
     FormField(
-      name = DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE,
-      labelId = R.string.address_state,
-      required = false,
+      name = DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY,
+      labelId = R.string.address_city,
+      required = true,
       inputType = FormField.Type.TEXT,
     ),
     FormField(
@@ -42,12 +42,6 @@ class CustomerAddressViewState : GoCardlessFormSceneState(
       required = true,
       inputType = FormField.Type.COUNTRY_CODE,
       minLength = 2,
-    ),
-    FormField(
-      name = DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE,
-      labelId = R.string.address_postal_code,
-      required = true,
-      inputType = FormField.Type.TEXT,
     ),
   ),
   button = ButtonState(

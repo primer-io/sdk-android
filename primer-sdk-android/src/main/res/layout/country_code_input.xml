@@ -23,9 +23,16 @@
         app:ccp_showFullName="true"
         app:ccp_showNameCode="false"
         app:ccp_showPhoneCode="false"
-        app:ccp_textGravity="RIGHT"
+        app:ccp_showFlag="false"
+        app:ccp_textGravity="LEFT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/country_code_label" />
+    <View
+        app:layout_constraintStart_toStartOf="@id/country_code_picker"
+        app:layout_constraintEnd_toEndOf="@id/country_code_picker"
+        app:layout_constraintTop_toBottomOf="@id/country_code_picker"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" android:background="@color/primer_text_color_default" />
 </androidx.constraintlayout.widget.ConstraintLayout>

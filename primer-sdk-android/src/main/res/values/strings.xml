@@ -27,8 +27,8 @@
     <string name="confirm_dd_mandate">Confirm mandate</string>
     <string name="name">Name</string>
     <string name="email">Email</string>
-    <string name="address_line_1">Address</string>
-    <string name="address_line_2">Address (extended)</string>
+    <string name="address_line_1">Address line 1</string>
+    <string name="address_line_2">Address line 2 (optional)</string>
     <string name="address_city">City</string>
     <string name="address_state">State</string>
     <string name="address_country_code">Country</string>
@@ -39,6 +39,7 @@
 
     <string name="enter_name">Enter your name</string>
     <string name="enter_email">Enter your email</string>
+    <string name="enter_address">Enter your address</string>
     <string name="first_last_name">First and last name</string>
 
     <!-- Navigation -->
