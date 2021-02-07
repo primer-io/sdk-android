@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:id="@+id/button_primary_cta_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primer_button_primary_fg"
+        style="@style/Primer.Button.Text.Primary"
+        android:minHeight="44dp"
+        android:gravity="center"
+        />
+
+    <ProgressBar
+        android:id="@+id/button_primary_cta_progress"
+        android:layout_width="12dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent"
+        android:visibility="gone"/>
+</merge>

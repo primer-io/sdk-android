@@ -65,7 +65,9 @@ internal class FormViewModel : ViewModel() {
       }
     }
 
-    isValid.value = validationErrors.value?.filter { it.value != null }?.isEmpty() ?: true
+    val valid = validationErrors.value?.filter { it.value != null }?.isEmpty() ?: true
+
+    isValid.value = valid
   }
 
   fun setLoading(loading: Boolean) {

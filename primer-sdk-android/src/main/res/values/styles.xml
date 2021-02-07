@@ -42,6 +42,12 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="Primer.Button.Text.Primary" parent="Primer.Button.Text">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="lineHeight">24sp</item>
+        <item name="android:textSize">@dimen/primer_text_size_button</item>
+    </style>
+
     <style name="Primer.Button.Text.Danger" parent="Primer.Button.Text">
         <item name="android:textColor">@color/primer_app_danger</item>
     </style>

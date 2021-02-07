@@ -25,6 +25,7 @@ import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
+import io.primer.android.ui.components.ButtonPrimary
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -44,10 +45,10 @@ import kotlin.collections.HashMap
 internal class CardFormFragment : Fragment(), DIAppComponent {
   private val log = Logger("card-form")
   private lateinit var inputs: Map<String, TextInputEditText>
-  private lateinit var submitButton: ViewGroup
+  private lateinit var submitButton: ButtonPrimary
   private lateinit var goBackButton: ImageView
-  private lateinit var submitButtonText: TextView
-  private lateinit var submitButtonLoading: ProgressBar
+//  private lateinit var submitButtonText: TextView
+//  private lateinit var submitButtonLoading: ProgressBar
   private lateinit var errorText: TextView
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
@@ -80,8 +81,6 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     )
     submitButton = view.findViewById(R.id.card_form_submit_button)
     goBackButton = view.findViewById(R.id.card_form_go_back)
-    submitButtonText = view.findViewById(R.id.card_form_submit_button_txt)
-    submitButtonLoading = view.findViewById(R.id.card_form_submit_button_loading)
     errorText = view.findViewById(R.id.card_form_error_message)
 
     // Attach view model observers
@@ -134,11 +133,9 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
   }
 
   private fun toggleLoading(on: Boolean) {
+    submitButton.setProgress(on)
     if (on) {
       errorText.visibility = View.INVISIBLE
-      submitButtonLoading.visibility = View.VISIBLE
-    } else {
-      submitButtonLoading.visibility = View.GONE
     }
   }
 
@@ -239,7 +236,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
   }
 
   private fun onUXModeChanged(mode: UniversalCheckout.UXMode) {
-    submitButtonText.text = when (mode) {
+    submitButton.text = when (mode) {
       UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.confirm)
       UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
         requireContext(),

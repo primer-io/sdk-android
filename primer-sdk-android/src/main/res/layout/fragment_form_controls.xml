@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<io.primer.android.ui.components.ButtonPrimaryLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/form_button"
-    style="@style/Widget.AppCompat.Button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:layout_marginTop="32dp"
-    android:background="@drawable/button_primary_bg"
-    android:clickable="true"
-    android:elevation="@dimen/primer_button_elevation"
-    android:focusable="true"
-    android:paddingStart="@dimen/primer_button_padding_horiz"
-    android:paddingEnd="@dimen/primer_button_padding_horiz">
-
-    <TextView
-        android:id="@+id/form_button_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/primer_button_primary_fg"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/form_button_loading"
-        android:layout_width="22dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/form_button_txt"
-        app:layout_constraintTop_toTopOf="parent" />
-</io.primer.android.ui.components.ButtonPrimaryLayout>
+    android:id="@+id/fragment_form_view_controls"
+    >
+    <io.primer.android.ui.components.ButtonPrimary
+        android:id="@+id/form_button_cta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

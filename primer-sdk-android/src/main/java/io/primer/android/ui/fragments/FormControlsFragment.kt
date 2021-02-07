@@ -11,10 +11,13 @@ import android.widget.TextView
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.ButtonState
+import io.primer.android.ui.components.ButtonPrimary
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
 internal class FormControlsFragment : FormChildFragment() {
   private val log = Logger("form-controls")
-  private lateinit var layout: ViewGroup
+  private lateinit var mButton: ButtonPrimary
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -27,33 +30,18 @@ internal class FormControlsFragment : FormChildFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    layout = view.findViewById(R.id.form_button)
+    mButton = view.findViewById(R.id.form_button_cta)
 
     viewModel.button.observe(viewLifecycleOwner) {
       it?.let { state ->
-        val buttonText = layout.findViewById<TextView>(R.id.form_button_txt)
-        val buttonLoading = layout.findViewById<ProgressBar>(R.id.form_button_loading)
-
-        layout.layoutParams = FrameLayout.LayoutParams(
-          FrameLayout.LayoutParams.WRAP_CONTENT,
-          FrameLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-          gravity = when (state.placement) {
-            ButtonState.Placement.LEFT -> Gravity.START
-            ButtonState.Placement.RIGHT -> Gravity.END
-            else -> Gravity.CENTER_HORIZONTAL
-          }
-        }
-
-        buttonText.text = requireContext().getString(state.labelId)
-
-        buttonLoading.visibility = if (state.loading) View.VISIBLE else View.GONE
-        layout.isEnabled = isViewEnabled(viewModel.isValid.value ?: true, it)
+        mButton.text = requireContext().getString(state.labelId)
+        mButton.setProgress(state.loading)
+        mButton.isEnabled = isViewEnabled(viewModel.isValid.value ?: true, it)
       }
     }
 
     viewModel.isValid.observe(viewLifecycleOwner) {
-      view.isEnabled = isViewEnabled(it, viewModel.button.value)
+      mButton.isEnabled = isViewEnabled(it, viewModel.button.value)
     }
 
     view.setOnClickListener {
