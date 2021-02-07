@@ -38,54 +38,10 @@ class GoCardlessViewFragment : FormFragment() {
   private lateinit var viewModel: FormViewModel
   private lateinit var primerViewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
+  private var readyToTokenize = false
 
   private val options: PaymentMethod.GoCardless
     get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
-
-
-  private val firstPageListener = object : FormActionListener {
-    override fun onFormAction(e: FormActionEvent) {
-      when (e) {
-        is FormActionEvent.SubmitPressed -> showSummaryView()
-        is FormActionEvent.Cancel -> onCancel()
-        is FormActionEvent.GoBack -> backToPreviousView()
-      }
-    }
-  }
-
-  private val backToPreviousListener = object : FormActionListener {
-    override fun onFormAction(e: FormActionEvent) {
-      when (e) {
-        is FormActionEvent.Cancel -> onCancel()
-        is FormActionEvent.GoBack -> backToPreviousView()
-        is FormActionEvent.SubmitPressed -> backToPreviousView()
-      }
-    }
-  }
-
-  private val submitFormListener = object : FormActionListener {
-    override fun onFormAction(e: FormActionEvent) {
-      when (e) {
-        is FormActionEvent.Cancel -> onCancel()
-        is FormActionEvent.GoBack -> backToPreviousView()
-        is FormActionEvent.SubmitPressed -> onSubmitPressed(e)
-        is FormActionEvent.SummaryItemPress -> onSummaryItemPress(e)
-      }
-    }
-
-    private fun onSubmitPressed(e: FormActionEvent.SubmitPressed) {
-      beginTokenization()
-    }
-
-    private fun onSummaryItemPress(e: FormActionEvent.SummaryItemPress) {
-      when (e.name) {
-        "bank" -> showIBANView()
-        "customer-name" -> showCustomerNameView()
-        "customer-email" -> showCustomerEmailView()
-        "address" -> showAddressView()
-      }
-    }
-  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
@@ -94,29 +50,93 @@ class GoCardlessViewFragment : FormFragment() {
     primerViewModel = PrimerViewModel.getInstance(requireActivity())
     tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
 
-    viewModel.setState(
+    showFormScene(
       IBANViewState(
+        buttonLabelId = R.string.next,
         mapOf(
           DD_FIELD_NAME_IBAN to "",
-          DD_FIELD_NAME_CUSTOMER_EMAIL to options.customerEmail,
-          DD_FIELD_NAME_CUSTOMER_NAME to options.customerName,
-          DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1 to options.customerAddressLine1,
+          DD_FIELD_NAME_CUSTOMER_EMAIL to (options.customerEmail ?: ""),
+          DD_FIELD_NAME_CUSTOMER_NAME to (options.customerName ?: ""),
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1 to (options.customerAddressLine1 ?: ""),
           DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_2 to (options.customerAddressLine2 ?: ""),
-          DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY to options.customerAddressCity,
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY to (options.customerAddressCity ?: ""),
           DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE to (options.customerAddressState ?: ""),
-          DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE to options.customerAddressCountryCode,
-          DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE to options.customerAddressPostalCode,
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE to (options.customerAddressCountryCode ?: ""),
+          DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE to (options.customerAddressPostalCode ?: ""),
         )
-      )
+      ),
+      isTransition = false
     )
-    setOnFormActionListener(firstPageListener)
   }
 
-  private fun showIBANView() {
-    showFormScene(
-      IBANViewState(),
-      backToPreviousListener
-    )
+  private fun onSummaryItemPress(e: FormActionEvent.SummaryItemPress) {
+    when (e.name) {
+      "bank" -> showIBANView(R.string.confirm)
+      "customer-name" -> showCustomerNameView(R.string.confirm)
+      "customer-email" -> showCustomerEmailView(R.string.confirm)
+      "address" -> showAddressView(R.string.confirm)
+    }
+  }
+
+  private fun createFormActionListener(scene: GoCardlessFormSceneState.Scene): FormActionListener {
+    return object : FormActionListener {
+      override fun onFormAction(e: FormActionEvent) {
+        when (e) {
+          is FormActionEvent.Cancel -> onCancel()
+          is FormActionEvent.GoBack -> backToPreviousView()
+          is FormActionEvent.SummaryItemPress -> onSummaryItemPress(e)
+          is FormActionEvent.SubmitPressed -> onSubmitPressed(scene)
+        }
+      }
+    }
+  }
+
+  private fun onSubmitPressed(scene: GoCardlessFormSceneState.Scene) {
+    if (readyToTokenize) {
+      return if (scene == GoCardlessFormSceneState.Scene.SUMMARY) beginTokenization() else backToPreviousView()
+    }
+
+    val hasName = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME).isNotEmpty()
+    val hasEmail = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_EMAIL).isNotEmpty()
+    val hasAddress =
+      viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1).isNotEmpty() &&
+          viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY).isNotEmpty() &&
+          viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE).isNotEmpty() &&
+          viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE).isNotEmpty()
+
+    var nextScene = scene
+
+    if (nextScene == GoCardlessFormSceneState.Scene.IBAN) {
+      nextScene = GoCardlessFormSceneState.Scene.CUSTOMER_NAME
+    }
+
+    if (nextScene == GoCardlessFormSceneState.Scene.CUSTOMER_NAME && hasName) {
+      nextScene = GoCardlessFormSceneState.Scene.CUSTOMER_EMAIL
+    }
+
+    if (nextScene == GoCardlessFormSceneState.Scene.CUSTOMER_EMAIL && hasEmail) {
+      nextScene = GoCardlessFormSceneState.Scene.ADDRESS
+    }
+
+    if (nextScene == GoCardlessFormSceneState.Scene.ADDRESS && hasAddress) {
+      nextScene = GoCardlessFormSceneState.Scene.SUMMARY
+    }
+
+    if (nextScene == GoCardlessFormSceneState.Scene.SUMMARY) {
+      readyToTokenize = true
+    }
+
+    when (nextScene) {
+      GoCardlessFormSceneState.Scene.CUSTOMER_NAME -> showCustomerNameView(R.string.next)
+      GoCardlessFormSceneState.Scene.CUSTOMER_EMAIL -> showCustomerEmailView(R.string.next)
+      GoCardlessFormSceneState.Scene.ADDRESS -> showAddressView(R.string.next)
+      GoCardlessFormSceneState.Scene.SUMMARY -> showSummaryView()
+      else -> {}
+    }
+  }
+
+  private fun showIBANView(buttonLabelId: Int) {
+    showFormScene(IBANViewState(buttonLabelId))
   }
 
   private fun showSummaryView() {
@@ -129,28 +149,24 @@ class GoCardlessViewFragment : FormFragment() {
         getBankDetails = { viewModel.getValue(DD_FIELD_NAME_IBAN) },
         legalText = requireContext().getString(R.string.dd_mandate_legal, options.companyName)
       ),
-      submitFormListener,
     )
   }
 
-  private fun showCustomerEmailView() {
+  private fun showCustomerEmailView(buttonLabelId: Int) {
     showFormScene(
-      CustomerEmailViewState(),
-      backToPreviousListener
+      CustomerEmailViewState(buttonLabelId),
     )
   }
 
-  private fun showCustomerNameView() {
+  private fun showCustomerNameView(buttonLabelId: Int) {
     showFormScene(
-      CustomerNameViewState(),
-      backToPreviousListener
+      CustomerNameViewState(buttonLabelId),
     )
   }
 
-  private fun showAddressView() {
+  private fun showAddressView(buttonLabelId: Int) {
     showFormScene(
-      CustomerAddressViewState(),
-      backToPreviousListener,
+      CustomerAddressViewState(buttonLabelId),
     )
   }
 
@@ -174,16 +190,21 @@ class GoCardlessViewFragment : FormFragment() {
     primerViewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
   }
 
-  private fun showFormScene(state: GoCardlessFormSceneState, actionListener: FormActionListener) {
-    val nextFragment = FormFragment(state)
+  private fun showFormScene(state: GoCardlessFormSceneState, isTransition: Boolean = true) {
+    val fragment = if (isTransition) FormFragment(state) else this
+    val listener = createFormActionListener(state.scene)
 
-    nextFragment.setOnFormActionListener(actionListener)
+    fragment.setOnFormActionListener(listener)
 
-    parentFragmentManager.beginTransaction()
-      .setReorderingAllowed(true)
-      .addToBackStack(null)
-      .replace(R.id.checkout_sheet_content, nextFragment)
-      .commit()
+    if (isTransition) {
+      parentFragmentManager.beginTransaction()
+        .setReorderingAllowed(true)
+        .addToBackStack(null)
+        .replace(R.id.checkout_sheet_content, fragment)
+        .commit()
+    } else {
+      viewModel.setState(state)
+    }
   }
 
   private fun formatCustomerAddress(): String {

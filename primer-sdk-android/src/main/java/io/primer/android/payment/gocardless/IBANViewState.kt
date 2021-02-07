@@ -6,7 +6,7 @@ import io.primer.android.ui.FormField
 import io.primer.android.ui.FormTitleState
 
 
-class IBANViewState(initialValues: Map<String, String>? = null) : GoCardlessFormSceneState(
+class IBANViewState(buttonLabelId: Int, initialValues: Map<String, String>? = null) : GoCardlessFormSceneState(
   scene = Scene.IBAN,
   title = FormTitleState(
     titleId = R.string.add_bank_account,
@@ -23,7 +23,7 @@ class IBANViewState(initialValues: Map<String, String>? = null) : GoCardlessForm
     )
   ),
   button = ButtonState(
-    labelId = R.string.next,
+    labelId = buttonLabelId,
   ),
   initialValues = initialValues,
 )

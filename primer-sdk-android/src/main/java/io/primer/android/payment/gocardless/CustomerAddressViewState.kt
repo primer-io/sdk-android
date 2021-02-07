@@ -5,7 +5,7 @@ import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormField
 import io.primer.android.ui.FormTitleState
 
-class CustomerAddressViewState : GoCardlessFormSceneState(
+class CustomerAddressViewState(buttonLabelId: Int) : GoCardlessFormSceneState(
   Scene.ADDRESS,
   title = FormTitleState(
     titleId = R.string.enter_address,
@@ -45,6 +45,6 @@ class CustomerAddressViewState : GoCardlessFormSceneState(
     ),
   ),
   button = ButtonState(
-    labelId = R.string.confirm,
+    labelId = buttonLabelId,
   )
 )

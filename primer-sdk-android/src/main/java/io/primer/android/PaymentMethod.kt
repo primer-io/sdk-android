@@ -18,14 +18,14 @@ sealed class PaymentMethod(val identifier: String) {
   class GoCardless(
     val companyName: String,
     val companyAddress: String,
-    val customerName: String,
-    val customerEmail: String,
-    val customerAddressLine1: String,
+    val customerName: String? = null,
+    val customerEmail: String? = null,
+    val customerAddressLine1: String? = null,
     val customerAddressLine2: String? = null,
-    val customerAddressCity: String,
+    val customerAddressCity: String? = null,
     val customerAddressState: String? = null,
-    val customerAddressCountryCode: String,
-    val customerAddressPostalCode: String,
+    val customerAddressCountryCode: String? = null,
+    val customerAddressPostalCode: String? = null,
   ) : io.primer.android.PaymentMethod(
     GOCARDLESS_IDENTIFIER
   )

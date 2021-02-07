@@ -29,6 +29,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
   private lateinit var sheet: CheckoutSheetFragment
+  private var initFinished = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -85,7 +86,11 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
       }
 
       if (fragment != null) {
-        openFragment(fragment, true)
+        openFragment(fragment, initFinished)
+      }
+
+      if (!initFinished && it != ViewStatus.INITIALIZING) {
+        initFinished = true
       }
     })
 
