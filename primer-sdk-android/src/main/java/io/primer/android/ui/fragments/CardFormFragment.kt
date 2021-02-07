@@ -33,6 +33,7 @@ import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * A simple [Fragment] subclass.
@@ -51,6 +52,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
   private lateinit var viewModel: PrimerViewModel
   private lateinit var tokenizationViewModel: TokenizationViewModel
   private val checkoutConfig: CheckoutConfig by inject()
+  private val dirtyMap: MutableMap<String, Boolean> = HashMap()
+  private var firstMount: Boolean = true
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -107,6 +110,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     // text change listeners
     inputs.entries.forEach {
       it.value.addTextChangedListener(createTextWatcher(it.key))
+      it.value.onFocusChangeListener = createFocusChangeListener(it.key)
     }
 
     // Click listeners
@@ -154,21 +158,42 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
   }
 
+  private fun createFocusChangeListener(name: String): View.OnFocusChangeListener {
+    return View.OnFocusChangeListener { _, hasFocus ->
+      var skip = false
+
+      if (!hasFocus && firstMount && name == CARD_NUMBER_FIELD_NAME) {
+        firstMount = false
+        skip = true
+      }
+
+      if (!skip && !hasFocus) {
+        dirtyMap[name] = true
+      }
+
+      setValidationErrors()
+    }
+  }
+
   private fun setValidationErrors() {
     val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
 
     submitButton.isEnabled = errors.isEmpty()
 
-    if (tokenizationViewModel.submitted.value != true) {
-      return
-    }
+    val showAll = tokenizationViewModel.submitted.value == true
 
     inputs.entries.forEach {
-      setValidationErrorState(it.value, errors.find { err -> err.name == it.key })
+      val dirty = getIsDirty(it.key)
+      val focused = it.value.isFocused
+
+      if (showAll || dirty) {
+        setValidationErrorState(it.value, if (focused) null else errors.find { err -> err.name == it.key })
+      }
     }
   }
 
   private fun setValidationErrorState(input: TextInputEditText, error: SyncValidationError?) {
+
     if (error == null) {
       input.error = null
     } else {
@@ -222,6 +247,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
       )
       else -> ""
     }
+  }
+
+  private fun getIsDirty(name: String): Boolean {
+    return dirtyMap[name] ?: false
   }
 
   companion object {
