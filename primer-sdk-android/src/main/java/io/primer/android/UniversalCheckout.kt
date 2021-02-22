@@ -5,12 +5,20 @@ import android.content.Intent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
+import io.primer.android.model.*
+import io.primer.android.model.APIClient
 import io.primer.android.model.DeferredToken
+import io.primer.android.model.Model
+import io.primer.android.model.Observable
+import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.ClientSession
+import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
 import org.koin.core.component.KoinApiExtension
+import java.util.*
+import kotlin.collections.ArrayList
 
 class UniversalCheckout private constructor(
   private val context: Context,
@@ -24,7 +32,6 @@ class UniversalCheckout private constructor(
   private var listener: EventListener? = null
   private var subscription: EventBus.SubscriptionHandle? = null
 
-
   interface EventListener {
     fun onCheckoutEvent(e: CheckoutEvent)
   }
@@ -35,6 +42,32 @@ class UniversalCheckout private constructor(
 
   private fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
     this.paymentMethods = paymentMethods
+  }
+
+  /**
+   * TODO: refactor API client & data layer
+   */
+  private fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+    token.observe {
+      val config = CheckoutConfig.create(clientToken = it)
+      val token = ClientToken.fromString(it)
+      val client = APIClient(token)
+      val model = Model(client, token, config)
+      model.getConfiguration().observe { remoteConfig ->
+        if (remoteConfig is Observable.ObservableSuccessEvent) {
+          model.getVaultedPaymentMethods().observe { vault ->
+            if (vault is Observable.ObservableSuccessEvent) {
+              val internal: List<PaymentMethodTokenInternal> = vault.cast(key = "data", defaultValue = Collections.emptyList())
+              callback(internal.map { PaymentMethodTokenAdapter.internalToExternal(it) })
+            } else {
+              callback(listOf())
+            }
+          }
+        } else {
+          callback(listOf())
+        }
+      }
+    }
   }
 
   @KoinApiExtension
@@ -109,6 +142,10 @@ class UniversalCheckout private constructor(
     fun showStandalone(listener: EventListener, paymentMethod: PaymentMethod) {
       instance?.loadPaymentMethods(listOf(paymentMethod))
       show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
+    }
+
+    fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+      instance?.getSavedPaymentMethods(callback)
     }
 
     /**
