@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.FormProgressState
+import io.primer.android.ui.FormTitleState
 
 internal class FormTitleFragment : FormChildFragment() {
   private val log = Logger("form-title-fragment")
@@ -35,7 +36,7 @@ internal class FormTitleFragment : FormChildFragment() {
     }
 
     view.findViewById<Button>(R.id.form_title_cancel_button).setOnClickListener {
-      dispatchFormEvent(FormActionEvent.Cancel())
+      dispatchFormEvent(if (viewModel.title.value?.cancelBehaviour == FormTitleState.CancelBehaviour.CANCEL) FormActionEvent.Cancel() else FormActionEvent.Exit())
     }
 
     viewModel.title.observe(viewLifecycleOwner) {

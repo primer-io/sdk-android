@@ -6,10 +6,14 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.PaymentMethod
 import io.primer.android.R
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.FormErrorState
+import io.primer.android.ui.FormTitleState
 import io.primer.android.ui.fragments.FormActionEvent
 import io.primer.android.ui.fragments.FormActionListener
 import io.primer.android.ui.fragments.FormFragment
@@ -53,6 +57,7 @@ class GoCardlessViewFragment : FormFragment() {
     showFormScene(
       IBANViewState(
         buttonLabelId = R.string.next,
+        cancelBehaviour = FormTitleState.CancelBehaviour.EXIT,
         showProgress = true,
         mapOf(
           DD_FIELD_NAME_IBAN to "",
@@ -84,6 +89,7 @@ class GoCardlessViewFragment : FormFragment() {
       override fun onFormAction(e: FormActionEvent) {
         when (e) {
           is FormActionEvent.Cancel -> onCancel()
+          is FormActionEvent.Exit -> onExit()
           is FormActionEvent.GoBack -> backToPreviousView()
           is FormActionEvent.SummaryItemPress -> onSummaryItemPress(e)
           is FormActionEvent.SubmitPressed -> onSubmitPressed(scene)
@@ -137,7 +143,7 @@ class GoCardlessViewFragment : FormFragment() {
   }
 
   private fun showIBANView(buttonLabelId: Int) {
-    showFormScene(IBANViewState(buttonLabelId, showProgress = false))
+    showFormScene(IBANViewState(buttonLabelId, cancelBehaviour = FormTitleState.CancelBehaviour.CANCEL, showProgress = false))
   }
 
   private fun showSummaryView() {
@@ -185,6 +191,10 @@ class GoCardlessViewFragment : FormFragment() {
       setNegativeButton(R.string.cancel) { _, _, -> }
       show()
     }
+  }
+
+  private fun onExit() {
+    EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_USER))
   }
 
   private fun onConfirmCancel() {

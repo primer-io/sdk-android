@@ -44,7 +44,13 @@ internal class Validator(private val field: FormField) {
 data class FormTitleState(
   val titleId: Int,
   val descriptionId: Int? = null,
-)
+  val cancelBehaviour: CancelBehaviour = CancelBehaviour.CANCEL,
+) {
+  enum class CancelBehaviour {
+    CANCEL,
+    EXIT,
+  }
+}
 
 data class FormField(
   val name: String,

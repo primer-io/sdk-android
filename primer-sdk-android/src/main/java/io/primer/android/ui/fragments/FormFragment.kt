@@ -16,6 +16,7 @@ enum class FormActionType {
   SUMMARY_ITEM_PRESS,
   GO_BACK,
   CANCEL,
+  EXIT,
 }
 
 sealed class FormActionEvent(val type: FormActionType) {
@@ -23,6 +24,7 @@ sealed class FormActionEvent(val type: FormActionType) {
   class SummaryItemPress(val name: String) : FormActionEvent(FormActionType.SUMMARY_ITEM_PRESS)
   class GoBack : FormActionEvent(FormActionType.GO_BACK)
   class Cancel : FormActionEvent(FormActionType.CANCEL)
+  class Exit : FormActionEvent(FormActionType.EXIT)
 }
 
 interface FormActionListenerOwner {
