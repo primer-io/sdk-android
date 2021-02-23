@@ -54,17 +54,23 @@ class UniversalCheckout private constructor(
       val client = APIClient(token)
       val model = Model(client, token, config)
       model.getConfiguration().observe { remoteConfig ->
-        if (remoteConfig is Observable.ObservableSuccessEvent) {
-          model.getVaultedPaymentMethods().observe { vault ->
-            if (vault is Observable.ObservableSuccessEvent) {
-              val internal: List<PaymentMethodTokenInternal> = vault.cast(key = "data", defaultValue = Collections.emptyList())
-              callback(internal.map { PaymentMethodTokenAdapter.internalToExternal(it) })
-            } else {
-              callback(listOf())
+        when (remoteConfig) {
+          is Observable.ObservableSuccessEvent -> {
+            model.getVaultedPaymentMethods().observe { vault ->
+              when (vault) {
+                is Observable.ObservableSuccessEvent -> {
+                  val internal: List<PaymentMethodTokenInternal> = vault.cast(key = "data", defaultValue = Collections.emptyList())
+                  callback(internal.map { PaymentMethodTokenAdapter.internalToExternal(it) })
+                }
+                is Observable.ObservableErrorEvent -> {
+                  callback(listOf())
+                }
+              }
             }
           }
-        } else {
-          callback(listOf())
+          is Observable.ObservableErrorEvent -> {
+            callback(listOf())
+          }
         }
       }
     }
