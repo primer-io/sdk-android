@@ -6,7 +6,7 @@ import java.util.*
 
 @Serializable
 internal data class PaymentMethodRemoteConfig(
-  val id: String? = null,
-  val type: String,
-  val options: JsonObject = JsonObject(content = Collections.emptyMap())
+    val id: String? = null,
+    val type: String,
+    val options: JsonObject = JsonObject(content = Collections.emptyMap()),
 )

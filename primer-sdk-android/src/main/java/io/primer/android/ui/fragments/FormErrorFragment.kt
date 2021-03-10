@@ -8,24 +8,25 @@ import android.widget.TextView
 import io.primer.android.R
 
 internal class FormErrorFragment : FormChildFragment() {
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_form_errors, container, false)
-  }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    viewModel.error.observe(viewLifecycleOwner) {
-      view.visibility = if (it == null) View.GONE else View.VISIBLE
-
-      it?.let { state ->
-        view.findViewById<TextView>(R.id.form_error_text).text =
-          requireContext().getText(state.labelId)
-      }
+    override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?,
+    ): View? {
+        return inflater.inflate(R.layout.fragment_form_errors, container, false)
     }
-  }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.error.observe(viewLifecycleOwner) {
+            view.visibility = if (it == null) View.GONE else View.VISIBLE
+
+            it?.let { state ->
+                view.findViewById<TextView>(R.id.form_error_text).text =
+                    requireContext().getText(state.labelId)
+            }
+        }
+    }
 }

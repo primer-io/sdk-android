@@ -19,114 +19,116 @@ import java.util.*
 
 @KoinApiExtension
 internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
-  private val log = Logger("tokenization-view-model")
-  private var paymentMethod: PaymentMethodDescriptor? = null
-  private val model: Model by inject()
-  private val checkoutConfig: CheckoutConfig by inject()
 
-  val submitted = MutableLiveData(false)
+    private val log = Logger("tokenization-view-model")
+    private var paymentMethod: PaymentMethodDescriptor? = null
+    private val model: Model by inject()
+    private val checkoutConfig: CheckoutConfig by inject()
 
-  val status = MutableLiveData(TokenizationStatus.NONE)
+    val submitted = MutableLiveData(false)
 
-  val error = MutableLiveData<APIError?>(null)
+    val status = MutableLiveData(TokenizationStatus.NONE)
 
-  val result = MutableLiveData<JSONObject>(null)
+    val error = MutableLiveData<APIError?>(null)
 
-  val validationErrors: MutableLiveData<List<SyncValidationError>> =
-    MutableLiveData(Collections.emptyList())
+    val result = MutableLiveData<JSONObject>(null)
 
-  fun reset(pm: PaymentMethodDescriptor? = null) {
-    paymentMethod = pm
-    submitted.value = false
-    status.value = TokenizationStatus.NONE
-    error.value = null
-    result.value = null
+    val validationErrors: MutableLiveData<List<SyncValidationError>> =
+        MutableLiveData(Collections.emptyList())
 
-    if (pm != null) {
-      validationErrors.value = pm.validate()
-    } else {
-      validationErrors.value = Collections.emptyList()
-    }
-  }
+    fun reset(pm: PaymentMethodDescriptor? = null) {
+        paymentMethod = pm
+        submitted.value = false
+        status.value = TokenizationStatus.NONE
+        error.value = null
+        result.value = null
 
-  fun isValid(): Boolean {
-    return paymentMethod != null && (validationErrors.value?.isEmpty() == true)
-  }
-
-  fun tokenize(): Observable {
-    return model.tokenize(paymentMethod!!).observe {
-      when (it) {
-        is Observable.ObservableLoadingEvent -> {
-          status.value = TokenizationStatus.LOADING
+        if (pm != null) {
+            validationErrors.value = pm.validate()
+        } else {
+            validationErrors.value = Collections.emptyList()
         }
-        is Observable.ObservableSuccessEvent -> {
-          result.value = it.data
-          status.value = TokenizationStatus.SUCCESS
+    }
+
+    fun isValid(): Boolean {
+        return paymentMethod != null && (validationErrors.value?.isEmpty() == true)
+    }
+
+    fun tokenize(): Observable {
+        return model.tokenize(paymentMethod!!).observe {
+            when (it) {
+              is Observable.ObservableLoadingEvent -> {
+                status.value = TokenizationStatus.LOADING
+              }
+              is Observable.ObservableSuccessEvent -> {
+                result.value = it.data
+                status.value = TokenizationStatus.SUCCESS
+              }
+              is Observable.ObservableErrorEvent -> {
+                error.value = it.error
+                status.value = TokenizationStatus.ERROR
+              }
+            }
         }
-        is Observable.ObservableErrorEvent -> {
-          error.value = it.error
-          status.value = TokenizationStatus.ERROR
+    }
+
+    // TODO: move this to vault view model ??
+    fun deleteToken(token: PaymentMethodTokenInternal) {
+        model.deleteToken(token)
+    }
+
+    fun setTokenizableValue(key: String, value: String) {
+        paymentMethod?.let { pm ->
+            pm.setTokenizableValue(key, value)
+            validationErrors.value = pm.validate()
         }
-      }
     }
-  }
 
-  // TODO: move this to vault view model ??
-  fun deleteToken(token: PaymentMethodTokenInternal) {
-    model.deleteToken(token)
-  }
-
-  fun setTokenizableValue(key: String, value: String) {
-    paymentMethod?.let { pm ->
-      pm.setTokenizableValue(key, value)
-      validationErrors.value = pm.validate()
+    // TODO: move these payal things somewhere else
+    fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String): Observable {
+        val body = JSONObject()
+        body.put("paymentMethodConfigId", id)
+        body.put("returnUrl", returnUrl)
+        body.put("cancelUrl", cancelUrl)
+        return model.post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)
     }
-  }
 
-  // TODO: move these payal things somewhere else
-  fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String): Observable {
-    val body = JSONObject()
-    body.put("paymentMethodConfigId", id)
-    body.put("returnUrl", returnUrl)
-    body.put("cancelUrl", cancelUrl)
-    return model.post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)
-  }
-
-  fun confirmPayPalBillingAgreement(id: String, token: String): Observable {
-    val body = JSONObject()
-    body.put("paymentMethodConfigId", id)
-    body.put("tokenId", token)
-    return model.post(APIEndpoint.CONFIRM_PAYPAL_BILLING_AGREEMENT, body)
-  }
-
-  fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String): Observable {
-    val body = JSONObject()
-    body.put("paymentMethodConfigId", id)
-    body.put("amount", checkoutConfig.amount?.value)
-    body.put("currencyCode", checkoutConfig.amount?.currency)
-    body.put("returnUrl", returnUrl)
-    body.put("cancelUrl", cancelUrl)
-
-    return model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)
-  }
-
-  fun createGoCardlessMandate(
-    id: String,
-    bankDetails: JSONObject,
-    customerDetails: JSONObject
-  ): Observable {
-    val body = JSONObject()
-
-    body.put("id", id)
-    body.put("bankDetails", bankDetails)
-    body.put("userDetails", customerDetails)
-
-    return model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)
-  }
-
-  companion object {
-    fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
-      return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
+    fun confirmPayPalBillingAgreement(id: String, token: String): Observable {
+        val body = JSONObject()
+        body.put("paymentMethodConfigId", id)
+        body.put("tokenId", token)
+        return model.post(APIEndpoint.CONFIRM_PAYPAL_BILLING_AGREEMENT, body)
     }
-  }
+
+    fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String): Observable {
+        val body = JSONObject()
+        body.put("paymentMethodConfigId", id)
+        body.put("amount", checkoutConfig.amount?.value)
+        body.put("currencyCode", checkoutConfig.amount?.currency)
+        body.put("returnUrl", returnUrl)
+        body.put("cancelUrl", cancelUrl)
+
+        return model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)
+    }
+
+    fun createGoCardlessMandate(
+      id: String,
+      bankDetails: JSONObject,
+      customerDetails: JSONObject,
+    ): Observable {
+        val body = JSONObject()
+
+        body.put("id", id)
+        body.put("bankDetails", bankDetails)
+        body.put("userDetails", customerDetails)
+
+        return model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)
+    }
+
+    companion object {
+
+        fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
+            return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
+        }
+    }
 }

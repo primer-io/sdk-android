@@ -4,41 +4,42 @@ import io.primer.android.R
 import io.primer.android.model.dto.SyncValidationError
 
 internal class Validator(private val field: FormField) {
-  fun validate(value: String): SyncValidationError? {
-    val normalized = (value ?: "").trim()
 
-    if (field.required && normalized.isEmpty()) {
-      return required()
+    fun validate(value: String): SyncValidationError? {
+        val normalized = (value ?: "").trim()
+
+        if (field.required && normalized.isEmpty()) {
+            return required()
+        }
+
+        if (normalized.length < field.minLength) {
+            return invalid()
+        }
+
+        if (normalized.length > field.maxLength) {
+            return invalid()
+        }
+
+        val numWords = normalized.split(Regex("\\s+")).size
+
+        if (numWords < field.minWordCount) {
+            return invalid()
+        }
+
+        return null
     }
 
-    if (normalized.length < field.minLength) {
-      return invalid()
+    private fun required(): SyncValidationError {
+        return error(R.string.form_error_required)
     }
 
-    if (normalized.length > field.maxLength) {
-      return invalid()
+    private fun invalid(): SyncValidationError {
+        return error(R.string.form_error_invalid)
     }
 
-    val numWords = normalized.split(Regex("\\s+")).size
-
-    if (numWords < field.minWordCount) {
-      return invalid()
+    private fun error(errorId: Int): SyncValidationError {
+        return SyncValidationError(name = field.name, errorId = errorId, fieldId = field.labelId)
     }
-
-    return null
-  }
-
-  private fun required(): SyncValidationError {
-    return error(R.string.form_error_required)
-  }
-
-  private fun invalid(): SyncValidationError {
-    return error(R.string.form_error_invalid)
-  }
-
-  private fun error(errorId: Int): SyncValidationError {
-    return SyncValidationError(name = field.name, errorId = errorId, fieldId = field.labelId)
-  }
 }
 
 data class FormTitleState(
@@ -46,10 +47,11 @@ data class FormTitleState(
   val descriptionId: Int? = null,
   val cancelBehaviour: CancelBehaviour = CancelBehaviour.CANCEL,
 ) {
-  enum class CancelBehaviour {
-    CANCEL,
-    EXIT,
-  }
+
+    enum class CancelBehaviour {
+        CANCEL,
+        EXIT,
+    }
 }
 
 data class FormField(
@@ -62,13 +64,14 @@ data class FormField(
   val maxLength: Int = Int.MAX_VALUE,
   val minWordCount: Int = 0,
 ) {
-  enum class Type {
-    TEXT,
-    POSTAL_ADDRESS,
-    PERSON_NAME,
-    EMAIL,
-    COUNTRY_CODE,
-  }
+
+    enum class Type {
+        TEXT,
+        POSTAL_ADDRESS,
+        PERSON_NAME,
+        EMAIL,
+        COUNTRY_CODE,
+    }
 }
 
 data class ButtonState(
@@ -76,11 +79,12 @@ data class ButtonState(
   val placement: Placement = Placement.CENTER,
   val loading: Boolean = false,
 ) {
-  enum class Placement {
-    LEFT,
-    CENTER,
-    RIGHT,
-  }
+
+    enum class Placement {
+        LEFT,
+        CENTER,
+        RIGHT,
+    }
 }
 
 data class InteractiveSummaryItem(
@@ -91,16 +95,16 @@ data class InteractiveSummaryItem(
 
 data class TextSummaryItem(
   val content: String,
-  val styleId: Int = R.style.Primer_Text_Small_Muted
+  val styleId: Int = R.style.Primer_Text_Small_Muted,
 )
 
 data class FormSummaryState(
   val items: List<InteractiveSummaryItem>,
-  val text: List<TextSummaryItem>
+  val text: List<TextSummaryItem>,
 )
 
 data class FormErrorState(
-  val labelId: Int
+  val labelId: Int,
 )
 
 data class FormProgressState(
@@ -114,5 +118,5 @@ open class FormViewState(
   val button: ButtonState? = null,
   val summary: FormSummaryState? = null,
   val initialValues: Map<String, String>? = null,
-  val progress: FormProgressState? = null
+  val progress: FormProgressState? = null,
 )

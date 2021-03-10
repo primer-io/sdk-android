@@ -6,24 +6,26 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class ClientToken(
-  val configurationUrl: String,
-  val accessToken: String,
+    val configurationUrl: String,
+    val accessToken: String,
 ) {
-  companion object {
-    fun fromString(encoded: String): ClientToken {
-      val tokens = encoded.split(".")
 
-      for (elm in tokens) {
-        val bytes = Base64.decode(elm, Base64.DEFAULT)
-        val decoded = String(bytes)
+    companion object {
 
-        if (decoded.contains("\"accessToken\":")) {
-          return json.decodeFromString(serializer(), decoded)
+        fun fromString(encoded: String): ClientToken {
+            val tokens = encoded.split(".")
+
+            for (elm in tokens) {
+                val bytes = Base64.decode(elm, Base64.DEFAULT)
+                val decoded = String(bytes)
+
+                if (decoded.contains("\"accessToken\":")) {
+                    return json.decodeFromString(serializer(), decoded)
+                }
+            }
+
+            // TODO: clean this up
+            throw IllegalArgumentException()
         }
-      }
-
-      // TODO: clean this up
-      throw IllegalArgumentException()
     }
-  }
 }

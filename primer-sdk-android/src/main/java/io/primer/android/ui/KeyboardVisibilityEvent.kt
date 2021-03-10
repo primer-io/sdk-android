@@ -15,80 +15,83 @@ import java.lang.ref.WeakReference
 private const val KEYBOARD_MIN_HEIGHT_RATIO = 0.15
 
 internal object KeyboardVisibilityEvent {
-  private val log = Logger("keyboard-event")
 
-  interface OnChangedListener {
-    fun onKeyboardVisibilityChanged(visible: Boolean)
-  }
+    private val log = Logger("keyboard-event")
 
-  private class Subscription(view: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {
-    private val viewRef = WeakReference(view)
-    private val listenerRef = WeakReference(listener)
+    interface OnChangedListener {
 
-    fun register() {
-      val view = viewRef.get()
-      val listener = listenerRef.get()
-
-      if (view != null && listener != null) {
-        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
-      }
+        fun onKeyboardVisibilityChanged(visible: Boolean)
     }
 
-    fun unregister() {
-      val view = viewRef.get()
-      val listener = listenerRef.get()
+    private class Subscription(view: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {
 
-      if (view != null && listener != null) {
-        view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-      }
-    }
-  }
+        private val viewRef = WeakReference(view)
+        private val listenerRef = WeakReference(listener)
 
-  fun subscribe(
-    contentView: View,
-    lifecycleOwner: LifecycleOwner,
-    listener: OnChangedListener,
-  ) {
-    val layoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-      private var isVisible = false
+        fun register() {
+            val view = viewRef.get()
+            val listener = listenerRef.get()
 
-      override fun onGlobalLayout() {
-        val nextIsVisible = isKeyboardVisible(contentView)
-
-        if (nextIsVisible == isVisible) {
-          return
+            if (view != null && listener != null) {
+                view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+            }
         }
 
-        isVisible = nextIsVisible
+        fun unregister() {
+            val view = viewRef.get()
+            val listener = listenerRef.get()
 
-        listener.onKeyboardVisibilityChanged(isVisible)
-      }
+            if (view != null && listener != null) {
+                view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+            }
+        }
     }
 
-    val subscription = Subscription(contentView, layoutListener)
+    fun subscribe(
+        contentView: View,
+        lifecycleOwner: LifecycleOwner,
+        listener: OnChangedListener,
+    ) {
+        val layoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+            private var isVisible = false
 
-    lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
-      @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-      fun onDestroy() {
-        subscription.unregister()
-      }
-    })
+            override fun onGlobalLayout() {
+                val nextIsVisible = isKeyboardVisible(contentView)
 
-    subscription.register()
-  }
+                if (nextIsVisible == isVisible) {
+                    return
+                }
 
-  private fun isKeyboardVisible(contentView: View): Boolean {
-    val r = Rect()
+                isVisible = nextIsVisible
 
-    contentView.getWindowVisibleDisplayFrame(r)
+                listener.onKeyboardVisibilityChanged(isVisible)
+            }
+        }
 
-    val screenHeight = contentView.rootView.height
-    val heightDiff = screenHeight - r.height()
+        val subscription = Subscription(contentView, layoutListener)
 
-    return heightDiff > screenHeight * KEYBOARD_MIN_HEIGHT_RATIO
-  }
+        lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onDestroy() {
+                subscription.unregister()
+            }
+        })
 
-  fun getContentRoot(activity: Activity): ViewGroup {
-    return activity.findViewById(android.R.id.content)
-  }
+        subscription.register()
+    }
+
+    fun isKeyboardVisible(contentView: View): Boolean {
+        val r = Rect()
+
+        contentView.getWindowVisibleDisplayFrame(r)
+
+        val screenHeight = contentView.rootView.height
+        val heightDiff = screenHeight - r.height()
+
+        return heightDiff > screenHeight * KEYBOARD_MIN_HEIGHT_RATIO
+    }
+
+    fun getContentRoot(activity: Activity): ViewGroup {
+        return activity.findViewById(android.R.id.content)
+    }
 }

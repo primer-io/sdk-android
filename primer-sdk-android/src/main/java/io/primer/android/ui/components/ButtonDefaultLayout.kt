@@ -13,33 +13,34 @@ import org.koin.core.component.inject
 
 @KoinApiExtension
 class ButtonDefaultLayout(ctx: Context, attrs: AttributeSet? = null) : LinearLayout(ctx, attrs),
-  DIAppComponent {
-  private val theme: UniversalCheckoutTheme by inject()
+    DIAppComponent {
 
-  init {
-    background = RippleDrawable(
-      ColorStateList(
-        arrayOf(IntArray(0)),
-        IntArray(1) { theme.buttonDefaultBorderColor },
-      ),
-      GradientDrawable().apply {
-        cornerRadius = theme.buttonCornerRadius
-        color = ColorStateList(
-          arrayOf(
-            IntArray(1) { android.R.attr.state_enabled },
-            IntArray(1) { -android.R.attr.state_enabled }
+    private val theme: UniversalCheckoutTheme by inject()
+
+    init {
+        background = RippleDrawable(
+          ColorStateList(
+            arrayOf(IntArray(0)),
+            IntArray(1) { theme.buttonDefaultBorderColor },
           ),
-          IntArray(2) {
-            when (it) {
-              0 -> theme.buttonDefaultColor
-              1 -> theme.buttonDefaultColorDisabled
-              else -> theme.buttonDefaultColor
-            }
-          }
+          GradientDrawable().apply {
+            cornerRadius = theme.buttonCornerRadius
+            color = ColorStateList(
+              arrayOf(
+                IntArray(1) { android.R.attr.state_enabled },
+                IntArray(1) { -android.R.attr.state_enabled }
+              ),
+              IntArray(2) {
+                when (it) {
+                  0 -> theme.buttonDefaultColor
+                  1 -> theme.buttonDefaultColorDisabled
+                  else -> theme.buttonDefaultColor
+                }
+              }
+            )
+            setStroke(1, theme.buttonDefaultBorderColor)
+          },
+          null
         )
-        setStroke(1, theme.buttonDefaultBorderColor)
-      },
-      null
-    )
-  }
+    }
 }

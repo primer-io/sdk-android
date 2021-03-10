@@ -21,90 +21,91 @@ private const val INPUT_BACKGROUND_COLOR_DEFAULT = "#FFFFFFFF"
 
 @Serializable
 class UniversalCheckoutTheme private constructor(
-  // Corner radii
-  val buttonCornerRadius: Float,
-  val inputCornerRadius: Float,
+    // Corner radii
+    val buttonCornerRadius: Float,
+    val inputCornerRadius: Float,
 
-  // Surface colors
-  @ColorInt val backgroundColor: Int,
+    // Surface colors
+    @ColorInt val backgroundColor: Int,
 
-  // Button Colors
-  @ColorInt val buttonPrimaryColor: Int,
-  @ColorInt val buttonPrimaryColorDisabled: Int,
-  @ColorInt val buttonDefaultColor: Int,
-  @ColorInt val buttonDefaultColorDisabled: Int,
-  @ColorInt val buttonDefaultBorderColor: Int,
+    // Button Colors
+    @ColorInt val buttonPrimaryColor: Int,
+    @ColorInt val buttonPrimaryColorDisabled: Int,
+    @ColorInt val buttonDefaultColor: Int,
+    @ColorInt val buttonDefaultColorDisabled: Int,
+    @ColorInt val buttonDefaultBorderColor: Int,
 
-  // Text Colors
-  @ColorInt val textDefaultColor: Int,
-  @ColorInt val textDangerColor: Int,
-  @ColorInt val textMutedColor: Int,
+    // Text Colors
+    @ColorInt val textDefaultColor: Int,
+    @ColorInt val textDangerColor: Int,
+    @ColorInt val textMutedColor: Int,
 
-  // General theme
-  @ColorInt val primaryColor: Int,
-  @ColorInt val inputBackgroundColor: Int,
+    // General theme
+    @ColorInt val primaryColor: Int,
+    @ColorInt val inputBackgroundColor: Int,
 
-  // Android specific
+    // Android specific
 //  val inputStyle: InputStyle,
-  val windowMode: WindowMode,
+    val windowMode: WindowMode,
 ) {
 //  enum class InputStyle {
 //    DEFAULT,
 //    OUTLINE,
 //  }
 
-  enum class WindowMode {
-    BOTTOM_SHEET,
-    FULL_HEIGHT,
-  }
-
-  companion object {
-    private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
-
-    fun getDefault(): UniversalCheckoutTheme {
-      return create()
+    enum class WindowMode {
+        BOTTOM_SHEET,
+        FULL_HEIGHT,
     }
 
-    fun create(
-      buttonCornerRadius: Float? = null,
-      inputCornerRadius: Float? = null,
-      backgroundColor: String? = null,
-      buttonPrimaryColor: String? = null,
-      buttonPrimaryColorDisabled: String? = null,
-      buttonDefaultColor: String? = null,
-      buttonDefaultColorDisabled: String? = null,
-      buttonDefaultBorderColor: String? = null,
-      textDefaultColor: String? = null,
-      textDangerColor: String? = null,
-      textMutedColor: String? = null,
-      primaryColor: String? = null,
-      inputBackgroundColor: String? = null,
+    companion object {
+
+        private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
+
+        fun getDefault(): UniversalCheckoutTheme {
+            return create()
+        }
+
+        fun create(
+            buttonCornerRadius: Float? = null,
+            inputCornerRadius: Float? = null,
+            backgroundColor: String? = null,
+            buttonPrimaryColor: String? = null,
+            buttonPrimaryColorDisabled: String? = null,
+            buttonDefaultColor: String? = null,
+            buttonDefaultColorDisabled: String? = null,
+            buttonDefaultBorderColor: String? = null,
+            textDefaultColor: String? = null,
+            textDangerColor: String? = null,
+            textMutedColor: String? = null,
+            primaryColor: String? = null,
+            inputBackgroundColor: String? = null,
 //      inputStyle: InputStyle? = null,
-      windowMode: WindowMode = WindowMode.BOTTOM_SHEET,
-    ): UniversalCheckoutTheme {
-      return UniversalCheckoutTheme(
-        buttonCornerRadius = buttonCornerRadius ?: BUTTON_CORNER_RADIUS_DEFAULT,
-        inputCornerRadius = inputCornerRadius ?: INPUT_CORNER_RADIUS_DEFAULT,
-        backgroundColor = hexToColorInt(backgroundColor, BACKGROUND_COLOR_DEFAULT),
-        buttonPrimaryColor = hexToColorInt(buttonPrimaryColor, BUTTON_PRIMARY_COLOR_DEFAULT),
-        buttonPrimaryColorDisabled = hexToColorInt(buttonPrimaryColorDisabled, BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT ),
-        buttonDefaultColor = hexToColorInt(buttonDefaultColor, BUTTON_DEFAULT_COLOR_DEFAULT),
-        buttonDefaultColorDisabled = hexToColorInt(buttonDefaultColorDisabled, BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT),
-        buttonDefaultBorderColor = hexToColorInt(buttonDefaultBorderColor, BUTTON_DEFAULT_BORDER_COLOR_DEFAULT),
-        textDefaultColor = hexToColorInt(textDefaultColor, TEXT_DEFAULT_COLOR_DEFAULT),
-        textDangerColor = hexToColorInt(textDangerColor, TEXT_DANGER_COLOR_DEFAULT),
-        textMutedColor = hexToColorInt(textMutedColor, TEXT_MUTED_COLOR_DEFAULT),
-        primaryColor = hexToColorInt(primaryColor, PRIMARY_COLOR_DEFAULT),
-        inputBackgroundColor = hexToColorInt(inputBackgroundColor, INPUT_BACKGROUND_COLOR_DEFAULT),
+            windowMode: WindowMode = WindowMode.BOTTOM_SHEET,
+        ): UniversalCheckoutTheme {
+            return UniversalCheckoutTheme(
+                buttonCornerRadius = buttonCornerRadius ?: BUTTON_CORNER_RADIUS_DEFAULT,
+                inputCornerRadius = inputCornerRadius ?: INPUT_CORNER_RADIUS_DEFAULT,
+                backgroundColor = hexToColorInt(backgroundColor, BACKGROUND_COLOR_DEFAULT),
+                buttonPrimaryColor = hexToColorInt(buttonPrimaryColor, BUTTON_PRIMARY_COLOR_DEFAULT),
+                buttonPrimaryColorDisabled = hexToColorInt(buttonPrimaryColorDisabled, BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT),
+                buttonDefaultColor = hexToColorInt(buttonDefaultColor, BUTTON_DEFAULT_COLOR_DEFAULT),
+                buttonDefaultColorDisabled = hexToColorInt(buttonDefaultColorDisabled, BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT),
+                buttonDefaultBorderColor = hexToColorInt(buttonDefaultBorderColor, BUTTON_DEFAULT_BORDER_COLOR_DEFAULT),
+                textDefaultColor = hexToColorInt(textDefaultColor, TEXT_DEFAULT_COLOR_DEFAULT),
+                textDangerColor = hexToColorInt(textDangerColor, TEXT_DANGER_COLOR_DEFAULT),
+                textMutedColor = hexToColorInt(textMutedColor, TEXT_MUTED_COLOR_DEFAULT),
+                primaryColor = hexToColorInt(primaryColor, PRIMARY_COLOR_DEFAULT),
+                inputBackgroundColor = hexToColorInt(inputBackgroundColor, INPUT_BACKGROUND_COLOR_DEFAULT),
 //        inputStyle = inputStyle ?: InputStyle.DEFAULT,
-        windowMode = windowMode,
-      )
-    }
+                windowMode = windowMode,
+            )
+        }
 
-    private fun hexToColorInt(hex: String?, defaultValue: String): Int {
-      return Color.parseColor(
-        if (hex?.matches(HEX_PATTERN) == true) hex else defaultValue
-      )
+        private fun hexToColorInt(hex: String?, defaultValue: String): Int {
+            return Color.parseColor(
+                if (hex?.matches(HEX_PATTERN) == true) hex else defaultValue
+            )
+        }
     }
-  }
 }

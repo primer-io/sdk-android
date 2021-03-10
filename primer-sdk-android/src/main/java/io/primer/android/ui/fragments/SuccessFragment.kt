@@ -16,37 +16,39 @@ private const val SUCCESS_FRAGMENT_DISMISS_DELAY_KEY = "SUCCESS_FRAGMENT_DISMISS
 private const val SUCCESS_FRAGMENT_DISMISS_DELAY_DEFAULT = 3000L
 
 class SuccessFragment : Fragment() {
-  private var delay: Long? = null
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    arguments?.let {
-      delay = it.getLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY)
-    }
-  }
+    private var delay: Long? = null
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_success, container, false)
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    Handler(Looper.getMainLooper()).postDelayed({
-      EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
-    }, delay ?: SUCCESS_FRAGMENT_DISMISS_DELAY_DEFAULT)
-  }
-
-  companion object {
-    fun newInstance(delay: Int): SuccessFragment {
-      return SuccessFragment().apply {
-        arguments = Bundle().apply {
-          putLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY, delay.toLong())
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            delay = it.getLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY)
         }
-      }
     }
-  }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        return inflater.inflate(R.layout.fragment_success, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Handler(Looper.getMainLooper()).postDelayed({
+            EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
+        }, delay ?: SUCCESS_FRAGMENT_DISMISS_DELAY_DEFAULT)
+    }
+
+    companion object {
+
+        fun newInstance(delay: Int): SuccessFragment {
+            return SuccessFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY, delay.toLong())
+                }
+            }
+        }
+    }
 }

@@ -10,78 +10,80 @@ internal class CardNumberFormatter private constructor(
   private val value: String,
   private val autoInsert: Boolean,
 ) {
-  private val meta = CardType.lookup(value)
-  private val log = Logger("card-nummber")
 
-  override fun toString(): String {
-    val max = meta.lengths.maxOrNull() ?: 16
+    private val meta = CardType.lookup(value)
+    private val log = Logger("card-nummber")
 
-    val formatted = buildString {
-      value.forEachIndexed { index, c ->
-        if (index < max) {
-          append(c)
-          if (meta.gaps.contains(index + 1)) {
-            append(' ')
-          }
+    override fun toString(): String {
+        val max = meta.lengths.maxOrNull() ?: 16
+
+        val formatted = buildString {
+            value.forEachIndexed { index, c ->
+                if (index < max) {
+                    append(c)
+                    if (meta.gaps.contains(index + 1)) {
+                        append(' ')
+                    }
+                }
+            }
         }
-      }
+
+        return if (!autoInsert && formatted.endsWith(' ')) {
+            formatted.trim()
+        } else {
+            formatted
+        }
     }
 
-    return if (!autoInsert && formatted.endsWith(' ')) {
-      formatted.trim()
-    } else {
-      formatted
-    }
-  }
-
-  fun getValue(): String {
-    return value.replace(INVALID_CHARACTER, "")
-  }
-
-  fun isEmpty(): Boolean {
-    return getValue().isEmpty()
-  }
-
-  fun isValid(): Boolean {
-    if (isEmpty()) {
-      return false
+    fun getValue(): String {
+        return value.replace(INVALID_CHARACTER, "")
     }
 
-    if (meta.lengths.contains(value.length).not()) {
-      return false
+    fun isEmpty(): Boolean {
+        return getValue().isEmpty()
     }
 
-    return isLuhnValid()
-  }
+    fun isValid(): Boolean {
+        if (isEmpty()) {
+            return false
+        }
 
-  fun getCVVLength(): Int {
-    return meta.cvvLength
-  }
+        if (meta.lengths.contains(value.length).not()) {
+            return false
+        }
 
-  private fun isLuhnValid(): Boolean {
-    val digits = value.substring(0, value.lastIndex)
-    var checksum = value.substring(value.lastIndex).toInt()
-
-    digits.forEachIndexed { n, c ->
-      var digit = Character.getNumericValue(c)
-
-      if ((n % 2) == 0) {
-        digit *= 2
-      }
-
-      if (digit > 9) {
-        digit -= 9
-      }
-
-      checksum += digit
+        return isLuhnValid()
     }
 
-    return (checksum % 10) == 0
-  }
-
-  companion object {
-    fun fromString(str: String, autoInsert: Boolean = false): CardNumberFormatter {
-      return CardNumberFormatter(str.replace(INVALID_CHARACTER, ""), autoInsert)
+    fun getCVVLength(): Int {
+        return meta.cvvLength
     }
-  }
+
+    private fun isLuhnValid(): Boolean {
+        val digits = value.substring(0, value.lastIndex)
+        var checksum = value.substring(value.lastIndex).toInt()
+
+        digits.forEachIndexed { n, c ->
+            var digit = Character.getNumericValue(c)
+
+            if ((n % 2) == 0) {
+                digit *= 2
+            }
+
+            if (digit > 9) {
+                digit -= 9
+            }
+
+            checksum += digit
+        }
+
+        return (checksum % 10) == 0
+    }
+
+    companion object {
+
+        fun fromString(str: String, autoInsert: Boolean = false): CardNumberFormatter {
+            return CardNumberFormatter(str.replace(INVALID_CHARACTER, ""), autoInsert)
+        }
+    }
 }

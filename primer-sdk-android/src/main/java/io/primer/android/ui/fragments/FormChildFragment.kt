@@ -7,17 +7,18 @@ import androidx.lifecycle.ViewModelProvider
 import io.primer.android.viewmodel.FormViewModel
 
 internal open class FormChildFragment : Fragment() {
-  protected lateinit var viewModel: FormViewModel
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+    protected lateinit var viewModel: FormViewModel
 
-    viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
-  }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-  protected fun dispatchFormEvent(e: FormActionEvent) {
-    parentFragment?.takeIf { it is FormActionListenerOwner }?.also {
-      (it as FormActionListenerOwner).getFormActionListener()?.onFormAction(e)
+        viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
     }
-  }
+
+    protected fun dispatchFormEvent(e: FormActionEvent) {
+        parentFragment?.takeIf { it is FormActionListenerOwner }?.also {
+            (it as FormActionListenerOwner).getFormActionListener()?.onFormAction(e)
+        }
+    }
 }

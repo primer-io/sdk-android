@@ -10,55 +10,56 @@ import io.primer.android.R
 import io.primer.android.ui.FormProgressState
 
 internal class FormProgressFragment : FormChildFragment() {
-  private lateinit var mLayout: ViewGroup
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_form_progress, container, false)
-  }
+    private lateinit var mLayout: ViewGroup
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    mLayout = view.findViewById(R.id.fragment_form_progress_container)
-
-    viewModel.progress.observe(viewLifecycleOwner) {
-      if (it == null) {
-        mLayout.visibility = View.INVISIBLE
-      } else {
-        mLayout.visibility = View.VISIBLE
-        addIndicators(it)
-      }
-    }
-  }
-
-  private fun addIndicators(state: FormProgressState) {
-    mLayout.removeAllViews()
-
-    for (i in 1..state.max) {
-      mLayout.addView(createIndicator(i == state.current))
+    override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?,
+    ): View {
+        return inflater.inflate(R.layout.fragment_form_progress, container, false)
     }
 
-    mLayout.requestLayout()
-  }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-  private fun createIndicator(active: Boolean): View {
-    val view = View(context)
+        mLayout = view.findViewById(R.id.fragment_form_progress_container)
 
-    val scale = requireContext().resources.displayMetrics.density
-    val width = (8 * scale + 0.5f)
-    val margin = (4 * scale + 0.5f)
-
-    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.progress_crumb)
-    view.isEnabled = active
-    view.layoutParams = LinearLayout.LayoutParams(width.toInt(), width.toInt(), 0.0f).apply {
-      marginStart = margin.toInt()
-      marginEnd = margin.toInt()
+        viewModel.progress.observe(viewLifecycleOwner) {
+            if (it == null) {
+                mLayout.visibility = View.INVISIBLE
+            } else {
+                mLayout.visibility = View.VISIBLE
+                addIndicators(it)
+            }
+        }
     }
 
-    return view
-  }
+    private fun addIndicators(state: FormProgressState) {
+        mLayout.removeAllViews()
+
+        for (i in 1..state.max) {
+            mLayout.addView(createIndicator(i == state.current))
+        }
+
+        mLayout.requestLayout()
+    }
+
+    private fun createIndicator(active: Boolean): View {
+        val view = View(context)
+
+        val scale = requireContext().resources.displayMetrics.density
+        val width = (8 * scale + 0.5f)
+        val margin = (4 * scale + 0.5f)
+
+        view.background = ContextCompat.getDrawable(requireContext(), R.drawable.progress_crumb)
+        view.isEnabled = active
+        view.layoutParams = LinearLayout.LayoutParams(width.toInt(), width.toInt(), 0.0f).apply {
+            marginStart = margin.toInt()
+            marginEnd = margin.toInt()
+        }
+
+        return view
+    }
 }

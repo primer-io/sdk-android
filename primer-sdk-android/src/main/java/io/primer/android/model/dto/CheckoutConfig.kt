@@ -11,20 +11,22 @@ internal data class CheckoutConfig private constructor(
   val theme: UniversalCheckoutTheme,
   val amount: MonetaryAmount? = null,
 ) {
-  companion object {
-    fun create(
-      clientToken: String,
-      uxMode: UniversalCheckout.UXMode = UniversalCheckout.UXMode.CHECKOUT,
-      currency: String? = null,
-      amount: Int? = null,
-      theme: UniversalCheckoutTheme? = null,
-    ): CheckoutConfig {
-      return CheckoutConfig(
-        clientToken,
-        uxMode = uxMode,
-        theme = theme ?: UniversalCheckoutTheme.getDefault(),
-        amount = MonetaryAmount.create(currency = currency, value = amount)
-      )
+
+    companion object {
+
+        fun create(
+          clientToken: String,
+          uxMode: UniversalCheckout.UXMode = UniversalCheckout.UXMode.CHECKOUT,
+          currency: String? = null,
+          amount: Int? = null,
+          theme: UniversalCheckoutTheme? = null,
+        ): CheckoutConfig {
+            return CheckoutConfig(
+              clientToken,
+              uxMode = uxMode,
+              theme = theme ?: UniversalCheckoutTheme.getDefault(),
+              amount = MonetaryAmount.create(currency = currency, value = amount)
+            )
+        }
     }
-  }
 }
