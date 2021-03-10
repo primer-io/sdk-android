@@ -14,71 +14,71 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
-
 internal class APIClient(token: ClientToken) : IAPIClient {
-  private val log = Logger("api-client")
-  private val client = OkHttpClient()
-  private val handler = Handler(Looper.getMainLooper())
-  private var clientToken = token
 
-  override fun get(url: String): Observable {
-    return this.request(Request.Builder().get().url(url))
-  }
+    private val log = Logger("api-client")
+    private val client = OkHttpClient()
+    private val handler = Handler(Looper.getMainLooper())
+    private var clientToken = token
 
-  override fun post(url: String, body: JSONObject?): Observable {
-    return this.request(Request.Builder().post(toRequestBody(body)).url(url))
-  }
+    override fun get(url: String): Observable {
+        return this.request(Request.Builder().get().url(url))
+    }
 
-  override fun delete(url: String): Observable {
-    return this.request(Request.Builder().delete().url(url))
-  }
+    override fun post(url: String, body: JSONObject?): Observable {
+        return this.request(Request.Builder().post(toRequestBody(body)).url(url))
+    }
 
-  private fun request(builder: Request.Builder): Observable {
-    val request = builder
-      .addHeader("Content-Type", "application/json")
-      .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
-      .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
-      .addHeader("Primer-Client-Token", clientToken.accessToken)
-      .build()
+    override fun delete(url: String): Observable {
+        return this.request(Request.Builder().delete().url(url))
+    }
 
-    val observable = Observable()
+    private fun request(builder: Request.Builder): Observable {
+        val request = builder
+            .addHeader("Content-Type", "application/json")
+            .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
+            .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
+            .addHeader("Primer-Client-Token", clientToken.accessToken)
+            .build()
 
-    val thread = Thread {
-      client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-          handler.post {
-            observable.setError(APIError.create(e))
-          }
+        val observable = Observable()
+
+        val thread = Thread {
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    handler.post {
+                        observable.setError(APIError.create(e))
+                    }
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    handler.post {
+                        if (response.code != 200) {
+                            observable.setError(APIError.create(response))
+                        } else {
+                            observable.setSuccess(getJSON(response))
+                        }
+                    }
+                }
+            })
         }
 
-        override fun onResponse(call: Call, response: Response) {
-          handler.post {
-            if (response.code != 200) {
-              observable.setError(APIError.create(response))
-            } else {
-              observable.setSuccess(getJSON(response))
+        thread.start()
+
+        return observable.observe {
+            if (it is Observable.ObservableErrorEvent) {
+                EventBus.broadcast(CheckoutEvent.ApiError(it.error))
             }
-          }
         }
-      })
     }
 
-    thread.start()
-
-    return observable.observe {
-      if (it is Observable.ObservableErrorEvent) {
-        EventBus.broadcast(CheckoutEvent.ApiError(it.error))
-      }
+    private fun getJSON(response: Response): JSONObject {
+        return JSONObject(response.body?.string() ?: "{}")
     }
-  }
 
-  private fun getJSON(response: Response): JSONObject {
-    return JSONObject(response.body?.string() ?: "{}")
-  }
-
-  private fun toRequestBody(json: JSONObject?): RequestBody {
-    val stringified = json?.toString() ?: "{}"
-    val mediaType = "application/json".toMediaType()
-    return stringified.toRequestBody(mediaType)
-  }
+    private fun toRequestBody(json: JSONObject?): RequestBody {
+        val stringified = json?.toString() ?: "{}"
+        val mediaType = "application/json".toMediaType()
+        return stringified.toRequestBody(mediaType)
+    }
 }

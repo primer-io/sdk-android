@@ -20,36 +20,38 @@ data class PaymentMethodTokenInternal(
   val tokenType: TokenType,
   val paymentInstrumentType: String,
   val paymentInstrumentData: JsonObject,
-  val vaultData: VaultData?
+  val vaultData: VaultData?,
 ) {
 
-  @Serializable
-  data class VaultData(
-    val customerId: String
-  )
+    @Serializable
+    data class VaultData(
+      val customerId: String,
+    )
 }
 
 internal object PaymentMethodTokenAdapter {
-  fun internalToExternal(token: PaymentMethodTokenInternal) : PaymentMethodToken {
-    return PaymentMethodToken(
-      token=token.token,
-      analyticsId = token.analyticsId,
-      tokenType = token.tokenType,
-      paymentInstrumentType = token.paymentInstrumentType,
-      paymentInstrumentData = JSONObject(token.paymentInstrumentData.toString()),
-      vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(customerId = token.vaultData.customerId)
-    )
-  }
-  fun externalToInternal(token: PaymentMethodToken) : PaymentMethodTokenInternal {
-    return PaymentMethodTokenInternal(
-      token=token.token,
-      analyticsId = token.analyticsId,
-      tokenType = token.tokenType,
-      paymentInstrumentType = token.paymentInstrumentType,
-      paymentInstrumentData = json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject,
-      vaultData = if (token.vaultData == null) null else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
-    )
-  }
+
+    fun internalToExternal(token: PaymentMethodTokenInternal): PaymentMethodToken {
+        return PaymentMethodToken(
+          token = token.token,
+          analyticsId = token.analyticsId,
+          tokenType = token.tokenType,
+          paymentInstrumentType = token.paymentInstrumentType,
+          paymentInstrumentData = JSONObject(token.paymentInstrumentData.toString()),
+          vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(customerId = token.vaultData.customerId)
+        )
+    }
+
+    fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
+        return PaymentMethodTokenInternal(
+          token = token.token,
+          analyticsId = token.analyticsId,
+          tokenType = token.tokenType,
+          paymentInstrumentType = token.paymentInstrumentType,
+          paymentInstrumentData = json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject,
+          vaultData = if (token.vaultData == null) null else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
+        )
+    }
 }
 
 data class PaymentMethodToken(
@@ -58,9 +60,10 @@ data class PaymentMethodToken(
   val tokenType: TokenType,
   val paymentInstrumentType: String,
   val paymentInstrumentData: JSONObject,
-  val vaultData: VaultData?
+  val vaultData: VaultData?,
 ) {
-  data class VaultData(
-    val customerId: String
-  )
+
+    data class VaultData(
+      val customerId: String,
+    )
 }

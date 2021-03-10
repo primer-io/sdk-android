@@ -17,58 +17,60 @@ data class APIError(
   val description: String,
   val errorId: String? = null,
   val diagnosticsId: String? = null,
-  val validationErrors: List<ValidationError> = Collections.emptyList()
+  val validationErrors: List<ValidationError> = Collections.emptyList(),
 ) {
-  @Serializable
-  data class ValidationErrorDetail(
-    val path: String,
-    val description: String
-  )
 
-  @Serializable
-  data class ValidationError(
-    val model: String,
-    val errors: List<ValidationErrorDetail>
-  )
-
-  companion object {
-    private val log = Logger("api-error")
-    private val DEFAULT_ERROR_ELEMENT = json.parseToJsonElement(
-      "{\"description\":\"Unknown Client Error\"}"
+    @Serializable
+    data class ValidationErrorDetail(
+      val path: String,
+      val description: String,
     )
 
-    fun create(response: Response): APIError {
-      return json.decodeFromJsonElement(getErrorFromContent(response.body))
-    }
+    @Serializable
+    data class ValidationError(
+      val model: String,
+      val errors: List<ValidationErrorDetail>,
+    )
 
-    fun create(e: IOException?): APIError {
-      return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
-    }
+    companion object {
 
-    private fun getErrorFromContent(body: ResponseBody?): JsonObject {
-      if (body == null) {
-        return DEFAULT_ERROR_ELEMENT.jsonObject
-      }
+        private val log = Logger("api-error")
+        private val DEFAULT_ERROR_ELEMENT = json.parseToJsonElement(
+          "{\"description\":\"Unknown Client Error\"}"
+        )
 
-      val content = body.string()
-
-      try {
-        val element = json.parseToJsonElement(content).jsonObject
-        if (element.containsKey("error")) {
-          return element["error"]!!.jsonObject
+        fun create(response: Response): APIError {
+            return json.decodeFromJsonElement(getErrorFromContent(response.body))
         }
 
-        if (element.containsKey("message")) {
-          val message = element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
-          val jsonString = "{\"description\": \"$message\"}"
-          return json.parseToJsonElement(jsonString).jsonObject
+        fun create(e: IOException?): APIError {
+            return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
         }
-      } catch (ex: Exception) {
-        log.warn("Failed to decode json response")
-        log.warn(content)
-      }
 
-      return DEFAULT_ERROR_ELEMENT.jsonObject
+        private fun getErrorFromContent(body: ResponseBody?): JsonObject {
+            if (body == null) {
+                return DEFAULT_ERROR_ELEMENT.jsonObject
+            }
+
+            val content = body.string()
+
+            try {
+                val element = json.parseToJsonElement(content).jsonObject
+                if (element.containsKey("error")) {
+                    return element["error"]!!.jsonObject
+                }
+
+                if (element.containsKey("message")) {
+                    val message = element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
+                    val jsonString = "{\"description\": \"$message\"}"
+                    return json.parseToJsonElement(jsonString).jsonObject
+                }
+            } catch (ex: Exception) {
+                log.warn("Failed to decode json response")
+                log.warn(content)
+            }
+
+            return DEFAULT_ERROR_ELEMENT.jsonObject
+        }
     }
-  }
 }

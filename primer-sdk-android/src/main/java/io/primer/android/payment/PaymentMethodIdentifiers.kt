@@ -1,4 +1,4 @@
-package io.primer.android
+package io.primer.android.payment
 
 internal const val PAYMENT_CARD_IDENTIFIER = "PAYMENT_CARD"
 internal const val PAYPAL_IDENTIFIER = "PAYPAL"

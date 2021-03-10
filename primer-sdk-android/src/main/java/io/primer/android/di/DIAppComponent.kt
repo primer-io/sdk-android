@@ -5,5 +5,6 @@ import org.koin.core.component.KoinComponent
 
 @KoinApiExtension
 interface DIAppComponent : KoinComponent {
-  override fun getKoin() = DIAppContext.app!!.koin
+
+    override fun getKoin() = DIAppContext.app!!.koin
 }

@@ -8,34 +8,35 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class PayPalOrderBehaviour(
-  private val paypal: PayPal
+    private val paypal: PayPal,
 ) : WebBrowserIntentBehaviour() {
-  private val log = Logger("paypal-orders")
 
-  override fun initialize() {
-    tokenizationViewModel?.reset(paypal)
-  }
+    private val log = Logger("paypal-orders")
 
-  override fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit)) {
-    paypal.config.id?.let {
-      tokenizationViewModel?.createPayPalOrder(
-        id = it,
-        returnUrl = returnUrl,
-        cancelUrl = cancelUrl
-      )?.observe { e ->
-        when (e) {
-          is Observable.ObservableSuccessEvent -> {
-            callback(e.data.getString("approvalUrl"))
-          }
-        }
-      }
+    override fun initialize() {
+        tokenizationViewModel?.reset(paypal)
     }
-  }
 
-  override fun onSuccess(uri: Uri) {
-    paypal.setTokenizableValue("paypalOrderId", uri.getQueryParameter("token") ?: "")
-  }
+    override fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit)) {
+        paypal.config.id?.let {
+            tokenizationViewModel?.createPayPalOrder(
+                id = it,
+                returnUrl = returnUrl,
+                cancelUrl = cancelUrl
+            )?.observe { e ->
+                when (e) {
+                    is Observable.ObservableSuccessEvent -> {
+                        callback(e.data.getString("approvalUrl"))
+                    }
+                }
+            }
+        }
+    }
 
-  override fun onCancel(uri: Uri?) {
-  }
+    override fun onSuccess(uri: Uri) {
+        paypal.setTokenizableValue("paypalOrderId", uri.getQueryParameter("token") ?: "")
+    }
+
+    override fun onCancel(uri: Uri?) {
+    }
 }

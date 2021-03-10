@@ -9,25 +9,25 @@ import org.koin.core.component.KoinApiExtension
 internal class PaymentMethodDescriptorResolver(
   viewModel: PrimerViewModel,
   private val configured: List<PaymentMethod>,
-  private val remote: List<PaymentMethodRemoteConfig>
+  private val remote: List<PaymentMethodRemoteConfig>,
 ) {
 
-  private val factory = PaymentMethodDescriptor.Factory(viewModel)
+    private val factory = PaymentMethodDescriptor.Factory(viewModel)
 
-  fun resolve(): List<PaymentMethodDescriptor> {
-    val list = ArrayList<PaymentMethodDescriptor>()
+    fun resolve(): List<PaymentMethodDescriptor> {
+        val list = ArrayList<PaymentMethodDescriptor>()
 
-    remote.forEach { pm ->
-      val config = configured.find { it.identifier == pm.type }
+        remote.forEach { pm ->
+            val config = configured.find { it.identifier == pm.type }
 
-      if (config != null) {
-        val descriptor = factory.create(pm, config)
-        if (descriptor != null) {
-          list.add(descriptor)
+            if (config != null) {
+                val descriptor = factory.create(pm, config)
+                if (descriptor != null) {
+                    list.add(descriptor)
+                }
+            }
         }
-      }
-    }
 
-    return list
-  }
+        return list
+    }
 }

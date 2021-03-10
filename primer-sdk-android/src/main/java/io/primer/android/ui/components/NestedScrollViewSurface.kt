@@ -11,10 +11,11 @@ import org.koin.core.component.inject
 
 @KoinApiExtension
 class NestedScrollViewSurface(context: Context, attrs: AttributeSet? = null) :
-  NestedScrollView(context, attrs), DIAppComponent {
-  private val theme: UniversalCheckoutTheme by inject()
+    NestedScrollView(context, attrs), DIAppComponent {
 
-  init {
-    background = ColorDrawable(theme.backgroundColor)
-  }
+    private val theme: UniversalCheckoutTheme by inject()
+
+    init {
+        background = ColorDrawable(theme.backgroundColor)
+    }
 }

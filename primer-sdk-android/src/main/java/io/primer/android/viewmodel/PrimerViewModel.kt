@@ -22,95 +22,93 @@ import java.util.*
 
 @KoinApiExtension
 internal class PrimerViewModel : BaseViewModel(), EventBus.EventListener, DIAppComponent {
-  private val log = Logger("view-model")
-  private lateinit var subscription: EventBus.SubscriptionHandle
 
-  private val model: Model by inject()
-  private val checkoutConfig: CheckoutConfig by inject()
-  private val configuredPaymentMethods: List<PaymentMethod> by inject()
+    private val log = Logger("view-model")
+    private lateinit var subscription: EventBus.SubscriptionHandle
 
-  val keyboardVisible = MutableLiveData(false)
+    private val model: Model by inject()
+    private val checkoutConfig: CheckoutConfig by inject()
+    private val configuredPaymentMethods: List<PaymentMethod> by inject()
 
-  val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
+    val keyboardVisible = MutableLiveData(false)
 
-  // Vaulted Payment Methods
-  val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(Collections.emptyList())
+    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
-  // Select Payment Method
-  val paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(Collections.emptyList())
+    val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(Collections.emptyList())
+    val paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(Collections.emptyList())
+    val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
 
-  val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
+    fun setSelectedPaymentMethod(pm: PaymentMethodDescriptor) {
+        selectedPaymentMethod.value = pm
+    }
 
-  fun setSelectedPaymentMethod(pm: PaymentMethodDescriptor) {
-    selectedPaymentMethod.value = pm
-  }
+    override fun initialize() {
+        // TODO: clean this up
+        model.getConfiguration().observe { config ->
+            if (config is Observable.ObservableSuccessEvent) {
+                val session: ClientSession = config.cast()
+                val resolver = PaymentMethodDescriptorResolver(
+                    this,
+                    configuredPaymentMethods,
+                    session.paymentMethods
+                )
 
-  override fun initialize() {
-    // TODO: clean this shit up
-    model.getConfiguration().observe { config ->
-      if (config is Observable.ObservableSuccessEvent) {
-        val session: ClientSession = config.cast()
-        val resolver = PaymentMethodDescriptorResolver(
-          this,
-          configuredPaymentMethods,
-          session.paymentMethods
-        )
+                model.getVaultedPaymentMethods().observe { vault ->
+                    when (vault) {
+                        is Observable.ObservableSuccessEvent -> {
+                            vaultedPaymentMethods.value =
+                                vault.cast(key = "data", defaultValue = Collections.emptyList())
 
-        model.getVaultedPaymentMethods().observe { vault ->
-          when (vault) {
-            is Observable.ObservableSuccessEvent -> {
-              vaultedPaymentMethods.value =
-                vault.cast(key = "data", defaultValue = Collections.emptyList())
+                            val descriptors = resolver.resolve()
 
-              val descriptors = resolver.resolve()
+                            paymentMethods.value = descriptors
 
-              paymentMethods.value = descriptors
-
-              if (checkoutConfig.uxMode == UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD) {
-                selectedPaymentMethod.value = descriptors.first()
-              } else {
-                viewStatus.value = getInitialViewStatus()
-              }
+                            if (checkoutConfig.uxMode == UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD) {
+                                selectedPaymentMethod.value = descriptors.first()
+                            } else {
+                                viewStatus.value = getInitialViewStatus()
+                            }
+                        }
+                        is Observable.ObservableErrorEvent -> log("Failed to get payment methods " + vault.error.description)
+                    }
+                }
             }
-            is Observable.ObservableErrorEvent -> log("Failed to get payment methods " + vault.error.description)
-          }
         }
-      }
+
+        subscription = EventBus.subscribe(this)
     }
 
-    subscription = EventBus.subscribe(this)
-  }
-
-  override fun onCleared() {
-    super.onCleared()
-    subscription.unregister()
-  }
-
-  private fun getInitialViewStatus(): ViewStatus {
-    if (vaultedPaymentMethods.value?.isNotEmpty() == true) {
-      return ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+    override fun onCleared() {
+        super.onCleared()
+        subscription.unregister()
     }
 
-    return ViewStatus.SELECT_PAYMENT_METHOD
-  }
-
-  companion object {
-    fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
-      return ViewModelProvider(owner).get(PrimerViewModel::class.java)
-    }
-  }
-
-  override fun onEvent(e: CheckoutEvent) {
-    when (e) {
-      is CheckoutEvent.TokenRemovedFromVault -> {
-        vaultedPaymentMethods.value =
-          vaultedPaymentMethods.value?.filter { it.token != e.data.token }
-      }
-      is CheckoutEvent.TokenAddedToVault -> {
-        if (vaultedPaymentMethods.value?.find { it.analyticsId == e.data.analyticsId } == null) {
-          vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(PaymentMethodTokenAdapter.externalToInternal(e.data))
+    private fun getInitialViewStatus(): ViewStatus {
+        if (vaultedPaymentMethods.value?.isNotEmpty() == true) {
+            return ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
         }
-      }
+
+        return ViewStatus.SELECT_PAYMENT_METHOD
     }
-  }
+
+    companion object {
+
+        fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
+            return ViewModelProvider(owner).get(PrimerViewModel::class.java)
+        }
+    }
+
+    override fun onEvent(e: CheckoutEvent) {
+        when (e) {
+            is CheckoutEvent.TokenRemovedFromVault -> {
+                vaultedPaymentMethods.value =
+                    vaultedPaymentMethods.value?.filter { it.token != e.data.token }
+            }
+            is CheckoutEvent.TokenAddedToVault -> {
+                if (vaultedPaymentMethods.value?.find { it.analyticsId == e.data.analyticsId } == null) {
+                    vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(PaymentMethodTokenAdapter.externalToInternal(e.data))
+                }
+            }
+        }
+    }
 }

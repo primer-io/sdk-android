@@ -10,10 +10,11 @@ import org.koin.core.component.inject
 
 @KoinApiExtension
 class TextViewDanger(ctx: Context, attrs: AttributeSet? = null) : AppCompatTextView(ctx, attrs),
-  DIAppComponent {
-  private val theme: UniversalCheckoutTheme by inject()
+    DIAppComponent {
 
-  init {
-    setTextColor(theme.textDangerColor)
-  }
+    private val theme: UniversalCheckoutTheme by inject()
+
+    init {
+        setTextColor(theme.textDangerColor)
+    }
 }

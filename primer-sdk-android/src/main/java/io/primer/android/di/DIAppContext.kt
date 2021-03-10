@@ -8,14 +8,15 @@ import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
 
 internal object DIAppContext {
-  var app: KoinApplication? = null
 
-  fun init(context: Context, config: CheckoutConfig, paymentMethods: List<PaymentMethod>) {
-    app = koinApplication {
-      androidContext(context)
-      modules(
-        CheckoutConfigModule(config, paymentMethods)
-      )
+    var app: KoinApplication? = null
+
+    fun init(context: Context, config: CheckoutConfig, paymentMethods: List<PaymentMethod>) {
+        app = koinApplication {
+            androidContext(context)
+            modules(
+                CheckoutConfigModule(config, paymentMethods)
+            )
+        }
     }
-  }
 }

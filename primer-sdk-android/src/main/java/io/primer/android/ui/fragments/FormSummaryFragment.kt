@@ -16,96 +16,97 @@ import io.primer.android.ui.InteractiveSummaryItem
 import io.primer.android.ui.TextSummaryItem
 
 internal class FormSummaryFragment : FormChildFragment() {
-  private lateinit var layout: ViewGroup
-  private val log = Logger("form-summary-fragment")
-  private val updaters: MutableList<() -> Unit> = ArrayList()
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.fragment_form_summary, container, false)
-  }
+    private lateinit var layout: ViewGroup
+    private val log = Logger("form-summary-fragment")
+    private val updaters: MutableList<() -> Unit> = ArrayList()
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    layout = view.findViewById(R.id.form_summary_fragment)
-
-    viewModel.summary.observe(viewLifecycleOwner) {
-      if (it == null) {
-        hideView()
-      } else {
-        showView(it)
-      }
-    }
-  }
-
-  private fun hideView() {
-    updaters.clear()
-    layout.removeAllViews()
-    layout.visibility = View.GONE
-  }
-
-  private fun showView(state: FormSummaryState) {
-    updaters.clear()
-    layout.removeAllViews()
-    layout.visibility = View.VISIBLE
-
-    state.items.forEach {
-      layout.addView(createItem(it))
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
+        return inflater.inflate(R.layout.fragment_form_summary, container, false)
     }
 
-    updateAllViews()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    state.text.forEachIndexed { index, content ->
-      layout.addView(createTextView(content, isFirst = index == 0))
-    }
-  }
+        layout = view.findViewById(R.id.form_summary_fragment)
 
-  override fun onResume() {
-    super.onResume()
-    updateAllViews()
-  }
-
-  private fun updateAllViews() {
-    updaters.forEach { it() }
-  }
-
-  private fun createItem(item: InteractiveSummaryItem): View {
-    val view = View.inflate(requireContext(), R.layout.form_summary_item, null)
-
-    view.findViewById<ImageView>(R.id.form_summary_item_icon).setImageDrawable(
-      ResourcesCompat.getDrawable(requireActivity().resources, item.iconId, null)
-    )
-
-    updaters.add {
-      view.findViewById<TextView>(R.id.form_summary_item_text).setText(item.getLabel())
+        viewModel.summary.observe(viewLifecycleOwner) {
+            if (it == null) {
+                hideView()
+            } else {
+                showView(it)
+            }
+        }
     }
 
-    view.setOnClickListener {
-      dispatchFormEvent(FormActionEvent.SummaryItemPress(item.name))
+    private fun hideView() {
+        updaters.clear()
+        layout.removeAllViews()
+        layout.visibility = View.GONE
     }
 
-    return view
-  }
+    private fun showView(state: FormSummaryState) {
+        updaters.clear()
+        layout.removeAllViews()
+        layout.visibility = View.VISIBLE
 
-  private fun createTextView(item: TextSummaryItem, isFirst: Boolean = false): TextView {
-    val view = TextView(requireContext())
-    view.id = View.generateViewId()
-    view.text = item.content
-    TextViewCompat.setTextAppearance(view, item.styleId)
+        state.items.forEach {
+            layout.addView(createItem(it))
+        }
 
-    val params = LinearLayout.LayoutParams(
-      LinearLayout.LayoutParams.MATCH_PARENT,
-      LinearLayout.LayoutParams.WRAP_CONTENT
-    )
+        updateAllViews()
 
-    params.topMargin = if (isFirst) 64 else 28
+        state.text.forEachIndexed { index, content ->
+            layout.addView(createTextView(content, isFirst = index == 0))
+        }
+    }
 
-    view.layoutParams = params
+    override fun onResume() {
+        super.onResume()
+        updateAllViews()
+    }
 
-    return view
-  }
+    private fun updateAllViews() {
+        updaters.forEach { it() }
+    }
+
+    private fun createItem(item: InteractiveSummaryItem): View {
+        val view = View.inflate(requireContext(), R.layout.form_summary_item, null)
+
+        view.findViewById<ImageView>(R.id.form_summary_item_icon).setImageDrawable(
+            ResourcesCompat.getDrawable(requireActivity().resources, item.iconId, null)
+        )
+
+        updaters.add {
+            view.findViewById<TextView>(R.id.form_summary_item_text).setText(item.getLabel())
+        }
+
+        view.setOnClickListener {
+            dispatchFormEvent(FormActionEvent.SummaryItemPress(item.name))
+        }
+
+        return view
+    }
+
+    private fun createTextView(item: TextSummaryItem, isFirst: Boolean = false): TextView {
+        val view = TextView(requireContext())
+        view.id = View.generateViewId()
+        view.text = item.content
+        TextViewCompat.setTextAppearance(view, item.styleId)
+
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        params.topMargin = if (isFirst) 64 else 28
+
+        view.layoutParams = params
+
+        return view
+    }
 }

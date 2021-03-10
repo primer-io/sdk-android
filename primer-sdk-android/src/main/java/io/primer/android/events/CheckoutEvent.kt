@@ -6,34 +6,35 @@ import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.PaymentMethodToken
 
 abstract class CheckoutEvent(
-  val type: CheckoutEventType,
-  val public: Boolean
+    val type: CheckoutEventType,
+    val public: Boolean,
 ) {
-  abstract class PublicCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, true)
-  abstract class PrivateCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, false)
 
-  class TokenizationSuccess(val data: PaymentMethodToken) :
-    PublicCheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
+    abstract class PublicCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, true)
+    abstract class PrivateCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, false)
 
-  class TokenizationError(val data: APIError) :
-    PublicCheckoutEvent(CheckoutEventType.TOKENIZE_ERROR)
+    class TokenizationSuccess(val data: PaymentMethodToken) :
+        PublicCheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
-  class TokenAddedToVault(val data: PaymentMethodToken) :
-    PublicCheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
+    class TokenizationError(val data: APIError) :
+        PublicCheckoutEvent(CheckoutEventType.TOKENIZE_ERROR)
 
-  class TokenRemovedFromVault(val data: PaymentMethodToken) :
-    PublicCheckoutEvent(CheckoutEventType.TOKEN_REMOVED_FROM_VAULT)
+    class TokenAddedToVault(val data: PaymentMethodToken) :
+        PublicCheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
 
-  class Exit(val data: CheckoutExitInfo) :
-    PublicCheckoutEvent(CheckoutEventType.EXIT)
+    class TokenRemovedFromVault(val data: PaymentMethodToken) :
+        PublicCheckoutEvent(CheckoutEventType.TOKEN_REMOVED_FROM_VAULT)
 
-  class ApiError(val data: APIError) : PublicCheckoutEvent(CheckoutEventType.API_ERROR)
+    class Exit(val data: CheckoutExitInfo) :
+        PublicCheckoutEvent(CheckoutEventType.EXIT)
 
-  class ToggleProgressIndicator(val data: Boolean) :
-    PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
+    class ApiError(val data: APIError) : PublicCheckoutEvent(CheckoutEventType.API_ERROR)
 
-  class DismissInternal(val data: CheckoutExitReason) :
-    PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
+    class ToggleProgressIndicator(val data: Boolean) :
+        PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
 
-  class ShowSuccess(val delay: Int = 3000) : PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
+    class DismissInternal(val data: CheckoutExitReason) :
+        PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
+
+    class ShowSuccess(val delay: Int = 3000) : PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
 }
