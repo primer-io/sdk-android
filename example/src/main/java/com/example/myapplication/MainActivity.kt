@@ -85,6 +85,6 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
     }
 
     private fun onError(error: VolleyError) {
-        Log.e("PRIMER", "Volley Error when getting client token: $error")
+        Log.e("primer.ExampleApp", "Volley Error when getting client token: $error")
     }
 }
