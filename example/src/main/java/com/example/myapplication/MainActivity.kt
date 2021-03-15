@@ -16,10 +16,11 @@ import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout.EventListener {
+
     override fun createToken(callback: (String) -> Unit) {
         val queue = Volley.newRequestQueue(this)
 
-        Log.i("primer.ExampleApp","Creating token")
+        Log.i("primer.ExampleApp", "Creating token")
 
         val body = JSONObject()
 
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
         queue.add(
             JsonObjectRequest(
                 Request.Method.POST,
-                "http://192.168.0.107/token",
+                "http://10.0.2.2/token",
                 body,
                 { response -> callback(response.getString("clientToken")) },
                 { error -> onError(error) }
@@ -36,24 +37,22 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
         )
     }
 
-    override fun onCheckoutEvent(e: CheckoutEvent) {
-        Log.i("primer.ExampleApp", "Checkout event! ${e.type.name}")
+    override fun onCheckoutEvent(event: CheckoutEvent) {
+        Log.i("primer.ExampleApp", "Checkout event! ${event.type.name}")
 
-        when(e) {
+        when (event) {
             is CheckoutEvent.TokenAddedToVault -> {
-                Log.i("primer.ExampleApp","Customer added a new payment method!")
-                Log.i("primer.ExampleApp", e.data.token)
+                Log.i("primer.ExampleApp", "Customer added a new payment method: ${event.data.token}")
                 Handler(Looper.getMainLooper()).postDelayed({
                     UniversalCheckout.showSuccess(autoDismissDelay = 2000)
                 }, 500)
             }
             is CheckoutEvent.Exit -> {
-                if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
+                if (event.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
                     Log.i("primer.ExampleApp", "Awesome")
                 }
             }
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +85,6 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
     }
 
     private fun onError(error: VolleyError) {
-        Log.e("primer.ExampleApp", "Volley Error when getting client token!")
-        Log.e("primer.ExampleApp", error.toString())
+        Log.e("primer.ExampleApp", "Volley Error when getting client token: $error")
     }
 }
