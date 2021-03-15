@@ -43,7 +43,7 @@ internal class Model constructor(
 
         json.put("paymentInstrument", tokenizable.toPaymentInstrument())
 
-        if (config.uxMode == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+        if (config.uxMode == UniversalCheckout.UXMode.VAULT) {
             json.put("tokenType", TokenType.MULTI_USE.name)
             json.put("paymentFlow", "VAULT")
         }

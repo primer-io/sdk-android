@@ -5,14 +5,12 @@ import android.content.Intent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.*
 import io.primer.android.model.APIClient
 import io.primer.android.model.DeferredToken
 import io.primer.android.model.Model
 import io.primer.android.model.Observable
 import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.json
 import kotlinx.serialization.serializer
@@ -39,7 +37,7 @@ class UniversalCheckout private constructor(
     }
 
     internal enum class UXMode {
-        CHECKOUT, ADD_PAYMENT_METHOD, STANDALONE_PAYMENT_METHOD,
+        CHECKOUT, VAULT,
     }
 
     private fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
@@ -85,6 +83,7 @@ class UniversalCheckout private constructor(
         uxMode: UXMode? = null,
         amount: Int? = null,
         currency: String? = null,
+        standalone: Boolean = false,
     ) {
         subscription?.unregister()
 
@@ -100,6 +99,7 @@ class UniversalCheckout private constructor(
                 amount = amount,
                 currency = currency,
                 theme = theme,
+                standalone = standalone,
             )
 
             val intent = Intent(context, CheckoutSheetActivity::class.java)
@@ -139,19 +139,13 @@ class UniversalCheckout private constructor(
         }
 
         @KoinApiExtension
-        fun showSavedPaymentMethods(listener: UniversalCheckout.EventListener) {
-            return show(listener, UXMode.ADD_PAYMENT_METHOD)
+        fun showVault(listener: UniversalCheckout.EventListener, standalone: Boolean = false) {
+            return show(listener, UXMode.VAULT, standalone = standalone)
         }
 
         @KoinApiExtension
-        fun showCheckout(listener: EventListener, amount: Int, currency: String) {
-            return show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
-        }
-
-        @KoinApiExtension
-        fun showStandalone(listener: EventListener, paymentMethod: PaymentMethod) {
-            instance?.loadPaymentMethods(listOf(paymentMethod))
-            show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
+        fun showCheckout(listener: EventListener, amount: Int, currency: String, standalone: Boolean = false) {
+            return show(listener, UXMode.CHECKOUT, amount = amount, currency = currency, standalone = standalone)
         }
 
         fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
@@ -211,8 +205,9 @@ class UniversalCheckout private constructor(
             uxMode: UXMode,
             amount: Int? = null,
             currency: String? = null,
+            standalone: Boolean = false,
         ) {
-            instance?.show(listener, uxMode, amount, currency)
+            instance?.show(listener, uxMode, amount, currency, standalone)
         }
     }
 }

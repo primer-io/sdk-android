@@ -6,26 +6,29 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CheckoutConfig private constructor(
-  val clientToken: String,
-  val uxMode: UniversalCheckout.UXMode,
-  val theme: UniversalCheckoutTheme,
-  val amount: MonetaryAmount? = null,
+    val clientToken: String,
+    val uxMode: UniversalCheckout.UXMode,
+    val theme: UniversalCheckoutTheme,
+    val amount: MonetaryAmount? = null,
+    val standalone: Boolean = false,
 ) {
 
     companion object {
 
         fun create(
-          clientToken: String,
-          uxMode: UniversalCheckout.UXMode = UniversalCheckout.UXMode.CHECKOUT,
-          currency: String? = null,
-          amount: Int? = null,
-          theme: UniversalCheckoutTheme? = null,
+            clientToken: String,
+            uxMode: UniversalCheckout.UXMode = UniversalCheckout.UXMode.CHECKOUT,
+            currency: String? = null,
+            amount: Int? = null,
+            theme: UniversalCheckoutTheme? = null,
+            standalone: Boolean = false,
         ): CheckoutConfig {
             return CheckoutConfig(
-              clientToken,
-              uxMode = uxMode,
-              theme = theme ?: UniversalCheckoutTheme.getDefault(),
-              amount = MonetaryAmount.create(currency = currency, value = amount)
+                clientToken,
+                uxMode = uxMode,
+                theme = theme ?: UniversalCheckoutTheme.getDefault(),
+                amount = MonetaryAmount.create(currency = currency, value = amount),
+                standalone = standalone
             )
         }
     }

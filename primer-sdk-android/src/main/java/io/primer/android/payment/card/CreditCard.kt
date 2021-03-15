@@ -56,7 +56,7 @@ internal class CreditCard(
 
         text.text = when (checkoutConfig.uxMode) {
             UniversalCheckout.UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
-            UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
+            UniversalCheckout.UXMode.VAULT -> context.getString(R.string.add_card)
             else -> ""
         }
 

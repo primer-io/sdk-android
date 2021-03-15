@@ -77,11 +77,11 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
             ),
         ))
 
-        UniversalCheckout.showSavedPaymentMethods(this)
+        UniversalCheckout.showVault(this)
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             Log.i("primer.ExampleApp", "Creating checkout")
-            UniversalCheckout.showSavedPaymentMethods(this)
+            UniversalCheckout.showVault(this)
         }
     }
 

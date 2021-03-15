@@ -63,7 +63,7 @@ internal class PrimerViewModel : BaseViewModel(), EventBus.EventListener, DIAppC
 
                             paymentMethods.value = descriptors
 
-                            if (checkoutConfig.uxMode == UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD) {
+                            if (checkoutConfig.standalone) {
                                 selectedPaymentMethod.value = descriptors.first()
                             } else {
                                 viewStatus.value = getInitialViewStatus()
