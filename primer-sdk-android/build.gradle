@@ -123,4 +123,4 @@ subprojects {
     tasks.withType(Javadoc).all { enabled = false }
 }
 
-apply from: 'publish.gradle'
+apply from: 'publishing.gradle' // apply from: 'publish.gradle'

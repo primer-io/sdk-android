@@ -1,0 +1,26 @@
+apply plugin: 'maven-publish'
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'io.primer.android'
+                artifactId = 'android'
+                version = '1.0.0-test.1'
+            }
+        }
+
+        repositories {
+            maven {
+                def ENV = System.getenv()
+                url ENV['PRIMER_S3_MAVEN_REPO']
+                credentials(AwsCredentials) {
+                    accessKey = ENV['PRIMER_S3_MAVEN_REPO_ACCESS_KEY']
+                    secretKey = ENV['PRIMER_S3_MAVEN_REPO_SECRET_KEY']
+                }
+            }
+        }
+    }
+}
