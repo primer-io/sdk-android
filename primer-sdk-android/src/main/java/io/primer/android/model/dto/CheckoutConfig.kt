@@ -1,7 +1,6 @@
 package io.primer.android.model.dto
 
 import io.primer.android.UXMode
-import io.primer.android.UniversalCheckout
 import io.primer.android.UniversalCheckoutTheme
 import kotlinx.serialization.Serializable
 

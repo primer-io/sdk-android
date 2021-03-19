@@ -7,7 +7,6 @@ import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UXMode
-import io.primer.android.UniversalCheckout
 import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutConfig
@@ -17,7 +16,6 @@ import io.primer.android.payment.*
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
-import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject

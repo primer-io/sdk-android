@@ -1,6 +1,7 @@
 package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.di.DIAppComponent
@@ -11,30 +12,31 @@ import io.primer.android.model.Observable
 import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.*
 
-@KoinApiExtension
-internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
+@KoinApiExtension // FIXME inject dependencies via ctor
+internal class TokenizationViewModel(
+//    private val model: Model,
+//    private val checkoutConfig: CheckoutConfig
+) : ViewModel(), DIAppComponent {
 
-    private val log = Logger("tokenization-view-model")
     private var paymentMethod: PaymentMethodDescriptor? = null
+
     private val model: Model by inject()
     private val checkoutConfig: CheckoutConfig by inject()
 
     val submitted = MutableLiveData(false)
-
     val status = MutableLiveData(TokenizationStatus.NONE)
-
     val error = MutableLiveData<APIError?>(null)
-
     val result = MutableLiveData<JSONObject>(null)
-
-    val validationErrors: MutableLiveData<List<SyncValidationError>> =
-        MutableLiveData(Collections.emptyList())
+    val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
     fun reset(pm: PaymentMethodDescriptor? = null) {
         paymentMethod = pm
@@ -57,17 +59,17 @@ internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
     fun tokenize(): Observable {
         return model.tokenize(paymentMethod!!).observe {
             when (it) {
-              is Observable.ObservableLoadingEvent -> {
-                status.value = TokenizationStatus.LOADING
-              }
-              is Observable.ObservableSuccessEvent -> {
-                result.value = it.data
-                status.value = TokenizationStatus.SUCCESS
-              }
-              is Observable.ObservableErrorEvent -> {
-                error.value = it.error
-                status.value = TokenizationStatus.ERROR
-              }
+                is Observable.ObservableLoadingEvent -> {
+                    status.value = TokenizationStatus.LOADING
+                }
+                is Observable.ObservableSuccessEvent -> {
+                    result.value = it.data
+                    status.value = TokenizationStatus.SUCCESS
+                }
+                is Observable.ObservableErrorEvent -> {
+                    error.value = it.error
+                    status.value = TokenizationStatus.ERROR
+                }
             }
         }
     }
@@ -112,9 +114,9 @@ internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
     }
 
     fun createGoCardlessMandate(
-      id: String,
-      bankDetails: JSONObject,
-      customerDetails: JSONObject,
+        id: String,
+        bankDetails: JSONObject,
+        customerDetails: JSONObject,
     ): Observable {
         val body = JSONObject()
 

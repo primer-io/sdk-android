@@ -4,215 +4,191 @@ import android.content.Context
 import android.content.Intent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.logging.Logger
-import io.primer.android.model.*
 import io.primer.android.model.APIClient
-import io.primer.android.model.DeferredToken
 import io.primer.android.model.Model
-import io.primer.android.model.Observable
+import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.json
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.serializer
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
-import java.util.*
-import kotlin.collections.ArrayList
 
-class UniversalCheckout private constructor(
-    private val context: Context,
-    authTokenProvider: ClientTokenProvider,
+internal enum class UXMode {
+    CHECKOUT, ADD_PAYMENT_METHOD, STANDALONE_PAYMENT_METHOD,
+}
+
+object UniversalCheckout {
+
+    private lateinit var checkout: InternalUniversalCheckout // FIXME can't hold ref to Context
+
+    fun initialize(context: Context, fullToken: String, theme: UniversalCheckoutTheme? = null) {
+        val clientToken = ClientToken.fromString(fullToken)
+        val config = CheckoutConfig.create(clientToken = fullToken)
+
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+            )
+            .addInterceptor { chain: Interceptor.Chain ->
+                chain.request().newBuilder()
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
+                    .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
+                    .addHeader("Primer-Client-Token", clientToken.accessToken)
+                    .build()
+                    .let { chain.proceed(it) }
+            }
+            .build()
+
+        val client = APIClient(clientToken)
+        val model = Model(client, clientToken, config, okHttpClient)
+
+        checkout = InternalUniversalCheckout(context, model, fullToken, Dispatchers.IO, theme)
+    }
+
+    fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
+        checkout.paymentMethods = paymentMethods
+    }
+
+    fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+        checkout.getSavedPaymentMethods(callback)
+    }
+
+    fun showSavedPaymentMethods(listener: CheckoutEventListener) {
+        checkout.showSavedPaymentMethods(listener)
+    }
+
+    @KoinApiExtension
+    fun showCheckout(listener: CheckoutEventListener, amount: Int, currency: String) {
+        checkout.showCheckout(listener, amount, currency)
+    }
+
+    @KoinApiExtension
+    fun showStandalone(listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
+        checkout.showStandalone(listener, paymentMethod)
+    }
+
+    fun dismiss() {
+        checkout.dismiss()
+    }
+
+    fun showProgressIndicator(visible: Boolean) {
+        checkout.showProgressIndicator(visible)
+    }
+
+    fun showSuccess(autoDismissDelay: Int = 3000) {
+        checkout.showSuccess(autoDismissDelay)
+    }
+}
+
+internal class InternalUniversalCheckout constructor(
+    private val context: Context, // FIXME we cannot hold a ref to a Context
+    private val model: Model,
+    private val fullToken: String,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val theme: UniversalCheckoutTheme? = null,
-) : EventBus.EventListener {
+) {
 
-    private val log = Logger("primer")
-    private val token = DeferredToken(authTokenProvider)
-    private var paymentMethods: List<PaymentMethod> = ArrayList()
+    var paymentMethods: List<PaymentMethod> = emptyList()
 
-    private var listener: EventListener? = null
+    private var listener: CheckoutEventListener? = null
     private var subscription: EventBus.SubscriptionHandle? = null
 
-    interface EventListener {
-
-        fun onCheckoutEvent(e: CheckoutEvent)
+    private val eventBusListener = object : EventBus.EventListener {
+        override fun onEvent(e: CheckoutEvent) {
+            if (e.public) {
+                listener?.onCheckoutEvent(e)
+            }
+        }
     }
 
-    internal enum class UXMode {
-        CHECKOUT, ADD_PAYMENT_METHOD, STANDALONE_PAYMENT_METHOD,
-    }
-
-    private fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
-        this.paymentMethods = paymentMethods
-    }
-
-    /**
-     * TODO: refactor API client & data layer
-     */
-    private fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
-        token.observe {
-            val config = CheckoutConfig.create(clientToken = it)
-            val token = ClientToken.fromString(it)
-            val client = APIClient(token)
-            val model = Model(client, token, config)
-            model.getConfiguration().observe { remoteConfig ->
-                when (remoteConfig) {
-                    is Observable.ObservableSuccessEvent -> {
-                        model.getVaultedPaymentMethods().observe { vault ->
-                            when (vault) {
-                                is Observable.ObservableSuccessEvent -> {
-                                    val internal: List<PaymentMethodTokenInternal> =
-                                        vault.cast(key = "data", defaultValue = Collections.emptyList())
-                                    callback(internal.map { PaymentMethodTokenAdapter.internalToExternal(it) })
-                                }
-                                is Observable.ObservableErrorEvent -> {
-                                    callback(listOf())
-                                }
-                            }
+    fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+        CoroutineScope(ioDispatcher).launch {
+            when (val configResult = model.getConfiguration()) {
+                is OperationResult.Success -> {
+                    val clientSession: ClientSession = configResult.data
+                    when (val result = model.getVaultedPaymentMethods(clientSession)) {
+                        is OperationResult.Success -> {
+                            val paymentMethodTokens: List<PaymentMethodTokenInternal> = result.data
+                            callback(paymentMethodTokens.map { PaymentMethodTokenAdapter.internalToExternal(it) })
+                        }
+                        is OperationResult.Error -> {
+                            callback(listOf())
+                            // TODO anything else?
                         }
                     }
-                    is Observable.ObservableErrorEvent -> {
-                        callback(listOf())
-                    }
+                }
+                is OperationResult.Error -> {
+                    callback(listOf())
+                    // TODO anything else?
                 }
             }
         }
     }
 
     @KoinApiExtension
-    private fun show(
-        listener: EventListener,
-        uxMode: UXMode? = null,
-        amount: Int? = null,
-        currency: String? = null,
-    ) {
+    fun showSavedPaymentMethods(listener: CheckoutEventListener) {
+        show(listener, UXMode.ADD_PAYMENT_METHOD)
+    }
+
+    @KoinApiExtension
+    fun showCheckout(listener: CheckoutEventListener, amount: Int, currency: String) {
+        show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
+    }
+
+    @KoinApiExtension
+    fun showStandalone(listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
+        paymentMethods = listOf(paymentMethod)
+        show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
+    }
+
+    fun dismiss() {
+        EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_CLIENT))
+    }
+
+    fun showProgressIndicator(visible: Boolean) {
+        EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
+    }
+
+    fun showSuccess(autoDismissDelay: Int = 3000) {
+        EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay))
+    }
+
+    @KoinApiExtension
+    private fun show(listener: CheckoutEventListener, uxMode: UXMode? = null, amount: Int? = null, currency: String? = null) {
         subscription?.unregister()
 
         this.listener = listener
-        this.subscription = EventBus.subscribe(this)
+        this.subscription = EventBus.subscribe(eventBusListener)
 
         WebviewInteropRegister.init(context.packageName)
 
-        token.observe {
-            val config = CheckoutConfig.create(
-                clientToken = it,
-                uxMode = uxMode ?: UXMode.CHECKOUT,
-                amount = amount,
-                currency = currency,
-                theme = theme,
-            )
+        val config = CheckoutConfig.create(
+            clientToken = fullToken,
+            uxMode = uxMode ?: UXMode.CHECKOUT,
+            amount = amount,
+            currency = currency,
+            theme = theme,
+        )
 
-            val intent = Intent(context, CheckoutSheetActivity::class.java)
-
-            intent.putExtra("config", json.encodeToString(serializer(), config))
-            intent.putExtra("paymentMethods", json.encodeToString(serializer(), paymentMethods))
-
-            context.startActivity(intent)
-        }
+        Intent(context, CheckoutSheetActivity::class.java)
+            .apply {
+                putExtra("config", json.encodeToString(serializer(), config))
+                putExtra("paymentMethods", json.encodeToString(serializer(), paymentMethods))
+            }
+            .run { context.startActivity(this) }
     }
+}
 
-    private fun destroy() {
-        this.subscription?.unregister()
-        this.subscription = null
-    }
+interface CheckoutEventListener {
 
-    override fun onEvent(e: CheckoutEvent) {
-        if (e.public) {
-            listener?.onCheckoutEvent(e)
-        }
-    }
-
-    companion object {
-
-        private var instance: UniversalCheckout? = null
-
-        /**
-         * Initializes the Primer SDK with the Application context and a client token Provider
-         */
-        fun initialize(
-            context: Context,
-            authTokenProvider: ClientTokenProvider,
-            theme: UniversalCheckoutTheme? = null,
-        ) {
-            destroy()
-            instance = UniversalCheckout(context, authTokenProvider, theme = theme)
-        }
-
-        @KoinApiExtension
-        fun showSavedPaymentMethods(listener: UniversalCheckout.EventListener) {
-            return show(listener, UXMode.ADD_PAYMENT_METHOD)
-        }
-
-        @KoinApiExtension
-        fun showCheckout(listener: EventListener, amount: Int, currency: String) {
-            return show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
-        }
-
-        @KoinApiExtension
-        fun showStandalone(listener: EventListener, paymentMethod: PaymentMethod) {
-            instance?.loadPaymentMethods(listOf(paymentMethod))
-            show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
-        }
-
-        fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
-            instance?.getSavedPaymentMethods(callback)
-        }
-
-        /**
-         * Initializes the Primer SDK with the Application context. This method assumes that
-         * the context also implements the IClientTokenProvider interface
-         */
-        fun initialize(context: Context, theme: UniversalCheckoutTheme? = null) {
-            initialize(context, context as ClientTokenProvider, theme)
-        }
-
-        /**
-         * Load the provided payment methods for use with the SDK
-         */
-        fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
-            instance?.loadPaymentMethods(paymentMethods)
-        }
-
-        /**
-         * Dismiss the checkout
-         */
-        fun dismiss() {
-            EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_CLIENT))
-        }
-
-        /**
-         * Toggle the loading screen
-         */
-        fun showProgressIndicator(visible: Boolean) {
-            EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
-        }
-
-        /**
-         * Show a success screen then dismiss
-         */
-        fun showSuccess(autoDismissDelay: Int = 3000) {
-            EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay))
-        }
-
-        /**
-         * Destroy the primer checkout and release any resources
-         */
-        fun destroy() {
-            instance?.destroy()
-            instance = null
-        }
-
-        /**
-         * Show the checkout sheet and attach a listener which will receive callback events
-         */
-        @KoinApiExtension
-        private fun show(
-            listener: EventListener,
-            uxMode: UXMode,
-            amount: Int? = null,
-            currency: String? = null,
-        ) {
-            instance?.show(listener, uxMode, amount, currency)
-        }
-    }
+    fun onCheckoutEvent(e: CheckoutEvent)
 }

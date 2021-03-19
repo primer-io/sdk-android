@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
 import io.primer.android.UXMode
-import io.primer.android.UniversalCheckout
 import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.APIError

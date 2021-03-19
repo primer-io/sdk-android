@@ -6,7 +6,6 @@ import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UXMode
-import io.primer.android.UniversalCheckout
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig

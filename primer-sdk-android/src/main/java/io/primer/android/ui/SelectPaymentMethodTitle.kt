@@ -6,7 +6,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import io.primer.android.R
 import io.primer.android.UXMode
-import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.MonetaryAmount
 
 internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? = null) :
