@@ -2,7 +2,9 @@ package io.primer.android.model
 
 import io.primer.android.ClientTokenProvider
 
-internal class DeferredToken(private val provider: ClientTokenProvider) {
+internal class DeferredToken(
+    private val provider: ClientTokenProvider
+) {
 
     private var value: String? = null
     private var observer: ((String) -> Unit)? = null
@@ -17,7 +19,7 @@ internal class DeferredToken(private val provider: ClientTokenProvider) {
     }
 
     private fun load() {
-        provider.createToken { token ->
+        provider.createToken { token: String ->
             value = token
             onValue()
         }
