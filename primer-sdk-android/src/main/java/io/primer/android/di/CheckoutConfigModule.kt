@@ -1,20 +1,41 @@
 package io.primer.android.di
 
+import io.primer.android.BuildConfig
 import io.primer.android.PaymentMethod
+import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.model.APIClient
 import io.primer.android.model.IAPIClient
 import io.primer.android.model.Model
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientToken
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 
-internal val CheckoutConfigModule = { config: CheckoutConfig, pms: List<PaymentMethod> ->
+internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: List<PaymentMethod> ->
     module {
-        single { config }
-        single { pms }
-        single { config.theme }
-        single { ClientToken.fromString(get<CheckoutConfig>().clientToken) }
-        single<IAPIClient> { APIClient(get()) }
-        single { Model(get(), get(), get()) }
+        single<CheckoutConfig> { config }
+        single<List<PaymentMethod>> { paymentMethods }
+        single<UniversalCheckoutTheme> { config.theme }
+        single<ClientToken> { ClientToken.fromString(get<CheckoutConfig>().clientToken) }
+        single<IAPIClient> { APIClient(get<ClientToken>()) }
+        single<OkHttpClient> {
+            OkHttpClient.Builder()
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                )
+                .addInterceptor { chain: Interceptor.Chain ->
+                    chain.request().newBuilder()
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
+                        .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
+                        .addHeader("Primer-Client-Token", get<ClientToken>().accessToken)
+                        .build()
+                        .let { chain.proceed(it) }
+                }
+                .build()
+        }
+        single<Model> { Model(api = get(), clientToken = get(), config = get(), okHttpClient = get()) }
     }
 }
