@@ -10,9 +10,9 @@ import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
-internal class PayPalBillingAgreementBehaviour(
+internal class PayPalBillingAgreementBehaviour constructor(
     private val paypal: PayPal,
-    private val viewModel: PrimerViewModel,
+    private val viewModel: PrimerViewModel, // FIXME how can we avoid holding the viewmodel here?
 ) : WebBrowserIntentBehaviour() {
 
     private val log = Logger("paypal.billingagreement")

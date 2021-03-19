@@ -6,6 +6,7 @@ import android.widget.TextView
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
+import io.primer.android.UXMode
 import io.primer.android.UniversalCheckout
 import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
@@ -30,10 +31,9 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 
 @KoinApiExtension
 internal class CreditCard(
-    viewModel: PrimerViewModel,
     config: PaymentMethodRemoteConfig,
     private val options: PaymentMethod.Card,
-) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()
 
@@ -55,8 +55,8 @@ internal class CreditCard(
         val text = button.findViewById<TextView>(R.id.card_preview_button_text)
 
         text.text = when (checkoutConfig.uxMode) {
-            UniversalCheckout.UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
-            UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
+            UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
+            UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
             else -> ""
         }
 

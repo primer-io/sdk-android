@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
+import io.primer.android.UXMode
 import io.primer.android.UniversalCheckout
 import io.primer.android.di.DIAppComponent
 import io.primer.android.logging.Logger
@@ -219,7 +220,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun onResultChanged(data: JSONObject?) {
         if (data != null) {
-            if (checkoutConfig.uxMode == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+            if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
                 viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
             }
         }
@@ -237,10 +238,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun onUXModeChanged(mode: UniversalCheckout.UXMode) {
+    private fun onUXModeChanged(mode: UXMode) {
         submitButton.text = when (mode) {
-            UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.confirm)
-            UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
+            UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.confirm)
+            UXMode.CHECKOUT -> PayAmountText.generate(
                 requireContext(),
                 checkoutConfig.amount
             )
