@@ -32,7 +32,6 @@ internal class PayPal constructor(
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
-            // FIXME we want to not have to hold a ref to a viewmodel
             PayPalBillingAgreementBehaviour(this, viewModel)
         } else {
             PayPalOrderBehaviour(this)

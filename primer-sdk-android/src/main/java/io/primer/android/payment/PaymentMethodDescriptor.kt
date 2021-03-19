@@ -16,7 +16,6 @@ import java.util.*
 
 @KoinApiExtension
 internal abstract class PaymentMethodDescriptor(
-    protected val viewModel: PrimerViewModel,
     val config: PaymentMethodRemoteConfig,
 ) {
 
@@ -30,7 +29,7 @@ internal abstract class PaymentMethodDescriptor(
 
     abstract fun createButton(context: Context): View
 
-    protected val values: JSONObject = JSONObject()
+    private val values: JSONObject = JSONObject()
 
     protected fun getStringValue(key: String): String {
         return values.optString(key)
@@ -51,22 +50,21 @@ internal abstract class PaymentMethodDescriptor(
     open fun toPaymentInstrument(): JSONObject {
         return values
     }
+}
 
-    class Factory(private val viewModel: PrimerViewModel) {
+internal class PaymentMethodDescriptorFactory {
 
-        private val log = Logger("payment-method-descriptor-factory")
-
-        fun create(
-            config: PaymentMethodRemoteConfig,
-            options: PaymentMethod,
-        ): PaymentMethodDescriptor? {
-            // TODO: hate this - think of a better way
-            return when (config.type) {
-                PAYMENT_CARD_IDENTIFIER -> CreditCard(viewModel, config, options as PaymentMethod.Card)
-                PAYPAL_IDENTIFIER -> PayPal(viewModel, config, options as PaymentMethod.PayPal)
-                GOCARDLESS_IDENTIFIER -> GoCardless(viewModel, config, options as PaymentMethod.GoCardless)
-                else -> null
-            }
+    fun create(
+        config: PaymentMethodRemoteConfig,
+        options: PaymentMethod,
+        viewModel: PrimerViewModel,
+    ): PaymentMethodDescriptor? {
+        // TODO: hate this - think of a better way
+        return when (config.type) {
+            PAYMENT_CARD_IDENTIFIER -> CreditCard(config, options as PaymentMethod.Card)
+            PAYPAL_IDENTIFIER -> PayPal(viewModel, config, options as PaymentMethod.PayPal)
+            GOCARDLESS_IDENTIFIER -> GoCardless(config, options as PaymentMethod.GoCardless)
+            else -> null
         }
     }
 }
