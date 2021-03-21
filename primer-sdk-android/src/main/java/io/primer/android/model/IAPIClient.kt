@@ -35,9 +35,7 @@ internal class APIClient(token: ClientToken) : IAPIClient {
     private val handler = Handler(Looper.getMainLooper())
     private val clientToken = token
 
-    // all these 3 functions are only called from Model.kt
-
-    override fun get(url: String): Observable {
+    override fun get(url: String): Observable { // FIXME remove. unused.
         return request(Request.Builder().get().url(url))
     }
 

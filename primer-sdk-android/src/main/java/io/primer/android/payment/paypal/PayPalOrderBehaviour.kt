@@ -11,25 +11,23 @@ internal class PayPalOrderBehaviour(
     private val paypal: PayPal,
 ) : WebBrowserIntentBehaviour() {
 
-    private val log = Logger("paypal-orders")
-
     override fun initialize() {
         tokenizationViewModel?.reset(paypal)
     }
 
-    override fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit)) {
-        paypal.config.id?.let {
-            tokenizationViewModel?.createPayPalOrder(
-                id = it,
-                returnUrl = returnUrl,
-                cancelUrl = cancelUrl
-            )?.observe { e ->
-                when (e) {
-                    is Observable.ObservableSuccessEvent -> {
-                        callback(e.data.getString("approvalUrl"))
-                    }
-                }
-            }
+//    override fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit)) {
+    override fun getUri(cancelUrl: String, returnUrl: String) {
+        paypal.config.id?.let { id ->
+
+            tokenizationViewModel?._createPayPalOrder(id, returnUrl, cancelUrl)
+//            tokenizationViewModel?.createPayPalOrder(id, returnUrl, cancelUrl)?.observe { e ->
+//                when (e) {
+//                    is Observable.ObservableSuccessEvent -> {
+//                        val url = e.data.getString("approvalUrl")
+//                        callback(url)
+//                    }
+//                }
+//            }
         }
     }
 

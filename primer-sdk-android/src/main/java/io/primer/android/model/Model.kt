@@ -17,11 +17,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.json.JSONObject
-import org.koin.core.component.KoinApiExtension
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+// TODO move this somewhere else
 internal suspend inline fun Call.await(): Response =
     suspendCancellableCoroutine<Response> { continuation ->
         val callback = object : Callback, CompletionHandler {
@@ -60,6 +60,7 @@ internal class Model constructor(
         get() = clientSession!!
 
     suspend fun getConfiguration(): OperationResult<ClientSession> {
+
         val request = Request.Builder()
             .url(clientToken.configurationUrl)
             .get()
@@ -80,7 +81,7 @@ internal class Model constructor(
                 response.body?.close()
                 continuation.resume(json)
             }
-            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString()) // needs to be extracted
+            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString()) // TODO move parsing somewhere else
             this.clientSession = clientSession
 
             OperationResult.Success(clientSession)
@@ -89,16 +90,15 @@ internal class Model constructor(
         }
     }
 
-    suspend fun getVaultedPaymentMethods(
-        clientSession: ClientSession,
-    ): OperationResult<List<PaymentMethodTokenInternal>> {
+    suspend fun getVaultedPaymentMethods(clientSession: ClientSession): OperationResult<List<PaymentMethodTokenInternal>> {
+
         val baseUrl = "${clientSession.pciUrl}/payment-instruments"
         val request = Request.Builder()
             .url(baseUrl)
             .get()
             .build()
 
-        try {
+        return try {
             val response: Response = okHttpClient!! // FIXME remove !!
                 .newCall(request)
                 .await()
@@ -111,15 +111,15 @@ internal class Model constructor(
                 continuation.resume(json)
             }
             val array = jsonBody.getJSONArray("data")
-            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(array.toString()) // needs to be extracted
+            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(array.toString()) // TODO move parsing somewhere else
 
-            return OperationResult.Success(list)
+            OperationResult.Success(list)
         } catch (error: Throwable) {
-            return OperationResult.Error(error)
+            OperationResult.Error(error)
         }
     }
 
-    suspend fun _tokenize(tokenizable: PaymentMethodDescriptor): OperationResult<PaymentMethodTokenInternal> {
+    suspend fun tokenize(tokenizable: PaymentMethodDescriptor): OperationResult<PaymentMethodTokenInternal> {
         val requestBody = JSONObject().apply {
             put("paymentInstrument", tokenizable.toPaymentInstrument())
             if (config.uxMode == UXMode.ADD_PAYMENT_METHOD) {
@@ -141,7 +141,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
-                EventBus.broadcast(CheckoutEvent.TokenizationError(error))
+                EventBus.broadcast(CheckoutEvent.TokenizationError(error)) // FIXME remove EventBus
                 return OperationResult.Error(Throwable())
             }
 
@@ -152,10 +152,10 @@ internal class Model constructor(
             }
             val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
             EventBus.broadcast(
-                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token))
+                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token)) // FIXME remove EventBus
             )
             if (token.tokenType == TokenType.MULTI_USE) {
-                EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token)))
+                EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
             }
 
             OperationResult.Success(token)
@@ -164,41 +164,71 @@ internal class Model constructor(
         }
     }
 
-    @KoinApiExtension
-    fun tokenize(tokenizable: PaymentMethodDescriptor): Observable {
-        val json = JSONObject()
-        json.put("paymentInstrument", tokenizable.toPaymentInstrument())
-        if (config.uxMode == UXMode.ADD_PAYMENT_METHOD) {
-            json.put("tokenType", TokenType.MULTI_USE.name)
-            json.put("paymentFlow", "VAULT")
-        }
-
-        val url = APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
-
-        return api.post(url, json).observe {
-            when (it) {
-                is Observable.ObservableSuccessEvent -> {
-                    handleTokenizationResult(it)
-                }
-                is Observable.ObservableErrorEvent -> {
-                    handleTokenizationResult(it)
-                }
-            }
-        }
-    }
-
-    fun deleteToken(token: PaymentMethodTokenInternal): Observable {
+    suspend fun deleteToken(token: PaymentMethodTokenInternal): OperationResult<Unit> {
         val url = APIEndpoint.get(
             session,
             APIEndpoint.Target.PCI,
             APIEndpoint.DELETE_TOKEN,
             params = mapOf("id" to token.token)
         )
+        val request = Request.Builder()
+            .url(url)
+            .delete()
+            .build()
 
-        return api.delete(url).observe {
-            if (it is Observable.ObservableSuccessEvent) {
-                EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(PaymentMethodTokenAdapter.internalToExternal(token)))
+        return try {
+            val response: Response = okHttpClient!! // FIXME remove !!
+                .newCall(request)
+                .await()
+
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                return OperationResult.Error(Throwable())
             }
+
+            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
+                val json = JSONObject(response.body?.string() ?: "{}")
+                response.body?.close()
+                continuation.resume(json)
+            }
+            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString()) // TODO move parsing somewhere else
+            this.clientSession = clientSession
+
+            EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
+
+            OperationResult.Success(Unit)
+        } catch (error: Throwable) {
+            OperationResult.Error(error)
+        }
+    }
+
+    suspend fun _post(pathname: String, requestBody: JSONObject? = null): OperationResult<JSONObject> {
+        val url = APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname)
+        val stringifiedBody = requestBody?.toString() ?: "{}"
+        val request = Request.Builder()
+            .url(url)
+            .post(stringifiedBody.toRequestBody("application/json".toMediaType()))
+            .build()
+
+        return try {
+            val response: Response = okHttpClient!! // FIXME remove !!
+                .newCall(request)
+                .await()
+
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                return OperationResult.Error(Throwable())
+            }
+
+            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
+                val json = JSONObject(response.body?.string() ?: "{}")
+                response.body?.close()
+                continuation.resume(json)
+            }
+
+            OperationResult.Success(jsonBody)
+        } catch (error: Throwable) {
+            OperationResult.Error(error)
         }
     }
 
@@ -206,17 +236,4 @@ internal class Model constructor(
         return api.post(APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname), body)
     }
 
-    private fun handleTokenizationResult(e: Observable.ObservableSuccessEvent) {
-        val token: PaymentMethodTokenInternal = e.cast()
-
-        EventBus.broadcast(CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token)))
-
-        if (token.tokenType == TokenType.MULTI_USE) {
-            EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token)))
-        }
-    }
-
-    private fun handleTokenizationResult(e: Observable.ObservableErrorEvent) {
-        EventBus.broadcast(CheckoutEvent.TokenizationError(e.error))
-    }
 }

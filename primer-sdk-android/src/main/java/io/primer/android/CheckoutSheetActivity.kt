@@ -1,5 +1,7 @@
 package io.primer.android
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -24,11 +26,13 @@ import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.WebBrowserIntentBehaviour
+import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
+import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
 typealias ActivityViewModelFactoryProvider = (Fragment) -> ViewModelProvider.Factory
@@ -97,12 +101,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private var exited = false
     private var initFinished = false
 
-    //    private lateinit var viewModel: PrimerViewModel
+    // private lateinit var viewModel: PrimerViewModel
     private val mainViewModel: PrimerViewModel by viewModels()
     private lateinit var viewModelFactory: PrimerViewModelFactory
-//    private val mainViewModel: PrimerViewModel by viewModels {
-//        GenericSavedStateViewModelFactory(viewModelFactory, this)
-//    }
+    // private val mainViewModel: PrimerViewModel by viewModels {
+    //   GenericSavedStateViewModelFactory(viewModelFactory, this)
+    // }
 
     private val tokenizationViewModel: TokenizationViewModel by viewModels()
 
@@ -116,10 +120,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
-//        val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
-//        val apiClient = APIClient(clientToken)
-//        val model = Model(apiClient, clientToken, checkoutConfig)
-//        viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, paymentMethods)
+        // val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
+        // val apiClient = APIClient(clientToken)
+        // val model = Model(apiClient, clientToken, checkoutConfig)
+        // viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, paymentMethods)
 
         mainViewModel.initialize()
 
@@ -168,11 +172,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                         openFragment(behaviour)
                     }
                     is WebBrowserIntentBehaviour -> {
-                        // FIXME PayPalBillingAgreementBehaviour which is a WebBrowserIntentBehaviour, is the only thing that is using
-                        // a viewmodel and why we have to pass it from:
-                        //  PrimerViewModel -> PaymentMethodDescriptorResolver#resolve(vm) -> PaymentMethodDescriptorFactory#create(vm)
-                        //  ->  PayPal(vm, ...) -> PayPalBillingAgreementBehaviour(PayPal, vm)
-                        behaviour.execute(this, tokenizationViewModel)
+                        behaviour.execute(tokenizationViewModel)
+                        //
                     }
                     else -> {
                         // TODO what
@@ -180,6 +181,26 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 }
             }
         })
+
+        tokenizationViewModel._payPalBillingAgreementUrl.observe(this) { uri: String ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+            startActivity(intent)
+        }
+
+        tokenizationViewModel._confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
+            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+            val paypal = paymentMethod as? PayPal ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
+
+            paypal.setTokenizableValue("paypalBillingAgreementId", data.getString("billingAgreementId"))
+            paypal.setTokenizableValue("externalPayerInfo", data.getJSONObject("externalPayerInfo"))
+            paypal.setTokenizableValue("shippingAddress", data.getJSONObject("shippingAddress"))
+
+            tokenizationViewModel.tokenize()
+        }
+
+        tokenizationViewModel._payPalOrder.observe(this) { data: JSONObject ->
+            // TODO
+        }
     }
 
     private fun attachEventListeners() {

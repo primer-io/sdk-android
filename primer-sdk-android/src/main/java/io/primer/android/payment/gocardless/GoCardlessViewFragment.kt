@@ -19,6 +19,7 @@ import io.primer.android.ui.fragments.FormActionListener
 import io.primer.android.ui.fragments.FormFragment
 import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
@@ -236,19 +237,24 @@ class GoCardlessViewFragment : FormFragment() {
         viewModel.error.value = null
 
         primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
-            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {
-                when (it) {
-                    is Observable.ObservableSuccessEvent -> onMandateCreated(it.data)
-                    is Observable.ObservableErrorEvent -> onTokenizeError(it.error)
-                }
+            tokenizationViewModel._createGoCardlessMandate(id, bankDetails, customerDetails)
+            tokenizationViewModel._goCardlessMandate.observe(this) { data ->
+                onMandateCreated(data)
             }
+            tokenizationViewModel._goCardlessMandateError.observe(this) {
+                onTokenizeError()
+            }
+//            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {
+//                when (it) {
+//                    is Observable.ObservableSuccessEvent -> onMandateCreated(it.data)
+//                    is Observable.ObservableErrorEvent -> onTokenizeError()
+//                }
+//            }
         }
     }
 
-    private fun formatBankDetails(): JSONObject {
-        return JSONObject().apply {
-            put("iban", viewModel.getValue(DD_FIELD_NAME_IBAN))
-        }
+    private fun formatBankDetails(): JSONObject = JSONObject().apply {
+        put("iban", viewModel.getValue(DD_FIELD_NAME_IBAN))
     }
 
     private fun formatCustomerDetails(): JSONObject {
@@ -286,23 +292,24 @@ class GoCardlessViewFragment : FormFragment() {
         tokenizationViewModel.reset(primerViewModel.selectedPaymentMethod.value)
         tokenizationViewModel.setTokenizableValue("gocardlessMandateId", mandateId)
 
-        tokenizationViewModel.tokenize().observe {
-            when (it) {
-                is Observable.ObservableSuccessEvent -> onTokenizeSuccess()
-                is Observable.ObservableErrorEvent -> onTokenizeError(it.error)
-            }
+        tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) {
+            onTokenizeSuccess()
+        }
+
+        tokenizationViewModel.tokenizationError.observe(viewLifecycleOwner) {
+            it?.let { onTokenizeError() }
         }
     }
 
     private fun onTokenizeSuccess() {}
 
-    private fun onTokenizeError(error: APIError) {
+    private fun onTokenizeError() {
         viewModel.setLoading(false)
         viewModel.error.value = FormErrorState(labelId = R.string.dd_mandate_error)
     }
 
     companion object {
 
-        fun newInstance() = GoCardlessViewFragment()
+        fun newInstance(): GoCardlessViewFragment = GoCardlessViewFragment()
     }
 }
