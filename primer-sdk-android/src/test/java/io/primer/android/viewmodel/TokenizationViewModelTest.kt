@@ -113,7 +113,7 @@ class TokenizationViewModelTest : KoinTest {
     }
 
     @Test
-    fun `tokenize`() {
+    fun `tokenization relies on Model instance`() {
         val mockJson: JSONObject = mockk()
         every { mockJson.optString(CARD_NAME_FILED_NAME) } returns "name"
         every { mockJson.optString(CARD_NUMBER_FIELD_NAME) } returns "number"
