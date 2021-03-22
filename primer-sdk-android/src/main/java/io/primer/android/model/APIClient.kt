@@ -9,8 +9,6 @@ import io.primer.android.logging.Logger
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.ClientToken
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
@@ -53,7 +51,7 @@ internal class APIClient(token: ClientToken) : IAPIClient {
 
                 override fun onResponse(call: Call, response: Response) {
                     handler.post {
-                        if (response.code != 200) {
+                        if (response.code() != 200) {
                             observable.setError(APIError.create(response))
                         } else {
                             observable.setSuccess(getJSON(response))
@@ -73,12 +71,12 @@ internal class APIClient(token: ClientToken) : IAPIClient {
     }
 
     private fun getJSON(response: Response): JSONObject {
-        return JSONObject(response.body?.string() ?: "{}")
+        return JSONObject(response.body()?.string() ?: "{}")
     }
 
     private fun toRequestBody(json: JSONObject?): RequestBody {
         val stringified = json?.toString() ?: "{}"
-        val mediaType = "application/json".toMediaType()
-        return stringified.toRequestBody(mediaType)
+        val mediaType = MediaType.get("application/json")
+        return RequestBody.create(mediaType, stringified)
     }
 }
