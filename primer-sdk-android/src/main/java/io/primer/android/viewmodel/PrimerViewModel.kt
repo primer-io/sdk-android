@@ -93,12 +93,12 @@ internal class PrimerViewModel(
                 )
 
                 val descriptors = resolver.resolve(this)
-                paymentMethods.value = descriptors
+                paymentMethods.postValue(descriptors)
 
                 if (this.checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {
-                    selectedPaymentMethod.value = descriptors.first()
+                    selectedPaymentMethod.postValue(descriptors.first())
                 } else {
-                    viewStatus.value = getInitialViewStatus()
+                    viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
                 }
             }
             is OperationResult.Error -> {
@@ -113,8 +113,8 @@ internal class PrimerViewModel(
         subscription.unregister()
     }
 
-    private fun getInitialViewStatus(): ViewStatus {
-        if (vaultedPaymentMethods.value?.isNotEmpty() == true) {
+    private fun getInitialViewStatus(vaultedPaymentMethods: List<PaymentMethodTokenInternal>): ViewStatus {
+        if (vaultedPaymentMethods.isNotEmpty()) {
             return ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
         }
 
