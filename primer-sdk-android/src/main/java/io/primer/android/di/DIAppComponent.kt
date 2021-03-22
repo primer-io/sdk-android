@@ -6,5 +6,6 @@ import org.koin.core.component.KoinComponent
 @KoinApiExtension
 interface DIAppComponent : KoinComponent {
 
+    // FIXME why is this overridden?
     override fun getKoin() = DIAppContext.app!!.koin
 }

@@ -32,23 +32,22 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 internal class CreditCard(
     viewModel: PrimerViewModel,
     config: PaymentMethodRemoteConfig,
-    private val options: PaymentMethod.Card,
-) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+    private val options: PaymentMethod.Card, // FIXME why's this here? it's unused
+    encodedAsJson: JSONObject = JSONObject() // FIXME passing ina as dependency so we can test
+) : PaymentMethodDescriptor(viewModel, config, encodedAsJson), DIAppComponent { // FIXME why is this implementing a di component?
 
     private val checkoutConfig: CheckoutConfig by inject()
 
+    // FIXME identifiers should not be needed to identify instances of a class
     override val identifier = PAYMENT_CARD_IDENTIFIER
 
-    private val log = Logger("payment-method.$identifier")
-
+    // FIXME static call + instantiation makes it impossible to properly test
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.FORM
+    override val type: PaymentMethodType = PaymentMethodType.FORM
 
-    override val vaultCapability: VaultCapability
-        get() = VaultCapability.SINGLE_USE_AND_VAULT
+    override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 
     override fun createButton(context: Context): View {
         val button = View.inflate(context, R.layout.payment_method_button_card, null)
@@ -63,6 +62,7 @@ internal class CreditCard(
         return button
     }
 
+    // FIXME a model should not be responsible for parsing itself into json
     override fun toPaymentInstrument(): JSONObject {
         val json = JSONObject()
 
@@ -81,6 +81,7 @@ internal class CreditCard(
         return json
     }
 
+    // FIXME this should not be here. a model should not be responsible for validating itself
     override fun validate(): List<SyncValidationError> {
         val errors = ArrayList<SyncValidationError>()
 
@@ -96,6 +97,7 @@ internal class CreditCard(
             )
         }
 
+        // FIXME static call (formatter should be injected)
         val number = CardNumberFormatter.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
 
         if (number.isEmpty()) {
@@ -136,6 +138,7 @@ internal class CreditCard(
             )
         }
 
+        // FIXME static call (formatter should be injected)
         val expiry = ExpiryDateFormatter.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
 
         if (expiry.isEmpty()) {
