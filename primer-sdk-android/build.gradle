@@ -106,6 +106,9 @@ dependencies {
     testImplementation "io.mockk:mockk:1.10.5"
     testImplementation "io.mockk:mockk-android:1.10.5"
     testImplementation "de.mannodermaus.junit5:android-test-runner:1.2.0"
+    testImplementation "org.koin:koin-test:$koin_version"
+    testImplementation "com.jraska.livedata:testing-ktx:1.1.2"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1"
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
