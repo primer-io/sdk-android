@@ -45,8 +45,9 @@ class TokenizationViewModelTest : KoinTest {
     @RelaxedMockK
     private lateinit var model: Model
 
-    // FIXME we're forced to provide a theme in tests because of the forced static calls
-    private val theme = UniversalCheckoutTheme(0f,
+    // FIXME we're forced to provide a theme in tests because of the static calls that happen if you don't
+    private val theme = UniversalCheckoutTheme(
+        0f,
         0f,
         Color.BLACK,
         Color.BLACK,

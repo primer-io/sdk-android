@@ -32,9 +32,6 @@ internal abstract class PaymentMethodDescriptor(
     // FIXME this should not be here. a model should not be responsible creating views
     abstract fun createButton(context: Context): View
 
-    // FIXME this should not be here. a model should not be responsible for parsing itself into json
-//    protected val values: JSONObject = JSONObject()
-
     // FIXME all this should not be here. a model should not be responsible for parsing itself into json
     protected fun getStringValue(key: String): String {
         return values.optString(key)
