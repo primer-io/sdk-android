@@ -186,14 +186,6 @@ internal class Model constructor(
                 return OperationResult.Error(Throwable())
             }
 
-            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
-                continuation.resume(json)
-            }
-            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString()) // TODO move parsing somewhere else
-            this.clientSession = clientSession
-
             EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
 
             OperationResult.Success(Unit)
