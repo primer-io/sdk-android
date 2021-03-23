@@ -139,7 +139,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private inline fun <reified T> unmarshal(name: String): T {
         // FIXME this should be parcelized instead
         val serialized = intent.getStringExtra(name)
-        return json.decodeFromString(serializer(), serialized!!)
+        return json.decodeFromString(serializer(), serialized!!) // TODO avoid !!
     }
 
     override fun onResume() {
@@ -173,10 +173,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                     }
                     is WebBrowserIntentBehaviour -> {
                         behaviour.execute(tokenizationViewModel)
-                        //
                     }
                     else -> {
-                        // TODO what
+                        // TODO what should we do here?
                     }
                 }
             }
