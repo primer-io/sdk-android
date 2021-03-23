@@ -241,12 +241,6 @@ class GoCardlessViewFragment : FormFragment() {
             tokenizationViewModel.goCardlessMandateError.observe(this) {
                 onTokenizeError()
             }
-//            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {
-//                when (it) {
-//                    is Observable.ObservableSuccessEvent -> onMandateCreated(it.data)
-//                    is Observable.ObservableErrorEvent -> onTokenizeError()
-//                }
-//            }
         }
     }
 

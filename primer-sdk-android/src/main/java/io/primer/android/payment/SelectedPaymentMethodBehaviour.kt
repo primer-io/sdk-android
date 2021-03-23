@@ -39,10 +39,6 @@ internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehavio
         initialize()
 
         val interopRegister = WebviewInteropRegister.register(this)
-//        val callback = { uri: String ->
-//            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-//            context.startActivity(intent)
-//        }
 
         getUri(interopRegister.cancelUrl, interopRegister.successUrl)
     }
