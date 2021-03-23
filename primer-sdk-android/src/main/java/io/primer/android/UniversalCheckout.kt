@@ -28,15 +28,17 @@ object UniversalCheckout {
 
     private lateinit var checkout: InternalUniversalCheckout // FIXME can't hold ref to Context
 
+    /**
+     * Initializes the Primer SDK with the Application context and a client token Provider
+     */
     fun initialize(context: Context, fullToken: String, theme: UniversalCheckoutTheme? = null) {
         val clientToken = ClientToken.fromString(fullToken)
         val config = CheckoutConfig.create(clientToken = fullToken)
 
         // FIXME inject these dependencies
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
+            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json")
@@ -53,6 +55,9 @@ object UniversalCheckout {
         checkout = InternalUniversalCheckout(context, model, fullToken, Dispatchers.IO, theme)
     }
 
+    /**
+     * Load the provided payment methods for use with the SDK
+     */
     fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
         checkout.paymentMethods = paymentMethods
     }
@@ -75,14 +80,23 @@ object UniversalCheckout {
         checkout.showStandalone(listener, paymentMethod)
     }
 
+    /**
+     * Dismiss the checkout
+     */
     fun dismiss() {
         checkout.dismiss()
     }
 
+    /**
+     * Toggle the loading screen
+     */
     fun showProgressIndicator(visible: Boolean) {
         checkout.showProgressIndicator(visible)
     }
 
+    /**
+     * Show a success screen then dismiss
+     */
     fun showSuccess(autoDismissDelay: Int = 3000) {
         checkout.showSuccess(autoDismissDelay)
     }
