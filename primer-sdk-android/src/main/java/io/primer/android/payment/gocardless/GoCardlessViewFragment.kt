@@ -9,8 +9,6 @@ import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.Observable
-import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.FormErrorState
 import io.primer.android.ui.FormTitleState
@@ -19,7 +17,6 @@ import io.primer.android.ui.fragments.FormActionListener
 import io.primer.android.ui.fragments.FormFragment
 import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
@@ -237,11 +234,11 @@ class GoCardlessViewFragment : FormFragment() {
         viewModel.error.value = null
 
         primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
-            tokenizationViewModel._createGoCardlessMandate(id, bankDetails, customerDetails)
-            tokenizationViewModel._goCardlessMandate.observe(this) { data ->
+            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails)
+            tokenizationViewModel.goCardlessMandate.observe(this) { data ->
                 onMandateCreated(data)
             }
-            tokenizationViewModel._goCardlessMandateError.observe(this) {
+            tokenizationViewModel.goCardlessMandateError.observe(this) {
                 onTokenizeError()
             }
 //            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {
@@ -289,7 +286,7 @@ class GoCardlessViewFragment : FormFragment() {
 
     private fun onMandateCreated(data: JSONObject) {
         val mandateId = data.getString("mandateId")
-        tokenizationViewModel.reset(primerViewModel.selectedPaymentMethod.value)
+        tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
         tokenizationViewModel.setTokenizableValue("gocardlessMandateId", mandateId)
 
         tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) {

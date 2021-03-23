@@ -13,10 +13,7 @@ import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
 import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
-import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
@@ -108,7 +105,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         viewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
         onUXModeChanged(checkoutConfig.uxMode)
 
-        tokenizationViewModel.reset(viewModel.selectedPaymentMethod.value)
+        tokenizationViewModel.resetPaymentMethod(viewModel.selectedPaymentMethod.value)
 
         // input masks
         inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())

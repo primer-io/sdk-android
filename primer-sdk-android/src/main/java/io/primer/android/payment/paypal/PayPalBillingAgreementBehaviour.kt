@@ -1,12 +1,9 @@
 package io.primer.android.payment.paypal
 
 import android.net.Uri
-import androidx.lifecycle.viewModelScope
 import io.primer.android.logging.Logger
-import io.primer.android.model.Observable
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
@@ -20,7 +17,7 @@ internal class PayPalBillingAgreementBehaviour constructor(
 
     override fun initialize() {
         // payment method to be tokenized is set here // FIXME it should be passed instead like so: tokenize(paymentMethod)
-        tokenizationViewModel?.reset(paypal)
+        tokenizationViewModel?.resetPaymentMethod(paypal)
     }
 
     override fun getUri(
@@ -30,7 +27,7 @@ internal class PayPalBillingAgreementBehaviour constructor(
     ) {
         paypal.config.id?.let { id ->
 
-            tokenizationViewModel?._createPayPalBillingAgreement(id, returnUrl, cancelUrl)
+            tokenizationViewModel?.createPayPalBillingAgreement(id, returnUrl, cancelUrl)
 
 //            tokenizationViewModel?.createPayPalBillingAgreement(id, returnUrl, cancelUrl)?.observe { e ->
 //                when (e) {
@@ -45,7 +42,7 @@ internal class PayPalBillingAgreementBehaviour constructor(
     override fun onSuccess(uri: Uri) {
         uri.getQueryParameter("ba_token")?.let { token ->
             paypal.config.id?.let { id ->
-                tokenizationViewModel?._confirmPayPalBillingAgreement(id, token)
+                tokenizationViewModel?.confirmPayPalBillingAgreement(id, token)
 
 //                tokenizationViewModel?.confirmPayPalBillingAgreement(id, token)?.observe { e ->
 //                    when (e) {

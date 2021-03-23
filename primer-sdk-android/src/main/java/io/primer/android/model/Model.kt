@@ -47,6 +47,8 @@ internal suspend inline fun Call.await(): Response =
         continuation.invokeOnCancellation(callback)
     }
 
+// FIXME drop Model class (in favour of something like PrimerService or PrimerApi)
+// FIXME extract parsing to collaborator
 internal class Model constructor(
     private val api: IAPIClient,
     private val clientToken: ClientToken,

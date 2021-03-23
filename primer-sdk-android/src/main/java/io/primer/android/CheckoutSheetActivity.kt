@@ -3,7 +3,6 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,12 +15,10 @@ import androidx.savedstate.SavedStateRegistryOwner
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.APIClient
 import io.primer.android.model.Model
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
@@ -182,12 +179,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             }
         })
 
-        tokenizationViewModel._payPalBillingAgreementUrl.observe(this) { uri: String ->
+        tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
         }
 
-        tokenizationViewModel._confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
+        tokenizationViewModel.confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
             val paypal = paymentMethod as? PayPal ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
@@ -198,7 +195,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             tokenizationViewModel.tokenize()
         }
 
-        tokenizationViewModel._payPalOrder.observe(this) { data: JSONObject ->
+        tokenizationViewModel.payPalOrder.observe(this) { data: JSONObject ->
             // TODO
         }
     }
