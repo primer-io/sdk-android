@@ -88,7 +88,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("cancelUrl", cancelUrl)
 
         viewModelScope.launch {
-            when (val result = model._post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)) {
+            when (val result = model.post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)) {
                 is OperationResult.Success -> {
                     val approvalUrl = result.data.getString("approvalUrl")
                     payPalBillingAgreementUrl.postValue(approvalUrl)
@@ -107,7 +107,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("tokenId", token)
 
         viewModelScope.launch {
-            when (val result = model._post(APIEndpoint.CONFIRM_PAYPAL_BILLING_AGREEMENT, body)) {
+            when (val result = model.post(APIEndpoint.CONFIRM_PAYPAL_BILLING_AGREEMENT, body)) {
                 is OperationResult.Success -> {
                     val data = result.data
                     confirmPayPalBillingAgreement.postValue(data)
@@ -129,7 +129,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("cancelUrl", cancelUrl)
 
         viewModelScope.launch {
-            when (val result = model._post(APIEndpoint.CREATE_PAYPAL_ORDER, body)) {
+            when (val result = model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)) {
                 is OperationResult.Success -> {
                     val uri = result.data.getString("approvalUrl")
                     payPalOrder.postValue(uri)
@@ -150,7 +150,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("userDetails", customerDetails)
 
         viewModelScope.launch {
-            when (val result = model._post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)) {
+            when (val result = model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)) {
                 is OperationResult.Success -> {
                     val data = result.data
                     goCardlessMandate.postValue(data)

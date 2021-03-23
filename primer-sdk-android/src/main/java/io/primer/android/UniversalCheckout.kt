@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.APIClient
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.*
@@ -48,8 +47,7 @@ object UniversalCheckout {
             }
             .build()
 
-        val client = APIClient(clientToken)
-        val model = Model(client, clientToken, config, okHttpClient)
+        val model = Model(clientToken, config, okHttpClient)
 
         checkout = InternalUniversalCheckout(context, model, fullToken, Dispatchers.IO, theme)
     }

@@ -50,7 +50,6 @@ internal suspend inline fun Call.await(): Response =
 // FIXME drop Model class (in favour of something like PrimerService or PrimerApi)
 // FIXME extract parsing to collaborator
 internal class Model constructor(
-    private val api: IAPIClient,
     private val clientToken: ClientToken,
     private val config: CheckoutConfig,
     private val okHttpClient: OkHttpClient? = null,
@@ -196,7 +195,7 @@ internal class Model constructor(
         }
     }
 
-    suspend fun _post(pathname: String, requestBody: JSONObject? = null): OperationResult<JSONObject> {
+    suspend fun post(pathname: String, requestBody: JSONObject? = null): OperationResult<JSONObject> {
         val url = APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname)
         val stringifiedBody = requestBody?.toString() ?: "{}"
         val request = Request.Builder()
@@ -225,9 +224,4 @@ internal class Model constructor(
             OperationResult.Error(error)
         }
     }
-
-    fun post(pathname: String, body: JSONObject? = null): Observable {
-        return api.post(APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname), body)
-    }
-
 }

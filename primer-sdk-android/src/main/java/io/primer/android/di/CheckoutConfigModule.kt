@@ -3,8 +3,6 @@ package io.primer.android.di
 import io.primer.android.BuildConfig
 import io.primer.android.PaymentMethod
 import io.primer.android.UniversalCheckoutTheme
-import io.primer.android.model.APIClient
-import io.primer.android.model.IAPIClient
 import io.primer.android.model.Model
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientToken
@@ -19,7 +17,6 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
         single<List<PaymentMethod>> { paymentMethods }
         single<UniversalCheckoutTheme> { config.theme }
         single<ClientToken> { ClientToken.fromString(get<CheckoutConfig>().clientToken) }
-        single<IAPIClient> { APIClient(get<ClientToken>()) }
         single<OkHttpClient> {
             OkHttpClient.Builder()
                 .addInterceptor(
@@ -36,6 +33,6 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
                 }
                 .build()
         }
-        single<Model> { Model(api = get(), clientToken = get(), config = get(), okHttpClient = get()) }
+        single<Model> { Model(clientToken = get(), config = get(), okHttpClient = get()) }
     }
 }
