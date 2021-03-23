@@ -32,12 +32,15 @@ import kotlinx.serialization.serializer
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
+// TODO manual di with this
 typealias ActivityViewModelFactoryProvider = (Fragment) -> ViewModelProvider.Factory
 
+// TODO manual di with this
 val activityViewModelFactoryProvider: ActivityViewModelFactoryProvider = {
     it.requireActivity().defaultViewModelProviderFactory
 }
 
+// TODO manual di with this
 internal inline fun <reified VM : ViewModel> Fragment.viewModelBuilder(
     useActivityStore: Boolean = false,
     noinline viewModelInitializer: () -> VM,
@@ -58,11 +61,13 @@ internal inline fun <reified VM : ViewModel> Fragment.viewModelBuilder(
     )
 }
 
+// TODO manual di with this
 interface ViewModelAssistedFactory<T : ViewModel> {
 
     fun create(handle: SavedStateHandle): T
 }
 
+// TODO manual di with this
 internal class PrimerViewModelFactory(
     private val model: Model,
     private val checkoutConfig: CheckoutConfig,
@@ -70,11 +75,12 @@ internal class PrimerViewModelFactory(
 ) : ViewModelAssistedFactory<PrimerViewModel> {
 
     override fun create(handle: SavedStateHandle): PrimerViewModel {
-//        return PrimerViewModel(model, checkoutConfig, configuredPaymentMethods)
+        // return PrimerViewModel(model, checkoutConfig, configuredPaymentMethods)
         return PrimerViewModel()
     }
 }
 
+// TODO manual di with this
 class GenericSavedStateViewModelFactory<out V : ViewModel>(
     private val viewModelFactory: ViewModelAssistedFactory<V>,
     owner: SavedStateRegistryOwner,
@@ -98,12 +104,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private var exited = false
     private var initFinished = false
 
-    // private lateinit var viewModel: PrimerViewModel
     private val mainViewModel: PrimerViewModel by viewModels()
-    private lateinit var viewModelFactory: PrimerViewModelFactory
-    // private val mainViewModel: PrimerViewModel by viewModels {
-    //   GenericSavedStateViewModelFactory(viewModelFactory, this)
-    // }
+    // private lateinit var viewModelFactory: PrimerViewModelFactory
 
     private val tokenizationViewModel: TokenizationViewModel by viewModels()
 
@@ -117,6 +119,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
+        // TODO manual di
         // val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
         // val apiClient = APIClient(clientToken)
         // val model = Model(apiClient, clientToken, checkoutConfig)
