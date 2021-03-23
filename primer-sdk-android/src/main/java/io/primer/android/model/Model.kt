@@ -130,6 +130,7 @@ internal class Model constructor(
             }
         }
 
+        // FIXME extra endpoint construction to collaborator (non-static call)
         val url = APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
         val request = Request.Builder()
             .url(url)
@@ -167,6 +168,8 @@ internal class Model constructor(
     }
 
     suspend fun deleteToken(token: PaymentMethodTokenInternal): OperationResult<Unit> {
+
+        // FIXME extra endpoint construction to collaborator (non-static call)
         val url = APIEndpoint.get(
             session,
             APIEndpoint.Target.PCI,
