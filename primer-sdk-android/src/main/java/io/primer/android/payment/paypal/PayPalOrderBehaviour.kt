@@ -13,10 +13,8 @@ internal class PayPalOrderBehaviour(
         tokenizationViewModel?.resetPaymentMethod(paypal)
     }
 
-//    override fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit)) {
     override fun getUri(cancelUrl: String, returnUrl: String) {
         paypal.config.id?.let { id ->
-
             tokenizationViewModel?.createPayPalOrder(id, returnUrl, cancelUrl)
 //            tokenizationViewModel?.createPayPalOrder(id, returnUrl, cancelUrl)?.observe { e ->
 //                when (e) {

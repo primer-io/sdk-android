@@ -33,11 +33,7 @@ internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehavio
 
     protected var tokenizationViewModel: TokenizationViewModel? = null
 
-    fun execute(
-        // context: Context,
-        viewModel: TokenizationViewModel,
-        // callback: ((String) -> Unit)
-    ) {
+    fun execute(viewModel: TokenizationViewModel) {
         tokenizationViewModel = viewModel
 
         initialize()
@@ -48,20 +44,11 @@ internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehavio
 //            context.startActivity(intent)
 //        }
 
-        // the callback code is now in
-        getUri(
-            interopRegister.cancelUrl,
-            interopRegister.successUrl,
-//            callback
-        )
+        getUri(interopRegister.cancelUrl, interopRegister.successUrl)
     }
 
     abstract fun initialize()
-    abstract fun getUri(
-        cancelUrl: String,
-        returnUrl: String,
-        // callback: ((String) -> Unit)
-    )
+    abstract fun getUri(cancelUrl: String, returnUrl: String)
 
     abstract fun onSuccess(uri: Uri)
     abstract fun onCancel(uri: Uri? = null)

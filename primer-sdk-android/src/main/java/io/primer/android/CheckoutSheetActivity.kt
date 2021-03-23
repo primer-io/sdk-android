@@ -198,7 +198,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         }
 
         tokenizationViewModel.payPalOrder.observe(this) { data: JSONObject ->
-            // TODO
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+            startActivity(intent)
         }
     }
 
