@@ -123,6 +123,7 @@ internal class InternalUniversalCheckout constructor(
     }
 
     fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+        // FIXME this needs to be moved to a viewmodel
         CoroutineScope(ioDispatcher).launch {
             when (val configResult = model.getConfiguration()) {
                 is OperationResult.Success -> {
