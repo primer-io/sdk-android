@@ -80,7 +80,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     // TODO: move these payal things somewhere else
-    val payPalBillingAgreementUrl = MutableLiveData<String>()
+    val payPalBillingAgreementUrl = MutableLiveData<String>() // emits RUI
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -119,7 +119,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    val payPalOrder = MutableLiveData<JSONObject>()
+    val payPalOrder = MutableLiveData<String>() // emits URI
     fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -131,8 +131,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         viewModelScope.launch {
             when (val result = model._post(APIEndpoint.CREATE_PAYPAL_ORDER, body)) {
                 is OperationResult.Success -> {
-                    val data = result.data
-                    payPalOrder.postValue(data)
+                    val uri = result.data.getString("approvalUrl")
+                    payPalOrder.postValue(uri)
                 }
                 is OperationResult.Error -> {
                     // TODO what should we do here?
