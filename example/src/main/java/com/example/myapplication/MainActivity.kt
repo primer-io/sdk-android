@@ -94,12 +94,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(this, token)
+        UniversalCheckout.initialize(token)
         UniversalCheckout.loadPaymentMethods(paymentMethods)
-        UniversalCheckout.showSavedPaymentMethods(eventListener)
+        UniversalCheckout.showSavedPaymentMethods(this, eventListener)
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             Log.i("primer.ExampleApp", "Creating checkout")
-            UniversalCheckout.showSavedPaymentMethods(eventListener)
+            UniversalCheckout.showSavedPaymentMethods(this, eventListener)
         }
     }
 

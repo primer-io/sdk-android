@@ -26,12 +26,12 @@ internal enum class UXMode {
 
 object UniversalCheckout {
 
-    private lateinit var checkout: InternalUniversalCheckout // FIXME can't hold ref to Context
+    private lateinit var checkout: InternalUniversalCheckout
 
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
-    fun initialize(context: Context, fullToken: String, theme: UniversalCheckoutTheme? = null) {
+    fun initialize(fullToken: String, theme: UniversalCheckoutTheme? = null) {
         val clientToken = ClientToken.fromString(fullToken)
         val config = CheckoutConfig.create(clientToken = fullToken)
 
@@ -52,7 +52,7 @@ object UniversalCheckout {
 
         val model = Model(clientToken, config, okHttpClient)
 
-        checkout = InternalUniversalCheckout(context, model, fullToken, Dispatchers.IO, theme)
+        checkout = InternalUniversalCheckout(model, fullToken, Dispatchers.IO, theme)
     }
 
     /**
@@ -66,18 +66,18 @@ object UniversalCheckout {
         checkout.getSavedPaymentMethods(callback)
     }
 
-    fun showSavedPaymentMethods(listener: CheckoutEventListener) {
-        checkout.showSavedPaymentMethods(listener)
+    fun showSavedPaymentMethods(context: Context, listener: CheckoutEventListener) {
+        checkout.showSavedPaymentMethods(context, listener)
     }
 
     @KoinApiExtension
-    fun showCheckout(listener: CheckoutEventListener, amount: Int, currency: String) {
-        checkout.showCheckout(listener, amount, currency)
+    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String) {
+        checkout.showCheckout(context, listener, amount, currency)
     }
 
     @KoinApiExtension
-    fun showStandalone(listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
-        checkout.showStandalone(listener, paymentMethod)
+    fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
+        checkout.showStandalone(context, listener, paymentMethod)
     }
 
     /**
@@ -103,14 +103,13 @@ object UniversalCheckout {
 }
 
 internal class InternalUniversalCheckout constructor(
-    private val context: Context, // FIXME we cannot hold a ref to a Context
     private val model: Model,
     private val fullToken: String,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val theme: UniversalCheckoutTheme? = null,
 ) {
 
-    var paymentMethods: List<PaymentMethod> = emptyList()
+    internal var paymentMethods: List<PaymentMethod> = emptyList()
 
     private var listener: CheckoutEventListener? = null
     private var subscription: EventBus.SubscriptionHandle? = null
@@ -148,19 +147,19 @@ internal class InternalUniversalCheckout constructor(
     }
 
     @KoinApiExtension
-    fun showSavedPaymentMethods(listener: CheckoutEventListener) {
-        show(listener, UXMode.ADD_PAYMENT_METHOD)
+    fun showSavedPaymentMethods(context: Context, listener: CheckoutEventListener) {
+        show(context, listener, UXMode.ADD_PAYMENT_METHOD)
     }
 
     @KoinApiExtension
-    fun showCheckout(listener: CheckoutEventListener, amount: Int, currency: String) {
-        show(listener, UXMode.CHECKOUT, amount = amount, currency = currency)
+    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String) {
+        show(context, listener, UXMode.CHECKOUT, amount = amount, currency = currency)
     }
 
     @KoinApiExtension
-    fun showStandalone(listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
+    fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
         paymentMethods = listOf(paymentMethod)
-        show(listener, UXMode.STANDALONE_PAYMENT_METHOD)
+        show(context, listener, UXMode.STANDALONE_PAYMENT_METHOD)
     }
 
     fun dismiss() {
@@ -176,7 +175,13 @@ internal class InternalUniversalCheckout constructor(
     }
 
     @KoinApiExtension
-    private fun show(listener: CheckoutEventListener, uxMode: UXMode? = null, amount: Int? = null, currency: String? = null) {
+    private fun show(
+        context: Context,
+        listener: CheckoutEventListener,
+        uxMode: UXMode? = null,
+        amount: Int? = null,
+        currency: String? = null,
+    ) {
         subscription?.unregister()
 
         this.listener = listener
