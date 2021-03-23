@@ -57,6 +57,7 @@ internal class Model constructor(
 
     private var clientSession: ClientSession? = null
 
+    // FIXME avoid this null-assertion
     private val session: ClientSession
         get() = clientSession!!
 
