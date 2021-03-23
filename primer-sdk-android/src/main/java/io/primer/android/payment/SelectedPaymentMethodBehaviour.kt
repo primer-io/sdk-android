@@ -31,7 +31,7 @@ internal class NewFragmentBehaviour(
 @KoinApiExtension
 internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehaviour() {
 
-    protected var tokenizationViewModel: TokenizationViewModel? = null
+    protected var tokenizationViewModel: TokenizationViewModel? = null // FIXME how can we avoid holding the viewmodel here?
 
     fun execute(viewModel: TokenizationViewModel) {
         tokenizationViewModel = viewModel
