@@ -17,26 +17,6 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
-    private val tokenProvider = object : ClientTokenProvider {
-
-        override fun createToken(callback: (String) -> Unit) {
-            val queue = Volley.newRequestQueue(this@MainActivity)
-            val body = JSONObject().apply { put("customerId", "will-123") }
-
-            queue.add(
-                JsonObjectRequest(
-                    Request.Method.POST,
-                    "http://10.0.2.2/token",
-                    body,
-                    { response ->
-                        callback(response.getString("clientToken"))
-                    },
-                    { error -> onError(error) }
-                )
-            )
-        }
-    }
-
     private val eventListener = object : CheckoutEventListener {
         override fun onCheckoutEvent(event: CheckoutEvent) {
             Log.i("primer.ExampleApp", "Checkout event! ${event.type.name}")
