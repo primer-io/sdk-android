@@ -27,9 +27,9 @@ import java.util.*
 
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class PrimerViewModel(
-//    private val model: Model,
-//    private val checkoutConfig: CheckoutConfig,
-//    private val configuredPaymentMethods: List<PaymentMethod>
+    // private val model: Model,
+    // private val checkoutConfig: CheckoutConfig,
+    // private val configuredPaymentMethods: List<PaymentMethod>
 ) : ViewModel(), EventBus.EventListener, DIAppComponent {
 
     companion object {

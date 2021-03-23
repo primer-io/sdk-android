@@ -16,14 +16,6 @@ internal class PayPalOrderBehaviour(
     override fun getUri(cancelUrl: String, returnUrl: String) {
         paypal.config.id?.let { id ->
             tokenizationViewModel?.createPayPalOrder(id, returnUrl, cancelUrl)
-//            tokenizationViewModel?.createPayPalOrder(id, returnUrl, cancelUrl)?.observe { e ->
-//                when (e) {
-//                    is Observable.ObservableSuccessEvent -> {
-//                        val url = e.data.getString("approvalUrl")
-//                        callback(url)
-//                    }
-//                }
-//            }
         }
     }
 
