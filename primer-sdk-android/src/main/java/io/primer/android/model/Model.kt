@@ -52,7 +52,7 @@ internal suspend inline fun Call.await(): Response =
 internal class Model constructor(
     private val clientToken: ClientToken,
     private val config: CheckoutConfig,
-    private val okHttpClient: OkHttpClient? = null,
+    private val okHttpClient: OkHttpClient,
 ) {
 
     private var clientSession: ClientSession? = null
@@ -68,7 +68,7 @@ internal class Model constructor(
             .build()
 
         return try {
-            val response: Response = okHttpClient!! // FIXME remove !!
+            val response: Response = okHttpClient
                 .newCall(request)
                 .await()
 
@@ -100,7 +100,7 @@ internal class Model constructor(
             .build()
 
         return try {
-            val response: Response = okHttpClient!! // FIXME remove !!
+            val response: Response = okHttpClient
                 .newCall(request)
                 .await()
 
@@ -136,7 +136,7 @@ internal class Model constructor(
             .build()
 
         return try {
-            val response: Response = okHttpClient!! // FIXME remove !!
+            val response: Response = okHttpClient
                 .newCall(request)
                 .await()
 
@@ -178,7 +178,7 @@ internal class Model constructor(
             .build()
 
         return try {
-            val response: Response = okHttpClient!! // FIXME remove !!
+            val response: Response = okHttpClient
                 .newCall(request)
                 .await()
 
@@ -204,7 +204,7 @@ internal class Model constructor(
             .build()
 
         return try {
-            val response: Response = okHttpClient!! // FIXME remove !!
+            val response: Response = okHttpClient
                 .newCall(request)
                 .await()
 
