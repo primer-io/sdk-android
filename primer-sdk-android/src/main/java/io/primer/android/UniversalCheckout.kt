@@ -32,6 +32,7 @@ object UniversalCheckout {
         val clientToken = ClientToken.fromString(fullToken)
         val config = CheckoutConfig.create(clientToken = fullToken)
 
+        // FIXME inject these dependencies
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
