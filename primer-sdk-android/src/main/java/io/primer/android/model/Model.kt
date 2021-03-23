@@ -74,6 +74,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
                 return OperationResult.Error(Throwable())
             }
 
@@ -184,6 +185,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
                 return OperationResult.Error(Throwable())
             }
 
@@ -210,6 +212,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
                 return OperationResult.Error(Throwable())
             }
 
