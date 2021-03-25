@@ -55,15 +55,6 @@ class GoCardlessViewFragment : FormFragment() {
         primerViewModel = PrimerViewModel.getInstance(requireActivity())
         tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
 
-//        tokenizationViewModel.goCardlessMandate.observe(viewLifecycleOwner) { data ->
-//            Log.d("RUI", "observed goCardlessMandate > $data")
-//            onMandateCreated(data)
-//        }
-//        tokenizationViewModel.goCardlessMandateError.observe(viewLifecycleOwner) {
-//            Log.d("RUI", "observed goCardlessMandateError")
-//            onTokenizeError()
-//        }
-
         showFormScene(
             IBANViewState(
                 buttonLabelId = R.string.next,
@@ -313,29 +304,6 @@ class GoCardlessViewFragment : FormFragment() {
         if (value.isNotEmpty()) {
             obj.put(key, value)
         }
-    }
-
-    private fun onMandateCreated(data: JSONObject) {
-        val mandateId = data.getString("mandateId")
-        tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
-        tokenizationViewModel.setTokenizableValue("gocardlessMandateId", mandateId)
-
-        tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) {
-            onTokenizeSuccess()
-        }
-
-        tokenizationViewModel.tokenizationError.observe(viewLifecycleOwner) {
-            it?.let { onTokenizeError() }
-        }
-    }
-
-    private fun onTokenizeSuccess() {
-        // ??
-    }
-
-    private fun onTokenizeError() {
-        viewModel.setLoading(false)
-        viewModel.error.value = FormErrorState(labelId = R.string.dd_mandate_error)
     }
 
     companion object {
