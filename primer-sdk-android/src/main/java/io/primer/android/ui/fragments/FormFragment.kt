@@ -44,6 +44,7 @@ interface FormActionListener {
 }
 
 // FIXME drop inheritance
+// FIXME move to gocardless as it's only used there
 open class FormFragment(
     private val state: FormViewState? = null, // FIXME this should not be passed via ctor
 ) : Fragment(), FormActionListenerOwner {
@@ -58,14 +59,12 @@ open class FormFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("RUI", "> FormFragment onViewCreated")
 
         viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
         tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
         primerViewModel = PrimerViewModel.getInstance(requireActivity())
 
         tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) {
-            Log.d("RUI", "FormFragment observed tokenizationData")
             onTokenizeSuccess()
         }
 
@@ -77,15 +76,15 @@ open class FormFragment(
     }
 
     private val goCardlessMandateObserver: Observer<JSONObject> = Observer<JSONObject> { data ->
-        Log.d("RUI", "observed goCardlessMandate > $data")
         onMandateCreated(data)
     }
 
     private val goCardlessMandateErrorObserver: Observer<Unit> = Observer<Unit> {
-        Log.d("RUI", "observed goCardlessMandateError")
         onTokenizeError()
     }
 
+    // FIXME unfortunately we need this gocardless mandate logic to be here and it needs to be observed/ in onStart/Stop because of the way
+    //  the fragment are displayed in succession (GoCardlessViewFragment issues requests but then it displays another FormFragment on top)
     override fun onStart() {
         super.onStart()
         tokenizationViewModel.goCardlessMandate.observeForever(goCardlessMandateObserver)
@@ -96,17 +95,10 @@ open class FormFragment(
         super.onStop()
         tokenizationViewModel.goCardlessMandate.removeObserver(goCardlessMandateObserver)
         tokenizationViewModel.goCardlessMandateError.removeObserver(goCardlessMandateErrorObserver)
-        Log.d("RUI", "< FormFragment onStop")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("RUI", "< FormFragment onDestroyView")
     }
 
     private fun onMandateCreated(data: JSONObject) {
-        Log.d("RUI", "FormFragment onMandateCreated()")
-
+        // FIXME we shouldn't be parsing json here
         val mandateId = data.getString("mandateId")
         tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
         tokenizationViewModel.setTokenizableValue("gocardlessMandateId", mandateId)
@@ -114,7 +106,7 @@ open class FormFragment(
     }
 
     private fun onTokenizeSuccess() {
-        // ??
+        // FIXME why do we need this?
     }
 
     private fun onTokenizeError() {
