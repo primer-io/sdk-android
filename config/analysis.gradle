@@ -1,0 +1,34 @@
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+// detekt setup - https://github.com/detekt/detekt
+detekt {
+    failFast = false
+    buildUponDefaultConfig = true
+//    config = files("$projectDir/config/detekt.yml")
+//    baseline = file("$projectDir/config/baseline.xml")
+
+    reports {
+        html.enabled = true // observe findings in your browser with structure and code snippets
+        xml.enabled = true // checkstyle like format mainly for integrations like Jenkins
+        txt.enabled = true
+        sarif.enabled = true // https://sarifweb.azurewebsites.net - for integrations with Github
+    }
+}
+tasks.detekt.jvmTarget = JavaVersion.VERSION_1_8
+
+// ktlint setup - https://github.com/JLLeitschuh/ktlint-gradle
+ktlint {
+    debug = false
+    verbose = false
+    android = true
+    outputToConsole = true
+    ignoreFailures = false
+
+    disabledRules = ["import-ordering"] // issue with false positives
+
+    reporters {
+        reporter "plain"
+        reporter "json"
+    }
+}

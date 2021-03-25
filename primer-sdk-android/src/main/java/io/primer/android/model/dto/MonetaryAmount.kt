@@ -5,12 +5,13 @@ import java.util.*
 
 @Serializable
 internal class MonetaryAmount private constructor(
-  val value: Int,
-  val currency: String,
+    val value: Int,
+    val currency: String,
 ) {
 
     companion object {
 
+        // FIXME it doesn't make sense to have a static factory method returning a null
         fun create(currency: String? = null, value: Int? = null): MonetaryAmount? {
             if (currency == null || value == null) {
                 return null
@@ -21,11 +22,11 @@ internal class MonetaryAmount private constructor(
                 return null
             }
 
-            try {
-                return MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
+            return try {
+                MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
             } catch (e: IllegalArgumentException) {
                 // TODO: handle invalid currency code
-                return null
+                null
             }
         }
     }

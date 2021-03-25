@@ -23,6 +23,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
+import org.koin.core.definition.Kind
 import java.util.*
 
 @KoinApiExtension // FIXME inject dependencies via ctor

@@ -33,7 +33,7 @@ object UniversalCheckout {
      */
     fun initialize(fullToken: String, theme: UniversalCheckoutTheme? = null) {
         val clientToken = ClientToken.fromString(fullToken)
-        val config = CheckoutConfig.create(clientToken = fullToken)
+        val config = CheckoutConfig(clientToken = fullToken)
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
@@ -190,7 +190,7 @@ internal class InternalUniversalCheckout constructor(
 
         WebviewInteropRegister.init(context.packageName)
 
-        val config = CheckoutConfig.create(
+        val config = CheckoutConfig(
             clientToken = fullToken,
             uxMode = uxMode ?: UXMode.CHECKOUT,
             amount = amount,

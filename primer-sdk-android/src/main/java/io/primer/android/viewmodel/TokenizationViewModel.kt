@@ -17,6 +17,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
 
