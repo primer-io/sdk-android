@@ -36,6 +36,12 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
+    val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
+    val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
+    val payPalOrder = MutableLiveData<String>() // emits URI
+    val goCardlessMandate = MutableLiveData<JSONObject>()
+    val goCardlessMandateError = MutableLiveData<Unit>()
+
     fun resetPaymentMethod(pm: PaymentMethodDescriptor? = null) {
         paymentMethod = pm
         submitted.value = false
@@ -82,7 +88,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     // TODO: move these payal things somewhere else
-    val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -102,7 +107,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
     fun confirmPayPalBillingAgreement(id: String, token: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -121,7 +125,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    val payPalOrder = MutableLiveData<String>() // emits URI
     fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -143,28 +146,20 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    val goCardlessMandate = MutableLiveData<JSONObject>()
-    val goCardlessMandateError = MutableLiveData<Unit>()
     fun createGoCardlessMandate(id: String, bankDetails: JSONObject, customerDetails: JSONObject) {
         val body = JSONObject()
         body.put("id", id)
         body.put("bankDetails", bankDetails)
         body.put("userDetails", customerDetails)
 
-        Log.d("RUI", "TokenizationViewModel createGoCardlessMandate()")
-
-        viewModelScope.launch { // this is running more than once after pressing "submit/confirm" @RUI
-
-            Log.d("RUI", "viewModelScope.launch {}")
+        viewModelScope.launch {
 
             when (val result = model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)) {
                 is OperationResult.Success -> {
                     val data = result.data
-                    Log.d("RUI", "> posting data/result to 'goCardlessMandate'")
                     goCardlessMandate.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    Log.d("RUI", "> posting data/result to 'goCardlessMandateError'")
                     goCardlessMandateError.postValue(Unit)
                 }
             }

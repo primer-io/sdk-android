@@ -74,28 +74,6 @@ class GoCardlessViewFragment : FormFragment() {
             ),
             isTransition = false
         )
-
-        Log.d("RUI", "> GoCardlessFragment onViewCreated")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("RUI", ". GoCardlessFragment onResume")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("RUI", "< GoCardlessFragment onDestroyView")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("RUI", ". GoCardlessFragment onStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("RUI", ". GoCardlessFragment onDestroy")
     }
 
     private fun onSummaryItemPress(e: FormActionEvent.SummaryItemPress) {
@@ -232,11 +210,8 @@ class GoCardlessViewFragment : FormFragment() {
     }
 
     private fun showFormScene(state: GoCardlessFormSceneState, isTransition: Boolean = true) {
-        val fragment = if (isTransition) FormFragment(state) else this
-
-        Log.d("RUI", "GoCardlessFragment showFormScene(isTransition=$isTransition)")
-
         val listener = createFormActionListener(state.scene)
+        val fragment = if (isTransition) FormFragment(state) else this
 
         fragment.setOnFormActionListener(listener)
 
@@ -264,8 +239,6 @@ class GoCardlessViewFragment : FormFragment() {
         val customerDetails = formatCustomerDetails()
 
         viewModel.setLoading(true)
-
-        Log.d("RUI", "GoCardlessFragment beginTokenization()")
 
         primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
             tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails)
