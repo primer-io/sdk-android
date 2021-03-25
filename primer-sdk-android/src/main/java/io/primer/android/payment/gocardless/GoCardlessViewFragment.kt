@@ -2,8 +2,10 @@ package io.primer.android.payment.gocardless
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
@@ -19,6 +21,7 @@ import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
@@ -37,14 +40,13 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddress
 @KoinApiExtension
 class GoCardlessViewFragment : FormFragment() {
 
-    private val log = Logger("gc-form-view")
     private lateinit var viewModel: FormViewModel
     private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
     private var readyToTokenize = false
 
     private val options: PaymentMethod.GoCardless
-        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
+        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options // FIXME a getter should never rely on the viewmodel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,6 +54,15 @@ class GoCardlessViewFragment : FormFragment() {
         viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
         primerViewModel = PrimerViewModel.getInstance(requireActivity())
         tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
+
+//        tokenizationViewModel.goCardlessMandate.observe(viewLifecycleOwner) { data ->
+//            Log.d("RUI", "observed goCardlessMandate > $data")
+//            onMandateCreated(data)
+//        }
+//        tokenizationViewModel.goCardlessMandateError.observe(viewLifecycleOwner) {
+//            Log.d("RUI", "observed goCardlessMandateError")
+//            onTokenizeError()
+//        }
 
         showFormScene(
             IBANViewState(
@@ -72,11 +83,33 @@ class GoCardlessViewFragment : FormFragment() {
             ),
             isTransition = false
         )
+
+        Log.d("RUI", "> GoCardlessFragment onViewCreated")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("RUI", ". GoCardlessFragment onResume")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("RUI", "< GoCardlessFragment onDestroyView")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("RUI", ". GoCardlessFragment onStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("RUI", ". GoCardlessFragment onDestroy")
     }
 
     private fun onSummaryItemPress(e: FormActionEvent.SummaryItemPress) {
         when (e.name) {
-            "bank" -> showIBANView(R.string.confirm)
+            "bank" -> showIbanView(R.string.confirm)
             "customer-name" -> showCustomerNameView(R.string.confirm)
             "customer-email" -> showCustomerEmailView(R.string.confirm)
             "address" -> showAddressView(R.string.confirm)
@@ -99,7 +132,12 @@ class GoCardlessViewFragment : FormFragment() {
 
     private fun onSubmitPressed(scene: GoCardlessFormSceneState.Scene) {
         if (readyToTokenize) {
-            return if (scene == GoCardlessFormSceneState.Scene.SUMMARY) beginTokenization() else backToPreviousView()
+            if (scene == GoCardlessFormSceneState.Scene.SUMMARY) {
+                beginTokenization()
+            } else {
+                backToPreviousView()
+            }
+            return
         }
 
         val hasName = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME).isNotEmpty()
@@ -138,11 +176,12 @@ class GoCardlessViewFragment : FormFragment() {
             GoCardlessFormSceneState.Scene.ADDRESS -> showAddressView(R.string.next)
             GoCardlessFormSceneState.Scene.SUMMARY -> showSummaryView()
             else -> {
+                // ??
             }
         }
     }
 
-    private fun showIBANView(buttonLabelId: Int) {
+    private fun showIbanView(buttonLabelId: Int) {
         showFormScene(IBANViewState(buttonLabelId, cancelBehaviour = FormTitleState.CancelBehaviour.CANCEL, showProgress = false))
     }
 
@@ -203,6 +242,9 @@ class GoCardlessViewFragment : FormFragment() {
 
     private fun showFormScene(state: GoCardlessFormSceneState, isTransition: Boolean = true) {
         val fragment = if (isTransition) FormFragment(state) else this
+
+        Log.d("RUI", "GoCardlessFragment showFormScene(isTransition=$isTransition)")
+
         val listener = createFormActionListener(state.scene)
 
         fragment.setOnFormActionListener(listener)
@@ -231,16 +273,11 @@ class GoCardlessViewFragment : FormFragment() {
         val customerDetails = formatCustomerDetails()
 
         viewModel.setLoading(true)
-        viewModel.error.value = null
+
+        Log.d("RUI", "GoCardlessFragment beginTokenization()")
 
         primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
             tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails)
-            tokenizationViewModel.goCardlessMandate.observe(this) { data ->
-                onMandateCreated(data)
-            }
-            tokenizationViewModel.goCardlessMandateError.observe(this) {
-                onTokenizeError()
-            }
         }
     }
 
@@ -292,7 +329,9 @@ class GoCardlessViewFragment : FormFragment() {
         }
     }
 
-    private fun onTokenizeSuccess() {}
+    private fun onTokenizeSuccess() {
+        // ??
+    }
 
     private fun onTokenizeError() {
         viewModel.setLoading(false)

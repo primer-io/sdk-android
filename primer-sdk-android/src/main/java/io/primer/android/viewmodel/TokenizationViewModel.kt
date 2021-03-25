@@ -1,5 +1,6 @@
 package io.primer.android.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -80,7 +81,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     // TODO: move these payal things somewhere else
-    val payPalBillingAgreementUrl = MutableLiveData<String>() // emits RUI
+    val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -149,14 +150,21 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("bankDetails", bankDetails)
         body.put("userDetails", customerDetails)
 
-        viewModelScope.launch {
+        Log.d("RUI", "TokenizationViewModel createGoCardlessMandate()")
+
+        viewModelScope.launch { // this is running more than once after pressing "submit/confirm" @RUI
+
+            Log.d("RUI", "viewModelScope.launch {}")
+
             when (val result = model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)) {
                 is OperationResult.Success -> {
                     val data = result.data
+                    Log.d("RUI", "> posting data/result to 'goCardlessMandate'")
                     goCardlessMandate.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    // TODO what should we do here?
+                    Log.d("RUI", "> posting data/result to 'goCardlessMandateError'")
+                    goCardlessMandateError.postValue(Unit)
                 }
             }
         }
