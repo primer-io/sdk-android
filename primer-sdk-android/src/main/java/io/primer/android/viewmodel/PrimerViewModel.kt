@@ -43,7 +43,6 @@ internal class PrimerViewModel : BaseViewModel(), EventBus.EventListener, DIAppC
     }
 
     override fun initialize() {
-        // TODO: clean this up
         model.getConfiguration().observe { config ->
             if (config is Observable.ObservableSuccessEvent) {
                 val session: ClientSession = config.cast()

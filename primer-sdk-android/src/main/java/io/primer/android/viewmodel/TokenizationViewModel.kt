@@ -14,13 +14,13 @@ import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
 
 @KoinApiExtension
 internal class TokenizationViewModel : BaseViewModel(), DIAppComponent {
 
-    private val log = Logger("tokenization-view-model")
     private var paymentMethod: PaymentMethodDescriptor? = null
     private val model: Model by inject()
     private val checkoutConfig: CheckoutConfig by inject()

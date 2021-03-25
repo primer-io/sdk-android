@@ -6,7 +6,7 @@ import java.util.*
 
 @Serializable
 internal data class PaymentMethodRemoteConfig(
-    val id: String? = null,
-    val type: String,
-    val options: JsonObject = JsonObject(content = Collections.emptyMap()),
+    val id: String? = null, // FIXME how come id can be null but not the other fields?
+    val type: String, // FIXME what is this?
+    val options: JsonObject = JsonObject(content = Collections.emptyMap()), // FIXME why's there a JsonObject here?
 )

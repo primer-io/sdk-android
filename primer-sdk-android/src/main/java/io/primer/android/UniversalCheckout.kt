@@ -51,7 +51,7 @@ class UniversalCheckout private constructor(
      */
     private fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
         token.observe {
-            val config = CheckoutConfig.create(clientToken = it)
+            val config = CheckoutConfig(clientToken = it)
             val token = ClientToken.fromString(it)
             val client = APIClient(token)
             val model = Model(client, token, config)
@@ -94,7 +94,7 @@ class UniversalCheckout private constructor(
         WebviewInteropRegister.init(context.packageName)
 
         token.observe {
-            val config = CheckoutConfig.create(
+            val config = CheckoutConfig(
                 clientToken = it,
                 uxMode = uxMode ?: UXMode.CHECKOUT,
                 amount = amount,
