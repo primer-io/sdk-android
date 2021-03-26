@@ -6,9 +6,13 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PaymentMethodTokenAdapter
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +40,9 @@ object UniversalCheckout {
         val config = CheckoutConfig(clientToken = fullToken)
 
         // FIXME inject these dependencies
-        val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor { chain: Interceptor.Chain ->
@@ -75,7 +81,7 @@ object UniversalCheckout {
         context: Context,
         listener: CheckoutEventListener,
         amount: Int,
-        currency: String
+        currency: String,
     ) {
         checkout.showCheckout(context, listener, amount, currency)
     }
@@ -84,7 +90,7 @@ object UniversalCheckout {
     fun showStandalone(
         context: Context,
         listener: CheckoutEventListener,
-        paymentMethod: PaymentMethod
+        paymentMethod: PaymentMethod,
     ) {
         checkout.showStandalone(context, listener, paymentMethod)
     }
@@ -172,7 +178,7 @@ internal class InternalUniversalCheckout constructor(
         context: Context,
         listener: CheckoutEventListener,
         amount: Int,
-        currency: String
+        currency: String,
     ) {
         show(context, listener, UXMode.CHECKOUT, amount = amount, currency = currency)
     }
@@ -181,7 +187,7 @@ internal class InternalUniversalCheckout constructor(
     fun showStandalone(
         context: Context,
         listener: CheckoutEventListener,
-        paymentMethod: PaymentMethod
+        paymentMethod: PaymentMethod,
     ) {
         paymentMethods = listOf(paymentMethod)
         show(context, listener, UXMode.STANDALONE_PAYMENT_METHOD)

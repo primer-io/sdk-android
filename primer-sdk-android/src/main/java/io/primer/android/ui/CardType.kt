@@ -1,7 +1,22 @@
 package io.primer.android.ui
 
+// FIXME why are these properties unused?
 internal class CardType(type: Type, val gaps: List<Int>) {
-    enum class Type { UNKOWN, VISA, MASTERCARD, AMEX, DINERS, DISCOVER, JCB, UNIONPAY, MAESTRO, ELO, MIR, HIPER, HIPERCARD }
+    enum class Type {
+        UNKOWN,
+        VISA,
+        MASTERCARD,
+        AMEX,
+        DINERS,
+        DISCOVER,
+        JCB,
+        UNIONPAY,
+        MAESTRO,
+        ELO,
+        MIR,
+        HIPER,
+        HIPERCARD
+    }
 
     open class Descriptor(
         val type: Type,

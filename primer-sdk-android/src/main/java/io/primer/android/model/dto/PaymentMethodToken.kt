@@ -44,15 +44,19 @@ internal object PaymentMethodTokenAdapter {
     }
 
     fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
+        val paymentInstrumentData =
+            json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject
+        val vaultData =
+            if (token.vaultData == null) null
+            else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
+
         return PaymentMethodTokenInternal(
             token = token.token,
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
-            paymentInstrumentData = json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject,
-            vaultData = if (token.vaultData == null) null else PaymentMethodTokenInternal.VaultData(
-                customerId = token.vaultData.customerId
-            )
+            paymentInstrumentData = paymentInstrumentData,
+            vaultData = vaultData
         )
     }
 }

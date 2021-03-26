@@ -26,7 +26,6 @@ import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.payment.card.CreditCard
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -79,7 +78,9 @@ class TokenizationViewModelTest : KoinTest {
                 }
             )
         }
-        DIAppContext.app = testApp // FIXME we have to hack this this way because of DIAppComponent and DIAppContext
+
+        // FIXME we have to hack this this way because of DIAppComponent and DIAppContext
+        DIAppContext.app = testApp
 
         viewModel = TokenizationViewModel()
     }

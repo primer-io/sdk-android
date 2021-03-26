@@ -9,7 +9,11 @@ import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.payment.*
+import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.payment.VaultCapability
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 

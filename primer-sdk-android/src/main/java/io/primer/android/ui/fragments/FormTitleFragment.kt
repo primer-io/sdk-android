@@ -38,7 +38,10 @@ internal class FormTitleFragment : FormChildFragment() {
 
         view.findViewById<Button>(R.id.form_title_cancel_button).setOnClickListener {
             dispatchFormEvent(
-                if (viewModel.title.value?.cancelBehaviour == FormTitleState.CancelBehaviour.CANCEL) FormActionEvent.Cancel() else FormActionEvent.Exit()
+                if (viewModel.title.value?.cancelBehaviour == FormTitleState.CancelBehaviour.CANCEL)
+                    FormActionEvent.Cancel()
+                else
+                    FormActionEvent.Exit()
             )
         }
 

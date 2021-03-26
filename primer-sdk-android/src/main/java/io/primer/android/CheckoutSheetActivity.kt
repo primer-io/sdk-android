@@ -24,7 +24,12 @@ import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.paypal.PayPal
-import io.primer.android.ui.fragments.*
+import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.fragments.InitializingFragment
+import io.primer.android.ui.fragments.ProgressIndicatorFragment
+import io.primer.android.ui.fragments.SelectPaymentMethodFragment
+import io.primer.android.ui.fragments.SuccessFragment
+import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
@@ -148,44 +153,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     }
 
     private fun attachViewModelListeners() {
-        mainViewModel.viewStatus.observe(
-            this,
-            {
-                val fragment = when (it) {
-                    ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
-                    ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
-                    ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
-                    else -> null
-                }
+        mainViewModel.viewStatus.observe(this) {
+            handleViewStatusUpdate(it)
+        }
 
-                if (fragment != null) {
-                    openFragment(fragment, initFinished)
-                }
-
-                if (!initFinished && it != ViewStatus.INITIALIZING) {
-                    initFinished = true
-                }
-            }
-        )
-
-        mainViewModel.selectedPaymentMethod.observe(
-            this,
-            { paymentMethod: PaymentMethodDescriptor? ->
-                paymentMethod?.let {
-                    when (val behaviour = it.selectedBehaviour) {
-                        is NewFragmentBehaviour -> {
-                            openFragment(behaviour)
-                        }
-                        is WebBrowserIntentBehaviour -> {
-                            behaviour.execute(tokenizationViewModel)
-                        }
-                        else -> {
-                            // TODO what should we do here?
-                        }
-                    }
-                }
-            }
-        )
+        mainViewModel.selectedPaymentMethod.observe(this) {
+            it?.let { handleSelectedPaymentMethod(it) }
+        }
 
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
@@ -194,7 +168,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         tokenizationViewModel.confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            val paypal = paymentMethod as? PayPal ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
+            val paypal = paymentMethod as? PayPal
+                ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
             paypal.setTokenizableValue(
                 "paypalBillingAgreementId",
@@ -209,6 +184,29 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         tokenizationViewModel.payPalOrder.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
+        }
+    }
+
+    private fun handleViewStatusUpdate(viewStatus: ViewStatus) {
+        when (viewStatus) {
+            ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
+            ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
+            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
+            else -> null
+        }?.let { fragment -> openFragment(fragment, initFinished) }
+
+        if (!initFinished && viewStatus != ViewStatus.INITIALIZING) {
+            initFinished = true
+        }
+    }
+
+    private fun handleSelectedPaymentMethod(paymentMethod: PaymentMethodDescriptor) {
+        when (val behaviour = it.selectedBehaviour) {
+            is NewFragmentBehaviour -> openFragment(behaviour)
+            is WebBrowserIntentBehaviour -> behaviour.execute(tokenizationViewModel)
+            else -> {
+                // TODO what should we do here?
+            }
         }
     }
 

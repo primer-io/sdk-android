@@ -61,7 +61,8 @@ data class APIError(
                 }
 
                 if (element.containsKey("message")) {
-                    val message = element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
+                    val message =
+                        element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
                     val jsonString = "{\"description\": \"$message\"}"
                     return json.parseToJsonElement(jsonString).jsonObject
                 }

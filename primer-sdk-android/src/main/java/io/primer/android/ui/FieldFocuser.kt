@@ -9,7 +9,8 @@ class FieldFocuser {
 
         fun focus(view: View?) {
             view?.let {
-                val imm = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm =
+                    it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
                 it.requestFocus()
 

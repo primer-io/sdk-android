@@ -19,7 +19,7 @@ import org.koin.core.component.inject
 
 @KoinApiExtension
 internal class PayPal constructor(
-    private val viewModel: PrimerViewModel, // FIXME we want to not have to hold a ref to a viewmodel
+    private val viewModel: PrimerViewModel, // FIXME don't hold ref to viewmodel
     config: PaymentMethodRemoteConfig,
     private val options: PaymentMethod.PayPal,
 ) : PaymentMethodDescriptor(config), DIAppComponent {

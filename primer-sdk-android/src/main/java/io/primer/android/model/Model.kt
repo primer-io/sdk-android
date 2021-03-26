@@ -3,7 +3,13 @@ package io.primer.android.model
 import io.primer.android.UXMode
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.dto.*
+import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.ClientSession
+import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.PaymentMethodTokenAdapter
+import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -84,7 +90,9 @@ internal class Model constructor(
                 response.body?.close()
                 continuation.resume(json)
             }
-            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString()) // TODO move parsing somewhere else
+
+            // TODO move parsing somewhere else
+            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString())
             this.clientSession = clientSession
 
             OperationResult.Success(clientSession)
@@ -93,7 +101,9 @@ internal class Model constructor(
         }
     }
 
-    suspend fun getVaultedPaymentMethods(clientSession: ClientSession): OperationResult<List<PaymentMethodTokenInternal>> {
+    suspend fun getVaultedPaymentMethods(
+        clientSession: ClientSession,
+    ): OperationResult<List<PaymentMethodTokenInternal>> {
 
         val baseUrl = "${clientSession.pciUrl}/payment-instruments"
         val request = Request.Builder()
@@ -114,7 +124,9 @@ internal class Model constructor(
                 continuation.resume(json)
             }
             val array = jsonBody.getJSONArray("data")
-            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(array.toString()) // TODO move parsing somewhere else
+
+            // TODO move parsing somewhere else
+            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(array.toString())
 
             OperationResult.Success(list)
         } catch (error: Throwable) {
@@ -122,7 +134,10 @@ internal class Model constructor(
         }
     }
 
-    suspend fun tokenize(tokenizable: PaymentMethodDescriptor): OperationResult<PaymentMethodTokenInternal> {
+    suspend fun tokenize(
+        tokenizable: PaymentMethodDescriptor,
+    ): OperationResult<PaymentMethodTokenInternal> {
+
         val requestBody = JSONObject().apply {
             put("paymentInstrument", tokenizable.toPaymentInstrument())
             if (config.uxMode == UXMode.ADD_PAYMENT_METHOD) {
@@ -211,7 +226,11 @@ internal class Model constructor(
         }
     }
 
-    suspend fun post(pathname: String, requestBody: JSONObject? = null): OperationResult<JSONObject> {
+    suspend fun post(
+        pathname: String,
+        requestBody: JSONObject? = null,
+    ): OperationResult<JSONObject> {
+
         val url = APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname)
         val stringifiedBody = requestBody?.toString() ?: "{}"
         val request = Request.Builder()

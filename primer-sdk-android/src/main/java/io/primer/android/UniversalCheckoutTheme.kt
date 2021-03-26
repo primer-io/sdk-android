@@ -79,12 +79,18 @@ data class UniversalCheckoutTheme constructor(
                 buttonCornerRadius = buttonCornerRadius ?: BUTTON_CORNER_RADIUS_DEFAULT,
                 inputCornerRadius = inputCornerRadius ?: INPUT_CORNER_RADIUS_DEFAULT,
                 backgroundColor = hexToColorInt(backgroundColor, BACKGROUND_COLOR_DEFAULT),
-                buttonPrimaryColor = hexToColorInt(buttonPrimaryColor, BUTTON_PRIMARY_COLOR_DEFAULT),
+                buttonPrimaryColor = hexToColorInt(
+                    buttonPrimaryColor,
+                    BUTTON_PRIMARY_COLOR_DEFAULT
+                ),
                 buttonPrimaryColorDisabled = hexToColorInt(
                     buttonPrimaryColorDisabled,
                     BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT
                 ),
-                buttonDefaultColor = hexToColorInt(buttonDefaultColor, BUTTON_DEFAULT_COLOR_DEFAULT),
+                buttonDefaultColor = hexToColorInt(
+                    buttonDefaultColor,
+                    BUTTON_DEFAULT_COLOR_DEFAULT
+                ),
                 buttonDefaultColorDisabled = hexToColorInt(
                     buttonDefaultColorDisabled,
                     BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT

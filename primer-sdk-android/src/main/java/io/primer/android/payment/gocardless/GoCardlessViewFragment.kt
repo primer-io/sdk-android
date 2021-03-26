@@ -41,7 +41,8 @@ class GoCardlessViewFragment : FormFragment() {
     private var readyToTokenize = false
 
     private val options: PaymentMethod.GoCardless
-        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options // FIXME a getter should never rely on the viewmodel
+        // FIXME a getter should never rely on the viewmodel
+        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,8 +64,14 @@ class GoCardlessViewFragment : FormFragment() {
                     DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_2 to (options.customerAddressLine2 ?: ""),
                     DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY to (options.customerAddressCity ?: ""),
                     DD_FIELD_NAME_CUSTOMER_ADDRESS_STATE to (options.customerAddressState ?: ""),
-                    DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE to (options.customerAddressCountryCode ?: ""),
-                    DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE to (options.customerAddressPostalCode ?: ""),
+                    DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE to (
+                        options.customerAddressCountryCode
+                            ?: ""
+                        ),
+                    DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE to (
+                        options.customerAddressPostalCode
+                            ?: ""
+                        ),
                 )
             ),
             isTransition = false
@@ -80,8 +87,10 @@ class GoCardlessViewFragment : FormFragment() {
         }
     }
 
-    private fun createFormActionListener(scene: GoCardlessFormSceneState.Scene): FormActionListener {
-        return object : FormActionListener {
+    private fun createFormActionListener(
+        scene: GoCardlessFormSceneState.Scene,
+    ): FormActionListener =
+        object : FormActionListener {
             override fun onFormAction(e: FormActionEvent) {
                 when (e) {
                     is FormActionEvent.Cancel -> onCancel()
@@ -92,7 +101,6 @@ class GoCardlessViewFragment : FormFragment() {
                 }
             }
         }
-    }
 
     private fun onSubmitPressed(scene: GoCardlessFormSceneState.Scene) {
         if (readyToTokenize) {

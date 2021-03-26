@@ -11,7 +11,11 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
-import io.primer.android.payment.*
+import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
@@ -30,8 +34,9 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 internal class CreditCard(
     config: PaymentMethodRemoteConfig,
     private val options: PaymentMethod.Card, // FIXME why's this here? it's unused
-    encodedAsJson: JSONObject = JSONObject() // FIXME passing in a as dependency so we can test
-) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent { // FIXME why is this implementing a di component?
+    encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
+) : PaymentMethodDescriptor(config, encodedAsJson),
+    DIAppComponent { // FIXME why is this implementing a di component?
 
     private val checkoutConfig: CheckoutConfig by inject()
 

@@ -16,7 +16,9 @@ import java.util.*
 @KoinApiExtension
 internal abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
-    protected val values: JSONObject = JSONObject() // FIXME why is this needed? why is the model holding a json format of itself?
+
+    // FIXME why is this needed? why is the model holding a json format of itself?
+    protected val values: JSONObject = JSONObject(),
 ) {
 
     abstract val identifier: String
