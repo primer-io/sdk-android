@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private val paymentMethods = listOf(
         PaymentMethod.Card(),
         PaymentMethod.PayPal(),
+        PaymentMethod.Klarna(),
         PaymentMethod.GoCardless(
             companyName = "Luko AB",
             companyAddress = "123 French St, Francetown, France, FR3NCH",

@@ -13,7 +13,7 @@ internal class PaymentMethodDescriptorResolver(
     private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
 ) {
 
-    fun resolve(viewModel: PrimerViewModel): List<PaymentMethodDescriptor> {
+    fun resolve(): List<PaymentMethodDescriptor> {
         val list = ArrayList<PaymentMethodDescriptor>()
 
         paymentMethodRemoteConfigs.forEach { paymentMethodRemoteConfig ->
@@ -21,7 +21,10 @@ internal class PaymentMethodDescriptorResolver(
                 .find { it.identifier == paymentMethodRemoteConfig.type }
                 ?.let {
                     paymentMethodDescriptorFactory
-                        .create(config = paymentMethodRemoteConfig, options = it, viewModel = viewModel)
+                        .create(
+                            paymentMethodRemoteConfig = paymentMethodRemoteConfig,
+                            paymentMethod = it,
+                        )
                         ?.let { paymentMethodDescriptor -> list.add(paymentMethodDescriptor) }
                 }
         }

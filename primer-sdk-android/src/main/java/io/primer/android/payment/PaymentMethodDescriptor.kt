@@ -7,6 +7,7 @@ import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.gocardless.GoCardless
+import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
@@ -55,15 +56,15 @@ internal abstract class PaymentMethodDescriptor(
 internal class PaymentMethodDescriptorFactory {
 
     fun create(
-        config: PaymentMethodRemoteConfig,
-        options: PaymentMethod,
-        viewModel: PrimerViewModel,
+        paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
+        paymentMethod: PaymentMethod,
     ): PaymentMethodDescriptor? {
         // TODO: hate this - think of a better way
-        return when (config.type) {
-            PAYMENT_CARD_IDENTIFIER -> CreditCard(config, options as PaymentMethod.Card)
-            PAYPAL_IDENTIFIER -> PayPal(viewModel, config, options as PaymentMethod.PayPal)
-            GOCARDLESS_IDENTIFIER -> GoCardless(config, options as PaymentMethod.GoCardless)
+        return when (paymentMethodRemoteConfig.type) {
+            PAYMENT_CARD_IDENTIFIER -> CreditCard(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.Card)
+            PAYPAL_IDENTIFIER -> PayPal(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.PayPal)
+            GOCARDLESS_IDENTIFIER -> GoCardless(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.GoCardless)
+            KLARNA_IDENTIFIER -> Klarna(paymentMethodRemoteConfig)
             else -> null
         }
     }

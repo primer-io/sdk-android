@@ -1,22 +1,23 @@
 package io.primer.android
 
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
+import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import kotlinx.serialization.Serializable
 
+// FIXME these can't be sealed if we want to modularize (consider marker interface)
 @Serializable
 sealed class PaymentMethod(val identifier: String) {
 
     @Serializable
-    class Card : io.primer.android.PaymentMethod(
-        PAYMENT_CARD_IDENTIFIER
-    )
+    class Card : PaymentMethod(PAYMENT_CARD_IDENTIFIER)
 
     @Serializable
-    class PayPal : io.primer.android.PaymentMethod(
-        PAYPAL_IDENTIFIER
-    )
+    class PayPal : PaymentMethod(PAYPAL_IDENTIFIER)
+
+    @Serializable
+    class Klarna : PaymentMethod(KLARNA_IDENTIFIER)
 
     @Serializable
     class GoCardless(
@@ -30,7 +31,7 @@ sealed class PaymentMethod(val identifier: String) {
         val customerAddressState: String? = null,
         val customerAddressCountryCode: String? = null,
         val customerAddressPostalCode: String? = null,
-    ) : io.primer.android.PaymentMethod(
+    ) : PaymentMethod(
         GOCARDLESS_IDENTIFIER
     )
 }
