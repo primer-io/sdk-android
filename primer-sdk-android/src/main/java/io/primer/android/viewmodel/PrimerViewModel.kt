@@ -93,7 +93,7 @@ internal class PrimerViewModel(
                     paymentMethodDescriptorFactory
                 )
 
-                val descriptors = resolver.resolve(this)
+                val descriptors = resolver.resolve()
                 paymentMethods.postValue(descriptors)
 
                 if (this.checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {

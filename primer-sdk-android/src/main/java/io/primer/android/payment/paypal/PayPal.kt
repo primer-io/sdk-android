@@ -19,7 +19,6 @@ import org.koin.core.component.inject
 
 @KoinApiExtension
 internal class PayPal constructor(
-    private val viewModel: PrimerViewModel, // FIXME we want to not have to hold a ref to a viewmodel
     config: PaymentMethodRemoteConfig,
     private val options: PaymentMethod.PayPal,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
@@ -31,7 +30,7 @@ internal class PayPal constructor(
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
-            PayPalBillingAgreementBehaviour(this, viewModel)
+            PayPalBillingAgreementBehaviour(this)
         } else {
             PayPalOrderBehaviour(this)
         }
