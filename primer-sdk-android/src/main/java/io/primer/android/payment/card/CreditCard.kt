@@ -6,9 +6,8 @@ import android.widget.TextView
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
+import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
@@ -16,7 +15,6 @@ import io.primer.android.payment.*
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
-import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -30,11 +28,10 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 
 @KoinApiExtension
 internal class CreditCard(
-    viewModel: PrimerViewModel,
     config: PaymentMethodRemoteConfig,
     private val options: PaymentMethod.Card, // FIXME why's this here? it's unused
-    encodedAsJson: JSONObject = JSONObject() // FIXME passing ina as dependency so we can test
-) : PaymentMethodDescriptor(viewModel, config, encodedAsJson), DIAppComponent { // FIXME why is this implementing a di component?
+    encodedAsJson: JSONObject = JSONObject() // FIXME passing in a as dependency so we can test
+) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent { // FIXME why is this implementing a di component?
 
     private val checkoutConfig: CheckoutConfig by inject()
 
@@ -54,8 +51,8 @@ internal class CreditCard(
         val text = button.findViewById<TextView>(R.id.card_preview_button_text)
 
         text.text = when (checkoutConfig.uxMode) {
-            UniversalCheckout.UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
-            UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
+            UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
+            UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
             else -> ""
         }
 

@@ -8,10 +8,11 @@ import io.primer.android.ui.*
 
 internal class FormViewModel : ViewModel() {
 
-    private val log = Logger("form-view-model")
+    private val values: MutableMap<String, String> = HashMap()
+    private val initialValues: MutableMap<String, String> = HashMap()
 
     val title: MutableLiveData<FormTitleState> = MutableLiveData()
-    val fields: MutableLiveData<List<FormField>> = MutableLiveData(ArrayList())
+    val fields: MutableLiveData<List<FormField>> = MutableLiveData(emptyList())
     val submitted: MutableLiveData<Boolean> = MutableLiveData(false)
     val isValid: MutableLiveData<Boolean> = MutableLiveData(true)
     val button: MutableLiveData<ButtonState?> = MutableLiveData()
@@ -20,23 +21,21 @@ internal class FormViewModel : ViewModel() {
     val progress: MutableLiveData<FormProgressState?> = MutableLiveData()
     val validationErrors: MutableLiveData<MutableMap<String, SyncValidationError?>> =
         MutableLiveData(HashMap())
-    val values: MutableMap<String, String> = HashMap()
-    val initialValues: MutableMap<String, String> = HashMap()
 
     fun setState(state: FormViewState) {
-        title.value = state.title
-        fields.value = state.fields
-        button.value = state.button
-        summary.value = state.summary
-        progress.value = state.progress
-        error.value = null
+        title.postValue(state.title)
+        fields.postValue(state.fields)
+        button.postValue(state.button)
+        summary.postValue(state.summary)
+        progress.postValue(state.progress)
+        error.postValue(null)
 
         state.initialValues?.let {
             setInitialValues(it)
         }
     }
 
-    fun setInitialValues(map: Map<String, String>) {
+    private fun setInitialValues(map: Map<String, String>) {
         initialValues.clear()
         values.clear()
 
@@ -73,5 +72,6 @@ internal class FormViewModel : ViewModel() {
 
     fun setLoading(loading: Boolean) {
         button.value = button.value?.copy(loading = loading)
+        error.value = null
     }
 }

@@ -61,11 +61,7 @@ internal class CheckoutSheetFragment :
         viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
     }
 

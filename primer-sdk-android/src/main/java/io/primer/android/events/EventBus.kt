@@ -1,5 +1,6 @@
 package io.primer.android.events
 
+// FIXME drop event bus
 internal object EventBus {
 
     val subscribers = ArrayList<EventListener>()

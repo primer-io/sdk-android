@@ -5,21 +5,19 @@ import android.view.View
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
+import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.*
-import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
 internal class GoCardless(
-    viewModel: PrimerViewModel,
     config: PaymentMethodRemoteConfig,
     val options: PaymentMethod.GoCardless,
-) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()
 
@@ -29,7 +27,7 @@ internal class GoCardless(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             GoCardlessViewFragment::newInstance,
-            returnToPreviousOnBack = checkoutConfig.uxMode != UniversalCheckout.UXMode.STANDALONE_PAYMENT_METHOD
+            returnToPreviousOnBack = checkoutConfig.uxMode != UXMode.STANDALONE_PAYMENT_METHOD
         )
 
     override val type: PaymentMethodType

@@ -3,18 +3,21 @@ package io.primer.android.viewmodel
 import android.graphics.Color
 import com.jraska.livedata.test
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.PaymentMethod
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppContext
 import io.primer.android.model.Model
+import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_MONTH_FIELD_NAME
@@ -96,10 +99,10 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
-        val paymentMethodDescriptor = CreditCard(primerViewModel, paymentMethodConfig, PaymentMethod.Card(), mockJson)
-        val statusObserver = viewModel.status.test()
+        val paymentMethodDescriptor = CreditCard(paymentMethodConfig, PaymentMethod.Card(), mockJson)
+        val statusObserver = viewModel.tokenizationStatus.test()
 
-        viewModel.reset(paymentMethodDescriptor)
+        viewModel.resetPaymentMethod(paymentMethodDescriptor)
 
         statusObserver.assertValue(TokenizationStatus.NONE)
     }
@@ -107,7 +110,7 @@ class TokenizationViewModelTest : KoinTest {
     @Test
     fun `payment method is invalid after being reset`() {
 
-        viewModel.reset()
+        viewModel.resetPaymentMethod()
 
         assertFalse(viewModel.isValid())
     }
@@ -121,12 +124,13 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
+        coEvery { model.tokenize(any()) } returns OperationResult.Success(mockk())
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
-        val paymentMethodDescriptor = CreditCard(primerViewModel, paymentMethodConfig, PaymentMethod.Card(), mockJson)
-        viewModel.reset(paymentMethodDescriptor)
+        val paymentMethodDescriptor = CreditCard(paymentMethodConfig, PaymentMethod.Card(), mockJson)
+        viewModel.resetPaymentMethod(paymentMethodDescriptor)
 
         viewModel.tokenize()
 
-        verify { model.tokenize(paymentMethodDescriptor) }
+        coVerify { model.tokenize(paymentMethodDescriptor) }
     }
 }

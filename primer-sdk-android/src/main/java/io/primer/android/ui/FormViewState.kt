@@ -43,9 +43,9 @@ internal class Validator(private val field: FormField) {
 }
 
 data class FormTitleState(
-  val titleId: Int,
-  val descriptionId: Int? = null,
-  val cancelBehaviour: CancelBehaviour = CancelBehaviour.CANCEL,
+    val titleId: Int,
+    val descriptionId: Int? = null,
+    val cancelBehaviour: CancelBehaviour = CancelBehaviour.CANCEL,
 ) {
 
     enum class CancelBehaviour {
@@ -55,14 +55,14 @@ data class FormTitleState(
 }
 
 data class FormField(
-  val name: String,
-  val labelId: Int,
-  val inputType: Type,
-  val required: Boolean = true,
-  val autoFocus: Boolean = false,
-  val minLength: Int = 0,
-  val maxLength: Int = Int.MAX_VALUE,
-  val minWordCount: Int = 0,
+    val name: String,
+    val labelId: Int,
+    val inputType: Type,
+    val required: Boolean = true,
+    val autoFocus: Boolean = false,
+    val minLength: Int = 0,
+    val maxLength: Int = Int.MAX_VALUE,
+    val minWordCount: Int = 0,
 ) {
 
     enum class Type {
@@ -75,9 +75,9 @@ data class FormField(
 }
 
 data class ButtonState(
-  val labelId: Int,
-  val placement: Placement = Placement.CENTER,
-  val loading: Boolean = false,
+    val labelId: Int,
+    val placement: Placement = Placement.CENTER,
+    val loading: Boolean = false,
 ) {
 
     enum class Placement {
@@ -88,35 +88,35 @@ data class ButtonState(
 }
 
 data class InteractiveSummaryItem(
-  val name: String,
-  val iconId: Int,
-  val getLabel: (() -> String),
+    val name: String,
+    val iconId: Int,
+    val getLabel: (() -> String),
 )
 
 data class TextSummaryItem(
-  val content: String,
-  val styleId: Int = R.style.Primer_Text_Small_Muted,
+    val content: String,
+    val styleId: Int = R.style.Primer_Text_Small_Muted,
 )
 
 data class FormSummaryState(
-  val items: List<InteractiveSummaryItem>,
-  val text: List<TextSummaryItem>,
+    val items: List<InteractiveSummaryItem>,
+    val text: List<TextSummaryItem>,
 )
 
 data class FormErrorState(
-  val labelId: Int,
+    val labelId: Int,
 )
 
 data class FormProgressState(
-  val current: Int,
-  val max: Int,
+    val current: Int,
+    val max: Int,
 )
 
 open class FormViewState(
-  val title: FormTitleState? = null,
-  val fields: List<FormField> = ArrayList(),
-  val button: ButtonState? = null,
-  val summary: FormSummaryState? = null,
-  val initialValues: Map<String, String>? = null,
-  val progress: FormProgressState? = null,
+    val title: FormTitleState? = null,
+    val fields: List<FormField> = ArrayList(),
+    val button: ButtonState? = null,
+    val summary: FormSummaryState? = null,
+    val initialValues: Map<String, String>? = null,
+    val progress: FormProgressState? = null,
 )
