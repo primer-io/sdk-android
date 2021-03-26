@@ -104,9 +104,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private var exited = false
     private var initFinished = false
 
-    private val mainViewModel: PrimerViewModel by viewModels()
     // private lateinit var viewModelFactory: PrimerViewModelFactory
-
+    private val mainViewModel: PrimerViewModel by viewModels()
     private val tokenizationViewModel: TokenizationViewModel by viewModels()
 
     private lateinit var sheet: CheckoutSheetFragment
