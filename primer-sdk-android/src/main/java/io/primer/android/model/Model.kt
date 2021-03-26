@@ -156,10 +156,16 @@ internal class Model constructor(
             }
             val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
             EventBus.broadcast(
-                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token)) // FIXME remove EventBus
+                CheckoutEvent.TokenizationSuccess(
+                    PaymentMethodTokenAdapter.internalToExternal(token)
+                ) // FIXME remove EventBus
             )
             if (token.tokenType == TokenType.MULTI_USE) {
-                EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
+                EventBus.broadcast(
+                    CheckoutEvent.TokenAddedToVault(
+                        PaymentMethodTokenAdapter.internalToExternal(token)
+                    )
+                ) // FIXME remove EventBus
             }
 
             OperationResult.Success(token)
@@ -193,7 +199,11 @@ internal class Model constructor(
                 return OperationResult.Error(Throwable())
             }
 
-            EventBus.broadcast(CheckoutEvent.TokenRemovedFromVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
+            EventBus.broadcast(
+                CheckoutEvent.TokenRemovedFromVault(
+                    PaymentMethodTokenAdapter.internalToExternal(token)
+                )
+            ) // FIXME remove EventBus
 
             OperationResult.Success(Unit)
         } catch (error: Throwable) {

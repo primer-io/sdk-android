@@ -21,7 +21,11 @@ internal class PaymentMethodDescriptorResolver(
                 .find { it.identifier == paymentMethodRemoteConfig.type }
                 ?.let {
                     paymentMethodDescriptorFactory
-                        .create(config = paymentMethodRemoteConfig, options = it, viewModel = viewModel)
+                        .create(
+                            config = paymentMethodRemoteConfig,
+                            options = it,
+                            viewModel = viewModel
+                        )
                         ?.let { paymentMethodDescriptor -> list.add(paymentMethodDescriptor) }
                 }
         }

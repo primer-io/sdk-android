@@ -2,17 +2,13 @@ package io.primer.android.payment.gocardless
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.ui.FormErrorState
 import io.primer.android.ui.FormTitleState
 import io.primer.android.ui.fragments.FormActionEvent
 import io.primer.android.ui.fragments.FormActionListener
@@ -21,7 +17,6 @@ import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
@@ -151,7 +146,13 @@ class GoCardlessViewFragment : FormFragment() {
     }
 
     private fun showIbanView(buttonLabelId: Int) {
-        showFormScene(IBANViewState(buttonLabelId, cancelBehaviour = FormTitleState.CancelBehaviour.CANCEL, showProgress = false))
+        showFormScene(
+            IBANViewState(
+                buttonLabelId,
+                cancelBehaviour = FormTitleState.CancelBehaviour.CANCEL,
+                showProgress = false
+            )
+        )
     }
 
     private fun showSummaryView() {
@@ -162,7 +163,10 @@ class GoCardlessViewFragment : FormFragment() {
                 getCustomerAddress = { formatCustomerAddress() },
                 companyAddress = options.companyAddress,
                 getBankDetails = { viewModel.getValue(DD_FIELD_NAME_IBAN) },
-                legalText = requireContext().getString(R.string.dd_mandate_legal, options.companyName)
+                legalText = requireContext().getString(
+                    R.string.dd_mandate_legal,
+                    options.companyName
+                )
             ),
         )
     }
@@ -262,7 +266,10 @@ class GoCardlessViewFragment : FormFragment() {
             val name = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME)
             val tokens = name.trim().split(Regex("\\s+"))
 
-            val firstName = if (tokens.size == 1) tokens.first() else tokens.subList(0, tokens.lastIndex)
+            val firstName = if (tokens.size == 1) tokens.first() else tokens.subList(
+                0,
+                tokens.lastIndex
+            )
                 .joinToString(" ")
             val lastName = if (tokens.size == 1) "" else tokens.last()
 

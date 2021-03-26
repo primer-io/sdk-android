@@ -26,9 +26,11 @@ internal object EventBus {
     }
 
     fun subscribe(l: ((CheckoutEvent) -> Unit)): SubscriptionHandle {
-        return subscribe(object : EventListener {
-            override fun onEvent(e: CheckoutEvent) = l(e)
-        })
+        return subscribe(
+            object : EventListener {
+                override fun onEvent(e: CheckoutEvent) = l(e)
+            }
+        )
     }
 
     fun broadcast(e: CheckoutEvent) {

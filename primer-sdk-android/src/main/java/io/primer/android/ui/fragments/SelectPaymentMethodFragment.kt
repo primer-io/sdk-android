@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.viewmodel.PrimerViewModel
@@ -30,27 +29,34 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
-        viewModel.paymentMethods.observe(viewLifecycleOwner, { paymentMethods ->
-            paymentMethods.forEachIndexed { i, paymentMethod ->
-                val button = paymentMethod.createButton(requireContext())
-                button.layoutParams = createLayoutParams(i == 0)
+        viewModel.paymentMethods.observe(
+            viewLifecycleOwner,
+            { paymentMethods ->
+                paymentMethods.forEachIndexed { i, paymentMethod ->
+                    val button = paymentMethod.createButton(requireContext())
+                    button.layoutParams = createLayoutParams(i == 0)
 
-                container.addView(button)
+                    container.addView(button)
 
-                button.setOnClickListener {
-                    viewModel.setSelectedPaymentMethod(paymentMethod)
+                    button.setOnClickListener {
+                        viewModel.setSelectedPaymentMethod(paymentMethod)
+                    }
                 }
-            }
 
-            container.requestLayout()
-        })
+                container.requestLayout()
+            }
+        )
 
         view.findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).apply {
             setAmount(checkoutConfig.amount)

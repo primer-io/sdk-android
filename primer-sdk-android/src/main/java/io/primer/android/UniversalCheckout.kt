@@ -71,12 +71,21 @@ object UniversalCheckout {
     }
 
     @KoinApiExtension
-    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String) {
+    fun showCheckout(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int,
+        currency: String
+    ) {
         checkout.showCheckout(context, listener, amount, currency)
     }
 
     @KoinApiExtension
-    fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
+    fun showStandalone(
+        context: Context,
+        listener: CheckoutEventListener,
+        paymentMethod: PaymentMethod
+    ) {
         checkout.showStandalone(context, listener, paymentMethod)
     }
 
@@ -131,7 +140,13 @@ internal class InternalUniversalCheckout constructor(
                     when (val result = model.getVaultedPaymentMethods(clientSession)) {
                         is OperationResult.Success -> {
                             val paymentMethodTokens: List<PaymentMethodTokenInternal> = result.data
-                            callback(paymentMethodTokens.map { PaymentMethodTokenAdapter.internalToExternal(it) })
+                            callback(
+                                paymentMethodTokens.map {
+                                    PaymentMethodTokenAdapter.internalToExternal(
+                                        it
+                                    )
+                                }
+                            )
                         }
                         is OperationResult.Error -> {
                             callback(listOf())
@@ -153,12 +168,21 @@ internal class InternalUniversalCheckout constructor(
     }
 
     @KoinApiExtension
-    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String) {
+    fun showCheckout(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int,
+        currency: String
+    ) {
         show(context, listener, UXMode.CHECKOUT, amount = amount, currency = currency)
     }
 
     @KoinApiExtension
-    fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
+    fun showStandalone(
+        context: Context,
+        listener: CheckoutEventListener,
+        paymentMethod: PaymentMethod
+    ) {
         paymentMethods = listOf(paymentMethod)
         show(context, listener, UXMode.STANDALONE_PAYMENT_METHOD)
     }

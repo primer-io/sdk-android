@@ -1,6 +1,5 @@
 package io.primer.android.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +16,6 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
 
@@ -34,7 +32,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationStatus = MutableLiveData(TokenizationStatus.NONE)
     val tokenizationError = MutableLiveData<Unit>()
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
-    val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
+    val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(
+        Collections.emptyList()
+    )
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()

@@ -9,7 +9,8 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class TextViewDanger(ctx: Context, attrs: AttributeSet? = null) : AppCompatTextView(ctx, attrs),
+class TextViewDanger(ctx: Context, attrs: AttributeSet? = null) :
+    AppCompatTextView(ctx, attrs),
     DIAppComponent {
 
     private val theme: UniversalCheckoutTheme by inject()

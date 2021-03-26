@@ -148,38 +148,44 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     }
 
     private fun attachViewModelListeners() {
-        mainViewModel.viewStatus.observe(this, {
-            val fragment = when (it) {
-                ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
-                ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
-                ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
-                else -> null
-            }
+        mainViewModel.viewStatus.observe(
+            this,
+            {
+                val fragment = when (it) {
+                    ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
+                    ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
+                    ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
+                    else -> null
+                }
 
-            if (fragment != null) {
-                openFragment(fragment, initFinished)
-            }
+                if (fragment != null) {
+                    openFragment(fragment, initFinished)
+                }
 
-            if (!initFinished && it != ViewStatus.INITIALIZING) {
-                initFinished = true
+                if (!initFinished && it != ViewStatus.INITIALIZING) {
+                    initFinished = true
+                }
             }
-        })
+        )
 
-        mainViewModel.selectedPaymentMethod.observe(this, { paymentMethod: PaymentMethodDescriptor? ->
-            paymentMethod?.let {
-                when (val behaviour = it.selectedBehaviour) {
-                    is NewFragmentBehaviour -> {
-                        openFragment(behaviour)
-                    }
-                    is WebBrowserIntentBehaviour -> {
-                        behaviour.execute(tokenizationViewModel)
-                    }
-                    else -> {
-                        // TODO what should we do here?
+        mainViewModel.selectedPaymentMethod.observe(
+            this,
+            { paymentMethod: PaymentMethodDescriptor? ->
+                paymentMethod?.let {
+                    when (val behaviour = it.selectedBehaviour) {
+                        is NewFragmentBehaviour -> {
+                            openFragment(behaviour)
+                        }
+                        is WebBrowserIntentBehaviour -> {
+                            behaviour.execute(tokenizationViewModel)
+                        }
+                        else -> {
+                            // TODO what should we do here?
+                        }
                     }
                 }
             }
-        })
+        )
 
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
@@ -190,7 +196,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
             val paypal = paymentMethod as? PayPal ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
-            paypal.setTokenizableValue("paypalBillingAgreementId", data.getString("billingAgreementId"))
+            paypal.setTokenizableValue(
+                "paypalBillingAgreementId",
+                data.getString("billingAgreementId")
+            )
             paypal.setTokenizableValue("externalPayerInfo", data.getJSONObject("externalPayerInfo"))
             paypal.setTokenizableValue("shippingAddress", data.getJSONObject("shippingAddress"))
 

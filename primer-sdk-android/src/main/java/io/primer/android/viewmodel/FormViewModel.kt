@@ -2,7 +2,6 @@ package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.ui.*
 

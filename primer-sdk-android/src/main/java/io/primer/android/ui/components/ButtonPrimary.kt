@@ -10,12 +10,9 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import io.primer.android.R
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
@@ -23,7 +20,8 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class ButtonPrimary(ctx: Context, attrs: AttributeSet) : LinearLayout(ctx, attrs),
+class ButtonPrimary(ctx: Context, attrs: AttributeSet) :
+    LinearLayout(ctx, attrs),
     DIAppComponent {
 
     private val mText: TextView
@@ -49,8 +47,8 @@ class ButtonPrimary(ctx: Context, attrs: AttributeSet) : LinearLayout(ctx, attrs
         text = attrs.getAttributeValue(R.styleable.ButtonPrimary_buttonText)
 
         layoutParams = LayoutParams(
-          LayoutParams.MATCH_PARENT,
-          LayoutParams.WRAP_CONTENT,
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.WRAP_CONTENT,
         )
 
         requestLayout()
@@ -62,33 +60,32 @@ class ButtonPrimary(ctx: Context, attrs: AttributeSet) : LinearLayout(ctx, attrs
 
     private fun createBackground(): Drawable {
         return RippleDrawable(
-          ColorStateList(
-            arrayOf(
-              IntArray(1) {
-                android.R.attr.state_pressed
-              }
+            ColorStateList(
+                arrayOf(
+                    IntArray(1) {
+                        android.R.attr.state_pressed
+                    }
+                ),
+                IntArray(1) { Color.parseColor("#FFFFFFFF") },
             ),
-            IntArray(1) { Color.parseColor("#FFFFFFFF") },
-          ),
-          GradientDrawable().apply {
-            cornerRadius = theme.buttonCornerRadius
-            color = ColorStateList(
-              arrayOf(
-                IntArray(1) { android.R.attr.state_enabled },
-                IntArray(1) { -android.R.attr.state_enabled }
-              ),
-              IntArray(2) {
-                when (it) {
-                  0 -> theme.buttonPrimaryColor
-                  1 -> theme.buttonPrimaryColorDisabled
-                  else -> theme.buttonPrimaryColor
-                }
-              }
-            )
-            setStroke(1, theme.buttonDefaultBorderColor)
-          },
-          null
+            GradientDrawable().apply {
+                cornerRadius = theme.buttonCornerRadius
+                color = ColorStateList(
+                    arrayOf(
+                        IntArray(1) { android.R.attr.state_enabled },
+                        IntArray(1) { -android.R.attr.state_enabled }
+                    ),
+                    IntArray(2) {
+                        when (it) {
+                            0 -> theme.buttonPrimaryColor
+                            1 -> theme.buttonPrimaryColorDisabled
+                            else -> theme.buttonPrimaryColor
+                        }
+                    }
+                )
+                setStroke(1, theme.buttonDefaultBorderColor)
+            },
+            null
         )
     }
-
 }
