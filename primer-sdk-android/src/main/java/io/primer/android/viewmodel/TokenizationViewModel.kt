@@ -36,7 +36,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
-    val klarnaPaymentUrl = MutableLiveData<Pair<String, String>>() // <paymentUrl, redirectUrl>
+//    val klarnaPaymentUrl = MutableLiveData<Pair<String, String>>() // <paymentUrl, redirectUrl>
+    val klarnaPaymentData = MutableLiveData<Triple<String, String, String>>() // <paymentUrl, redirectUrl>
     val finalizeKlarnaPayment = MutableLiveData<JSONObject>()
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
@@ -128,7 +129,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
                 is OperationResult.Success -> {
                     val hppRedirectUrl = result.data.getString("hppRedirectUrl")
-                    klarnaPaymentUrl.postValue(Pair(hppRedirectUrl, klarnaReturnUrl))
+                    val sessionId = result.data.getString("sessionId")
+                    klarnaPaymentData.postValue(Triple(hppRedirectUrl, klarnaReturnUrl, sessionId))
                 }
                 is OperationResult.Error -> {
                     Log.d("RUI", "!! klarna error")
@@ -138,10 +140,10 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    fun finalizeKlarnaPayment(id: String, sessionId: String, token: String) {
+    fun finalizeKlarnaPayment(id: String) {
         val body = JSONObject()
+        val sessionId = klarnaPaymentData.value?.third ?: return
         body.put("paymentMethodConfigId", id)
-//        body.put("token", token)
         body.put("sessionId", sessionId)
 
         viewModelScope.launch {

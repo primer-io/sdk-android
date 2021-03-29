@@ -187,7 +187,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             }
         })
 
-        tokenizationViewModel.klarnaPaymentUrl.observe(this) { (paymentUrl, redirectUrl) ->
+        tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
             val intent = Intent(this, WebViewActivity::class.java).apply {
                 putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
                 putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
@@ -204,7 +204,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             // TODO @RUI confirm what we should be putting here
             klarna.setTokenizableValue("recurringDescription", sessionData.getString("recurringDescription"))
             klarna.setTokenizableValue("billingAddress", sessionData.getJSONObject("billingAddress"))
-            klarna.setTokenizableValue("shippingAddress", sessionData.getJSONObject("shippingAddress"))
+
+            sessionData.optJSONObject("shippingAddress")?.let {
+                klarna.setTokenizableValue("shippingAddress", it)
+            }
 
             tokenizationViewModel.tokenize()
         }
@@ -246,11 +249,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             }
 
             val id = klarna.config.id ?: return
-            val sessionIdIndex = redirectUrl.indexOf("session_id=")
-            val tokenIndex = redirectUrl.indexOf("token=")
-            val sessionId = redirectUrl.substring(sessionIdIndex + "session_id=".length, redirectUrl.indexOf("&token="))
-            val token = redirectUrl.substring(tokenIndex + "token=".length)
-            tokenizationViewModel.finalizeKlarnaPayment(id, sessionId, token)
+            tokenizationViewModel.finalizeKlarnaPayment(id)
         }
     }
 

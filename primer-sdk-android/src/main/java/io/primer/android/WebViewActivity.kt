@@ -41,6 +41,7 @@ internal class WebViewActivity : AppCompatActivity() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val shouldOverride = captureUrl != null && request?.url?.toString()?.contains(captureUrl) ?: false
                 if (shouldOverride) {
+                    Log.d("RUI", "webview> ${request?.url?.toString()}")
                     val intent = Intent().apply { putExtra(REDIRECT_URL_KEY, request?.url?.toString()) }
                     setResult(Activity.RESULT_OK, intent)
                     finish()
