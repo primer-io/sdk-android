@@ -201,7 +201,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     }
 
     private fun handleSelectedPaymentMethod(paymentMethod: PaymentMethodDescriptor) {
-        when (val behaviour = it.selectedBehaviour) {
+        when (val behaviour = paymentMethod.selectedBehaviour) {
             is NewFragmentBehaviour -> openFragment(behaviour)
             is WebBrowserIntentBehaviour -> behaviour.execute(tokenizationViewModel)
             else -> {
