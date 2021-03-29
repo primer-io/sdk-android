@@ -24,7 +24,7 @@ internal class KlarnaBehaviour constructor(
         Log.d("RUI", "KlarnaBehaviour onSuccess: ")
         uri.getQueryParameter("ba_token")?.let { token ->
             klarna.config.id?.let { id ->
-                tokenizationViewModel?.confirmPayPalBillingAgreement(id, token)
+                //
             }
         }
     }

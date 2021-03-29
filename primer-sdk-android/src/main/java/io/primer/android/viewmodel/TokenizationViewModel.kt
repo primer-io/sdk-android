@@ -36,11 +36,11 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
+    val klarnaPaymentUrl = MutableLiveData<String>() // emits URI
+
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
     val payPalOrder = MutableLiveData<String>() // emits URI
-
-    val klarna = MutableLiveData<Unit>() // TODO
 
     val goCardlessMandate = MutableLiveData<JSONObject>()
     val goCardlessMandateError = MutableLiveData<Unit>()
@@ -90,26 +90,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    // TODO: move these payal things somewhere else
-    fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
-        val body = JSONObject()
-        body.put("paymentMethodConfigId", id)
-        body.put("returnUrl", returnUrl)
-        body.put("cancelUrl", cancelUrl)
-
-        viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)) {
-                is OperationResult.Success -> {
-                    val approvalUrl = result.data.getString("approvalUrl")
-                    payPalBillingAgreementUrl.postValue(approvalUrl)
-                }
-                is OperationResult.Error -> {
-                    // TODO what should we do here?
-                }
-            }
-        }
-    }
-
     fun createKlarnaBillingAgreement(id: String, returnUrl: String) {
         viewModelScope.launch {
 
@@ -145,11 +125,31 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
             when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
                 is OperationResult.Success -> {
-                    Log.d("RUI", result.data.toString())
-                    klarna.postValue(Unit)
+                    val hppRedirectUrl = result.data.getString("hppRedirectUrl")
+                    klarnaPaymentUrl.postValue(hppRedirectUrl)
                 }
                 is OperationResult.Error -> {
                     Log.d("RUI", "!! klarna error")
+                    // TODO what should we do here?
+                }
+            }
+        }
+    }
+
+    // TODO: move these payal things somewhere else
+    fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
+        val body = JSONObject()
+        body.put("paymentMethodConfigId", id)
+        body.put("returnUrl", returnUrl)
+        body.put("cancelUrl", cancelUrl)
+
+        viewModelScope.launch {
+            when (val result = model.post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)) {
+                is OperationResult.Success -> {
+                    val approvalUrl = result.data.getString("approvalUrl")
+                    payPalBillingAgreementUrl.postValue(approvalUrl)
+                }
+                is OperationResult.Error -> {
                     // TODO what should we do here?
                 }
             }

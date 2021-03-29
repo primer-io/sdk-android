@@ -180,6 +180,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             }
         })
 
+        tokenizationViewModel.klarnaPaymentUrl.observe(this) { uri: String ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+            startActivity(intent)
+            // TODO webview @RUI
+        }
+
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
