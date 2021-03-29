@@ -88,15 +88,16 @@ internal class PrimerViewModel(
 
                 // FIXME needs to be injected
                 val resolver = PaymentMethodDescriptorResolver(
-                    configuredPaymentMethods,
-                    clientSession.paymentMethods,
-                    paymentMethodDescriptorFactory
+                    checkoutConfig = checkoutConfig,
+                    configured = configuredPaymentMethods,
+                    paymentMethodRemoteConfigs = clientSession.paymentMethods,
+                    paymentMethodDescriptorFactory = paymentMethodDescriptorFactory
                 )
 
                 val descriptors = resolver.resolve()
                 paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {
+                if (checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {
                     selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))

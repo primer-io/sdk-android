@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(token, Locale.UK)
+        UniversalCheckout.initialize(this, token, Locale.UK)
         UniversalCheckout.loadPaymentMethods(paymentMethods)
 
         val items = listOf(OrderItem("ps5", 123, 1))

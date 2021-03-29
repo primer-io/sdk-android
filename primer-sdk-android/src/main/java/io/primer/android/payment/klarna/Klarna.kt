@@ -3,6 +3,7 @@ package io.primer.android.payment.klarna
 import android.content.Context
 import android.view.View
 import io.primer.android.R
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
@@ -12,6 +13,7 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class Klarna constructor(
+    val checkoutConfig: CheckoutConfig,
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {
 
@@ -19,7 +21,7 @@ internal class Klarna constructor(
         get() = "KLARNA"
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = KlarnaBehaviour(this)
+        get() = KlarnaBehaviour(this, checkoutConfig.packageName)
 
     override val type: PaymentMethodType
         get() = PaymentMethodType.SIMPLE_BUTTON

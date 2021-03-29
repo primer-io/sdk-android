@@ -33,6 +33,7 @@ object LocaleSerializer : KSerializer<Locale> {
 @Serializable
 internal data class CheckoutConfig(
     val clientToken: String,
+    val packageName: String,
     val uxMode: UXMode,
     @Serializable(with = LocaleSerializer::class) val locale: Locale,
     val amount: MonetaryAmount?,
@@ -42,6 +43,7 @@ internal data class CheckoutConfig(
 
     constructor(
         clientToken: String,
+        packageName: String,
         locale: Locale,
         uxMode: UXMode = UXMode.CHECKOUT,
         currency: String? = null,
@@ -50,6 +52,7 @@ internal data class CheckoutConfig(
         theme: UniversalCheckoutTheme? = null,
     ) : this(
         clientToken = clientToken,
+        packageName = packageName,
         uxMode = uxMode,
         locale = locale,
         amount = MonetaryAmount.create(currency = currency, value = amount),

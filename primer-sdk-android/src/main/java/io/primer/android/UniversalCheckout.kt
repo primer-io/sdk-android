@@ -36,12 +36,13 @@ object UniversalCheckout {
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
     fun initialize(
+        context: Context,
         fullToken: String,
         locale: Locale,
         theme: UniversalCheckoutTheme? = null,
     ) {
         val clientToken = ClientToken.fromString(fullToken)
-        val config = CheckoutConfig(clientToken = fullToken, locale = locale)
+        val config = CheckoutConfig(clientToken = fullToken, locale = locale, packageName = context.packageName)
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
@@ -239,6 +240,7 @@ internal class InternalUniversalCheckout constructor(
 
         val config = CheckoutConfig(
             clientToken = fullToken,
+            packageName = context.packageName,
             locale = locale,
             uxMode = uxMode ?: UXMode.CHECKOUT,
             amount = amount,

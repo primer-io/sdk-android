@@ -37,6 +37,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
     val klarnaPaymentUrl = MutableLiveData<Pair<String, String>>() // <paymentUrl, redirectUrl>
+    val finalizeKlarnaPayment = MutableLiveData<JSONObject>()
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
@@ -131,6 +132,25 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 }
                 is OperationResult.Error -> {
                     Log.d("RUI", "!! klarna error")
+                    // TODO what should we do here?
+                }
+            }
+        }
+    }
+
+    fun finalizeKlarnaPayment(id: String, sessionId: String, token: String) {
+        val body = JSONObject()
+        body.put("paymentMethodConfigId", id)
+//        body.put("token", token)
+        body.put("sessionId", sessionId)
+
+        viewModelScope.launch {
+            when (val result = model.post(APIEndpoint.FINALIZE_KLARNA_PAYMENT, body)) {
+                is OperationResult.Success -> {
+                    val data = result.data
+                    finalizeKlarnaPayment.postValue(data)
+                }
+                is OperationResult.Error -> {
                     // TODO what should we do here?
                 }
             }

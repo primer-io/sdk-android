@@ -15,6 +15,8 @@ internal class APIEndpoint {
         const val CREATE_PAYPAL_ORDER = "/paypal/orders/create"
 
         const val CREATE_KLARNA_PAYMENT_SESSION = "/klarna/payment-sessions"
+        const val FINALIZE_KLARNA_PAYMENT = "/klarna/payment-sessions/finalize"
+        // const val FINALIZE_KLARNA_PAYMENT = "/klarna/customer-tokens"
 
         const val CREATE_GOCARDLESS_MANDATE = "/gocardless/mandates"
 

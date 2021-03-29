@@ -2,34 +2,28 @@ package io.primer.android.payment.klarna
 
 import android.net.Uri
 import android.util.Log
-import io.primer.android.payment.WebBrowserIntentBehaviour
+import io.primer.android.payment.WebViewBehaviour
+import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class KlarnaBehaviour constructor(
-    private val klarna: Klarna
-) : WebBrowserIntentBehaviour() {
+    private val klarna: Klarna,
+    packageName: String
+) : WebViewBehaviour(packageName) {
 
-    override fun initialize() {
-        tokenizationViewModel?.resetPaymentMethod(klarna)
+    override fun initialize(viewModel: TokenizationViewModel) {
+        viewModel.resetPaymentMethod(klarna)
     }
 
-    override fun getUri(cancelUrl: String, returnUrl: String) {
+    override fun getUri(viewModel: TokenizationViewModel, returnUrl: String) {
         klarna.config.id?.let { id ->
-            tokenizationViewModel?.createKlarnaBillingAgreement(id, returnUrl)
+            viewModel.createKlarnaBillingAgreement(id, returnUrl)
         }
     }
 
     override fun onSuccess(uri: Uri) {
         Log.d("RUI", "KlarnaBehaviour onSuccess: ")
-        uri.getQueryParameter("ba_token")?.let { token ->
-            klarna.config.id?.let { id ->
-                // TODO @RUI
-            }
-        }
-    }
-
-    override fun onCancel(uri: Uri?) {
-        // TODO what should we do here?
+        // @RUI
     }
 }

@@ -25,6 +25,8 @@ import io.primer.android.model.json
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.WebBrowserIntentBehaviour
+import io.primer.android.payment.WebViewBehaviour
+import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
@@ -175,6 +177,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                     is WebBrowserIntentBehaviour -> {
                         behaviour.execute(tokenizationViewModel)
                     }
+                    is WebViewBehaviour -> {
+                        behaviour.execute(tokenizationViewModel)
+                    }
                     else -> {
                         // TODO what should we do here?
                     }
@@ -188,6 +193,20 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
             }
             startActivityForResult(intent, 42)
+        }
+
+        tokenizationViewModel.finalizeKlarnaPayment.observe(this) { data: JSONObject ->
+            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+            val klarna = paymentMethod as? Klarna
+                ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
+
+            val sessionData = data.getJSONObject("sessionData")
+            // TODO @RUI confirm what we should be putting here
+            klarna.setTokenizableValue("recurringDescription", sessionData.getString("recurringDescription"))
+            klarna.setTokenizableValue("billingAddress", sessionData.getJSONObject("billingAddress"))
+            klarna.setTokenizableValue("shippingAddress", sessionData.getJSONObject("shippingAddress"))
+
+            tokenizationViewModel.tokenize()
         }
 
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
@@ -216,7 +235,22 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 42 && resultCode == Activity.RESULT_OK) {
-            Log.d("RUI", "activity> ${data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)}")
+            val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
+            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+            val klarna = paymentMethod as? Klarna
+
+            if (redirectUrl == null || klarna == null) {
+                // TODO error
+                Log.d("RUI", "!! redirectUrl=$redirectUrl klarna=$klarna")
+                return
+            }
+
+            val id = klarna.config.id ?: return
+            val sessionIdIndex = redirectUrl.indexOf("session_id=")
+            val tokenIndex = redirectUrl.indexOf("token=")
+            val sessionId = redirectUrl.substring(sessionIdIndex + "session_id=".length, redirectUrl.indexOf("&token="))
+            val token = redirectUrl.substring(tokenIndex + "token=".length)
+            tokenizationViewModel.finalizeKlarnaPayment(id, sessionId, token)
         }
     }
 

@@ -6,6 +6,7 @@ import io.primer.android.R
 import io.primer.android.WebviewInteropRegister
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
+import java.util.*
 
 internal abstract class SelectedPaymentMethodBehaviour
 
@@ -48,6 +49,24 @@ internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehavio
 
     abstract fun onSuccess(uri: Uri)
     abstract fun onCancel(uri: Uri? = null)
+}
+
+@KoinApiExtension
+internal abstract class WebViewBehaviour(private val packageName: String) : SelectedPaymentMethodBehaviour() {
+
+    fun execute(viewModel: TokenizationViewModel) {
+        initialize(viewModel)
+
+        val id = UUID.randomUUID().toString()
+        val returnUrl = "$packageName.primer://$id/success"
+
+        getUri(viewModel, returnUrl)
+    }
+
+    abstract fun initialize(viewModel: TokenizationViewModel)
+    abstract fun getUri(viewModel: TokenizationViewModel, returnUrl: String)
+
+    abstract fun onSuccess(uri: Uri)
 }
 
 internal class NoopBehaviour : SelectedPaymentMethodBehaviour()
