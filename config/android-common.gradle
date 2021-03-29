@@ -1,0 +1,44 @@
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 30
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArgument("runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder")
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility projectJvmTarget
+        targetCompatibility projectJvmTarget
+    }
+
+    kotlinOptions {
+        jvmTarget = projectJvmTarget.toString()
+    }
+}
+
+apply from: "$rootDir/config/dependencies.gradle"
+apply from: "$rootDir/config/test-dependencies.gradle"
+apply from: "$rootDir/config/android-dependencies.gradle"
+
+dependencies {
+    testRuntimeOnly TestDependencies.Junit.jupiterEngine
+    testImplementation TestDependencies.Junit.jupiter
+    testImplementation TestDependencies.Junit.jupiterParams
+    testImplementation TestDependencies.Mockk.mockk
+
+    androidTestImplementation TestDependencies.Mockk.mockkAndroid
+    androidTestImplementation TestDependencies.Android.core
+    androidTestImplementation TestDependencies.Android.testRunner
+    androidTestImplementation TestDependencies.Android.xJunitRunner
+    androidTestRuntimeOnly TestDependencies.Junit.testRunner
+}
+
+apply plugin: "de.mannodermaus.android-junit5"
