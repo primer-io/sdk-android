@@ -10,7 +10,7 @@ import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import org.koin.core.component.KoinApiExtension
 
-//@KoinApiExtension
+@KoinApiExtension
 internal class Klarna constructor(
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {

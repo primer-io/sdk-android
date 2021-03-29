@@ -1,10 +1,8 @@
 package io.primer.android.payment.klarna
 
 import android.net.Uri
-import io.primer.android.logging.Logger
+import android.util.Log
 import io.primer.android.payment.WebBrowserIntentBehaviour
-import io.primer.android.viewmodel.PrimerViewModel
-import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
@@ -18,11 +16,12 @@ internal class KlarnaBehaviour constructor(
 
     override fun getUri(cancelUrl: String, returnUrl: String) {
         klarna.config.id?.let { id ->
-            tokenizationViewModel?.createPayPalBillingAgreement(id, returnUrl, cancelUrl)
+            tokenizationViewModel?.createKlarnaBillingAgreement(id, returnUrl)
         }
     }
 
     override fun onSuccess(uri: Uri) {
+        Log.d("RUI", "KlarnaBehaviour onSuccess: ")
         uri.getQueryParameter("ba_token")?.let { token ->
             klarna.config.id?.let { id ->
                 tokenizationViewModel?.confirmPayPalBillingAgreement(id, token)

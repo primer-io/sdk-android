@@ -12,8 +12,10 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
+import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -76,9 +78,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(token)
+        UniversalCheckout.initialize(token, Locale.UK)
         UniversalCheckout.loadPaymentMethods(paymentMethods)
-        UniversalCheckout.showSavedPaymentMethods(this, eventListener)
+
+        val items = listOf(OrderItem("ps5", 123, 1))
+        UniversalCheckout.showCheckout(this, eventListener, 123, "GBP", items)
+//        UniversalCheckout.showSavedPaymentMethods(this, eventListener)
+
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             Log.i("primer.ExampleApp", "Creating checkout")
             UniversalCheckout.showSavedPaymentMethods(this, eventListener)

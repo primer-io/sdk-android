@@ -9,11 +9,16 @@ internal class APIEndpoint {
     companion object {
 
         const val PAYMENT_INSTRUMENTS = "/payment-instruments"
-        const val DELETE_TOKEN = "/payment-instruments/{id}/vault"
+
         const val CREATE_PAYPAL_BILLING_AGREEMENT = "/paypal/billing-agreements/create-agreement"
         const val CONFIRM_PAYPAL_BILLING_AGREEMENT = "/paypal/billing-agreements/confirm-agreement"
         const val CREATE_PAYPAL_ORDER = "/paypal/orders/create"
+
+        const val CREATE_KLARNA_PAYMENT_SESSION = "/klarna/payment-sessions"
+
         const val CREATE_GOCARDLESS_MANDATE = "/gocardless/mandates"
+
+        const val DELETE_TOKEN = "/payment-instruments/{id}/vault"
 
         fun get(
             session: ClientSession,

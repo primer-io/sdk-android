@@ -15,6 +15,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -38,6 +39,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
     val payPalOrder = MutableLiveData<String>() // emits URI
+
+    val klarna = MutableLiveData<Unit>() // TODO
+
     val goCardlessMandate = MutableLiveData<JSONObject>()
     val goCardlessMandateError = MutableLiveData<Unit>()
 
@@ -100,6 +104,52 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     payPalBillingAgreementUrl.postValue(approvalUrl)
                 }
                 is OperationResult.Error -> {
+                    // TODO what should we do here?
+                }
+            }
+        }
+    }
+
+    fun createKlarnaBillingAgreement(id: String, returnUrl: String) {
+        viewModelScope.launch {
+
+            val localeData = JSONObject().apply {
+                val countryCode = checkoutConfig.locale.country
+                val currencyCode = checkoutConfig.amount?.currency
+                val locale = checkoutConfig.locale.toLanguageTag()
+
+                put("countryCode", countryCode)
+                put("currencyCode", currencyCode)
+                put("localeCode", locale)
+            }
+
+            val orderItems = JSONArray().apply {
+                checkoutConfig.orderItems.forEach {
+                    val item = JSONObject().apply {
+                        put("name", it.name)
+                        put("unitAmount", it.unitAmount)
+                        put("quantity", it.quantity)
+                    }
+                    put(item)
+                }
+            }
+
+            val body = JSONObject().apply {
+                put("paymentMethodConfigId", id)
+                put("sessionType", "HOSTED_PAYMENT_PAGE")
+                put("redirectUrl", "https://$returnUrl")
+                put("totalAmount", checkoutConfig.amount?.value)
+                put("localeData", localeData)
+                put("orderItems", orderItems)
+            }
+
+            when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
+                is OperationResult.Success -> {
+                    Log.d("RUI", result.data.toString())
+                    klarna.postValue(Unit)
+                }
+                is OperationResult.Error -> {
+                    Log.d("RUI", "!! klarna error")
                     // TODO what should we do here?
                 }
             }

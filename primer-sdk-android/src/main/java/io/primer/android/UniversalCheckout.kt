@@ -6,6 +6,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientToken
@@ -19,9 +20,12 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
+import java.util.*
 
 internal enum class UXMode {
-    CHECKOUT, ADD_PAYMENT_METHOD, STANDALONE_PAYMENT_METHOD,
+    CHECKOUT,
+    ADD_PAYMENT_METHOD,
+    STANDALONE_PAYMENT_METHOD,
 }
 
 object UniversalCheckout {
@@ -31,9 +35,13 @@ object UniversalCheckout {
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
-    fun initialize(fullToken: String, theme: UniversalCheckoutTheme? = null) {
+    fun initialize(
+        fullToken: String,
+        locale: Locale,
+        theme: UniversalCheckoutTheme? = null,
+    ) {
         val clientToken = ClientToken.fromString(fullToken)
-        val config = CheckoutConfig(clientToken = fullToken)
+        val config = CheckoutConfig(clientToken = fullToken, locale = locale)
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
@@ -52,7 +60,7 @@ object UniversalCheckout {
 
         val model = Model(clientToken, config, okHttpClient)
 
-        checkout = InternalUniversalCheckout(model, fullToken, Dispatchers.IO, theme)
+        checkout = InternalUniversalCheckout(model, Dispatchers.IO, fullToken, locale, theme)
     }
 
     /**
@@ -71,8 +79,14 @@ object UniversalCheckout {
     }
 
     @KoinApiExtension
-    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String) {
-        checkout.showCheckout(context, listener, amount, currency)
+    fun showCheckout(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int,
+        currency: String,
+        orderItems: List<OrderItem> = emptyList(),
+    ) {
+        checkout.showCheckout(context, listener, amount, currency, orderItems)
     }
 
     @KoinApiExtension
@@ -104,8 +118,9 @@ object UniversalCheckout {
 
 internal class InternalUniversalCheckout constructor(
     private val model: Model,
-    private val fullToken: String,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val fullToken: String,
+    private val locale: Locale,
     private val theme: UniversalCheckoutTheme? = null,
 ) {
 
@@ -149,18 +164,48 @@ internal class InternalUniversalCheckout constructor(
 
     @KoinApiExtension
     fun showSavedPaymentMethods(context: Context, listener: CheckoutEventListener) {
-        show(context, listener, UXMode.ADD_PAYMENT_METHOD)
+        show(
+            context = context,
+            listener = listener,
+            locale = locale,
+            uxMode = UXMode.ADD_PAYMENT_METHOD,
+            amount = null,
+            currency = null,
+            orderItems = emptyList()
+        )
     }
 
     @KoinApiExtension
-    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String) {
-        show(context, listener, UXMode.CHECKOUT, amount = amount, currency = currency)
+    fun showCheckout(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int,
+        currency: String,
+        orderItems: List<OrderItem>,
+    ) {
+        show(
+            context = context,
+            listener = listener,
+            locale = locale,
+            uxMode = UXMode.CHECKOUT,
+            amount = amount,
+            currency = currency,
+            orderItems = orderItems
+        )
     }
 
     @KoinApiExtension
     fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
         paymentMethods = listOf(paymentMethod)
-        show(context, listener, UXMode.STANDALONE_PAYMENT_METHOD)
+        show(
+            context = context,
+            listener = listener,
+            locale = locale,
+            uxMode = UXMode.STANDALONE_PAYMENT_METHOD,
+            amount = null,
+            currency = null,
+            orderItems = emptyList()
+        )
     }
 
     fun dismiss() {
@@ -179,9 +224,11 @@ internal class InternalUniversalCheckout constructor(
     private fun show(
         context: Context,
         listener: CheckoutEventListener,
-        uxMode: UXMode? = null,
-        amount: Int? = null,
-        currency: String? = null,
+        locale: Locale,
+        uxMode: UXMode?,
+        amount: Int?,
+        currency: String?,
+        orderItems: List<OrderItem>,
     ) {
         subscription?.unregister()
 
@@ -192,9 +239,11 @@ internal class InternalUniversalCheckout constructor(
 
         val config = CheckoutConfig(
             clientToken = fullToken,
+            locale = locale,
             uxMode = uxMode ?: UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
+            orderItems = orderItems,
             theme = theme,
         )
 

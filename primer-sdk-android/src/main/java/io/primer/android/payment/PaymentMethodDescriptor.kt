@@ -14,7 +14,6 @@ import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import java.util.*
 
-@KoinApiExtension
 internal abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
     protected val values: JSONObject = JSONObject() // FIXME why is this needed? why is the model holding a json format of itself?
@@ -53,6 +52,7 @@ internal abstract class PaymentMethodDescriptor(
     }
 }
 
+@KoinApiExtension
 internal class PaymentMethodDescriptorFactory {
 
     fun create(
