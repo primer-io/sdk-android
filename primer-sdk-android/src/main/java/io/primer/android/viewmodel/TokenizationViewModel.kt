@@ -36,7 +36,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
-    val klarnaPaymentUrl = MutableLiveData<String>() // emits URI
+    val klarnaPaymentUrl = MutableLiveData<Pair<String, String>>() // <paymentUrl, redirectUrl>
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
@@ -92,7 +92,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     fun createKlarnaBillingAgreement(id: String, returnUrl: String) {
         viewModelScope.launch {
-
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country
                 val currencyCode = checkoutConfig.amount?.currency
@@ -114,10 +113,12 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 }
             }
 
+            val klarnaReturnUrl = "https://$returnUrl"
+
             val body = JSONObject().apply {
                 put("paymentMethodConfigId", id)
                 put("sessionType", "HOSTED_PAYMENT_PAGE")
-                put("redirectUrl", "https://$returnUrl")
+                put("redirectUrl", klarnaReturnUrl)
                 put("totalAmount", checkoutConfig.amount?.value)
                 put("localeData", localeData)
                 put("orderItems", orderItems)
@@ -126,7 +127,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
                 is OperationResult.Success -> {
                     val hppRedirectUrl = result.data.getString("hppRedirectUrl")
-                    klarnaPaymentUrl.postValue(hppRedirectUrl)
+                    klarnaPaymentUrl.postValue(Pair(hppRedirectUrl, klarnaReturnUrl))
                 }
                 is OperationResult.Error -> {
                     Log.d("RUI", "!! klarna error")

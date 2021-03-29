@@ -6,10 +6,6 @@
 
     <application>
         <activity
-            android:name=".WebBrowserInteropActivity"
-            android:label=""
-            android:theme="@android:style/Theme.NoDisplay"></activity>
-        <activity
             android:name=".CheckoutSheetActivity"
             android:label=""
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
@@ -23,6 +19,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".WebBrowserInteropActivity"
+            android:label=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <activity android:name=".WebViewActivity" />
     </application>
 
 </manifest>

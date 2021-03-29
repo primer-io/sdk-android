@@ -1,8 +1,10 @@
 package io.primer.android
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -180,10 +182,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             }
         })
 
-        tokenizationViewModel.klarnaPaymentUrl.observe(this) { uri: String ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-            startActivity(intent)
-            // TODO webview @RUI
+        tokenizationViewModel.klarnaPaymentUrl.observe(this) { (paymentUrl, redirectUrl) ->
+            val intent = Intent(this, WebViewActivity::class.java).apply {
+                putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+                putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+            }
+            startActivityForResult(intent, 42)
         }
 
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
@@ -193,7 +197,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         tokenizationViewModel.confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            val paypal = paymentMethod as? PayPal ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
+            val paypal = paymentMethod as? PayPal
+                ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
             paypal.setTokenizableValue("paypalBillingAgreementId", data.getString("billingAgreementId"))
             paypal.setTokenizableValue("externalPayerInfo", data.getJSONObject("externalPayerInfo"))
@@ -205,6 +210,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         tokenizationViewModel.payPalOrder.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 42 && resultCode == Activity.RESULT_OK) {
+            Log.d("RUI", "activity> ${data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)}")
         }
     }
 
