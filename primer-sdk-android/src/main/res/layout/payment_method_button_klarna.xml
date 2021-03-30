@@ -5,17 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/button_light"
+    android:backgroundTint="@color/klarna"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/card_preview_button_text"
-        style="@style/Primer.Text"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="@dimen/primer_payment_method_preview_button_height"
-        android:gravity="center"
-        android:text="Klarna"
-        app:drawableStartCompat="@drawable/credit_card_icon" />
+        android:src="@drawable/ic_klarna"
+        android:contentDescription="TODO" />
 </io.primer.android.ui.components.ButtonDefaultLayout>
