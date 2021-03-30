@@ -14,6 +14,6 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="@dimen/primer_payment_method_preview_button_height"
-        android:src="@drawable/ic_klarna"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/klarna"
+        android:src="@drawable/ic_klarna" />
 </io.primer.android.ui.components.ButtonDefaultLayout>
