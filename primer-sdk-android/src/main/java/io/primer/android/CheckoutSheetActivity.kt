@@ -204,11 +204,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             klarna.setTokenizableValue("klarnaAuthorizationToken", data.optString("token"))
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
-//            klarna.setTokenizableValue("billingAddress", sessionData.getJSONObject("billingAddress"))
-//            sessionData.optJSONObject("shippingAddress")?.let {
-//                klarna.setTokenizableValue("shippingAddress", it)
-//            }
-
             tokenizationViewModel.tokenize()
         }
 
@@ -256,7 +251,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 val klarna = paymentMethod as? Klarna
 
                 if (redirectUrl == null || klarna == null || token == null) {
-                    Log.d("RUI", "!! redirectUrl=$redirectUrl klarna=$klarna")
                     // TODO error
                     return
                 }

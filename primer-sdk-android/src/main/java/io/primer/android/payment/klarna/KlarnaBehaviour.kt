@@ -24,6 +24,5 @@ internal class KlarnaBehaviour constructor(
 
     override fun onSuccess(uri: Uri) {
         Log.d("RUI", "KlarnaBehaviour onSuccess: ")
-        // @RUI
     }
 }
