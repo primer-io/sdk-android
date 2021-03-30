@@ -27,6 +27,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.klarna.Klarna
+import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
@@ -192,7 +193,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
                 putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
             }
-            startActivityForResult(intent, 42)
+            startActivityForResult(intent, KLARNA_REQUEST_CODE)
         }
 
         tokenizationViewModel.finalizeKlarnaPayment.observe(this) { data: JSONObject ->
@@ -237,19 +238,32 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 42 && resultCode == Activity.RESULT_OK) {
-            val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
-            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            val klarna = paymentMethod as? Klarna
-
-            if (redirectUrl == null || klarna == null) {
-                // TODO error
-                Log.d("RUI", "!! redirectUrl=$redirectUrl klarna=$klarna")
-                return
+        when (requestCode) {
+            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
+            else -> {
+                // unexpected request code
             }
+        }
+    }
 
-            val id = klarna.config.id ?: return
-            tokenizationViewModel.finalizeKlarnaPayment(id)
+    private fun handleKlarnaRequestResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            RESULT_OK -> {
+                val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
+                val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+                val klarna = paymentMethod as? Klarna
+
+                if (redirectUrl == null || klarna == null) {
+                    Log.d("RUI", "!! redirectUrl=$redirectUrl klarna=$klarna")
+                    // TODO error
+                    return
+                }
+                val id = klarna.config.id ?: return
+                tokenizationViewModel.finalizeKlarnaPayment(id)
+            }
+            RESULT_CANCELED -> {
+                // TODO
+            }
         }
     }
 

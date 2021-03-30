@@ -17,6 +17,11 @@ internal class Klarna constructor(
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {
 
+    companion object {
+
+        const val KLARNA_REQUEST_CODE = 1000
+    }
+
     override val identifier: String
         get() = "KLARNA"
 
