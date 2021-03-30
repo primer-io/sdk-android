@@ -36,8 +36,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
-//    val klarnaPaymentUrl = MutableLiveData<Pair<String, String>>() // <paymentUrl, redirectUrl>
-    val klarnaPaymentData = MutableLiveData<Triple<String, String, String>>() // <paymentUrl, redirectUrl>
+    val klarnaPaymentData = MutableLiveData<Triple<String, String, String>>() // <hppRedirectUrl, klarnaReturnUrl, sessionId>
     val finalizeKlarnaPayment = MutableLiveData<JSONObject>()
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
