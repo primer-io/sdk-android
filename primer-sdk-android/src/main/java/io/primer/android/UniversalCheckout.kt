@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.serializer
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
 
 internal enum class UXMode {
@@ -36,9 +35,7 @@ object UniversalCheckout {
         val config = CheckoutConfig(clientToken = fullToken)
 
         // FIXME inject these dependencies
-        val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json")

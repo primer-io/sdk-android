@@ -10,10 +10,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.decodeFromString
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -80,8 +80,8 @@ internal class Model constructor(
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                response.body()?.close()
                 continuation.resume(json)
             }
             val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString()) // TODO move parsing somewhere else
@@ -106,10 +106,10 @@ internal class Model constructor(
                 .newCall(request)
                 .await()
 
-            val body: ResponseBody? = response.body
+            val body: ResponseBody? = response.body()
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
+                val json = JSONObject(response.body()?.string() ?: "{}")
                 body?.close()
                 continuation.resume(json)
             }
@@ -131,11 +131,13 @@ internal class Model constructor(
             }
         }
 
+        val body = toJsonRequestBody(requestBody)
+
         // FIXME extra endpoint construction to collaborator (non-static call)
         val url = APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
         val request = Request.Builder()
             .url(url)
-            .post(requestBody.toString().toRequestBody("application/json".toMediaType()))
+            .post(body)
             .build()
 
         return try {
@@ -150,8 +152,8 @@ internal class Model constructor(
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                response.body()?.close()
                 continuation.resume(json)
             }
             val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
@@ -203,10 +205,10 @@ internal class Model constructor(
 
     suspend fun post(pathname: String, requestBody: JSONObject? = null): OperationResult<JSONObject> {
         val url = APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname)
-        val stringifiedBody = requestBody?.toString() ?: "{}"
+        val body = toJsonRequestBody(requestBody)
         val request = Request.Builder()
             .url(url)
-            .post(stringifiedBody.toRequestBody("application/json".toMediaType()))
+            .post(body)
             .build()
 
         return try {
@@ -221,8 +223,8 @@ internal class Model constructor(
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                response.body()?.close()
                 continuation.resume(json)
             }
 
@@ -230,5 +232,11 @@ internal class Model constructor(
         } catch (error: Throwable) {
             OperationResult.Error(error)
         }
+    }
+
+    private fun toJsonRequestBody(requestBody: JSONObject?): RequestBody {
+        val mimeType = MediaType.get("application/json")
+        val serialized = requestBody?.toString() ?: "{}"
+        return RequestBody.create(mimeType, serialized)
     }
 }
