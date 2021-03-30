@@ -5,7 +5,7 @@ import android.view.View
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
+import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -18,11 +18,11 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-internal class PayPal(
-    viewModel: PrimerViewModel,
+internal class PayPal constructor(
+    private val viewModel: PrimerViewModel, // FIXME we want to not have to hold a ref to a viewmodel
     config: PaymentMethodRemoteConfig,
     private val options: PaymentMethod.PayPal,
-) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()
 
@@ -30,7 +30,7 @@ internal class PayPal(
         get() = PAYPAL_IDENTIFIER
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (checkoutConfig.uxMode == UniversalCheckout.UXMode.ADD_PAYMENT_METHOD) {
+        get() = if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
             PayPalBillingAgreementBehaviour(this, viewModel)
         } else {
             PayPalOrderBehaviour(this)

@@ -24,7 +24,6 @@ internal data class ClientToken(
                 }
             }
 
-            // TODO: clean this up
             throw IllegalArgumentException()
         }
     }

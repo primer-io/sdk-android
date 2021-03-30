@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import androidx.annotation.ColorInt
 import kotlinx.serialization.Serializable
 
+// FIXME all these should be declared as resources
 private const val BUTTON_CORNER_RADIUS_DEFAULT = 12.0f
 private const val INPUT_CORNER_RADIUS_DEFAULT = 12.0f
 private const val BACKGROUND_COLOR_DEFAULT = "#FFFFFFFF"
@@ -20,38 +21,28 @@ private const val PRIMARY_COLOR_DEFAULT = "#FF2C98F0"
 private const val INPUT_BACKGROUND_COLOR_DEFAULT = "#FFFFFFFF"
 
 @Serializable
-class UniversalCheckoutTheme private constructor(
-    // Corner radii
+// FIXME consider resource references instead of values
+data class UniversalCheckoutTheme constructor(
     val buttonCornerRadius: Float,
     val inputCornerRadius: Float,
 
-    // Surface colors
     @ColorInt val backgroundColor: Int,
 
-    // Button Colors
     @ColorInt val buttonPrimaryColor: Int,
     @ColorInt val buttonPrimaryColorDisabled: Int,
     @ColorInt val buttonDefaultColor: Int,
     @ColorInt val buttonDefaultColorDisabled: Int,
     @ColorInt val buttonDefaultBorderColor: Int,
 
-    // Text Colors
     @ColorInt val textDefaultColor: Int,
     @ColorInt val textDangerColor: Int,
     @ColorInt val textMutedColor: Int,
 
-    // General theme
     @ColorInt val primaryColor: Int,
     @ColorInt val inputBackgroundColor: Int,
 
-    // Android specific
-//  val inputStyle: InputStyle,
     val windowMode: WindowMode,
 ) {
-//  enum class InputStyle {
-//    DEFAULT,
-//    OUTLINE,
-//  }
 
     enum class WindowMode {
         BOTTOM_SHEET,
@@ -62,10 +53,13 @@ class UniversalCheckoutTheme private constructor(
 
         private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
 
+        // FIXME unnecessary indirection
         fun getDefault(): UniversalCheckoutTheme {
             return create()
         }
 
+        // FIXME drop all these static methods
+        // FIXME theming should rely on android's color system, not hex values
         fun create(
             buttonCornerRadius: Float? = null,
             inputCornerRadius: Float? = null,
@@ -80,7 +74,6 @@ class UniversalCheckoutTheme private constructor(
             textMutedColor: String? = null,
             primaryColor: String? = null,
             inputBackgroundColor: String? = null,
-//      inputStyle: InputStyle? = null,
             windowMode: WindowMode = WindowMode.BOTTOM_SHEET,
         ): UniversalCheckoutTheme {
             return UniversalCheckoutTheme(
@@ -97,11 +90,11 @@ class UniversalCheckoutTheme private constructor(
                 textMutedColor = hexToColorInt(textMutedColor, TEXT_MUTED_COLOR_DEFAULT),
                 primaryColor = hexToColorInt(primaryColor, PRIMARY_COLOR_DEFAULT),
                 inputBackgroundColor = hexToColorInt(inputBackgroundColor, INPUT_BACKGROUND_COLOR_DEFAULT),
-//        inputStyle = inputStyle ?: InputStyle.DEFAULT,
                 windowMode = windowMode,
             )
         }
 
+        // FIXME this should be moved elsewhere. this class should not hold this responsibility
         private fun hexToColorInt(hex: String?, defaultValue: String): Int {
             return Color.parseColor(
                 if (hex?.matches(HEX_PATTERN) == true) hex else defaultValue

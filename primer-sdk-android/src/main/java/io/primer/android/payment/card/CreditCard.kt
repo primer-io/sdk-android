@@ -6,9 +6,8 @@ import android.widget.TextView
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
+import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
@@ -16,7 +15,6 @@ import io.primer.android.payment.*
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
-import io.primer.android.viewmodel.PrimerViewModel
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -30,39 +28,38 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 
 @KoinApiExtension
 internal class CreditCard(
-    viewModel: PrimerViewModel,
     config: PaymentMethodRemoteConfig,
-    private val options: PaymentMethod.Card,
-) : PaymentMethodDescriptor(viewModel, config), DIAppComponent {
+    private val options: PaymentMethod.Card, // FIXME why's this here? it's unused
+    encodedAsJson: JSONObject = JSONObject() // FIXME passing in a as dependency so we can test
+) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent { // FIXME why is this implementing a di component?
 
     private val checkoutConfig: CheckoutConfig by inject()
 
+    // FIXME identifiers should not be needed to identify instances of a class
     override val identifier = PAYMENT_CARD_IDENTIFIER
 
-    private val log = Logger("payment-method.$identifier")
-
+    // FIXME static call + instantiation makes it impossible to properly test
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.FORM
+    override val type: PaymentMethodType = PaymentMethodType.FORM
 
-    override val vaultCapability: VaultCapability
-        get() = VaultCapability.SINGLE_USE_AND_VAULT
+    override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 
     override fun createButton(context: Context): View {
         val button = View.inflate(context, R.layout.payment_method_button_card, null)
         val text = button.findViewById<TextView>(R.id.card_preview_button_text)
 
         text.text = when (checkoutConfig.uxMode) {
-            UniversalCheckout.UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
-            UniversalCheckout.UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
+            UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
+            UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_card)
             else -> ""
         }
 
         return button
     }
 
+    // FIXME a model should not be responsible for parsing itself into json
     override fun toPaymentInstrument(): JSONObject {
         val json = JSONObject()
 
@@ -81,6 +78,7 @@ internal class CreditCard(
         return json
     }
 
+    // FIXME this should not be here. a model should not be responsible for validating itself
     override fun validate(): List<SyncValidationError> {
         val errors = ArrayList<SyncValidationError>()
 
@@ -96,6 +94,7 @@ internal class CreditCard(
             )
         }
 
+        // FIXME static call (formatter should be injected)
         val number = CardNumberFormatter.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
 
         if (number.isEmpty()) {
@@ -136,6 +135,7 @@ internal class CreditCard(
             )
         }
 
+        // FIXME static call (formatter should be injected)
         val expiry = ExpiryDateFormatter.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
 
         if (expiry.isEmpty()) {

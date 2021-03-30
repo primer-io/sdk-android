@@ -6,6 +6,8 @@ const fetch = require('node-fetch');
 const dotenv = require('dotenv');
 const server = express();
 
+const PORT = 80
+
 const {parsed: env} = dotenv.config({
   path: path.join(__dirname, '../.env')
 })
@@ -33,36 +35,41 @@ server.use(
   })
 );
 
-server.listen(80, () => {
-  console.log('Proxy server listeninng');
+server.listen(PORT, () => {
+  console.log(`Proxy server listening on port ${PORT}`);
 });
 
 function proxy (options) {
   return async (req, res) => {
+
     const { format = identity, headers = {} } = options;
-    
     const url = options.to + req.url.replace(/\/$/, '');
 
-    const init = { 
+    const proxiedOptions = {
       method: req.method,
       headers: { ...req.headers, ...headers },
     };
 
     if (req.method.toLowerCase() === 'post') {
-      init.body = JSON.stringify(req.body);
+      proxiedOptions.body = JSON.stringify(req.body);
     }
 
-    console.log('Making Request: ' + url, init.headers);
+    delete proxiedOptions.headers.host
 
-    const response = await fetch(url, init);
-    const json = await response.json();
+    console.log(`Making Request: ${req.method} ` + url, proxiedOptions.headers, proxiedOptions.body ? proxiedOptions.body : '');
 
-    const data = format(json);
+    try {
+        const response = await fetch(url, proxiedOptions);
+        const json = await response.json();
 
-    console.log('Response from Primer:');
-    console.log(response.status, data);
+        const data = format(json);
 
-    return res.status(response.status).send(data);
+        console.log('Response from Primer:', response.status, data);
+        return res.status(response.status).send(data);
+    } catch (error) {
+        console.error(error)
+        res.status(500).send("Proxied request failed")
+    }
   };
 }
 

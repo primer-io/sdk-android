@@ -2,15 +2,15 @@ package io.primer.android.payment.gocardless
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
-import io.primer.android.model.Observable
-import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.FormErrorState
 import io.primer.android.ui.FormTitleState
@@ -21,6 +21,7 @@ import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
@@ -39,14 +40,13 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddress
 @KoinApiExtension
 class GoCardlessViewFragment : FormFragment() {
 
-    private val log = Logger("gc-form-view")
     private lateinit var viewModel: FormViewModel
     private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
     private var readyToTokenize = false
 
     private val options: PaymentMethod.GoCardless
-        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
+        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options // FIXME a getter should never rely on the viewmodel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,7 +78,7 @@ class GoCardlessViewFragment : FormFragment() {
 
     private fun onSummaryItemPress(e: FormActionEvent.SummaryItemPress) {
         when (e.name) {
-            "bank" -> showIBANView(R.string.confirm)
+            "bank" -> showIbanView(R.string.confirm)
             "customer-name" -> showCustomerNameView(R.string.confirm)
             "customer-email" -> showCustomerEmailView(R.string.confirm)
             "address" -> showAddressView(R.string.confirm)
@@ -101,7 +101,12 @@ class GoCardlessViewFragment : FormFragment() {
 
     private fun onSubmitPressed(scene: GoCardlessFormSceneState.Scene) {
         if (readyToTokenize) {
-            return if (scene == GoCardlessFormSceneState.Scene.SUMMARY) beginTokenization() else backToPreviousView()
+            if (scene == GoCardlessFormSceneState.Scene.SUMMARY) {
+                beginTokenization()
+            } else {
+                backToPreviousView()
+            }
+            return
         }
 
         val hasName = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME).isNotEmpty()
@@ -140,11 +145,12 @@ class GoCardlessViewFragment : FormFragment() {
             GoCardlessFormSceneState.Scene.ADDRESS -> showAddressView(R.string.next)
             GoCardlessFormSceneState.Scene.SUMMARY -> showSummaryView()
             else -> {
+                // ??
             }
         }
     }
 
-    private fun showIBANView(buttonLabelId: Int) {
+    private fun showIbanView(buttonLabelId: Int) {
         showFormScene(IBANViewState(buttonLabelId, cancelBehaviour = FormTitleState.CancelBehaviour.CANCEL, showProgress = false))
     }
 
@@ -204,8 +210,8 @@ class GoCardlessViewFragment : FormFragment() {
     }
 
     private fun showFormScene(state: GoCardlessFormSceneState, isTransition: Boolean = true) {
-        val fragment = if (isTransition) FormFragment(state) else this
         val listener = createFormActionListener(state.scene)
+        val fragment = if (isTransition) FormFragment(state) else this
 
         fragment.setOnFormActionListener(listener)
 
@@ -233,22 +239,14 @@ class GoCardlessViewFragment : FormFragment() {
         val customerDetails = formatCustomerDetails()
 
         viewModel.setLoading(true)
-        viewModel.error.value = null
 
         primerViewModel.selectedPaymentMethod.value?.config?.id?.let { id ->
-            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails).observe {
-                when (it) {
-                    is Observable.ObservableSuccessEvent -> onMandateCreated(it.data)
-                    is Observable.ObservableErrorEvent -> onTokenizeError(it.error)
-                }
-            }
+            tokenizationViewModel.createGoCardlessMandate(id, bankDetails, customerDetails)
         }
     }
 
-    private fun formatBankDetails(): JSONObject {
-        return JSONObject().apply {
-            put("iban", viewModel.getValue(DD_FIELD_NAME_IBAN))
-        }
+    private fun formatBankDetails(): JSONObject = JSONObject().apply {
+        put("iban", viewModel.getValue(DD_FIELD_NAME_IBAN))
     }
 
     private fun formatCustomerDetails(): JSONObject {
@@ -281,28 +279,8 @@ class GoCardlessViewFragment : FormFragment() {
         }
     }
 
-    private fun onMandateCreated(data: JSONObject) {
-        val mandateId = data.getString("mandateId")
-        tokenizationViewModel.reset(primerViewModel.selectedPaymentMethod.value)
-        tokenizationViewModel.setTokenizableValue("gocardlessMandateId", mandateId)
-
-        tokenizationViewModel.tokenize().observe {
-            when (it) {
-                is Observable.ObservableSuccessEvent -> onTokenizeSuccess()
-                is Observable.ObservableErrorEvent -> onTokenizeError(it.error)
-            }
-        }
-    }
-
-    private fun onTokenizeSuccess() {}
-
-    private fun onTokenizeError(error: APIError) {
-        viewModel.setLoading(false)
-        viewModel.error.value = FormErrorState(labelId = R.string.dd_mandate_error)
-    }
-
     companion object {
 
-        fun newInstance() = GoCardlessViewFragment()
+        fun newInstance(): GoCardlessViewFragment = GoCardlessViewFragment()
     }
 }
