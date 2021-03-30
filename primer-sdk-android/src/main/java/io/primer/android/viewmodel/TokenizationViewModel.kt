@@ -91,6 +91,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
+    // region klarna
     fun createKlarnaBillingAgreement(id: String, returnUrl: String) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
@@ -139,7 +140,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    fun finalizeKlarnaPayment(id: String) {
+    fun finalizeKlarnaPayment(id: String, token: String) {
         val body = JSONObject()
         val sessionId = klarnaPaymentData.value?.third ?: return
         body.put("paymentMethodConfigId", id)
@@ -149,6 +150,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             when (val result = model.post(APIEndpoint.FINALIZE_KLARNA_PAYMENT, body)) {
                 is OperationResult.Success -> {
                     val data = result.data
+                    data.put("token", token)
                     finalizeKlarnaPayment.postValue(data)
                 }
                 is OperationResult.Error -> {
@@ -157,7 +159,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
         }
     }
+    // endregion
 
+    // region paypal
     // TODO: move these payal things somewhere else
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
@@ -216,7 +220,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
         }
     }
+    // endregion
 
+    // region go cardless
     fun createGoCardlessMandate(id: String, bankDetails: JSONObject, customerDetails: JSONObject) {
         val body = JSONObject()
         body.put("id", id)
@@ -236,6 +242,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
         }
     }
+    // endregion
 
     companion object {
 

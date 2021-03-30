@@ -1,9 +1,7 @@
 package io.primer.android
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -13,12 +11,13 @@ internal class WebViewActivity : AppCompatActivity() {
 
     companion object {
 
+        // url to load in the webview
         const val PAYMENT_URL_KEY = "URL_KEY"
 
         // url that the webview should capture and not load
         const val CAPTURE_URL_KEY = "CAPTURE_URL_KEY"
 
-        // url returned by klarna to us (with a token in it)
+        // url called/loaded by the webview when finishing up
         const val REDIRECT_URL_KEY = "REDIRECT_URL_KEY"
     }
 
@@ -27,7 +26,7 @@ internal class WebViewActivity : AppCompatActivity() {
 
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
-            ?.substringBeforeLast(':') // @RUI this is flaky
+            ?.substringBeforeLast(':') // FIXME better way of checking this
 
         setContentView(R.layout.activity_webview)
         val webView = findViewById<WebView>(R.id.webView).apply {
@@ -37,19 +36,11 @@ internal class WebViewActivity : AppCompatActivity() {
             settings.useWideViewPort = true
         }
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                val requestUrl = request?.url?.toString()
-                val shouldOverride = captureUrl != null && requestUrl?.contains(captureUrl) ?: false
-                if (shouldOverride) requestUrl?.let {
-                    Log.d("RUI", "webview> $requestUrl")
-                    val canceled = requestUrl.contains("state=cancel")
-                    val intent = Intent().apply { putExtra(REDIRECT_URL_KEY, request?.url?.toString()) }
-                    val resultCode = if (canceled) RESULT_CANCELED else RESULT_OK
-                    setResult(resultCode, intent)
-                    finish()
-                }
-                return shouldOverride
+        // FIXME we need to instantiate this dynamically
+        webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
+            override fun handleResult(resultCode: Int, intent: Intent) {
+                setResult(resultCode, intent)
+                finish()
             }
         }
 
@@ -57,4 +48,24 @@ internal class WebViewActivity : AppCompatActivity() {
             webView.loadUrl(it)
         }
     }
+}
+
+internal abstract class KlarnaWebViewClient(
+    private val captureUrl: String?,
+) : WebViewClient() {
+
+    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        val requestUrl = request?.url?.toString()
+        val shouldOverride = captureUrl != null && requestUrl?.contains(captureUrl) ?: false
+        if (shouldOverride) requestUrl?.let {
+
+            val canceled = requestUrl.contains("state=cancel")
+            val resultCode = if (canceled) AppCompatActivity.RESULT_CANCELED else AppCompatActivity.RESULT_OK
+            val intent = Intent().apply { putExtra(WebViewActivity.REDIRECT_URL_KEY, requestUrl) }
+            handleResult(resultCode, intent)
+        }
+        return shouldOverride
+    }
+
+    abstract fun handleResult(resultCode: Int, intent: Intent)
 }

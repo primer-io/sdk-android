@@ -201,14 +201,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             val klarna = paymentMethod as? Klarna
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
-            val sessionData = data.getJSONObject("sessionData")
-            // TODO @RUI confirm what we should be putting here
-            klarna.setTokenizableValue("recurringDescription", sessionData.getString("recurringDescription"))
-            klarna.setTokenizableValue("billingAddress", sessionData.getJSONObject("billingAddress"))
+            klarna.setTokenizableValue("klarnaAuthorizationToken", data.optString("token"))
+            klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
-            sessionData.optJSONObject("shippingAddress")?.let {
-                klarna.setTokenizableValue("shippingAddress", it)
-            }
+//            klarna.setTokenizableValue("billingAddress", sessionData.getJSONObject("billingAddress"))
+//            sessionData.optJSONObject("shippingAddress")?.let {
+//                klarna.setTokenizableValue("shippingAddress", it)
+//            }
 
             tokenizationViewModel.tokenize()
         }
@@ -250,16 +249,19 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         when (resultCode) {
             RESULT_OK -> {
                 val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
+                val uri = Uri.parse(redirectUrl)
+                val token = uri.getQueryParameter("token")
+
                 val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
                 val klarna = paymentMethod as? Klarna
 
-                if (redirectUrl == null || klarna == null) {
+                if (redirectUrl == null || klarna == null || token == null) {
                     Log.d("RUI", "!! redirectUrl=$redirectUrl klarna=$klarna")
                     // TODO error
                     return
                 }
                 val id = klarna.config.id ?: return
-                tokenizationViewModel.finalizeKlarnaPayment(id)
+                tokenizationViewModel.finalizeKlarnaPayment(id, token)
             }
             RESULT_CANCELED -> {
                 // TODO
