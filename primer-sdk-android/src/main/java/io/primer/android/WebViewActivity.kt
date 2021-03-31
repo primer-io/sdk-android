@@ -47,7 +47,6 @@ internal class WebViewActivity : AppCompatActivity() {
         }
 
         url?.let {
-            Log.d("RUI", "loading url $it")
             webView.loadUrl(it)
         }
     }

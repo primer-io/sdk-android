@@ -133,7 +133,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     klarnaPaymentData.postValue(Triple(hppRedirectUrl, klarnaReturnUrl, sessionId))
                 }
                 is OperationResult.Error -> {
-                    Log.d("RUI", "!! Klarna CREATE_KLARNA_PAYMENT_SESSION error")
                     // TODO what should we do here?
                 }
             }
@@ -162,12 +161,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     fun saveKlarnaPayment(id: String, token: String) {
 
-//        let paymentMethodConfigId : String // primer
-//        let sessionId : String // klarna
-//        let authorizationToken : String // klarna
-//        let description : String // I use the first order item's name for now
-//        let localeData : KlarnaLocaleData // same as payment session request
-
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
             val currencyCode = checkoutConfig.amount?.currency
@@ -192,12 +185,10 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             when (val result = model.post(APIEndpoint.SAVE_KLARNA_PAYMENT, body)) {
                 is OperationResult.Success -> {
                     val data = result.data
-                    // TODO what?
-                    Log.d("RUI", "> saveKlarnaPayment SUCCESS")
+                    // TODO what? @RUI
                 }
                 is OperationResult.Error -> {
-                    Log.d("RUI", "> saveKlarnaPayment ERROR")
-                    // TODO what should we do here?
+                    // TODO what should we do here? @RUI
                 }
             }
         }

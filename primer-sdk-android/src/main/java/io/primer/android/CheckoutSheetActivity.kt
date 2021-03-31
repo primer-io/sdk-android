@@ -202,21 +202,15 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         }
 
         tokenizationViewModel.tokenizationStatus.observe(this) { status ->
-            if (status != TokenizationStatus.SUCCESS) return@observe
-
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            if (paymentMethod !is Klarna) return@observe
+            if (paymentMethod !is Klarna || status != TokenizationStatus.SUCCESS) return@observe
 
-            Log.d("RUI", "> uxmode= ${checkoutConfig.uxMode}")
             if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
-                //
-            }
-
-            // TODO only fire this request if UXMode says we need to
-            tokenizationViewModel.finalizeKlarnaPayment.value?.let { data ->
-                val id = paymentMethod.config.id ?: return@observe
-                val token = data.optString("token")
-                tokenizationViewModel.saveKlarnaPayment(id, token)
+                tokenizationViewModel.finalizeKlarnaPayment.value?.let { data ->
+                    val id = paymentMethod.config.id ?: return@observe
+                    val token = data.optString("token")
+                    tokenizationViewModel.saveKlarnaPayment(id, token)
+                }
             }
         }
         // endregion

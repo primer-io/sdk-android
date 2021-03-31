@@ -9,7 +9,7 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class KlarnaBehaviour constructor(
     private val klarna: Klarna,
-    packageName: String
+    packageName: String,
 ) : WebViewBehaviour(packageName) {
 
     override fun initialize(viewModel: TokenizationViewModel) {
@@ -20,9 +20,5 @@ internal class KlarnaBehaviour constructor(
         klarna.config.id?.let { id ->
             viewModel.createKlarnaBillingAgreement(id, returnUrl)
         }
-    }
-
-    override fun onSuccess(uri: Uri) {
-        Log.d("RUI", "KlarnaBehaviour onSuccess: ")
     }
 }
