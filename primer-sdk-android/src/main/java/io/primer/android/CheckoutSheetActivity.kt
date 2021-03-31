@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.webkit.WebViewFragment
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -30,11 +31,9 @@ import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
-import io.primer.android.payment.WebViewFragmentBehaviour
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
-import io.primer.android.ui.BottomSheetWebView
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -152,10 +151,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                     // which ultimately posts Triple(hppRedirectUrl, klarnaReturnUrl, sessionId) to klarnaPaymentData
                     behaviour.execute(tokenizationViewModel)
                 }
-                is WebViewFragmentBehaviour -> {
-                    // behaviour.execute(sheet, this)
-                    behaviour.execute(tokenizationViewModel)
-                }
                 else -> {
                     // TODO what should we do here?
                 }
@@ -191,23 +186,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
             }
             startActivityForResult(intent, KLARNA_REQUEST_CODE)
-
-            // region TODO @RUI display fragment instead
-            val arguments = Bundle().apply {
-                putString(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-                putString(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-            }
-
-            val fragmentManager: FragmentManager = supportFragmentManager
-            fragmentManager.setFragmentResultListener(WebViewFragment.RESULT_REQUEST_KEY, this) { requestKey: String, result: Bundle ->
-                // TODO: onFragmentResult not implemented
-                Log.d("RUI", "> $requestKey $result")
-            }
-
-            // BottomSheetWebView(this).showWithUrl(paymentUrl)
-            // WebViewFragment.newInstance(arguments).show(supportFragmentManager, "tag")
-            // openFragment(WebViewFragment.newInstance(arguments))
-            // endregion
         }
 
         tokenizationViewModel.finalizeKlarnaPayment.observe(this) { data: JSONObject ->
