@@ -1,7 +1,5 @@
 package io.primer.android.payment.klarna
 
-import android.net.Uri
-import android.util.Log
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension

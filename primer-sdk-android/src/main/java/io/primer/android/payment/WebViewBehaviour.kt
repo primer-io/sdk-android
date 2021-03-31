@@ -1,6 +1,5 @@
 package io.primer.android.payment
 
-import android.net.Uri
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
 import java.util.*
