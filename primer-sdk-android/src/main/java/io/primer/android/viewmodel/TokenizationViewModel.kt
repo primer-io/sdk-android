@@ -133,7 +133,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     klarnaPaymentData.postValue(Triple(hppRedirectUrl, klarnaReturnUrl, sessionId))
                 }
                 is OperationResult.Error -> {
-                    Log.d("RUI", "!! klarna error")
+                    Log.d("RUI", "!! Klarna CREATE_KLARNA_PAYMENT_SESSION error")
                     // TODO what should we do here?
                 }
             }

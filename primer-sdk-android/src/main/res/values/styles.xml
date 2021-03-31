@@ -11,6 +11,11 @@
         <item name="colorPrimary">@android:color/black</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/primer_app_primary</item>
+        <item name="bottomSheetDialogTheme">@style/Primer.BottomSheet</item>
+    </style>
+
+    <style name="Theme.AppCompat.WebView" parent="Theme.AppCompat">
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent">
@@ -88,7 +93,7 @@
     </style>
 
     <style name="Primer.Text.Title" parent="Primer.Text.Large">
-<!--        <item name="android:textFontWeight">500</item>-->
+        <!--        <item name="android:textFontWeight">500</item>-->
     </style>
 
     <style name="Primer.FormInput.Layout" parent="Widget.Design.TextInputLayout">
