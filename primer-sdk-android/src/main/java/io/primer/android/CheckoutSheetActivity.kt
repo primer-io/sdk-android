@@ -1,14 +1,18 @@
 package io.primer.android
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
@@ -26,9 +30,11 @@ import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
+import io.primer.android.payment.WebViewFragmentBehaviour
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.ui.BottomSheetWebView
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -115,6 +121,48 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
     private lateinit var sheet: CheckoutSheetFragment
 
+    private val viewStatusObserver = Observer<ViewStatus> {
+        val fragment = when (it) {
+            ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
+            ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
+            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
+            else -> null
+        }
+
+        if (fragment != null) {
+            openFragment(fragment, initFinished)
+        }
+
+        if (!initFinished && it != ViewStatus.INITIALIZING) {
+            initFinished = true
+        }
+    }
+
+    private val selectPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
+        it?.let {
+            when (val behaviour = it.selectedBehaviour) {
+                is NewFragmentBehaviour -> {
+                    openFragment(behaviour)
+                }
+                is WebBrowserIntentBehaviour -> {
+                    behaviour.execute(tokenizationViewModel)
+                }
+                is WebViewBehaviour -> {
+                    // this calls viewModel.createKlarnaBillingAgreement(id, returnUrl)
+                    // which ultimately posts Triple(hppRedirectUrl, klarnaReturnUrl, sessionId) to klarnaPaymentData
+                    behaviour.execute(tokenizationViewModel)
+                }
+                is WebViewFragmentBehaviour -> {
+                    // behaviour.execute(sheet, this)
+                    behaviour.execute(tokenizationViewModel)
+                }
+                else -> {
+                    // TODO what should we do here?
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -123,70 +171,19 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
-        // TODO manual di
-        // val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
-        // val apiClient = APIClient(clientToken)
-        // val model = Model(apiClient, clientToken, checkoutConfig)
-        // viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, paymentMethods)
+        /* TODO manual di
+        val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
+        val apiClient = APIClient(clientToken)
+        val model = Model(apiClient, clientToken, checkoutConfig)
+        viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, paymentMethods)
+        */
 
         mainViewModel.initialize()
 
         sheet = CheckoutSheetFragment.newInstance()
 
-        attachViewModelListeners()
-
-        attachEventListeners()
-
-        openSheet()
-    }
-
-    private inline fun <reified T> unmarshal(name: String): T {
-        // FIXME this should be parcelized instead
-        val serialized = intent.getStringExtra(name)
-        return json.decodeFromString(serializer(), serialized!!) // TODO avoid !!
-    }
-
-    override fun onResume() {
-        super.onResume()
-        WebviewInteropRegister.invokeAll()
-    }
-
-    private fun attachViewModelListeners() {
-        mainViewModel.viewStatus.observe(this, {
-            val fragment = when (it) {
-                ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
-                ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
-                ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
-                else -> null
-            }
-
-            if (fragment != null) {
-                openFragment(fragment, initFinished)
-            }
-
-            if (!initFinished && it != ViewStatus.INITIALIZING) {
-                initFinished = true
-            }
-        })
-
-        mainViewModel.selectedPaymentMethod.observe(this, { paymentMethod: PaymentMethodDescriptor? ->
-            paymentMethod?.let {
-                when (val behaviour = it.selectedBehaviour) {
-                    is NewFragmentBehaviour -> {
-                        openFragment(behaviour)
-                    }
-                    is WebBrowserIntentBehaviour -> {
-                        behaviour.execute(tokenizationViewModel)
-                    }
-                    is WebViewBehaviour -> {
-                        behaviour.execute(tokenizationViewModel)
-                    }
-                    else -> {
-                        // TODO what should we do here?
-                    }
-                }
-            }
-        })
+        mainViewModel.viewStatus.observe(this, viewStatusObserver)
+        mainViewModel.selectedPaymentMethod.observe(this, selectPaymentMethodObserver)
 
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
             val intent = Intent(this, WebViewActivity::class.java).apply {
@@ -194,6 +191,23 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
             }
             startActivityForResult(intent, KLARNA_REQUEST_CODE)
+
+            // region TODO @RUI display fragment instead
+            val arguments = Bundle().apply {
+                putString(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+                putString(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+            }
+
+            val fragmentManager: FragmentManager = supportFragmentManager
+            fragmentManager.setFragmentResultListener(WebViewFragment.RESULT_REQUEST_KEY, this) { requestKey: String, result: Bundle ->
+                // TODO: onFragmentResult not implemented
+                Log.d("RUI", "> $requestKey $result")
+            }
+
+            // BottomSheetWebView(this).showWithUrl(paymentUrl)
+            // WebViewFragment.newInstance(arguments).show(supportFragmentManager, "tag")
+            // openFragment(WebViewFragment.newInstance(arguments))
+            // endregion
         }
 
         tokenizationViewModel.finalizeKlarnaPayment.observe(this) { data: JSONObject ->
@@ -228,6 +242,33 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
         }
+
+        subscription = EventBus.subscribe {
+            when (it) {
+                is CheckoutEvent.DismissInternal -> {
+                    onExit(it.data)
+                }
+                is CheckoutEvent.ShowSuccess -> {
+                    openFragment(SuccessFragment.newInstance(it.delay))
+                }
+                is CheckoutEvent.ToggleProgressIndicator -> {
+                    onToggleProgressIndicator(it.data)
+                }
+            }
+        }
+
+        openSheet()
+    }
+
+    private inline fun <reified T> unmarshal(name: String): T {
+        // FIXME this should be parcelized instead
+        val serialized = intent.getStringExtra(name)
+        return json.decodeFromString(serializer(), serialized!!) // TODO avoid !!
+    }
+
+    override fun onResume() {
+        super.onResume()
+        WebviewInteropRegister.invokeAll()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -263,22 +304,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         }
     }
 
-    private fun attachEventListeners() {
-        subscription = EventBus.subscribe {
-            when (it) {
-                is CheckoutEvent.DismissInternal -> {
-                    onExit(it.data)
-                }
-                is CheckoutEvent.ShowSuccess -> {
-                    openFragment(SuccessFragment.newInstance(it.delay))
-                }
-                is CheckoutEvent.ToggleProgressIndicator -> {
-                    onToggleProgressIndicator(it.data)
-                }
-            }
-        }
-    }
-
     private fun onExit(reason: CheckoutExitReason) {
         if (!exited) {
             exited = true
@@ -310,10 +335,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     }
 
     private fun openSheet() {
-        supportFragmentManager.let {
-            sheet.apply {
-                show(it, tag)
-            }
-        }
+        sheet.show(supportFragmentManager, sheet.tag)
     }
 }
