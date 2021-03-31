@@ -83,11 +83,12 @@ class MainActivity : AppCompatActivity() {
 
         val items = listOf(OrderItem("ps5", 123, 1))
         UniversalCheckout.showCheckout(this, eventListener, 123, "GBP", items)
-//        UniversalCheckout.showSavedPaymentMethods(this, eventListener)
+        // UniversalCheckout.showSavedPaymentMethods(this, eventListener)
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             Log.i("primer.ExampleApp", "Creating checkout")
-            UniversalCheckout.showSavedPaymentMethods(this, eventListener)
+            UniversalCheckout.showCheckout(this, eventListener, 123, "GBP", items)
+            // UniversalCheckout.showSavedPaymentMethods(this, eventListener)
         }
     }
 
