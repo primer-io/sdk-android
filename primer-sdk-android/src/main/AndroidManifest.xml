@@ -27,6 +27,7 @@
 
         <activity
             android:name=".WebViewActivity"
+            android:theme="@style/Theme.AppCompat.WebView"
             android:label=""/>
     </application>
 

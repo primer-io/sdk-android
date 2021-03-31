@@ -14,8 +14,10 @@
         <item name="bottomSheetDialogTheme">@style/Primer.BottomSheet</item>
     </style>
 
-    <style name="Theme.AppCompat.WebView" parent="Theme.AppCompat">
+    <style name="Theme.AppCompat.WebView" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
     </style>
 
     <style name="Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent">
