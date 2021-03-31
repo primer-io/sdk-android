@@ -6,7 +6,9 @@ import org.koin.core.component.KoinApiExtension
 import java.util.*
 
 @KoinApiExtension
-internal abstract class WebViewBehaviour(private val packageName: String) : SelectedPaymentMethodBehaviour() {
+internal abstract class WebViewBehaviour(
+    private val packageName: String,
+) : SelectedPaymentMethodBehaviour() {
 
     fun execute(viewModel: TokenizationViewModel) {
         initialize(viewModel)
