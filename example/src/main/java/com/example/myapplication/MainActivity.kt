@@ -21,18 +21,18 @@ class MainActivity : AppCompatActivity() {
 
     private val eventListener = object : CheckoutEventListener {
         override fun onCheckoutEvent(event: CheckoutEvent) {
-            Log.i("primer.ExampleApp", "Checkout event! ${event.type.name}")
+            Log.i("ExampleApp", "Checkout event! ${event.type.name}")
 
             when (event) {
                 is CheckoutEvent.TokenAddedToVault -> {
-                    Log.i("primer.ExampleApp", "Customer added a new payment method: ${event.data.token}")
+                    Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
                     Handler(Looper.getMainLooper()).postDelayed({
                         UniversalCheckout.showSuccess(autoDismissDelay = 2000)
                     }, 500)
                 }
                 is CheckoutEvent.Exit -> {
                     if (event.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
-                        Log.i("primer.ExampleApp", "Awesome")
+                        Log.i("ExampleApp", "Awesome")
                     }
                 }
             }
@@ -86,13 +86,13 @@ class MainActivity : AppCompatActivity() {
         // UniversalCheckout.showSavedPaymentMethods(this, eventListener)
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            Log.i("primer.ExampleApp", "Creating checkout")
+            Log.i("ExampleApp", "Creating checkout")
             UniversalCheckout.showCheckout(this, eventListener, 123, "GBP", items)
             // UniversalCheckout.showSavedPaymentMethods(this, eventListener)
         }
     }
 
     private fun onError(error: VolleyError) {
-        Log.e("primer.ExampleApp", "Volley Error when getting client token: $error")
+        Log.e("ExampleApp", "Volley Error when getting client token: $error")
     }
 }

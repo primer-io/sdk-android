@@ -26,7 +26,7 @@ internal class WebViewActivity : AppCompatActivity() {
 
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
-            ?.substringBeforeLast(':') // FIXME better way of checking this
+            ?.substringBeforeLast(':') // FIXME better way of checking this (we're forced to do it because klarna removes it)
 
         setContentView(R.layout.activity_webview)
 

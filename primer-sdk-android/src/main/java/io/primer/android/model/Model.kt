@@ -145,7 +145,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
-                EventBus.broadcast(CheckoutEvent.TokenizationError(error)) // FIXME remove EventBus
+                EventBus.broadcast(CheckoutEvent.TokenizationError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -156,10 +156,11 @@ internal class Model constructor(
             }
             val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
             EventBus.broadcast(
-                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token)) // FIXME remove EventBus
+                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token))
             )
             if (token.tokenType == TokenType.MULTI_USE) {
-                EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
+                // TODO @RUI check with carl if this "multi_use" token resulting in "token added to vault" makes sense
+                EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token)))
             }
 
             OperationResult.Success(token)

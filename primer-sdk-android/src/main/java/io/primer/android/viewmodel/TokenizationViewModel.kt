@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
@@ -37,6 +40,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     val klarnaPaymentData = MutableLiveData<Triple<String, String, String>>() // <hppRedirectUrl, klarnaReturnUrl, sessionId>
     val finalizeKlarnaPayment = MutableLiveData<JSONObject>()
+    val saveKlarnaPayment = MutableLiveData<Unit>()
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
@@ -159,6 +163,11 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     fun saveKlarnaPayment(id: String, token: String) {
+        val status = tokenizationStatus.value
+        // TODO @RUI check with carl if we only issue this request when ADD_PAYMENT_METHOD
+        if (checkoutConfig.uxMode != UXMode.ADD_PAYMENT_METHOD || status != TokenizationStatus.SUCCESS) {
+            return
+        }
 
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
@@ -181,10 +190,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("localeData", localeData)
 
         viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.SAVE_KLARNA_PAYMENT, body)) {
+            when (model.post(APIEndpoint.SAVE_KLARNA_PAYMENT, body)) {
                 is OperationResult.Success -> {
-                    val data = result.data
-                    // TODO what? @RUI
+                    saveKlarnaPayment.postValue(Unit)
                 }
                 is OperationResult.Error -> {
                     // TODO what should we do here? @RUI

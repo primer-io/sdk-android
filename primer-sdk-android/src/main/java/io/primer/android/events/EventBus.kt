@@ -1,6 +1,7 @@
 package io.primer.android.events
 
 // FIXME drop event bus
+@Deprecated(message = "EventBus needs to be removed.")
 internal object EventBus {
 
     val subscribers = ArrayList<EventListener>()

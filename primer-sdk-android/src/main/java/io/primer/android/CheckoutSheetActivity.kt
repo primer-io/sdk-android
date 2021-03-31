@@ -3,6 +3,7 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -142,8 +143,6 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                     behaviour.execute(tokenizationViewModel)
                 }
                 is WebViewBehaviour -> {
-                    // this calls viewModel.createKlarnaBillingAgreement(id, returnUrl)
-                    // which ultimately posts Triple(hppRedirectUrl, klarnaReturnUrl, sessionId) to klarnaPaymentData
                     behaviour.execute(tokenizationViewModel)
                 }
                 else -> {
@@ -175,7 +174,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
         mainViewModel.selectedPaymentMethod.observe(this, selectPaymentMethodObserver)
 
-        // region klarna
+        // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
             val intent = Intent(this, WebViewActivity::class.java).apply {
                 putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
@@ -197,19 +196,22 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         tokenizationViewModel.tokenizationStatus.observe(this) { status ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            if (paymentMethod !is Klarna || status != TokenizationStatus.SUCCESS) return@observe
+            if (paymentMethod !is Klarna) return@observe
 
-            if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
-                tokenizationViewModel.finalizeKlarnaPayment.value?.let { data ->
-                    val id = paymentMethod.config.id ?: return@observe
-                    val token = data.optString("token")
-                    tokenizationViewModel.saveKlarnaPayment(id, token)
-                }
+            tokenizationViewModel.finalizeKlarnaPayment.value?.let { data ->
+                val id = paymentMethod.config.id ?: return@observe
+                val token = data.optString("token")
+                tokenizationViewModel.saveKlarnaPayment(id, token)
             }
+        }
+
+        tokenizationViewModel.saveKlarnaPayment.observe(this) {
+            Log.d("RUI", "> saveKlarnaPayment emission")
+            openFragment(SuccessFragment.newInstance(3000)) // TODO is this correct? @RUI
         }
         // endregion
 
-        // region paypal
+        // region PAYPAL
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
@@ -266,7 +268,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         when (requestCode) {
             KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
             else -> {
-                // unexpected request code
+                // TODO error: unexpected request code
             }
         }
     }
@@ -282,14 +284,14 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 val klarna = paymentMethod as? Klarna
 
                 if (redirectUrl == null || klarna == null || token == null) {
-                    // TODO error
+                    // TODO error: missing fields
                     return
                 }
                 val id = klarna.config.id ?: return
                 tokenizationViewModel.finalizeKlarnaPayment(id, token)
             }
             RESULT_CANCELED -> {
-                // TODO
+                // TODO anything?
             }
         }
     }
