@@ -36,6 +36,7 @@ import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
@@ -180,6 +181,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
         mainViewModel.selectedPaymentMethod.observe(this, selectPaymentMethodObserver)
 
+        // region klarna
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
             val intent = Intent(this, WebViewActivity::class.java).apply {
                 putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
@@ -199,6 +201,27 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             tokenizationViewModel.tokenize()
         }
 
+        tokenizationViewModel.tokenizationStatus.observe(this) { status ->
+            if (status != TokenizationStatus.SUCCESS) return@observe
+
+            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+            if (paymentMethod !is Klarna) return@observe
+
+            Log.d("RUI", "> uxmode= ${checkoutConfig.uxMode}")
+            if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+                //
+            }
+
+            // TODO only fire this request if UXMode says we need to
+            tokenizationViewModel.finalizeKlarnaPayment.value?.let { data ->
+                val id = paymentMethod.config.id ?: return@observe
+                val token = data.optString("token")
+                tokenizationViewModel.saveKlarnaPayment(id, token)
+            }
+        }
+        // endregion
+
+        // region paypal
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
@@ -220,6 +243,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
             startActivity(intent)
         }
+        // endregion
 
         subscription = EventBus.subscribe {
             when (it) {

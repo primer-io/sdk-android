@@ -159,6 +159,49 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
         }
     }
+
+    fun saveKlarnaPayment(id: String, token: String) {
+
+//        let paymentMethodConfigId : String // primer
+//        let sessionId : String // klarna
+//        let authorizationToken : String // klarna
+//        let description : String // I use the first order item's name for now
+//        let localeData : KlarnaLocaleData // same as payment session request
+
+        val localeData = JSONObject().apply {
+            val countryCode = checkoutConfig.locale.country
+            val currencyCode = checkoutConfig.amount?.currency
+            val locale = checkoutConfig.locale.toLanguageTag()
+
+            put("countryCode", countryCode)
+            put("currencyCode", currencyCode)
+            put("localeCode", locale)
+        }
+
+        val description = checkoutConfig.orderItems.map { it.name }.reduce { acc, s -> "$acc;$s" }
+
+        val body = JSONObject()
+        val sessionId = klarnaPaymentData.value?.third ?: return
+        body.put("paymentMethodConfigId", id)
+        body.put("sessionId", sessionId)
+        body.put("authorizationToken", token)
+        body.put("description", description)
+        body.put("localeData", localeData)
+
+        viewModelScope.launch {
+            when (val result = model.post(APIEndpoint.SAVE_KLARNA_PAYMENT, body)) {
+                is OperationResult.Success -> {
+                    val data = result.data
+                    // TODO what?
+                    Log.d("RUI", "> saveKlarnaPayment SUCCESS")
+                }
+                is OperationResult.Error -> {
+                    Log.d("RUI", "> saveKlarnaPayment ERROR")
+                    // TODO what should we do here?
+                }
+            }
+        }
+    }
     // endregion
 
     // region paypal
