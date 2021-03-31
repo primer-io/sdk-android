@@ -2,6 +2,7 @@ package io.primer.android
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -29,6 +30,7 @@ internal class WebViewActivity : AppCompatActivity() {
             ?.substringBeforeLast(':') // FIXME better way of checking this
 
         setContentView(R.layout.activity_webview)
+
         val webView = findViewById<WebView>(R.id.webView).apply {
             settings.setSupportZoom(true)
             settings.loadsImagesAutomatically = true
@@ -45,6 +47,7 @@ internal class WebViewActivity : AppCompatActivity() {
         }
 
         url?.let {
+            Log.d("RUI", "loading url $it")
             webView.loadUrl(it)
         }
     }

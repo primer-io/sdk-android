@@ -25,7 +25,9 @@
             android:label=""
             android:theme="@android:style/Theme.NoDisplay" />
 
-        <activity android:name=".WebViewActivity" />
+        <activity
+            android:name=".WebViewActivity"
+            android:label=""/>
     </application>
 
 </manifest>
