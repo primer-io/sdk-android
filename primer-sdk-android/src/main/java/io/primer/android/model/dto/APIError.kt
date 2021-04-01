@@ -14,33 +14,33 @@ import java.util.*
 
 @Serializable
 data class APIError(
-  val description: String,
-  val errorId: String? = null,
-  val diagnosticsId: String? = null,
-  val validationErrors: List<ValidationError> = Collections.emptyList(),
+    val description: String,
+    val errorId: String? = null,
+    val diagnosticsId: String? = null,
+    val validationErrors: List<ValidationError> = Collections.emptyList(),
 ) {
 
     @Serializable
     data class ValidationErrorDetail(
-      val path: String,
-      val description: String,
+        val path: String,
+        val description: String,
     )
 
     @Serializable
     data class ValidationError(
-      val model: String,
-      val errors: List<ValidationErrorDetail>,
+        val model: String,
+        val errors: List<ValidationErrorDetail>,
     )
 
     companion object {
 
         private val log = Logger("api-error")
         private val DEFAULT_ERROR_ELEMENT = json.parseToJsonElement(
-          "{\"description\":\"Unknown Client Error\"}"
+            "{\"description\":\"Unknown Client Error\"}"
         )
 
         fun create(response: Response): APIError {
-            return json.decodeFromJsonElement(getErrorFromContent(response.body))
+            return json.decodeFromJsonElement(getErrorFromContent(response.body()))
         }
 
         fun create(e: IOException?): APIError {

@@ -5,16 +5,16 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
+import io.primer.android.UXMode
 import io.primer.android.model.dto.MonetaryAmount
 
 internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {
 
-    private var uxMode: UniversalCheckout.UXMode? = null
+    private var uxMode: UXMode? = null
     private var amount: MonetaryAmount? = null
 
-    fun setUXMode(uxMode: UniversalCheckout.UXMode) {
+    fun setUXMode(uxMode: UXMode) {
         this.uxMode = uxMode
         update()
     }
@@ -26,8 +26,8 @@ internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? =
 
     private fun update() {
         findViewById<TextView>(R.id.primer_sheet_title).text = when (uxMode) {
-            UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(context, amount)
-            UniversalCheckout.UXMode.VAULT -> context.getString(R.string.add_new_payment_method)
+            UXMode.CHECKOUT -> PayAmountText.generate(context, amount)
+            UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_new_payment_method)
             else -> ""
         }
     }

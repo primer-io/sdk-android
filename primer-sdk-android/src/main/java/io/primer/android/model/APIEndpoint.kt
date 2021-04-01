@@ -16,10 +16,10 @@ internal class APIEndpoint {
         const val CREATE_GOCARDLESS_MANDATE = "/gocardless/mandates"
 
         fun get(
-          session: ClientSession,
-          target: Target,
-          pathname: String,
-          params: Map<String, String>? = null,
+            session: ClientSession,
+            target: Target,
+            pathname: String,
+            params: Map<String, String>? = null,
         ): String {
             val baseUrl = if (target == Target.PCI) session.pciUrl else session.coreUrl
             var url = "$baseUrl$pathname"

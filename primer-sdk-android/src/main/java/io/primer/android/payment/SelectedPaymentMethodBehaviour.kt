@@ -1,7 +1,5 @@
 package io.primer.android.payment
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
 import io.primer.android.R
@@ -12,8 +10,8 @@ import org.koin.core.component.KoinApiExtension
 internal abstract class SelectedPaymentMethodBehaviour
 
 internal class NewFragmentBehaviour(
-  private val factory: (() -> Fragment),
-  private val returnToPreviousOnBack: Boolean = false,
+    private val factory: (() -> Fragment),
+    private val returnToPreviousOnBack: Boolean = false,
 ) : SelectedPaymentMethodBehaviour() {
 
     fun execute(parent: Fragment) {
@@ -33,23 +31,21 @@ internal class NewFragmentBehaviour(
 @KoinApiExtension
 internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehaviour() {
 
-    protected var tokenizationViewModel: TokenizationViewModel? = null
+    protected var tokenizationViewModel: TokenizationViewModel? = null // FIXME how can we avoid holding the viewmodel here?
 
-    fun execute(context: Context, viewModel: TokenizationViewModel) {
+    fun execute(viewModel: TokenizationViewModel) {
         tokenizationViewModel = viewModel
 
         initialize()
 
-        val callback = WebviewInteropRegister.register(this)
+        val interopRegister = WebviewInteropRegister.register(this)
 
-        getUri(callback.cancelUrl, callback.successUrl) { uri ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-            context.startActivity(intent)
-        }
+        getUri(interopRegister.cancelUrl, interopRegister.successUrl)
     }
 
     abstract fun initialize()
-    abstract fun getUri(cancelUrl: String, returnUrl: String, callback: ((String) -> Unit))
+    abstract fun getUri(cancelUrl: String, returnUrl: String)
+
     abstract fun onSuccess(uri: Uri)
     abstract fun onCancel(uri: Uri? = null)
 }

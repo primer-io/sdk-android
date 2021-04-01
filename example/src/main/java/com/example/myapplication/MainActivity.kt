@@ -15,70 +15,69 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout.EventListener {
-    override fun createToken(callback: (String) -> Unit) {
-        val queue = Volley.newRequestQueue(this)
+class MainActivity : AppCompatActivity() {
 
-        Log.i("primer.ExampleApp","Creating token")
+    private val eventListener = object : CheckoutEventListener {
+        override fun onCheckoutEvent(event: CheckoutEvent) {
+            Log.i("primer.ExampleApp", "Checkout event! ${event.type.name}")
 
-        val body = JSONObject()
-
-        body.put("customerId", "will-123")
-
-        queue.add(
-            JsonObjectRequest(
-                Request.Method.POST,
-                "http://192.168.0.107/token",
-                body,
-                { response -> callback(response.getString("clientToken")) },
-                { error -> onError(error) }
-            )
-        )
-    }
-
-    override fun onCheckoutEvent(e: CheckoutEvent) {
-        Log.i("primer.ExampleApp", "Checkout event! ${e.type.name}")
-
-        when(e) {
-            is CheckoutEvent.TokenAddedToVault -> {
-                Log.i("primer.ExampleApp","Customer added a new payment method!")
-                Log.i("primer.ExampleApp", e.data.token)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    UniversalCheckout.showSuccess(autoDismissDelay = 2000)
-                }, 500)
-            }
-            is CheckoutEvent.Exit -> {
-                if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
-                    Log.i("primer.ExampleApp", "Awesome")
+            when (event) {
+                is CheckoutEvent.TokenAddedToVault -> {
+                    Log.i("primer.ExampleApp", "Customer added a new payment method: ${event.data.token}")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        UniversalCheckout.showSuccess(autoDismissDelay = 2000)
+                    }, 500)
+                }
+                is CheckoutEvent.Exit -> {
+                    if (event.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
+                        Log.i("primer.ExampleApp", "Awesome")
+                    }
                 }
             }
         }
-
     }
+
+    private val paymentMethods = listOf(
+        PaymentMethod.Card(),
+        PaymentMethod.PayPal(),
+        PaymentMethod.GoCardless(
+            companyName = "Luko AB",
+            companyAddress = "123 French St, Francetown, France, FR3NCH",
+            customerName = "Will Knowles",
+            customerEmail = "will.jk01@gmail.com",
+            customerAddressPostalCode = "864918",
+            customerAddressLine1 = "123 Fake St",
+            customerAddressCity = "Paris",
+            customerAddressCountryCode = "FR"
+        ),
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        UniversalCheckout.initialize(this)
+        val queue = Volley.newRequestQueue(this@MainActivity)
+        val body = JSONObject().apply { put("customerId", "will-123") }
 
-        UniversalCheckout.loadPaymentMethods(listOf(
-            PaymentMethod.Card(),
-            PaymentMethod.GoCardless(
-                companyName = "Luko AB",
-                companyAddress = "123 French St, Francetown, France, FR3NCH",
-                customerName = "Will Knowles",
-                customerEmail = "will.jk01@gmail.com",
-                customerAddressPostalCode = "864918",
-                customerAddressLine1 = "123 Fake St",
-                customerAddressCity = "Paris",
-                customerAddressCountryCode = "FR"
-            ),
-        ))
+        queue.add(
+            JsonObjectRequest(
+                Request.Method.POST,
+                "http://10.0.2.2/token",
+                body,
+                { response ->
+                    val token = response.getString("clientToken")
+                    initializeCheckout(token)
+                },
+                { error -> onError(error) }
+            )
+        )
+    }
 
-        UniversalCheckout.showVault(this)
-
+    private fun initializeCheckout(token: String) {
+        UniversalCheckout.initialize(token)
+        UniversalCheckout.loadPaymentMethods(paymentMethods)
+        UniversalCheckout.showSavedPaymentMethods(this, eventListener)
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             Log.i("primer.ExampleApp", "Creating checkout")
             UniversalCheckout.showVault(this)
@@ -86,7 +85,6 @@ class MainActivity : AppCompatActivity(), ClientTokenProvider, UniversalCheckout
     }
 
     private fun onError(error: VolleyError) {
-        Log.e("primer.ExampleApp", "Volley Error when getting client token!")
-        Log.e("primer.ExampleApp", error.toString())
+        Log.e("primer.ExampleApp", "Volley Error when getting client token: $error")
     }
 }

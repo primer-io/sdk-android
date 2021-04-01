@@ -3,29 +3,27 @@ package io.primer.android.viewmodel
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodDescriptorFactory
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class PaymentMethodDescriptorResolver(
-  viewModel: PrimerViewModel,
-  private val configured: List<PaymentMethod>,
-  private val remote: List<PaymentMethodRemoteConfig>,
+    private val configured: List<PaymentMethod>,
+    private val paymentMethodRemoteConfigs: List<PaymentMethodRemoteConfig>,
+    private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
 ) {
 
-    private val factory = PaymentMethodDescriptor.Factory(viewModel)
-
-    fun resolve(): List<PaymentMethodDescriptor> {
+    fun resolve(viewModel: PrimerViewModel): List<PaymentMethodDescriptor> {
         val list = ArrayList<PaymentMethodDescriptor>()
 
-        remote.forEach { pm ->
-            val config = configured.find { it.identifier == pm.type }
-
-            if (config != null) {
-                val descriptor = factory.create(pm, config)
-                if (descriptor != null) {
-                    list.add(descriptor)
+        paymentMethodRemoteConfigs.forEach { paymentMethodRemoteConfig ->
+            configured
+                .find { it.identifier == paymentMethodRemoteConfig.type }
+                ?.let {
+                    paymentMethodDescriptorFactory
+                        .create(config = paymentMethodRemoteConfig, options = it, viewModel = viewModel)
+                        ?.let { paymentMethodDescriptor -> list.add(paymentMethodDescriptor) }
                 }
-            }
         }
 
         return list

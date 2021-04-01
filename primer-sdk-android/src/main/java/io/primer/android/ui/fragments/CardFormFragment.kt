@@ -11,10 +11,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.R
-import io.primer.android.UniversalCheckout
+import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
-import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
@@ -29,7 +27,6 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
-import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.*
@@ -43,13 +40,10 @@ import kotlin.collections.HashMap
 @KoinApiExtension
 internal class CardFormFragment : Fragment(), DIAppComponent {
 
-    private val log = Logger("card-form")
     private lateinit var inputs: Map<String, TextInputEditText>
     private lateinit var submitButton: ButtonPrimary
     private lateinit var goBackButton: ImageView
 
-    //  private lateinit var submitButtonText: TextView
-//  private lateinit var submitButtonLoading: ProgressBar
     private lateinit var errorText: TextView
     private lateinit var viewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
@@ -73,7 +67,6 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Assign UI vars
         inputs = mapOf(
             CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name_input),
             CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number_input),
@@ -84,10 +77,23 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         goBackButton = view.findViewById(R.id.card_form_go_back)
         errorText = view.findViewById(R.id.card_form_error_message)
 
-        // Attach view model observers
-        tokenizationViewModel.status.observe(viewLifecycleOwner, this::onStatusChanged)
-        tokenizationViewModel.error.observe(viewLifecycleOwner, this::onErrorChanged)
-        tokenizationViewModel.result.observe(viewLifecycleOwner, this::onResultChanged)
+        tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                TokenizationStatus.LOADING -> toggleLoading(true)
+                else -> toggleLoading(false)
+            }
+        }
+        tokenizationViewModel.tokenizationError.observe(viewLifecycleOwner) {
+            errorText.text = requireContext().getText(R.string.payment_method_error)
+            errorText.visibility = View.VISIBLE
+        }
+        tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) { paymentMethodToken ->
+            if (paymentMethodToken != null) {
+                if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+                    viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+                }
+            }
+        }
 
         tokenizationViewModel.validationErrors.observe(viewLifecycleOwner, {
             setValidationErrors()
@@ -96,12 +102,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             setValidationErrors()
         })
 
-        viewModel.keyboardVisible.observe(viewLifecycleOwner, this::onKeyboardVisibilityChanged)
+        viewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
         onUXModeChanged(checkoutConfig.uxMode)
 
-        tokenizationViewModel.reset(viewModel.selectedPaymentMethod.value)
-
-        // Attach input event listeners
+        tokenizationViewModel.resetPaymentMethod(viewModel.selectedPaymentMethod.value)
 
         // input masks
         inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())
@@ -200,30 +204,6 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun onStatusChanged(status: TokenizationStatus) {
-        when (status) {
-            TokenizationStatus.LOADING -> toggleLoading(true)
-            else -> toggleLoading(false)
-        }
-    }
-
-    private fun onErrorChanged(error: APIError?) {
-        if (error == null) {
-            return
-        }
-
-        errorText.text = requireContext().getText(R.string.payment_method_error)
-        errorText.visibility = View.VISIBLE
-    }
-
-    private fun onResultChanged(data: JSONObject?) {
-        if (data != null) {
-            if (checkoutConfig.uxMode == UniversalCheckout.UXMode.VAULT) {
-                viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-            }
-        }
-    }
-
     private fun onKeyboardVisibilityChanged(visible: Boolean) {
         val hasFocus = inputs.entries.any { it.value.isFocused }
 
@@ -236,10 +216,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun onUXModeChanged(mode: UniversalCheckout.UXMode) {
+    private fun onUXModeChanged(mode: UXMode) {
         submitButton.text = when (mode) {
-            UniversalCheckout.UXMode.VAULT -> requireContext().getString(R.string.confirm)
-            UniversalCheckout.UXMode.CHECKOUT -> PayAmountText.generate(
+            UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.confirm)
+            UXMode.CHECKOUT -> PayAmountText.generate(
                 requireContext(),
                 checkoutConfig.amount
             )
