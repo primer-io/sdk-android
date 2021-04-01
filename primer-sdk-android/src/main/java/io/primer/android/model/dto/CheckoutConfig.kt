@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 internal data class CheckoutConfig(
     val clientToken: String,
     val uxMode: UXMode,
+    val isStandalonePayment: Boolean,
     val theme: UniversalCheckoutTheme,
     val amount: MonetaryAmount?,
 ) {
@@ -15,12 +16,14 @@ internal data class CheckoutConfig(
     constructor(
         clientToken: String,
         uxMode: UXMode = UXMode.CHECKOUT,
+        isStandalonePayment: Boolean = false,
         currency: String? = null,
         amount: Int? = null,
         theme: UniversalCheckoutTheme? = null,
     ) : this(
         clientToken,
         uxMode = uxMode,
+        isStandalonePayment = isStandalonePayment,
         theme = theme ?: UniversalCheckoutTheme.getDefault(),
         amount = MonetaryAmount.create(currency = currency, value = amount)
     )
