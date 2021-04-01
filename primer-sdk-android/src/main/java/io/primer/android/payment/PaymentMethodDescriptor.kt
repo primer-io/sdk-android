@@ -16,7 +16,7 @@ import java.util.*
 
 internal abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
-    protected val values: JSONObject = JSONObject() // FIXME why is this needed? why is the model holding a json format of itself?
+    protected val values: JSONObject = JSONObject(), // FIXME why is this needed? why is the model holding a json format of itself?
 ) {
 
     abstract val identifier: String
@@ -65,7 +65,7 @@ internal class PaymentMethodDescriptorFactory {
             PAYMENT_CARD_IDENTIFIER -> CreditCard(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.Card)
             PAYPAL_IDENTIFIER -> PayPal(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.PayPal)
             GOCARDLESS_IDENTIFIER -> GoCardless(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.GoCardless)
-            KLARNA_IDENTIFIER -> Klarna(checkoutConfig, paymentMethodRemoteConfig)
+            KLARNA_IDENTIFIER -> Klarna(checkoutConfig, paymentMethod as PaymentMethod.Klarna, paymentMethodRemoteConfig)
             else -> null
         }
     }

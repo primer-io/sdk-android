@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import io.primer.android.WebViewActivity
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
@@ -95,7 +94,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     // region KLARNA
-    fun createKlarnaBillingAgreement(id: String, returnUrl: String) {
+    fun createKlarnaBillingAgreement(id: String, returnUrl: String, klarna: Klarna) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country
@@ -108,7 +107,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
 
             val orderItems = JSONArray().apply {
-                checkoutConfig.orderItems.forEach {
+//                checkoutConfig.orderItems.forEach {
+                klarna.options.orderItems.forEach {
                     val item = JSONObject().apply {
                         put("name", it.name)
                         put("unitAmount", it.unitAmount)
@@ -149,16 +149,15 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         val uri = Uri.parse(redirectUrl)
         val klarnaAuthToken = uri.getQueryParameter("token")
 
-        if (redirectUrl == null || klarna == null || klarnaAuthToken == null) {
+        if (redirectUrl == null || klarna == null || klarna.config.id == null || klarnaAuthToken == null) {
             // TODO error: missing fields
             return
         }
-        val id = klarna.config.id ?: return
 
-        vaultKlarnaPayment(id, klarnaAuthToken)
+        vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
     }
 
-    fun vaultKlarnaPayment(id: String, token: String) {
+    fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
             val currencyCode = checkoutConfig.amount?.currency
@@ -169,7 +168,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             put("localeCode", locale)
         }
 
-        val description = checkoutConfig.orderItems
+//        val description = checkoutConfig.orderItems
+        val description = klarna.options.orderItems
             .map { it.name }
             .reduce { acc, s -> "$acc;$s" }
 

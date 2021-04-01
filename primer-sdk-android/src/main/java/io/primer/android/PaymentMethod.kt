@@ -1,5 +1,6 @@
 package io.primer.android
 
+import io.primer.android.model.OrderItem
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
@@ -17,7 +18,11 @@ sealed class PaymentMethod(val identifier: String) {
     class PayPal : PaymentMethod(PAYPAL_IDENTIFIER)
 
     @Serializable
-    class Klarna : PaymentMethod(KLARNA_IDENTIFIER)
+    class Klarna(
+        val amount: Int,
+        val currency: String,
+        val orderItems: List<OrderItem>,
+    ) : PaymentMethod(KLARNA_IDENTIFIER)
 
     @Serializable
     class GoCardless(
@@ -31,7 +36,5 @@ sealed class PaymentMethod(val identifier: String) {
         val customerAddressState: String? = null,
         val customerAddressCountryCode: String? = null,
         val customerAddressPostalCode: String? = null,
-    ) : PaymentMethod(
-        GOCARDLESS_IDENTIFIER
-    )
+    ) : PaymentMethod(GOCARDLESS_IDENTIFIER)
 }

@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -16,6 +17,10 @@ import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 import java.util.*
+
+const val CLIENT_TOKEN_URI: String = "https://api.sandbox.primer.io/auth/client-token"
+const val CUSTOMER_ID: String = "will-123"
+const val API_KEY: String = "b91c117b-3a89-4773-bfc7-58a24d8328a6"
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,20 +44,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val paymentMethods = listOf(
-        PaymentMethod.Card(),
-        PaymentMethod.PayPal(),
-        PaymentMethod.Klarna(),
-        PaymentMethod.GoCardless(
-            companyName = "Luko AB",
-            companyAddress = "123 French St, Francetown, France, FR3NCH",
-            customerName = "Will Knowles",
-            customerEmail = "will.jk01@gmail.com",
-            customerAddressPostalCode = "864918",
-            customerAddressLine1 = "123 Fake St",
-            customerAddressCity = "Paris",
-            customerAddressCountryCode = "FR"
-        ),
+    private val card = PaymentMethod.Card()
+
+    private val paypal = PaymentMethod.PayPal()
+
+    private val goCardless = PaymentMethod.GoCardless(
+        companyName = "Luko AB",
+        companyAddress = "123 French St, Francetown, France, FR3NCH",
+        customerName = "Will Knowles",
+        customerEmail = "will.jk01@gmail.com",
+        customerAddressPostalCode = "864918",
+        customerAddressLine1 = "123 Fake St",
+        customerAddressCity = "Paris",
+        customerAddressCountryCode = "FR"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,14 +64,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        val queue = Volley.newRequestQueue(this@MainActivity)
-        val body = JSONObject().apply { put("customerId", "will-123") }
+        val queue = Volley.newRequestQueue(this)
 
         queue.add(
-            JsonObjectRequest(
-                Request.Method.POST,
-                "http://10.0.2.2/token",
-                body,
+            ClientTokenRequest(
                 { response ->
                     val token = response.getString("clientToken")
                     initializeCheckout(token)
@@ -78,21 +78,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(this, token, Locale.UK)
-        UniversalCheckout.loadPaymentMethods(paymentMethods)
+        val items = listOf(OrderItem("PS5", 99999, 1))
+        val klarna = PaymentMethod.Klarna(
+            amount = 99999,
+            currency = "GBP",
+            orderItems = items,
+        )
 
-        val items = listOf(OrderItem("ps5", 123, 1))
-        UniversalCheckout.showCheckout(this, eventListener, 123, "GBP", items)
-        // UniversalCheckout.showSavedPaymentMethods(this, eventListener)
+        UniversalCheckout.initialize(this, token, Locale.UK)
+        UniversalCheckout.loadPaymentMethods(listOf(klarna))
+
+        showCheckout()
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            Log.i("ExampleApp", "Creating checkout")
-            UniversalCheckout.showCheckout(this, eventListener, 123, "GBP", items)
-            // UniversalCheckout.showSavedPaymentMethods(this, eventListener)
+            showCheckout()
         }
+    }
+
+    private fun showCheckout() {
+//        UniversalCheckout.showVault(this, eventListener, isStandalonePayment = true)
+        UniversalCheckout.showVault(
+            context = this,
+            listener = eventListener,
+            amount = 99999,
+            currency = "GBP",
+//            orderItems = listOf(OrderItem("PS5", 99999, 1)),
+            isStandalonePayment = true
+        )
     }
 
     private fun onError(error: VolleyError) {
         Log.e("ExampleApp", "Volley Error when getting client token: $error")
+    }
+}
+
+class ClientTokenRequest(onSuccess: Response.Listener<JSONObject>, onError: Response.ErrorListener) : JsonObjectRequest(
+    Method.POST,
+    CLIENT_TOKEN_URI,
+    JSONObject().apply { put("customerId", CUSTOMER_ID) },
+    onSuccess,
+    onError,
+) {
+
+    override fun getHeaders(): MutableMap<String, String> {
+        return HashMap<String, String>().apply {
+            if (API_KEY.isNotEmpty()) {
+                put("X-Api-Key", API_KEY)
+            }
+        }
     }
 }

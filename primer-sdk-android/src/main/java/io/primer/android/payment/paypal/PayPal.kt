@@ -13,7 +13,6 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
-import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -29,7 +28,7 @@ internal class PayPal constructor(
         get() = PAYPAL_IDENTIFIER
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+        get() = if (checkoutConfig.uxMode == UXMode.VAULT) {
             PayPalBillingAgreementBehaviour(this)
         } else {
             PayPalOrderBehaviour(this)

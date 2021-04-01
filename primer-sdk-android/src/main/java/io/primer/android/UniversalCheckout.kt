@@ -24,8 +24,7 @@ import java.util.*
 
 internal enum class UXMode {
     CHECKOUT,
-    ADD_PAYMENT_METHOD,
-    STANDALONE_PAYMENT_METHOD,
+    VAULT,
 }
 
 object UniversalCheckout {
@@ -45,7 +44,9 @@ object UniversalCheckout {
         val config = CheckoutConfig(clientToken = fullToken, locale = locale, packageName = context.packageName)
 
         // FIXME inject these dependencies
-        val httpLoggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        }
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor { chain: Interceptor.Chain ->
@@ -75,8 +76,15 @@ object UniversalCheckout {
         checkout.getSavedPaymentMethods(callback)
     }
 
-    fun showSavedPaymentMethods(context: Context, listener: CheckoutEventListener) {
-        checkout.showSavedPaymentMethods(context, listener)
+    fun showVault(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int? = null,
+        currency: String? = null,
+//        orderItems: List<OrderItem> = emptyList(),
+        isStandalonePayment: Boolean = false,
+    ) {
+        checkout.showVault(context, listener, amount, currency, isStandalonePayment)
     }
 
     fun showCheckout(
@@ -84,14 +92,10 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int,
         currency: String,
-        orderItems: List<OrderItem> = emptyList(),
+//        orderItems: List<OrderItem> = emptyList(),
+        isStandalonePayment: Boolean = false,
     ) {
-        checkout.showCheckout(context, listener, amount, currency, orderItems)
-    }
-
-    @KoinApiExtension
-    fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
-        checkout.showStandalone(context, listener, paymentMethod)
+        checkout.showCheckout(context, listener, amount, currency, isStandalonePayment)
     }
 
     /**
@@ -163,15 +167,22 @@ internal class InternalUniversalCheckout constructor(
     }
 
     @KoinApiExtension
-    fun showSavedPaymentMethods(context: Context, listener: CheckoutEventListener) {
+    fun showVault(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int? = null,
+        currency: String? = null,
+        isStandalonePayment: Boolean = false,
+    ) {
         show(
             context = context,
             listener = listener,
             locale = locale,
-            uxMode = UXMode.ADD_PAYMENT_METHOD,
-            amount = null,
-            currency = null,
-            orderItems = emptyList()
+            uxMode = UXMode.VAULT,
+            amount = amount,
+            currency = currency,
+//            orderItems = emptyList(),
+            isStandalonePayment = isStandalonePayment
         )
     }
 
@@ -181,7 +192,7 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int,
         currency: String,
-        orderItems: List<OrderItem>,
+        isStandalonePayment: Boolean = false,
     ) {
         show(
             context = context,
@@ -190,21 +201,8 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
-            orderItems = orderItems
-        )
-    }
-
-    @KoinApiExtension
-    fun showStandalone(context: Context, listener: CheckoutEventListener, paymentMethod: PaymentMethod) {
-        paymentMethods = listOf(paymentMethod)
-        show(
-            context = context,
-            listener = listener,
-            locale = locale,
-            uxMode = UXMode.STANDALONE_PAYMENT_METHOD,
-            amount = null,
-            currency = null,
-            orderItems = emptyList()
+//            orderItems = emptyList(),
+            isStandalonePayment = isStandalonePayment,
         )
     }
 
@@ -225,10 +223,11 @@ internal class InternalUniversalCheckout constructor(
         context: Context,
         listener: CheckoutEventListener,
         locale: Locale,
-        uxMode: UXMode?,
+        uxMode: UXMode,
         amount: Int?,
         currency: String?,
-        orderItems: List<OrderItem>,
+//        orderItems: List<OrderItem>,
+        isStandalonePayment: Boolean,
     ) {
         subscription?.unregister()
 
@@ -241,10 +240,11 @@ internal class InternalUniversalCheckout constructor(
             clientToken = fullToken,
             packageName = context.packageName,
             locale = locale,
-            uxMode = uxMode ?: UXMode.CHECKOUT,
+            uxMode = uxMode,
+            isStandalonePayment = isStandalonePayment,
             amount = amount,
             currency = currency,
-            orderItems = orderItems,
+//            orderItems = orderItems,
             theme = theme,
         )
 

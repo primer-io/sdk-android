@@ -90,7 +90,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
         tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) { paymentMethodToken ->
             if (paymentMethodToken != null) {
-                if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+                if (checkoutConfig.uxMode == UXMode.VAULT) {
                     viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
                 }
             }
@@ -214,7 +214,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun onUXModeChanged(mode: UXMode) {
         submitButton.text = when (mode) {
-            UXMode.ADD_PAYMENT_METHOD -> requireContext().getString(R.string.confirm)
+            UXMode.VAULT -> requireContext().getString(R.string.confirm)
             UXMode.CHECKOUT -> PayAmountText.generate(
                 requireContext(),
                 checkoutConfig.amount

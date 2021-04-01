@@ -16,7 +16,7 @@ internal class KlarnaBehaviour constructor(
 
     override fun getUri(viewModel: TokenizationViewModel, returnUrl: String) {
         klarna.config.id?.let { id ->
-            viewModel.createKlarnaBillingAgreement(id, returnUrl)
+            viewModel.createKlarnaBillingAgreement(id, returnUrl, klarna)
         }
     }
 }

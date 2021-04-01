@@ -189,7 +189,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             klarna.setTokenizableValue("klarnaAuthorizationToken", data.optString("klarnaAuthorizationToken"))
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
-            tokenizationViewModel.tokenize() // TODO @RUI make sure success if propagated
+            tokenizationViewModel.tokenize()
         }
         // endregion
 
@@ -265,7 +265,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 tokenizationViewModel.handleKlarnaRequestResult(redirectUrl, klarna)
             }
             RESULT_CANCELED -> {
-                // TODO anything?
+                onExit(CheckoutExitReason.DISMISSED_BY_USER)
             }
         }
     }
@@ -273,7 +273,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private fun onExit(reason: CheckoutExitReason) {
         if (!exited) {
             exited = true
-            EventBus.broadcast(CheckoutEvent.Exit(CheckoutExitInfo(reason)))
+            EventBus.broadcast(
+                CheckoutEvent.Exit(CheckoutExitInfo(reason))
+            )
             finish()
         }
     }

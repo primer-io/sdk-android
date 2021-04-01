@@ -12,6 +12,40 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.util.*
 
+@Serializable
+internal data class CheckoutConfig(
+    val clientToken: String,
+    val packageName: String,
+    val uxMode: UXMode,
+    @Serializable(with = LocaleSerializer::class) val locale: Locale,
+    val amount: MonetaryAmount?,
+//    val orderItems: List<OrderItem>,
+    val isStandalonePayment: Boolean,
+    val theme: UniversalCheckoutTheme,
+) {
+
+    constructor(
+        clientToken: String,
+        packageName: String,
+        locale: Locale,
+        uxMode: UXMode = UXMode.CHECKOUT,
+        isStandalonePayment: Boolean = false,
+        currency: String? = null,
+        amount: Int? = null,
+//        orderItems: List<OrderItem> = emptyList(),
+        theme: UniversalCheckoutTheme? = null,
+    ) : this(
+        clientToken = clientToken,
+        packageName = packageName,
+        uxMode = uxMode,
+        locale = locale,
+        amount = MonetaryAmount.create(currency = currency, value = amount),
+//        orderItems = orderItems,
+        isStandalonePayment = isStandalonePayment,
+        theme = theme ?: UniversalCheckoutTheme.getDefault()
+    )
+}
+
 object LocaleSerializer : KSerializer<Locale> {
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Locale", PrimitiveKind.STRING)
@@ -28,35 +62,4 @@ object LocaleSerializer : KSerializer<Locale> {
         encoder.encodeString(value.country)
         encoder.encodeString(value.variant)
     }
-}
-
-@Serializable
-internal data class CheckoutConfig(
-    val clientToken: String,
-    val packageName: String,
-    val uxMode: UXMode,
-    @Serializable(with = LocaleSerializer::class) val locale: Locale,
-    val amount: MonetaryAmount?,
-    val orderItems: List<OrderItem> = emptyList(),
-    val theme: UniversalCheckoutTheme,
-) {
-
-    constructor(
-        clientToken: String,
-        packageName: String,
-        locale: Locale,
-        uxMode: UXMode = UXMode.CHECKOUT,
-        currency: String? = null,
-        amount: Int? = null,
-        orderItems: List<OrderItem> = emptyList(),
-        theme: UniversalCheckoutTheme? = null,
-    ) : this(
-        clientToken = clientToken,
-        packageName = packageName,
-        uxMode = uxMode,
-        locale = locale,
-        amount = MonetaryAmount.create(currency = currency, value = amount),
-        orderItems = orderItems,
-        theme = theme ?: UniversalCheckoutTheme.getDefault()
-    )
 }
