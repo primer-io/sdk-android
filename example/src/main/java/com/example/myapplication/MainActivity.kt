@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         val items = listOf(OrderItem("PS5", 99999, 1))
         val klarna = PaymentMethod.Klarna(orderItems = items)
 
-        UniversalCheckout.initialize(this, token, Locale.GERMANY)
+        UniversalCheckout.initialize(this, token, Locale.UK)
         UniversalCheckout.loadPaymentMethods(listOf(klarna))
 
         showCheckout()
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             context = this,
             listener = eventListener,
             amount = 99999,
-            currency = "EUR",
+            currency = "GBP",
             isStandalonePaymentMethod = true
         )
     }
