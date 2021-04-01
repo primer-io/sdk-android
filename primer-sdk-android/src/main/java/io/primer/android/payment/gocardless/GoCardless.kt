@@ -27,7 +27,7 @@ internal class GoCardless(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             GoCardlessViewFragment::newInstance,
-            returnToPreviousOnBack = checkoutConfig.uxMode != UXMode.STANDALONE_PAYMENT_METHOD
+            returnToPreviousOnBack = !checkoutConfig.isStandalonePayment
         )
 
     override val type: PaymentMethodType

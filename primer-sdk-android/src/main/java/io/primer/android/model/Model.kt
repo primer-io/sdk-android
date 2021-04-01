@@ -125,7 +125,7 @@ internal class Model constructor(
     suspend fun tokenize(tokenizable: PaymentMethodDescriptor): OperationResult<PaymentMethodTokenInternal> {
         val requestBody = JSONObject().apply {
             put("paymentInstrument", tokenizable.toPaymentInstrument())
-            if (config.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+            if (config.uxMode == UXMode.VAULT) {
                 put("tokenType", TokenType.MULTI_USE.name)
                 put("paymentFlow", "VAULT")
             }

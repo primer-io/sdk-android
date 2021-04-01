@@ -96,7 +96,9 @@ internal class PrimerViewModel(
                 val descriptors = resolver.resolve(this)
                 paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {
+                // If the merchant just wants to display the payment method in isolation without the rest of our UI then we should select
+                // the provided payment method immediately
+                if (this.checkoutConfig.isStandalonePayment) {
                     selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))

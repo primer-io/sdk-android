@@ -30,7 +30,7 @@ internal class PayPal constructor(
         get() = PAYPAL_IDENTIFIER
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (checkoutConfig.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+        get() = if (checkoutConfig.uxMode == UXMode.VAULT) {
             PayPalBillingAgreementBehaviour(this, viewModel)
         } else {
             PayPalOrderBehaviour(this)
