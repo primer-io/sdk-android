@@ -47,6 +47,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     private lateinit var errorText: TextView
     private lateinit var viewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
+
     private val checkoutConfig: CheckoutConfig by inject()
     private val dirtyMap: MutableMap<String, Boolean> = HashMap()
     private var firstMount: Boolean = true
@@ -107,17 +108,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
         tokenizationViewModel.resetPaymentMethod(viewModel.selectedPaymentMethod.value)
 
-        // input masks
         inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())
         inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(TextInputMask.CardNumber())
 
-        // text change listeners
         inputs.entries.forEach {
             it.value.addTextChangedListener(createTextWatcher(it.key))
             it.value.onFocusChangeListener = createFocusChangeListener(it.key)
         }
 
-        // Click listeners
         submitButton.setOnClickListener {
             if (tokenizationViewModel.isValid()) {
                 tokenizationViewModel.tokenize()
@@ -128,12 +126,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             parentFragmentManager.popBackStack()
         }
 
-        // IME action listeners
         inputs[CARD_NAME_FILED_NAME]?.setOnEditorActionListener { _, _, _ ->
             submitButton.performClick()
         }
 
-        // grab focus to display the keyboard
         focusFirstInput()
     }
 
@@ -233,12 +229,6 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     companion object {
 
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment CardFormFragment.
-         */
         @JvmStatic
         fun newInstance(): CardFormFragment {
             return CardFormFragment()

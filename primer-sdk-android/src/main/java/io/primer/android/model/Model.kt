@@ -76,6 +76,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -105,6 +106,13 @@ internal class Model constructor(
             val response: Response = okHttpClient
                 .newCall(request)
                 .await()
+
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
+                return OperationResult.Error(Throwable())
+            }
 
             val body: ResponseBody? = response.body()
 
@@ -147,7 +155,8 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
-                EventBus.broadcast(CheckoutEvent.TokenizationError(error)) // FIXME remove EventBus
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.TokenizationError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -158,14 +167,17 @@ internal class Model constructor(
             }
             val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
             EventBus.broadcast(
-                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token)) // FIXME remove EventBus
+                CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token))
             )
             if (token.tokenType == TokenType.MULTI_USE) {
-                EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))) // FIXME remove EventBus
+                EventBus.broadcast(
+                    CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))
+                )
             }
 
             OperationResult.Success(token)
         } catch (error: Throwable) {
+
             OperationResult.Error(error)
         }
     }
@@ -192,6 +204,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -219,6 +232,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 

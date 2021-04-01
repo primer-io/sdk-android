@@ -52,5 +52,10 @@
     <string name="success_icon_description">success</string>
 
     <!--  Legal  -->
-    <string name="dd_mandate_legal">By signing this mandate form, you authorise (A) %1$s to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %1$s.</string>
+    <string name="dd_mandate_legal">
+        By signing this mandate form, you authorise (A) %1$s to send instructions to your bank to debit your account and (B) your bank to
+        debit your account in accordance with the instructions from %1$s.
+    </string>
+
+    <string name="klarna">Klarna</string>
 </resources>

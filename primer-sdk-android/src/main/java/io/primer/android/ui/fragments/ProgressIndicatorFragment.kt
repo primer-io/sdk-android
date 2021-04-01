@@ -19,6 +19,6 @@ class ProgressIndicatorFragment : Fragment() {
 
     companion object {
 
-        fun newInstance() = ProgressIndicatorFragment()
+        fun newInstance(): ProgressIndicatorFragment = ProgressIndicatorFragment()
     }
 }

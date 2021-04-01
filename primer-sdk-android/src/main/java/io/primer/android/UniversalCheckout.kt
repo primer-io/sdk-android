@@ -6,6 +6,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientToken
@@ -17,10 +18,13 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.serializer
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
+import java.util.*
 
 internal enum class UXMode {
-    CHECKOUT, VAULT,
+    CHECKOUT,
+    VAULT,
 }
 
 object UniversalCheckout {
@@ -30,12 +34,21 @@ object UniversalCheckout {
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
      */
-    fun initialize(fullToken: String, theme: UniversalCheckoutTheme? = null) {
+    fun initialize(
+        context: Context,
+        fullToken: String,
+        locale: Locale,
+        theme: UniversalCheckoutTheme? = null,
+    ) {
         val clientToken = ClientToken.fromString(fullToken)
-        val config = CheckoutConfig(clientToken = fullToken)
+        val config = CheckoutConfig(clientToken = fullToken, locale = locale, packageName = context.packageName)
 
         // FIXME inject these dependencies
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        }
         val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json")
@@ -49,7 +62,7 @@ object UniversalCheckout {
 
         val model = Model(clientToken, config, okHttpClient)
 
-        checkout = InternalUniversalCheckout(model, fullToken, Dispatchers.IO, theme)
+        checkout = InternalUniversalCheckout(model, Dispatchers.IO, fullToken, locale, theme)
     }
 
     /**
@@ -63,19 +76,24 @@ object UniversalCheckout {
         checkout.getSavedPaymentMethods(callback)
     }
 
-    fun showVault(context: Context, listener: CheckoutEventListener, isStandalonePayment: Boolean = false) {
-        checkout.showVault(context, listener, isStandalonePayment)
+    fun showVault(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int? = null,
+        currency: String? = null,
+        isStandalonePaymentMethod: Boolean = false,
+    ) {
+        checkout.showVault(context, listener, amount, currency, isStandalonePaymentMethod)
     }
 
-    @KoinApiExtension
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
         amount: Int,
         currency: String,
-        isStandalonePayment: Boolean = false,
+        isStandalonePaymentMethod: Boolean = false,
     ) {
-        checkout.showCheckout(context, listener, amount, currency, isStandalonePayment)
+        checkout.showCheckout(context, listener, amount, currency, isStandalonePaymentMethod)
     }
 
     /**
@@ -102,8 +120,9 @@ object UniversalCheckout {
 
 internal class InternalUniversalCheckout constructor(
     private val model: Model,
-    private val fullToken: String,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val fullToken: String,
+    private val locale: Locale,
     private val theme: UniversalCheckoutTheme? = null,
 ) {
 
@@ -146,13 +165,41 @@ internal class InternalUniversalCheckout constructor(
     }
 
     @KoinApiExtension
-    fun showVault(context: Context, listener: CheckoutEventListener, isStandalonePayment: Boolean) {
-        show(context, listener, UXMode.VAULT, isStandalonePayment)
+    fun showVault(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int? = null,
+        currency: String? = null,
+        isStandalonePaymentMethod: Boolean = false,
+    ) {
+        show(
+            context = context,
+            listener = listener,
+            locale = locale,
+            uxMode = UXMode.VAULT,
+            amount = amount,
+            currency = currency,
+            isStandalonePaymentMethod = isStandalonePaymentMethod
+        )
     }
 
     @KoinApiExtension
-    fun showCheckout(context: Context, listener: CheckoutEventListener, amount: Int, currency: String, isStandalonePayment: Boolean) {
-        show(context, listener, UXMode.CHECKOUT, isStandalonePayment, amount = amount, currency = currency)
+    fun showCheckout(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int,
+        currency: String,
+        isStandalonePaymentMethod: Boolean = false,
+    ) {
+        show(
+            context = context,
+            listener = listener,
+            locale = locale,
+            uxMode = UXMode.CHECKOUT,
+            amount = amount,
+            currency = currency,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+        )
     }
 
     fun dismiss() {
@@ -171,10 +218,11 @@ internal class InternalUniversalCheckout constructor(
     private fun show(
         context: Context,
         listener: CheckoutEventListener,
+        locale: Locale,
         uxMode: UXMode,
-        isStandalonePayment: Boolean,
-        amount: Int? = null,
-        currency: String? = null,
+        amount: Int?,
+        currency: String?,
+        isStandalonePaymentMethod: Boolean,
     ) {
         subscription?.unregister()
 
@@ -185,8 +233,10 @@ internal class InternalUniversalCheckout constructor(
 
         val config = CheckoutConfig(
             clientToken = fullToken,
+            packageName = context.packageName,
+            locale = locale,
             uxMode = uxMode,
-            isStandalonePayment = isStandalonePayment,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
             amount = amount,
             currency = currency,
             theme = theme,
