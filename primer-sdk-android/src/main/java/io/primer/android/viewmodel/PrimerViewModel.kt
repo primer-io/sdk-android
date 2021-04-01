@@ -78,8 +78,7 @@ internal class PrimerViewModel(
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
-        val result: OperationResult<List<PaymentMethodTokenInternal>> = model.getVaultedPaymentMethods(clientSession)
-        when (result) {
+        when (val result: OperationResult<List<PaymentMethodTokenInternal>> = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)

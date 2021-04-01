@@ -153,6 +153,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 is OperationResult.Success -> {
                     val data = result.data
                     data.put("token", token)
+                    // TODO pass all the data we get from /finalize to where?
                     finalizeKlarnaPayment.postValue(data)
                 }
                 is OperationResult.Error -> {
@@ -179,7 +180,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             put("localeCode", locale)
         }
 
-        val description = checkoutConfig.orderItems.map { it.name }.reduce { acc, s -> "$acc;$s" }
+        val description = checkoutConfig.orderItems
+            .map { it.name }
+            .reduce { acc, s -> "$acc;$s" }
 
         val body = JSONObject()
         val sessionId = klarnaPaymentData.value?.third ?: return
@@ -192,6 +195,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         viewModelScope.launch {
             when (model.post(APIEndpoint.SAVE_KLARNA_PAYMENT, body)) {
                 is OperationResult.Success -> {
+                    // TODO parse response to be able to tokenize properly  @RUI
                     saveKlarnaPayment.postValue(Unit)
                 }
                 is OperationResult.Error -> {

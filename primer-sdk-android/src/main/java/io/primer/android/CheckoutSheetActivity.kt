@@ -207,7 +207,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         tokenizationViewModel.saveKlarnaPayment.observe(this) {
             Log.d("RUI", "> saveKlarnaPayment emission")
-            openFragment(SuccessFragment.newInstance(3000)) // TODO is this correct? @RUI
+            openFragment(SuccessFragment.newInstance(3000)) // TODO is this a safe assumption (that we need to show the success here)? @RUI
         }
         // endregion
 
