@@ -259,19 +259,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         when (resultCode) {
             RESULT_OK -> {
                 val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
-                val uri = Uri.parse(redirectUrl)
-                val klarnaAuthToken = uri.getQueryParameter("token")
-
                 val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
                 val klarna = paymentMethod as? Klarna
 
-                if (redirectUrl == null || klarna == null || klarnaAuthToken == null) {
-                    // TODO error: missing fields
-                    return
-                }
-                val id = klarna.config.id ?: return
-
-                tokenizationViewModel.vaultKlarnaPayment(id, klarnaAuthToken)
+                tokenizationViewModel.handleKlarnaRequestResult(redirectUrl, klarna)
             }
             RESULT_CANCELED -> {
                 // TODO anything?

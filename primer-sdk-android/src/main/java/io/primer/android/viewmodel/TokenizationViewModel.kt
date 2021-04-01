@@ -1,10 +1,12 @@
 package io.primer.android.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import io.primer.android.WebViewActivity
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
@@ -14,6 +16,7 @@ import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.klarna.Klarna
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -139,6 +142,20 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 }
             }
         }
+    }
+
+    fun handleKlarnaRequestResult(redirectUrl: String?, klarna: Klarna?) {
+        // TODO move uri parsing to collaborator
+        val uri = Uri.parse(redirectUrl)
+        val klarnaAuthToken = uri.getQueryParameter("token")
+
+        if (redirectUrl == null || klarna == null || klarnaAuthToken == null) {
+            // TODO error: missing fields
+            return
+        }
+        val id = klarna.config.id ?: return
+
+        vaultKlarnaPayment(id, klarnaAuthToken)
     }
 
     fun vaultKlarnaPayment(id: String, token: String) {
