@@ -81,7 +81,6 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
-//        orderItems: List<OrderItem> = emptyList(),
         isStandalonePayment: Boolean = false,
     ) {
         checkout.showVault(context, listener, amount, currency, isStandalonePayment)
@@ -92,7 +91,6 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int,
         currency: String,
-//        orderItems: List<OrderItem> = emptyList(),
         isStandalonePayment: Boolean = false,
     ) {
         checkout.showCheckout(context, listener, amount, currency, isStandalonePayment)
@@ -181,7 +179,6 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
-//            orderItems = emptyList(),
             isStandalonePayment = isStandalonePayment
         )
     }
@@ -201,7 +198,6 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
-//            orderItems = emptyList(),
             isStandalonePayment = isStandalonePayment,
         )
     }
@@ -226,7 +222,6 @@ internal class InternalUniversalCheckout constructor(
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
-//        orderItems: List<OrderItem>,
         isStandalonePayment: Boolean,
     ) {
         subscription?.unregister()
@@ -244,7 +239,6 @@ internal class InternalUniversalCheckout constructor(
             isStandalonePayment = isStandalonePayment,
             amount = amount,
             currency = currency,
-//            orderItems = orderItems,
             theme = theme,
         )
 

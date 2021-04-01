@@ -107,7 +107,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
 
             val orderItems = JSONArray().apply {
-//                checkoutConfig.orderItems.forEach {
                 klarna.options.orderItems.forEach {
                     val item = JSONObject().apply {
                         put("name", it.name)
@@ -168,7 +167,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             put("localeCode", locale)
         }
 
-//        val description = checkoutConfig.orderItems
         val description = klarna.options.orderItems
             .map { it.name }
             .reduce { acc, s -> "$acc;$s" }

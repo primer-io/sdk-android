@@ -79,11 +79,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         val items = listOf(OrderItem("PS5", 99999, 1))
-        val klarna = PaymentMethod.Klarna(
-            amount = 99999,
-            currency = "GBP",
-            orderItems = items,
-        )
+        val klarna = PaymentMethod.Klarna(orderItems = items)
 
         UniversalCheckout.initialize(this, token, Locale.UK)
         UniversalCheckout.loadPaymentMethods(listOf(klarna))
@@ -96,13 +92,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-//        UniversalCheckout.showVault(this, eventListener, isStandalonePayment = true)
         UniversalCheckout.showVault(
             context = this,
             listener = eventListener,
             amount = 99999,
             currency = "GBP",
-//            orderItems = listOf(OrderItem("PS5", 99999, 1)),
             isStandalonePayment = true
         )
     }
