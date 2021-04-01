@@ -25,7 +25,7 @@ import java.util.*
 internal enum class UXMode {
     CHECKOUT,
     ADD_PAYMENT_METHOD,
-    STANDALONE_PAYMENT_METHOD, // TODO @RUI check with carl if STANDALONE doesn't also mean that the payment method should be vaulted
+    STANDALONE_PAYMENT_METHOD,
 }
 
 object UniversalCheckout {

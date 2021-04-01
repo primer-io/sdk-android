@@ -3,7 +3,6 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -31,7 +30,6 @@ import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.*
 import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
@@ -183,31 +181,15 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             startActivityForResult(intent, KLARNA_REQUEST_CODE)
         }
 
-        tokenizationViewModel.finalizeKlarnaPayment.observe(this) { data: JSONObject ->
+        tokenizationViewModel.vaultedKlarnaPayment.observe(this) { data ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
             val klarna = paymentMethod as? Klarna
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
-            klarna.setTokenizableValue("klarnaAuthorizationToken", data.optString("token"))
+            klarna.setTokenizableValue("klarnaAuthorizationToken", data.optString("klarnaAuthorizationToken"))
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
-            tokenizationViewModel.tokenize()
-        }
-
-        tokenizationViewModel.tokenizationStatus.observe(this) { status ->
-            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            if (paymentMethod !is Klarna) return@observe
-
-            tokenizationViewModel.finalizeKlarnaPayment.value?.let { data ->
-                val id = paymentMethod.config.id ?: return@observe
-                val token = data.optString("token")
-                tokenizationViewModel.saveKlarnaPayment(id, token)
-            }
-        }
-
-        tokenizationViewModel.saveKlarnaPayment.observe(this) {
-            Log.d("RUI", "> saveKlarnaPayment emission")
-            openFragment(SuccessFragment.newInstance(3000)) // TODO is this a safe assumption (that we need to show the success here)? @RUI
+            tokenizationViewModel.tokenize() // TODO @RUI make sure success if propagated
         }
         // endregion
 
@@ -278,17 +260,18 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             RESULT_OK -> {
                 val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
                 val uri = Uri.parse(redirectUrl)
-                val token = uri.getQueryParameter("token")
+                val klarnaAuthToken = uri.getQueryParameter("token")
 
                 val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
                 val klarna = paymentMethod as? Klarna
 
-                if (redirectUrl == null || klarna == null || token == null) {
+                if (redirectUrl == null || klarna == null || klarnaAuthToken == null) {
                     // TODO error: missing fields
                     return
                 }
                 val id = klarna.config.id ?: return
-                tokenizationViewModel.finalizeKlarnaPayment(id, token)
+
+                tokenizationViewModel.vaultKlarnaPayment(id, klarnaAuthToken)
             }
             RESULT_CANCELED -> {
                 // TODO anything?

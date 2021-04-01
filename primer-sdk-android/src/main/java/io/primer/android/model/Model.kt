@@ -159,7 +159,6 @@ internal class Model constructor(
                 CheckoutEvent.TokenizationSuccess(PaymentMethodTokenAdapter.internalToExternal(token))
             )
             if (token.tokenType == TokenType.MULTI_USE) {
-                // TODO @RUI check with carl if this "multi_use" token resulting in "token added to vault" makes sense
                 EventBus.broadcast(CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token)))
             }
 

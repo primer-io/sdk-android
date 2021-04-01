@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
@@ -38,9 +35,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
+    val klarnaError = MutableLiveData<Unit>()
     val klarnaPaymentData = MutableLiveData<Triple<String, String, String>>() // <hppRedirectUrl, klarnaReturnUrl, sessionId>
-    val finalizeKlarnaPayment = MutableLiveData<JSONObject>()
-    val saveKlarnaPayment = MutableLiveData<Unit>()
+    val vaultedKlarnaPayment = MutableLiveData<JSONObject>()
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
@@ -49,13 +46,13 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val goCardlessMandate = MutableLiveData<JSONObject>()
     val goCardlessMandateError = MutableLiveData<Unit>()
 
-    fun resetPaymentMethod(pm: PaymentMethodDescriptor? = null) {
-        paymentMethod = pm
+    fun resetPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor? = null) {
+        paymentMethod = paymentMethodDescriptor
         submitted.value = false
         tokenizationStatus.value = TokenizationStatus.NONE
 
-        if (pm != null) {
-            validationErrors.value = pm.validate()
+        if (paymentMethodDescriptor != null) {
+            validationErrors.value = paymentMethodDescriptor.validate()
         } else {
             validationErrors.value = Collections.emptyList()
         }
@@ -94,7 +91,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    // region klarna
+    // region KLARNA
     fun createKlarnaBillingAgreement(id: String, returnUrl: String) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
@@ -142,34 +139,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    fun finalizeKlarnaPayment(id: String, token: String) {
-        val body = JSONObject()
-        val sessionId = klarnaPaymentData.value?.third ?: return
-        body.put("paymentMethodConfigId", id)
-        body.put("sessionId", sessionId)
-
-        viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.FINALIZE_KLARNA_PAYMENT, body)) {
-                is OperationResult.Success -> {
-                    val data = result.data
-                    data.put("token", token)
-                    // TODO pass all the data we get from /finalize to where?
-                    finalizeKlarnaPayment.postValue(data)
-                }
-                is OperationResult.Error -> {
-                    // TODO what should we do here?
-                }
-            }
-        }
-    }
-
-    fun saveKlarnaPayment(id: String, token: String) {
-        val status = tokenizationStatus.value
-        // TODO @RUI check with carl if we only issue this request when ADD_PAYMENT_METHOD
-        if (checkoutConfig.uxMode != UXMode.ADD_PAYMENT_METHOD || status != TokenizationStatus.SUCCESS) {
-            return
-        }
-
+    fun vaultKlarnaPayment(id: String, token: String) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
             val currencyCode = checkoutConfig.amount?.currency
@@ -193,20 +163,21 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("localeData", localeData)
 
         viewModelScope.launch {
-            when (model.post(APIEndpoint.SAVE_KLARNA_PAYMENT, body)) {
+            when (val result = model.post(APIEndpoint.VAULT_KLARNA_PAYMENT, body)) {
                 is OperationResult.Success -> {
-                    // TODO parse response to be able to tokenize properly  @RUI
-                    saveKlarnaPayment.postValue(Unit)
+                    val data = result.data
+                    data.put("klarnaAuthorizationToken", token)
+                    vaultedKlarnaPayment.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    // TODO what should we do here? @RUI
+                    klarnaError.postValue(Unit)
                 }
             }
         }
     }
     // endregion
 
-    // region paypal
+    // region PAYPAL
     // TODO: move these payal things somewhere else
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
@@ -267,7 +238,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
     // endregion
 
-    // region go cardless
+    // region GO CARDLESS
     fun createGoCardlessMandate(id: String, bankDetails: JSONObject, customerDetails: JSONObject) {
         val body = JSONObject()
         body.put("id", id)
