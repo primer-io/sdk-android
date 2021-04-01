@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.APIEndpoint
+import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.*
@@ -20,8 +21,7 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.*
 
-@KoinApiExtension
-// FIXME inject dependencies via ctor
+@KoinApiExtension // FIXME inject dependencies via ctor
 internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
@@ -36,7 +36,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
 
     val klarnaError = MutableLiveData<Unit>()
-    val klarnaPaymentData = MutableLiveData<Triple<String, String, String>>() // <hppRedirectUrl, klarnaReturnUrl, sessionId>
+    val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
     val vaultedKlarnaPayment = MutableLiveData<JSONObject>()
 
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
@@ -130,7 +130,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 is OperationResult.Success -> {
                     val hppRedirectUrl = result.data.getString("hppRedirectUrl")
                     val sessionId = result.data.getString("sessionId")
-                    klarnaPaymentData.postValue(Triple(hppRedirectUrl, klarnaReturnUrl, sessionId))
+                    klarnaPaymentData.postValue(
+                        KlarnaPaymentData(hppRedirectUrl, klarnaReturnUrl, sessionId)
+                    )
                 }
                 is OperationResult.Error -> {
                     // TODO what should we do here?
@@ -155,7 +157,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             .reduce { acc, s -> "$acc;$s" }
 
         val body = JSONObject()
-        val sessionId = klarnaPaymentData.value?.third ?: return
+        val sessionId = klarnaPaymentData.value?.sessionId
+
         body.put("paymentMethodConfigId", id)
         body.put("sessionId", sessionId)
         body.put("authorizationToken", token)
