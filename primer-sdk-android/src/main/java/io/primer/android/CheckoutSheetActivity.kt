@@ -191,6 +191,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
             tokenizationViewModel.tokenize()
         }
+
+        tokenizationViewModel.klarnaError.observe(this) {
+            // TODO
+        }
         // endregion
 
         // region PAYPAL

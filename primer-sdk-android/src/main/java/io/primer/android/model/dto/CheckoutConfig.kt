@@ -19,16 +19,17 @@ internal data class CheckoutConfig(
     val uxMode: UXMode,
     @Serializable(with = LocaleSerializer::class) val locale: Locale,
     val amount: MonetaryAmount?,
-    val isStandalonePayment: Boolean,
+    val isStandalonePaymentMethod: Boolean,
     val theme: UniversalCheckoutTheme,
 ) {
 
+    // FIXME move Locale to Klarna
     constructor(
         clientToken: String,
         packageName: String,
         locale: Locale,
         uxMode: UXMode = UXMode.CHECKOUT,
-        isStandalonePayment: Boolean = false,
+        isStandalonePaymentMethod: Boolean = false,
         currency: String? = null,
         amount: Int? = null,
         theme: UniversalCheckoutTheme? = null,
@@ -38,7 +39,7 @@ internal data class CheckoutConfig(
         uxMode = uxMode,
         locale = locale,
         amount = MonetaryAmount.create(currency = currency, value = amount),
-        isStandalonePayment = isStandalonePayment,
+        isStandalonePaymentMethod = isStandalonePaymentMethod,
         theme = theme ?: UniversalCheckoutTheme.getDefault()
     )
 }

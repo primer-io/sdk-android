@@ -81,9 +81,9 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
-        isStandalonePayment: Boolean = false,
+        isStandalonePaymentMethod: Boolean = false,
     ) {
-        checkout.showVault(context, listener, amount, currency, isStandalonePayment)
+        checkout.showVault(context, listener, amount, currency, isStandalonePaymentMethod)
     }
 
     fun showCheckout(
@@ -91,9 +91,9 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int,
         currency: String,
-        isStandalonePayment: Boolean = false,
+        isStandalonePaymentMethod: Boolean = false,
     ) {
-        checkout.showCheckout(context, listener, amount, currency, isStandalonePayment)
+        checkout.showCheckout(context, listener, amount, currency, isStandalonePaymentMethod)
     }
 
     /**
@@ -170,7 +170,7 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
-        isStandalonePayment: Boolean = false,
+        isStandalonePaymentMethod: Boolean = false,
     ) {
         show(
             context = context,
@@ -179,7 +179,7 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
-            isStandalonePayment = isStandalonePayment
+            isStandalonePaymentMethod = isStandalonePaymentMethod
         )
     }
 
@@ -189,7 +189,7 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int,
         currency: String,
-        isStandalonePayment: Boolean = false,
+        isStandalonePaymentMethod: Boolean = false,
     ) {
         show(
             context = context,
@@ -198,7 +198,7 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
-            isStandalonePayment = isStandalonePayment,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
         )
     }
 
@@ -222,7 +222,7 @@ internal class InternalUniversalCheckout constructor(
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
-        isStandalonePayment: Boolean,
+        isStandalonePaymentMethod: Boolean,
     ) {
         subscription?.unregister()
 
@@ -236,7 +236,7 @@ internal class InternalUniversalCheckout constructor(
             packageName = context.packageName,
             locale = locale,
             uxMode = uxMode,
-            isStandalonePayment = isStandalonePayment,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
             amount = amount,
             currency = currency,
             theme = theme,

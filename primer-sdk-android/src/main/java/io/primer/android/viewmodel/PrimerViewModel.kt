@@ -93,7 +93,7 @@ internal class PrimerViewModel(
                 val descriptors = resolver.resolve()
                 paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.isStandalonePayment) {
+                if (this.checkoutConfig.isStandalonePaymentMethod) {
                     selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))

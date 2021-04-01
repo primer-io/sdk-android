@@ -76,6 +76,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -105,6 +106,13 @@ internal class Model constructor(
             val response: Response = okHttpClient
                 .newCall(request)
                 .await()
+
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
+                return OperationResult.Error(Throwable())
+            }
 
             val body: ResponseBody? = response.body()
 
@@ -147,6 +155,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
                 EventBus.broadcast(CheckoutEvent.TokenizationError(error))
                 return OperationResult.Error(Throwable())
             }
@@ -168,6 +177,7 @@ internal class Model constructor(
 
             OperationResult.Success(token)
         } catch (error: Throwable) {
+
             OperationResult.Error(error)
         }
     }
@@ -194,6 +204,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -221,6 +232,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 

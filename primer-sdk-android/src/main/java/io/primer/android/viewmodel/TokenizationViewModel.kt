@@ -137,7 +137,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     )
                 }
                 is OperationResult.Error -> {
-                    // TODO what should we do here?
+                    klarnaError.postValue(Unit)
                 }
             }
         }

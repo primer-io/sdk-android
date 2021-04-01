@@ -18,9 +18,9 @@ import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 import java.util.*
 
-const val CLIENT_TOKEN_URI: String = "https://api.sandbox.primer.io/auth/client-token"
-const val CUSTOMER_ID: String = "will-123"
-const val API_KEY: String = "b91c117b-3a89-4773-bfc7-58a24d8328a6"
+private const val CLIENT_TOKEN_URI: String = "https://api.sandbox.primer.io/auth/client-token"
+private const val CUSTOMER_ID: String = "will-123"
+private const val API_KEY: String = "b91c117b-3a89-4773-bfc7-58a24d8328a6"
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,9 +31,13 @@ class MainActivity : AppCompatActivity() {
             when (event) {
                 is CheckoutEvent.TokenAddedToVault -> {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        UniversalCheckout.showSuccess(autoDismissDelay = 2000)
-                    }, 500)
+                    Handler(Looper.getMainLooper()).post {
+                        UniversalCheckout.showSuccess(autoDismissDelay = 2500)
+                    }
+                }
+                is CheckoutEvent.ApiError -> {
+                    Log.e("ExampleApp", "${event.data}")
+                    UniversalCheckout.dismiss()
                 }
                 is CheckoutEvent.Exit -> {
                     if (event.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
@@ -81,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         val items = listOf(OrderItem("PS5", 99999, 1))
         val klarna = PaymentMethod.Klarna(orderItems = items)
 
-        UniversalCheckout.initialize(this, token, Locale.UK)
+        UniversalCheckout.initialize(this, token, Locale.GERMANY)
         UniversalCheckout.loadPaymentMethods(listOf(klarna))
 
         showCheckout()
@@ -96,8 +100,8 @@ class MainActivity : AppCompatActivity() {
             context = this,
             listener = eventListener,
             amount = 99999,
-            currency = "GBP",
-            isStandalonePayment = true
+            currency = "EUR",
+            isStandalonePaymentMethod = true
         )
     }
 
