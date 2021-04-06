@@ -6,8 +6,6 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.OrderItem
-import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.ClientSession
@@ -25,7 +23,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.Locale
 
 internal enum class UXMode {
     CHECKOUT,
@@ -46,9 +44,11 @@ object UniversalCheckout {
         theme: UniversalCheckoutTheme? = null,
     ) {
         val clientToken = ClientToken.fromString(fullToken)
-        val config = CheckoutConfig(clientToken = fullToken,
+        val config = CheckoutConfig(
+            clientToken = fullToken,
             locale = locale,
-            packageName = context.packageName)
+            packageName = context.packageName
+        )
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {

@@ -28,7 +28,12 @@ import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
-import io.primer.android.ui.fragments.*
+import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.fragments.InitializingFragment
+import io.primer.android.ui.fragments.ProgressIndicatorFragment
+import io.primer.android.ui.fragments.SelectPaymentMethodFragment
+import io.primer.android.ui.fragments.SuccessFragment
+import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
@@ -186,8 +191,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             val klarna = paymentMethod as? Klarna
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
-            klarna.setTokenizableValue("klarnaAuthorizationToken",
-                data.optString("klarnaAuthorizationToken"))
+            klarna.setTokenizableValue(
+                "klarnaAuthorizationToken",
+                data.optString("klarnaAuthorizationToken")
+            )
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
             tokenizationViewModel.tokenize()
@@ -209,8 +216,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             val paypal = paymentMethod as? PayPal
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
-            paypal.setTokenizableValue("paypalBillingAgreementId",
-                data.getString("billingAgreementId"))
+            paypal.setTokenizableValue(
+                "paypalBillingAgreementId",
+                data.getString("billingAgreementId")
+            )
             paypal.setTokenizableValue("externalPayerInfo", data.getJSONObject("externalPayerInfo"))
             paypal.setTokenizableValue("shippingAddress", data.getJSONObject("shippingAddress"))
 

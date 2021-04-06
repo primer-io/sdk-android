@@ -29,7 +29,7 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
 import kotlin.collections.HashMap
 
 /**

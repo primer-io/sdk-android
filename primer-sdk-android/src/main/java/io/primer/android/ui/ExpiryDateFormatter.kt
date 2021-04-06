@@ -1,7 +1,7 @@
 package io.primer.android.ui
 
 import io.primer.android.logging.Logger
-import java.util.*
+import java.util.Calendar
 import kotlin.math.min
 
 private val INVALID_CHARACTER = Regex("[^0-9/]")

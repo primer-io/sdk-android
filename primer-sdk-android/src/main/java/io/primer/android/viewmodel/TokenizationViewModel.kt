@@ -1,5 +1,6 @@
 package io.primer.android.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +21,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class TokenizationViewModel : ViewModel(), DIAppComponent {
@@ -149,7 +150,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         val uri = Uri.parse(redirectUrl)
         val klarnaAuthToken = uri.getQueryParameter("token")
 
-        if (redirectUrl == null || klarna == null || klarna.config.id == null || klarnaAuthToken == null) {
+        if (redirectUrl == null || klarna == null ||
+            klarna.config.id == null || klarnaAuthToken == null
+        ) {
             // TODO error: missing fields
             return
         }

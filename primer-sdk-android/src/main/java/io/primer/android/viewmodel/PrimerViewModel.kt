@@ -21,7 +21,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class PrimerViewModel(
@@ -77,8 +77,10 @@ internal class PrimerViewModel(
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
-        when (val result: OperationResult<List<PaymentMethodTokenInternal>> =
-            model.getVaultedPaymentMethods(clientSession)) {
+        when (
+            val result: OperationResult<List<PaymentMethodTokenInternal>> =
+                model.getVaultedPaymentMethods(clientSession)
+        ) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)

@@ -2,7 +2,7 @@ package io.primer.android.ui
 
 import io.primer.android.model.dto.MonetaryAmount
 import java.text.NumberFormat
-import java.util.*
+import java.util.Currency
 
 internal class CurrencyFormatter private constructor() {
     companion object {

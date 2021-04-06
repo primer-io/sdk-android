@@ -10,7 +10,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.IOException
-import java.util.*
+import java.util.Collections
 
 @Serializable
 data class APIError(

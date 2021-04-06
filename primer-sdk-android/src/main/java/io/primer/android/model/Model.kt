@@ -188,7 +188,9 @@ internal class Model constructor(
             )
             if (token.tokenType == TokenType.MULTI_USE) {
                 EventBus.broadcast(
-                    CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))
+                    CheckoutEvent.TokenAddedToVault(
+                        PaymentMethodTokenAdapter.internalToExternal(token)
+                    )
                 )
             }
 

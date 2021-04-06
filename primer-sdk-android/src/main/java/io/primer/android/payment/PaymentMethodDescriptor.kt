@@ -12,11 +12,11 @@ import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.Collections
 
 internal abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
-    protected val values: JSONObject = JSONObject(), // FIXME why is this needed? why is the model holding a json format of itself?
+    protected val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
 ) {
 
     abstract val identifier: String
@@ -62,10 +62,23 @@ internal class PaymentMethodDescriptorFactory {
     ): PaymentMethodDescriptor? {
         // TODO: hate this - think of a better way
         return when (paymentMethodRemoteConfig.type) {
-            PAYMENT_CARD_IDENTIFIER -> CreditCard(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.Card)
-            PAYPAL_IDENTIFIER -> PayPal(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.PayPal)
-            GOCARDLESS_IDENTIFIER -> GoCardless(paymentMethodRemoteConfig, paymentMethod as PaymentMethod.GoCardless)
-            KLARNA_IDENTIFIER -> Klarna(checkoutConfig, paymentMethod as PaymentMethod.Klarna, paymentMethodRemoteConfig)
+            PAYMENT_CARD_IDENTIFIER -> CreditCard(
+                paymentMethodRemoteConfig,
+                paymentMethod as PaymentMethod.Card
+            )
+            PAYPAL_IDENTIFIER -> PayPal(
+                paymentMethodRemoteConfig,
+                paymentMethod as PaymentMethod.PayPal
+            )
+            GOCARDLESS_IDENTIFIER -> GoCardless(
+                paymentMethodRemoteConfig,
+                paymentMethod as PaymentMethod.GoCardless
+            )
+            KLARNA_IDENTIFIER -> Klarna(
+                checkoutConfig,
+                paymentMethod as PaymentMethod.Klarna,
+                paymentMethodRemoteConfig
+            )
             else -> null
         }
     }

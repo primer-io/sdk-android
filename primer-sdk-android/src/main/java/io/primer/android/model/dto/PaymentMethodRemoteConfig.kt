@@ -2,7 +2,7 @@ package io.primer.android.model.dto
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
-import java.util.*
+import java.util.Collections
 
 @Serializable
 internal data class PaymentMethodRemoteConfig(
