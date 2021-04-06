@@ -10,6 +10,7 @@ import io.primer.android.ui.FormProgressState
 import io.primer.android.ui.FormSummaryState
 import io.primer.android.ui.FormTitleState
 import io.primer.android.ui.FormViewState
+import io.primer.android.ui.Validator
 
 internal class FormViewModel : ViewModel() {
 
