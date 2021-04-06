@@ -6,6 +6,8 @@ detekt {
     failFast = false
     buildUponDefaultConfig = true
 
+    config = files("$rootDir/config/detekt.yml")
+
     debug = true
     parallel = true
     disableDefaultRuleSets = false
