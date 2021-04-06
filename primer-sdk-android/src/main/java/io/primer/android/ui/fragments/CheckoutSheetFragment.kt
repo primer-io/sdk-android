@@ -30,7 +30,6 @@ internal class CheckoutSheetFragment :
     KeyboardVisibilityEvent.OnChangedListener,
     DIAppComponent {
 
-    private val log = Logger("checkout-fragment")
     private lateinit var viewModel: PrimerViewModel
     private val theme: UniversalCheckoutTheme by inject()
 
@@ -42,19 +41,19 @@ internal class CheckoutSheetFragment :
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
 
-        dialog.setCanceledOnTouchOutside(false)
-
-        val behavior = (dialog as BottomSheetDialog).behavior
-
-        behavior.isHideable = false
-        behavior.isDraggable = false
+        // FIXME why are we overriding this?
+        // dialog.setCanceledOnTouchOutside(false)
+        // val behavior = (dialog as BottomSheetDialog).behavior
+        // behavior.isHideable = false
+        // behavior.isDraggable = false
 
         dialog.setOnKeyListener(this::onKeyPress)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.Primer_BottomSheet)
+        // FIXME why are we applying the style this way??
+        // setStyle(STYLE_NORMAL, R.style.Primer_BottomSheet)
         viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
@@ -81,6 +80,11 @@ internal class CheckoutSheetFragment :
         if (theme.windowMode == UniversalCheckoutTheme.WindowMode.FULL_HEIGHT) {
             setFullHeight()
         }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_USER))
     }
 
     override fun onDismiss(dialog: DialogInterface) {

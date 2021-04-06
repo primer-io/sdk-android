@@ -27,7 +27,7 @@ internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? =
     private fun update() {
         findViewById<TextView>(R.id.primer_sheet_title).text = when (uxMode) {
             UXMode.CHECKOUT -> PayAmountText.generate(context, amount)
-            UXMode.ADD_PAYMENT_METHOD -> context.getString(R.string.add_new_payment_method)
+            UXMode.VAULT -> context.getString(R.string.add_new_payment_method)
             else -> ""
         }
     }

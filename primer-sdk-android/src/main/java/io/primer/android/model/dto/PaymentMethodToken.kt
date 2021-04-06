@@ -38,8 +38,7 @@ internal object PaymentMethodTokenAdapter {
             paymentInstrumentType = token.paymentInstrumentType,
             paymentInstrumentData = JSONObject(token.paymentInstrumentData.toString()),
             vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
-                customerId = token.vaultData.customerId
-            )
+                customerId = token.vaultData.customerId)
         )
     }
 

@@ -1,19 +1,21 @@
 package io.primer.android.viewmodel
 
 import io.primer.android.PaymentMethod
+import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
-internal class PaymentMethodDescriptorResolver(
+internal class PaymentMethodDescriptorResolver constructor(
+    private val checkoutConfig: CheckoutConfig,
     private val configured: List<PaymentMethod>,
     private val paymentMethodRemoteConfigs: List<PaymentMethodRemoteConfig>,
     private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
 ) {
 
-    fun resolve(viewModel: PrimerViewModel): List<PaymentMethodDescriptor> {
+    fun resolve(): List<PaymentMethodDescriptor> {
         val list = ArrayList<PaymentMethodDescriptor>()
 
         paymentMethodRemoteConfigs.forEach { paymentMethodRemoteConfig ->
@@ -22,9 +24,9 @@ internal class PaymentMethodDescriptorResolver(
                 ?.let {
                     paymentMethodDescriptorFactory
                         .create(
-                            config = paymentMethodRemoteConfig,
-                            options = it,
-                            viewModel = viewModel
+                            checkoutConfig = checkoutConfig,
+                            paymentMethodRemoteConfig = paymentMethodRemoteConfig,
+                            paymentMethod = it,
                         )
                         ?.let { paymentMethodDescriptor -> list.add(paymentMethodDescriptor) }
                 }

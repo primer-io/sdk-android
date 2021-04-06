@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
-import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -78,7 +77,8 @@ internal class PrimerViewModel(
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
-        when (val result = model.getVaultedPaymentMethods(clientSession)) {
+        when (val result: OperationResult<List<PaymentMethodTokenInternal>> =
+            model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)
@@ -87,15 +87,16 @@ internal class PrimerViewModel(
 
                 // FIXME needs to be injected
                 val resolver = PaymentMethodDescriptorResolver(
-                    configuredPaymentMethods,
-                    clientSession.paymentMethods,
-                    paymentMethodDescriptorFactory
+                    checkoutConfig = checkoutConfig,
+                    configured = configuredPaymentMethods,
+                    paymentMethodRemoteConfigs = clientSession.paymentMethods,
+                    paymentMethodDescriptorFactory = paymentMethodDescriptorFactory
                 )
 
-                val descriptors = resolver.resolve(this)
+                val descriptors = resolver.resolve()
                 paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {
+                if (this.checkoutConfig.isStandalonePaymentMethod) {
                     selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))

@@ -7,20 +7,22 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.APIEndpoint
+import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.klarna.Klarna
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.*
 
-@KoinApiExtension
-// FIXME inject dependencies via ctor
+@KoinApiExtension // FIXME inject dependencies via ctor
 internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
@@ -36,19 +38,24 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         Collections.emptyList()
     )
 
+    val klarnaError = MutableLiveData<Unit>()
+    val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
+    val vaultedKlarnaPayment = MutableLiveData<JSONObject>()
+
     val payPalBillingAgreementUrl = MutableLiveData<String>() // emits URI
     val confirmPayPalBillingAgreement = MutableLiveData<JSONObject>()
     val payPalOrder = MutableLiveData<String>() // emits URI
+
     val goCardlessMandate = MutableLiveData<JSONObject>()
     val goCardlessMandateError = MutableLiveData<Unit>()
 
-    fun resetPaymentMethod(pm: PaymentMethodDescriptor? = null) {
-        paymentMethod = pm
+    fun resetPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor? = null) {
+        paymentMethod = paymentMethodDescriptor
         submitted.value = false
         tokenizationStatus.value = TokenizationStatus.NONE
 
-        if (pm != null) {
-            validationErrors.value = pm.validate()
+        if (paymentMethodDescriptor != null) {
+            validationErrors.value = paymentMethodDescriptor.validate()
         } else {
             validationErrors.value = Collections.emptyList()
         }
@@ -87,6 +94,109 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
+    // region KLARNA
+    fun createKlarnaBillingAgreement(id: String, returnUrl: String, klarna: Klarna) {
+        viewModelScope.launch {
+            val localeData = JSONObject().apply {
+                val countryCode = checkoutConfig.locale.country
+                val currencyCode = checkoutConfig.amount?.currency
+                val locale = checkoutConfig.locale.toLanguageTag()
+
+                put("countryCode", countryCode)
+                put("currencyCode", currencyCode)
+                put("localeCode", locale)
+            }
+
+            val orderItems = JSONArray().apply {
+                klarna.options.orderItems.forEach {
+                    val item = JSONObject().apply {
+                        put("name", it.name)
+                        put("unitAmount", it.unitAmount)
+                        put("quantity", it.quantity)
+                    }
+                    put(item)
+                }
+            }
+
+            val klarnaReturnUrl = "https://$returnUrl"
+
+            val body = JSONObject().apply {
+                put("paymentMethodConfigId", id)
+                put("sessionType", "HOSTED_PAYMENT_PAGE")
+                put("redirectUrl", klarnaReturnUrl)
+                put("totalAmount", checkoutConfig.amount?.value)
+                put("localeData", localeData)
+                put("orderItems", orderItems)
+            }
+
+            when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
+                is OperationResult.Success -> {
+                    val hppRedirectUrl = result.data.getString("hppRedirectUrl")
+                    val sessionId = result.data.getString("sessionId")
+                    klarnaPaymentData.postValue(
+                        KlarnaPaymentData(hppRedirectUrl, klarnaReturnUrl, sessionId)
+                    )
+                }
+                is OperationResult.Error -> {
+                    klarnaError.postValue(Unit)
+                }
+            }
+        }
+    }
+
+    fun handleKlarnaRequestResult(redirectUrl: String?, klarna: Klarna?) {
+        // TODO move uri parsing to collaborator
+        val uri = Uri.parse(redirectUrl)
+        val klarnaAuthToken = uri.getQueryParameter("token")
+
+        if (redirectUrl == null || klarna == null || klarna.config.id == null || klarnaAuthToken == null) {
+            // TODO error: missing fields
+            return
+        }
+
+        vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
+    }
+
+    fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
+        val localeData = JSONObject().apply {
+            val countryCode = checkoutConfig.locale.country
+            val currencyCode = checkoutConfig.amount?.currency
+            val locale = checkoutConfig.locale.toLanguageTag()
+
+            put("countryCode", countryCode)
+            put("currencyCode", currencyCode)
+            put("localeCode", locale)
+        }
+
+        val description = klarna.options.orderItems
+            .map { it.name }
+            .reduce { acc, s -> "$acc;$s" }
+
+        val body = JSONObject()
+        val sessionId = klarnaPaymentData.value?.sessionId
+
+        body.put("paymentMethodConfigId", id)
+        body.put("sessionId", sessionId)
+        body.put("authorizationToken", token)
+        body.put("description", description)
+        body.put("localeData", localeData)
+
+        viewModelScope.launch {
+            when (val result = model.post(APIEndpoint.VAULT_KLARNA_PAYMENT, body)) {
+                is OperationResult.Success -> {
+                    val data = result.data
+                    data.put("klarnaAuthorizationToken", token)
+                    vaultedKlarnaPayment.postValue(data)
+                }
+                is OperationResult.Error -> {
+                    klarnaError.postValue(Unit)
+                }
+            }
+        }
+    }
+    // endregion
+
+    // region PAYPAL
     // TODO: move these payal things somewhere else
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
@@ -145,7 +255,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
         }
     }
+    // endregion
 
+    // region GO CARDLESS
     fun createGoCardlessMandate(id: String, bankDetails: JSONObject, customerDetails: JSONObject) {
         val body = JSONObject()
         body.put("id", id)
@@ -165,6 +277,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             }
         }
     }
+    // endregion
 
     companion object {
 

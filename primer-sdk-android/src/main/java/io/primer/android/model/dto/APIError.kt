@@ -40,7 +40,7 @@ data class APIError(
         )
 
         fun create(response: Response): APIError {
-            return json.decodeFromJsonElement(getErrorFromContent(response.body))
+            return json.decodeFromJsonElement(getErrorFromContent(response.body()))
         }
 
         fun create(e: IOException?): APIError {

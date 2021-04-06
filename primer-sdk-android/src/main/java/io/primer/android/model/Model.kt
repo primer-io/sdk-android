@@ -16,10 +16,10 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.decodeFromString
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -82,12 +82,13 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                response.body()?.close()
                 continuation.resume(json)
             }
 
@@ -116,10 +117,17 @@ internal class Model constructor(
                 .newCall(request)
                 .await()
 
-            val body: ResponseBody? = response.body
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
+                return OperationResult.Error(Throwable())
+            }
+
+            val body: ResponseBody? = response.body()
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
+                val json = JSONObject(response.body()?.string() ?: "{}")
                 body?.close()
                 continuation.resume(json)
             }
@@ -140,17 +148,19 @@ internal class Model constructor(
 
         val requestBody = JSONObject().apply {
             put("paymentInstrument", tokenizable.toPaymentInstrument())
-            if (config.uxMode == UXMode.ADD_PAYMENT_METHOD) {
+            if (config.uxMode == UXMode.VAULT) {
                 put("tokenType", TokenType.MULTI_USE.name)
                 put("paymentFlow", "VAULT")
             }
         }
 
+        val body = toJsonRequestBody(requestBody)
+
         // FIXME extra endpoint construction to collaborator (non-static call)
         val url = APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
         val request = Request.Builder()
             .url(url)
-            .post(requestBody.toString().toRequestBody("application/json".toMediaType()))
+            .post(body)
             .build()
 
         return try {
@@ -160,31 +170,31 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
-                EventBus.broadcast(CheckoutEvent.TokenizationError(error)) // FIXME remove EventBus
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.TokenizationError(error))
                 return OperationResult.Error(Throwable())
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                response.body()?.close()
                 continuation.resume(json)
             }
             val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
             EventBus.broadcast(
                 CheckoutEvent.TokenizationSuccess(
                     PaymentMethodTokenAdapter.internalToExternal(token)
-                ) // FIXME remove EventBus
+                )
             )
             if (token.tokenType == TokenType.MULTI_USE) {
                 EventBus.broadcast(
-                    CheckoutEvent.TokenAddedToVault(
-                        PaymentMethodTokenAdapter.internalToExternal(token)
-                    )
-                ) // FIXME remove EventBus
+                    CheckoutEvent.TokenAddedToVault(PaymentMethodTokenAdapter.internalToExternal(token))
+                )
             }
 
             OperationResult.Success(token)
         } catch (error: Throwable) {
+
             OperationResult.Error(error)
         }
     }
@@ -211,6 +221,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
@@ -232,10 +243,10 @@ internal class Model constructor(
     ): OperationResult<JSONObject> {
 
         val url = APIEndpoint.get(session, APIEndpoint.Target.CORE, pathname)
-        val stringifiedBody = requestBody?.toString() ?: "{}"
+        val body = toJsonRequestBody(requestBody)
         val request = Request.Builder()
             .url(url)
-            .post(stringifiedBody.toRequestBody("application/json".toMediaType()))
+            .post(body)
             .build()
 
         return try {
@@ -246,12 +257,13 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
+                EventBus.broadcast(CheckoutEvent.ApiError(error))
                 return OperationResult.Error(Throwable())
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body?.string() ?: "{}")
-                response.body?.close()
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                response.body()?.close()
                 continuation.resume(json)
             }
 
@@ -259,5 +271,11 @@ internal class Model constructor(
         } catch (error: Throwable) {
             OperationResult.Error(error)
         }
+    }
+
+    private fun toJsonRequestBody(requestBody: JSONObject?): RequestBody {
+        val mimeType = MediaType.get("application/json")
+        val serialized = requestBody?.toString() ?: "{}"
+        return RequestBody.create(mimeType, serialized)
     }
 }

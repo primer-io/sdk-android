@@ -5,7 +5,6 @@ import android.view.View
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
-import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -31,7 +30,7 @@ internal class GoCardless(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             GoCardlessViewFragment::newInstance,
-            returnToPreviousOnBack = checkoutConfig.uxMode != UXMode.STANDALONE_PAYMENT_METHOD
+            returnToPreviousOnBack = !checkoutConfig.isStandalonePaymentMethod
         )
 
     override val type: PaymentMethodType
