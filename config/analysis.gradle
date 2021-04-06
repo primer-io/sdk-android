@@ -5,17 +5,25 @@ apply plugin: 'io.gitlab.arturbosch.detekt'
 detekt {
     failFast = false
     buildUponDefaultConfig = true
+
+    debug = true
+    parallel = true
+    disableDefaultRuleSets = false
+
+    ignoredBuildTypes = ["debug"]
+
 //    config = files("$projectDir/config/detekt.yml")
 //    baseline = file("$projectDir/config/baseline.xml")
 
     reports {
-        html.enabled = true // observe findings in your browser with structure and code snippets
-        xml.enabled = true // checkstyle like format mainly for integrations like Jenkins
+        html.enabled = true
+        xml.enabled = true
         txt.enabled = true
         sarif.enabled = true // https://sarifweb.azurewebsites.net - for integrations with Github
     }
 }
-tasks.detekt.jvmTarget = JavaVersion.VERSION_1_8
+
+tasks.detekt.jvmTarget = projectJvmTarget
 
 // ktlint setup - https://github.com/JLLeitschuh/ktlint-gradle
 ktlint {
