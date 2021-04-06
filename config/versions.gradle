@@ -9,8 +9,7 @@ ext {
             kotlin                 : kotlinVersion,
             lifecycle              : "2.2.0",
             mockk                  : "1.10.5",
-            okhttp                 : "4.9.0",
-            retrofit               : "2.9.0",
+            okhttp                 : "3.12.1",
             xJunitRunner           : "1.1.2",
     ]
 }
