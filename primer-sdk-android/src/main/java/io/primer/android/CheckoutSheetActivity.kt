@@ -136,7 +136,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         }
     }
 
-    private val selectPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
+    private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
         it?.let {
             when (val behaviour = it.selectedBehaviour) {
                 is NewFragmentBehaviour -> {
@@ -175,7 +175,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         sheet = CheckoutSheetFragment.newInstance()
 
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
-        mainViewModel.selectedPaymentMethod.observe(this, selectPaymentMethodObserver)
+        mainViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
 
         // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
