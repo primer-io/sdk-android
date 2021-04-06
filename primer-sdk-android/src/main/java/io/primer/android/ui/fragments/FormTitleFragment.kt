@@ -20,9 +20,9 @@ internal class FormTitleFragment : FormChildFragment() {
     private lateinit var mProgress: ViewGroup
 
     override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_form_title, container, false)
     }
@@ -37,7 +37,12 @@ internal class FormTitleFragment : FormChildFragment() {
         }
 
         view.findViewById<Button>(R.id.form_title_cancel_button).setOnClickListener {
-            dispatchFormEvent(if (viewModel.title.value?.cancelBehaviour == FormTitleState.CancelBehaviour.CANCEL) FormActionEvent.Cancel() else FormActionEvent.Exit())
+            dispatchFormEvent(
+                if (viewModel.title.value?.cancelBehaviour == FormTitleState.CancelBehaviour.CANCEL)
+                    FormActionEvent.Cancel()
+                else
+                    FormActionEvent.Exit()
+            )
         }
 
         viewModel.title.observe(viewLifecycleOwner) {

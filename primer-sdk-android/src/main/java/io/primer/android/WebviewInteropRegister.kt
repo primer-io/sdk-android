@@ -4,7 +4,7 @@ import android.net.Uri
 import io.primer.android.logging.Logger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.UUID
 import kotlin.collections.HashMap
 
 internal class WebviewInteropRegister {

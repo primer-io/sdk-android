@@ -2,7 +2,7 @@ package io.primer.android.payment
 
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.UUID
 
 @KoinApiExtension
 internal abstract class WebViewBehaviour(

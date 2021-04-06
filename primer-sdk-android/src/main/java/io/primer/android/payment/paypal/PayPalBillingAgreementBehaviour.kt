@@ -3,8 +3,6 @@ package io.primer.android.payment.paypal
 import android.net.Uri
 import io.primer.android.logging.Logger
 import io.primer.android.payment.WebBrowserIntentBehaviour
-import io.primer.android.viewmodel.PrimerViewModel
-import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension

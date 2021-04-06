@@ -7,8 +7,8 @@ private val INVALID_CHARACTER = Regex("[^0-9]")
 private val ENDS_WITH_WHITESPACE = Regex(".+\\s$")
 
 internal class CardNumberFormatter private constructor(
-  private val value: String,
-  private val autoInsert: Boolean,
+    private val value: String,
+    private val autoInsert: Boolean,
 ) {
 
     private val meta = CardType.lookup(value)

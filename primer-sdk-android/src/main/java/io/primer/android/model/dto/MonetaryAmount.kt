@@ -1,7 +1,7 @@
 package io.primer.android.model.dto
 
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.Currency
 
 @Serializable
 internal class MonetaryAmount private constructor(

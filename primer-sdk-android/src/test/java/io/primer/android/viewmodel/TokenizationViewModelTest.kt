@@ -27,7 +27,6 @@ import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.payment.card.CreditCard
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -86,9 +85,12 @@ class TokenizationViewModelTest : KoinTest {
                 module {
                     single { model }
                     single { config }
-                })
+                }
+            )
         }
-        DIAppContext.app = testApp // FIXME we have to hack this this way because of DIAppComponent and DIAppContext
+
+        // FIXME we have to hack this this way because of DIAppComponent and DIAppContext
+        DIAppContext.app = testApp
 
         viewModel = TokenizationViewModel()
     }
@@ -108,7 +110,11 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
-        val paymentMethodDescriptor = CreditCard(paymentMethodConfig, PaymentMethod.Card(), mockJson)
+        val paymentMethodDescriptor = CreditCard(
+            paymentMethodConfig,
+            PaymentMethod.Card(),
+            mockJson
+        )
         val statusObserver = viewModel.tokenizationStatus.test()
 
         viewModel.resetPaymentMethod(paymentMethodDescriptor)
@@ -135,7 +141,11 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
         coEvery { model.tokenize(any()) } returns OperationResult.Success(mockk())
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
-        val paymentMethodDescriptor = CreditCard(paymentMethodConfig, PaymentMethod.Card(), mockJson)
+        val paymentMethodDescriptor = CreditCard(
+            paymentMethodConfig,
+            PaymentMethod.Card(),
+            mockJson
+        )
         viewModel.resetPaymentMethod(paymentMethodDescriptor)
 
         viewModel.tokenize()

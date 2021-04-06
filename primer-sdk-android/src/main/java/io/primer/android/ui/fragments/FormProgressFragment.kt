@@ -14,9 +14,9 @@ internal class FormProgressFragment : FormChildFragment() {
     private lateinit var mLayout: ViewGroup
 
     override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         return inflater.inflate(R.layout.fragment_form_progress, container, false)
     }

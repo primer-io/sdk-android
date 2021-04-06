@@ -11,8 +11,8 @@ import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.klarna.Klarna
@@ -21,7 +21,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class TokenizationViewModel : ViewModel(), DIAppComponent {
@@ -35,7 +35,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val tokenizationStatus = MutableLiveData(TokenizationStatus.NONE)
     val tokenizationError = MutableLiveData<Unit>()
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
-    val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(Collections.emptyList())
+    val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(
+        Collections.emptyList()
+    )
 
     val klarnaError = MutableLiveData<Unit>()
     val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
@@ -148,7 +150,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         val uri = Uri.parse(redirectUrl)
         val klarnaAuthToken = uri.getQueryParameter("token")
 
-        if (redirectUrl == null || klarna == null || klarna.config.id == null || klarnaAuthToken == null) {
+        if (redirectUrl == null || klarna == null ||
+            klarna.config.id == null || klarnaAuthToken == null
+        ) {
             // TODO error: missing fields
             return
         }

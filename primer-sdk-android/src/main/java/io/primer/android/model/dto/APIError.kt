@@ -10,7 +10,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.IOException
-import java.util.*
+import java.util.Collections
 
 @Serializable
 data class APIError(
@@ -61,7 +61,8 @@ data class APIError(
                 }
 
                 if (element.containsKey("message")) {
-                    val message = element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
+                    val message =
+                        element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
                     val jsonString = "{\"description\": \"$message\"}"
                     return json.parseToJsonElement(jsonString).jsonObject
                 }

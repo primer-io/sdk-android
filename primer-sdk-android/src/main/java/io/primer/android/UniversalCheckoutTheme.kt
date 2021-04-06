@@ -1,7 +1,6 @@
 package io.primer.android
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.annotation.ColorInt
 import kotlinx.serialization.Serializable
 
@@ -80,16 +79,34 @@ data class UniversalCheckoutTheme constructor(
                 buttonCornerRadius = buttonCornerRadius ?: BUTTON_CORNER_RADIUS_DEFAULT,
                 inputCornerRadius = inputCornerRadius ?: INPUT_CORNER_RADIUS_DEFAULT,
                 backgroundColor = hexToColorInt(backgroundColor, BACKGROUND_COLOR_DEFAULT),
-                buttonPrimaryColor = hexToColorInt(buttonPrimaryColor, BUTTON_PRIMARY_COLOR_DEFAULT),
-                buttonPrimaryColorDisabled = hexToColorInt(buttonPrimaryColorDisabled, BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT),
-                buttonDefaultColor = hexToColorInt(buttonDefaultColor, BUTTON_DEFAULT_COLOR_DEFAULT),
-                buttonDefaultColorDisabled = hexToColorInt(buttonDefaultColorDisabled, BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT),
-                buttonDefaultBorderColor = hexToColorInt(buttonDefaultBorderColor, BUTTON_DEFAULT_BORDER_COLOR_DEFAULT),
+                buttonPrimaryColor = hexToColorInt(
+                    buttonPrimaryColor,
+                    BUTTON_PRIMARY_COLOR_DEFAULT
+                ),
+                buttonPrimaryColorDisabled = hexToColorInt(
+                    buttonPrimaryColorDisabled,
+                    BUTTON_PRIMARY_COLOR_DISABLED_DEFAULT
+                ),
+                buttonDefaultColor = hexToColorInt(
+                    buttonDefaultColor,
+                    BUTTON_DEFAULT_COLOR_DEFAULT
+                ),
+                buttonDefaultColorDisabled = hexToColorInt(
+                    buttonDefaultColorDisabled,
+                    BUTTON_DEFAULT_COLOR_DISABLED_DEFAULT
+                ),
+                buttonDefaultBorderColor = hexToColorInt(
+                    buttonDefaultBorderColor,
+                    BUTTON_DEFAULT_BORDER_COLOR_DEFAULT
+                ),
                 textDefaultColor = hexToColorInt(textDefaultColor, TEXT_DEFAULT_COLOR_DEFAULT),
                 textDangerColor = hexToColorInt(textDangerColor, TEXT_DANGER_COLOR_DEFAULT),
                 textMutedColor = hexToColorInt(textMutedColor, TEXT_MUTED_COLOR_DEFAULT),
                 primaryColor = hexToColorInt(primaryColor, PRIMARY_COLOR_DEFAULT),
-                inputBackgroundColor = hexToColorInt(inputBackgroundColor, INPUT_BACKGROUND_COLOR_DEFAULT),
+                inputBackgroundColor = hexToColorInt(
+                    inputBackgroundColor,
+                    INPUT_BACKGROUND_COLOR_DEFAULT
+                ),
                 windowMode = windowMode,
             )
         }

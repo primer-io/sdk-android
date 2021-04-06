@@ -1,26 +1,21 @@
 package io.primer.android.ui.fragments
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
@@ -60,8 +55,13 @@ internal class CheckoutSheetFragment :
         viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
