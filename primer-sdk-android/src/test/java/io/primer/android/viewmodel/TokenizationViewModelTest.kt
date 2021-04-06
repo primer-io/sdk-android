@@ -11,6 +11,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.PaymentMethod
+import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppContext
 import io.primer.android.model.Model
@@ -35,6 +36,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
+import java.util.*
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class TokenizationViewModelTest : KoinTest {
@@ -65,7 +67,15 @@ class TokenizationViewModelTest : KoinTest {
         UniversalCheckoutTheme.WindowMode.FULL_HEIGHT
     )
 
-    private val config = CheckoutConfig(clientToken = "t0k3n", theme = theme)
+    private val config = CheckoutConfig(
+        clientToken = "t0k3n",
+        packageName = "pkg",
+        uxMode = UXMode.VAULT,
+        locale = Locale.UK,
+        amount = null,
+        isStandalonePaymentMethod = false,
+        theme = theme
+    )
 
     @BeforeEach
     internal fun setUp() {

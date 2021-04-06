@@ -15,6 +15,9 @@ ext {
             Kotlin : [
                     coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1",
             ],
+            Koin   : [
+                    test: "org.koin:koin-test:$koinVersion"
+            ],
             Android: [
                     testRunner  : "androidx.test:runner:1.1.1",
                     fragment    : "androidx.fragment:fragment-testing:${Versions.fragment}",

@@ -1,19 +1,25 @@
 buildscript {
-    repositories { jcenter() }
+    repositories {
+        jcenter()
+        google()
+    }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "org.koin:koin-gradle-plugin:$koin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
+        classpath "org.koin:koin-gradle-plugin:$koinVersion"
     }
 }
 
 plugins {
     id 'com.android.library'
+    id 'kotlin-android'
 }
 
 apply plugin: 'koin'
-apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
+
+apply from: "$rootDir/config/android-common.gradle"
+apply from: "$rootDir/config/test-dependencies.gradle"
 
 ext {
     userOrganisation = 'primer-api'
@@ -42,31 +48,11 @@ ext {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
-
-    defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     buildTypes.each {
@@ -76,12 +62,12 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1'
 
-    implementation "org.koin:koin-core:$koin_version"
-    implementation "org.koin:koin-androidx-scope:$koin_version"
+    implementation "org.koin:koin-core:$koinVersion"
+    implementation "org.koin:koin-androidx-scope:$koinVersion"
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
@@ -102,18 +88,12 @@ dependencies {
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2'
     implementation 'com.hbb20:ccp:2.4.5'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.6.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.6.2"
-    testImplementation "io.mockk:mockk:1.10.5"
-    testImplementation "io.mockk:mockk-android:1.10.5"
-    testImplementation "de.mannodermaus.junit5:android-test-runner:1.2.0"
-    testImplementation "org.koin:koin-test:$koin_version"
-    testImplementation "com.jraska.livedata:testing-ktx:1.1.2"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1"
+    testImplementation TestDependencies.Kotlin.coroutines
+    testImplementation TestDependencies.Android.archCore
+    testImplementation TestDependencies.Android.liveData
+    testImplementation TestDependencies.Koin.test
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation TestDependencies.Android.Espresso.core
 }
 
 repositories {

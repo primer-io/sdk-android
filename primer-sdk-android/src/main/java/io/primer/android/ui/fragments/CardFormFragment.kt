@@ -217,7 +217,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             UXMode.VAULT -> requireContext().getString(R.string.confirm)
             UXMode.CHECKOUT -> PayAmountText.generate(
                 requireContext(),
-                checkoutConfig.amount
+                checkoutConfig.monetaryAmount
             )
             else -> ""
         }

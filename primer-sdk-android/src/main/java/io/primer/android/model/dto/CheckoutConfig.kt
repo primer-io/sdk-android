@@ -2,7 +2,6 @@ package io.primer.android.model.dto
 
 import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
-import io.primer.android.model.OrderItem
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -18,7 +17,7 @@ internal data class CheckoutConfig(
     val packageName: String,
     val uxMode: UXMode,
     @Serializable(with = LocaleSerializer::class) val locale: Locale,
-    val amount: MonetaryAmount?,
+    val monetaryAmount: MonetaryAmount?,
     val isStandalonePaymentMethod: Boolean,
     val theme: UniversalCheckoutTheme,
 ) {
@@ -38,7 +37,7 @@ internal data class CheckoutConfig(
         packageName = packageName,
         uxMode = uxMode,
         locale = locale,
-        amount = MonetaryAmount.create(currency = currency, value = amount),
+        monetaryAmount = MonetaryAmount.create(currency = currency, value = amount),
         isStandalonePaymentMethod = isStandalonePaymentMethod,
         theme = theme ?: UniversalCheckoutTheme.getDefault()
     )
