@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
-import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -15,7 +14,6 @@ import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
-import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
@@ -23,7 +21,6 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import org.koin.core.definition.Kind
 import java.util.*
 
 @KoinApiExtension // FIXME inject dependencies via ctor
@@ -78,8 +75,7 @@ internal class PrimerViewModel(
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
-        val result: OperationResult<List<PaymentMethodTokenInternal>> = model.getVaultedPaymentMethods(clientSession)
-        when (result) {
+        when (val result: OperationResult<List<PaymentMethodTokenInternal>> = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)
@@ -88,15 +84,16 @@ internal class PrimerViewModel(
 
                 // FIXME needs to be injected
                 val resolver = PaymentMethodDescriptorResolver(
-                    configuredPaymentMethods,
-                    clientSession.paymentMethods,
-                    paymentMethodDescriptorFactory
+                    checkoutConfig = checkoutConfig,
+                    configured = configuredPaymentMethods,
+                    paymentMethodRemoteConfigs = clientSession.paymentMethods,
+                    paymentMethodDescriptorFactory = paymentMethodDescriptorFactory
                 )
 
-                val descriptors = resolver.resolve(this)
+                val descriptors = resolver.resolve()
                 paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.uxMode == UXMode.STANDALONE_PAYMENT_METHOD) {
+                if (this.checkoutConfig.isStandalonePaymentMethod) {
                     selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))

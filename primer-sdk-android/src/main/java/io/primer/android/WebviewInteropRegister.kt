@@ -8,6 +8,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 internal class WebviewInteropRegister {
+
     @KoinApiExtension
     data class Callback(
         val id: String,

@@ -20,7 +20,9 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
         single<OkHttpClient> {
             OkHttpClient.Builder()
                 .addInterceptor(
-                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                    HttpLoggingInterceptor().apply {
+                        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+                    }
                 )
                 .addInterceptor { chain: Interceptor.Chain ->
                     chain.request().newBuilder()
