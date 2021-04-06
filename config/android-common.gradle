@@ -34,13 +34,13 @@ dependencies {
     testRuntimeOnly TestDependencies.Junit.jupiterEngine
     testImplementation TestDependencies.Junit.jupiter
     testImplementation TestDependencies.Junit.jupiterParams
+
     testImplementation TestDependencies.Mockk.mockk
 
     androidTestImplementation TestDependencies.Mockk.mockkAndroid
     androidTestImplementation TestDependencies.Android.core
     androidTestImplementation TestDependencies.Android.testRunner
     androidTestImplementation TestDependencies.Android.xJunitRunner
+
     androidTestRuntimeOnly TestDependencies.Junit.testRunner
 }
-
-apply plugin: "de.mannodermaus.android-junit5"
