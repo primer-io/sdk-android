@@ -46,43 +46,52 @@ class VaultedPaymentMethodsFragment : Fragment() {
         tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         paymentMethodsLinearLayout = view.findViewById(R.id.vaulted_payment_methods_list)
-        readOnlyHeaderLinearLayout = view.findViewById(R.id.primer_view_vaulted_payment_methods_header)
+        readOnlyHeaderLinearLayout = view.findViewById(
+            R.id.primer_view_vaulted_payment_methods_header
+        )
         editHeaderLinearLayout = view.findViewById(R.id.primer_edit_vaulted_payment_methods_header)
 
-        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner, { paymentMethods ->
-            views.forEach {
-                paymentMethodsLinearLayout.removeView(it.getView())
-            }
+        viewModel.vaultedPaymentMethods.observe(
+            viewLifecycleOwner,
+            { paymentMethods ->
+                views.forEach {
+                    paymentMethodsLinearLayout.removeView(it.getView())
+                }
 
-            views.clear()
+                views.clear()
 
-            paymentMethods.forEach { paymentMethodToken ->
-                val attributes = TokenAttributes.create(paymentMethodToken)
+                paymentMethods.forEach { paymentMethodToken ->
+                    val attributes = TokenAttributes.create(paymentMethodToken)
 
-                attributes?.let { attrs ->
-                    val paymentMethodView = VaultedPaymentMethodView(requireContext(), attrs)
+                    attributes?.let { attrs ->
+                        val paymentMethodView = VaultedPaymentMethodView(requireContext(), attrs)
 
-                    paymentMethodView.setOnDeleteListener {
-                        tokenizationViewModel.deleteToken(paymentMethodToken)
+                        paymentMethodView.setOnDeleteListener {
+                            tokenizationViewModel.deleteToken(paymentMethodToken)
+                        }
+
+                        views.add(paymentMethodView)
+                        paymentMethodView.setEditable(isEditing)
+                        paymentMethodsLinearLayout.addView(paymentMethodView.getView())
                     }
+                }
 
-                    views.add(paymentMethodView)
-                    paymentMethodView.setEditable(isEditing)
-                    paymentMethodsLinearLayout.addView(paymentMethodView.getView())
+                if (views.isEmpty()) {
+                    gotoSelectPaymentMethod()
                 }
             }
-
-            if (views.isEmpty()) {
-                gotoSelectPaymentMethod()
-            }
-        })
+        )
 
         view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
             gotoSelectPaymentMethod()

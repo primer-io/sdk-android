@@ -110,7 +110,10 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class ClientTokenRequest(onSuccess: Response.Listener<JSONObject>, onError: Response.ErrorListener) : JsonObjectRequest(
+class ClientTokenRequest(
+    onSuccess: Response.Listener<JSONObject>,
+    onError: Response.ErrorListener,
+) : JsonObjectRequest(
     Method.POST,
     CLIENT_TOKEN_URI,
     JSONObject().apply { put("customerId", CUSTOMER_ID) },
@@ -118,11 +121,10 @@ class ClientTokenRequest(onSuccess: Response.Listener<JSONObject>, onError: Resp
     onError,
 ) {
 
-    override fun getHeaders(): MutableMap<String, String> {
-        return HashMap<String, String>().apply {
+    override fun getHeaders(): MutableMap<String, String> =
+        HashMap<String, String>().apply {
             if (API_KEY.isNotEmpty()) {
                 put("X-Api-Key", API_KEY)
             }
         }
-    }
 }

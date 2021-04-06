@@ -2,9 +2,14 @@ package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.SyncValidationError
-import io.primer.android.ui.*
+import io.primer.android.ui.ButtonState
+import io.primer.android.ui.FormErrorState
+import io.primer.android.ui.FormField
+import io.primer.android.ui.FormProgressState
+import io.primer.android.ui.FormSummaryState
+import io.primer.android.ui.FormTitleState
+import io.primer.android.ui.FormViewState
 
 internal class FormViewModel : ViewModel() {
 

@@ -1,7 +1,11 @@
 package io.primer.android.payment.gocardless
 
 import io.primer.android.R
-import io.primer.android.ui.*
+import io.primer.android.ui.ButtonState
+import io.primer.android.ui.FormSummaryState
+import io.primer.android.ui.FormTitleState
+import io.primer.android.ui.InteractiveSummaryItem
+import io.primer.android.ui.TextSummaryItem
 
 class SummaryViewState(
     val getCustomerName: () -> String,

@@ -70,12 +70,14 @@ internal object KeyboardVisibilityEvent {
 
         val subscription = Subscription(contentView, layoutListener)
 
-        lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun onDestroy() {
-                subscription.unregister()
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    subscription.unregister()
+                }
             }
-        })
+        )
 
         subscription.register()
     }

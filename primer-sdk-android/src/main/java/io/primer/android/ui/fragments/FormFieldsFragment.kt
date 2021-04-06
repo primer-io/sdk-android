@@ -67,9 +67,19 @@ internal class FormFieldsFragment : FormChildFragment() {
 
             private fun listenerToTextWatcher(l: InputChangeListener): TextWatcher {
                 return object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
 
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
                         l.onValueChange(s.toString())
                     }
 
@@ -142,7 +152,9 @@ internal class FormFieldsFragment : FormChildFragment() {
 
                     fieldIds[key]?.let { id ->
                         val inputLayout = layout.findViewById<TextInputLayout>(id)
-                        val inputField = inputLayout.findViewById<TextInputEditText>(R.id.form_input_field)
+                        val inputField = inputLayout.findViewById<TextInputEditText>(
+                            R.id.form_input_field
+                        )
 
                         inputField.error = if (value == null) null else requireContext().getString(
                             value.errorId,
@@ -206,5 +218,4 @@ internal class FormFieldsFragment : FormChildFragment() {
             else -> InputElementFactory.EditText(field)
         }
     }
-
 }

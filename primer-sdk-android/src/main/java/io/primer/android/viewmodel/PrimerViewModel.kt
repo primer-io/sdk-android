@@ -21,7 +21,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class PrimerViewModel(
@@ -49,7 +49,9 @@ internal class PrimerViewModel(
 
     val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
 
-    val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(Collections.emptyList())
+    val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
+        Collections.emptyList()
+    )
     val paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(Collections.emptyList())
     val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
 
@@ -75,7 +77,10 @@ internal class PrimerViewModel(
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
-        when (val result: OperationResult<List<PaymentMethodTokenInternal>> = model.getVaultedPaymentMethods(clientSession)) {
+        when (
+            val result: OperationResult<List<PaymentMethodTokenInternal>> =
+                model.getVaultedPaymentMethods(clientSession)
+        ) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)
@@ -111,13 +116,14 @@ internal class PrimerViewModel(
         subscription.unregister()
     }
 
-    private fun getInitialViewStatus(vaultedPaymentMethods: List<PaymentMethodTokenInternal>): ViewStatus {
+    private fun getInitialViewStatus(
+        vaultedPaymentMethods: List<PaymentMethodTokenInternal>,
+    ): ViewStatus =
         if (vaultedPaymentMethods.isNotEmpty()) {
-            return ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+        } else {
+            ViewStatus.SELECT_PAYMENT_METHOD
         }
-
-        return ViewStatus.SELECT_PAYMENT_METHOD
-    }
 
     override fun onEvent(e: CheckoutEvent) {
         when (e) {
@@ -126,8 +132,12 @@ internal class PrimerViewModel(
                     vaultedPaymentMethods.value?.filter { it.token != e.data.token }
             }
             is CheckoutEvent.TokenAddedToVault -> {
-                if (vaultedPaymentMethods.value?.find { it.analyticsId == e.data.analyticsId } == null) {
-                    vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(PaymentMethodTokenAdapter.externalToInternal(e.data))
+                val hasMatch = vaultedPaymentMethods.value
+                    ?.count { it.analyticsId == e.data.analyticsId } ?: 0 > 0
+                if (hasMatch) {
+                    vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(
+                        PaymentMethodTokenAdapter.externalToInternal(e.data)
+                    )
                 }
             }
         }

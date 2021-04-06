@@ -1,7 +1,7 @@
 package io.primer.android.ui
 
 import io.primer.android.logging.Logger
-import java.util.*
+import java.util.Calendar
 import kotlin.math.min
 
 private val INVALID_CHARACTER = Regex("[^0-9/]")
@@ -13,9 +13,9 @@ private val SEPARATOR_CHAR = Regex("[\\s/-]+")
 private val INVALID_MONTH = Regex("^1[3-9].*")
 
 internal class ExpiryDateFormatter(
-  private var month: String = "",
-  private var year: String = "",
-  private var separator: Boolean = false,
+    private var month: String = "",
+    private var year: String = "",
+    private var separator: Boolean = false,
 ) {
 
     private val log = Logger("expiry-date")
@@ -64,7 +64,7 @@ internal class ExpiryDateFormatter(
     fun getYear(date: Calendar? = null): String {
         val now = date ?: getDate()
         val prefix = now.get(Calendar.YEAR).toString().substring(0, 2)
-        return "${prefix}${year}"
+        return "${prefix}$year"
     }
 
     companion object {
@@ -116,8 +116,8 @@ internal class ExpiryDateFormatter(
                 tokens = emptyList()
             } else if (sanitized.matches(THREE_OR_FOUR_DIGITS)) {
                 tokens = listOf(
-                  sanitized.substring(0, 2),
-                  sanitized.substring(2)
+                    sanitized.substring(0, 2),
+                    sanitized.substring(2)
                 )
             } else {
                 tokens = sanitized.split(SEPARATOR_CHAR)

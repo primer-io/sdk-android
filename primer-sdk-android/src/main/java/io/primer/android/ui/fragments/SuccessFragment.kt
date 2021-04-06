@@ -36,9 +36,12 @@ class SuccessFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Handler(Looper.getMainLooper()).postDelayed({
-            EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
-        }, delay ?: SUCCESS_FRAGMENT_DISMISS_DELAY_DEFAULT)
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
+            },
+            delay ?: SUCCESS_FRAGMENT_DISMISS_DELAY_DEFAULT
+        )
     }
 
     companion object {

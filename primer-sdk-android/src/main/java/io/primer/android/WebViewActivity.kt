@@ -61,7 +61,9 @@ internal abstract class KlarnaWebViewClient(
         if (shouldOverride) requestUrl?.let {
 
             val canceled = requestUrl.contains("state=cancel")
-            val resultCode = if (canceled) AppCompatActivity.RESULT_CANCELED else AppCompatActivity.RESULT_OK
+            val resultCode =
+                if (canceled) AppCompatActivity.RESULT_CANCELED
+                else AppCompatActivity.RESULT_OK
             val intent = Intent().apply { putExtra(WebViewActivity.REDIRECT_URL_KEY, requestUrl) }
             handleResult(resultCode, intent)
         }

@@ -7,8 +7,10 @@ import io.primer.android.ui.FormProgressState
 import io.primer.android.ui.FormTitleState
 
 class IBANViewState(
-    buttonLabelId: Int, cancelBehaviour: FormTitleState.CancelBehaviour,
-    showProgress: Boolean, initialValues: Map<String, String>? = null,
+    buttonLabelId: Int,
+    cancelBehaviour: FormTitleState.CancelBehaviour,
+    showProgress: Boolean,
+    initialValues: Map<String, String>? = null,
 ) : GoCardlessFormSceneState(
     scene = Scene.IBAN,
     title = FormTitleState(

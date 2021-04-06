@@ -2,7 +2,6 @@ package io.primer.android.model.dto
 
 import io.primer.android.model.json
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import org.json.JSONObject
@@ -38,18 +37,26 @@ internal object PaymentMethodTokenAdapter {
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
             paymentInstrumentData = JSONObject(token.paymentInstrumentData.toString()),
-            vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(customerId = token.vaultData.customerId)
+            vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
+                customerId = token.vaultData.customerId
+            )
         )
     }
 
     fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
+        val paymentInstrumentData =
+            json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject
+        val vaultData =
+            if (token.vaultData == null) null
+            else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
+
         return PaymentMethodTokenInternal(
             token = token.token,
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
-            paymentInstrumentData = json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject,
-            vaultData = if (token.vaultData == null) null else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
+            paymentInstrumentData = paymentInstrumentData,
+            vaultData = vaultData
         )
     }
 }

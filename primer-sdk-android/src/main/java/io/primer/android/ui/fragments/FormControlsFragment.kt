@@ -1,13 +1,9 @@
 package io.primer.android.ui.fragments
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import io.primer.android.R
 import io.primer.android.logging.Logger
 import io.primer.android.ui.ButtonState
@@ -21,9 +17,9 @@ internal class FormControlsFragment : FormChildFragment() {
     private lateinit var mButton: ButtonPrimary
 
     override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_form_controls, container, false)
     }

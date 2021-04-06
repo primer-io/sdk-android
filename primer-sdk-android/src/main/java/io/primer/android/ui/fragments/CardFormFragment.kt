@@ -29,7 +29,7 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
 import kotlin.collections.HashMap
 
 /**
@@ -59,7 +59,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         return inflater.inflate(R.layout.fragment_card_form, container, false)
@@ -96,12 +97,18 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             }
         }
 
-        tokenizationViewModel.validationErrors.observe(viewLifecycleOwner, {
-            setValidationErrors()
-        })
-        tokenizationViewModel.submitted.observe(viewLifecycleOwner, {
-            setValidationErrors()
-        })
+        tokenizationViewModel.validationErrors.observe(
+            viewLifecycleOwner,
+            {
+                setValidationErrors()
+            }
+        )
+        tokenizationViewModel.submitted.observe(
+            viewLifecycleOwner,
+            {
+                setValidationErrors()
+            }
+        )
 
         viewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
         onUXModeChanged(checkoutConfig.uxMode)
@@ -185,7 +192,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             val focused = it.value.isFocused
 
             if (showAll || dirty) {
-                setValidationErrorState(it.value, if (focused) null else errors.find { err -> err.name == it.key })
+                setValidationErrorState(
+                    it.value,
+                    if (focused) null else errors.find { err -> err.name == it.key }
+                )
             }
         }
     }

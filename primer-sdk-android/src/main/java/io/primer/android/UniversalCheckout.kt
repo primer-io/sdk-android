@@ -6,10 +6,13 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.OrderItem
-import io.primer.android.model.dto.*
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PaymentMethodTokenAdapter
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +23,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.Locale
 
 internal enum class UXMode {
     CHECKOUT,
@@ -41,11 +44,17 @@ object UniversalCheckout {
         theme: UniversalCheckoutTheme? = null,
     ) {
         val clientToken = ClientToken.fromString(fullToken)
-        val config = CheckoutConfig(clientToken = fullToken, locale = locale, packageName = context.packageName)
+        val config = CheckoutConfig(
+            clientToken = fullToken,
+            locale = locale,
+            packageName = context.packageName
+        )
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            level =
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                else HttpLoggingInterceptor.Level.NONE
         }
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
@@ -148,7 +157,13 @@ internal class InternalUniversalCheckout constructor(
                     when (val result = model.getVaultedPaymentMethods(clientSession)) {
                         is OperationResult.Success -> {
                             val paymentMethodTokens: List<PaymentMethodTokenInternal> = result.data
-                            callback(paymentMethodTokens.map { PaymentMethodTokenAdapter.internalToExternal(it) })
+                            callback(
+                                paymentMethodTokens.map {
+                                    PaymentMethodTokenAdapter.internalToExternal(
+                                        it
+                                    )
+                                }
+                            )
                         }
                         is OperationResult.Error -> {
                             callback(listOf())
