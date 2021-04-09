@@ -1,8 +1,12 @@
+if (System.getenv()['CI']) {
+    return
+}
+
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 version = libraryVersion
-group = publishedGroupId    // Maven Group ID for the artifact
+group = publishedGroupId
 
 install {
     repositories.mavenInstaller {
@@ -13,18 +17,17 @@ install {
                 groupId publishedGroupId
                 artifactId artifact
 
-                // Add your description here
                 name libraryName
                 description libraryDescription
                 url siteUrl
 
-                // Set your license
                 licenses {
                     license {
                         name licenseName
                         url licenseUrl
                     }
                 }
+
                 developers {
                     developer {
                         id developerId
@@ -32,6 +35,7 @@ install {
                         email developerEmail
                     }
                 }
+
                 scm {
                     connection gitUrl
                     developerConnection gitUrl
@@ -51,7 +55,6 @@ artifacts {
     archives sourcesJar
 }
 
-// Bintray
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
@@ -60,6 +63,7 @@ bintray {
     key = properties.getProperty("bintray.apikey")
 
     configurations = ['archives']
+
     pkg {
         userOrg = userOrganisation
         repo = bintrayRepo

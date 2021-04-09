@@ -11,6 +11,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.PaymentMethod
+import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppContext
 import io.primer.android.model.Model
@@ -26,6 +27,7 @@ import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.payment.card.CreditCard
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,6 +36,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
+import java.util.Locale
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class TokenizationViewModelTest : KoinTest {
@@ -64,7 +67,15 @@ class TokenizationViewModelTest : KoinTest {
         UniversalCheckoutTheme.WindowMode.FULL_HEIGHT
     )
 
-    private val config = CheckoutConfig(clientToken = "t0k3n", theme = theme)
+    private val config = CheckoutConfig(
+        clientToken = "t0k3n",
+        packageName = "pkg",
+        uxMode = UXMode.VAULT,
+        locale = Locale.UK,
+        amount = null,
+        isStandalonePaymentMethod = false,
+        theme = theme
+    )
 
     @BeforeEach
     internal fun setUp() {

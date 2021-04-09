@@ -1,0 +1,4 @@
+java {
+    sourceCompatibility = projectJvmTarget
+    targetCompatibility = projectJvmTarget
+}

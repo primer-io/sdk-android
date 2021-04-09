@@ -100,7 +100,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country
-                val currencyCode = checkoutConfig.amount?.currency
+                val currencyCode = checkoutConfig.monetaryAmount?.currency
                 val locale = checkoutConfig.locale.toLanguageTag()
 
                 put("countryCode", countryCode)
@@ -125,7 +125,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 put("paymentMethodConfigId", id)
                 put("sessionType", "HOSTED_PAYMENT_PAGE")
                 put("redirectUrl", klarnaReturnUrl)
-                put("totalAmount", checkoutConfig.amount?.value)
+                put("totalAmount", checkoutConfig.monetaryAmount?.value)
                 put("localeData", localeData)
                 put("orderItems", orderItems)
             }
@@ -163,7 +163,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
-            val currencyCode = checkoutConfig.amount?.currency
+            val currencyCode = checkoutConfig.monetaryAmount?.currency
             val locale = checkoutConfig.locale.toLanguageTag()
 
             put("countryCode", countryCode)
@@ -241,8 +241,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
-        body.put("amount", checkoutConfig.amount?.value)
-        body.put("currencyCode", checkoutConfig.amount?.currency)
+        body.put("amount", checkoutConfig.monetaryAmount?.value)
+        body.put("currencyCode", checkoutConfig.monetaryAmount?.currency)
         body.put("returnUrl", returnUrl)
         body.put("cancelUrl", cancelUrl)
 

@@ -1,0 +1,36 @@
+apply from: "$rootDir/config/versions.gradle"
+
+ext {
+    TestDependencies = [
+            Junit  : [
+                    jupiter      : "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}",
+                    jupiterEngine: "org.junit.jupiter:junit-jupiter-engine:${Versions.junit5}",
+                    jupiterParams: "org.junit.jupiter:junit-jupiter-params:${Versions.junit5}",
+                    testRunner   : "de.mannodermaus.junit5:android-test-runner:${Versions.androidJunit5TestRunner}"
+            ],
+            Mockk  : [
+                    mockk       : "io.mockk:mockk:${Versions.mockk}",
+                    mockkAndroid: "io.mockk:mockk-android:${Versions.mockk}"
+            ],
+            Kotlin : [
+                    coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1",
+            ],
+            Koin   : [
+                    test: "org.koin:koin-test:$koinVersion"
+            ],
+            Android: [
+                    testRunner  : "androidx.test:runner:1.1.1",
+                    fragment    : "androidx.fragment:fragment-testing:${Versions.fragment}",
+                    xJunitRunner: "androidx.test.ext:junit:${Versions.xJunitRunner}",
+                    liveData    : "com.jraska.livedata:testing-ktx:1.1.2",
+                    archCore    : "androidx.arch.core:core-testing:${Versions.arch}",
+                    core        : "androidx.test:core:1.3.0", // 1.2.0 if running into issues
+                    Espresso    : [
+                            core         : "androidx.test.espresso:espresso-core:${Versions.espresso}",
+                            contrib      : "androidx.test.espresso:espresso-contrib:${Versions.espresso}",
+                            intents      : "androidx.test.espresso:espresso-intents:${Versions.espresso}",
+                            accessibility: "androidx.test.espresso:espresso-accessibility:${Versions.espresso}"
+                    ]
+            ],
+    ]
+}
