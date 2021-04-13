@@ -192,7 +192,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
             klarna.setTokenizableValue(
-                "klarnaAuthorizationToken",
+                "klarnaCustomerToken",
                 data.optString("klarnaAuthorizationToken")
             )
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
