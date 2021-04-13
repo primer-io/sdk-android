@@ -23,6 +23,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "PRIMER_API_KEY", "\"${System.getenv('PRIMER_API_KEY')}\""
+            buildConfigField "String", "PRIMER_CUSTOMER_ID", "\"${System.getenv('PRIMER_CUSTOMER_ID')}\""
+            buildConfigField "String", "PRIMER_MERCHANT_API_URL", "\"${System.getenv('PRIMER_MERCHANT_API_URL')}\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
