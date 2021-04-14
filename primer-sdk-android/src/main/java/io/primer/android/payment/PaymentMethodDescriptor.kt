@@ -8,6 +8,7 @@ import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.gocardless.GoCardless
+import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
@@ -16,7 +17,7 @@ import java.util.Collections
 
 internal abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
-    protected val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
+    private val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
 ) {
 
     abstract val identifier: String
@@ -52,16 +53,18 @@ internal abstract class PaymentMethodDescriptor(
     }
 }
 
-@KoinApiExtension
 internal class PaymentMethodDescriptorFactory {
+
+    // FIXME this factory should not return null
+    // FIXME each payment method should have its own factory and register with this one;
+    //  this factory should just delegate to the appropriate one
 
     fun create(
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-    ): PaymentMethodDescriptor? {
-        // TODO: hate this - think of a better way
-        return when (paymentMethodRemoteConfig.type) {
+    ): PaymentMethodDescriptor? =
+        when (paymentMethodRemoteConfig.type) {
             PAYMENT_CARD_IDENTIFIER -> CreditCard(
                 paymentMethodRemoteConfig,
                 paymentMethod as PaymentMethod.Card
@@ -79,7 +82,11 @@ internal class PaymentMethodDescriptorFactory {
                 paymentMethod as PaymentMethod.Klarna,
                 paymentMethodRemoteConfig
             )
+            GOOGLE_PAY_IDENTIFIER -> GooglePay(
+                checkoutConfig,
+                paymentMethod as PaymentMethod.GooglePay,
+                paymentMethodRemoteConfig
+            )
             else -> null
         }
-    }
 }
