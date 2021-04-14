@@ -6,6 +6,7 @@ import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -25,7 +26,7 @@ internal class Klarna constructor(
     }
 
     override val identifier: String
-        get() = "KLARNA"
+        get() = KLARNA_IDENTIFIER
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = KlarnaBehaviour(this, checkoutConfig.packageName)
