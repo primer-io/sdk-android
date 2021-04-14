@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             listener = eventListener,
             amount = 99999,
             currency = "GBP",
-            isStandalonePaymentMethod = true
+            isStandalonePaymentMethod = false
         )
     }
 
