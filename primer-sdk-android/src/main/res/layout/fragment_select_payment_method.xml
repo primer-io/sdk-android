@@ -18,6 +18,7 @@
             style="@style/Primer.Text.Title" />
     </io.primer.android.ui.SelectPaymentMethodTitle>
 
+    <!-- TODO consider recyclerview here -->
     <LinearLayout
         android:id="@+id/primer_sheet_payment_methods_list"
         android:layout_width="match_parent"
