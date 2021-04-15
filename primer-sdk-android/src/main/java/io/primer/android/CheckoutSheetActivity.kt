@@ -3,6 +3,7 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -180,11 +181,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
-            val intent = Intent(this, WebViewActivity::class.java).apply {
-                putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-                putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-            }
+//            val intent = Intent(this, WebViewActivity::class.java).apply {
+//                putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+//                putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+//            }
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
             startActivityForResult(intent, KLARNA_REQUEST_CODE)
+//            startActivity(intent)
         }
 
         tokenizationViewModel.vaultedKlarnaPayment.observe(this) { data ->
@@ -264,7 +267,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
+            KLARNA_REQUEST_CODE -> {
+//                handleKlarnaRequestResult(resultCode, data)
+            }
             else -> {
                 // TODO error: unexpected request code
             }

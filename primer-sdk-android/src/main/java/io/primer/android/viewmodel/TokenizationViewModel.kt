@@ -11,7 +11,6 @@ import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
@@ -120,7 +119,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 }
             }
 
-            val klarnaReturnUrl = "https://$returnUrl"
+            val klarnaReturnUrl = "$returnUrl"
 
             val body = JSONObject().apply {
                 put("paymentMethodConfigId", id)
@@ -162,7 +161,17 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
     }
 
-    fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
+    fun handleKlarnaRequestResult(klarna: Klarna?, klarnaAuthToken: String) {
+
+        if (klarna == null || klarna.config.id == null) {
+            // TODO error: missing fields
+            return
+        }
+
+        vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
+    }
+
+    private fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
             val currencyCode = checkoutConfig.monetaryAmount?.currency
@@ -173,9 +182,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             put("localeCode", locale)
         }
 
-        val description = klarna.options.orderItems
-            .map { it.name }
-            .reduce { acc, s -> "$acc;$s" }
+//        val description = klarna.options.orderItems
+//            .map { it.name }
+//            .reduce { acc, s -> "$acc;$s" }
 
         val body = JSONObject()
         val sessionId = klarnaPaymentData.value?.sessionId
@@ -183,7 +192,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("paymentMethodConfigId", id)
         body.put("sessionId", sessionId)
         body.put("authorizationToken", token)
-        body.put("description", description)
+        body.put("description", klarna.options.orderDescription)
         body.put("localeData", localeData)
 
         viewModelScope.launch {
