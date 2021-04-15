@@ -28,7 +28,7 @@ internal class Klarna constructor(
         get() = "KLARNA"
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-//        get() = KlarnaBehaviour(this, checkoutConfig.packageName)
+        // get() = KlarnaBehaviour(this, checkoutConfig.packageName)
         get() = RecurringKlarnaBehaviour(this)
 
     override val type: PaymentMethodType

@@ -47,6 +47,7 @@ internal class RecurringKlarnaBehaviour constructor(
     }
 
     override fun onCancel(uri: Uri?) {
+        // TODO @RUI how to let someone know user cancelled?
         Log.d("RUI", ">>> canceled")
     }
 }

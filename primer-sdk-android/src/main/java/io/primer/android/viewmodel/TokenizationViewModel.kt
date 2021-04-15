@@ -119,15 +119,18 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 }
             }
 
-            val klarnaReturnUrl = "$returnUrl"
+            // FIXME a klarna flow that is not recurring requires every url to start with https://
+            val klarnaReturnUrl = returnUrl
 
             val body = JSONObject().apply {
                 put("paymentMethodConfigId", id)
                 put("sessionType", "RECURRING_PAYMENT")
                 put("redirectUrl", klarnaReturnUrl)
-                // put("totalAmount", checkoutConfig.monetaryAmount?.value)
                 put("localeData", localeData)
                 put("description", klarna.options.orderDescription)
+
+                // FIXME these are not needed in the recurring klarna flow
+                // put("totalAmount", checkoutConfig.monetaryAmount?.value)
                 // put("orderItems", orderItems)
             }
 
@@ -181,10 +184,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             put("currencyCode", currencyCode)
             put("localeCode", locale)
         }
-
-//        val description = klarna.options.orderItems
-//            .map { it.name }
-//            .reduce { acc, s -> "$acc;$s" }
 
         val body = JSONObject()
         val sessionId = klarnaPaymentData.value?.sessionId

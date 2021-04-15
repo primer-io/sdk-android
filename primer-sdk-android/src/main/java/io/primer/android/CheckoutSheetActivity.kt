@@ -181,13 +181,15 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
-//            val intent = Intent(this, WebViewActivity::class.java).apply {
-//                putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-//                putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-//            }
+            // TODO  a klarna flow that is not recurring requires this:
+            // val intent = Intent(this, WebViewActivity::class.java).apply {
+            //     putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+            //     putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+            // }
+            // startActivity(intent)
+
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
             startActivityForResult(intent, KLARNA_REQUEST_CODE)
-//            startActivity(intent)
         }
 
         tokenizationViewModel.vaultedKlarnaPayment.observe(this) { data ->
@@ -268,7 +270,8 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             KLARNA_REQUEST_CODE -> {
-//                handleKlarnaRequestResult(resultCode, data)
+                // TODO  a klarna flow that is not recurring will need this
+                // handleKlarnaRequestResult(resultCode, data)
             }
             else -> {
                 // TODO error: unexpected request code
