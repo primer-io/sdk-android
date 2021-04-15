@@ -15,7 +15,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import io.primer.android.R
-import io.primer.android.logging.Logger
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.FormField
 
@@ -23,7 +22,6 @@ internal class FormFieldsFragment : FormChildFragment() {
 
     private lateinit var layout: ViewGroup
     private val fieldIds: MutableMap<String, Int> = HashMap()
-    private val log = Logger("form-fields")
 
     interface InputChangeListener {
 
@@ -72,7 +70,9 @@ internal class FormFieldsFragment : FormChildFragment() {
                         start: Int,
                         count: Int,
                         after: Int
-                    ) {}
+                    ) {
+                        // no op
+                    }
 
                     override fun onTextChanged(
                         s: CharSequence?,
@@ -83,7 +83,9 @@ internal class FormFieldsFragment : FormChildFragment() {
                         l.onValueChange(s.toString())
                     }
 
-                    override fun afterTextChanged(s: Editable?) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        // no op
+                    }
                 }
             }
 

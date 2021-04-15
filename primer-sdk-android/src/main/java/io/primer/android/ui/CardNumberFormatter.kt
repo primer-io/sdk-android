@@ -1,10 +1,6 @@
 package io.primer.android.ui
 
-import io.primer.android.logging.Logger
-import kotlin.math.max
-
 private val INVALID_CHARACTER = Regex("[^0-9]")
-private val ENDS_WITH_WHITESPACE = Regex(".+\\s$")
 
 internal class CardNumberFormatter private constructor(
     private val value: String,
@@ -12,7 +8,6 @@ internal class CardNumberFormatter private constructor(
 ) {
 
     private val meta = CardType.lookup(value)
-    private val log = Logger("card-nummber")
 
     override fun toString(): String {
         val max = meta.lengths.maxOrNull() ?: 16

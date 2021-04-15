@@ -13,7 +13,7 @@ internal class PayPalBillingAgreementBehaviour constructor(
     private val log = Logger("paypal.billingagreement")
 
     override fun initialize() {
-        // payment method to be tokenized is set here // FIXME it should be passed instead like so: tokenize(paymentMethod)
+        // FIXME it should be passed instead like so: tokenize(paymentMethod)
         tokenizationViewModel?.resetPaymentMethod(paypal)
     }
 

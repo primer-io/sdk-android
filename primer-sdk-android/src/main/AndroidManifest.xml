@@ -27,8 +27,8 @@
 
         <activity
             android:name=".WebViewActivity"
-            android:theme="@style/Theme.AppCompat.WebView"
-            android:label=""/>
+            android:label=""
+            android:theme="@style/Theme.AppCompat.WebView" />
     </application>
 
 </manifest>

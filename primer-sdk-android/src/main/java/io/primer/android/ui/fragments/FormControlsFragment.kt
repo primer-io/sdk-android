@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.logging.Logger
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.components.ButtonPrimary
 import org.koin.core.component.KoinApiExtension
@@ -13,7 +12,6 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class FormControlsFragment : FormChildFragment() {
 
-    private val log = Logger("form-controls")
     private lateinit var mButton: ButtonPrimary
 
     override fun onCreateView(
