@@ -2,6 +2,7 @@ package io.primer.android.ui
 
 // FIXME why are these properties unused?
 internal class CardType(type: Type, val gaps: List<Int>) {
+
     enum class Type {
         UNKOWN,
         VISA,
@@ -24,7 +25,7 @@ internal class CardType(type: Type, val gaps: List<Int>) {
         val lengths: List<Int>,
         lower: String,
         upper: String?,
-        val cvvLength: Int = 3,
+        val cvvLength: Int = CVV_LEN_3,
     ) : Comparable<Descriptor> {
 
         private val weight: Int = lower.length
@@ -41,46 +42,46 @@ internal class CardType(type: Type, val gaps: List<Int>) {
     }
 
     class VisaDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.VISA, listOf(4, 8, 12), listOf(16, 18, 19), lower, upper)
+        Descriptor(Type.VISA, CARD_GAPS_4_8_12, CARD_LENS_16_18_19, lower, upper)
 
     class MastercardDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.MASTERCARD, listOf(4, 8, 12), listOf(16), lower, upper)
+        Descriptor(Type.MASTERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
     class AmexDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.AMEX, listOf(4, 10), listOf(15), lower, upper, cvvLength = 4)
+        Descriptor(Type.AMEX, CARD_GAPS_4_10, CARD_LENS_15, lower, upper, cvvLength = CVV_LEN_4)
 
     class DinersDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.DINERS, listOf(4, 10), listOf(14, 16, 19), lower, upper)
+        Descriptor(Type.DINERS, CARD_GAPS_4_10, CARD_LENS_14_16_19, lower, upper)
 
     class DiscoverDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.DISCOVER, listOf(4, 8, 12), listOf(16, 19), lower, upper)
+        Descriptor(Type.DISCOVER, CARD_GAPS_4_8_12, CARD_LENS_16_19, lower, upper)
 
     class JcbDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.JCB, listOf(4, 8, 12), listOf(16, 17, 18, 19), lower, upper)
+        Descriptor(Type.JCB, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
     class UnionpayDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.UNIONPAY, listOf(4, 8, 12), listOf(14, 15, 16, 17, 18, 19), lower, upper)
+        Descriptor(Type.UNIONPAY, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
     class MaestroDescriptor(lower: String, upper: String? = null) :
         Descriptor(
             Type.MAESTRO,
-            listOf(4, 8, 12),
-            listOf(12, 13, 14, 15, 16, 17, 18, 19),
+            CARD_GAPS_4_8_12,
+            CARD_LENS_12_13_14_15_16_17_18_19,
             lower,
             upper
         )
 
     class EloDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.ELO, listOf(4, 8, 12), listOf(16), lower, upper)
+        Descriptor(Type.ELO, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
     class MirDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.MIR, listOf(4, 8, 12), listOf(16, 17, 18, 19), lower, upper)
+        Descriptor(Type.MIR, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
     class HiperDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.HIPER, listOf(4, 8, 12), listOf(16), lower, upper)
+        Descriptor(Type.HIPER, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
     class HiperCardDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.HIPERCARD, listOf(4, 8, 12), listOf(16), lower, upper)
+        Descriptor(Type.HIPERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
     companion object {
 
@@ -179,8 +180,77 @@ internal class CardType(type: Type, val gaps: List<Int>) {
             return if (matching.isNotEmpty()) {
                 matching[0]
             } else {
-                Descriptor(Type.UNKOWN, listOf(4, 8, 12), listOf(16), "", "")
+                Descriptor(Type.UNKOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
             }
         }
     }
 }
+
+private const val CARD_NUM_GAP_4 = 4
+private const val CARD_NUM_GAP_8 = 8
+private const val CARD_NUM_GAP_10 = 10
+private const val CARD_NUM_GAP_12 = 12
+
+private val CARD_GAPS_4_10 = listOf(
+    CARD_NUM_GAP_4,
+    CARD_NUM_GAP_10,
+)
+private val CARD_GAPS_4_8_12 = listOf(
+    CARD_NUM_GAP_4,
+    CARD_NUM_GAP_8,
+    CARD_NUM_GAP_12
+)
+
+private const val CARD_NUM_LEN_12 = 14
+private const val CARD_NUM_LEN_13 = 14
+private const val CARD_NUM_LEN_14 = 14
+private const val CARD_NUM_LEN_15 = 14
+private const val CARD_NUM_LEN_16 = 16
+private const val CARD_NUM_LEN_17 = 17
+private const val CARD_NUM_LEN_18 = 18
+private const val CARD_NUM_LEN_19 = 19
+
+private val CARD_LENS_15 = listOf(
+    CARD_NUM_LEN_15,
+)
+private val CARD_LENS_16 = listOf(
+    CARD_NUM_LEN_16,
+)
+private val CARD_LENS_16_19 = listOf(
+    CARD_NUM_LEN_16,
+    CARD_NUM_LEN_19,
+)
+private val CARD_LENS_14_16_19 = listOf(
+    CARD_NUM_LEN_14,
+    CARD_NUM_LEN_16,
+    CARD_NUM_LEN_19
+)
+private val CARD_LENS_14_18_19 = listOf(
+    CARD_NUM_LEN_14,
+    CARD_NUM_LEN_18,
+    CARD_NUM_LEN_19
+)
+private val CARD_LENS_16_18_19 = listOf(
+    CARD_NUM_LEN_16,
+    CARD_NUM_LEN_18,
+    CARD_NUM_LEN_19
+)
+private val CARD_LENS_16_17_18_19 = listOf(
+    CARD_NUM_LEN_16,
+    CARD_NUM_LEN_17,
+    CARD_NUM_LEN_18,
+    CARD_NUM_LEN_19
+)
+private val CARD_LENS_12_13_14_15_16_17_18_19 = listOf(
+    CARD_NUM_LEN_12,
+    CARD_NUM_LEN_13,
+    CARD_NUM_LEN_14,
+    CARD_NUM_LEN_15,
+    CARD_NUM_LEN_16,
+    CARD_NUM_LEN_17,
+    CARD_NUM_LEN_18,
+    CARD_NUM_LEN_19
+)
+
+private const val CVV_LEN_3 = 3
+private const val CVV_LEN_4 = 4

@@ -1,11 +1,18 @@
 package io.primer.android
 
+import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 
 internal class WebViewActivity : AppCompatActivity() {
 
@@ -19,6 +26,8 @@ internal class WebViewActivity : AppCompatActivity() {
 
         // url called/loaded by the webview when finishing up
         const val REDIRECT_URL_KEY = "REDIRECT_URL_KEY"
+
+        const val RESULT_ERROR = 1234
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +48,39 @@ internal class WebViewActivity : AppCompatActivity() {
 
         // FIXME we need to instantiate this dynamically
         webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
+            override fun handleIntent(intent: Intent) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    handleIntentOnAndroid11OrAbove(intent)
+                } else {
+                    handleIntentOnAndroid10OrBelow(intent)
+                }
+            }
+
+            private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
+                try {
+                    intent.apply {
+                        flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_REQUIRE_NON_BROWSER
+                    }
+                    startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    cannotHandleIntent(intent)
+                }
+            }
+
+            @SuppressLint("QueryPermissionsNeeded")
+            private fun handleIntentOnAndroid10OrBelow(intent: Intent) {
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                } else {
+                    cannotHandleIntent(intent)
+                }
+            }
+
+            private fun cannotHandleIntent(intent: Intent) {
+                setResult(RESULT_ERROR, intent)
+                finish()
+            }
+
             override fun handleResult(resultCode: Int, intent: Intent) {
                 setResult(resultCode, intent)
                 finish()
@@ -56,6 +98,18 @@ internal abstract class KlarnaWebViewClient(
 ) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+
+        val isHttp = request?.url?.scheme?.contains("http") ?: false
+        val isHttps = request?.url?.scheme?.contains("https") ?: false
+        val isDeeplink = !isHttp && !isHttps
+
+        if (isDeeplink) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(request?.url.toString())
+            handleIntent(intent)
+            return true
+        }
+
         val requestUrl = request?.url?.toString()
         val shouldOverride = captureUrl != null && requestUrl?.contains(captureUrl) ?: false
         if (shouldOverride) requestUrl?.let {
@@ -69,6 +123,8 @@ internal abstract class KlarnaWebViewClient(
         }
         return shouldOverride
     }
+
+    abstract fun handleIntent(intent: Intent)
 
     abstract fun handleResult(resultCode: Int, intent: Intent)
 }

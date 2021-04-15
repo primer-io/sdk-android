@@ -17,7 +17,8 @@ import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 import java.util.*
 
-private const val CLIENT_TOKEN_URI: String = "https://api.sandbox.primer.io/auth/client-token"
+private const val CLIENT_TOKEN_URI: String =
+    "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
 private const val CUSTOMER_ID: String = "will-123"
 private const val API_KEY: String = "b91c117b-3a89-4773-bfc7-58a24d8328a6"
 
@@ -51,9 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
-    val klarna = PaymentMethod.Klarna(
-        orderItems = listOf(OrderItem("PS5", 99999, 1))
-    )
+    val klarna = PaymentMethod.Klarna("brand new PS5")
 
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(this, token, Locale.UK)
+        UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
         UniversalCheckout.loadPaymentMethods(listOf(klarna))
 
         showCheckout()
@@ -100,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             context = this,
             listener = eventListener,
             amount = 99999,
-            currency = "GBP",
+            currency = "SEK",
             isStandalonePaymentMethod = true
         )
     }
@@ -127,4 +126,16 @@ class ClientTokenRequest(
                 put("X-Api-Key", API_KEY)
             }
         }
+
+    override fun getBody(): ByteArray {
+        val body = """
+            {
+                "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
+                "checkout": {
+                    "paymentFlow": "PREFER_VAULT"
+                }
+            }
+        """.trimIndent()
+        return body.toByteArray()
+    }
 }

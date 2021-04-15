@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
+import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -177,12 +178,20 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
         mainViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
 
+        tokenizationViewModel.tokenizationCanceled.observe(this) {
+            onExit(CheckoutExitReason.DISMISSED_BY_USER)
+        }
+
         // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
-            val intent = Intent(this, WebViewActivity::class.java).apply {
-                putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-                putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-            }
+            // TODO  a klarna flow that is not recurring requires this:
+            // val intent = Intent(this, WebViewActivity::class.java).apply {
+            //     putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+            //     putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+            // }
+            // startActivity(intent)
+
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
             startActivityForResult(intent, KLARNA_REQUEST_CODE)
         }
 
@@ -192,7 +201,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
             klarna.setTokenizableValue(
-                "klarnaAuthorizationToken",
+                "klarnaCustomerToken",
                 data.optString("klarnaAuthorizationToken")
             )
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
@@ -263,7 +272,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
+            KLARNA_REQUEST_CODE -> {
+                // TODO  a klarna flow that is not recurring will need this
+                // handleKlarnaRequestResult(resultCode, data)
+            }
             else -> {
                 // TODO error: unexpected request code
             }
@@ -279,6 +291,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 val klarna = paymentMethod as? Klarna
 
                 tokenizationViewModel.handleKlarnaRequestResult(redirectUrl, klarna)
+            }
+            RESULT_ERROR -> {
+                onExit(CheckoutExitReason.ERROR)
             }
             RESULT_CANCELED -> {
                 onExit(CheckoutExitReason.DISMISSED_BY_USER)

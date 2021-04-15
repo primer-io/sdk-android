@@ -1,6 +1,7 @@
 package io.primer.android.viewmodel
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +39,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(
         Collections.emptyList()
     )
+    private val _tokenizationCanceled = MutableLiveData<Unit>()
+    val tokenizationCanceled: LiveData<Unit> = _tokenizationCanceled
 
     val klarnaError = MutableLiveData<Unit>()
     val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
@@ -94,6 +97,10 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
+    fun userCanceled() {
+        _tokenizationCanceled.postValue(Unit)
+    }
+
     // region KLARNA
     fun createKlarnaBillingAgreement(id: String, returnUrl: String, klarna: Klarna) {
         viewModelScope.launch {
@@ -118,15 +125,19 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 }
             }
 
-            val klarnaReturnUrl = "https://$returnUrl"
+            // FIXME a klarna flow that is not recurring requires every url to start with https://
+            val klarnaReturnUrl = returnUrl
 
             val body = JSONObject().apply {
                 put("paymentMethodConfigId", id)
-                put("sessionType", "HOSTED_PAYMENT_PAGE")
+                put("sessionType", "RECURRING_PAYMENT")
                 put("redirectUrl", klarnaReturnUrl)
-                put("totalAmount", checkoutConfig.monetaryAmount?.value)
                 put("localeData", localeData)
-                put("orderItems", orderItems)
+                put("description", klarna.options.orderDescription)
+
+                // FIXME these are not needed in the recurring klarna flow
+                // put("totalAmount", checkoutConfig.monetaryAmount?.value)
+                // put("orderItems", orderItems)
             }
 
             when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
@@ -159,7 +170,17 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
     }
 
-    fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
+    fun handleKlarnaRequestResult(klarna: Klarna?, klarnaAuthToken: String) {
+
+        if (klarna == null || klarna.config.id == null) {
+            // TODO error: missing fields
+            return
+        }
+
+        vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
+    }
+
+    private fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
             val currencyCode = checkoutConfig.monetaryAmount?.currency
@@ -170,17 +191,13 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             put("localeCode", locale)
         }
 
-        val description = klarna.options.orderItems
-            .map { it.name }
-            .reduce { acc, s -> "$acc;$s" }
-
         val body = JSONObject()
         val sessionId = klarnaPaymentData.value?.sessionId
 
         body.put("paymentMethodConfigId", id)
         body.put("sessionId", sessionId)
         body.put("authorizationToken", token)
-        body.put("description", description)
+        body.put("description", klarna.options.orderDescription)
         body.put("localeData", localeData)
 
         viewModelScope.launch {

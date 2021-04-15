@@ -55,7 +55,7 @@ open class FormFragment(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View =
         inflater.inflate(R.layout.fragment_form_view, container, false)
 
@@ -85,8 +85,9 @@ open class FormFragment(
         onTokenizeError()
     }
 
-    // FIXME unfortunately we need this gocardless mandate logic to be here and it needs to be observed/ in onStart/Stop because of the way
-    //  the fragment are displayed in succession (GoCardlessViewFragment issues requests but then it displays another FormFragment on top)
+    // FIXME unfortunately we need this gocardless mandate logic to be here and it needs to be
+    //  observed/ in onStart/Stop because of the way the fragment are displayed in succession
+    //  (GoCardlessViewFragment issues requests but then it displays another FormFragment on top)
     override fun onStart() {
         super.onStart()
         tokenizationViewModel.goCardlessMandate.observeForever(goCardlessMandateObserver)
