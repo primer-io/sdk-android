@@ -179,6 +179,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
         mainViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
 
+        tokenizationViewModel.tokenizationCanceled.observe(this) {
+            onExit(CheckoutExitReason.DISMISSED_BY_USER)
+        }
+
         // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
             // TODO  a klarna flow that is not recurring requires this:

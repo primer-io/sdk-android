@@ -1,6 +1,7 @@
 package io.primer.android.viewmodel
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +39,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(
         Collections.emptyList()
     )
+    private val _tokenizationCanceled = MutableLiveData<Unit>()
+    val tokenizationCanceled: LiveData<Unit> = _tokenizationCanceled
 
     val klarnaError = MutableLiveData<Unit>()
     val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
@@ -93,6 +96,10 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             pm.setTokenizableValue(key, value)
             validationErrors.value = pm.validate()
         }
+    }
+
+    fun userCanceled() {
+        _tokenizationCanceled.postValue(Unit)
     }
 
     // region KLARNA
