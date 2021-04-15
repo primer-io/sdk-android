@@ -24,8 +24,6 @@ internal abstract class TokenAttributes private constructor(
     internal class PaymentCardAttributes(token: PaymentMethodTokenInternal) :
         TokenAttributes(token, R.drawable.credit_card_icon) {
 
-        private val log = Logger("payment-card")
-
         override fun getDescription(context: Context): String {
             val network = data["network"]?.jsonPrimitive?.contentOrNull
                 ?: context.getString(R.string.card_network_fallback)
@@ -43,8 +41,6 @@ internal abstract class TokenAttributes private constructor(
     internal class PayPalBillingAgreementAttributes(token: PaymentMethodTokenInternal) :
         TokenAttributes(token, R.drawable.icon_paypal_sm) {
 
-        private val log = Logger("paypal")
-
         override fun getDescription(context: Context): String {
             return data["externalPayerInfo"]?.jsonObject?.get("email")?.jsonPrimitive?.contentOrNull
                 ?: "PayPal"
@@ -54,7 +50,6 @@ internal abstract class TokenAttributes private constructor(
     internal class GoCardlessMandateAttributes(token: PaymentMethodTokenInternal) :
         TokenAttributes(token, R.drawable.ic_bank) {
 
-        private val log = Logger("go-cardless")
         override fun getDescription(context: Context): String {
             val ref = data["gocardlessMandateId"]?.jsonPrimitive?.contentOrNull ?: ""
             return context.getString(R.string.bank_account) + " $ref"

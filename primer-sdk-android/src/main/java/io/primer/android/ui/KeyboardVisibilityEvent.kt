@@ -16,8 +16,6 @@ private const val KEYBOARD_MIN_HEIGHT_RATIO = 0.15
 
 internal object KeyboardVisibilityEvent {
 
-    private val log = Logger("keyboard-event")
-
     interface OnChangedListener {
 
         fun onKeyboardVisibilityChanged(visible: Boolean)

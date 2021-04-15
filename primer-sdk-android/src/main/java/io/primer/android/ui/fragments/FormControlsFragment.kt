@@ -13,7 +13,6 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class FormControlsFragment : FormChildFragment() {
 
-    private val log = Logger("form-controls")
     private lateinit var mButton: ButtonPrimary
 
     override fun onCreateView(

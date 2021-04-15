@@ -23,7 +23,6 @@ internal class FormFieldsFragment : FormChildFragment() {
 
     private lateinit var layout: ViewGroup
     private val fieldIds: MutableMap<String, Int> = HashMap()
-    private val log = Logger("form-fields")
 
     interface InputChangeListener {
 
