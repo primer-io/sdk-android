@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelLazy
 import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
+import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -279,6 +280,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
                 val klarna = paymentMethod as? Klarna
 
                 tokenizationViewModel.handleKlarnaRequestResult(redirectUrl, klarna)
+            }
+            RESULT_ERROR -> {
+                onExit(CheckoutExitReason.ERROR)
             }
             RESULT_CANCELED -> {
                 onExit(CheckoutExitReason.DISMISSED_BY_USER)
