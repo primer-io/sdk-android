@@ -24,11 +24,11 @@ import org.koin.core.component.inject
 import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
-internal class PrimerViewModel(
-    // private val model: Model,
-    // private val checkoutConfig: CheckoutConfig,
-    // private val configuredPaymentMethods: List<PaymentMethod>
-) : ViewModel(), EventBus.EventListener, DIAppComponent {
+internal class PrimerViewModel
+//( private val model: Model,
+// private val checkoutConfig: CheckoutConfig,
+// private val configuredPaymentMethods: List<PaymentMethod>)
+    : ViewModel(), EventBus.EventListener, DIAppComponent {
 
     companion object {
 

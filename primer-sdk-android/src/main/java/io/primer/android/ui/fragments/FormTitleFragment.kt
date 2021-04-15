@@ -16,7 +16,6 @@ import io.primer.android.ui.FormTitleState
 
 internal class FormTitleFragment : FormChildFragment() {
 
-    private val log = Logger("form-title-fragment")
     private lateinit var mProgress: ViewGroup
 
     override fun onCreateView(
@@ -85,8 +84,8 @@ internal class FormTitleFragment : FormChildFragment() {
         val view = View(context)
 
         val scale = requireContext().resources.displayMetrics.density
-        val width = (8 * scale + 0.5f)
-        val margin = (4 * scale + 0.5f)
+        val width = (SCALE_8 * scale + HALF)
+        val margin = (SCALE_4 * scale + HALF)
 
         view.background = ContextCompat.getDrawable(requireContext(), R.drawable.progress_crumb)
         view.isEnabled = active
@@ -98,3 +97,7 @@ internal class FormTitleFragment : FormChildFragment() {
         return view
     }
 }
+
+private const val SCALE_4 = 4
+private const val SCALE_8 = 8
+private const val HALF = 0.5f

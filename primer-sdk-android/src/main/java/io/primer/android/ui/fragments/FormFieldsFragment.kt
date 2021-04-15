@@ -72,7 +72,9 @@ internal class FormFieldsFragment : FormChildFragment() {
                         start: Int,
                         count: Int,
                         after: Int
-                    ) {}
+                    ) {
+                        // no op
+                    }
 
                     override fun onTextChanged(
                         s: CharSequence?,
@@ -83,7 +85,9 @@ internal class FormFieldsFragment : FormChildFragment() {
                         l.onValueChange(s.toString())
                     }
 
-                    override fun afterTextChanged(s: Editable?) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        // no op
+                    }
                 }
             }
 
