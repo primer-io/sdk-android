@@ -1,11 +1,13 @@
 package io.primer.android
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 
 internal class WebViewActivity : AppCompatActivity() {
 
@@ -39,6 +41,10 @@ internal class WebViewActivity : AppCompatActivity() {
 
         // FIXME we need to instantiate this dynamically
         webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
+            override fun handleIntent(intent: Intent) {
+                startActivity(intent)
+            }
+
             override fun handleResult(resultCode: Int, intent: Intent) {
                 setResult(resultCode, intent)
                 finish()
@@ -56,6 +62,18 @@ internal abstract class KlarnaWebViewClient(
 ) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+
+        val isHttp = request?.url?.scheme?.contains("http") ?: false
+        val isHttps = request?.url?.scheme?.contains("https") ?: false
+        val b = !isHttp && !isHttps
+
+        if (b) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(request?.url.toString())
+            handleIntent(intent)
+            return true
+        }
+
         val requestUrl = request?.url?.toString()
         val shouldOverride = captureUrl != null && requestUrl?.contains(captureUrl) ?: false
         if (shouldOverride) requestUrl?.let {
@@ -69,6 +87,8 @@ internal abstract class KlarnaWebViewClient(
         }
         return shouldOverride
     }
+
+    abstract fun handleIntent(intent: Intent)
 
     abstract fun handleResult(resultCode: Int, intent: Intent)
 }

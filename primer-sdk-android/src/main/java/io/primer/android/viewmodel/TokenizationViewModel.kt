@@ -11,6 +11,7 @@ import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
@@ -123,11 +124,12 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
             val body = JSONObject().apply {
                 put("paymentMethodConfigId", id)
-                put("sessionType", "HOSTED_PAYMENT_PAGE")
+                put("sessionType", "RECURRING_PAYMENT")
                 put("redirectUrl", klarnaReturnUrl)
-                put("totalAmount", checkoutConfig.monetaryAmount?.value)
+                // put("totalAmount", checkoutConfig.monetaryAmount?.value)
                 put("localeData", localeData)
-                put("orderItems", orderItems)
+                put("description", klarna.options.orderDescription)
+                // put("orderItems", orderItems)
             }
 
             when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {

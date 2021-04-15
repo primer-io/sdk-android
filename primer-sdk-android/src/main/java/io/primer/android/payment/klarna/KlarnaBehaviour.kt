@@ -20,3 +20,19 @@ internal class KlarnaBehaviour constructor(
         }
     }
 }
+
+internal class _KlarnaBehaviour constructor(
+    private val klarna: Klarna,
+    packageName: String,
+) : WebViewBehaviour(packageName) {
+
+    override fun initialize(viewModel: TokenizationViewModel) {
+        viewModel.resetPaymentMethod(klarna)
+    }
+
+    override fun getUri(viewModel: TokenizationViewModel, returnUrl: String) {
+        klarna.config.id?.let { id ->
+            viewModel.createKlarnaBillingAgreement(id, returnUrl, klarna)
+        }
+    }
+}
