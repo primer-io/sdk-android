@@ -9,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import io.primer.android.logging.Logger
 import java.lang.ref.WeakReference
 
 private const val KEYBOARD_MIN_HEIGHT_RATIO = 0.15

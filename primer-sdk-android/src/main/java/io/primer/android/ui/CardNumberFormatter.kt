@@ -1,8 +1,5 @@
 package io.primer.android.ui
 
-import io.primer.android.logging.Logger
-import kotlin.math.max
-
 private val INVALID_CHARACTER = Regex("[^0-9]")
 
 internal class CardNumberFormatter private constructor(

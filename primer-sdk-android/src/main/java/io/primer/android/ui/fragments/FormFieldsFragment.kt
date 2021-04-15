@@ -15,7 +15,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import io.primer.android.R
-import io.primer.android.logging.Logger
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.FormField
 

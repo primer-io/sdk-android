@@ -1,6 +1,5 @@
 package io.primer.android
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import io.primer.android.events.CheckoutEvent

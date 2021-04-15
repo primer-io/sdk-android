@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import io.primer.android.R
-import io.primer.android.logging.Logger
 import io.primer.android.ui.FormProgressState
 import io.primer.android.ui.FormTitleState
 

@@ -3,7 +3,6 @@ package io.primer.android.payment
 import android.content.Context
 import androidx.annotation.DrawableRes
 import io.primer.android.R
-import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
