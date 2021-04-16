@@ -6,7 +6,6 @@ import android.os.Looper
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
@@ -53,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
+    val klarna = PaymentMethod.Klarna("brand new PS5")
+
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
         companyAddress = "123 French St, Francetown, France, FR3NCH",
@@ -83,8 +84,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        val klarna = PaymentMethod.Klarna("brand new PS5")
-
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
         UniversalCheckout.loadPaymentMethods(listOf(klarna))
 

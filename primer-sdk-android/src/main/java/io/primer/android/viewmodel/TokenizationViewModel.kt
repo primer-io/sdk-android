@@ -84,7 +84,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    // TODO: move this to vault view model ??
     fun deleteToken(token: PaymentMethodTokenInternal) {
         viewModelScope.launch {
             model.deleteToken(token)

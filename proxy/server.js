@@ -15,7 +15,7 @@ const {parsed: env} = dotenv.config({
 server.use(bodyParser.json());
 server.use(cors());
 
-server.use('/token', proxy({
+server.use('/auth/client-token', proxy({
   to: env.PRIMER_MERCHANT_API_URL + '/auth/client-token',
   format: replaceUrls,
   headers: {
