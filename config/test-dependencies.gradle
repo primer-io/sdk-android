@@ -13,7 +13,7 @@ ext {
                     mockkAndroid: "io.mockk:mockk-android:${Versions.mockk}"
             ],
             Kotlin : [
-                    coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1",
+                    coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}",
             ],
             Koin   : [
                     test: "org.koin:koin-test:$koinVersion"
