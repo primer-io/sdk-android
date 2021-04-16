@@ -202,7 +202,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
             klarna.setTokenizableValue(
                 "klarnaCustomerToken",
-                data.optString("klarnaAuthorizationToken")
+                data.optString("customerTokenId")
             )
             klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
