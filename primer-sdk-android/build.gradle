@@ -36,7 +36,7 @@ ext {
     siteUrl = 'https://github.com/primer-io/primer-sdk-android'
     gitUrl = 'https://github.com/primer-io/primer-sdk-android.git'
 
-    libraryVersion = '1.0.0-beta.13'
+    libraryVersion = '1.0.0-beta.14'
 
     developerId = 'primer-api'
     developerName = 'Primer Developers'
