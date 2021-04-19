@@ -26,6 +26,13 @@ import java.util.Collections
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
+    companion object {
+
+        fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
+            return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
+        }
+    }
+
     private var paymentMethod: PaymentMethodDescriptor? = null
 
     private val model: Model by inject()
@@ -96,6 +103,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     // region KLARNA
+    // FIXME @RUI rename to createKlarnaPaymentSession()
     fun createKlarnaBillingAgreement(id: String, returnUrl: String, klarna: Klarna) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
@@ -135,7 +143,11 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     val hppRedirectUrl = result.data.getString("hppRedirectUrl")
                     val sessionId = result.data.getString("sessionId")
                     klarnaPaymentData.postValue(
-                        KlarnaPaymentData(hppRedirectUrl, klarnaReturnUrl, sessionId)
+                        KlarnaPaymentData(
+                            redirectUrl = hppRedirectUrl,
+                            returnUrl = klarnaReturnUrl,
+                            sessionId = sessionId
+                        )
                     )
                 }
                 is OperationResult.Error -> {
@@ -281,11 +293,4 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
     // endregion
-
-    companion object {
-
-        fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
-            return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
-        }
-    }
 }
