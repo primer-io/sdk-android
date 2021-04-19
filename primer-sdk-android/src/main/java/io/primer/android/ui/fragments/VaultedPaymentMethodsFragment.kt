@@ -99,7 +99,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
 
         view.findViewById<View>(R.id.vaulted_payment_methods_add_card).setOnClickListener {
             viewModel.paymentMethods.value?.find { it.identifier == PAYMENT_CARD_IDENTIFIER }?.let {
-                viewModel.setSelectedPaymentMethod(it)
+                viewModel.selectPaymentMethod(it)
             }
         }
 

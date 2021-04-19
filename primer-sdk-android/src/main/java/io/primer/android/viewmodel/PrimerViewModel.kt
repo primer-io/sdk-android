@@ -1,5 +1,6 @@
 package io.primer.android.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,17 +18,15 @@ import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodDescriptorFactory
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.inject
 import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
-internal class PrimerViewModel(
-    // private val model: Model,
-    // private val checkoutConfig: CheckoutConfig,
-    // private val configuredPaymentMethods: List<PaymentMethod>
+internal class PrimerViewModel constructor(
+    private val model: Model,
+    private val checkoutConfig: CheckoutConfig,
+    private val paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
 ) : ViewModel(), EventBus.EventListener, DIAppComponent {
 
     companion object {
@@ -41,10 +40,6 @@ internal class PrimerViewModel(
     private val log = Logger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
 
-    private val model: Model by inject()
-    private val checkoutConfig: CheckoutConfig by inject()
-    private val configuredPaymentMethods: List<PaymentMethod> by inject()
-
     val keyboardVisible = MutableLiveData(false)
 
     val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
@@ -52,11 +47,15 @@ internal class PrimerViewModel(
     val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
         Collections.emptyList()
     )
-    val paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(Collections.emptyList())
-    val selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
 
-    fun setSelectedPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
-        selectedPaymentMethod.value = paymentMethodDescriptor
+    private val _paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(emptyList())
+    val paymentMethods: LiveData<List<PaymentMethodDescriptor>> = _paymentMethods
+
+    private val _selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
+    val selectedPaymentMethod: LiveData<PaymentMethodDescriptor?> = _selectedPaymentMethod
+
+    fun selectPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
+        _selectedPaymentMethod.value = paymentMethodDescriptor
     }
 
     // FIXME rename or hook with lifecycle observer
@@ -73,33 +72,22 @@ internal class PrimerViewModel(
             }
         }
 
-        subscription = EventBus.subscribe(this) // FIXME drop eventbus
+        subscription = EventBus.subscribe(this)
     }
 
-    private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
-        when (
-            val result: OperationResult<List<PaymentMethodTokenInternal>> =
-                model.getVaultedPaymentMethods(clientSession)
-        ) {
+    private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) =
+        when (val result = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)
 
-                val paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory()
+                val descriptors =
+                    paymentMethodDescriptorResolver.resolve(clientSession)
 
-                // FIXME needs to be injected
-                val resolver = PaymentMethodDescriptorResolver(
-                    checkoutConfig = checkoutConfig,
-                    configured = configuredPaymentMethods,
-                    paymentMethodRemoteConfigs = clientSession.paymentMethods,
-                    paymentMethodDescriptorFactory = paymentMethodDescriptorFactory
-                )
-
-                val descriptors = resolver.resolve()
-                paymentMethods.postValue(descriptors)
+                _paymentMethods.postValue(descriptors)
 
                 if (this.checkoutConfig.isStandalonePaymentMethod) {
-                    selectedPaymentMethod.postValue(descriptors.first())
+                    _selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
                 }
@@ -109,7 +97,6 @@ internal class PrimerViewModel(
                 log("Failed to get payment methods: ${result.error.message}")
             }
         }
-    }
 
     override fun onCleared() {
         super.onCleared()
