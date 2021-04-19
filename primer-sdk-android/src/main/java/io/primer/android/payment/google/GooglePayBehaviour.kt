@@ -1,20 +1,28 @@
 package io.primer.android.payment.google
 
-import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
+import io.primer.android.viewmodel.PaymentMethodChecker
+import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
 
-internal abstract class _NewBehaviour(
-    //
+internal abstract class _InitialCheckRequiredBehaviour(
+
 ) : SelectedPaymentMethodBehaviour() {
 
-    fun execute(viewModel: TokenizationViewModel) {
-        initialize(viewModel)
+    abstract fun initialize(
+        paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
+        viewModel: TokenizationViewModel,
+    )
 
+    fun execute(
+        paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
+        viewModel: TokenizationViewModel,
+    ) {
+        initialize(paymentMethodCheckerRegistrar, viewModel)
     }
-
-    abstract fun initialize(viewModel: TokenizationViewModel)
 }
 
 // 1. PaymentsUtil.createPaymentsClient(this)
@@ -23,18 +31,21 @@ internal abstract class _NewBehaviour(
 // 4. onActivityResult()
 // 5. handlePaymentSuccess()
 
-interface GooglePayBehaviourExecutor {
-
-    fun start()
-}
-
 @KoinApiExtension
 internal class GooglePayBehaviour constructor(
-    private val paymentMethodDescriptor: GooglePay,
-) : _NewBehaviour() {
+    private val paymentMethodDescriptor: GooglePayDescriptor,
+    private val googlePayPaymentMethodChecker: PaymentMethodChecker
+) : _InitialCheckRequiredBehaviour() {
 
-    override fun initialize(viewModel: TokenizationViewModel) {
+    override fun initialize(
+        paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
+        viewModel: TokenizationViewModel,
+    ) {
+        paymentMethodCheckerRegistrar.register(
+            GOOGLE_PAY_IDENTIFIER,
+            googlePayPaymentMethodChecker
+        )
+
         viewModel.resetPaymentMethod(paymentMethodDescriptor)
-        // TODO issue request to check if google pay should be available
     }
 }

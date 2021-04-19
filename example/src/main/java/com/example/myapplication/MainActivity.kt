@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
+    private val googlePay = PaymentMethod.GooglePay()
+
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
         companyAddress = "123 French St, Francetown, France, FR3NCH",
@@ -86,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         val klarna = PaymentMethod.Klarna(orderItems = items)
 
         UniversalCheckout.initialize(this, token, Locale.UK)
-        UniversalCheckout.loadPaymentMethods(listOf(klarna))
+        UniversalCheckout.loadPaymentMethods(listOf(klarna, googlePay))
 
         showCheckout()
 
@@ -96,13 +98,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-        UniversalCheckout.showVault(
+        UniversalCheckout.showCheckout(
             context = this,
             listener = eventListener,
             amount = 99999,
             currency = "GBP",
             isStandalonePaymentMethod = false
         )
+//        UniversalCheckout.showVault(
+//            context = this,
+//            listener = eventListener,
+//            amount = 99999,
+//            currency = "GBP",
+//            isStandalonePaymentMethod = false
+//        )
     }
 
     private fun onError(error: VolleyError) {
