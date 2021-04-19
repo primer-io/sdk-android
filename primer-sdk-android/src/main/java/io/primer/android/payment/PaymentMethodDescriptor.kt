@@ -8,11 +8,13 @@ import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.gocardless.GoCardless
-import io.primer.android.payment.google.GooglePay
+import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
+import io.primer.android.viewmodel.PaymentMethodChecker
+import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
 import org.json.JSONObject
-import org.koin.core.component.KoinApiExtension
 import java.util.Collections
 
 internal abstract class PaymentMethodDescriptor(
@@ -53,7 +55,9 @@ internal abstract class PaymentMethodDescriptor(
     }
 }
 
-internal class PaymentMethodDescriptorFactory {
+internal class PaymentMethodDescriptorFactory(
+    private val paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+) {
 
     // FIXME this factory should not return null
     // FIXME each payment method should have its own factory and register with this one;
@@ -82,11 +86,14 @@ internal class PaymentMethodDescriptorFactory {
                 paymentMethod as PaymentMethod.Klarna,
                 paymentMethodRemoteConfig
             )
-            GOOGLE_PAY_IDENTIFIER -> GooglePay(
-                checkoutConfig,
-                paymentMethod as PaymentMethod.GooglePay,
-                paymentMethodRemoteConfig
-            )
+            GOOGLE_PAY_IDENTIFIER -> {
+                GooglePayDescriptor(
+                    checkoutConfig = checkoutConfig,
+                    options = paymentMethod as PaymentMethod.GooglePay,
+                    paymentMethodChecker = paymentMethodCheckers[GOOGLE_PAY_IDENTIFIER] ?: throw Error(),
+                    config = paymentMethodRemoteConfig
+                )
+            }
             else -> null
         }
 }
