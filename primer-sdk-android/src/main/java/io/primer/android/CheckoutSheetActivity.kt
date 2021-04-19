@@ -30,6 +30,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.google.GooglePayBridge
+import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
@@ -120,6 +121,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 is WebViewBehaviour -> {
                     behaviour.execute(tokenizationViewModel)
                 }
+                is InitialCheckRequiredBehaviour -> {
+                    // TODO
+                }
                 else -> {
                     // TODO what should we do here?
                 }
@@ -135,8 +139,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
-//        val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
-//        val model = Model(apiClient, clientToken, checkoutConfig)
         val walletOptions = Wallet.WalletOptions.Builder()
             .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
             .build()
