@@ -3,16 +3,18 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelLazy
-import androidx.lifecycle.ViewModelProvider
-import androidx.savedstate.SavedStateRegistryOwner
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.wallet.IsReadyToPayRequest
+import com.google.android.gms.wallet.PaymentsClient
+import com.google.android.gms.wallet.Wallet
+import com.google.android.gms.wallet.WalletConstants
+import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -21,10 +23,13 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
+import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
+import io.primer.android.payment.google.GooglePayBridge
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPal
@@ -34,87 +39,54 @@ import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SuccessFragment
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
+import io.primer.android.viewmodel.GenericSavedStateViewModelFactory
+import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
+import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
+import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistrar
+import io.primer.android.viewmodel.PrimerPaymentMethodDescriptorResolver
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.ViewModelAssistedFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
-// TODO manual di with this
-typealias ActivityViewModelFactoryProvider = (Fragment) -> ViewModelProvider.Factory
-
-// TODO manual di with this
-val activityViewModelFactoryProvider: ActivityViewModelFactoryProvider = {
-    it.requireActivity().defaultViewModelProviderFactory
-}
-
-// TODO manual di with this
-internal inline fun <reified VM : ViewModel> Fragment.viewModelBuilder(
-    useActivityStore: Boolean = false,
-    noinline viewModelInitializer: () -> VM,
-): Lazy<VM> {
-    return ViewModelLazy(
-        viewModelClass = VM::class,
-        storeProducer = {
-            if (useActivityStore) requireActivity().viewModelStore else viewModelStore
-        },
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return viewModelInitializer.invoke() as T
-                }
-            }
-        }
-    )
-}
-
-// TODO manual di with this
-interface ViewModelAssistedFactory<T : ViewModel> {
-
-    fun create(handle: SavedStateHandle): T
-}
-
-// TODO manual di with this
 internal class PrimerViewModelFactory(
     private val model: Model,
     private val checkoutConfig: CheckoutConfig,
-    private val configuredPaymentMethods: List<PaymentMethod>,
+    private val primerPaymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
 ) : ViewModelAssistedFactory<PrimerViewModel> {
 
-    override fun create(handle: SavedStateHandle): PrimerViewModel {
-        // return PrimerViewModel(model, checkoutConfig, configuredPaymentMethods)
-        return PrimerViewModel()
-    }
-}
-
-// TODO manual di with this
-class GenericSavedStateViewModelFactory<out V : ViewModel>(
-    private val viewModelFactory: ViewModelAssistedFactory<V>,
-    owner: SavedStateRegistryOwner,
-    defaultArgs: Bundle? = null,
-) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(
-        key: String,
-        modelClass: Class<T>,
-        handle: SavedStateHandle,
-    ): T {
-        return viewModelFactory.create(handle) as T
-    }
+    override fun create(handle: SavedStateHandle): PrimerViewModel =
+        PrimerViewModel(model, checkoutConfig, primerPaymentMethodDescriptorResolver)
 }
 
 @KoinApiExtension
-internal class CheckoutSheetActivity : AppCompatActivity() {
+internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private var subscription: EventBus.SubscriptionHandle? = null
     private var exited = false
     private var initFinished = false
 
-    // private lateinit var viewModelFactory: PrimerViewModelFactory
-    private val mainViewModel: PrimerViewModel by viewModels()
+    private lateinit var viewModelFactory: PrimerViewModelFactory
+    private val mainViewModel: PrimerViewModel by viewModels {
+        GenericSavedStateViewModelFactory(viewModelFactory, this)
+    }
+//    private val mainViewModel: PrimerViewModel by viewModels(factoryProducer = {
+//        object : ViewModelProvider.Factory {
+//            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//                PrimerViewModel(
+//
+//                )
+//            }
+//        }
+//    })
+
+    private val model: Model by inject() // FIXME manual di here
+    private val configuredPaymentMethods: List<PaymentMethod> by inject() // FIXME manual di here
+
     private val tokenizationViewModel: TokenizationViewModel by viewModels()
 
     private lateinit var sheet: CheckoutSheetFragment
@@ -163,12 +135,29 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
-        /* TODO manual di
-        val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
-        val apiClient = APIClient(clientToken)
-        val model = Model(apiClient, clientToken, checkoutConfig)
-        viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, paymentMethods)
-        */
+//        val clientToken = ClientToken.fromString(checkoutConfig.clientToken)
+//        val model = Model(apiClient, clientToken, checkoutConfig)
+        val walletOptions = Wallet.WalletOptions.Builder()
+            .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+            .build()
+        val paymentsClient: PaymentsClient =
+            Wallet.getPaymentsClient(applicationContext, walletOptions)
+        val payBridge = GooglePayBridge(paymentsClient)
+        val googlePayChecker = GooglePayPaymentMethodChecker(
+            googlePayBridge = payBridge,
+        )
+
+        val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistrar
+        paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
+
+        val paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)
+        val resolver = PrimerPaymentMethodDescriptorResolver(
+            localConfig = checkoutConfig,
+            localPaymentMethods = configuredPaymentMethods,
+            paymentMethodDescriptorFactory = paymentMethodDescriptorFactory,
+            availabilityCheckers = paymentMethodRegistrar
+        )
+        viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, resolver)
 
         mainViewModel.initialize()
 
@@ -203,6 +192,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
         tokenizationViewModel.klarnaError.observe(this) {
             // TODO
         }
+        // endregion
+
+        // region GOOGLE PAY
+        // TODO @RUI
         // endregion
 
         // region PAYPAL
