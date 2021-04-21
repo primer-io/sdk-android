@@ -28,7 +28,10 @@ import org.koin.core.component.inject
 import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
-internal class TokenizationViewModel constructor() : ViewModel(), DIAppComponent {
+internal class TokenizationViewModel constructor(
+//    private val model: Model,
+//    private val checkoutConfig: CheckoutConfig
+) : ViewModel(), DIAppComponent {
 
     companion object {
 
@@ -112,18 +115,17 @@ internal class TokenizationViewModel constructor() : ViewModel(), DIAppComponent
         val paymentMethodData = JSONObject(paymentInformation).getJSONObject("paymentMethodData")
         val token = paymentMethodData
             .getJSONObject("tokenizationData")
-            .getString("token") // .replace("""\" """.replace(" ", ""), "\"")
+            .getString("token")
 
-        val merchantId = googlePay?.config?.options?.get("merchantId")?.toString()
-            ?.replace("\"", "") ?: return
+        val merchantId = googlePay?.merchantId ?: return
 
-        val base64Token = Base64.encodeToString(token.toByteArray(), Base64.DEFAULT)
+        val base64Token = Base64.encodeToString(token.toByteArray(), Base64.NO_WRAP)
+
         googlePay.setTokenizableValue("merchantId", merchantId)
         googlePay.setTokenizableValue("encryptedPayload", base64Token)
+        googlePay.setTokenizableValue("flow", "GATEWAY")
 
         tokenize()
-
-        Log.d("RUI", "> token = $token")
     }
     // endregion
 

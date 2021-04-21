@@ -2,6 +2,7 @@ package io.primer.android.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -21,6 +22,16 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import java.util.Collections
+
+internal class PrimerViewModelFactory(
+    private val model: Model,
+    private val checkoutConfig: CheckoutConfig,
+    private val primerPaymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
+) : ViewModelAssistedFactory<PrimerViewModel> {
+
+    override fun create(handle: SavedStateHandle): PrimerViewModel =
+        PrimerViewModel(model, checkoutConfig, primerPaymentMethodDescriptorResolver)
+}
 
 internal class PrimerViewModel constructor(
     private val model: Model,

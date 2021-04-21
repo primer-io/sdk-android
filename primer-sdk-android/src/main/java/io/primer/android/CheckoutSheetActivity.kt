@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
 import com.google.android.gms.wallet.PaymentData
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
@@ -45,23 +44,13 @@ import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistrar
 import io.primer.android.viewmodel.PrimerPaymentMethodDescriptorResolver
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.ViewModelAssistedFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.serializer
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-
-internal class PrimerViewModelFactory(
-    private val model: Model,
-    private val checkoutConfig: CheckoutConfig,
-    private val primerPaymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
-) : ViewModelAssistedFactory<PrimerViewModel> {
-
-    override fun create(handle: SavedStateHandle): PrimerViewModel =
-        PrimerViewModel(model, checkoutConfig, primerPaymentMethodDescriptorResolver)
-}
 
 @KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
@@ -74,15 +63,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private val mainViewModel: PrimerViewModel by viewModels {
         GenericSavedStateViewModelFactory(viewModelFactory, this)
     }
-//    private val mainViewModel: PrimerViewModel by viewModels(factoryProducer = {
-//        object : ViewModelProvider.Factory {
-//            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//                PrimerViewModel(
-//
-//                )
-//            }
-//        }
-//    })
 
     private val model: Model by inject() // FIXME manual di here
     private val configuredPaymentMethods: List<PaymentMethod> by inject() // FIXME manual di here

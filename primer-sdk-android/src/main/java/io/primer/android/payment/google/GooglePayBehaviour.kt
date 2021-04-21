@@ -17,7 +17,7 @@ internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBeh
     abstract fun execute(
         activity: Activity,
         tokenizationViewModel: TokenizationViewModel,
-        googlePayBridge: GooglePayBridge
+        googlePayBridge: GooglePayBridge,
     )
 }
 
@@ -37,15 +37,12 @@ internal class GooglePayBehaviour constructor(
     override fun execute(
         activity: Activity,
         tokenizationViewModel: TokenizationViewModel,
-        googlePayBridge: GooglePayBridge
+        googlePayBridge: GooglePayBridge,
     ) {
         tokenizationViewModel.resetPaymentMethod(paymentMethodDescriptor)
 
         val paymentMethod = paymentMethodDescriptor.options
-        val gatewayMerchantId =
-            paymentMethodDescriptor.config.options["merchantId"]?.toString()
-                ?.replace("\"", "") // FIXME issue with kotlin serialization here
-                ?: return // TODO log missing value
+        val gatewayMerchantId = paymentMethodDescriptor.merchantId ?: return
 
         googlePayBridge.pay(
             activity = activity,

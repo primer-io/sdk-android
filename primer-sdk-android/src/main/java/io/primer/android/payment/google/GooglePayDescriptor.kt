@@ -43,6 +43,10 @@ internal class GooglePayDescriptor constructor(
     override val vaultCapability: VaultCapability
         get() = VaultCapability.SINGLE_USE_AND_VAULT
 
+    val merchantId: String?
+        get() = config.options["merchantId"]?.toString()
+            ?.replace("\"", "")
+
     override fun createButton(context: Context): View =
         View.inflate(context, R.layout.payment_method_button_google, null)
 }
