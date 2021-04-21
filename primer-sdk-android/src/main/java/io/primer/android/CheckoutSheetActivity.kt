@@ -3,14 +3,12 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.wallet.IsReadyToPayRequest
+import com.google.android.gms.wallet.PaymentData
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
@@ -30,6 +28,8 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.google.GooglePayBridge
+import io.primer.android.payment.google.GooglePayDescriptor
+import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
@@ -42,7 +42,6 @@ import io.primer.android.ui.fragments.SuccessFragment
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.GenericSavedStateViewModelFactory
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
-import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistrar
 import io.primer.android.viewmodel.PrimerPaymentMethodDescriptorResolver
 import io.primer.android.viewmodel.PrimerViewModel
@@ -122,7 +121,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     behaviour.execute(tokenizationViewModel)
                 }
                 is InitialCheckRequiredBehaviour -> {
-                    // TODO
+                    behaviour.execute(
+                        this,
+                        tokenizationViewModel,
+                        googlePayBridge
+                    )
                 }
                 else -> {
                     // TODO what should we do here?
@@ -130,6 +133,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             }
         }
     }
+
+    private lateinit var googlePayBridge: GooglePayBridge
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,12 +149,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             .build()
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)
-        val payBridge = GooglePayBridge(paymentsClient)
-        val googlePayChecker = GooglePayPaymentMethodChecker(
-            googlePayBridge = payBridge,
-        )
+        googlePayBridge = GooglePayBridge(paymentsClient)
+        val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge = googlePayBridge)
 
         val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistrar
+        // FIXME this should be dynamic but how?
         paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
 
         val paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)
@@ -198,6 +202,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         // region GOOGLE PAY
         // TODO @RUI
+
         // endregion
 
         // region PAYPAL
@@ -259,6 +264,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
+            GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> {
                 // TODO error: unexpected request code
             }
@@ -269,14 +275,30 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         when (resultCode) {
             RESULT_OK -> {
                 val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
-                val paymentMethod: PaymentMethodDescriptor? =
-                    mainViewModel.selectedPaymentMethod.value
+                val paymentMethod = mainViewModel.selectedPaymentMethod.value
                 val klarna = paymentMethod as? Klarna
 
                 tokenizationViewModel.handleKlarnaRequestResult(redirectUrl, klarna)
             }
             RESULT_CANCELED -> {
                 onExit(CheckoutExitReason.DISMISSED_BY_USER)
+            }
+        }
+    }
+
+    private fun handleGooglePayRequestResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            RESULT_OK -> {
+                val paymentMethod = mainViewModel.selectedPaymentMethod.value
+                val googlePay = paymentMethod as? GooglePayDescriptor
+                data?.let {
+                    val paymentData = PaymentData.getFromIntent(data)
+                    tokenizationViewModel.handleGooglePayRequestResult(paymentData, googlePay)
+                }
+            }
+            RESULT_CANCELED -> {
+                // onExit(CheckoutExitReason.DISMISSED_BY_USER)
+                // TODO ?
             }
         }
     }

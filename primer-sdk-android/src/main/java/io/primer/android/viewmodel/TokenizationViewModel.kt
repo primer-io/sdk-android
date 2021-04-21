@@ -1,11 +1,14 @@
 package io.primer.android.viewmodel
 
 import android.net.Uri
+import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
@@ -15,6 +18,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.Klarna
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -101,6 +105,28 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             validationErrors.value = pm.validate()
         }
     }
+
+    // region GOOGLE PAY
+    fun handleGooglePayRequestResult(paymentData: PaymentData?, googlePay: GooglePayDescriptor?) {
+        val paymentInformation = paymentData?.toJson() ?: return
+        val paymentMethodData = JSONObject(paymentInformation).getJSONObject("paymentMethodData")
+        val token = paymentMethodData
+            .getJSONObject("tokenizationData")
+            .getString("token")
+
+        val merchantId = googlePay?.config?.options?.get("merchantId")?.toString()
+            ?.replace("\"", "") ?: return
+
+        // TODO tokenize: base64 'token' and push it
+        val base64Token = Base64.encodeToString(token.toByteArray(), Base64.DEFAULT)
+        googlePay.setTokenizableValue("merchantId", merchantId)
+        googlePay.setTokenizableValue("encryptedPayload", base64Token.toString())
+
+        tokenize()
+
+        Log.d("RUI", "> token = $token")
+    }
+    // endregion
 
     // region KLARNA
     // FIXME @RUI rename to createKlarnaPaymentSession()
