@@ -20,6 +20,10 @@ sealed class PaymentMethod(val identifier: String) {
 
     @Serializable
     data class GooglePay(
+        val merchantName: String = "",
+        val totalPrice: String,
+        val countryCode: String,
+        val currencyCode: String,
         val allowedCardNetworks: List<String> = listOf(
             "AMEX",
             "DISCOVER",
