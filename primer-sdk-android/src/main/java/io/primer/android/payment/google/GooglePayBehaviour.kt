@@ -1,5 +1,6 @@
 package io.primer.android.payment.google
 
+import android.app.Activity
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.viewmodel.PaymentMethodChecker
@@ -11,19 +12,14 @@ internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBeh
 
     abstract fun initialize(
         paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
-        viewModel: TokenizationViewModel,
     )
 
     abstract fun execute(
-        viewModel: TokenizationViewModel,
+        activity: Activity,
+        tokenizationViewModel: TokenizationViewModel,
+        googlePayBridge: GooglePayBridge
     )
 }
-
-// 1. PaymentsUtil.createPaymentsClient(this)   done
-// 2. possiblyShowGooglePayButton()             done
-// 3. requestPayment()                          TODO
-// 4. onActivityResult()                        TODO
-// 5. handlePaymentSuccess()                    TODO
 
 @KoinApiExtension
 internal class GooglePayBehaviour constructor(
@@ -33,17 +29,36 @@ internal class GooglePayBehaviour constructor(
 
     override fun initialize(
         paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
-        viewModel: TokenizationViewModel,
     ) {
         paymentMethodCheckerRegistrar.register(
             GOOGLE_PAY_IDENTIFIER,
             googlePayPaymentMethodChecker
         )
-
-        viewModel.resetPaymentMethod(paymentMethodDescriptor)
     }
 
-    override fun execute(viewModel: TokenizationViewModel) {
-        // TODO: execute not implemented
+    override fun execute(
+        activity: Activity,
+        tokenizationViewModel: TokenizationViewModel,
+        googlePayBridge: GooglePayBridge
+    ) {
+        tokenizationViewModel.resetPaymentMethod(paymentMethodDescriptor)
+
+        val paymentMethod = paymentMethodDescriptor.options
+        val gatewayMerchantId =
+            paymentMethodDescriptor.config.options["merchantId"]?.toString()
+                ?.replace("\"", "") // FIXME issue with kotlin serialization here
+                ?: return // TODO log missing value
+
+        googlePayBridge.pay(
+            activity = activity,
+            gatewayMerchantId = gatewayMerchantId,
+            merchantName = paymentMethod.merchantName,
+            totalPrice = paymentMethod.totalPrice,
+            countryCode = paymentMethod.countryCode,
+            currencyCode = paymentMethod.currencyCode,
+            allowedCardNetworks = paymentMethod.allowedCardNetworks,
+            allowedCardAuthMethods = paymentMethod.allowedCardAuthMethods,
+            billingAddressRequired = paymentMethod.billingAddressRequired
+        )
     }
 }
