@@ -9,35 +9,6 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.google.GooglePayBridge
 import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
-internal class OldPaymentMethodDescriptorResolver constructor(
-    private val checkoutConfig: CheckoutConfig,
-    private val configured: List<PaymentMethod>,
-    private val paymentMethodRemoteConfigs: List<PaymentMethodRemoteConfig>,
-    private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
-) {
-
-    fun resolve(): List<PaymentMethodDescriptor> {
-        val list = ArrayList<PaymentMethodDescriptor>()
-
-        paymentMethodRemoteConfigs.forEach { paymentMethodRemoteConfig ->
-            configured
-                .find { it.identifier == paymentMethodRemoteConfig.type }
-                ?.let {
-                    paymentMethodDescriptorFactory
-                        .create(
-                            checkoutConfig = checkoutConfig,
-                            paymentMethodRemoteConfig = paymentMethodRemoteConfig,
-                            paymentMethod = it,
-                        )
-                        ?.let { paymentMethodDescriptor -> list.add(paymentMethodDescriptor) }
-                }
-        }
-
-        return list
-    }
-}
-
 internal interface PaymentMethodChecker {
 
     suspend fun shouldPaymentMethodBeAvailable(
@@ -55,14 +26,7 @@ internal class GooglePayPaymentMethodChecker constructor(
         clientSession: ClientSession,
     ): Boolean {
         val googlePay = paymentMethod as PaymentMethod.GooglePay
-        val gatewayMerchantId = clientSession.paymentMethods
-            .find { it.type == googlePay.identifier }
-            ?.options?.get("merchantId")?.toString()
-            ?.replace("\"", "") // FIXME issue with kotlin serialization here
-            ?: return false // TODO log missing value
-
         return googlePayBridge.checkIfIsReadyToPay(
-            gatewayMerchantId = gatewayMerchantId,
             allowedCardNetworks = googlePay.allowedCardNetworks,
             allowedCardAuthMethods = googlePay.allowedCardAuthMethods,
             billingAddressRequired = googlePay.billingAddressRequired
@@ -96,10 +60,7 @@ internal object PrimerPaymentMethodCheckerRegistrar : PaymentMethodCheckerRegist
 
 internal interface PaymentMethodDescriptorResolver {
 
-    suspend fun resolve(
-//        remotePaymentMethods: List<PaymentMethodRemoteConfig>,
-        clientSession: ClientSession,
-    ): List<PaymentMethodDescriptor> = emptyList()
+    suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> = emptyList()
 }
 
 internal class PrimerPaymentMethodDescriptorResolver constructor(
