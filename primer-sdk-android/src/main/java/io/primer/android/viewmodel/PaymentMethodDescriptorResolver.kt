@@ -4,7 +4,7 @@ import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodDescriptorFactory
+import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 
 internal interface PaymentMethodDescriptorResolver {
 
@@ -14,7 +14,7 @@ internal interface PaymentMethodDescriptorResolver {
 internal class PrimerPaymentMethodDescriptorResolver constructor(
     private val localConfig: CheckoutConfig,
     private val localPaymentMethods: List<PaymentMethod>,
-    private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
+    private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     private val availabilityCheckers: PaymentMethodCheckerRegistry,
 ) : PaymentMethodDescriptorResolver {
 
@@ -27,7 +27,7 @@ internal class PrimerPaymentMethodDescriptorResolver constructor(
                 .find { it.identifier == paymentMethodRemoteConfig.type }
                 ?.takeUnlessUnavailable(clientSession)
                 ?.let {
-                    paymentMethodDescriptorFactory
+                    paymentMethodDescriptorFactoryRegistry
                         .create(
                             checkoutConfig = localConfig,
                             paymentMethodRemoteConfig = paymentMethodRemoteConfig,

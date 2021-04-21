@@ -30,7 +30,7 @@ import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodDescriptorFactory
+import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
@@ -120,7 +120,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
-    private lateinit var paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory
+    private lateinit var paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
     private lateinit var paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver
     private lateinit var googlePayBridge: GooglePayBridge
 
@@ -143,24 +143,25 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistry
         paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
 
-        paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)
-        paymentMethodDescriptorFactory.register(
+        paymentMethodDescriptorFactoryRegistry =
+            PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistrar)
+        paymentMethodDescriptorFactoryRegistry.register(
             PAYMENT_CARD_IDENTIFIER,
             CardPaymentMethodDescriptorFactory()
         )
-        paymentMethodDescriptorFactory.register(
+        paymentMethodDescriptorFactoryRegistry.register(
             PAYPAL_IDENTIFIER,
             PayPalPaymentMethodDescriptorFactory()
         )
-        paymentMethodDescriptorFactory.register(
+        paymentMethodDescriptorFactoryRegistry.register(
             GOCARDLESS_IDENTIFIER,
             GoCardlessPaymentMethodDescriptorFactory()
         )
-        paymentMethodDescriptorFactory.register(
+        paymentMethodDescriptorFactoryRegistry.register(
             KLARNA_IDENTIFIER,
             KlarnaPaymentMethodDescriptorFactory()
         )
-        paymentMethodDescriptorFactory.register(
+        paymentMethodDescriptorFactoryRegistry.register(
             GOOGLE_PAY_IDENTIFIER,
             GooglePayPaymentMethodDescriptorFactory(googlePayBridge)
         )
@@ -168,7 +169,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
             localConfig = checkoutConfig,
             localPaymentMethods = configuredPaymentMethods,
-            paymentMethodDescriptorFactory = paymentMethodDescriptorFactory,
+            paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry,
             availabilityCheckers = paymentMethodRegistrar
         )
         viewModelFactory = PrimerViewModelFactory(

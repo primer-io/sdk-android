@@ -5,8 +5,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-// TODO rename to PaymentMethodDescriptorFactoryRegistry
-internal class PaymentMethodDescriptorFactory(
+internal class PaymentMethodDescriptorFactoryRegistry(
     private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
 ) {
 
