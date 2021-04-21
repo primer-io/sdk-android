@@ -201,8 +201,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         // endregion
 
         // region GOOGLE PAY
-        // TODO @RUI
-
+        // TODO @RUI what to do here?
         // endregion
 
         // region PAYPAL

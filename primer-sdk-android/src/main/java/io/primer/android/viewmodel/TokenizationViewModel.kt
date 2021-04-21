@@ -129,8 +129,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     // endregion
 
     // region KLARNA
-    // FIXME @RUI rename to createKlarnaPaymentSession()
-    fun createKlarnaBillingAgreement(id: String, returnUrl: String, klarna: Klarna) {
+    fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: Klarna) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country

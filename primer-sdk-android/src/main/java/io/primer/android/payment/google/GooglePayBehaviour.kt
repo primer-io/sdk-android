@@ -27,9 +27,7 @@ internal class GooglePayBehaviour constructor(
     private val googlePayPaymentMethodChecker: PaymentMethodChecker,
 ) : InitialCheckRequiredBehaviour() {
 
-    override fun initialize(
-        paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
-    ) {
+    override fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar) {
         paymentMethodCheckerRegistrar.register(
             GOOGLE_PAY_IDENTIFIER,
             googlePayPaymentMethodChecker

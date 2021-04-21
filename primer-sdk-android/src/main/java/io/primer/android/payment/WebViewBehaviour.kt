@@ -20,6 +20,5 @@ internal abstract class WebViewBehaviour(
 
     abstract fun initialize(viewModel: TokenizationViewModel)
 
-    // FIXME @RUI rename to createKlarnaBillingAgreement()
     abstract fun getUri(viewModel: TokenizationViewModel, returnUrl: String)
 }
