@@ -4,12 +4,12 @@ import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
-import io.primer.android.payment.SinglePaymentMethodDescriptorFactory
+import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 internal class GooglePayPaymentMethodDescriptorFactory(
     private val googlePayBridge: GooglePayBridge,
-) : SinglePaymentMethodDescriptorFactory {
+) : PaymentMethodDescriptorFactory {
 
     override fun create(
         checkoutConfig: CheckoutConfig,

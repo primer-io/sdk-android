@@ -9,7 +9,7 @@ internal class PaymentMethodDescriptorFactoryRegistry(
     private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
 ) {
 
-    private val factories: MutableMap<String, SinglePaymentMethodDescriptorFactory> = mutableMapOf()
+    private val factories: MutableMap<String, PaymentMethodDescriptorFactory> = mutableMapOf()
 
     fun create(
         checkoutConfig: CheckoutConfig,
@@ -23,24 +23,13 @@ internal class PaymentMethodDescriptorFactoryRegistry(
             paymentMethodCheckers = paymentMethodCheckers
         )
 
-    fun register(id: String, factory: SinglePaymentMethodDescriptorFactory) {
+    fun register(id: String, factory: PaymentMethodDescriptorFactory) {
         factories[id] = factory
     }
 
-    fun unregister(id: SinglePaymentMethodDescriptorFactory) {
+    fun unregister(id: PaymentMethodDescriptorFactory) {
         factories.remove(id)
     }
 
-    operator fun get(id: String): SinglePaymentMethodDescriptorFactory? = factories[id]
+    operator fun get(id: String): PaymentMethodDescriptorFactory? = factories[id]
 }
-
-internal interface SinglePaymentMethodDescriptorFactory {
-
-    fun create(
-        checkoutConfig: CheckoutConfig,
-        paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
-        paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
-    ): PaymentMethodDescriptor
-}
-
