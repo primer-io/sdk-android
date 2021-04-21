@@ -20,8 +20,14 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
+import io.primer.android.payment.*
+import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
+import io.primer.android.payment.GooglePayPaymentMethodDescriptorFactory
+import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
+import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.WebBrowserIntentBehaviour
@@ -104,7 +110,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     behaviour.execute(
                         this,
                         tokenizationViewModel,
-                        googlePayBridge
+                        //googlePayBridge
                     )
                 }
                 else -> {
@@ -114,6 +120,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
+    private lateinit var paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory
+    private lateinit var paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver
     private lateinit var googlePayBridge: GooglePayBridge
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,20 +138,29 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)
         googlePayBridge = GooglePayBridge(paymentsClient)
-        val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge = googlePayBridge)
+        val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge)
 
         val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistrar
-        // FIXME this should be dynamic but how?
         paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
 
-        val paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)
-        val resolver = PrimerPaymentMethodDescriptorResolver(
+        paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)
+        paymentMethodDescriptorFactory.register(PAYMENT_CARD_IDENTIFIER, CardPaymentMethodDescriptorFactory())
+        paymentMethodDescriptorFactory.register(PAYPAL_IDENTIFIER, PayPalPaymentMethodDescriptorFactory())
+        paymentMethodDescriptorFactory.register(GOCARDLESS_IDENTIFIER, GoCardlessPaymentMethodDescriptorFactory())
+        paymentMethodDescriptorFactory.register(KLARNA_IDENTIFIER, KlarnaPaymentMethodDescriptorFactory())
+        paymentMethodDescriptorFactory.register(GOOGLE_PAY_IDENTIFIER, GooglePayPaymentMethodDescriptorFactory(googlePayBridge))
+
+        paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
             localConfig = checkoutConfig,
             localPaymentMethods = configuredPaymentMethods,
             paymentMethodDescriptorFactory = paymentMethodDescriptorFactory,
             availabilityCheckers = paymentMethodRegistrar
         )
-        viewModelFactory = PrimerViewModelFactory(model, checkoutConfig, resolver)
+        viewModelFactory = PrimerViewModelFactory(
+            model = model,
+            checkoutConfig = checkoutConfig,
+            primerPaymentMethodDescriptorResolver = paymentMethodDescriptorResolver
+        )
 
         mainViewModel.initialize()
 

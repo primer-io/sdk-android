@@ -5,6 +5,7 @@ package io.primer.android.viewmodel
  * Each payment method should register its own [PaymentMethodChecker] with this class so its
  * availability can be evaluated when necessary. See [PaymentMethodChecker].
  */
+// TODO rename to PaymentMethodCheckerRegistry
 internal interface PaymentMethodCheckerRegistrar {
 
     val checkers: Map<String, PaymentMethodChecker>

@@ -19,7 +19,8 @@ import org.koin.core.component.KoinApiExtension
 internal class GooglePayDescriptor constructor(
     val checkoutConfig: CheckoutConfig,
     val options: PaymentMethod.GooglePay,
-    private val paymentMethodChecker: PaymentMethodChecker,
+    val googlePayBridge: GooglePayBridge,
+    paymentMethodChecker: PaymentMethodChecker,
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {
 
@@ -34,7 +35,8 @@ internal class GooglePayDescriptor constructor(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour =
         GooglePayBehaviour(
             paymentMethodDescriptor = this,
-            googlePayPaymentMethodChecker = paymentMethodChecker
+            googlePayPaymentMethodChecker = paymentMethodChecker,
+            googlePayBridge = googlePayBridge
         )
 
     override val type: PaymentMethodType
@@ -45,8 +47,43 @@ internal class GooglePayDescriptor constructor(
 
     val merchantId: String?
         get() = config.options["merchantId"]?.toString()
-            ?.replace("\"", "")
+            ?.replace("\"", "") // FIXME issue with kotlin serialization here
 
     override fun createButton(context: Context): View =
         View.inflate(context, R.layout.payment_method_button_google, null)
 }
+
+//internal class old_GooglePayDescriptor constructor(
+//    val checkoutConfig: CheckoutConfig,
+//    val options: PaymentMethod.GooglePay,
+//    paymentMethodChecker: PaymentMethodChecker,
+//    config: PaymentMethodRemoteConfig,
+//) : PaymentMethodDescriptor(config) {
+//
+//    companion object {
+//
+//        const val GOOGLE_PAY_REQUEST_CODE = 1100
+//    }
+//
+//    override val identifier: String
+//        get() = GOOGLE_PAY_IDENTIFIER
+//
+//    override val selectedBehaviour: SelectedPaymentMethodBehaviour =
+//        GooglePayBehaviour(
+//            paymentMethodDescriptor = this,
+//            googlePayPaymentMethodChecker = paymentMethodChecker,
+//        )
+//
+//    override val type: PaymentMethodType
+//        get() = PaymentMethodType.SIMPLE_BUTTON
+//
+//    override val vaultCapability: VaultCapability
+//        get() = VaultCapability.SINGLE_USE_AND_VAULT
+//
+//    val merchantId: String?
+//        get() = config.options["merchantId"]?.toString()
+//            ?.replace("\"", "") // FIXME issue with kotlin serialization here
+//
+//    override fun createButton(context: Context): View =
+//        View.inflate(context, R.layout.payment_method_button_google, null)
+//}

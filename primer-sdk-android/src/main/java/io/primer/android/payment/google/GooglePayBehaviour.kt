@@ -10,24 +10,20 @@ import org.koin.core.component.KoinApiExtension
 
 internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBehaviour() {
 
-    abstract fun initialize(
-        paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar,
-    )
+    abstract fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar)
 
-    abstract fun execute(
-        activity: Activity,
-        tokenizationViewModel: TokenizationViewModel,
-        googlePayBridge: GooglePayBridge,
-    )
+    abstract fun execute(activity: Activity, tokenizationViewModel: TokenizationViewModel)
 }
 
 @KoinApiExtension
 internal class GooglePayBehaviour constructor(
     private val paymentMethodDescriptor: GooglePayDescriptor,
     private val googlePayPaymentMethodChecker: PaymentMethodChecker,
+    private val googlePayBridge: GooglePayBridge,
 ) : InitialCheckRequiredBehaviour() {
 
     override fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar) {
+        // FIXME this is not being called at the moment
         paymentMethodCheckerRegistrar.register(
             GOOGLE_PAY_IDENTIFIER,
             googlePayPaymentMethodChecker
@@ -37,7 +33,6 @@ internal class GooglePayBehaviour constructor(
     override fun execute(
         activity: Activity,
         tokenizationViewModel: TokenizationViewModel,
-        googlePayBridge: GooglePayBridge,
     ) {
         tokenizationViewModel.resetPaymentMethod(paymentMethodDescriptor)
 
