@@ -140,11 +140,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         googlePayBridge = GooglePayBridge(paymentsClient)
         val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge)
 
-        val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistry
-        paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
+        val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
+        paymentMethodRegistry.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
 
         paymentMethodDescriptorFactoryRegistry =
-            PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistrar)
+            PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistry)
         paymentMethodDescriptorFactoryRegistry.register(
             PAYMENT_CARD_IDENTIFIER,
             CardPaymentMethodDescriptorFactory()
@@ -170,7 +170,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             localConfig = checkoutConfig,
             localPaymentMethods = configuredPaymentMethods,
             paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry,
-            availabilityCheckers = paymentMethodRegistrar
+            availabilityCheckers = paymentMethodRegistry
         )
         viewModelFactory = PrimerViewModelFactory(
             model = model,
