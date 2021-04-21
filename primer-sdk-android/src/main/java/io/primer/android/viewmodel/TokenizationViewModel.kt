@@ -28,7 +28,7 @@ import org.koin.core.component.inject
 import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
-internal class TokenizationViewModel : ViewModel(), DIAppComponent {
+internal class TokenizationViewModel constructor() : ViewModel(), DIAppComponent {
 
     companion object {
 

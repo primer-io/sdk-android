@@ -49,7 +49,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? =
         inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
 
@@ -62,42 +62,38 @@ class VaultedPaymentMethodsFragment : Fragment() {
         )
         editHeaderLinearLayout = view.findViewById(R.id.primer_edit_vaulted_payment_methods_header)
 
-        viewModel.vaultedPaymentMethods.observe(
-            viewLifecycleOwner,
-            { paymentMethods ->
-                views.forEach {
-                    paymentMethodsLinearLayout.removeView(it.getView())
-                }
+        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+            views.forEach { paymentMethodsLinearLayout.removeView(it.getView()) }
+            views.clear()
 
-                views.clear()
+            paymentMethods.forEach { paymentMethodToken ->
+                val attributes = TokenAttributes.create(paymentMethodToken)
 
-                paymentMethods.forEach { paymentMethodToken ->
-                    val attributes = TokenAttributes.create(paymentMethodToken)
+                attributes?.let { attrs ->
+                    val paymentMethodView = VaultedPaymentMethodView(requireContext(), attrs)
 
-                    attributes?.let { attrs ->
-                        val paymentMethodView = VaultedPaymentMethodView(requireContext(), attrs)
-
-                        paymentMethodView.setOnDeleteListener {
-                            tokenizationViewModel.deleteToken(paymentMethodToken)
-                        }
-
-                        views.add(paymentMethodView)
-                        paymentMethodView.setEditable(isEditing)
-                        paymentMethodsLinearLayout.addView(paymentMethodView.getView())
+                    paymentMethodView.setOnDeleteListener {
+                        tokenizationViewModel.deleteToken(paymentMethodToken)
                     }
-                }
 
-                if (views.isEmpty()) {
-                    gotoSelectPaymentMethod()
+                    views.add(paymentMethodView)
+                    paymentMethodView.setEditable(isEditing)
+                    paymentMethodsLinearLayout.addView(paymentMethodView.getView())
                 }
             }
-        )
+
+            if (views.isEmpty()) {
+                gotoSelectPaymentMethod()
+            }
+        }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
             gotoSelectPaymentMethod()
         }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_add_card).setOnClickListener {
+            // FIXME this is looking for a PAYMENT_CARD_IDENTIFIER method, if there is none (for ex.
+            //  merchant has not set it up) it will do nothing
             viewModel.paymentMethods.value?.find { it.identifier == PAYMENT_CARD_IDENTIFIER }?.let {
                 viewModel.selectPaymentMethod(it)
             }
