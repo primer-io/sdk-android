@@ -52,7 +52,16 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
-    private val googlePay = PaymentMethod.GooglePay()
+    val klarna = PaymentMethod.Klarna(
+        orderItems = listOf(OrderItem("PS5", 99999, 1))
+    )
+
+    private val googlePay = PaymentMethod.GooglePay(
+        merchantName = "Primer",
+        totalPrice = "1000",
+        countryCode = "UK",
+        currencyCode = "GBP"
+    )
 
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
@@ -84,8 +93,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        val items = listOf(OrderItem("PS5", 99999, 1))
-        val klarna = PaymentMethod.Klarna(orderItems = items)
 
         UniversalCheckout.initialize(this, token, Locale.UK)
         UniversalCheckout.loadPaymentMethods(listOf(klarna, googlePay))
