@@ -11,8 +11,6 @@ import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
-import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
-import io.primer.android.viewmodel.PaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
 import org.json.JSONObject
 import java.util.Collections
@@ -90,7 +88,8 @@ internal class PaymentMethodDescriptorFactory(
                 GooglePayDescriptor(
                     checkoutConfig = checkoutConfig,
                     options = paymentMethod as PaymentMethod.GooglePay,
-                    paymentMethodChecker = paymentMethodCheckers[GOOGLE_PAY_IDENTIFIER] ?: throw Error(),
+                    paymentMethodChecker = paymentMethodCheckers[GOOGLE_PAY_IDENTIFIER]
+                        ?: throw Error("Missing payment method checker"),
                     config = paymentMethodRemoteConfig
                 )
             }

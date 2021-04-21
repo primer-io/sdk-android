@@ -16,13 +16,17 @@ import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodChecker
 import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class GooglePayDescriptor constructor(
     val checkoutConfig: CheckoutConfig,
     val options: PaymentMethod.GooglePay,
     private val paymentMethodChecker: PaymentMethodChecker,
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {
+
+    companion object {
+
+        const val GOOGLE_PAY_REQUEST_CODE = 1100
+    }
 
     override val identifier: String
         get() = GOOGLE_PAY_IDENTIFIER
