@@ -47,7 +47,7 @@ import io.primer.android.ui.fragments.SuccessFragment
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.GenericSavedStateViewModelFactory
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
-import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistrar
+import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerPaymentMethodDescriptorResolver
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
@@ -140,7 +140,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         googlePayBridge = GooglePayBridge(paymentsClient)
         val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge)
 
-        val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistrar
+        val paymentMethodRegistrar = PrimerPaymentMethodCheckerRegistry
         paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
 
         paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)

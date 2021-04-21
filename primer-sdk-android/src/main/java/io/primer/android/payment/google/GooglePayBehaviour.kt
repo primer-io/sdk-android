@@ -4,13 +4,13 @@ import android.app.Activity
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.viewmodel.PaymentMethodChecker
-import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
+import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
 
 internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBehaviour() {
 
-    abstract fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar)
+    abstract fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistry)
 
     abstract fun execute(activity: Activity, tokenizationViewModel: TokenizationViewModel)
 }
@@ -22,7 +22,7 @@ internal class GooglePayBehaviour constructor(
     private val googlePayBridge: GooglePayBridge,
 ) : InitialCheckRequiredBehaviour() {
 
-    override fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistrar) {
+    override fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistry) {
         // FIXME this is not being called at the moment
         paymentMethodCheckerRegistrar.register(
             GOOGLE_PAY_IDENTIFIER,

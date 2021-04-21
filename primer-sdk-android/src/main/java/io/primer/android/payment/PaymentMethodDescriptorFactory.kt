@@ -9,11 +9,11 @@ import io.primer.android.payment.google.GooglePayBridge
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
-import io.primer.android.viewmodel.PaymentMethodCheckerRegistrar
+import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 // TODO rename to PaymentMethodDescriptorFactoryRegistry
 internal class PaymentMethodDescriptorFactory(
-    private val paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+    private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
 ) {
 
     private val factories: MutableMap<String, SinglePaymentMethodDescriptorFactory> = mutableMapOf()
@@ -47,7 +47,7 @@ internal interface SinglePaymentMethodDescriptorFactory {
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor
 }
 
@@ -59,7 +59,7 @@ internal class GooglePayPaymentMethodDescriptorFactory(
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): GooglePayDescriptor =
         GooglePayDescriptor(
             checkoutConfig = checkoutConfig,
@@ -77,7 +77,7 @@ internal class CardPaymentMethodDescriptorFactory : SinglePaymentMethodDescripto
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
         CreditCard(
             config = paymentMethodRemoteConfig,
@@ -91,7 +91,7 @@ internal class PayPalPaymentMethodDescriptorFactory : SinglePaymentMethodDescrip
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
         PayPal(
             paymentMethodRemoteConfig,
@@ -105,7 +105,7 @@ internal class GoCardlessPaymentMethodDescriptorFactory : SinglePaymentMethodDes
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
         GoCardless(
             paymentMethodRemoteConfig,
@@ -119,7 +119,7 @@ internal class KlarnaPaymentMethodDescriptorFactory : SinglePaymentMethodDescrip
         checkoutConfig: CheckoutConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistrar,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
         Klarna(
             checkoutConfig,

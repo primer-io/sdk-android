@@ -1,12 +1,11 @@
 package io.primer.android.viewmodel
 
 /**
- * Responsible for holding all the [PaymentMethodCheckerRegistrar] for all the payment methods.
+ * Responsible for holding all the [PaymentMethodCheckerRegistry] for all the payment methods.
  * Each payment method should register its own [PaymentMethodChecker] with this class so its
  * availability can be evaluated when necessary. See [PaymentMethodChecker].
  */
-// TODO rename to PaymentMethodCheckerRegistry
-internal interface PaymentMethodCheckerRegistrar {
+internal interface PaymentMethodCheckerRegistry {
 
     val checkers: Map<String, PaymentMethodChecker>
 
@@ -16,7 +15,7 @@ internal interface PaymentMethodCheckerRegistrar {
     operator fun get(id: String): PaymentMethodChecker? = checkers[id]
 }
 
-internal object PrimerPaymentMethodCheckerRegistrar : PaymentMethodCheckerRegistrar {
+internal object PrimerPaymentMethodCheckerRegistry : PaymentMethodCheckerRegistry {
 
     private val _checkers: MutableMap<String, PaymentMethodChecker> = mutableMapOf()
     override val checkers: Map<String, PaymentMethodChecker> = _checkers

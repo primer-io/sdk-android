@@ -15,7 +15,7 @@ internal class PrimerPaymentMethodDescriptorResolver constructor(
     private val localConfig: CheckoutConfig,
     private val localPaymentMethods: List<PaymentMethod>,
     private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
-    private val availabilityCheckers: PaymentMethodCheckerRegistrar,
+    private val availabilityCheckers: PaymentMethodCheckerRegistry,
 ) : PaymentMethodDescriptorResolver {
 
     override suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> {
