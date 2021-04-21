@@ -21,9 +21,10 @@ import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.json
 import io.primer.android.payment.*
+import io.primer.android.payment.card.CardPaymentMethodDescriptorFactory
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
-import io.primer.android.payment.GooglePayPaymentMethodDescriptorFactory
+import io.primer.android.payment.google.GooglePayPaymentMethodDescriptorFactory
 import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
@@ -32,13 +33,16 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
+import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
 import io.primer.android.payment.google.GooglePayBridge
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
+import io.primer.android.payment.klarna.KlarnaPaymentMethodDescriptorFactory
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.payment.paypal.PayPalPaymentMethodDescriptorFactory
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
@@ -107,11 +111,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     behaviour.execute(tokenizationViewModel)
                 }
                 is InitialCheckRequiredBehaviour -> {
-                    behaviour.execute(
-                        this,
-                        tokenizationViewModel,
-                        //googlePayBridge
-                    )
+                    behaviour.execute(this, tokenizationViewModel)
                 }
                 else -> {
                     // TODO what should we do here?
@@ -144,11 +144,26 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         paymentMethodRegistrar.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
 
         paymentMethodDescriptorFactory = PaymentMethodDescriptorFactory(paymentMethodRegistrar)
-        paymentMethodDescriptorFactory.register(PAYMENT_CARD_IDENTIFIER, CardPaymentMethodDescriptorFactory())
-        paymentMethodDescriptorFactory.register(PAYPAL_IDENTIFIER, PayPalPaymentMethodDescriptorFactory())
-        paymentMethodDescriptorFactory.register(GOCARDLESS_IDENTIFIER, GoCardlessPaymentMethodDescriptorFactory())
-        paymentMethodDescriptorFactory.register(KLARNA_IDENTIFIER, KlarnaPaymentMethodDescriptorFactory())
-        paymentMethodDescriptorFactory.register(GOOGLE_PAY_IDENTIFIER, GooglePayPaymentMethodDescriptorFactory(googlePayBridge))
+        paymentMethodDescriptorFactory.register(
+            PAYMENT_CARD_IDENTIFIER,
+            CardPaymentMethodDescriptorFactory()
+        )
+        paymentMethodDescriptorFactory.register(
+            PAYPAL_IDENTIFIER,
+            PayPalPaymentMethodDescriptorFactory()
+        )
+        paymentMethodDescriptorFactory.register(
+            GOCARDLESS_IDENTIFIER,
+            GoCardlessPaymentMethodDescriptorFactory()
+        )
+        paymentMethodDescriptorFactory.register(
+            KLARNA_IDENTIFIER,
+            KlarnaPaymentMethodDescriptorFactory()
+        )
+        paymentMethodDescriptorFactory.register(
+            GOOGLE_PAY_IDENTIFIER,
+            GooglePayPaymentMethodDescriptorFactory(googlePayBridge)
+        )
 
         paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
             localConfig = checkoutConfig,
