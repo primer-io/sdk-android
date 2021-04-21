@@ -200,10 +200,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
         // endregion
 
-        // region GOOGLE PAY
-        // TODO @RUI what to do here?
-        // endregion
-
         // region PAYPAL
         tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))

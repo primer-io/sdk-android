@@ -112,15 +112,14 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         val paymentMethodData = JSONObject(paymentInformation).getJSONObject("paymentMethodData")
         val token = paymentMethodData
             .getJSONObject("tokenizationData")
-            .getString("token")
+            .getString("token") // .replace("""\" """.replace(" ", ""), "\"")
 
         val merchantId = googlePay?.config?.options?.get("merchantId")?.toString()
             ?.replace("\"", "") ?: return
 
-        // TODO tokenize: base64 'token' and push it
         val base64Token = Base64.encodeToString(token.toByteArray(), Base64.DEFAULT)
         googlePay.setTokenizableValue("merchantId", merchantId)
-        googlePay.setTokenizableValue("encryptedPayload", base64Token.toString())
+        googlePay.setTokenizableValue("encryptedPayload", base64Token)
 
         tokenize()
 

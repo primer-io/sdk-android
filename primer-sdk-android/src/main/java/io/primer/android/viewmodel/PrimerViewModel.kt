@@ -22,12 +22,11 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import java.util.Collections
 
-@KoinApiExtension // FIXME inject dependencies via ctor
 internal class PrimerViewModel constructor(
     private val model: Model,
     private val checkoutConfig: CheckoutConfig,
     private val paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
-) : ViewModel(), EventBus.EventListener, DIAppComponent {
+) : ViewModel(), EventBus.EventListener {
 
     companion object {
 
