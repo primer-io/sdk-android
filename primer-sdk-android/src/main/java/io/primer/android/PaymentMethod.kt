@@ -104,9 +104,6 @@ val payPalSerializationModule: SerializersModule = SerializersModule {
     }
 }
 
-//
-//
-
 @Serializable
 data class GooglePay(
     val merchantName: String,
@@ -139,11 +136,11 @@ val googlePaySerializationModule: SerializersModule = SerializersModule {
     }
 }
 
-//
-//
-
 @Serializable
-data class Klarna(val orderItems: List<OrderItem>) : PaymentMethod {
+data class Klarna(
+    val orderDescription: String,
+    val orderItems: List<OrderItem> = emptyList(),
+) : PaymentMethod {
 
     override val identifier: String = KLARNA_IDENTIFIER
 
@@ -177,9 +174,6 @@ val klarnaSerializationModule: SerializersModule = SerializersModule {
         subclass(Klarna::class)
     }
 }
-
-//
-//
 
 @Serializable
 data class GoCardless(
@@ -219,7 +213,7 @@ data class GoCardless(
         }
     }
     override val serializersModule: SerializersModule
-        get() = googlePaySerializationModule
+        get() = goCardlessSerializationModule
 }
 
 val goCardlessSerializationModule: SerializersModule = SerializersModule {
@@ -227,4 +221,3 @@ val goCardlessSerializationModule: SerializersModule = SerializersModule {
         subclass(GoCardless::class)
     }
 }
-

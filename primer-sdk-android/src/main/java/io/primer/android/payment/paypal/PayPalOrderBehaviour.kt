@@ -24,5 +24,6 @@ internal class PayPalOrderBehaviour(
     }
 
     override fun onCancel(uri: Uri?) {
+        // no op
     }
 }

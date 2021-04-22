@@ -39,13 +39,13 @@ object UniversalCheckout {
      */
     fun initialize(
         context: Context,
-        fullToken: String,
+        clientToken: String,
         locale: Locale,
         theme: UniversalCheckoutTheme? = null,
     ) {
-        val clientToken = ClientToken.fromString(fullToken)
+        val decodedToken = ClientToken.fromString(clientToken)
         val config = CheckoutConfig(
-            clientToken = fullToken,
+            clientToken = clientToken,
             locale = locale,
             packageName = context.packageName
         )
@@ -63,7 +63,7 @@ object UniversalCheckout {
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
                     .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
-                    .addHeader("Primer-Client-Token", clientToken.accessToken)
+                    .addHeader("Primer-Client-Token", decodedToken.accessToken)
                     .build()
                     .let { chain.proceed(it) }
             }
@@ -71,9 +71,9 @@ object UniversalCheckout {
 
         val json = UniversalJson.json
 
-        val model = Model(clientToken, config, okHttpClient, json)
+        val model = Model(decodedToken, config, okHttpClient, json)
 
-        checkout = InternalUniversalCheckout(model, Dispatchers.IO, fullToken, locale, theme)
+        checkout = InternalUniversalCheckout(model, Dispatchers.IO, clientToken, locale, theme)
     }
 
     /**
@@ -231,6 +231,7 @@ internal class InternalUniversalCheckout constructor(
         EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay))
     }
 
+    @Suppress("LongParameterList")
     @KoinApiExtension
     private fun show(
         context: Context,

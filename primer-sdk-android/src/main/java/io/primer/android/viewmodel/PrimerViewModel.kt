@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import io.primer.android.PaymentMethod
-import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -20,7 +18,6 @@ import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinApiExtension
 import java.util.Collections
 
 internal class PrimerViewModelFactory(
