@@ -36,8 +36,7 @@ internal class CreditCard(
     config: PaymentMethodRemoteConfig,
     private val options: Card, // FIXME why's this here? it's unused
     encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
-) : PaymentMethodDescriptor(config, encodedAsJson),
-    DIAppComponent { // FIXME why is this implementing a di component?
+) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()
 
