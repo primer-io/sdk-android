@@ -1,5 +1,6 @@
 package io.primer.android.payment.google
 
+import io.primer.android.GooglePay
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -19,7 +20,7 @@ internal class GooglePayPaymentMethodDescriptorFactory(
     ): GooglePayDescriptor =
         GooglePayDescriptor(
             checkoutConfig = checkoutConfig,
-            options = paymentMethod as PaymentMethod.GooglePay,
+            options = paymentMethod as GooglePay,
             paymentMethodChecker = paymentMethodCheckers[GOOGLE_PAY_IDENTIFIER]
                 ?: throw Error("Missing payment method checker"),
             googlePayBridge = googlePayBridge,

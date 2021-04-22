@@ -2,6 +2,8 @@ package io.primer.android.payment.paypal
 
 import android.content.Context
 import android.view.View
+import io.primer.android.Klarna
+import io.primer.android.PayPal
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
@@ -13,13 +15,16 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-internal class PayPal constructor(
+internal class PayPalDescriptor constructor(
     config: PaymentMethodRemoteConfig,
-    private val options: PaymentMethod.PayPal,
+    private val options: PayPal,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()

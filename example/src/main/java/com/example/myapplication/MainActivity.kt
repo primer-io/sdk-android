@@ -48,22 +48,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val card = PaymentMethod.Card()
+    private val card = Card()
 
-    private val paypal = PaymentMethod.PayPal()
+    private val paypal = PayPal()
 
-    val klarna = PaymentMethod.Klarna(
+    val klarna = Klarna(
         orderItems = listOf(OrderItem("PS5", 99999, 1))
     )
 
-    private val googlePay = PaymentMethod.GooglePay(
+    private val googlePay = GooglePay(
         merchantName = "Primer",
         totalPrice = "1000",
         countryCode = "UK",
         currencyCode = "GBP"
     )
 
-    private val goCardless = PaymentMethod.GoCardless(
+    private val goCardless = GoCardless(
         companyName = "Luko AB",
         companyAddress = "123 French St, Francetown, France, FR3NCH",
         customerName = "Will Knowles",

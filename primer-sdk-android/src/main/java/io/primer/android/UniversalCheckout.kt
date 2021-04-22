@@ -6,6 +6,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.UniversalJson
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.ClientSession
@@ -13,7 +14,6 @@ import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import io.primer.android.model.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
 import java.util.Locale
 
-internal enum class UXMode {
+enum class UXMode {
     CHECKOUT,
     VAULT,
 }
@@ -69,7 +69,9 @@ object UniversalCheckout {
             }
             .build()
 
-        val model = Model(clientToken, config, okHttpClient)
+        val json = UniversalJson.json
+
+        val model = Model(clientToken, config, okHttpClient, json)
 
         checkout = InternalUniversalCheckout(model, Dispatchers.IO, fullToken, locale, theme)
     }
@@ -256,6 +258,9 @@ internal class InternalUniversalCheckout constructor(
             currency = currency,
             theme = theme,
         )
+
+        paymentMethods.forEach { UniversalJson.addModule(it.serializersModule) }
+        val json = UniversalJson.json
 
         Intent(context, CheckoutSheetActivity::class.java)
             .apply {

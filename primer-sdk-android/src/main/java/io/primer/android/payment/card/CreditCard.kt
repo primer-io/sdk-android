@@ -3,6 +3,7 @@ package io.primer.android.payment.card
 import android.content.Context
 import android.view.View
 import android.widget.TextView
+import io.primer.android.Card
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.PaymentMethod
 import io.primer.android.R
@@ -33,7 +34,7 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 @KoinApiExtension
 internal class CreditCard(
     config: PaymentMethodRemoteConfig,
-    private val options: PaymentMethod.Card, // FIXME why's this here? it's unused
+    private val options: Card, // FIXME why's this here? it's unused
     encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
 ) : PaymentMethodDescriptor(config, encodedAsJson),
     DIAppComponent { // FIXME why is this implementing a di component?

@@ -7,7 +7,7 @@ import io.primer.android.model.dto.SyncValidationError
 import org.json.JSONObject
 import java.util.Collections
 
-internal abstract class PaymentMethodDescriptor(
+abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
     private val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
 ) {

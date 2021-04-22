@@ -1,5 +1,6 @@
 package io.primer.android.payment.klarna
 
+import io.primer.android.Klarna
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -15,9 +16,9 @@ internal class KlarnaPaymentMethodDescriptorFactory : PaymentMethodDescriptorFac
         paymentMethod: PaymentMethod,
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
-        Klarna(
+        KlarnaDescriptor(
             checkoutConfig,
-            paymentMethod as PaymentMethod.Klarna,
+            paymentMethod as Klarna,
             paymentMethodRemoteConfig
         )
 }

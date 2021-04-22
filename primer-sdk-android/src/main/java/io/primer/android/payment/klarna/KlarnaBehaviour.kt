@@ -6,7 +6,7 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class KlarnaBehaviour constructor(
-    private val klarna: Klarna,
+    private val klarna: KlarnaDescriptor,
     packageName: String,
 ) : WebViewBehaviour(packageName) {
 

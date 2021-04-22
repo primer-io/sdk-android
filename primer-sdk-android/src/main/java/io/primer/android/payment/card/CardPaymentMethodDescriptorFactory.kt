@@ -1,5 +1,6 @@
 package io.primer.android.payment.card
 
+import io.primer.android.Card
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -17,6 +18,6 @@ internal class CardPaymentMethodDescriptorFactory : PaymentMethodDescriptorFacto
     ): PaymentMethodDescriptor =
         CreditCard(
             config = paymentMethodRemoteConfig,
-            options = paymentMethod as PaymentMethod.Card
+            options = paymentMethod as Card
         )
 }

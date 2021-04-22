@@ -2,8 +2,10 @@ package io.primer.android.payment.gocardless
 
 import android.content.Context
 import android.view.View
-import io.primer.android.payment.GOCARDLESS_IDENTIFIER
+import io.primer.android.GoCardless
+import io.primer.android.Klarna
 import io.primer.android.PaymentMethod
+import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
@@ -13,13 +15,16 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-internal class GoCardless(
+internal class GoCardlessDescriptor(
     config: PaymentMethodRemoteConfig,
-    val options: PaymentMethod.GoCardless,
+    val options: GoCardless,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()

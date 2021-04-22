@@ -2,7 +2,6 @@ package io.primer.android.viewmodel
 
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +18,7 @@ import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor
-import io.primer.android.payment.klarna.Klarna
+import io.primer.android.payment.klarna.KlarnaDescriptor
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -130,7 +129,7 @@ internal class TokenizationViewModel constructor(
     // endregion
 
     // region KLARNA
-    fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: Klarna) {
+    fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: KlarnaDescriptor) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country
@@ -183,7 +182,7 @@ internal class TokenizationViewModel constructor(
         }
     }
 
-    fun handleKlarnaRequestResult(redirectUrl: String?, klarna: Klarna?) {
+    fun handleKlarnaRequestResult(redirectUrl: String?, klarna: KlarnaDescriptor?) {
         // TODO move uri parsing to collaborator
         val uri = Uri.parse(redirectUrl)
         val klarnaAuthToken = uri.getQueryParameter("token")
@@ -198,7 +197,7 @@ internal class TokenizationViewModel constructor(
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
     }
 
-    fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
+    fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
             val currencyCode = checkoutConfig.monetaryAmount?.currency

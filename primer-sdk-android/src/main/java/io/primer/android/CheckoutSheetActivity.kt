@@ -8,41 +8,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
-import com.google.android.gms.wallet.PaymentsClient
-import com.google.android.gms.wallet.Wallet
-import com.google.android.gms.wallet.WalletConstants
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
+import io.primer.android.model.UniversalJson
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.json
 import io.primer.android.payment.*
-import io.primer.android.payment.card.CardPaymentMethodDescriptorFactory
-import io.primer.android.payment.GOCARDLESS_IDENTIFIER
-import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
-import io.primer.android.payment.google.GooglePayPaymentMethodDescriptorFactory
-import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
-import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
-import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
-import io.primer.android.payment.google.GooglePayBridge
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import io.primer.android.payment.google.InitialCheckRequiredBehaviour
-import io.primer.android.payment.klarna.Klarna
-import io.primer.android.payment.klarna.Klarna.Companion.KLARNA_REQUEST_CODE
-import io.primer.android.payment.klarna.KlarnaPaymentMethodDescriptorFactory
-import io.primer.android.payment.paypal.PayPal
-import io.primer.android.payment.paypal.PayPalPaymentMethodDescriptorFactory
+import io.primer.android.payment.klarna.KlarnaDescriptor
+import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
+import io.primer.android.payment.paypal.PayPalDescriptor
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
@@ -50,13 +36,13 @@ import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SuccessFragment
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.GenericSavedStateViewModelFactory
-import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerPaymentMethodDescriptorResolver
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
@@ -122,49 +108,30 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private lateinit var paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
     private lateinit var paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver
-    private lateinit var googlePayBridge: GooglePayBridge
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val checkoutConfig = unmarshal<CheckoutConfig>("config")
-        val paymentMethods = unmarshal<List<PaymentMethod>>("paymentMethods")
+        val json = UniversalJson.json
+
+        val checkoutConfig = intent.unmarshal<CheckoutConfig>("config", json) ?: return
+        val paymentMethods = intent.unmarshal<List<PaymentMethod>>("paymentMethods", json) ?: return
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
-        val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-            .build()
-        val paymentsClient: PaymentsClient =
-            Wallet.getPaymentsClient(applicationContext, walletOptions)
-        googlePayBridge = GooglePayBridge(paymentsClient)
-        val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge)
-
         val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
-        paymentMethodRegistry.register(GOOGLE_PAY_IDENTIFIER, googlePayChecker)
-
         paymentMethodDescriptorFactoryRegistry =
             PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistry)
-        paymentMethodDescriptorFactoryRegistry.register(
-            PAYMENT_CARD_IDENTIFIER,
-            CardPaymentMethodDescriptorFactory()
-        )
-        paymentMethodDescriptorFactoryRegistry.register(
-            PAYPAL_IDENTIFIER,
-            PayPalPaymentMethodDescriptorFactory()
-        )
-        paymentMethodDescriptorFactoryRegistry.register(
-            GOCARDLESS_IDENTIFIER,
-            GoCardlessPaymentMethodDescriptorFactory()
-        )
-        paymentMethodDescriptorFactoryRegistry.register(
-            KLARNA_IDENTIFIER,
-            KlarnaPaymentMethodDescriptorFactory()
-        )
-        paymentMethodDescriptorFactoryRegistry.register(
-            GOOGLE_PAY_IDENTIFIER,
-            GooglePayPaymentMethodDescriptorFactory(googlePayBridge)
-        )
+
+        configuredPaymentMethods.forEach { paymentMethod ->
+            paymentMethod.module.initialize(applicationContext)
+            paymentMethod.module.registerPaymentMethodCheckers(
+                paymentMethodCheckerRegistry = paymentMethodRegistry
+            )
+            paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry
+            )
+        }
 
         paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
             localConfig = checkoutConfig,
@@ -196,7 +163,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         tokenizationViewModel.vaultedKlarnaPayment.observe(this) { data ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            val klarna = paymentMethod as? Klarna
+            val klarna = paymentMethod as? KlarnaDescriptor
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
             klarna.setTokenizableValue(
@@ -221,7 +188,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         tokenizationViewModel.confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
             val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
-            val paypal = paymentMethod as? PayPal
+            val paypal = paymentMethod as? PayPalDescriptor
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
             paypal.setTokenizableValue(
@@ -257,12 +224,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         openSheet()
     }
 
-    private inline fun <reified T> unmarshal(name: String): T {
-        // FIXME this should be parcelized instead
-        val serialized = intent.getStringExtra(name)
-        return json.decodeFromString(serializer(), serialized!!) // TODO avoid !!
-    }
-
     override fun onResume() {
         super.onResume()
         WebviewInteropRegister.invokeAll()
@@ -284,7 +245,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             RESULT_OK -> {
                 val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
                 val paymentMethod = mainViewModel.selectedPaymentMethod.value
-                val klarna = paymentMethod as? Klarna
+                val klarna = paymentMethod as? KlarnaDescriptor
 
                 tokenizationViewModel.handleKlarnaRequestResult(redirectUrl, klarna)
             }
@@ -305,8 +266,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 }
             }
             RESULT_CANCELED -> {
-                // onExit(CheckoutExitReason.DISMISSED_BY_USER)
-                // TODO ?
+                // TODO check if this behavior is correct/right
+                onExit(CheckoutExitReason.DISMISSED_BY_USER)
             }
         }
     }
@@ -346,4 +307,12 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
     }
+}
+
+private inline fun <reified T> Intent.unmarshal(
+    name: String,
+    json: Json,
+): T? {
+    val serialized = getStringExtra(name)
+    return serialized?.let { json.decodeFromString(serializer(), it) }
 }

@@ -5,7 +5,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-internal interface PaymentMethodDescriptorFactory {
+interface PaymentMethodDescriptorFactory {
 
     fun create(
         checkoutConfig: CheckoutConfig,

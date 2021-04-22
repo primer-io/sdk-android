@@ -1,5 +1,6 @@
 package io.primer.android.payment.gocardless
 
+import io.primer.android.GoCardless
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -15,8 +16,8 @@ internal class GoCardlessPaymentMethodDescriptorFactory : PaymentMethodDescripto
         paymentMethod: PaymentMethod,
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
-        GoCardless(
+        GoCardlessDescriptor(
             paymentMethodRemoteConfig,
-            paymentMethod as PaymentMethod.GoCardless
+            paymentMethod as GoCardless
         )
 }
