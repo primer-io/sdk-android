@@ -1,10 +1,6 @@
 package io.primer.android.model.dto
 
-import io.primer.android.model.json
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
-import org.json.JSONObject
 
 /**
  * There's an issue with JsonObject & JSONObject here - need to replace
@@ -18,13 +14,24 @@ data class PaymentMethodTokenInternal(
     val analyticsId: String,
     val tokenType: TokenType,
     val paymentInstrumentType: String,
-    val paymentInstrumentData: JsonObject,
-    val vaultData: VaultData?,
+    val paymentInstrumentData: PaymentInstrumentData? = null,
+    val vaultData: VaultData? = null,
 ) {
 
     @Serializable
     data class VaultData(
         val customerId: String,
+    )
+
+    @Serializable
+    data class PaymentInstrumentData(
+        val network: String? = null,
+        val cardholderName: String? = null,
+        val last4Digits: Int? = null,
+        val expirationMonth: Int? = null,
+        val expirationYear: Int? = null,
+        val gocardlessMandateId: String? = null,
+        val externalPayerInfo: ExternalPayerInfo? = null,
     )
 }
 
@@ -36,7 +43,15 @@ internal object PaymentMethodTokenAdapter {
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
-            paymentInstrumentData = JSONObject(token.paymentInstrumentData.toString()),
+            paymentInstrumentData = if (token.paymentInstrumentData == null) null else PaymentMethodToken.PaymentInstrumentData(
+                token.paymentInstrumentData.network,
+                token.paymentInstrumentData.cardholderName,
+                token.paymentInstrumentData.last4Digits,
+                token.paymentInstrumentData.expirationMonth,
+                token.paymentInstrumentData.expirationYear,
+                token.paymentInstrumentData.gocardlessMandateId,
+                token.paymentInstrumentData.externalPayerInfo
+            ),
             vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
                 customerId = token.vaultData.customerId
             )
@@ -45,7 +60,16 @@ internal object PaymentMethodTokenAdapter {
 
     fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
         val paymentInstrumentData =
-            json.parseToJsonElement(token.paymentInstrumentData.toString()).jsonObject
+            if (token.paymentInstrumentData == null) null
+            else PaymentMethodTokenInternal.PaymentInstrumentData(
+                token.paymentInstrumentData.network,
+                token.paymentInstrumentData.cardholderName,
+                token.paymentInstrumentData.last4Digits,
+                token.paymentInstrumentData.expirationMonth,
+                token.paymentInstrumentData.expirationYear,
+                token.paymentInstrumentData.gocardlessMandateId,
+                token.paymentInstrumentData.externalPayerInfo
+            )
         val vaultData =
             if (token.vaultData == null) null
             else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
@@ -66,11 +90,27 @@ data class PaymentMethodToken(
     val analyticsId: String,
     val tokenType: TokenType,
     val paymentInstrumentType: String,
-    val paymentInstrumentData: JSONObject,
+    val paymentInstrumentData: PaymentInstrumentData?,
     val vaultData: VaultData?,
 ) {
 
     data class VaultData(
         val customerId: String,
     )
+
+    @Serializable
+    data class PaymentInstrumentData(
+        val network: String? = null,
+        val cardholderName: String? = null,
+        val last4Digits: Int? = null,
+        val expirationMonth: Int? = null,
+        val expirationYear: Int? = null,
+        val gocardlessMandateId: String? = null,
+        val externalPayerInfo: ExternalPayerInfo? = null,
+    )
 }
+
+@Serializable
+data class ExternalPayerInfo(
+    val email: String?,
+)

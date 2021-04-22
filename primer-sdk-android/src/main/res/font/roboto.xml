@@ -8,4 +8,8 @@
         app:font="@font/roboto_medium"
         app:fontStyle="italic"
         app:fontWeight="400" />
+    <font
+        app:font="@font/roboto_medium"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
 </font-family>

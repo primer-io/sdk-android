@@ -1,15 +1,22 @@
 package io.primer.android.ui.fragments
 
 import android.os.Bundle
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.payment.TokenAttributes
 import io.primer.android.ui.SelectPaymentMethodTitle
+import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
@@ -32,7 +39,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? =
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
@@ -58,9 +65,46 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             }
         )
 
+        viewModel.vaultedPaymentMethods.observe(
+            viewLifecycleOwner,
+            { paymentMethods ->
+                if (paymentMethods.isEmpty()) {
+
+                } else {
+
+                    val method = paymentMethods[0]
+
+                    view.findViewById<TextView>(R.id.network_label).text =
+                        method.paymentInstrumentData?.network
+
+                    view.findViewById<TextView>(R.id.name_label).text =
+                        method.paymentInstrumentData?.cardholderName
+
+                    view.findViewById<TextView>(R.id.last_four_label).text =
+                        getString(R.string.last_four, method.paymentInstrumentData?.last4Digits)
+
+                    when (method.paymentInstrumentData?.network) {
+                        "Visa" -> {
+                            view.findViewById<ImageView>(R.id.payment_method_icon)
+                                .setImageResource(R.drawable.ic_visa)
+                        }
+                        "Mastercard" -> {
+                            view.findViewById<ImageView>(R.id.payment_method_icon)
+                                .setImageResource(R.drawable.ic_mastercard)
+                        }
+                    }
+                }
+            }
+        )
+
         view.findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).apply {
             setAmount(checkoutConfig.monetaryAmount)
             setUXMode(checkoutConfig.uxMode)
+        }
+
+        view.findViewById<ConstraintLayout>(R.id.include).setOnClickListener {
+            it.isSelected = !it.isSelected
+            it.elevation = if (it.isSelected) 10f else 0f
         }
     }
 

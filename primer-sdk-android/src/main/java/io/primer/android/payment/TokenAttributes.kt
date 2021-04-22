@@ -24,9 +24,8 @@ internal abstract class TokenAttributes private constructor(
         TokenAttributes(token, R.drawable.credit_card_icon) {
 
         override fun getDescription(context: Context): String {
-            val network = data["network"]?.jsonPrimitive?.contentOrNull
-                ?: context.getString(R.string.card_network_fallback)
-            val digits = data["last4Digits"]?.jsonPrimitive?.contentOrNull ?: ""
+            val network = data?.network ?: context.getString(R.string.card_network_fallback)
+            val digits = data?.last4Digits.toString() ?: ""
             var description = network
 
             if (digits.isNotEmpty()) {
@@ -41,8 +40,7 @@ internal abstract class TokenAttributes private constructor(
         TokenAttributes(token, R.drawable.icon_paypal_sm) {
 
         override fun getDescription(context: Context): String {
-            return data["externalPayerInfo"]?.jsonObject?.get("email")?.jsonPrimitive?.contentOrNull
-                ?: "PayPal"
+            return data?.externalPayerInfo?.email ?: "PayPal"
         }
     }
 
@@ -50,7 +48,7 @@ internal abstract class TokenAttributes private constructor(
         TokenAttributes(token, R.drawable.ic_bank) {
 
         override fun getDescription(context: Context): String {
-            val ref = data["gocardlessMandateId"]?.jsonPrimitive?.contentOrNull ?: ""
+            val ref = data?.gocardlessMandateId ?: ""
             return context.getString(R.string.bank_account) + " $ref"
         }
     }
