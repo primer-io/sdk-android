@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PayPal()
 
-    private val klarna = Klarna("brand new PS5")
+    private val klarna = Klarna("Brand new PS5")
 
     private val googlePay = GooglePay(
         merchantName = "Primer",
@@ -112,7 +112,6 @@ class MainActivity : AppCompatActivity() {
         UniversalCheckout.showCheckout(
             context = this,
             listener = eventListener,
-            amount = 99999,
             currency = "SEK",
             isStandalonePaymentMethod = false
         )

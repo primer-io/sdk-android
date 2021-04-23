@@ -100,8 +100,8 @@ object UniversalCheckout {
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
-        amount: Int,
-        currency: String,
+        amount: Int? = null,
+        currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
     ) {
         checkout.showCheckout(context, listener, amount, currency, isStandalonePaymentMethod)
@@ -204,8 +204,8 @@ internal class InternalUniversalCheckout constructor(
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
-        amount: Int,
-        currency: String,
+        amount: Int? = null,
+        currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
     ) {
         show(
