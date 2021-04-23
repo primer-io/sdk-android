@@ -1,6 +1,5 @@
 package io.primer.android.payment.klarna
 
-import io.primer.android.Klarna
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
