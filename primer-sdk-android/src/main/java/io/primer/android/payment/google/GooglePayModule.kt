@@ -10,18 +10,14 @@ import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-class GooglePayModule : PaymentMethodModule {
+class GooglePayModule(
+    private val googlePayFacadeFactory: GooglePayFacadeFactory = GooglePayFacadeFactory()
+) : PaymentMethodModule {
 
     private lateinit var googlePayFacade: GooglePayFacade
 
     override fun initialize(applicationContext: Context) {
-        val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-            .build()
-        val paymentsClient: PaymentsClient =
-            Wallet.getPaymentsClient(applicationContext, walletOptions)
-
-        googlePayFacade = GooglePayFacade(paymentsClient)
+        googlePayFacade = googlePayFacadeFactory.create(applicationContext)
     }
 
     override fun registerPaymentMethodCheckers(

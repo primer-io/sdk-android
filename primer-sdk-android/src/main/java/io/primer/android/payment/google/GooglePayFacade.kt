@@ -1,11 +1,14 @@
 package io.primer.android.payment.google
 
 import android.app.Activity
+import android.content.Context
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.IsReadyToPayRequest
 import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
+import com.google.android.gms.wallet.Wallet
+import com.google.android.gms.wallet.WalletConstants
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.Continuation
@@ -174,5 +177,18 @@ class GooglePayFacade constructor(
             activity,
             GOOGLE_PAY_REQUEST_CODE
         )
+    }
+}
+
+class GooglePayFacadeFactory {
+
+    fun create(applicationContext: Context): GooglePayFacade {
+        val walletOptions = Wallet.WalletOptions.Builder()
+            .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+            .build()
+        val paymentsClient: PaymentsClient =
+            Wallet.getPaymentsClient(applicationContext, walletOptions)
+
+        return GooglePayFacade(paymentsClient)
     }
 }
