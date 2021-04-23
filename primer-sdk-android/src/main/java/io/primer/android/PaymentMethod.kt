@@ -16,7 +16,9 @@ import io.primer.android.payment.paypal.PayPalPaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
+import kotlinx.serialization.modules.SerializersModule
 
 // this new way of declaring PaymentMethods is meant to improve modularisation as each method can
 // be declared in a separate module (provided the marker interface is declared in shared one)
