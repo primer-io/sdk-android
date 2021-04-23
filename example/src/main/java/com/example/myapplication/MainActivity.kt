@@ -10,15 +10,20 @@ import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import io.primer.android.*
+import io.primer.android.CheckoutEventListener
+import io.primer.android.GoCardless
+import io.primer.android.GooglePay
+import io.primer.android.Klarna
+import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
-import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.payment.card.Card
+import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
 import java.util.*
 
 private const val CLIENT_TOKEN_URI: String = "https://api.sandbox.primer.io/auth/client-token"
+
 //private const val CLIENT_TOKEN_URI: String =
 //    "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
 private const val CUSTOMER_ID: String = "will-123"

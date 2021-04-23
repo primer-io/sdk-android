@@ -5,12 +5,10 @@ import io.primer.android.model.OrderItem
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.KLARNA_IDENTIFIER
-import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
 import io.primer.android.payment.google.GoogleModule
 import io.primer.android.payment.klarna.KlarnaPaymentMethodDescriptorFactory
-import io.primer.android.payment.paypal.PayPalPaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -30,42 +28,6 @@ interface PaymentMethod {
 
     @Transient
     val serializersModule: SerializersModule
-}
-
-@Serializable
-class PayPal : PaymentMethod {
-
-    override val identifier: String = PAYPAL_IDENTIFIER
-
-    @Transient
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context) {
-            // TODO: initialize not implemented
-        }
-
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
-        ) {
-            // TODO: registerPaymentMethodCheckers not implemented
-        }
-
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                PAYPAL_IDENTIFIER,
-                PayPalPaymentMethodDescriptorFactory()
-            )
-        }
-    }
-    override val serializersModule: SerializersModule
-        get() = payPalSerializationModule
-}
-
-val payPalSerializationModule: SerializersModule = SerializersModule {
-    polymorphic(PaymentMethod::class) {
-        subclass(PayPal::class)
-    }
 }
 
 @Serializable
