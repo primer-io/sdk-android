@@ -2,7 +2,6 @@ package io.primer.android.payment.paypal
 
 import android.content.Context
 import android.view.View
-import io.primer.android.PayPal
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.UXMode

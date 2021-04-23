@@ -1,6 +1,5 @@
 package io.primer.android.payment.paypal
 
-import io.primer.android.PayPal
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig

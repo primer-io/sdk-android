@@ -1,6 +1,5 @@
 package io.primer.android.payment.google
 
-import io.primer.android.GooglePay
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig

@@ -3,11 +3,9 @@ package io.primer.android
 import android.content.Context
 import io.primer.android.model.OrderItem
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
-import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
-import io.primer.android.payment.google.GoogleModule
 import io.primer.android.payment.klarna.KlarnaPaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
@@ -28,38 +26,6 @@ interface PaymentMethod {
 
     @Transient
     val serializersModule: SerializersModule
-}
-
-@Serializable
-data class GooglePay(
-    val merchantName: String,
-    val totalPrice: String,
-    val countryCode: String,
-    val currencyCode: String,
-    val allowedCardNetworks: List<String> = listOf(
-        "AMEX",
-        "DISCOVER",
-        "JCB",
-        "MASTERCARD",
-        "VISA"
-    ),
-) : PaymentMethod {
-
-    override val identifier: String = GOOGLE_PAY_IDENTIFIER
-
-    internal val allowedCardAuthMethods: List<String> = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
-    internal val billingAddressRequired: Boolean = false
-
-    override val module: PaymentMethodModule by lazy { GoogleModule() }
-
-    override val serializersModule: SerializersModule
-        get() = googlePaySerializationModule
-}
-
-val googlePaySerializationModule: SerializersModule = SerializersModule {
-    polymorphic(PaymentMethod::class) {
-        subclass(GooglePay::class)
-    }
 }
 
 @Serializable
