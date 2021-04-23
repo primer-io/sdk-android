@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
@@ -48,14 +49,17 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             paymentMethods.forEachIndexed { i, paymentMethod ->
-                val button = paymentMethod.createButton(requireContext())
-                button.layoutParams = createLayoutParams(i == 0)
+                val button: View = paymentMethod.createButton(container)
+
+                button.layoutParams = button.layoutParams.apply {
+                    val layoutParams = this as LinearLayout.LayoutParams
+                    layoutParams.topMargin =
+                        resources.getDimensionPixelSize(R.dimen.primer_list_margin)
+                }
 
                 container.addView(button)
 
-                button.setOnClickListener {
-                    primerViewModel.selectPaymentMethod(paymentMethod)
-                }
+                button.setOnClickListener { primerViewModel.selectPaymentMethod(paymentMethod) }
             }
 
             container.requestLayout()
@@ -65,18 +69,5 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             setAmount(checkoutConfig.monetaryAmount)
             setUXMode(checkoutConfig.uxMode)
         }
-    }
-
-    private fun createLayoutParams(isFirst: Boolean): LinearLayout.LayoutParams {
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        if (!isFirst) {
-            params.topMargin = 13 // FIXME why 13?
-        }
-
-        return params
     }
 }

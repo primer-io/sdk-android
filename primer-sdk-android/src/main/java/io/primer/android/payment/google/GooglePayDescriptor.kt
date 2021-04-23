@@ -1,7 +1,9 @@
 package io.primer.android.payment.google
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -45,6 +47,10 @@ internal class GooglePayDescriptor constructor(
         get() = config.options["merchantId"]?.toString()
             ?.replace("\"", "") // FIXME issue with kotlin serialization here
 
-    override fun createButton(context: Context): View =
-        View.inflate(context, R.layout.payment_method_button_google, null)
+    override fun createButton(container: ViewGroup): View =
+        LayoutInflater.from(container.context).inflate(
+            R.layout.googlepay_black_button,
+            container,
+            false
+        )
 }

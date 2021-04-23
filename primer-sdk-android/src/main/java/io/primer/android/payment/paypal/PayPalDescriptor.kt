@@ -1,7 +1,9 @@
 package io.primer.android.payment.paypal
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.UXMode
@@ -39,7 +41,10 @@ internal class PayPalDescriptor constructor(
     override val vaultCapability: VaultCapability
         get() = VaultCapability.SINGLE_USE_AND_VAULT
 
-    override fun createButton(context: Context): View {
-        return View.inflate(context, R.layout.payment_method_button_paypal, null)
-    }
+    override fun createButton(container: ViewGroup): View =
+        LayoutInflater.from(container.context).inflate(
+            R.layout.payment_method_button_paypal,
+            container,
+            false
+        )
 }

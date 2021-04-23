@@ -1,7 +1,9 @@
 package io.primer.android.payment.gocardless
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
@@ -38,7 +40,10 @@ internal class GoCardlessDescriptor(
     override val vaultCapability: VaultCapability
         get() = VaultCapability.VAULT_ONLY
 
-    override fun createButton(context: Context): View {
-        return View.inflate(context, R.layout.payment_method_button_direct_debit, null)
-    }
+    override fun createButton(container: ViewGroup): View =
+        LayoutInflater.from(container.context).inflate(
+            R.layout.payment_method_button_direct_debit,
+            container,
+            false
+        )
 }

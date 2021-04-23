@@ -2,6 +2,7 @@ package io.primer.android.payment
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import org.json.JSONObject
@@ -21,7 +22,7 @@ abstract class PaymentMethodDescriptor(
     abstract val vaultCapability: VaultCapability
 
     // FIXME this should not be here. a model should not be responsible creating views
-    abstract fun createButton(context: Context): View
+    abstract fun createButton(container: ViewGroup): View
 
     // FIXME all this should not be here. a model should not be responsible for parsing itself into json
     protected fun getStringValue(key: String): String {
