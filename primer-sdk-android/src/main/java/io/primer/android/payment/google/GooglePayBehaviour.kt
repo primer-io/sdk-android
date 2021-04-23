@@ -19,7 +19,7 @@ internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBeh
 internal class GooglePayBehaviour constructor(
     private val paymentMethodDescriptor: GooglePayDescriptor,
     private val googlePayPaymentMethodChecker: PaymentMethodChecker,
-    private val googlePayBridge: GooglePayBridge,
+    private val googlePayFacade: GooglePayFacade,
 ) : InitialCheckRequiredBehaviour() {
 
     override fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistry) {
@@ -39,7 +39,7 @@ internal class GooglePayBehaviour constructor(
         val paymentMethod = paymentMethodDescriptor.options
         val gatewayMerchantId = paymentMethodDescriptor.merchantId ?: return
 
-        googlePayBridge.pay(
+        googlePayFacade.pay(
             activity = activity,
             gatewayMerchantId = gatewayMerchantId,
             merchantName = paymentMethod.merchantName,

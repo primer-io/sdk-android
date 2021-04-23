@@ -15,7 +15,7 @@ import io.primer.android.viewmodel.PaymentMethodChecker
 internal class GooglePayDescriptor constructor(
     val checkoutConfig: CheckoutConfig,
     val options: GooglePay,
-    val googlePayBridge: GooglePayBridge,
+    val googlePayFacade: GooglePayFacade,
     paymentMethodChecker: PaymentMethodChecker,
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {
@@ -32,7 +32,7 @@ internal class GooglePayDescriptor constructor(
         GooglePayBehaviour(
             paymentMethodDescriptor = this,
             googlePayPaymentMethodChecker = paymentMethodChecker,
-            googlePayBridge = googlePayBridge
+            googlePayBridge = googlePayFacade
         )
 
     override val type: PaymentMethodType

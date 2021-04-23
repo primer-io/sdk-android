@@ -12,7 +12,7 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 class GooglePayModule : PaymentMethodModule {
 
-    private lateinit var googlePayBridge: GooglePayBridge
+    private lateinit var googlePayFacade: GooglePayFacade
 
     override fun initialize(applicationContext: Context) {
         val walletOptions = Wallet.WalletOptions.Builder()
@@ -21,13 +21,13 @@ class GooglePayModule : PaymentMethodModule {
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)
 
-        googlePayBridge = GooglePayBridge(paymentsClient)
+        googlePayFacade = GooglePayFacade(paymentsClient)
     }
 
     override fun registerPaymentMethodCheckers(
         paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
     ) {
-        val googlePayChecker = GooglePayPaymentMethodChecker(googlePayBridge)
+        val googlePayChecker = GooglePayPaymentMethodChecker(googlePayFacade)
 
         paymentMethodCheckerRegistry.register(
             GOOGLE_PAY_IDENTIFIER,
@@ -39,7 +39,7 @@ class GooglePayModule : PaymentMethodModule {
         paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     ) {
         val paymentMethodDescriptorFactory =
-            GooglePayPaymentMethodDescriptorFactory(googlePayBridge)
+            GooglePayPaymentMethodDescriptorFactory(googlePayFacade)
 
         paymentMethodDescriptorFactoryRegistry.register(
             GOOGLE_PAY_IDENTIFIER,

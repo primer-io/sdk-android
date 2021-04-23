@@ -3,10 +3,10 @@ package io.primer.android.viewmodel
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.google.GooglePay
-import io.primer.android.payment.google.GooglePayBridge
+import io.primer.android.payment.google.GooglePayFacade
 
 internal class GooglePayPaymentMethodChecker constructor(
-    private val googlePayBridge: GooglePayBridge,
+    private val googlePayFacade: GooglePayFacade,
 ) : PaymentMethodChecker {
 
     override suspend fun shouldPaymentMethodBeAvailable(
@@ -14,7 +14,7 @@ internal class GooglePayPaymentMethodChecker constructor(
         clientSession: ClientSession,
     ): Boolean {
         val googlePay = paymentMethod as GooglePay
-        return googlePayBridge.checkIfIsReadyToPay(
+        return googlePayFacade.checkIfIsReadyToPay(
             allowedCardNetworks = googlePay.allowedCardNetworks,
             allowedCardAuthMethods = googlePay.allowedCardAuthMethods,
             billingAddressRequired = googlePay.billingAddressRequired

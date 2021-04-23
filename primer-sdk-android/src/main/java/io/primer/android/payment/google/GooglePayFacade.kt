@@ -13,8 +13,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-// TODO rename to facade
-class GooglePayBridge constructor(
+class GooglePayFacade constructor(
     private val paymentsClient: PaymentsClient,
 ) {
 
