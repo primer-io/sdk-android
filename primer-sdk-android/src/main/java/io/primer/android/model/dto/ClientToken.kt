@@ -1,7 +1,7 @@
 package io.primer.android.model.dto
 
 import android.util.Base64
-import io.primer.android.model.UniversalJson
+import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,7 +12,7 @@ internal data class ClientToken(
 
     companion object {
 
-        val json = UniversalJson.json
+        val json = Serialization.json
 
         fun fromString(encoded: String): ClientToken {
             val tokens = encoded.split(".")

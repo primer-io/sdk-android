@@ -1,7 +1,7 @@
 package io.primer.android.model.dto
 
 import io.primer.android.logging.Logger
-import io.primer.android.model.UniversalJson
+import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -34,7 +34,7 @@ data class APIError(
 
     companion object {
 
-        private val json = UniversalJson.json
+        private val json = Serialization.json
 
         private val log = Logger("api-error")
 

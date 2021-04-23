@@ -4,7 +4,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 
-object UniversalJson {
+object Serialization {
 
     private var _json: Json = Json {
         ignoreUnknownKeys = true

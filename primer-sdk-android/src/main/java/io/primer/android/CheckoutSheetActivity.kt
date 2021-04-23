@@ -14,7 +14,7 @@ import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
-import io.primer.android.model.UniversalJson
+import io.primer.android.model.Serialization
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
@@ -113,7 +113,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val json = UniversalJson.json
+        val json = Serialization.json
 
         val checkoutConfig = intent.unmarshal<CheckoutConfig>("config", json) ?: return
         val paymentMethods = intent.unmarshal<List<PaymentMethod>>("paymentMethods", json) ?: return

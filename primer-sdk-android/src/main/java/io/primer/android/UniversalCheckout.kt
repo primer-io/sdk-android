@@ -6,7 +6,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.UniversalJson
+import io.primer.android.model.Serialization
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.ClientSession
@@ -69,7 +69,7 @@ object UniversalCheckout {
             }
             .build()
 
-        val json = UniversalJson.json
+        val json = Serialization.json
 
         val model = Model(decodedToken, config, okHttpClient, json)
 
@@ -260,8 +260,8 @@ internal class InternalUniversalCheckout constructor(
             theme = theme,
         )
 
-        paymentMethods.forEach { UniversalJson.addModule(it.serializersModule) }
-        val json = UniversalJson.json
+        paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
+        val json = Serialization.json
 
         Intent(context, CheckoutSheetActivity::class.java)
             .apply {

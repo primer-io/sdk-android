@@ -4,7 +4,7 @@ import io.primer.android.BuildConfig
 import io.primer.android.PaymentMethod
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.model.Model
-import io.primer.android.model.UniversalJson
+import io.primer.android.model.Serialization
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientToken
 import kotlinx.serialization.json.Json
@@ -39,7 +39,7 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
                 }
                 .build()
         }
-        single<Json> { UniversalJson.json }
+        single<Json> { Serialization.json }
         single<Model> {
             Model(
                 clientToken = get(),
