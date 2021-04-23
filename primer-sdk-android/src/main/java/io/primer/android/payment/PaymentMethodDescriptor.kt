@@ -44,4 +44,3 @@ abstract class PaymentMethodDescriptor(
         return values
     }
 }
-

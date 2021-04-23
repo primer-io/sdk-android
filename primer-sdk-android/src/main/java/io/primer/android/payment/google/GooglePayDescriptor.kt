@@ -3,7 +3,6 @@ package io.primer.android.payment.google
 import android.content.Context
 import android.view.View
 import io.primer.android.GooglePay
-import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -12,13 +11,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
-import io.primer.android.payment.klarna.KlarnaBehaviour
-import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodChecker
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
-import org.koin.core.component.KoinApiExtension
 
 internal class GooglePayDescriptor constructor(
     val checkoutConfig: CheckoutConfig,

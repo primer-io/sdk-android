@@ -4,7 +4,6 @@ import android.app.Activity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.IsReadyToPayRequest
-import com.google.android.gms.wallet.PaymentData
 import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
 import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
@@ -64,9 +63,12 @@ class GooglePayBridge constructor(
                 put("allowedCardNetworks", JSONArray(allowedCardNetworks))
                 put("billingAddressRequired", billingAddressRequired)
                 if (billingAddressRequired) {
-                    put("billingAddressParameters", JSONObject().apply {
-                        put("format", "FULL")
-                    })
+                    put(
+                        "billingAddressParameters",
+                        JSONObject().apply {
+                            put("format", "FULL")
+                        }
+                    )
                 }
             }
 

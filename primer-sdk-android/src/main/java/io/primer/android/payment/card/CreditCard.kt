@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.TextView
 import io.primer.android.Card
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
-import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent

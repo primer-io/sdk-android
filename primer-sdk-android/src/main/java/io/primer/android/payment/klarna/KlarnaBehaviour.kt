@@ -1,7 +1,6 @@
 package io.primer.android.payment.klarna
 
 import android.net.Uri
-import io.primer.android.Klarna
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.viewmodel.TokenizationViewModel
