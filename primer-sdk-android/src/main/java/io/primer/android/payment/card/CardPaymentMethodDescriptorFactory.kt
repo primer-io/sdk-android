@@ -1,6 +1,5 @@
 package io.primer.android.payment.card
 
-import io.primer.android.Card
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig

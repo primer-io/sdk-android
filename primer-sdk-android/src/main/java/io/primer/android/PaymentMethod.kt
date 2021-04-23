@@ -5,10 +5,8 @@ import io.primer.android.model.OrderItem
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.KLARNA_IDENTIFIER
-import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
-import io.primer.android.payment.card.CardPaymentMethodDescriptorFactory
 import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
 import io.primer.android.payment.google.GoogleModule
 import io.primer.android.payment.klarna.KlarnaPaymentMethodDescriptorFactory
@@ -32,42 +30,6 @@ interface PaymentMethod {
 
     @Transient
     val serializersModule: SerializersModule
-}
-
-@Serializable
-class Card : PaymentMethod {
-
-    override val identifier: String = PAYMENT_CARD_IDENTIFIER
-
-    @Transient
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context) {
-            // TODO: initialize not implemented
-        }
-
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
-        ) {
-            // TODO: registerPaymentMethodCheckers not implemented
-        }
-
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                PAYMENT_CARD_IDENTIFIER,
-                CardPaymentMethodDescriptorFactory()
-            )
-        }
-    }
-    override val serializersModule: SerializersModule
-        get() = cardSerializationModule
-}
-
-val cardSerializationModule: SerializersModule = SerializersModule {
-    polymorphic(PaymentMethod::class) {
-        subclass(Card::class)
-    }
 }
 
 @Serializable

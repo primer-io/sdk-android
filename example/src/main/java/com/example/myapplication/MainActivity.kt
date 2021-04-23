@@ -14,6 +14,7 @@ import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.payment.card.Card
 import org.json.JSONObject
 import java.util.*
 
