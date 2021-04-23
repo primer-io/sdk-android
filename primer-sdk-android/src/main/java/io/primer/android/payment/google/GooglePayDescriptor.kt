@@ -22,7 +22,7 @@ internal class GooglePayDescriptor constructor(
 
     companion object {
 
-        const val GOOGLE_PAY_REQUEST_CODE = 1100
+        const val GOOGLE_PAY_REQUEST_CODE = GooglePayFacade.GOOGLE_PAY_REQUEST_CODE
     }
 
     override val identifier: String
@@ -32,7 +32,7 @@ internal class GooglePayDescriptor constructor(
         GooglePayBehaviour(
             paymentMethodDescriptor = this,
             googlePayPaymentMethodChecker = paymentMethodChecker,
-            googlePayBridge = googlePayFacade
+            googlePayFacade = googlePayFacade
         )
 
     override val type: PaymentMethodType

@@ -6,7 +6,6 @@ import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.IsReadyToPayRequest
 import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
-import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.Continuation
@@ -16,6 +15,11 @@ import kotlin.coroutines.suspendCoroutine
 class GooglePayFacade constructor(
     private val paymentsClient: PaymentsClient,
 ) {
+
+    companion object {
+
+        const val GOOGLE_PAY_REQUEST_CODE: Int = 1100
+    }
 
     private val baseRequest: JSONObject = JSONObject().apply {
         put("apiVersion", 2)
@@ -87,8 +91,7 @@ class GooglePayFacade constructor(
                             continuation.resume(isAvailable)
                         }
                     } catch (exception: ApiException) {
-                        // continuation.resumeWithException(exception)
-                        // TODO log error
+                        // continuation.resumeWithException(exception) // TODO log error
                         continuation.resume(false)
                     }
                 }
@@ -160,15 +163,7 @@ class GooglePayFacade constructor(
             put("allowedPaymentMethods", JSONArray().put(cardPaymentMethod))
             put("transactionInfo", transactionInfo)
             put("merchantInfo", merchantInfo)
-
-            // An optional shipping address requirement is a top-level property of the
-            // PaymentDataRequest JSON object.
-//            val shippingAddressParameters = JSONObject().apply {
-//                put("phoneNumberRequired", false)
-//                put("allowedCountryCodes", JSONArray(Constants.SHIPPING_SUPPORTED_COUNTRIES))
-//            }
             put("shippingAddressRequired", false)
-//            put("shippingAddressParameters", shippingAddressParameters)
         }
     }
 
