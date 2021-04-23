@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import io.primer.android.GoCardless
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus

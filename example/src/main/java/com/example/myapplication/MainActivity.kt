@@ -11,11 +11,11 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.CheckoutEventListener
-import io.primer.android.GoCardless
 import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.payment.card.Card
+import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal

@@ -1,6 +1,5 @@
 package io.primer.android.payment.gocardless
 
-import io.primer.android.GoCardless
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig

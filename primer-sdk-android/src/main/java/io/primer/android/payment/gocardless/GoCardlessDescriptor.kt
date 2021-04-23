@@ -2,7 +2,6 @@ package io.primer.android.payment.gocardless
 
 import android.content.Context
 import android.view.View
-import io.primer.android.GoCardless
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
