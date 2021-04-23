@@ -1,6 +1,5 @@
 package io.primer.android.ui
 
-import io.primer.android.logging.Logger
 import java.util.Calendar
 import kotlin.math.min
 
