@@ -10,7 +10,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-class GoogleModule : PaymentMethodModule {
+class GooglePayModule : PaymentMethodModule {
 
     private lateinit var googlePayBridge: GooglePayBridge
 

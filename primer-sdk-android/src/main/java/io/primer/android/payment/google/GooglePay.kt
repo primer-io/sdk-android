@@ -28,7 +28,7 @@ data class GooglePay(
     internal val allowedCardAuthMethods: List<String> = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
     internal val billingAddressRequired: Boolean = false
 
-    override val module: PaymentMethodModule by lazy { GoogleModule() }
+    override val module: PaymentMethodModule by lazy { GooglePayModule() }
 
     override val serializersModule: SerializersModule
         get() = googlePaySerializationModule
