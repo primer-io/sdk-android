@@ -1,8 +1,6 @@
 package io.primer.android
 
 import kotlinx.serialization.Transient
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import kotlinx.serialization.modules.SerializersModule
 
 // this new way of declaring PaymentMethods is meant to improve modularisation as each method can

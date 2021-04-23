@@ -18,8 +18,6 @@ internal class ExpiryDateFormatter(
     private var separator: Boolean = false,
 ) {
 
-    private val log = Logger("expiry-date")
-
     override fun toString(): String {
         return buildString {
             if (month.isNotEmpty()) {

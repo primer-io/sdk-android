@@ -28,10 +28,7 @@ import org.koin.core.component.inject
 import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
-internal class TokenizationViewModel constructor(
-//    private val model: Model,
-//    private val checkoutConfig: CheckoutConfig
-) : ViewModel(), DIAppComponent {
+internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     companion object {
 
@@ -253,7 +250,6 @@ internal class TokenizationViewModel constructor(
     // endregion
 
     // region PAYPAL
-    // TODO: move these payal things somewhere else
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)

@@ -5,7 +5,6 @@ import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
-import io.primer.android.payment.gocardless.GoCardlessPaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
