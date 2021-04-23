@@ -18,7 +18,6 @@ import io.primer.android.model.UniversalJson
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.payment.*
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
@@ -107,7 +106,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
-    private lateinit var paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
+    private lateinit var paymentMethodDescriptorFactoryRegistry:
+        PaymentMethodDescriptorFactoryRegistry
     private lateinit var paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver
 
     override fun onCreate(savedInstanceState: Bundle?) {
