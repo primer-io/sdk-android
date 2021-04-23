@@ -112,7 +112,6 @@ class MainActivity : AppCompatActivity() {
         UniversalCheckout.showCheckout(
             context = this,
             listener = eventListener,
-            currency = "SEK",
             isStandalonePaymentMethod = false
         )
     }
