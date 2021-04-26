@@ -21,7 +21,7 @@ data class GooglePay(
         "MASTERCARD",
         "VISA"
     ),
-    val buttonStyle: ButtonStyle = ButtonStyle.BLACK,
+    val buttonStyle: ButtonStyle = ButtonStyle.WHITE,
 ) : PaymentMethod {
 
     companion object {
