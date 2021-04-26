@@ -47,7 +47,6 @@ internal class PrimerViewModel
 
     val keyboardVisible = MutableLiveData(false)
 
-//    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
     val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData()
 
     val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
@@ -74,7 +73,7 @@ internal class PrimerViewModel
             }
         }
 
-        subscription = EventBus.subscribe(this) // FIXME drop eventbus
+        subscription = EventBus.subscribe(this)
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) {
@@ -99,7 +98,7 @@ internal class PrimerViewModel
                 val descriptors = resolver.resolve()
                 paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.isStandalonePaymentMethod) {
+                if (checkoutConfig.isStandalonePaymentMethod) {
                     selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
