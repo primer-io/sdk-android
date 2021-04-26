@@ -47,7 +47,9 @@ internal class PrimerViewModel
 
     val keyboardVisible = MutableLiveData(false)
 
-    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData()
+    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData<ViewStatus>().apply {
+        if (checkoutConfig.showLoading) value = ViewStatus.INITIALIZING
+    }
 
     val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
         Collections.emptyList()
