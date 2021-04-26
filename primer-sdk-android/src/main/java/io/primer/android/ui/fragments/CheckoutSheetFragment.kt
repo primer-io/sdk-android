@@ -86,18 +86,6 @@ internal class CheckoutSheetFragment :
             view.findViewById<View>(R.id.checkout_sheet_content)
                 .updatePadding(top = 0, bottom = 0)
 
-//            backStackChangedListener = FragmentManager.OnBackStackChangedListener {
-//                backStackChangedListener?.let {
-//                    childFragmentManager.removeOnBackStackChangedListener(it)
-//                }
-//
-//                val padding =
-//                    resources.getDimensionPixelSize(R.dimen.primer_checkout_sheet_padding_vert)
-//
-//                view.findViewById<View>(R.id.checkout_sheet_content)
-//                    .updatePadding(top = padding, bottom = padding)
-//            }
-//                .also { childFragmentManager.addOnBackStackChangedListener(it) }
             childFragmentManager.addOnBackStackChangedListener(backStackChangedListener)
         }
 
