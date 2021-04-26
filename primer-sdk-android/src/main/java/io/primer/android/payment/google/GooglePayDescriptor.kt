@@ -1,6 +1,5 @@
 package io.primer.android.payment.google
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,11 @@ internal class GooglePayDescriptor constructor(
 
     override fun createButton(container: ViewGroup): View =
         LayoutInflater.from(container.context).inflate(
-            R.layout.googlepay_black_button,
+            when (options.buttonStyle) {
+                GooglePay.Companion.ButtonStyle.WHITE -> R.layout.googlepay_white_button
+                GooglePay.Companion.ButtonStyle.BLACK -> R.layout.googlepay_black_button
+                GooglePay.Companion.ButtonStyle.BORDER -> R.layout.googlepay_white_button_no_shadow
+            },
             container,
             false
         )

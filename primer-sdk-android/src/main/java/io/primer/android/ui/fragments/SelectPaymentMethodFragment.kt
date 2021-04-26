@@ -48,7 +48,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
 
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
-            paymentMethods.forEachIndexed { i, paymentMethod ->
+            paymentMethods.forEach { paymentMethod ->
                 val button: View = paymentMethod.createButton(container)
 
                 button.layoutParams = button.layoutParams.apply {
@@ -59,7 +59,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
                 container.addView(button)
 
-                button.setOnClickListener { primerViewModel.selectPaymentMethod(paymentMethod) }
+                button.setOnClickListener {
+                    primerViewModel.selectPaymentMethod(paymentMethod)
+                }
             }
 
             container.requestLayout()
