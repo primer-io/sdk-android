@@ -49,9 +49,10 @@ internal class GooglePayDescriptor constructor(
     override fun createButton(container: ViewGroup): View =
         LayoutInflater.from(container.context).inflate(
             when (options.buttonStyle) {
-                GooglePay.Companion.ButtonStyle.WHITE -> R.layout.googlepay_white_button
                 GooglePay.Companion.ButtonStyle.BLACK -> R.layout.googlepay_black_button
-                GooglePay.Companion.ButtonStyle.BORDER -> R.layout.googlepay_white_button_no_shadow
+                GooglePay.Companion.ButtonStyle.WHITE -> R.layout.googlepay_white_button_no_shadow
+//                GooglePay.Companion.ButtonStyle.BORDER -> R.layout.googlepay_white_button_no_shadow
+//                GooglePay.Companion.ButtonStyle.WHITE -> R.layout.googlepay_white_button
             },
             container,
             false

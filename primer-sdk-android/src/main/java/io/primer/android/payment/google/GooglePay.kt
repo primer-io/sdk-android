@@ -28,7 +28,7 @@ data class GooglePay(
         enum class ButtonStyle {
             WHITE,
             BLACK,
-            BORDER,
+//            BORDER,
         }
     }
 
