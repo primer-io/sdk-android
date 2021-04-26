@@ -21,14 +21,13 @@ data class GooglePay(
         "MASTERCARD",
         "VISA"
     ),
-    val buttonStyle: ButtonStyle = ButtonStyle.WHITE,
+    val buttonStyle: ButtonStyle = ButtonStyle.BLACK,
 ) : PaymentMethod {
 
     companion object {
         enum class ButtonStyle {
             WHITE,
             BLACK,
-//            BORDER,
         }
     }
 
