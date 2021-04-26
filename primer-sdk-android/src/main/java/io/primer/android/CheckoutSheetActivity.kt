@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.Observer
@@ -173,7 +174,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         mainViewModel.initialize()
 
-        sheet = CheckoutSheetFragment.newInstance()
+        sheet = CheckoutSheetFragment.newInstance(
+            noVerticalPadding = !checkoutConfig.showLoading
+        )
 
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
         mainViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
