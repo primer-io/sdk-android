@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.updatePadding
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
@@ -45,6 +46,7 @@ internal class CheckoutSheetFragment :
     private val theme: UniversalCheckoutTheme by inject()
 
     private lateinit var viewModel: PrimerViewModel
+    private lateinit var backStackChangedListener: FragmentManager.OnBackStackChangedListener
 
     override fun onKeyboardVisibilityChanged(visible: Boolean) {
         viewModel.keyboardVisible.value = visible
@@ -52,6 +54,17 @@ internal class CheckoutSheetFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        backStackChangedListener = FragmentManager.OnBackStackChangedListener {
+            childFragmentManager.removeOnBackStackChangedListener(backStackChangedListener)
+
+            val padding =
+                resources.getDimensionPixelSize(R.dimen.primer_checkout_sheet_padding_vert)
+
+            view?.findViewById<View>(R.id.checkout_sheet_content)
+                ?.updatePadding(top = padding, bottom = padding)
+        }
+
         viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
@@ -73,6 +86,20 @@ internal class CheckoutSheetFragment :
         if (arguments?.getBoolean(NO_VERTICAL_PADDING) == true) {
             view.findViewById<View>(R.id.checkout_sheet_content)
                 .updatePadding(top = 0, bottom = 0)
+
+//            backStackChangedListener = FragmentManager.OnBackStackChangedListener {
+//                backStackChangedListener?.let {
+//                    childFragmentManager.removeOnBackStackChangedListener(it)
+//                }
+//
+//                val padding =
+//                    resources.getDimensionPixelSize(R.dimen.primer_checkout_sheet_padding_vert)
+//
+//                view.findViewById<View>(R.id.checkout_sheet_content)
+//                    .updatePadding(top = padding, bottom = padding)
+//            }
+//                .also { childFragmentManager.addOnBackStackChangedListener(it) }
+            childFragmentManager.addOnBackStackChangedListener(backStackChangedListener)
         }
 
         val window = requireDialog().window ?: return

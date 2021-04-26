@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(klarna))
+        UniversalCheckout.loadPaymentMethods(listOf(klarna, card))
 
         showCheckout()
 
