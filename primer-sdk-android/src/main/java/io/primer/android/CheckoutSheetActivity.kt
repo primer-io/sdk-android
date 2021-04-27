@@ -125,7 +125,7 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private val viewStatusObserver = Observer<ViewStatus> {
         if (checkoutConfig.doNotShowUi) {
             return@Observer
-        };
+        }
 
         val fragment = when (it) {
             ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
