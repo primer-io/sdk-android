@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Button
+import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(klarna, card))
+        UniversalCheckout.loadPaymentMethods(listOf(klarna))
 
         showCheckout()
 
@@ -101,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             amount = 99999,
             currency = "SEK",
             isStandalonePaymentMethod = true,
-            showLoading = false
+            doNotShowUi = true
         )
     }
 
