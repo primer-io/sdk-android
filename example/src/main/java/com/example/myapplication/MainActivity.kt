@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna))
+        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card))
 
         showCheckout()
 
@@ -112,7 +112,8 @@ class MainActivity : AppCompatActivity() {
         UniversalCheckout.showCheckout(
             context = this,
             listener = eventListener,
-            isStandalonePaymentMethod = false
+            isStandalonePaymentMethod = false,
+            currency = "SEK",
         )
     }
 

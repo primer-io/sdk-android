@@ -49,7 +49,9 @@ internal class PrimerViewModel constructor(
 
     val keyboardVisible = MutableLiveData(false)
 
-    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData(ViewStatus.INITIALIZING)
+    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData<ViewStatus>().apply {
+        if (checkoutConfig.showLoading) value = ViewStatus.INITIALIZING
+    }
 
     val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
         Collections.emptyList()
@@ -93,7 +95,7 @@ internal class PrimerViewModel constructor(
 
                 _paymentMethods.postValue(descriptors)
 
-                if (this.checkoutConfig.isStandalonePaymentMethod) {
+                if (checkoutConfig.isStandalonePaymentMethod) {
                     _selectedPaymentMethod.postValue(descriptors.first())
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
