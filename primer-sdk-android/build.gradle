@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-//        jcenter()
         google()
     }
 
@@ -98,7 +97,6 @@ dependencies {
 
 repositories {
     google()
-//    jcenter()
     mavenCentral()
 }
 
