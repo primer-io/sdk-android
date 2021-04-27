@@ -62,12 +62,8 @@ android {
 }
 
 dependencies {
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-
     implementation Dependencies.Kotlin.Serialization.core
-    //'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'
     implementation Dependencies.Kotlin.Serialization.json
-    //'org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1'
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-androidx-scope:$koinVersion"
