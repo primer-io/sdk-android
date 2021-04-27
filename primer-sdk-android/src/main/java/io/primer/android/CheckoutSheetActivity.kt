@@ -173,7 +173,9 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         mainViewModel.initialize()
 
-        sheet = CheckoutSheetFragment.newInstance()
+        sheet = CheckoutSheetFragment.newInstance(
+            noVerticalPadding = !checkoutConfig.showLoading
+        )
 
         mainViewModel.viewStatus.observe(this, viewStatusObserver)
         mainViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)

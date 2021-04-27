@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.updatePadding
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
@@ -28,46 +30,68 @@ internal class CheckoutSheetFragment :
     KeyboardVisibilityEvent.OnChangedListener,
     DIAppComponent {
 
-    private lateinit var viewModel: PrimerViewModel
+    companion object {
+
+        private const val NO_VERTICAL_PADDING = "NO_VERTICAL_PADDING"
+
+        @JvmStatic
+        fun newInstance(noVerticalPadding: Boolean = false) = CheckoutSheetFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean(NO_VERTICAL_PADDING, noVerticalPadding)
+            }
+        }
+    }
+
     private val theme: UniversalCheckoutTheme by inject()
+
+    private lateinit var viewModel: PrimerViewModel
+    private lateinit var backStackChangedListener: FragmentManager.OnBackStackChangedListener
 
     override fun onKeyboardVisibilityChanged(visible: Boolean) {
         viewModel.keyboardVisible.value = visible
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        backStackChangedListener = FragmentManager.OnBackStackChangedListener {
+            childFragmentManager.removeOnBackStackChangedListener(backStackChangedListener)
+
+            val padding =
+                resources.getDimensionPixelSize(R.dimen.primer_checkout_sheet_padding_vert)
+
+            view?.findViewById<View>(R.id.checkout_sheet_content)
+                ?.updatePadding(top = padding, bottom = padding)
+        }
+
+        viewModel = PrimerViewModel.getInstance(requireActivity())
+    }
+
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
-
-        // FIXME why are we overriding this?
-        // dialog.setCanceledOnTouchOutside(false)
-        // val behavior = (dialog as BottomSheetDialog).behavior
-        // behavior.isHideable = false
-        // behavior.isDraggable = false
-
         dialog.setOnKeyListener(this::onKeyPress)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // FIXME why are we applying the style this way??
-        // setStyle(STYLE_NORMAL, R.style.Primer_BottomSheet)
-        viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
-    }
+        savedInstanceState: Bundle?,
+    ): View = inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (arguments?.getBoolean(NO_VERTICAL_PADDING) == true) {
+            view.findViewById<View>(R.id.checkout_sheet_content)
+                .updatePadding(top = 0, bottom = 0)
+
+            childFragmentManager.addOnBackStackChangedListener(backStackChangedListener)
+        }
+
+        val window = requireDialog().window ?: return
         KeyboardVisibilityEvent.subscribe(
-            requireDialog().window!!.decorView,
+            window.decorView,
             viewLifecycleOwner,
             this
         )
@@ -126,11 +150,5 @@ internal class CheckoutSheetFragment :
                 }
             }
         }
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance() = CheckoutSheetFragment()
     }
 }

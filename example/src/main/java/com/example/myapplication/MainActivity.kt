@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
-    val klarna = PaymentMethod.Klarna("brand new PS5")
+    private val klarna = PaymentMethod.Klarna("brand new PS5")
 
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(klarna))
+        UniversalCheckout.loadPaymentMethods(listOf(klarna, card))
 
         showCheckout()
 
@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
             listener = eventListener,
             amount = 99999,
             currency = "SEK",
-            isStandalonePaymentMethod = true
+            isStandalonePaymentMethod = true,
+            showLoading = false
         )
     }
 
