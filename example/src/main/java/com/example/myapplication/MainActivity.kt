@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Button
-import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
@@ -14,7 +12,6 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
-import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 import java.util.*
