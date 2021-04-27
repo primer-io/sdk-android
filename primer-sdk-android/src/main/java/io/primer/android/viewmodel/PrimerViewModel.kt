@@ -1,5 +1,6 @@
 package io.primer.android.viewmodel
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -47,9 +48,7 @@ internal class PrimerViewModel
 
     val keyboardVisible = MutableLiveData(false)
 
-    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData<ViewStatus>().apply {
-        if (checkoutConfig.showLoading) value = ViewStatus.INITIALIZING
-    }
+    val viewStatus: MutableLiveData<ViewStatus> = MutableLiveData<ViewStatus>(ViewStatus.INITIALIZING)
 
     val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
         Collections.emptyList()
