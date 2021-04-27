@@ -32,6 +32,8 @@ data class PaymentMethodTokenInternal(
         val expirationYear: Int? = null,
         val gocardlessMandateId: String? = null,
         val externalPayerInfo: ExternalPayerInfo? = null,
+        val klarnaCustomerToken: String? = null,
+        val sessionData: SessionData? = null,
     )
 }
 
@@ -50,7 +52,9 @@ internal object PaymentMethodTokenAdapter {
                 token.paymentInstrumentData.expirationMonth,
                 token.paymentInstrumentData.expirationYear,
                 token.paymentInstrumentData.gocardlessMandateId,
-                token.paymentInstrumentData.externalPayerInfo
+                token.paymentInstrumentData.externalPayerInfo,
+                token.paymentInstrumentData.klarnaCustomerToken,
+                token.paymentInstrumentData.sessionData
             ),
             vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
                 customerId = token.vaultData.customerId
@@ -68,7 +72,9 @@ internal object PaymentMethodTokenAdapter {
                 token.paymentInstrumentData.expirationMonth,
                 token.paymentInstrumentData.expirationYear,
                 token.paymentInstrumentData.gocardlessMandateId,
-                token.paymentInstrumentData.externalPayerInfo
+                token.paymentInstrumentData.externalPayerInfo,
+                token.paymentInstrumentData.klarnaCustomerToken,
+                token.paymentInstrumentData.sessionData
             )
         val vaultData =
             if (token.vaultData == null) null
@@ -107,10 +113,23 @@ data class PaymentMethodToken(
         val expirationYear: Int? = null,
         val gocardlessMandateId: String? = null,
         val externalPayerInfo: ExternalPayerInfo? = null,
+        val klarnaCustomerToken: String? = null,
+        val sessionData: SessionData? = null,
     )
 }
 
 @Serializable
 data class ExternalPayerInfo(
     val email: String?,
+)
+
+@Serializable
+data class SessionData(
+    val recurringDescription: String? = null,
+    val billingAddress: BillingAddress? = null
+)
+
+@Serializable
+data class BillingAddress(
+    val email: String? = null
 )

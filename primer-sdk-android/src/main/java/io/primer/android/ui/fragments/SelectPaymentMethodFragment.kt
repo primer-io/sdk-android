@@ -1,7 +1,6 @@
 package io.primer.android.ui.fragments
 
 import android.os.Bundle
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +13,7 @@ import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.payment.TokenAttributes
 import io.primer.android.ui.SelectPaymentMethodTitle
-import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
@@ -43,6 +40,28 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     ): View? =
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
+    private fun renderSavedApmView(view: View, title: String?) {
+        listOf(R.id.title_label, R.id.subtitle_label, R.id.last_four_label, R.id.expiry_label)
+            .forEach { view.findViewById<TextView>(it).isVisible = false }
+        view.findViewById<TextView>(R.id.title_view_alt).apply {
+            this.isVisible = true
+            this.text = title
+        }
+    }
+
+    private fun formatExpiryDate(year: Int?, month: Int?): String {
+        return "$month / $year"
+    }
+
+    private fun setCardIcon(view: View, network: String?) {
+        val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
+        when (network) {
+            "Visa" -> iconView.setImageResource(R.drawable.ic_visa_card)
+            "Mastercard" -> iconView.setImageResource(R.drawable.ic_mastercard_card)
+            else -> iconView.setImageResource(R.drawable.ic_generic_card)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,29 +87,42 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         viewModel.vaultedPaymentMethods.observe(
             viewLifecycleOwner,
             { paymentMethods ->
-                if (paymentMethods.isEmpty()) {
-
-                } else {
+                if (paymentMethods.isNotEmpty()) {
 
                     val method = paymentMethods[0]
+                    val titleLabel = view.findViewById<TextView>(R.id.title_label)
+                    val subtitleLabel = view.findViewById<TextView>(R.id.subtitle_label)
+                    val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
+                    val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
+                    val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
 
-                    view.findViewById<TextView>(R.id.network_label).text =
-                        method.paymentInstrumentData?.network
-
-                    view.findViewById<TextView>(R.id.name_label).text =
-                        method.paymentInstrumentData?.cardholderName
-
-                    view.findViewById<TextView>(R.id.last_four_label).text =
-                        getString(R.string.last_four, method.paymentInstrumentData?.last4Digits)
-
-                    when (method.paymentInstrumentData?.network) {
-                        "Visa" -> {
-                            view.findViewById<ImageView>(R.id.payment_method_icon)
-                                .setImageResource(R.drawable.ic_visa)
+                    when (method.paymentInstrumentType) {
+                        "KLARNA_CUSTOMER_TOKEN" -> {
+                            val title =
+                                method.paymentInstrumentData?.sessionData?.billingAddress?.email
+                            renderSavedApmView(view, title)
+                            iconView.setImageResource(R.drawable.ic_klarna_card)
                         }
-                        "Mastercard" -> {
-                            view.findViewById<ImageView>(R.id.payment_method_icon)
-                                .setImageResource(R.drawable.ic_mastercard)
+                        "GOCARDLESS_MANDATE" -> {
+                            renderSavedApmView(view, "Direct Debit")
+                            iconView.setImageResource(R.drawable.ic_directdebit_card)
+                        }
+                        "PAYMENT_CARD" -> {
+                            val data = method.paymentInstrumentData
+                            titleLabel.text = data?.network
+                            subtitleLabel.text = data?.cardholderName
+                            lastFourLabel.text = getString(
+                                R.string.last_four,
+                                data?.last4Digits
+                            )
+                            expiryLabel.text = formatExpiryDate(
+                                data?.expirationYear,
+                                data?.expirationMonth
+                            )
+                            setCardIcon(view, data?.network)
+                        }
+                        else -> {
+                            iconView.setImageResource(R.drawable.ic_generic_card)
                         }
                     }
                 }
