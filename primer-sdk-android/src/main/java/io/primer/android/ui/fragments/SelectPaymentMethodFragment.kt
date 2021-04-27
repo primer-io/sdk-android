@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent

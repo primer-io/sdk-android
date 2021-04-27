@@ -1,6 +1,5 @@
 package io.primer.android.payment
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.model.dto.PaymentMethodRemoteConfig

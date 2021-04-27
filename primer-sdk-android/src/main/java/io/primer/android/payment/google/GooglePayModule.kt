@@ -1,9 +1,6 @@
 package io.primer.android.payment.google
 
 import android.content.Context
-import com.google.android.gms.wallet.PaymentsClient
-import com.google.android.gms.wallet.Wallet
-import com.google.android.gms.wallet.WalletConstants
 import io.primer.android.PaymentMethodModule
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
@@ -11,7 +8,7 @@ import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 class GooglePayModule(
-    private val googlePayFacadeFactory: GooglePayFacadeFactory = GooglePayFacadeFactory()
+    private val googlePayFacadeFactory: GooglePayFacadeFactory = GooglePayFacadeFactory(),
 ) : PaymentMethodModule {
 
     private lateinit var googlePayFacade: GooglePayFacade
