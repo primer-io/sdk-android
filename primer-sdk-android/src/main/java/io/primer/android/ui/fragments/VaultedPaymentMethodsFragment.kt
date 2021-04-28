@@ -103,7 +103,6 @@ class VaultedPaymentMethodsFragment : Fragment() {
             isEditing = true
         }
 
-        // TODO: should these do something different?
         view.findViewById<View>(R.id.edit_vaulted_payment_methods_go_back).setOnClickListener {
             isEditing = false
         }

@@ -33,7 +33,7 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 @KoinApiExtension
 internal class CreditCard(
     config: PaymentMethodRemoteConfig,
-    private val options: Card, // FIXME why's this here? it's unused
+    private val options: Card,
     encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
 ) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent {
 
@@ -132,7 +132,7 @@ internal class CreditCard(
                     fieldId = R.string.card_cvv
                 )
             )
-        } else if (cvv.length != number.getCVVLength()) {
+        } else if (cvv.length != number.getCvvLength()) {
             errors.add(
                 SyncValidationError(
                     name = CARD_CVV_FIELD_NAME,

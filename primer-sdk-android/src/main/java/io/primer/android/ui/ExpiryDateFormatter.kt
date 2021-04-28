@@ -160,18 +160,13 @@ internal class ExpiryDateFormatter(
             return sanitized
         }
 
-        private fun parseYear(str: String): String {
-            val sanitized = str.trim()
-
-            if (sanitized.isEmpty()) {
-                return sanitized
+        private fun parseYear(year: String): String {
+            val sanitized = year.trim()
+            return when {
+                sanitized.isEmpty() -> sanitized
+                sanitized.length > 2 -> sanitized.substring(0, 2)
+                else -> sanitized
             }
-
-            if (sanitized.length > 2) {
-                return sanitized.substring(0, 2)
-            }
-
-            return sanitized
         }
     }
 }

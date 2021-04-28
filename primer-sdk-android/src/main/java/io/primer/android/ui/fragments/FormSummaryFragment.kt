@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import io.primer.android.R
-import io.primer.android.logging.Logger
 import io.primer.android.ui.FormSummaryState
 import io.primer.android.ui.InteractiveSummaryItem
 import io.primer.android.ui.TextSummaryItem
@@ -18,7 +17,6 @@ import io.primer.android.ui.TextSummaryItem
 internal class FormSummaryFragment : FormChildFragment() {
 
     private lateinit var layout: ViewGroup
-    private val log = Logger("form-summary-fragment")
     private val updaters: MutableList<() -> Unit> = ArrayList()
 
     override fun onCreateView(

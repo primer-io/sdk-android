@@ -35,7 +35,7 @@ internal class WebViewActivity : AppCompatActivity() {
 
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
-            ?.substringBeforeLast(':') // FIXME better way of checking this (we're forced to do it because klarna removes it)
+            ?.substringBeforeLast(':')
 
         setContentView(R.layout.activity_webview)
 
@@ -46,7 +46,7 @@ internal class WebViewActivity : AppCompatActivity() {
             settings.useWideViewPort = true
         }
 
-        // FIXME we need to instantiate this dynamically
+        // FIXME we need to instantiate this dynamically (right now it's tied to klarna)
         webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
             override fun handleIntent(intent: Intent) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

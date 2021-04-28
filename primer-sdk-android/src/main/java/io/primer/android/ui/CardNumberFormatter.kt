@@ -38,21 +38,14 @@ internal class CardNumberFormatter private constructor(
         return getValue().isEmpty()
     }
 
-    fun isValid(): Boolean {
-        if (isEmpty()) {
-            return false
+    fun isValid(): Boolean =
+        when {
+            isEmpty() -> false
+            meta.lengths.none { it == value.length } -> false
+            else -> isLuhnValid()
         }
 
-        if (meta.lengths.contains(value.length).not()) {
-            return false
-        }
-
-        return isLuhnValid()
-    }
-
-    fun getCVVLength(): Int {
-        return meta.cvvLength
-    }
+    fun getCvvLength(): Int = meta.cvvLength
 
     private fun isLuhnValid(): Boolean {
         val digits = value.substring(0, value.lastIndex)
