@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.google.android.material.resources.MaterialResources
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
@@ -40,12 +41,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     ): View? =
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
-    private fun renderSavedApmView(view: View, title: String?) {
+    private fun renderAlternativeSavedPaymentMethodView(view: View, title: String?) {
         listOf(R.id.title_label, R.id.subtitle_label, R.id.last_four_label, R.id.expiry_label)
             .forEach { view.findViewById<TextView>(it).isVisible = false }
         view.findViewById<TextView>(R.id.title_view_alt).apply {
-            this.isVisible = true
-            this.text = title
+            isVisible = true
+            text = title
         }
     }
 
@@ -84,50 +85,46 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             }
         )
 
-        viewModel.vaultedPaymentMethods.observe(
-            viewLifecycleOwner,
-            { paymentMethods ->
-                if (paymentMethods.isNotEmpty()) {
+        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+            if (paymentMethods.isEmpty()) return@observe
 
-                    val method = paymentMethods[0]
-                    val titleLabel = view.findViewById<TextView>(R.id.title_label)
-                    val subtitleLabel = view.findViewById<TextView>(R.id.subtitle_label)
-                    val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
-                    val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
-                    val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
+            val method = paymentMethods[0]
+            val titleLabel = view.findViewById<TextView>(R.id.title_label)
+            val subtitleLabel = view.findViewById<TextView>(R.id.subtitle_label)
+            val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
+            val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
+            val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
 
-                    when (method.paymentInstrumentType) {
-                        "KLARNA_CUSTOMER_TOKEN" -> {
-                            val title =
-                                method.paymentInstrumentData?.sessionData?.billingAddress?.email
-                            renderSavedApmView(view, title)
-                            iconView.setImageResource(R.drawable.ic_klarna_card)
-                        }
-                        "GOCARDLESS_MANDATE" -> {
-                            renderSavedApmView(view, "Direct Debit")
-                            iconView.setImageResource(R.drawable.ic_directdebit_card)
-                        }
-                        "PAYMENT_CARD" -> {
-                            val data = method.paymentInstrumentData
-                            titleLabel.text = data?.network
-                            subtitleLabel.text = data?.cardholderName
-                            lastFourLabel.text = getString(
-                                R.string.last_four,
-                                data?.last4Digits
-                            )
-                            expiryLabel.text = formatExpiryDate(
-                                data?.expirationYear,
-                                data?.expirationMonth
-                            )
-                            setCardIcon(view, data?.network)
-                        }
-                        else -> {
-                            iconView.setImageResource(R.drawable.ic_generic_card)
-                        }
-                    }
+            when (method.paymentInstrumentType) {
+                "KLARNA_CUSTOMER_TOKEN" -> {
+                    val title =
+                        method.paymentInstrumentData?.sessionData?.billingAddress?.email
+                    renderAlternativeSavedPaymentMethodView(view, title)
+                    iconView.setImageResource(R.drawable.ic_klarna_card)
+                }
+                "GOCARDLESS_MANDATE" -> {
+                    renderAlternativeSavedPaymentMethodView(view, "Direct Debit")
+                    iconView.setImageResource(R.drawable.ic_directdebit_card)
+                }
+                "PAYMENT_CARD" -> {
+                    val data = method.paymentInstrumentData
+                    titleLabel.text = data?.network
+                    subtitleLabel.text = data?.cardholderName
+                    lastFourLabel.text = getString(
+                        R.string.last_four,
+                        data?.last4Digits
+                    )
+                    expiryLabel.text = formatExpiryDate(
+                        data?.expirationYear,
+                        data?.expirationMonth
+                    )
+                    setCardIcon(view, data?.network)
+                }
+                else -> {
+                    iconView.setImageResource(R.drawable.ic_generic_card)
                 }
             }
-        )
+        }
 
         view.findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).apply {
             setAmount(checkoutConfig.monetaryAmount)
@@ -136,7 +133,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         view.findViewById<ConstraintLayout>(R.id.include).setOnClickListener {
             it.isSelected = !it.isSelected
-            it.elevation = if (it.isSelected) 10f else 0f
+            val elevation =
+                if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
+            it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
         }
     }
 

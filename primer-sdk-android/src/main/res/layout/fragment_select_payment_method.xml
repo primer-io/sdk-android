@@ -4,27 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="@dimen/medium_padding">
 
     <io.primer.android.ui.SelectPaymentMethodTitle
         android:id="@+id/primer_sheet_title_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/large_vertical_margin"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:padding="4dp"
+        android:padding="@dimen/small_padding"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
+        app:layout_constraintTop_toBottomOf="@+id/choose_payment_method_label">
 
         <TextView
             android:id="@+id/primer_sheet_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:textColor="@android:color/black"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            style="@style/Primer.Text.Title"
+            android:textIsSelectable="true" />
 
 
     </io.primer.android.ui.SelectPaymentMethodTitle>
@@ -33,21 +31,21 @@
         android:id="@+id/primer_sheet_payment_methods_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/large_vertical_margin"
         android:orientation="vertical"
-        android:padding="4dp"
+        android:padding="@dimen/small_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saved_payment_method_section" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/choose_payment_method_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose payment method"
-        android:textColor="#000000"
-        android:padding="4dp"
+        android:text="@string/choose_payment_method"
+        android:textColor="@android:color/black"
+        android:padding="@dimen/small_padding"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:fontFamily="@font/roboto_medium"
@@ -58,16 +56,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:padding="4dp"
+        android:padding="@dimen/small_padding"
         app:layout_constraintTop_toBottomOf="@+id/primer_sheet_title_layout">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/saved_payment_method_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Saved card"
-            android:textColor="#808080"
+            android:layout_marginTop="@dimen/medium_vertical_margin"
+            android:text="@string/saved_payment_method"
+            android:textColor="@color/primer_text_color_muted"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,33 +74,33 @@
             layout="@layout/payment_method_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/medium_vertical_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/saved_payment_method_label" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/see_all_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="see all"
+            android:layout_marginTop="@dimen/large_vertical_margin"
+            android:text="@string/see_all"
             android:textAllCaps="true"
-            android:textColor="#2C98F0"
+            android:textColor="@color/primer_button_primary"
             android:fontFamily="@font/roboto_medium"
             app:layout_constraintEnd_toEndOf="@+id/include"
             app:layout_constraintStart_toStartOf="@+id/include"
             app:layout_constraintTop_toBottomOf="@+id/include" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/other_ways_to_pay_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Other ways to pay"
-            android:textColor="#808080"
+            android:layout_marginTop="@dimen/medium_vertical_margin"
+            android:text="@string/other_ways_to_pay"
+            android:textColor="@color/primer_text_color_muted"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/see_all_label" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

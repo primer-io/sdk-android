@@ -39,9 +39,9 @@ internal abstract class TokenAttributes private constructor(
     internal class PayPalBillingAgreementAttributes(token: PaymentMethodTokenInternal) :
         TokenAttributes(token, R.drawable.icon_paypal_sm) {
 
-        override fun getDescription(context: Context): String {
-            return data?.externalPayerInfo?.email ?: "PayPal"
-        }
+        override fun getDescription(context: Context): String =
+            data?.externalPayerInfo?.email ?: "PayPal"
+
     }
 
     internal class GoCardlessMandateAttributes(token: PaymentMethodTokenInternal) :

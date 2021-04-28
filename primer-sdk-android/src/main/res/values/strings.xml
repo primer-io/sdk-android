@@ -59,4 +59,13 @@
     </string>
 
     <string name="klarna">Klarna</string>
+    <string name="choose_payment_method">Choose payment method</string>
+    <string name="saved_payment_method">Saved payment method</string>
+    <string name="see_all">see all</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="john_doe">John Doe</string>
+    <string name="_1234">•••• 1234</string>
+    <string name="expires_12_21">Expires 12 / 21</string>
+    <string name="payment_method_icon">payment method icon</string>
+    <string name="test_mail_com">test@mail.com</string>
 </resources>
