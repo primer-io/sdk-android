@@ -18,7 +18,8 @@ interface PaymentMethodCheckerRegistry {
 internal object PrimerPaymentMethodCheckerRegistry : PaymentMethodCheckerRegistry {
 
     private val _checkers: MutableMap<String, PaymentMethodChecker> = mutableMapOf()
-    override val checkers: Map<String, PaymentMethodChecker> = _checkers
+    override val checkers: Map<String, PaymentMethodChecker>
+        get() = _checkers
 
     override fun register(id: String, checker: PaymentMethodChecker) {
         _checkers[id] = checker
