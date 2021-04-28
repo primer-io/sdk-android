@@ -136,8 +136,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country
-                val currencyCode = checkoutConfig.monetaryAmount?.currency
                 val locale = checkoutConfig.locale.toLanguageTag()
+                val currencyCode = checkoutConfig.monetaryAmount?.currency
 
                 put("countryCode", countryCode)
                 put("currencyCode", currencyCode)
@@ -217,8 +217,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
-            val currencyCode = checkoutConfig.monetaryAmount?.currency
             val locale = checkoutConfig.locale.toLanguageTag()
+            val currencyCode = checkoutConfig.monetaryAmount?.currency
 
             put("countryCode", countryCode)
             put("currencyCode", currencyCode)
