@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
-    private val klarna = PaymentMethod.Klarna("brand new PS5")
+    private val klarna = PaymentMethod.Klarna()
 
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
