@@ -338,6 +338,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     }
 
     private fun openFragment(behaviour: NewFragmentBehaviour) {
+        if (checkoutConfig.doNotShowUi) {
+            return
+        }
+
         behaviour.execute(sheet)
     }
 
