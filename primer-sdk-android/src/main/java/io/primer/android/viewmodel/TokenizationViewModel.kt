@@ -200,7 +200,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("authorizationToken", token)
         body.put("localeData", localeData)
 
-        klarna.options.orderDescription?.let { put("description", it) }
+        klarna.options.orderDescription?.let { body.put("description", it) }
 
         viewModelScope.launch {
             when (val result = model.post(APIEndpoint.VAULT_KLARNA_PAYMENT, body)) {
