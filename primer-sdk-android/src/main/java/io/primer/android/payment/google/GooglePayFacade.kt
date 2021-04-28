@@ -103,7 +103,7 @@ class GooglePayFacade constructor(
     fun pay(
         activity: Activity,
         gatewayMerchantId: String,
-        merchantName: String,
+        merchantName: String? = null,
         totalPrice: String,
         countryCode: String,
         currencyCode: String,
@@ -126,7 +126,7 @@ class GooglePayFacade constructor(
 
     private fun buildPaymentRequest(
         gatewayMerchantId: String,
-        merchantName: String,
+        merchantName: String? = null,
         totalPrice: String,
         countryCode: String,
         currencyCode: String,
@@ -160,13 +160,14 @@ class GooglePayFacade constructor(
             put("currencyCode", currencyCode)
         }
 
-        val merchantInfo = JSONObject().put("merchantName", merchantName)
-
         return JSONObject(baseRequest.toString()).apply {
             put("allowedPaymentMethods", JSONArray().put(cardPaymentMethod))
             put("transactionInfo", transactionInfo)
-            put("merchantInfo", merchantInfo)
             put("shippingAddressRequired", false)
+
+            merchantName?.let {
+                put("merchantInfo", JSONObject().put("merchantName", merchantName))
+            }
         }
     }
 
@@ -184,7 +185,7 @@ class GooglePayFacadeFactory {
 
     fun create(applicationContext: Context): GooglePayFacade {
         val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+            .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
             .build()
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)

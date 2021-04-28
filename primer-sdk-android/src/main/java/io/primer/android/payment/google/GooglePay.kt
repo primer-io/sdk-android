@@ -10,7 +10,7 @@ import kotlinx.serialization.modules.subclass
 
 @Serializable
 data class GooglePay(
-    val merchantName: String,
+    val merchantName: String? = null,
     val totalPrice: String,
     val countryCode: String,
     val currencyCode: String,

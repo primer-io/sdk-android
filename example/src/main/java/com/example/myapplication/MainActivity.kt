@@ -22,7 +22,7 @@ import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
 import java.util.*
 
-private const val CLIENT_TOKEN_URI: String = "https://api.sandbox.primer.io/auth/client-token"
+private const val CLIENT_TOKEN_URI: String = "https://api.staging.primer.io/auth/client-token"
 
 //private const val CLIENT_TOKEN_URI: String =
 //    "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
@@ -36,6 +36,12 @@ class MainActivity : AppCompatActivity() {
             Log.i("ExampleApp", "Checkout event! ${event.type.name}")
 
             when (event) {
+                is CheckoutEvent.TokenizationSuccess -> {
+                    Log.i(
+                        "ExampleApp",
+                        "TokenizationSuccess: ${event.data.tokenType} ${event.data.token}"
+                    )
+                }
                 is CheckoutEvent.TokenAddedToVault -> {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
                     Handler(Looper.getMainLooper()).post {
@@ -62,10 +68,9 @@ class MainActivity : AppCompatActivity() {
     private val klarna = Klarna("Brand new PS5")
 
     private val googlePay = GooglePay(
-        merchantName = "Primer",
-        totalPrice = "1000",
+        totalPrice = "0.01",
         countryCode = "UK",
-        currencyCode = "GBP"
+        currencyCode = "GBP",
     )
 
     private val goCardless = GoCardless(
@@ -99,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card))
+        UniversalCheckout.loadPaymentMethods(listOf(googlePay, card))
 
         showCheckout()
 
@@ -111,9 +116,7 @@ class MainActivity : AppCompatActivity() {
     private fun showCheckout() {
         UniversalCheckout.showCheckout(
             context = this,
-            listener = eventListener,
-            isStandalonePaymentMethod = false,
-            currency = "SEK",
+            listener = eventListener
         )
     }
 
