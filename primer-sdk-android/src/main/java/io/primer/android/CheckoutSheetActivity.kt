@@ -1,6 +1,5 @@
 package io.primer.android
 
-import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -58,13 +57,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private lateinit var viewModelFactory: PrimerViewModelFactory
     private val primerViewModel: PrimerViewModel by viewModels {
-//        SavedStateViewModelFactory(application, this)
-//        GenericSavedStateViewModelFactory(viewModelFactory, this)
         GenericSavedStateAndroidViewModelFactory(application, viewModelFactory, this)
     }
 
     private val model: Model by inject() // FIXME manual di here
-    private val configuredPaymentMethods: List<PaymentMethod> by inject() // FIXME manual di here
 
     private val tokenizationViewModel: TokenizationViewModel by viewModels()
 
@@ -109,42 +105,23 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
-    private lateinit var paymentMethodDescriptorFactoryRegistry:
-        PaymentMethodDescriptorFactoryRegistry
-    private lateinit var paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val json = Serialization.json
-
-        val app = applicationContext as Application
-
         val checkoutConfig = intent.unmarshal<CheckoutConfig>("config", json) ?: return
-        val paymentMethods = intent.unmarshal<List<PaymentMethod>>("paymentMethods", json) ?: return
+        val locallyConfiguredPaymentMethods =
+            intent.unmarshal<List<PaymentMethod>>("paymentMethods", json) ?: return
 
-        DIAppContext.init(this, checkoutConfig, paymentMethods)
-
-        // dependency issue is the following
-        // -. PaymentModule needs the ClientSession (to initialize)
-        // -. PrimerViewModel needs the PrimerPaymentMethodDescriptorResolver
-        // -. PrimerViewModel fetches the ClientSession
+        DIAppContext.init(this, checkoutConfig, locallyConfiguredPaymentMethods)
 
         val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
         val paymentMethodDescriptorFactoryRegistry =
             PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistry)
 
-//        configuredPaymentMethods.forEach { paymentMethod ->
-//            paymentMethod.module.initialize(applicationContext, clientSession)
-//            paymentMethod.module.registerPaymentMethodCheckers(paymentMethodRegistry)
-//            paymentMethod.module.registerPaymentMethodDescriptorFactory(
-//                paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry
-//            )
-//        }
-
-        paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
+        val paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
             localConfig = checkoutConfig,
-            localPaymentMethods = configuredPaymentMethods,
+            localPaymentMethods = locallyConfiguredPaymentMethods,
             paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry,
             availabilityCheckers = paymentMethodRegistry
         )
@@ -156,15 +133,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerPaymentMethodDescriptorResolver = paymentMethodDescriptorResolver
         )
 
-        primerViewModel.fetchConfiguration()
+        primerViewModel.fetchConfiguration(locallyConfiguredPaymentMethods)
 
         sheet = CheckoutSheetFragment.newInstance(
             noVerticalPadding = !checkoutConfig.showLoading
         )
-
-        primerViewModel.clientSession.observe(this) { clientSession ->
-            primerViewModel.resolverIsReady(configuredPaymentMethods, clientSession)
-        }
 
         primerViewModel.viewStatus.observe(this, viewStatusObserver)
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)

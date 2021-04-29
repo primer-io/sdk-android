@@ -74,9 +74,6 @@ internal class PrimerViewModel(
         Collections.emptyList()
     )
 
-    private val _clientSession = MutableLiveData<ClientSession>()
-    val clientSession: LiveData<ClientSession> = _clientSession
-
     private val _paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(emptyList())
     val paymentMethods: LiveData<List<PaymentMethodDescriptor>> = _paymentMethods
 
@@ -87,12 +84,13 @@ internal class PrimerViewModel(
         _selectedPaymentMethod.value = paymentMethodDescriptor
     }
 
-    fun fetchConfiguration() {
+    fun fetchConfiguration(locallyConfiguredPaymentMethods: List<PaymentMethod>) {
         viewModelScope.launch {
             when (val result = model.getConfiguration()) {
                 is OperationResult.Success -> {
                     val clientSession: ClientSession = result.data
-                    _clientSession.postValue(clientSession)
+
+                    initializePaymentMethodModules(locallyConfiguredPaymentMethods, clientSession)
 
                     handleVaultedPaymentMethods(clientSession)
                 }
@@ -103,6 +101,19 @@ internal class PrimerViewModel(
         }
 
         subscription = EventBus.subscribe(this)
+    }
+
+    private fun initializePaymentMethodModules(
+        locallyConfiguredPaymentMethods: List<PaymentMethod>,
+        clientSession: ClientSession,
+    ) {
+        locallyConfiguredPaymentMethods.forEach { paymentMethod ->
+            paymentMethod.module.initialize(getApplication(), clientSession)
+            paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
+            paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry
+            )
+        }
     }
 
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) =
@@ -127,21 +138,6 @@ internal class PrimerViewModel(
                 log("Failed to get payment methods: ${result.error.message}")
             }
         }
-
-    fun resolverIsReady(configuredPaymentMethods: List<PaymentMethod>, clientSession: ClientSession) {
-        viewModelScope.launch {
-            val clientSession = this@PrimerViewModel.clientSession.value
-            clientSession?.let {
-                configuredPaymentMethods.forEach { paymentMethod ->
-                    paymentMethod.module.initialize(getApplication(), clientSession)
-                    paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
-                    paymentMethod.module.registerPaymentMethodDescriptorFactory(
-                        paymentMethodDescriptorFactoryRegistry
-                    )
-                }
-            }
-        }
-    }
 
     private fun getInitialViewStatus(
         vaultedPaymentMethods: List<PaymentMethodTokenInternal>,
