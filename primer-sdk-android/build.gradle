@@ -82,7 +82,6 @@ dependencies {
     implementation AndroidDependencies.fragment
     implementation AndroidDependencies.Lifecycle.liveData
     implementation AndroidDependencies.Lifecycle.lifecycle
-    implementation AndroidDependencies.Lifecycle.lifecycleExtensions
     implementation AndroidDependencies.Lifecycle.viewModel
     implementation AndroidDependencies.Lifecycle.viewModelSavedState
 
