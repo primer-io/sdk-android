@@ -22,10 +22,10 @@ import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
 import java.util.*
 
-private const val CLIENT_TOKEN_URI: String = "https://api.staging.primer.io/auth/client-token"
+//private const val CLIENT_TOKEN_URI: String = "https://api.staging.primer.io/auth/client-token"
 
-//private const val CLIENT_TOKEN_URI: String =
-//    "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
+private const val CLIENT_TOKEN_URI: String =
+    "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
 private const val CUSTOMER_ID: String = "will-123"
 private const val API_KEY: String = "b91c117b-3a89-4773-bfc7-58a24d8328a6"
 
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
+        UniversalCheckout.initialize(this, token, Locale("sv"))
         UniversalCheckout.loadPaymentMethods(listOf(googlePay, card))
 
         showCheckout()
@@ -122,6 +122,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onError(error: VolleyError) {
         Log.e("ExampleApp", "Volley Error when getting client token: $error")
+        Log.e("ExampleApp", String(error.networkResponse.data))
     }
 }
 
@@ -146,6 +147,7 @@ class ClientTokenRequest(
     override fun getBody(): ByteArray {
         val body = """
             {
+                "staging": true,
                 "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
                 "checkout": {
                     "paymentFlow": "PREFER_VAULT"
