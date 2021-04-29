@@ -179,13 +179,24 @@ class GooglePayFacade constructor(
             GOOGLE_PAY_REQUEST_CODE
         )
     }
+
+    enum class Environment {
+        TEST,
+        PRODUCTION
+    }
 }
 
 class GooglePayFacadeFactory {
 
-    fun create(applicationContext: Context): GooglePayFacade {
+    fun create(
+        applicationContext: Context,
+        environment: GooglePayFacade.Environment,
+    ): GooglePayFacade {
+        val walletEnvironment =
+            if (environment == GooglePayFacade.Environment.TEST) WalletConstants.ENVIRONMENT_TEST
+            else WalletConstants.ENVIRONMENT_PRODUCTION
         val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
+            .setEnvironment(walletEnvironment)
             .build()
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)

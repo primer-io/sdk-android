@@ -1,5 +1,6 @@
 package io.primer.android
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -35,7 +36,7 @@ import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SuccessFragment
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
-import io.primer.android.viewmodel.GenericSavedStateViewModelFactory
+import io.primer.android.viewmodel.GenericSavedStateAndroidViewModelFactory
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerPaymentMethodDescriptorResolver
 import io.primer.android.viewmodel.PrimerViewModel
@@ -56,8 +57,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private var initFinished = false
 
     private lateinit var viewModelFactory: PrimerViewModelFactory
-    private val mainViewModel: PrimerViewModel by viewModels {
-        GenericSavedStateViewModelFactory(viewModelFactory, this)
+    private val primerViewModel: PrimerViewModel by viewModels {
+//        SavedStateViewModelFactory(application, this)
+//        GenericSavedStateViewModelFactory(viewModelFactory, this)
+        GenericSavedStateAndroidViewModelFactory(application, viewModelFactory, this)
     }
 
     private val model: Model by inject() // FIXME manual di here
@@ -115,24 +118,29 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         val json = Serialization.json
 
+        val app = applicationContext as Application
+
         val checkoutConfig = intent.unmarshal<CheckoutConfig>("config", json) ?: return
         val paymentMethods = intent.unmarshal<List<PaymentMethod>>("paymentMethods", json) ?: return
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
+        // dependency issue is the following
+        // -. PaymentModule needs the ClientSession (to initialize)
+        // -. PrimerViewModel needs the PrimerPaymentMethodDescriptorResolver
+        // -. PrimerViewModel fetches the ClientSession
+
         val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
-        paymentMethodDescriptorFactoryRegistry =
+        val paymentMethodDescriptorFactoryRegistry =
             PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistry)
 
-        configuredPaymentMethods.forEach { paymentMethod ->
-            paymentMethod.module.initialize(applicationContext)
-            paymentMethod.module.registerPaymentMethodCheckers(
-                paymentMethodCheckerRegistry = paymentMethodRegistry
-            )
-            paymentMethod.module.registerPaymentMethodDescriptorFactory(
-                paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry
-            )
-        }
+//        configuredPaymentMethods.forEach { paymentMethod ->
+//            paymentMethod.module.initialize(applicationContext, clientSession)
+//            paymentMethod.module.registerPaymentMethodCheckers(paymentMethodRegistry)
+//            paymentMethod.module.registerPaymentMethodDescriptorFactory(
+//                paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry
+//            )
+//        }
 
         paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
             localConfig = checkoutConfig,
@@ -143,17 +151,23 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         viewModelFactory = PrimerViewModelFactory(
             model = model,
             checkoutConfig = checkoutConfig,
+            paymentMethodCheckerRegistry = paymentMethodRegistry,
+            paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry,
             primerPaymentMethodDescriptorResolver = paymentMethodDescriptorResolver
         )
 
-        mainViewModel.initialize()
+        primerViewModel.fetchConfiguration()
 
         sheet = CheckoutSheetFragment.newInstance(
             noVerticalPadding = !checkoutConfig.showLoading
         )
 
-        mainViewModel.viewStatus.observe(this, viewStatusObserver)
-        mainViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
+        primerViewModel.clientSession.observe(this) { clientSession ->
+            primerViewModel.resolverIsReady(configuredPaymentMethods, clientSession)
+        }
+
+        primerViewModel.viewStatus.observe(this, viewStatusObserver)
+        primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
 
         tokenizationViewModel.tokenizationCanceled.observe(this) {
             onExit(CheckoutExitReason.DISMISSED_BY_USER)
@@ -173,7 +187,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
 
         tokenizationViewModel.vaultedKlarnaPayment.observe(this) { data ->
-            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+            val paymentMethod: PaymentMethodDescriptor? =
+                primerViewModel.selectedPaymentMethod.value
             val klarna = paymentMethod as? KlarnaDescriptor
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
 
@@ -198,7 +213,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
 
         tokenizationViewModel.confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
-            val paymentMethod: PaymentMethodDescriptor? = mainViewModel.selectedPaymentMethod.value
+            val paymentMethod: PaymentMethodDescriptor? =
+                primerViewModel.selectedPaymentMethod.value
             val paypal = paymentMethod as? PayPalDescriptor
                 ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
 
@@ -258,7 +274,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         when (resultCode) {
             RESULT_OK -> {
                 val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
-                val paymentMethod = mainViewModel.selectedPaymentMethod.value
+                val paymentMethod = primerViewModel.selectedPaymentMethod.value
                 val klarna = paymentMethod as? KlarnaDescriptor
 
                 tokenizationViewModel.handleKlarnaRequestResult(klarna, redirectUrl)
@@ -275,7 +291,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun handleGooglePayRequestResult(resultCode: Int, data: Intent?) {
         when (resultCode) {
             RESULT_OK -> {
-                val paymentMethod = mainViewModel.selectedPaymentMethod.value
+                val paymentMethod = primerViewModel.selectedPaymentMethod.value
                 val googlePay = paymentMethod as? GooglePayDescriptor
                 data?.let {
                     val paymentData = PaymentData.getFromIntent(data)

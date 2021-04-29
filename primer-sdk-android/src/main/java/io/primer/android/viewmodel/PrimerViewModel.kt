@@ -1,12 +1,14 @@
 package io.primer.android.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import io.primer.android.PaymentMethod
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -17,24 +19,39 @@ import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import kotlinx.coroutines.launch
 import java.util.Collections
 
 internal class PrimerViewModelFactory(
     private val model: Model,
     private val checkoutConfig: CheckoutConfig,
+    private val paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+    private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     private val primerPaymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
-) : ViewModelAssistedFactory<PrimerViewModel> {
+) : AndroidViewModelAssistedFactory<PrimerViewModel> {
 
-    override fun create(handle: SavedStateHandle): PrimerViewModel =
-        PrimerViewModel(model, checkoutConfig, primerPaymentMethodDescriptorResolver)
+    override fun create(application: Application, handle: SavedStateHandle): PrimerViewModel =
+        PrimerViewModel(
+            application,
+            handle,
+            model,
+            checkoutConfig,
+            paymentMethodCheckerRegistry,
+            paymentMethodDescriptorFactoryRegistry,
+            primerPaymentMethodDescriptorResolver
+        )
 }
 
-internal class PrimerViewModel constructor(
+internal class PrimerViewModel(
+    application: Application,
+    handle: SavedStateHandle,
     private val model: Model,
     private val checkoutConfig: CheckoutConfig,
+    private val paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+    private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     private val paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
-) : ViewModel(), EventBus.EventListener {
+) : AndroidViewModel(application), EventBus.EventListener {
 
     companion object {
 
@@ -57,6 +74,9 @@ internal class PrimerViewModel constructor(
         Collections.emptyList()
     )
 
+    private val _clientSession = MutableLiveData<ClientSession>()
+    val clientSession: LiveData<ClientSession> = _clientSession
+
     private val _paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(emptyList())
     val paymentMethods: LiveData<List<PaymentMethodDescriptor>> = _paymentMethods
 
@@ -67,12 +87,13 @@ internal class PrimerViewModel constructor(
         _selectedPaymentMethod.value = paymentMethodDescriptor
     }
 
-    // FIXME rename or hook with lifecycle observer
-    fun initialize() {
+    fun fetchConfiguration() {
         viewModelScope.launch {
             when (val result = model.getConfiguration()) {
                 is OperationResult.Success -> {
                     val clientSession: ClientSession = result.data
+                    _clientSession.postValue(clientSession)
+
                     handleVaultedPaymentMethods(clientSession)
                 }
                 is OperationResult.Error -> {
@@ -90,7 +111,7 @@ internal class PrimerViewModel constructor(
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)
 
-                val descriptors =
+                val descriptors: List<PaymentMethodDescriptor> =
                     paymentMethodDescriptorResolver.resolve(clientSession)
 
                 _paymentMethods.postValue(descriptors)
@@ -107,9 +128,19 @@ internal class PrimerViewModel constructor(
             }
         }
 
-    override fun onCleared() {
-        super.onCleared()
-        subscription.unregister()
+    fun resolverIsReady(configuredPaymentMethods: List<PaymentMethod>, clientSession: ClientSession) {
+        viewModelScope.launch {
+            val clientSession = this@PrimerViewModel.clientSession.value
+            clientSession?.let {
+                configuredPaymentMethods.forEach { paymentMethod ->
+                    paymentMethod.module.initialize(getApplication(), clientSession)
+                    paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
+                    paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                        paymentMethodDescriptorFactoryRegistry
+                    )
+                }
+            }
+        }
     }
 
     private fun getInitialViewStatus(
@@ -120,6 +151,11 @@ internal class PrimerViewModel constructor(
         } else {
             ViewStatus.SELECT_PAYMENT_METHOD
         }
+
+    override fun onCleared() {
+        super.onCleared()
+        subscription.unregister()
+    }
 
     override fun onEvent(e: CheckoutEvent) {
         when (e) {
