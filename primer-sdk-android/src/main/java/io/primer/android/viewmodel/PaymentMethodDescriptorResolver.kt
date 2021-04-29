@@ -11,7 +11,7 @@ internal interface PaymentMethodDescriptorResolver {
     suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> = emptyList()
 }
 
-internal class PrimerPaymentMethodDescriptorResolver constructor(
+internal class PrimerPaymentMethodDescriptorResolver(
     private val localConfig: CheckoutConfig,
     private val localPaymentMethods: List<PaymentMethod>,
     private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,

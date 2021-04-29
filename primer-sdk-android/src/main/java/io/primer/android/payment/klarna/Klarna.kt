@@ -4,6 +4,7 @@ import android.content.Context
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.model.OrderItem
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -23,7 +24,7 @@ data class Klarna(
 
     @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context) {
+        override fun initialize(applicationContext: Context, clientSession: ClientSession) {
             // no-op
         }
 

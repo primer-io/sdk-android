@@ -3,6 +3,7 @@ package io.primer.android.payment.card
 import android.content.Context
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -19,7 +20,7 @@ class Card : PaymentMethod {
 
     @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context) {
+        override fun initialize(applicationContext: Context, clientSession: ClientSession) {
             // no-op
         }
 

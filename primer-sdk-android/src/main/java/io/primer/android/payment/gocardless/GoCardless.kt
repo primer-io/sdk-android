@@ -3,6 +3,7 @@ package io.primer.android.payment.gocardless
 import android.content.Context
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -30,7 +31,7 @@ data class GoCardless(
 
     @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context) {
+        override fun initialize(applicationContext: Context, clientSession: ClientSession) {
             // no-op
         }
 
