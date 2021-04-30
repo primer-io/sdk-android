@@ -12,7 +12,6 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
-import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 import java.util.*
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
-    private val klarna = PaymentMethod.Klarna("brand new PS5")
+    private val klarna = PaymentMethod.Klarna()
 
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(klarna, card))
+        UniversalCheckout.loadPaymentMethods(listOf(klarna))
 
         showCheckout()
 
@@ -101,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             amount = 99999,
             currency = "SEK",
             isStandalonePaymentMethod = true,
-            showLoading = false
+            doNotShowUi = true
         )
     }
 

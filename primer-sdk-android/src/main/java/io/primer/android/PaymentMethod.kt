@@ -19,7 +19,7 @@ sealed class PaymentMethod(val identifier: String) {
 
     @Serializable
     class Klarna(
-        val orderDescription: String,
+        val orderDescription: String? = null,
         var orderItems: List<OrderItem> = listOf(),
     ) : PaymentMethod(KLARNA_IDENTIFIER)
 

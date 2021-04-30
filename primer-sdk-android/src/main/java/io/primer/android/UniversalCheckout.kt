@@ -91,7 +91,7 @@ object UniversalCheckout {
         amount: Int? = null,
         currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
-        showLoading: Boolean = true,
+        doNotShowUi: Boolean = false,
     ) {
         checkout.showVault(
             context = context,
@@ -99,7 +99,7 @@ object UniversalCheckout {
             amount = amount,
             currency = currency,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
-            showLoading = showLoading
+            doNotShowUi = doNotShowUi
         )
     }
 
@@ -109,7 +109,7 @@ object UniversalCheckout {
         amount: Int,
         currency: String,
         isStandalonePaymentMethod: Boolean = false,
-        showLoading: Boolean = true,
+        doNotShowUi: Boolean = false,
     ) {
         checkout.showCheckout(
             context = context,
@@ -117,7 +117,7 @@ object UniversalCheckout {
             amount = amount,
             currency = currency,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
-            showLoading = showLoading
+            doNotShowUi = doNotShowUi
         )
     }
 
@@ -202,7 +202,7 @@ internal class InternalUniversalCheckout constructor(
         amount: Int? = null,
         currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
-        showLoading: Boolean = true,
+        doNotShowUi: Boolean = false,
     ) {
         show(
             context = context,
@@ -211,7 +211,7 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
-            showLoading = showLoading,
+            doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod
         )
     }
@@ -223,7 +223,7 @@ internal class InternalUniversalCheckout constructor(
         amount: Int,
         currency: String,
         isStandalonePaymentMethod: Boolean = false,
-        showLoading: Boolean = true,
+        doNotShowUi: Boolean = false,
     ) {
         show(
             context = context,
@@ -232,7 +232,7 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
-            showLoading = showLoading,
+            doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
         )
     }
@@ -259,7 +259,7 @@ internal class InternalUniversalCheckout constructor(
         amount: Int?,
         currency: String?,
         isStandalonePaymentMethod: Boolean,
-        showLoading: Boolean,
+        doNotShowUi: Boolean,
     ) {
         subscription?.unregister()
 
@@ -274,7 +274,7 @@ internal class InternalUniversalCheckout constructor(
             locale = locale,
             uxMode = uxMode,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
-            showLoading = showLoading,
+            doNotShowUi = doNotShowUi,
             amount = amount,
             currency = currency,
             theme = theme,
