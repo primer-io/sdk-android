@@ -5,6 +5,15 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
+/**
+ * Holds all available [PaymentMethodDescriptorFactory]. At run-time, when the SDK is being set up
+ * and initialized, all [PaymentMethod]s are requested to register their [PaymentMethodDescriptorFactory]
+ * with this registry, doing so through their [PaymentMethodModule].
+ *
+ * **You should only ever need an instance of this class and it should be a singleton**.
+ *
+ * @see
+ */
 class PaymentMethodDescriptorFactoryRegistry(
     private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
 ) {
