@@ -16,12 +16,13 @@ class MonetaryAmount private constructor(
             when {
                 currency == null || value == null -> null
                 value <= 0 -> null // TODO: handle invalid input
-                else -> try {
-                    MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
-                } catch (e: IllegalArgumentException) {
-                    // TODO: handle invalid currency code
-                    null
-                }
+                else ->
+                    try {
+                        MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
+                    } catch (e: IllegalArgumentException) {
+                        // TODO: handle invalid currency code
+                        null
+                    }
             }
     }
 }
