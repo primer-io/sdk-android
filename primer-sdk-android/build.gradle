@@ -1,10 +1,12 @@
 buildscript {
     repositories {
+        mavenCentral()
         google()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.0'
         classpath "io.insert-koin:koin-gradle-plugin:$koinVersion"
     }
 }
@@ -105,7 +107,8 @@ subprojects {
 }
 
 apply from: "$rootDir/config/analysis.gradle"
-apply from: "$rootDir/config/publish.gradle"
+//apply from: "$rootDir/config/publish.gradle"
+apply plugin: "com.vanniktech.maven.publish"
 
 task detektProjectBaseline(type: io.gitlab.arturbosch.detekt.DetektCreateBaselineTask) {
     description = "Overrides current baseline."
