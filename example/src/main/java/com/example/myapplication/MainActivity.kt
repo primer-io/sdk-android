@@ -12,7 +12,6 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import io.primer.android.*
 import io.primer.android.events.CheckoutEvent
-import io.primer.android.model.OrderItem
 import io.primer.android.model.dto.CheckoutExitReason
 import org.json.JSONObject
 import java.util.*
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PaymentMethod.PayPal()
 
-    val klarna = PaymentMethod.Klarna("brand new PS5")
+    private val klarna = PaymentMethod.Klarna()
 
     private val goCardless = PaymentMethod.GoCardless(
         companyName = "Luko AB",
@@ -99,6 +98,8 @@ class MainActivity : AppCompatActivity() {
             listener = eventListener,
             amount = 1000,
             currency = "SEK",
+            isStandalonePaymentMethod = true,
+            doNotShowUi = true
         )
 
     }

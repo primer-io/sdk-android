@@ -28,46 +28,43 @@ internal class CheckoutSheetFragment :
     KeyboardVisibilityEvent.OnChangedListener,
     DIAppComponent {
 
-    private lateinit var viewModel: PrimerViewModel
+    companion object {
+
+        @JvmStatic
+        fun newInstance() = CheckoutSheetFragment()
+    }
+
     private val theme: UniversalCheckoutTheme by inject()
+
+    private lateinit var viewModel: PrimerViewModel
 
     override fun onKeyboardVisibilityChanged(visible: Boolean) {
         viewModel.keyboardVisible.value = visible
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = PrimerViewModel.getInstance(requireActivity())
+    }
+
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
-
-        // FIXME why are we overriding this?
-        // dialog.setCanceledOnTouchOutside(false)
-        // val behavior = (dialog as BottomSheetDialog).behavior
-        // behavior.isHideable = false
-        // behavior.isDraggable = false
-
         dialog.setOnKeyListener(this::onKeyPress)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // FIXME why are we applying the style this way??
-        // setStyle(STYLE_NORMAL, R.style.Primer_BottomSheet)
-        viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
-    }
+        savedInstanceState: Bundle?,
+    ): View = inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val window = requireDialog().window ?: return
         KeyboardVisibilityEvent.subscribe(
-            requireDialog().window!!.decorView,
+            window.decorView,
             viewLifecycleOwner,
             this
         )
@@ -126,11 +123,5 @@ internal class CheckoutSheetFragment :
                 }
             }
         }
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance() = CheckoutSheetFragment()
     }
 }

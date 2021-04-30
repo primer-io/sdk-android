@@ -19,6 +19,7 @@ internal data class CheckoutConfig(
     @Serializable(with = LocaleSerializer::class) val locale: Locale,
     val monetaryAmount: MonetaryAmount?,
     val isStandalonePaymentMethod: Boolean,
+    val doNotShowUi: Boolean,
     val theme: UniversalCheckoutTheme,
 ) {
 
@@ -29,6 +30,7 @@ internal data class CheckoutConfig(
         locale: Locale,
         uxMode: UXMode = UXMode.CHECKOUT,
         isStandalonePaymentMethod: Boolean = false,
+        doNotShowUi: Boolean = false,
         currency: String? = null,
         amount: Int? = null,
         theme: UniversalCheckoutTheme? = null,
@@ -37,6 +39,7 @@ internal data class CheckoutConfig(
         packageName = packageName,
         uxMode = uxMode,
         locale = locale,
+        doNotShowUi = doNotShowUi,
         monetaryAmount = MonetaryAmount.create(currency = currency, value = amount),
         isStandalonePaymentMethod = isStandalonePaymentMethod,
         theme = theme ?: UniversalCheckoutTheme.getDefault()

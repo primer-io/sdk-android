@@ -3,6 +3,7 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -119,8 +120,13 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     private val tokenizationViewModel: TokenizationViewModel by viewModels()
 
     private lateinit var sheet: CheckoutSheetFragment
+    private lateinit var checkoutConfig: CheckoutConfig
 
     private val viewStatusObserver = Observer<ViewStatus> {
+        if (checkoutConfig.doNotShowUi) {
+            return@Observer
+        }
+
         val fragment = when (it) {
             ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
             ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
@@ -161,6 +167,12 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
 
         val checkoutConfig = unmarshal<CheckoutConfig>("config")
         val paymentMethods = unmarshal<List<PaymentMethod>>("paymentMethods")
+
+        if (checkoutConfig.doNotShowUi) {
+            ensureClicksGoThrough()
+        }
+
+        this.checkoutConfig = checkoutConfig
 
         DIAppContext.init(this, checkoutConfig, paymentMethods)
 
@@ -255,7 +267,17 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
             }
         }
 
-        openSheet()
+        if (!checkoutConfig.doNotShowUi) {
+            openSheet()
+        }
+    }
+
+    private fun ensureClicksGoThrough() {
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
     }
 
     private inline fun <reified T> unmarshal(name: String): T {
@@ -316,6 +338,10 @@ internal class CheckoutSheetActivity : AppCompatActivity() {
     }
 
     private fun openFragment(behaviour: NewFragmentBehaviour) {
+        if (checkoutConfig.doNotShowUi) {
+            return
+        }
+
         behaviour.execute(sheet)
     }
 
