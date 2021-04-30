@@ -23,18 +23,6 @@ data class PaymentMethodTokenInternal(
         val customerId: String,
     )
 
-    @Serializable
-    data class PaymentInstrumentData(
-        val network: String? = null,
-        val cardholderName: String? = null,
-        val last4Digits: Int? = null,
-        val expirationMonth: Int? = null,
-        val expirationYear: Int? = null,
-        val gocardlessMandateId: String? = null,
-        val externalPayerInfo: ExternalPayerInfo? = null,
-        val klarnaCustomerToken: String? = null,
-        val sessionData: SessionData? = null,
-    )
 }
 
 internal object PaymentMethodTokenAdapter {
@@ -45,7 +33,7 @@ internal object PaymentMethodTokenAdapter {
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
-            paymentInstrumentData = if (token.paymentInstrumentData == null) null else PaymentMethodToken.PaymentInstrumentData(
+            paymentInstrumentData = if (token.paymentInstrumentData == null) null else PaymentInstrumentData(
                 token.paymentInstrumentData.network,
                 token.paymentInstrumentData.cardholderName,
                 token.paymentInstrumentData.last4Digits,
@@ -65,7 +53,7 @@ internal object PaymentMethodTokenAdapter {
     fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
         val paymentInstrumentData =
             if (token.paymentInstrumentData == null) null
-            else PaymentMethodTokenInternal.PaymentInstrumentData(
+            else PaymentInstrumentData(
                 token.paymentInstrumentData.network,
                 token.paymentInstrumentData.cardholderName,
                 token.paymentInstrumentData.last4Digits,
@@ -103,24 +91,24 @@ data class PaymentMethodToken(
     data class VaultData(
         val customerId: String,
     )
-
-    @Serializable
-    data class PaymentInstrumentData(
-        val network: String? = null,
-        val cardholderName: String? = null,
-        val last4Digits: Int? = null,
-        val expirationMonth: Int? = null,
-        val expirationYear: Int? = null,
-        val gocardlessMandateId: String? = null,
-        val externalPayerInfo: ExternalPayerInfo? = null,
-        val klarnaCustomerToken: String? = null,
-        val sessionData: SessionData? = null,
-    )
 }
 
 @Serializable
+data class PaymentInstrumentData(
+    val network: String? = null,
+    val cardholderName: String? = null,
+    val last4Digits: Int? = null,
+    val expirationMonth: Int? = null,
+    val expirationYear: Int? = null,
+    val gocardlessMandateId: String? = null,
+    val externalPayerInfo: ExternalPayerInfo? = null,
+    val klarnaCustomerToken: String? = null,
+    val sessionData: SessionData? = null,
+)
+
+@Serializable
 data class ExternalPayerInfo(
-    val email: String?,
+    val email: String,
 )
 
 @Serializable
@@ -131,5 +119,5 @@ data class SessionData(
 
 @Serializable
 data class BillingAddress(
-    val email: String? = null
+    val email: String
 )
