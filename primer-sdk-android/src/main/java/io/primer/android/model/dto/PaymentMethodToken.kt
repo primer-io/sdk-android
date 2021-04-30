@@ -22,7 +22,6 @@ data class PaymentMethodTokenInternal(
     data class VaultData(
         val customerId: String,
     )
-
 }
 
 internal object PaymentMethodTokenAdapter {
@@ -33,7 +32,8 @@ internal object PaymentMethodTokenAdapter {
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
-            paymentInstrumentData = if (token.paymentInstrumentData == null) null else PaymentInstrumentData(
+            paymentInstrumentData = if (token.paymentInstrumentData == null) null
+            else PaymentInstrumentData(
                 token.paymentInstrumentData.network,
                 token.paymentInstrumentData.cardholderName,
                 token.paymentInstrumentData.last4Digits,

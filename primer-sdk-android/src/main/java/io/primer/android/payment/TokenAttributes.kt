@@ -4,9 +4,6 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import io.primer.android.R
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 internal abstract class TokenAttributes private constructor(
     token: PaymentMethodTokenInternal,
@@ -41,7 +38,6 @@ internal abstract class TokenAttributes private constructor(
 
         override fun getDescription(context: Context): String =
             data?.externalPayerInfo?.email ?: "PayPal"
-
     }
 
     internal class GoCardlessMandateAttributes(token: PaymentMethodTokenInternal) :
