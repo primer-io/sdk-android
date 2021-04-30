@@ -163,7 +163,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                 put("sessionType", "RECURRING_PAYMENT")
                 put("redirectUrl", klarnaReturnUrl)
                 put("localeData", localeData)
-                put("description", klarna.options.orderDescription)
+
+                klarna.options.orderDescription?.let { put("description", it) }
 
                 // FIXME these are not needed in the recurring klarna flow
                 // put("totalAmount", checkoutConfig.monetaryAmount?.value)
@@ -231,8 +232,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("paymentMethodConfigId", id)
         body.put("sessionId", sessionId)
         body.put("authorizationToken", token)
-        body.put("description", klarna.options.orderDescription)
         body.put("localeData", localeData)
+
+        klarna.options.orderDescription?.let { body.put("description", it) }
 
         viewModelScope.launch {
             when (val result = model.post(APIEndpoint.VAULT_KLARNA_PAYMENT, body)) {

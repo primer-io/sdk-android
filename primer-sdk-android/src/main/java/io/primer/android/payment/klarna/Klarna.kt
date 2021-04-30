@@ -16,7 +16,7 @@ import kotlinx.serialization.modules.subclass
 
 @Serializable
 data class Klarna(
-    val orderDescription: String,
+    val orderDescription: String? = null,
     val orderItems: List<OrderItem> = emptyList(),
 ) : PaymentMethod {
 

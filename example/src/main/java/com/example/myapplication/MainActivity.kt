@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     private val paypal = PayPal()
 
-    private val klarna = Klarna("Brand new PS5")
+    private val klarna = Klarna()
 
     private val googlePay = GooglePay(
         totalPrice = "0.01",
