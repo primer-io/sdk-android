@@ -14,27 +14,18 @@
     <TextView
         android:id="@+id/title_label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="@dimen/medium_large_padding"
         android:layout_marginTop="@dimen/medium_large_padding"
         android:layout_marginBottom="@dimen/medium_large_padding"
-        android:text="@string/mastercard"
+        android:gravity="center_vertical"
+        android:text="@string/test_mail_com"
         android:textColor="@android:color/black"
         android:textSize="@dimen/primer_text_size_sm"
-        app:layout_constraintBottom_toTopOf="@+id/subtitle_label"
-        app:layout_constraintStart_toEndOf="@+id/payment_method_icon"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/subtitle_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/medium_large_padding"
-        android:text="@string/john_doe"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/primer_text_size_s"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/title_label" />
+        app:layout_constraintStart_toEndOf="@+id/payment_method_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
 
     <TextView
         android:id="@+id/last_four_label"
@@ -54,9 +45,8 @@
         android:text="@string/expires_12_21"
         android:textColor="@android:color/black"
         android:textSize="@dimen/primer_text_size_s"
-        app:layout_constraintBottom_toBottomOf="@+id/subtitle_label"
-        app:layout_constraintEnd_toEndOf="@+id/last_four_label"
-        app:layout_constraintTop_toTopOf="@+id/subtitle_label" />
+        app:layout_constraintBottom_toBottomOf="@+id/title_label"
+        app:layout_constraintEnd_toEndOf="@+id/last_four_label" />
 
     <ImageView
         android:id="@+id/payment_method_icon"
@@ -72,21 +62,5 @@
         app:layout_constraintDimensionRatio="H,2:3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/title_view_alt"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginStart="@dimen/medium_large_padding"
-        android:layout_marginTop="@dimen/medium_large_padding"
-        android:layout_marginBottom="@dimen/medium_large_padding"
-        android:gravity="center_vertical"
-        android:text="@string/test_mail_com"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/primer_text_size_sm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/payment_method_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,9 +42,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
     private fun renderAlternativeSavedPaymentMethodView(view: View, title: String?) {
-        listOf(R.id.title_label, R.id.subtitle_label, R.id.last_four_label, R.id.expiry_label)
+        listOf(R.id.title_label, R.id.last_four_label, R.id.expiry_label)
             .forEach { view.findViewById<TextView>(it).isVisible = false }
-        view.findViewById<TextView>(R.id.title_view_alt).apply {
+        view.findViewById<TextView>(R.id.title_label).apply {
             isVisible = true
             text = title
         }
@@ -60,6 +60,17 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             "Visa" -> iconView.setImageResource(R.drawable.ic_visa_card)
             "Mastercard" -> iconView.setImageResource(R.drawable.ic_mastercard_card)
             else -> iconView.setImageResource(R.drawable.ic_generic_card)
+        }
+    }
+
+    private fun toggleSavedPaymentMethodViewVisibility(view: View, listIsEmpty: Boolean) {
+        val items = listOf(R.id.saved_payment_method_label,
+            R.id.saved_payment_method,
+            R.id.see_all_label,
+            R.id.other_ways_to_pay_label)
+
+        items.forEach {
+            view.findViewById<View>(it).isVisible = !listIsEmpty
         }
     }
 
@@ -86,11 +97,15 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         )
 
         viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+
+            // the views for displaying the saved payment method should not be visible
+            // if the customer has not added any.
+            toggleSavedPaymentMethodViewVisibility(view, paymentMethods.isEmpty())
+
             if (paymentMethods.isEmpty()) return@observe
 
             val method = paymentMethods[0]
             val titleLabel = view.findViewById<TextView>(R.id.title_label)
-            val subtitleLabel = view.findViewById<TextView>(R.id.subtitle_label)
             val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
             val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
             val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
@@ -108,8 +123,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 }
                 "PAYMENT_CARD" -> {
                     val data = method.paymentInstrumentData
-                    titleLabel.text = data?.network
-                    subtitleLabel.text = data?.cardholderName
+                    titleLabel.text = data?.cardholderName
                     lastFourLabel.text = getString(
                         R.string.last_four,
                         data?.last4Digits
@@ -131,7 +145,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             setUXMode(checkoutConfig.uxMode)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.include).setOnClickListener {
+        view.findViewById<ConstraintLayout>(R.id.saved_payment_method).setOnClickListener {
             it.isSelected = !it.isSelected
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
