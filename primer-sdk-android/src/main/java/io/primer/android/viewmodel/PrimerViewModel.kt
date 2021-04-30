@@ -34,7 +34,6 @@ internal class PrimerViewModelFactory(
     override fun create(application: Application, handle: SavedStateHandle): PrimerViewModel =
         PrimerViewModel(
             application,
-            handle,
             model,
             checkoutConfig,
             paymentMethodCheckerRegistry,
@@ -45,7 +44,6 @@ internal class PrimerViewModelFactory(
 
 internal class PrimerViewModel(
     application: Application,
-    handle: SavedStateHandle,
     private val model: Model,
     private val checkoutConfig: CheckoutConfig,
     private val paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
