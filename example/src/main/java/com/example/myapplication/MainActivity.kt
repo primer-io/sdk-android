@@ -84,9 +84,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(klarna))
-
-        showCheckout()
+        UniversalCheckout.loadPaymentMethods(listOf(klarna, card))
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             showCheckout()
@@ -94,14 +92,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-        UniversalCheckout.showVault(
+
+        UniversalCheckout.showCheckout(
             context = this,
             listener = eventListener,
-            amount = 99999,
+            amount = 1000,
             currency = "SEK",
             isStandalonePaymentMethod = true,
             doNotShowUi = true
         )
+
     }
 
     private fun onError(error: VolleyError) {
