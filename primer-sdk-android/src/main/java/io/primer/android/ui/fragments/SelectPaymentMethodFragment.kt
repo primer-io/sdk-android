@@ -124,10 +124,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 "PAYMENT_CARD" -> {
                     val data = method.paymentInstrumentData
                     titleLabel.text = data?.cardholderName
-                    lastFourLabel.text = getString(
-                        R.string.last_four,
-                        data?.last4Digits
-                    )
+                    if (data?.last4Digits != null) {
+                        lastFourLabel.text = getString(
+                            R.string.last_four,
+                            data.last4Digits
+                        )
+                    }
                     expiryLabel.text = formatExpiryDate(
                         data?.expirationYear,
                         data?.expirationMonth
