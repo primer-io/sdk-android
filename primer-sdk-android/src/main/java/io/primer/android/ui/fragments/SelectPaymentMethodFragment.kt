@@ -50,6 +50,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private fun renderAlternativeSavedPaymentMethodView(view: View, title: String?) {
         listOf(R.id.title_label, R.id.last_four_label, R.id.expiry_label)
             .forEach { view.findViewById<TextView>(it).isVisible = false }
+
         view.findViewById<TextView>(R.id.title_label).apply {
             isVisible = true
             text = title
