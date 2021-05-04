@@ -116,9 +116,10 @@ class MainActivity : AppCompatActivity() {
     private fun showCheckout() {
         UniversalCheckout.showCheckout(
             context = this,
+            amount = 200,
+            currency = "GBP",
             listener = eventListener
         )
-
     }
 
     private fun onError(error: VolleyError) {
