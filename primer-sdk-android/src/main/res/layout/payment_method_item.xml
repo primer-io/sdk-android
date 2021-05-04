@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/payment_method_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/saved_payment_method_item"
     android:clickable="true"
-    android:focusable="true"
     android:drawSelectorOnTop="true"
-    android:background="@drawable/saved_payment_method_item">
+    android:focusable="true">
 
     <TextView
         android:id="@+id/title_label"
@@ -19,12 +18,13 @@
         android:layout_marginTop="@dimen/medium_large_padding"
         android:layout_marginBottom="@dimen/medium_large_padding"
         android:gravity="center_vertical"
-        android:text="@string/test_mail_com"
         android:textColor="@android:color/black"
+        android:textIsSelectable="true"
         android:textSize="@dimen/primer_text_size_sm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/payment_method_icon"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/test_mail_com"
         tools:visibility="invisible" />
 
     <TextView

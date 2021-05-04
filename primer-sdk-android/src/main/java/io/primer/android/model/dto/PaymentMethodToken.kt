@@ -52,7 +52,6 @@ internal object PaymentMethodTokenAdapter {
     }
 
     fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
-        val json = Serialization.json
         val paymentInstrumentData =
             if (token.paymentInstrumentData == null) null
             else PaymentInstrumentData(

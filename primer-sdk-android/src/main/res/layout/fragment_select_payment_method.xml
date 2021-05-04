@@ -14,7 +14,7 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_payment_method_label">
+        app:layout_constraintTop_toBottomOf="@id/choose_payment_method_label">
 
         <TextView
             android:id="@+id/primer_sheet_title"
@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/other_ways_to_pay_label" />
+        app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
 
     <TextView
         android:id="@+id/choose_payment_method_label"
@@ -56,7 +56,7 @@
         android:text="@string/saved_payment_methods"
         android:textColor="@color/primer_text_color_muted"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/primer_sheet_title_layout" />
+        app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout" />
 
     <include
         android:id="@+id/saved_payment_method"
@@ -66,7 +66,7 @@
         android:layout_marginTop="@dimen/medium_vertical_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saved_payment_method_label" />
+        app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
 
     <TextView
         android:id="@+id/see_all_label"
@@ -77,9 +77,9 @@
         android:text="@string/see_all"
         android:textAllCaps="true"
         android:textColor="@color/primer_button_primary"
-        app:layout_constraintEnd_toEndOf="@+id/saved_payment_method"
-        app:layout_constraintStart_toStartOf="@+id/saved_payment_method"
-        app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
+        app:layout_constraintEnd_toEndOf="@id/saved_payment_method"
+        app:layout_constraintStart_toStartOf="@id/saved_payment_method"
+        app:layout_constraintTop_toBottomOf="@id/saved_payment_method" />
 
     <TextView
         android:id="@+id/other_ways_to_pay_label"
@@ -89,6 +89,6 @@
         android:text="@string/available_payment_methods"
         android:textColor="@color/primer_text_color_muted"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/see_all_label" />
+        app:layout_constraintTop_toBottomOf="@id/see_all_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
