@@ -112,7 +112,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         view.findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).apply {
             setAmount(checkoutConfig.monetaryAmount)
-            setUXMode(checkoutConfig.uxMode)
+            setUxMode(checkoutConfig.uxMode)
         }
 
         view.findViewById<ConstraintLayout>(R.id.saved_payment_method).setOnClickListener {

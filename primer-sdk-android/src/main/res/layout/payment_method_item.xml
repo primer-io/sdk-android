@@ -7,7 +7,6 @@
     android:layout_height="wrap_content"
     android:background="@drawable/saved_payment_method_item"
     android:clickable="true"
-    android:drawSelectorOnTop="true"
     android:focusable="true">
 
     <TextView

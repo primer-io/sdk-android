@@ -14,7 +14,7 @@ internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? =
     private var uxMode: UXMode? = null
     private var amount: MonetaryAmount? = null
 
-    fun setUXMode(uxMode: UXMode) {
+    fun setUxMode(uxMode: UXMode) {
         this.uxMode = uxMode
         update()
     }
