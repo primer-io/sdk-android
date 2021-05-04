@@ -103,8 +103,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(this, token, Locale("sv"))
-        UniversalCheckout.loadPaymentMethods(listOf(googlePay, card))
+        UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
+        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card))
 
         showCheckout()
 
@@ -118,6 +118,7 @@ class MainActivity : AppCompatActivity() {
             context = this,
             listener = eventListener
         )
+
     }
 
     private fun onError(error: VolleyError) {
