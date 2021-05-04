@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.R
@@ -100,9 +99,11 @@ class VaultedPaymentMethodsFragment : Fragment() {
             }
         }
 
-        listOf(R.id.edit_vaulted_payment_methods,
+        listOf(
+            R.id.edit_vaulted_payment_methods,
             R.id.edit_vaulted_payment_methods_go_back,
-            R.id.edit_vaulted_payment_methods_done).forEach {
+            R.id.edit_vaulted_payment_methods_done,
+        ).forEach {
             isEditing = when (it) {
                 R.id.edit_vaulted_payment_methods -> true
                 else -> false
