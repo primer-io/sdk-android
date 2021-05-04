@@ -19,5 +19,6 @@ internal abstract class WebViewBehaviour(
     }
 
     abstract fun initialize(viewModel: TokenizationViewModel)
+
     abstract fun getUri(viewModel: TokenizationViewModel, returnUrl: String)
 }

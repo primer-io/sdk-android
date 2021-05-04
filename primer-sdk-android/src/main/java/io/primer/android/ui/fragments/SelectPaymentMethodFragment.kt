@@ -22,14 +22,20 @@ import org.koin.core.component.inject
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
-    private lateinit var viewModel: PrimerViewModel
+    companion object {
+
+        @JvmStatic
+        fun newInstance() = SelectPaymentMethodFragment()
+    }
+
+    private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
 
     private val checkoutConfig: CheckoutConfig by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = PrimerViewModel.getInstance(requireActivity())
+        primerViewModel = PrimerViewModel.getInstance(requireActivity())
         tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
     }
 
@@ -76,27 +82,29 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
-        viewModel.paymentMethods.observe(
-            viewLifecycleOwner,
-            { paymentMethods ->
-                paymentMethods.forEachIndexed { i, paymentMethod ->
-                    val button = paymentMethod.createButton(requireContext())
-                    button.layoutParams = createLayoutParams(i == 0)
 
-                    container.addView(button)
+        primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+            paymentMethods.forEach { paymentMethod ->
+                val button: View = paymentMethod.createButton(container)
 
-                    button.setOnClickListener {
-                        viewModel.setSelectedPaymentMethod(paymentMethod)
-                    }
+                button.layoutParams = button.layoutParams.apply {
+                    val layoutParams = this as LinearLayout.LayoutParams
+                    layoutParams.topMargin =
+                        resources.getDimensionPixelSize(R.dimen.primer_list_margin)
                 }
 
-                container.requestLayout()
-            }
-        )
+                container.addView(button)
 
-        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+                button.setOnClickListener {
+                    primerViewModel.selectPaymentMethod(paymentMethod)
+                }
+            }
+
+            container.requestLayout()
+        }
+
+        primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
 
             // the views for displaying the saved payment method should not be visible
             // if the customer has not added any.
@@ -149,24 +157,5 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
         }
-    }
-
-    private fun createLayoutParams(isFirst: Boolean): LinearLayout.LayoutParams {
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        if (!isFirst) {
-            params.topMargin = 13 // FIXME why 13?
-        }
-
-        return params
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance() = SelectPaymentMethodFragment()
     }
 }

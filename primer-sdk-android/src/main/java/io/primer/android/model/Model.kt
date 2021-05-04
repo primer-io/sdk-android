@@ -14,6 +14,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType
@@ -59,6 +60,7 @@ internal class Model constructor(
     private val clientToken: ClientToken,
     private val config: CheckoutConfig,
     private val okHttpClient: OkHttpClient,
+    private val json: Json
 ) {
 
     private var clientSession: ClientSession? = null

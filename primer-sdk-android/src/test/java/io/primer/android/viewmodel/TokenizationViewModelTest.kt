@@ -10,7 +10,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.PaymentMethod
 import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppContext
@@ -24,6 +23,7 @@ import io.primer.android.payment.card.CARD_EXPIRY_MONTH_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_YEAR_FIELD_NAME
 import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
+import io.primer.android.payment.card.Card
 import io.primer.android.payment.card.CreditCard
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
@@ -113,7 +113,7 @@ class TokenizationViewModelTest : KoinTest {
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
-            PaymentMethod.Card(),
+            Card(),
             mockJson
         )
         val statusObserver = viewModel.tokenizationStatus.test()
@@ -144,7 +144,7 @@ class TokenizationViewModelTest : KoinTest {
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
-            PaymentMethod.Card(),
+            Card(),
             mockJson
         )
         viewModel.resetPaymentMethod(paymentMethodDescriptor)

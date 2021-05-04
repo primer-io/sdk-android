@@ -22,10 +22,9 @@
     <dimen name="primer_text_size_xs">10sp</dimen>
 
     <!--  Payment methods  -->
-    <dimen name="primer_payment_method_preview_button_height">50dp</dimen>
+    <dimen name="primer_payment_method_preview_button_height">48sp</dimen>
 
     <!--  Universal Checkout view  -->
-
     <dimen name="small_padding">4dp</dimen>
     <dimen name="medium_padding">8dp</dimen>
     <dimen name="medium_large_padding">10dp</dimen>

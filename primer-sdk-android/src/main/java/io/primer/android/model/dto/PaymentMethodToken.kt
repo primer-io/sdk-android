@@ -1,5 +1,6 @@
 package io.primer.android.model.dto
 
+import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
 
 /**
@@ -51,6 +52,7 @@ internal object PaymentMethodTokenAdapter {
     }
 
     fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
+        val json = Serialization.json
         val paymentInstrumentData =
             if (token.paymentInstrumentData == null) null
             else PaymentInstrumentData(

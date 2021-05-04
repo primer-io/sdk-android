@@ -10,11 +10,19 @@ import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import io.primer.android.*
+import io.primer.android.CheckoutEventListener
+import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.payment.card.Card
+import io.primer.android.payment.gocardless.GoCardless
+import io.primer.android.payment.google.GooglePay
+import io.primer.android.payment.klarna.Klarna
+import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
 import java.util.*
+
+//private const val CLIENT_TOKEN_URI: String = "https://api.staging.primer.io/auth/client-token"
 
 private const val CLIENT_TOKEN_URI: String =
     "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
@@ -28,6 +36,12 @@ class MainActivity : AppCompatActivity() {
             Log.i("ExampleApp", "Checkout event! ${event.type.name}")
 
             when (event) {
+                is CheckoutEvent.TokenizationSuccess -> {
+                    Log.i(
+                        "ExampleApp",
+                        "TokenizationSuccess: ${event.data.tokenType} ${event.data.token}"
+                    )
+                }
                 is CheckoutEvent.TokenAddedToVault -> {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
                     Handler(Looper.getMainLooper()).post {
@@ -47,13 +61,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val card = PaymentMethod.Card()
+    private val card = Card()
 
-    private val paypal = PaymentMethod.PayPal()
+    private val paypal = PayPal()
 
-    private val klarna = PaymentMethod.Klarna()
+    private val klarna = Klarna()
 
-    private val goCardless = PaymentMethod.GoCardless(
+    private val googlePay = GooglePay(
+        totalPrice = "0.01",
+        countryCode = "UK",
+        currencyCode = "GBP",
+    )
+
+    private val goCardless = GoCardless(
         companyName = "Luko AB",
         companyAddress = "123 French St, Francetown, France, FR3NCH",
         customerName = "Will Knowles",
@@ -84,7 +104,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(klarna, card))
+        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card))
+
+        showCheckout()
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
             showCheckout()
@@ -92,20 +114,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-
         UniversalCheckout.showCheckout(
             context = this,
-            listener = eventListener,
-            amount = 1000,
-            currency = "SEK",
-            isStandalonePaymentMethod = true,
-            doNotShowUi = true
+            listener = eventListener
         )
 
     }
 
     private fun onError(error: VolleyError) {
         Log.e("ExampleApp", "Volley Error when getting client token: $error")
+        Log.e("ExampleApp", String(error.networkResponse.data))
     }
 }
 
@@ -130,6 +148,7 @@ class ClientTokenRequest(
     override fun getBody(): ByteArray {
         val body = """
             {
+                "staging": true,
                 "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
                 "checkout": {
                     "paymentFlow": "PREFER_VAULT"

@@ -8,7 +8,7 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class KlarnaBehaviour constructor(
-    private val klarna: Klarna,
+    private val klarna: KlarnaDescriptor,
     packageName: String,
 ) : WebViewBehaviour(packageName) {
 
@@ -18,14 +18,14 @@ internal class KlarnaBehaviour constructor(
 
     override fun getUri(viewModel: TokenizationViewModel, returnUrl: String) {
         klarna.config.id?.let { id ->
-            viewModel.createKlarnaBillingAgreement(id, returnUrl, klarna)
+            viewModel.createKlarnaPaymentSession(id, returnUrl, klarna)
         }
     }
 }
 
 @KoinApiExtension
 internal class RecurringKlarnaBehaviour constructor(
-    private val klarna: Klarna,
+    private val klarna: KlarnaDescriptor,
 ) : WebBrowserIntentBehaviour() {
 
     override fun initialize() {
@@ -34,13 +34,13 @@ internal class RecurringKlarnaBehaviour constructor(
 
     override fun getUri(cancelUrl: String, returnUrl: String) {
         klarna.config.id?.let { id ->
-            tokenizationViewModel?.createKlarnaBillingAgreement(id, returnUrl, klarna)
+            tokenizationViewModel?.createKlarnaPaymentSession(id, returnUrl, klarna)
         }
     }
 
     override fun onSuccess(uri: Uri) {
         val klarnaAuthToken = uri.getQueryParameter("token") ?: ""
-        tokenizationViewModel?.handleKlarnaRequestResult(klarna, klarnaAuthToken)
+        tokenizationViewModel?.handleRecurringKlarnaRequestResult(klarna, klarnaAuthToken)
     }
 
     override fun onCancel(uri: Uri?) {

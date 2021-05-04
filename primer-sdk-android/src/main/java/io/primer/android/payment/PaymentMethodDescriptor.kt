@@ -1,22 +1,15 @@
 package io.primer.android.payment
 
-import android.content.Context
 import android.view.View
-import io.primer.android.PaymentMethod
-import io.primer.android.model.dto.CheckoutConfig
+import android.view.ViewGroup
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
-import io.primer.android.payment.card.CreditCard
-import io.primer.android.payment.gocardless.GoCardless
-import io.primer.android.payment.klarna.Klarna
-import io.primer.android.payment.paypal.PayPal
 import org.json.JSONObject
-import org.koin.core.component.KoinApiExtension
 import java.util.Collections
 
-internal abstract class PaymentMethodDescriptor(
+abstract class PaymentMethodDescriptor(
     val config: PaymentMethodRemoteConfig,
-    protected val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
+    private val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
 ) {
 
     abstract val identifier: String
@@ -28,7 +21,7 @@ internal abstract class PaymentMethodDescriptor(
     abstract val vaultCapability: VaultCapability
 
     // FIXME this should not be here. a model should not be responsible creating views
-    abstract fun createButton(context: Context): View
+    abstract fun createButton(container: ViewGroup): View
 
     // FIXME all this should not be here. a model should not be responsible for parsing itself into json
     protected fun getStringValue(key: String): String {
@@ -49,37 +42,5 @@ internal abstract class PaymentMethodDescriptor(
 
     open fun toPaymentInstrument(): JSONObject {
         return values
-    }
-}
-
-@KoinApiExtension
-internal class PaymentMethodDescriptorFactory {
-
-    fun create(
-        checkoutConfig: CheckoutConfig,
-        paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
-        paymentMethod: PaymentMethod,
-    ): PaymentMethodDescriptor? {
-        // TODO: hate this - think of a better way
-        return when (paymentMethodRemoteConfig.type) {
-            PAYMENT_CARD_IDENTIFIER -> CreditCard(
-                paymentMethodRemoteConfig,
-                paymentMethod as PaymentMethod.Card
-            )
-            PAYPAL_IDENTIFIER -> PayPal(
-                paymentMethodRemoteConfig,
-                paymentMethod as PaymentMethod.PayPal
-            )
-            GOCARDLESS_IDENTIFIER -> GoCardless(
-                paymentMethodRemoteConfig,
-                paymentMethod as PaymentMethod.GoCardless
-            )
-            KLARNA_IDENTIFIER -> Klarna(
-                checkoutConfig,
-                paymentMethod as PaymentMethod.Klarna,
-                paymentMethodRemoteConfig
-            )
-            else -> null
-        }
     }
 }

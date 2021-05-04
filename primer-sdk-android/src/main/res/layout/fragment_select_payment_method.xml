@@ -18,14 +18,14 @@
 
         <TextView
             android:id="@+id/primer_sheet_title"
+            style="@style/Primer.Text.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Primer.Text.Title"
             android:textIsSelectable="true" />
-
 
     </io.primer.android.ui.SelectPaymentMethodTitle>
 
+    <!-- TODO consider recyclerview here -->
     <LinearLayout
         android:id="@+id/primer_sheet_payment_methods_list"
         android:layout_width="match_parent"
@@ -41,12 +41,12 @@
         android:id="@+id/choose_payment_method_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/choose_payment_method"
         android:textColor="@android:color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:fontFamily="@font/roboto_medium"
-        android:textSize="20sp"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/saved_payment_method_label"
@@ -73,10 +73,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/large_vertical_margin"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/see_all"
         android:textAllCaps="true"
         android:textColor="@color/primer_button_primary"
-        android:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="@+id/saved_payment_method"
         app:layout_constraintStart_toStartOf="@+id/saved_payment_method"
         app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
@@ -90,6 +90,5 @@
         android:textColor="@color/primer_text_color_muted"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/see_all_label" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

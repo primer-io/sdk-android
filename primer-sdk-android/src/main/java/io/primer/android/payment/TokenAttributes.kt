@@ -52,7 +52,7 @@ internal abstract class TokenAttributes private constructor(
     companion object {
 
         fun create(token: PaymentMethodTokenInternal): TokenAttributes? {
-            // TODO: hate this - change it
+            // FIXME this is tightly coupled to each payment type
             return when (token.paymentInstrumentType) {
                 PAYMENT_CARD_TYPE -> PaymentCardAttributes(token)
                 PAYPAL_BILLING_AGREEMENT_TYPE -> PayPalBillingAgreementAttributes(token)

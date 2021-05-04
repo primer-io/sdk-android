@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -40,9 +39,9 @@ class GoCardlessViewFragment : FormFragment() {
     private lateinit var tokenizationViewModel: TokenizationViewModel
     private var readyToTokenize = false
 
-    private val options: PaymentMethod.GoCardless
+    private val options: GoCardless
         // FIXME a getter should never rely on the viewmodel
-        get() = (primerViewModel.selectedPaymentMethod.value as GoCardless).options
+        get() = (primerViewModel.selectedPaymentMethod.value as GoCardlessDescriptor).options
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
