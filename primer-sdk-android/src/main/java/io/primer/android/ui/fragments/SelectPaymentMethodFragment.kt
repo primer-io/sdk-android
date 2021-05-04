@@ -29,10 +29,15 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         fun newInstance() = SelectPaymentMethodFragment()
     }
 
+    private val checkoutConfig: CheckoutConfig by inject()
+
     private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
 
-    private val checkoutConfig: CheckoutConfig by inject()
+    private lateinit var titleLabel: TextView
+    private lateinit var lastFourLabel: TextView
+    private lateinit var expiryLabel: TextView
+    private lateinit var iconView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +53,11 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
     private fun renderAlternativeSavedPaymentMethodView(view: View, title: String?) {
-        listOf(R.id.title_label, R.id.last_four_label, R.id.expiry_label)
-            .forEach { view.findViewById<TextView>(it).isVisible = false }
+        listOf(titleLabel, lastFourLabel, expiryLabel).forEach {
+            it.isVisible = false
+        }
 
-        view.findViewById<TextView>(R.id.title_label).apply {
+        titleLabel.apply {
             isVisible = true
             text = title
         }
@@ -70,20 +76,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun toggleSavedPaymentMethodViewVisibility(view: View, listIsEmpty: Boolean) {
-        val items = listOf(
-            R.id.saved_payment_method_label,
-            R.id.saved_payment_method,
-            R.id.see_all_label,
-            R.id.other_ways_to_pay_label,
-        )
-        items.forEach {
-            view.findViewById<View>(it).isVisible = !listIsEmpty
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        titleLabel = view.findViewById(R.id.title_label)
+        lastFourLabel = view.findViewById(R.id.last_four_label)
+        expiryLabel = view.findViewById(R.id.expiry_label)
+        iconView = view.findViewById(R.id.payment_method_icon)
+
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
 
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
@@ -124,22 +124,46 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun updateVaultedMethodsUi(paymentMethods: List<PaymentMethodTokenInternal>) {
-        val view = this.view ?: return
-
-        toggleSavedPaymentMethodViewVisibility(view, paymentMethods.isEmpty())
+        if (paymentMethods.isEmpty()) {
+            hideSavedPaymentMethodView()
+        } else {
+            showSavedPaymentMethodView()
+        }
 
         if (paymentMethods.isEmpty()) return
 
         val method: PaymentMethodTokenInternal = paymentMethods.first()
-        val titleLabel = view.findViewById<TextView>(R.id.title_label)
-        val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
-        val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
-        val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
+        updateSelectedPaymentMethod(method)
+    }
 
-        when (method.paymentInstrumentType) {
+    private fun showSavedPaymentMethodView() {
+        toggleSavedPaymentMethodViewVisibility(false)
+    }
+
+    private fun hideSavedPaymentMethodView() {
+        toggleSavedPaymentMethodViewVisibility(true)
+    }
+
+    private fun toggleSavedPaymentMethodViewVisibility(listIsEmpty: Boolean) {
+        val view = this.view ?: return
+        val items = listOf(
+            R.id.saved_payment_method_label,
+            R.id.saved_payment_method,
+            R.id.see_all_label,
+            R.id.other_ways_to_pay_label,
+        )
+        items.forEach {
+            view.findViewById<View>(it).isVisible = !listIsEmpty
+        }
+    }
+
+    private fun updateSelectedPaymentMethod(paymentMethod: PaymentMethodTokenInternal) {
+        val view = this.view ?: return
+
+        when (paymentMethod.paymentInstrumentType) {
             "KLARNA_CUSTOMER_TOKEN" -> {
                 val title =
-                    method.paymentInstrumentData?.sessionData?.billingAddress?.email
+                    paymentMethod.paymentInstrumentData?.sessionData?.billingAddress?.email
                 renderAlternativeSavedPaymentMethodView(view, title)
                 iconView.setImageResource(R.drawable.ic_klarna_card)
             }
@@ -148,7 +172,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 iconView.setImageResource(R.drawable.ic_directdebit_card)
             }
             "PAYMENT_CARD" -> {
-                val data = method.paymentInstrumentData
+                val data = paymentMethod.paymentInstrumentData
                 titleLabel.text = data?.cardholderName
                 val last4: Int = data?.last4Digits ?: 0
                 lastFourLabel.text = getString(R.string.last_four, last4)
