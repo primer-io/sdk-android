@@ -104,7 +104,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             container.requestLayout()
         }
 
-        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+        primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
 
             // the views for displaying the saved payment method should not be visible
             // if the customer has not added any.
