@@ -10,24 +10,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="@dimen/primer_form_title_margin"
-        >
-        <ImageView
-            android:id="@+id/card_form_go_back"
-            android:clickable="true"
-            android:focusable="true"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/primer_form_title_margin" >
+
+        <TextView
+            style="@style/Primer.Text.Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/enter_card_details" />
+
+        <Button
+            android:id="@+id/nav_cancel_button"
+            style="@style/Primer.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/go_back_description"
-            android:src="@drawable/icon_go_back"
-            android:layout_marginEnd="24dp"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Primer.Text.Title"
-            android:text="@string/enter_card_details"
-            />
+            android:gravity="center_vertical|end"
+            android:text="@string/cancel" />
     </LinearLayout>
 
     <io.primer.android.ui.components.TextInputWidget

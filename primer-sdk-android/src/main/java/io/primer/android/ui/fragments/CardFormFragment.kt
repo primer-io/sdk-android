@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -42,7 +43,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private lateinit var inputs: Map<String, TextInputEditText>
     private lateinit var submitButton: ButtonPrimary
-    private lateinit var goBackButton: ImageView
+    private lateinit var cancelButton: Button
 
     private lateinit var errorText: TextView
     private lateinit var viewModel: PrimerViewModel
@@ -76,7 +77,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
         )
         submitButton = view.findViewById(R.id.card_form_submit_button)
-        goBackButton = view.findViewById(R.id.card_form_go_back)
+        cancelButton = view.findViewById(R.id.nav_cancel_button)
         errorText = view.findViewById(R.id.card_form_error_message)
 
         tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
@@ -129,7 +130,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             }
         }
 
-        goBackButton.setOnClickListener {
+        cancelButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
