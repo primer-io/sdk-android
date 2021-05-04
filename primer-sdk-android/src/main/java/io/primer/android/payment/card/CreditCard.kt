@@ -1,10 +1,10 @@
 package io.primer.android.payment.card
 
-import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
-import io.primer.android.PaymentMethod
 import io.primer.android.R
 import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
@@ -33,10 +33,9 @@ internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 @KoinApiExtension
 internal class CreditCard(
     config: PaymentMethodRemoteConfig,
-    private val options: PaymentMethod.Card, // FIXME why's this here? it's unused
+    private val options: Card,
     encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
-) : PaymentMethodDescriptor(config, encodedAsJson),
-    DIAppComponent { // FIXME why is this implementing a di component?
+) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent {
 
     private val checkoutConfig: CheckoutConfig by inject()
 
@@ -51,14 +50,17 @@ internal class CreditCard(
 
     override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 
-    override fun createButton(context: Context): View {
-        val button = View.inflate(context, R.layout.payment_method_button_card, null)
+    override fun createButton(container: ViewGroup): View {
+        val button = LayoutInflater.from(container.context).inflate(
+            R.layout.payment_method_button_card,
+            container,
+            false
+        )
         val text = button.findViewById<TextView>(R.id.card_preview_button_text)
 
         text.text = when (checkoutConfig.uxMode) {
-            UXMode.CHECKOUT -> context.getString(R.string.pay_by_card)
-            UXMode.VAULT -> context.getString(R.string.add_card)
-            else -> ""
+            UXMode.CHECKOUT -> container.context.getString(R.string.pay_by_card)
+            UXMode.VAULT -> container.context.getString(R.string.add_card)
         }
 
         return button
@@ -130,7 +132,7 @@ internal class CreditCard(
                     fieldId = R.string.card_cvv
                 )
             )
-        } else if (cvv.length != number.getCVVLength()) {
+        } else if (cvv.length != number.getCvvLength()) {
             errors.add(
                 SyncValidationError(
                     name = CARD_CVV_FIELD_NAME,

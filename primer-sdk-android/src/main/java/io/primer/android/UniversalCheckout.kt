@@ -6,6 +6,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.Serialization
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.ClientSession
@@ -13,7 +14,6 @@ import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import io.primer.android.model.json
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinApiExtension
 import java.util.Locale
 
-internal enum class UXMode {
+enum class UXMode {
     CHECKOUT,
     VAULT,
 }
@@ -69,7 +69,9 @@ object UniversalCheckout {
             }
             .build()
 
-        val model = Model(decodedToken, config, okHttpClient)
+        val json = Serialization.json
+
+        val model = Model(decodedToken, config, okHttpClient, json)
 
         checkout = InternalUniversalCheckout(model, Dispatchers.IO, clientToken, locale, theme)
     }
@@ -106,8 +108,8 @@ object UniversalCheckout {
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
-        amount: Int,
-        currency: String,
+        amount: Int? = null,
+        currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -220,8 +222,8 @@ internal class InternalUniversalCheckout constructor(
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
-        amount: Int,
-        currency: String,
+        amount: Int? = null,
+        currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -279,6 +281,9 @@ internal class InternalUniversalCheckout constructor(
             currency = currency,
             theme = theme,
         )
+
+        paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
+        val json = Serialization.json
 
         Intent(context, CheckoutSheetActivity::class.java)
             .apply {

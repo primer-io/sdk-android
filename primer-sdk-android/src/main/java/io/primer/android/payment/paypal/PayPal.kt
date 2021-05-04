@@ -1,46 +1,50 @@
 package io.primer.android.payment.paypal
 
 import android.content.Context
-import android.view.View
-import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.PaymentMethod
-import io.primer.android.R
-import io.primer.android.UXMode
-import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
-import io.primer.android.payment.SelectedPaymentMethodBehaviour
-import io.primer.android.payment.VaultCapability
-import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.inject
+import io.primer.android.PaymentMethodModule
+import io.primer.android.model.dto.ClientSession
+import io.primer.android.payment.PAYPAL_IDENTIFIER
+import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
+import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
-@KoinApiExtension
-internal class PayPal constructor(
-    config: PaymentMethodRemoteConfig,
-    private val options: PaymentMethod.PayPal,
-) : PaymentMethodDescriptor(config), DIAppComponent {
+@Serializable
+class PayPal : PaymentMethod {
 
-    private val checkoutConfig: CheckoutConfig by inject()
+    override val identifier: String = PAYPAL_IDENTIFIER
 
-    override val identifier: String
-        get() = PAYPAL_IDENTIFIER
-
-    override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (checkoutConfig.uxMode == UXMode.VAULT) {
-            PayPalBillingAgreementBehaviour(this)
-        } else {
-            PayPalOrderBehaviour(this)
+    @Transient
+    override val module: PaymentMethodModule = object : PaymentMethodModule {
+        override fun initialize(applicationContext: Context, clientSession: ClientSession) {
+            // no-op
         }
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.SIMPLE_BUTTON
+        override fun registerPaymentMethodCheckers(
+            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+        ) {
+            // no-op
+        }
 
-    override val vaultCapability: VaultCapability
-        get() = VaultCapability.SINGLE_USE_AND_VAULT
+        override fun registerPaymentMethodDescriptorFactory(
+            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+        ) {
+            paymentMethodDescriptorFactoryRegistry.register(
+                PAYPAL_IDENTIFIER,
+                PayPalPaymentMethodDescriptorFactory()
+            )
+        }
+    }
+    override val serializersModule: SerializersModule
+        get() = payPalSerializationModule
+}
 
-    override fun createButton(context: Context): View {
-        return View.inflate(context, R.layout.payment_method_button_paypal, null)
+private val payPalSerializationModule: SerializersModule = SerializersModule {
+    polymorphic(PaymentMethod::class) {
+        subclass(PayPal::class)
     }
 }

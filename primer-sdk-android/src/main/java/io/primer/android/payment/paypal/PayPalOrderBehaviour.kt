@@ -6,7 +6,7 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class PayPalOrderBehaviour(
-    private val paypal: PayPal,
+    private val paypal: PayPalDescriptor,
 ) : WebBrowserIntentBehaviour() {
 
     override fun initialize() {

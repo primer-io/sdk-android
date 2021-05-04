@@ -1,12 +1,14 @@
 package io.primer.android.viewmodel
 
 import android.net.Uri
+import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
@@ -16,7 +18,8 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.klarna.Klarna
+import io.primer.android.payment.google.GooglePayDescriptor
+import io.primer.android.payment.klarna.KlarnaDescriptor
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -26,6 +29,13 @@ import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
 internal class TokenizationViewModel : ViewModel(), DIAppComponent {
+
+    companion object {
+
+        fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
+            return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
+        }
+    }
 
     private var paymentMethod: PaymentMethodDescriptor? = null
 
@@ -101,13 +111,33 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         _tokenizationCanceled.postValue(Unit)
     }
 
+    // region GOOGLE PAY
+    fun handleGooglePayRequestResult(paymentData: PaymentData?, googlePay: GooglePayDescriptor?) {
+        val paymentInformation = paymentData?.toJson() ?: return
+        val paymentMethodData = JSONObject(paymentInformation).getJSONObject("paymentMethodData")
+        val token = paymentMethodData
+            .getJSONObject("tokenizationData")
+            .getString("token")
+
+        val merchantId = googlePay?.merchantId ?: return
+
+        val base64Token = Base64.encodeToString(token.toByteArray(), Base64.NO_WRAP)
+
+        googlePay.setTokenizableValue("merchantId", merchantId)
+        googlePay.setTokenizableValue("encryptedPayload", base64Token)
+        googlePay.setTokenizableValue("flow", "GATEWAY")
+
+        tokenize()
+    }
+    // endregion
+
     // region KLARNA
-    fun createKlarnaBillingAgreement(id: String, returnUrl: String, klarna: Klarna) {
+    fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: KlarnaDescriptor) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
                 val countryCode = checkoutConfig.locale.country
-                val currencyCode = checkoutConfig.monetaryAmount?.currency
                 val locale = checkoutConfig.locale.toLanguageTag()
+                val currencyCode = checkoutConfig.monetaryAmount?.currency
 
                 put("countryCode", countryCode)
                 put("currencyCode", currencyCode)
@@ -146,7 +176,11 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     val hppRedirectUrl = result.data.getString("hppRedirectUrl")
                     val sessionId = result.data.getString("sessionId")
                     klarnaPaymentData.postValue(
-                        KlarnaPaymentData(hppRedirectUrl, klarnaReturnUrl, sessionId)
+                        KlarnaPaymentData(
+                            redirectUrl = hppRedirectUrl,
+                            returnUrl = klarnaReturnUrl,
+                            sessionId = sessionId
+                        )
                     )
                 }
                 is OperationResult.Error -> {
@@ -156,7 +190,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    fun handleKlarnaRequestResult(redirectUrl: String?, klarna: Klarna?) {
+    fun handleKlarnaRequestResult(klarna: KlarnaDescriptor?, redirectUrl: String?) {
         // TODO move uri parsing to collaborator
         val uri = Uri.parse(redirectUrl)
         val klarnaAuthToken = uri.getQueryParameter("token")
@@ -171,7 +205,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
     }
 
-    fun handleKlarnaRequestResult(klarna: Klarna?, klarnaAuthToken: String) {
+    fun handleRecurringKlarnaRequestResult(klarna: KlarnaDescriptor?, klarnaAuthToken: String) {
 
         if (klarna == null || klarna.config.id == null) {
             // TODO error: missing fields
@@ -181,11 +215,11 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
     }
 
-    private fun vaultKlarnaPayment(id: String, token: String, klarna: Klarna) {
+    fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
         val localeData = JSONObject().apply {
             val countryCode = checkoutConfig.locale.country
-            val currencyCode = checkoutConfig.monetaryAmount?.currency
             val locale = checkoutConfig.locale.toLanguageTag()
+            val currencyCode = checkoutConfig.monetaryAmount?.currency
 
             put("countryCode", countryCode)
             put("currencyCode", currencyCode)
@@ -218,7 +252,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     // endregion
 
     // region PAYPAL
-    // TODO: move these payal things somewhere else
     fun createPayPalBillingAgreement(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
@@ -299,11 +332,4 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
     // endregion
-
-    companion object {
-
-        fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
-            return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
-        }
-    }
 }

@@ -2,5 +2,9 @@
 <resources>
     <style name="Primer.Text.Title" parent="Primer.Text.Large">
         <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">roboto</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 </resources>
