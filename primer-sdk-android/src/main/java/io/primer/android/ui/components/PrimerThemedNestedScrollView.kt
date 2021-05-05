@@ -9,8 +9,8 @@ import io.primer.android.di.DIAppComponent
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension // FIXME rename to PrimerNestedScrollView
-class NestedScrollViewSurface(
+@KoinApiExtension
+class PrimerThemedNestedScrollView(
     context: Context,
     attrs: AttributeSet? = null,
 ) : NestedScrollView(context, attrs), DIAppComponent {
