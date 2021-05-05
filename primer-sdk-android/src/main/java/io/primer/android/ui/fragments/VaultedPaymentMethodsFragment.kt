@@ -11,7 +11,6 @@ import io.primer.android.payment.TokenAttributes
 import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
@@ -83,12 +82,12 @@ class VaultedPaymentMethodsFragment : Fragment() {
             }
 
             if (views.isEmpty()) {
-                gotoSelectPaymentMethod()
+                viewModel.goToVaultedPaymentMethodsView()
             }
         }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
-            gotoSelectPaymentMethod()
+            viewModel.goToVaultedPaymentMethodsView()
         }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_add_card).setOnClickListener {
@@ -106,13 +105,10 @@ class VaultedPaymentMethodsFragment : Fragment() {
         view.findViewById<View>(R.id.edit_vaulted_payment_methods_go_back).setOnClickListener {
             isEditing = false
         }
+
         view.findViewById<View>(R.id.edit_vaulted_payment_methods_done).setOnClickListener {
             isEditing = false
         }
-    }
-
-    private fun gotoSelectPaymentMethod() {
-        viewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
     }
 
     companion object {

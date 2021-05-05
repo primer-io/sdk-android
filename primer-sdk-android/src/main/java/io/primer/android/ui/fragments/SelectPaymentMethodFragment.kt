@@ -17,7 +17,6 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -82,10 +81,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun goToVaultedPaymentMethods() {
-        primerViewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-    }
-
     private fun setupUiIfVaultMode(view: View) {
         if (checkoutConfig.uxMode == UXMode.VAULT) {
             view.findViewById<TextView>(R.id.primer_sheet_title).isVisible = false
@@ -119,7 +114,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
 
         view.findViewById<TextView>(R.id.see_all_label).setOnClickListener {
-            goToVaultedPaymentMethods()
+            primerViewModel.goToVaultedPaymentMethodsView()
         }
 
         setupUiIfVaultMode(view)

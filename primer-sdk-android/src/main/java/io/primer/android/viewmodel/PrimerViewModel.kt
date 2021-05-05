@@ -77,6 +77,14 @@ internal class PrimerViewModel(
     private val _selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
     val selectedPaymentMethod: LiveData<PaymentMethodDescriptor?> = _selectedPaymentMethod
 
+    fun goToVaultedPaymentMethodsView() {
+        viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+    }
+
+    fun goToSelectPaymentMethodsView() {
+        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+    }
+
     fun selectPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
         _selectedPaymentMethod.value = paymentMethodDescriptor
     }
