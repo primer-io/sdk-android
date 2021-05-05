@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -34,10 +36,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
 
+    private lateinit var motionLayout: MotionLayout
     private lateinit var titleLabel: TextView
     private lateinit var lastFourLabel: TextView
     private lateinit var expiryLabel: TextView
     private lateinit var iconView: ImageView
+    private lateinit var payAllButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,10 +83,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        motionLayout = view.findViewById(R.id.motionLayout)
         titleLabel = view.findViewById(R.id.title_label)
         lastFourLabel = view.findViewById(R.id.last_four_label)
         expiryLabel = view.findViewById(R.id.expiry_label)
         iconView = view.findViewById(R.id.payment_method_icon)
+//        payAllButton = view.findViewById(R.id.payAllButton)
 
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
 
@@ -120,6 +126,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
+
+            if (it.isSelected) {
+                motionLayout.transitionToState(R.id.end)
+            } else {
+                motionLayout.transitionToState(R.id.start)
+            }
         }
     }
 

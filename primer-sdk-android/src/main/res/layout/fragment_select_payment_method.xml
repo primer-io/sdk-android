@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/medium_padding">
+    app:layoutDescription="@xml/fragment_select_payment_method_scene"
+    tools:showPaths="true">
 
     <io.primer.android.ui.SelectPaymentMethodTitle
         android:id="@+id/primer_sheet_title_layout"
@@ -38,34 +40,27 @@
 
     <TextView
         android:id="@+id/choose_payment_method_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_medium"
         android:text="@string/choose_payment_method"
         android:textColor="@android:color/black"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/saved_payment_method_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_vertical_margin"
+        android:layout_marginEnd="@dimen/small_padding"
         android:text="@string/saved_payment_methods"
         android:textColor="@color/primer_text_color_muted"
+        app:layout_constraintEnd_toStartOf="@id/see_all_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout" />
-
-    <include
-        android:id="@+id/saved_payment_method"
-        layout="@layout/payment_method_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_vertical_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
 
     <TextView
         android:id="@+id/see_all_label"
@@ -76,18 +71,40 @@
         android:text="@string/see_all"
         android:textAllCaps="true"
         android:textColor="@color/primer_button_primary"
-        app:layout_constraintEnd_toEndOf="@id/saved_payment_method"
-        app:layout_constraintStart_toStartOf="@id/saved_payment_method"
-        app:layout_constraintTop_toBottomOf="@id/saved_payment_method" />
+        app:layout_constraintBaseline_toBaselineOf="@id/saved_payment_method_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/saved_payment_method_label" />
+
+    <Button
+        android:id="@+id/payAllButton"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:stateListAnimator="@null"
+        android:text="pay £466"
+        app:layout_constraintBottom_toTopOf="@id/other_ways_to_pay_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
+
+    <include
+        android:id="@+id/saved_payment_method"
+        layout="@layout/payment_method_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/medium_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
 
     <TextView
         android:id="@+id/other_ways_to_pay_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_vertical_margin"
         android:text="@string/available_payment_methods"
         android:textColor="@color/primer_text_color_muted"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/see_all_label" />
+        app:layout_constraintTop_toBottomOf="@id/payAllButton" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

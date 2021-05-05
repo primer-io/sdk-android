@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onError(error: VolleyError) {
         Log.e("ExampleApp", "Volley Error when getting client token: $error")
-        Log.e("ExampleApp", String(error.networkResponse.data))
+        Log.e("ExampleApp", String(error.networkResponse.data ?: byteArrayOf()))
     }
 }
 
