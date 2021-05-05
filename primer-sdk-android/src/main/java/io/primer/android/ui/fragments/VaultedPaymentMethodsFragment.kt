@@ -99,15 +99,15 @@ class VaultedPaymentMethodsFragment : Fragment() {
             }
         }
 
-        listOf(
-            R.id.edit_vaulted_payment_methods,
-            R.id.edit_vaulted_payment_methods_go_back,
-            R.id.edit_vaulted_payment_methods_done,
-        ).forEach {
-            isEditing = when (it) {
-                R.id.edit_vaulted_payment_methods -> true
-                else -> false
-            }
+        view.findViewById<View>(R.id.edit_vaulted_payment_methods).setOnClickListener {
+            isEditing = true
+        }
+
+        view.findViewById<View>(R.id.edit_vaulted_payment_methods_go_back).setOnClickListener {
+            isEditing = false
+        }
+        view.findViewById<View>(R.id.edit_vaulted_payment_methods_done).setOnClickListener {
+            isEditing = false
         }
     }
 

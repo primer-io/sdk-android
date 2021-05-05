@@ -86,6 +86,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         primerViewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
     }
 
+    private fun setupUiIfVaultMode(view: View) {
+        if (checkoutConfig.uxMode == UXMode.VAULT) {
+            view.findViewById<TextView>(R.id.primer_sheet_title).isVisible = false
+            view.findViewById<TextView>(R.id.choose_payment_method_label).text =
+                context?.getString(R.string.add_new_payment_method)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
@@ -114,12 +122,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             goToVaultedPaymentMethods()
         }
 
-        // set vault title if UX mode is vault & hide amount label
-        if (checkoutConfig.uxMode == UXMode.VAULT) {
-            view.findViewById<TextView>(R.id.primer_sheet_title).isVisible = false
-            view.findViewById<TextView>(R.id.choose_payment_method_label).text =
-                context?.getString(R.string.add_new_payment_method)
-        }
+        setupUiIfVaultMode(view)
 
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
 
