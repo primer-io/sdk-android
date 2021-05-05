@@ -82,12 +82,12 @@ class VaultedPaymentMethodsFragment : Fragment() {
             }
 
             if (views.isEmpty()) {
-                viewModel.goToVaultedPaymentMethodsView()
+                viewModel.goToSelectPaymentMethodsView()
             }
         }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
-            viewModel.goToVaultedPaymentMethodsView()
+            viewModel.goToSelectPaymentMethodsView()
         }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_add_card).setOnClickListener {
