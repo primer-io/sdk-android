@@ -1,6 +1,5 @@
 package io.primer.android.ui.fragments
 
-import android.animation.AnimatorSet
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
