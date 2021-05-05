@@ -110,6 +110,14 @@ apply from: "$rootDir/config/analysis.gradle"
 //apply from: "$rootDir/config/publish.gradle"
 apply plugin: "com.vanniktech.maven.publish"
 
+allprojects {
+    plugins.withId("com.vanniktech.maven.publish") {
+        mavenPublish {
+            sonatypeHost = "S01"
+        }
+    }
+}
+
 task detektProjectBaseline(type: io.gitlab.arturbosch.detekt.DetektCreateBaselineTask) {
     description = "Overrides current baseline."
     ignoreFailures.set(true)
