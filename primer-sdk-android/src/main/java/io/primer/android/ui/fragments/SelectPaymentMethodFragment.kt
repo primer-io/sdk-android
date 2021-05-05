@@ -1,5 +1,6 @@
 package io.primer.android.ui.fragments
 
+import android.animation.AnimatorSet
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +42,10 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private lateinit var lastFourLabel: TextView
     private lateinit var expiryLabel: TextView
     private lateinit var iconView: ImageView
+    private lateinit var savedPaymentMethod: ViewGroup
     private lateinit var payAllButton: Button
+    private lateinit var otherWaysPayLabel: TextView
+    private lateinit var paymentMethodsContainer: ViewGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,13 +92,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         lastFourLabel = view.findViewById(R.id.last_four_label)
         expiryLabel = view.findViewById(R.id.expiry_label)
         iconView = view.findViewById(R.id.payment_method_icon)
-//        payAllButton = view.findViewById(R.id.payAllButton)
-
-        val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
+        savedPaymentMethod = view.findViewById(R.id.saved_payment_method)
+        payAllButton = view.findViewById(R.id.payAllButton)
+        otherWaysPayLabel = view.findViewById(R.id.other_ways_to_pay_label)
+        paymentMethodsContainer = view.findViewById(R.id.primer_sheet_payment_methods_list)
 
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             paymentMethods.forEach { paymentMethod ->
-                val button: View = paymentMethod.createButton(container)
+                val button: View = paymentMethod.createButton(paymentMethodsContainer)
 
                 button.layoutParams = button.layoutParams.apply {
                     val layoutParams = this as LinearLayout.LayoutParams
@@ -102,14 +107,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                         resources.getDimensionPixelSize(R.dimen.primer_list_margin)
                 }
 
-                container.addView(button)
+                paymentMethodsContainer.addView(button)
 
                 button.setOnClickListener {
                     primerViewModel.selectPaymentMethod(paymentMethod)
                 }
             }
 
-            container.requestLayout()
+            paymentMethodsContainer.requestLayout()
         }
 
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
@@ -128,9 +133,27 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
 
             if (it.isSelected) {
-                motionLayout.transitionToState(R.id.end)
+                // motionLayout.transitionToState(R.id.end)
+
+                val height = payAllButton.height.toFloat()
+                val payAnimator = payAllButton.animate().translationYBy(height)
+                val paymentMethodsContainerAnimator =
+                    paymentMethodsContainer.animate().translationYBy(height)
+                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
+                payAnimator.start()
+                paymentMethodsContainerAnimator.start()
+                otherWaysPayLabelAnimator.start()
             } else {
-                motionLayout.transitionToState(R.id.start)
+                // motionLayout.transitionToState(R.id.start)
+
+                val height = -payAllButton.height.toFloat()
+                val payAnimator = payAllButton.animate().translationYBy(height)
+                val paymentMethodsContainerAnimator =
+                    paymentMethodsContainer.animate().translationYBy(height)
+                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
+                payAnimator.start()
+                paymentMethodsContainerAnimator.start()
+                otherWaysPayLabelAnimator.start()
             }
         }
     }

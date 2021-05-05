@@ -26,18 +26,6 @@
             android:textIsSelectable="true" />
     </io.primer.android.ui.SelectPaymentMethodTitle>
 
-    <!-- TODO consider recyclerview here -->
-    <LinearLayout
-        android:id="@+id/primer_sheet_payment_methods_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_vertical_margin"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
-
     <TextView
         android:id="@+id/choose_payment_method_label"
         android:layout_width="0dp"
@@ -106,5 +94,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/payAllButton" />
+
+    <!-- TODO consider recyclerview here -->
+    <LinearLayout
+        android:id="@+id/primer_sheet_payment_methods_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/medium_vertical_margin"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
