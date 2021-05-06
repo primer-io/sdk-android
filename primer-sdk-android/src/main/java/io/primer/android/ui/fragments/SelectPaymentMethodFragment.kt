@@ -132,27 +132,27 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
 
             if (it.isSelected) {
-                // motionLayout.transitionToState(R.id.end)
+                motionLayout.transitionToState(R.id.end)
 
-                val height = payAllButton.height.toFloat()
-                val payAnimator = payAllButton.animate().translationYBy(height)
-                val paymentMethodsContainerAnimator =
-                    paymentMethodsContainer.animate().translationYBy(height)
-                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
-                payAnimator.start()
-                paymentMethodsContainerAnimator.start()
-                otherWaysPayLabelAnimator.start()
+//                val height = payAllButton.height.toFloat()
+//                val payAnimator = payAllButton.animate().translationYBy(height)
+//                val paymentMethodsContainerAnimator =
+//                    paymentMethodsContainer.animate().translationYBy(height)
+//                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
+//                payAnimator.start()
+//                paymentMethodsContainerAnimator.start()
+//                otherWaysPayLabelAnimator.start()
             } else {
-                // motionLayout.transitionToState(R.id.start)
+                motionLayout.transitionToState(R.id.start)
 
-                val height = -payAllButton.height.toFloat()
-                val payAnimator = payAllButton.animate().translationYBy(height)
-                val paymentMethodsContainerAnimator =
-                    paymentMethodsContainer.animate().translationYBy(height)
-                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
-                payAnimator.start()
-                paymentMethodsContainerAnimator.start()
-                otherWaysPayLabelAnimator.start()
+//                val height = -payAllButton.height.toFloat()
+//                val payAnimator = payAllButton.animate().translationYBy(height)
+//                val paymentMethodsContainerAnimator =
+//                    paymentMethodsContainer.animate().translationYBy(height)
+//                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
+//                payAnimator.start()
+//                paymentMethodsContainerAnimator.start()
+//                otherWaysPayLabelAnimator.start()
             }
         }
     }

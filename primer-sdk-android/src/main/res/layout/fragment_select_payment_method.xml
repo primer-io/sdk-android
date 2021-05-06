@@ -3,10 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/motionLayout"
+    android:maxHeight="200dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/fragment_select_payment_method_scene"
     tools:showPaths="true">
+
+    <TextView
+        android:id="@+id/choose_payment_method_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:text="@string/choose_payment_method"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <io.primer.android.ui.SelectPaymentMethodTitle
         android:id="@+id/primer_sheet_title_layout"
@@ -25,18 +38,6 @@
             android:layout_height="wrap_content"
             android:textIsSelectable="true" />
     </io.primer.android.ui.SelectPaymentMethodTitle>
-
-    <TextView
-        android:id="@+id/choose_payment_method_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_medium"
-        android:text="@string/choose_payment_method"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/saved_payment_method_label"
@@ -102,7 +103,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_vertical_margin"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
