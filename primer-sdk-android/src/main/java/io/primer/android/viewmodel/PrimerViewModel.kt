@@ -62,6 +62,8 @@ internal class PrimerViewModel(
     private val log = Logger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
 
+    private var selectedPaymentMethodId: String = ""
+
     val keyboardVisible = MutableLiveData(false)
 
     val viewStatus: MutableLiveData<ViewStatus> =
@@ -108,6 +110,14 @@ internal class PrimerViewModel(
         subscription = EventBus.subscribe(this)
     }
 
+    fun setSelectedPaymentMethodId(id: String) {
+        selectedPaymentMethodId = id
+    }
+
+    fun getSelectedPaymentMethodId(): String {
+        return selectedPaymentMethodId
+    }
+
     private fun initializePaymentMethodModules(
         locallyConfiguredPaymentMethods: List<PaymentMethod>,
         clientSession: ClientSession,
@@ -126,6 +136,10 @@ internal class PrimerViewModel(
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
                 vaultedPaymentMethods.postValue(paymentModelTokens)
+
+                if (selectedPaymentMethodId.isEmpty() && paymentModelTokens.isNotEmpty()) {
+                    setSelectedPaymentMethodId(paymentModelTokens[0].token)
+                }
 
                 val descriptors: List<PaymentMethodDescriptor> =
                     paymentMethodDescriptorResolver.resolve(clientSession)

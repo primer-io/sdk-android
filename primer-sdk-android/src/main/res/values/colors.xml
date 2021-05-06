@@ -9,6 +9,7 @@
     <color name="primer_app_primary">#FF2C98F0</color>
     <color name="primer_app_primary_muted">#402C98F0</color>
     <color name="primer_app_danger">#FFEB001B</color>
+    <color name="primer_android_red">#FFFF1744</color>
 
     <color name="primer_button_primary">@color/primer_app_primary</color>
     <color name="primer_button_primary_fg">@android:color/white</color>

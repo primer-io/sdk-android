@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-        UniversalCheckout.showCheckout(
+        UniversalCheckout.showVault(
             context = this,
             amount = 200,
             currency = "GBP",

@@ -127,7 +127,13 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
             if (paymentMethods.isEmpty()) return@observe
 
-            val method = paymentMethods[0]
+            val id = primerViewModel.getSelectedPaymentMethodId()
+
+            // select new id if can't find selected id
+            val method = paymentMethods.find { it.token == id } ?: paymentMethods[0]
+
+            primerViewModel.setSelectedPaymentMethodId(method.token)
+
             val titleLabel = view.findViewById<TextView>(R.id.title_label)
             val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
             val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)

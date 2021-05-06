@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:clipChildren="false"
     android:orientation="vertical">
 
@@ -31,6 +32,7 @@
             android:paddingEnd="11dp">
 
             <TextView
+                android:id="@+id/vault_title_label"
                 style="@style/Primer.Text.Title.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -90,19 +92,11 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/vaulted_payment_methods_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/vault_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:orientation="vertical" />
+        tools:itemCount="3"
+        tools:listitem="@layout/payment_method_item_vault"/>
 
-    <Button
-        android:id="@+id/vaulted_payment_methods_add_card"
-        style="@style/Primer.Button.Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="62dp"
-        android:gravity="start|center_vertical"
-        android:text="@string/add_card" />
 </LinearLayout>
