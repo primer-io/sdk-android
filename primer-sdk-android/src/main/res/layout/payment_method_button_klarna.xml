@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_preview_button"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/primer_payment_method_preview_button_height"
+    android:paddingTop="2sp"
     android:background="@drawable/button_light"
     android:backgroundTint="@color/klarna"
     android:clickable="true"
@@ -13,7 +14,7 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/primer_payment_method_preview_button_height"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/klarna"
         android:src="@drawable/ic_klarna" />
 </io.primer.android.ui.components.ButtonDefaultLayout>

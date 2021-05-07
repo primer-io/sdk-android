@@ -18,8 +18,20 @@
     <dimen name="primer_text_size_md">18sp</dimen>
     <dimen name="primer_text_size_sm">16sp</dimen>
     <dimen name="primer_text_size_button">14sp</dimen>
+    <dimen name="primer_text_size_s">12sp</dimen>
     <dimen name="primer_text_size_xs">10sp</dimen>
 
     <!--  Payment methods  -->
-    <dimen name="primer_payment_method_preview_button_height">50dp</dimen>
+    <dimen name="primer_payment_method_preview_button_height">48sp</dimen>
+
+    <!--  Universal Checkout view  -->
+    <dimen name="small_padding">4dp</dimen>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="medium_large_padding">10dp</dimen>
+
+    <dimen name="medium_vertical_margin">8dp</dimen>
+    <dimen name="large_vertical_margin">16dp</dimen>
+
+    <dimen name="elevation_selected">5dp</dimen>
+    <dimen name="elevation_unselected">0dp</dimen>
 </resources>

@@ -2,36 +2,50 @@ package io.primer.android.viewmodel
 
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodDescriptorFactory
-import org.koin.core.component.KoinApiExtension
+import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 
-@KoinApiExtension
-internal class PaymentMethodDescriptorResolver constructor(
-    private val checkoutConfig: CheckoutConfig,
-    private val configured: List<PaymentMethod>,
-    private val paymentMethodRemoteConfigs: List<PaymentMethodRemoteConfig>,
-    private val paymentMethodDescriptorFactory: PaymentMethodDescriptorFactory,
-) {
+internal interface PaymentMethodDescriptorResolver {
 
-    fun resolve(): List<PaymentMethodDescriptor> {
+    suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> = emptyList()
+}
+
+internal class PrimerPaymentMethodDescriptorResolver(
+    private val localConfig: CheckoutConfig,
+    private val localPaymentMethods: List<PaymentMethod>,
+    private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+    private val availabilityCheckers: PaymentMethodCheckerRegistry,
+) : PaymentMethodDescriptorResolver {
+
+    override suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> {
+        val remotePaymentMethods = clientSession.paymentMethods
         val list = ArrayList<PaymentMethodDescriptor>()
 
-        paymentMethodRemoteConfigs.forEach { paymentMethodRemoteConfig ->
-            configured
+        remotePaymentMethods.forEach { paymentMethodRemoteConfig ->
+            localPaymentMethods
                 .find { it.identifier == paymentMethodRemoteConfig.type }
+                ?.takeUnlessUnavailable(clientSession)
                 ?.let {
-                    paymentMethodDescriptorFactory
+                    paymentMethodDescriptorFactoryRegistry
                         .create(
-                            checkoutConfig = checkoutConfig,
+                            checkoutConfig = localConfig,
                             paymentMethodRemoteConfig = paymentMethodRemoteConfig,
                             paymentMethod = it,
                         )
-                        ?.let { paymentMethodDescriptor -> list.add(paymentMethodDescriptor) }
                 }
+                ?.let { list.add(it) }
         }
 
         return list
     }
+
+    private suspend fun PaymentMethod.takeUnlessUnavailable(clientSession: ClientSession) =
+        takeUnless {
+            val checker = availabilityCheckers[identifier]
+            checker != null && !checker.shouldPaymentMethodBeAvailable(
+                paymentMethod = this,
+                clientSession = clientSession,
+            )
+        }
 }

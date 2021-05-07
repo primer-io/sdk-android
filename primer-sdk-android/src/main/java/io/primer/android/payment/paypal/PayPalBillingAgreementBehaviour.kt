@@ -7,7 +7,7 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class PayPalBillingAgreementBehaviour constructor(
-    private val paypal: PayPal,
+    private val paypal: PayPalDescriptor,
 ) : WebBrowserIntentBehaviour() {
 
     private val log = Logger("paypal.billingagreement")

@@ -94,8 +94,9 @@
         <item name="android:textSize">@dimen/primer_text_size_xs</item>
     </style>
 
-    <style name="Primer.Text.Title" parent="Primer.Text.Large">
-        <!--        <item name="android:textFontWeight">500</item>-->
+    <style name="primer_title">
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="fontWeight">600</item>
     </style>
 
     <style name="Primer.FormInput.Layout" parent="Widget.Design.TextInputLayout">

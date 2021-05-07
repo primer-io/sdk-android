@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import java.util.Currency
 
 @Serializable
-internal class MonetaryAmount private constructor(
+class MonetaryAmount private constructor(
     val value: Int,
     val currency: String,
 ) {
@@ -12,22 +12,17 @@ internal class MonetaryAmount private constructor(
     companion object {
 
         // FIXME it doesn't make sense to have a static factory method returning a null
-        fun create(currency: String? = null, value: Int? = null): MonetaryAmount? {
-            if (currency == null || value == null) {
-                return null
+        fun create(currency: String? = null, value: Int? = null): MonetaryAmount? =
+            when {
+                currency == null || value == null -> null
+                value <= 0 -> null // TODO: handle invalid input
+                else ->
+                    try {
+                        MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
+                    } catch (e: IllegalArgumentException) {
+                        // TODO: handle invalid currency code
+                        null
+                    }
             }
-
-            if (value <= 0) {
-                // TODO: handle invalid input
-                return null
-            }
-
-            return try {
-                MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
-            } catch (e: IllegalArgumentException) {
-                // TODO: handle invalid currency code
-                null
-            }
-        }
     }
 }

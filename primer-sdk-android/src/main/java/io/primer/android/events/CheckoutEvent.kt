@@ -5,7 +5,7 @@ import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.PaymentMethodToken
 
-abstract class CheckoutEvent(
+sealed class CheckoutEvent(
     val type: CheckoutEventType,
     val public: Boolean,
 ) {

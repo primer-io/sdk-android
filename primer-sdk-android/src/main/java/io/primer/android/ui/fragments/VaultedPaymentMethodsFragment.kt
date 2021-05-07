@@ -11,7 +11,6 @@ import io.primer.android.payment.TokenAttributes
 import io.primer.android.ui.VaultedPaymentMethodView
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
@@ -49,7 +48,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? =
         inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
 
@@ -62,44 +61,40 @@ class VaultedPaymentMethodsFragment : Fragment() {
         )
         editHeaderLinearLayout = view.findViewById(R.id.primer_edit_vaulted_payment_methods_header)
 
-        viewModel.vaultedPaymentMethods.observe(
-            viewLifecycleOwner,
-            { paymentMethods ->
-                views.forEach {
-                    paymentMethodsLinearLayout.removeView(it.getView())
-                }
+        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+            views.forEach { paymentMethodsLinearLayout.removeView(it.getView()) }
+            views.clear()
 
-                views.clear()
+            paymentMethods.forEach { paymentMethodToken ->
+                val attributes = TokenAttributes.create(paymentMethodToken)
 
-                paymentMethods.forEach { paymentMethodToken ->
-                    val attributes = TokenAttributes.create(paymentMethodToken)
+                attributes?.let { attrs ->
+                    val paymentMethodView = VaultedPaymentMethodView(requireContext(), attrs)
 
-                    attributes?.let { attrs ->
-                        val paymentMethodView = VaultedPaymentMethodView(requireContext(), attrs)
-
-                        paymentMethodView.setOnDeleteListener {
-                            tokenizationViewModel.deleteToken(paymentMethodToken)
-                        }
-
-                        views.add(paymentMethodView)
-                        paymentMethodView.setEditable(isEditing)
-                        paymentMethodsLinearLayout.addView(paymentMethodView.getView())
+                    paymentMethodView.setOnDeleteListener {
+                        tokenizationViewModel.deleteToken(paymentMethodToken)
                     }
-                }
 
-                if (views.isEmpty()) {
-                    gotoSelectPaymentMethod()
+                    views.add(paymentMethodView)
+                    paymentMethodView.setEditable(isEditing)
+                    paymentMethodsLinearLayout.addView(paymentMethodView.getView())
                 }
             }
-        )
+
+            if (views.isEmpty()) {
+                viewModel.goToSelectPaymentMethodsView()
+            }
+        }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
-            gotoSelectPaymentMethod()
+            viewModel.goToSelectPaymentMethodsView()
         }
 
         view.findViewById<View>(R.id.vaulted_payment_methods_add_card).setOnClickListener {
+            // FIXME this is looking for a PAYMENT_CARD_IDENTIFIER method, if there is none (for ex.
+            //  merchant has not set it up) it will do nothing
             viewModel.paymentMethods.value?.find { it.identifier == PAYMENT_CARD_IDENTIFIER }?.let {
-                viewModel.setSelectedPaymentMethod(it)
+                viewModel.selectPaymentMethod(it)
             }
         }
 
@@ -107,17 +102,13 @@ class VaultedPaymentMethodsFragment : Fragment() {
             isEditing = true
         }
 
-        // TODO: should these do something different?
         view.findViewById<View>(R.id.edit_vaulted_payment_methods_go_back).setOnClickListener {
             isEditing = false
         }
+
         view.findViewById<View>(R.id.edit_vaulted_payment_methods_done).setOnClickListener {
             isEditing = false
         }
-    }
-
-    private fun gotoSelectPaymentMethod() {
-        viewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
     }
 
     companion object {

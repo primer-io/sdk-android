@@ -1,6 +1,5 @@
 package io.primer.android.ui
 
-import io.primer.android.logging.Logger
 import java.util.Calendar
 import kotlin.math.min
 
@@ -17,8 +16,6 @@ internal class ExpiryDateFormatter(
     private var year: String = "",
     private var separator: Boolean = false,
 ) {
-
-    private val log = Logger("expiry-date")
 
     override fun toString(): String {
         return buildString {
@@ -163,18 +160,13 @@ internal class ExpiryDateFormatter(
             return sanitized
         }
 
-        private fun parseYear(str: String): String {
-            val sanitized = str.trim()
-
-            if (sanitized.isEmpty()) {
-                return sanitized
+        private fun parseYear(year: String): String {
+            val sanitized = year.trim()
+            return when {
+                sanitized.isEmpty() -> sanitized
+                sanitized.length > 2 -> sanitized.substring(0, 2)
+                else -> sanitized
             }
-
-            if (sanitized.length > 2) {
-                return sanitized.substring(0, 2)
-            }
-
-            return sanitized
         }
     }
 }

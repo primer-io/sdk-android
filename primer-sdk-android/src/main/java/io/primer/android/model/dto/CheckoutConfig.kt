@@ -12,7 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 import java.util.Locale
 
 @Serializable
-internal data class CheckoutConfig(
+data class CheckoutConfig(
     val clientToken: String,
     val packageName: String,
     val uxMode: UXMode,

@@ -5,7 +5,7 @@ import kotlinx.serialization.json.JsonObject
 import java.util.Collections
 
 @Serializable
-internal data class PaymentMethodRemoteConfig(
+data class PaymentMethodRemoteConfig(
     val id: String? = null, // FIXME how come id can be null but not the other fields?
     val type: String, // FIXME what is this?
 
