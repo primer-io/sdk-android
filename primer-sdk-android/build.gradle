@@ -2,7 +2,6 @@ buildscript {
     repositories {
         mavenCentral()
         google()
-        jcenter() // livedata-testing has not migrated yet, once it does this has to be removed
     }
 
     dependencies {
@@ -37,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation Dependencies.Kotlin.Serialization.core
     implementation Dependencies.Kotlin.Serialization.json
 
@@ -74,6 +73,7 @@ dependencies {
 
 repositories {
     google()
+    jcenter() // livedata-testing has not migrated yet, once it does this has to be removed
     mavenCentral()
 }
 
