@@ -13,7 +13,6 @@ class DebugActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_debug)
 
-        motionLayout = findViewById(R.id.motionLayout)
         findViewById<ConstraintLayout>(R.id.saved_payment_method).setOnClickListener {
             when (motionLayout.currentState) {
                 motionLayout.startState -> motionLayout.transitionToEnd()

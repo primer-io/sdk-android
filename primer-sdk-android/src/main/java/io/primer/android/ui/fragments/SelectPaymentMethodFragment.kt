@@ -86,7 +86,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        motionLayout = view.findViewById(R.id.motionLayout)
         titleLabel = view.findViewById(R.id.title_label)
         lastFourLabel = view.findViewById(R.id.last_four_label)
         expiryLabel = view.findViewById(R.id.expiry_label)
@@ -132,27 +131,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
 
             if (it.isSelected) {
-                motionLayout.transitionToState(R.id.end)
-
-//                val height = payAllButton.height.toFloat()
-//                val payAnimator = payAllButton.animate().translationYBy(height)
-//                val paymentMethodsContainerAnimator =
-//                    paymentMethodsContainer.animate().translationYBy(height)
-//                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
-//                payAnimator.start()
-//                paymentMethodsContainerAnimator.start()
-//                otherWaysPayLabelAnimator.start()
+                // TODO
             } else {
-                motionLayout.transitionToState(R.id.start)
-
-//                val height = -payAllButton.height.toFloat()
-//                val payAnimator = payAllButton.animate().translationYBy(height)
-//                val paymentMethodsContainerAnimator =
-//                    paymentMethodsContainer.animate().translationYBy(height)
-//                val otherWaysPayLabelAnimator = otherWaysPayLabel.animate().translationYBy(height)
-//                payAnimator.start()
-//                paymentMethodsContainerAnimator.start()
-//                otherWaysPayLabelAnimator.start()
+                // TODO
             }
         }
     }
