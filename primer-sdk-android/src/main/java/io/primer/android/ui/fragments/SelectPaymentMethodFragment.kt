@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -36,7 +35,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
 
-    private lateinit var motionLayout: MotionLayout
     private lateinit var titleLabel: TextView
     private lateinit var lastFourLabel: TextView
     private lateinit var expiryLabel: TextView
