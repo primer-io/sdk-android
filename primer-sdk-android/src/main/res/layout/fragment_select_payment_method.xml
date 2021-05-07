@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/motionLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:layoutDescription="@xml/fragment_select_payment_method_scene"
     tools:showPaths="true">
 
@@ -16,9 +16,9 @@
         android:text="@string/choose_payment_method"
         android:textColor="@android:color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/primer_sheet_title_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <io.primer.android.ui.SelectPaymentMethodTitle
         android:id="@+id/primer_sheet_title_layout"
@@ -26,9 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/large_vertical_margin"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/saved_payment_method_label"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/choose_payment_method_label">
 
         <TextView
             android:id="@+id/primer_sheet_title"
@@ -46,9 +46,9 @@
         android:layout_marginEnd="@dimen/small_padding"
         android:text="@string/saved_payment_methods"
         android:textColor="@color/primer_text_color_muted"
-        app:layout_constraintBottom_toTopOf="@+id/saved_payment_method"
         app:layout_constraintEnd_toStartOf="@id/see_all_label"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout" />
 
     <TextView
         android:id="@+id/see_all_label"
@@ -69,9 +69,10 @@
         android:layout_height="36dp"
         android:stateListAnimator="@null"
         android:text="pay £466"
-        app:layout_constraintBottom_toBottomOf="@id/saved_payment_method"
+        app:layout_constraintBottom_toTopOf="@id/other_ways_to_pay_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
 
     <include
         android:id="@+id/saved_payment_method"
@@ -79,9 +80,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_vertical_margin"
-        app:layout_constraintBottom_toTopOf="@+id/other_ways_to_pay_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
 
     <TextView
         android:id="@+id/other_ways_to_pay_label"
@@ -90,19 +91,20 @@
         android:layout_marginTop="@dimen/medium_vertical_margin"
         android:text="@string/available_payment_methods"
         android:textColor="@color/primer_text_color_muted"
-        app:layout_constraintBottom_toTopOf="@+id/primer_sheet_payment_methods_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/payAllButton" />
 
     <!-- TODO consider recyclerview here -->
     <LinearLayout
         android:id="@+id/primer_sheet_payment_methods_list"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_vertical_margin"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
