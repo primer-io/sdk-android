@@ -22,6 +22,10 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
 
+const val DEFAULT_LAST_FOUR: Int = 1234
+const val DEFAULT_MONTH: Int = 1
+const val DEFAULT_YEAR: Int = 2021
+
 @KoinApiExtension
 class VaultedPaymentMethodsFragment : Fragment() {
 
@@ -66,7 +70,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
     }
 
     private fun generateItemDataFromPaymentMethods(
-        paymentMethods: List<PaymentMethodTokenInternal>
+        paymentMethods: List<PaymentMethodTokenInternal>,
     ): List<PaymentMethodItemData> {
         return paymentMethods.map {
             when (it.paymentInstrumentType) {
@@ -78,14 +82,12 @@ class VaultedPaymentMethodsFragment : Fragment() {
                     ApmData("Direct Debit Mandate", it.token)
                 }
                 "PAYMENT_CARD" -> {
-                    CardData(
-                        it.paymentInstrumentData?.cardholderName ?: "unknown",
-                        it.paymentInstrumentData?.last4Digits ?: 1234,
-                        it.paymentInstrumentData?.expirationMonth ?: 1,
-                        it.paymentInstrumentData?.expirationYear ?: 2021,
-                        it.paymentInstrumentData?.network ?: "unknown",
-                        it.token,
-                    )
+                    val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
+                    val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
+                    val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
+                    val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
+                    val network = it.paymentInstrumentData?.network ?: "unknown"
+                    CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
                 }
                 else -> {
                     ApmData("title", it.token)

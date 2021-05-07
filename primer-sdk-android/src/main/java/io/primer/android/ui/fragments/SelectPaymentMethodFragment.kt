@@ -14,6 +14,7 @@ import io.primer.android.R
 import io.primer.android.UXMode
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -89,6 +90,40 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
+    private fun configureSavedPaymentMethodView(view: View, method: PaymentMethodTokenInternal) {
+        val titleLabel = view.findViewById<TextView>(R.id.title_label)
+        val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
+        val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
+        val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
+
+        when (method.paymentInstrumentType) {
+            "KLARNA_CUSTOMER_TOKEN" -> {
+                val title =
+                    method.paymentInstrumentData?.sessionData?.billingAddress?.email
+                renderAlternativeSavedPaymentMethodView(view, title)
+                iconView.setImageResource(R.drawable.ic_klarna_card)
+            }
+            "GOCARDLESS_MANDATE" -> {
+                renderAlternativeSavedPaymentMethodView(view, "Direct Debit")
+                iconView.setImageResource(R.drawable.ic_directdebit_card)
+            }
+            "PAYMENT_CARD" -> {
+                val data = method.paymentInstrumentData
+                titleLabel.text = data?.cardholderName
+                val last4: Int = data?.last4Digits ?: 0
+                lastFourLabel.text = getString(R.string.last_four, last4)
+                expiryLabel.text = formatExpiryDate(
+                    data?.expirationYear,
+                    data?.expirationMonth
+                )
+                setCardIcon(view, data?.network)
+            }
+            else -> {
+                iconView.setImageResource(R.drawable.ic_generic_card)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val container: ViewGroup = view.findViewById(R.id.primer_sheet_payment_methods_list)
@@ -121,8 +156,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
 
-            // the views for displaying the saved payment method should not be visible
-            // if the customer has not added any.
             toggleSavedPaymentMethodViewVisibility(view, paymentMethods.isEmpty())
 
             if (paymentMethods.isEmpty()) return@observe
@@ -134,37 +167,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
             primerViewModel.setSelectedPaymentMethodId(method.token)
 
-            val titleLabel = view.findViewById<TextView>(R.id.title_label)
-            val lastFourLabel = view.findViewById<TextView>(R.id.last_four_label)
-            val expiryLabel = view.findViewById<TextView>(R.id.expiry_label)
-            val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
-
-            when (method.paymentInstrumentType) {
-                "KLARNA_CUSTOMER_TOKEN" -> {
-                    val title =
-                        method.paymentInstrumentData?.sessionData?.billingAddress?.email
-                    renderAlternativeSavedPaymentMethodView(view, title)
-                    iconView.setImageResource(R.drawable.ic_klarna_card)
-                }
-                "GOCARDLESS_MANDATE" -> {
-                    renderAlternativeSavedPaymentMethodView(view, "Direct Debit")
-                    iconView.setImageResource(R.drawable.ic_directdebit_card)
-                }
-                "PAYMENT_CARD" -> {
-                    val data = method.paymentInstrumentData
-                    titleLabel.text = data?.cardholderName
-                    val last4: Int = data?.last4Digits ?: 0
-                    lastFourLabel.text = getString(R.string.last_four, last4)
-                    expiryLabel.text = formatExpiryDate(
-                        data?.expirationYear,
-                        data?.expirationMonth
-                    )
-                    setCardIcon(view, data?.network)
-                }
-                else -> {
-                    iconView.setImageResource(R.drawable.ic_generic_card)
-                }
-            }
+            configureSavedPaymentMethodView(view, method)
         }
 
         view.findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).apply {
