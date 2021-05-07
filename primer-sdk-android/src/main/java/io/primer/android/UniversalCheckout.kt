@@ -57,7 +57,6 @@ object UniversalCheckout {
                 else HttpLoggingInterceptor.Level.NONE
         }
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json")
@@ -67,6 +66,7 @@ object UniversalCheckout {
                     .build()
                     .let { chain.proceed(it) }
             }
+            .addInterceptor(httpLoggingInterceptor)
             .build()
 
         val json = Serialization.json

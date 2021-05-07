@@ -21,13 +21,6 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
         single<ClientToken> { ClientToken.fromString(get<CheckoutConfig>().clientToken) }
         single<OkHttpClient> {
             OkHttpClient.Builder()
-                .addInterceptor(
-                    HttpLoggingInterceptor().apply {
-                        level =
-                            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-                            else HttpLoggingInterceptor.Level.NONE
-                    }
-                )
                 .addInterceptor { chain: Interceptor.Chain ->
                     chain.request().newBuilder()
                         .addHeader("Content-Type", "application/json")
@@ -37,6 +30,13 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
                         .build()
                         .let { chain.proceed(it) }
                 }
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level =
+                            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                            else HttpLoggingInterceptor.Level.NONE
+                    }
+                )
                 .build()
         }
         single<Json> { Serialization.json }
