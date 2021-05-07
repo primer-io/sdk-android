@@ -22,32 +22,6 @@ apply plugin: 'kotlinx-serialization'
 apply from: "$rootDir/config/android-common.gradle"
 apply from: "$rootDir/config/test-dependencies.gradle"
 
-ext {
-    userOrganisation = 'primer-api'
-
-    bintrayRepo = 'android'
-    bintrayName = 'io.primer.android'
-
-    publishedGroupId = 'io.primer.android'
-    libraryName = 'android'
-    artifact = 'android'
-
-    libraryDescription = 'Primer SDK for Android'
-
-    siteUrl = 'https://github.com/primer-io/primer-sdk-android'
-    gitUrl = 'https://github.com/primer-io/primer-sdk-android.git'
-
-    libraryVersion = '1.0.0-beta.14'
-
-    developerId = 'primer-api'
-    developerName = 'Primer Developers'
-    developerEmail = 'developers@primerapi.com'
-
-    licenseName = 'MIT'
-    licenseUrl = 'https://tldrlegal.com/license/mit-license#fulltext'
-    allLicenses = ["MIT"]
-}
-
 android {
     buildTypes {
         release {
@@ -108,4 +82,3 @@ subprojects {
 
 apply from: "$rootDir/config/analysis.gradle"
 apply from: "$rootDir/config/publish.gradle"
-
