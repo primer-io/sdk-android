@@ -89,13 +89,6 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             errorText.text = requireContext().getText(R.string.payment_method_error)
             errorText.visibility = View.VISIBLE
         }
-        tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) { paymentMethodToken ->
-            if (paymentMethodToken != null) {
-                if (checkoutConfig.uxMode == UXMode.VAULT) {
-                    viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-                }
-            }
-        }
 
         tokenizationViewModel.validationErrors.observe(
             viewLifecycleOwner,
@@ -228,12 +221,11 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun onUXModeChanged(mode: UXMode) {
         submitButton.text = when (mode) {
-            UXMode.VAULT -> requireContext().getString(R.string.confirm)
+            UXMode.VAULT -> requireContext().getString(R.string.add_card)
             UXMode.CHECKOUT -> PayAmountText.generate(
                 requireContext(),
                 checkoutConfig.monetaryAmount
             )
-            else -> ""
         }
     }
 
