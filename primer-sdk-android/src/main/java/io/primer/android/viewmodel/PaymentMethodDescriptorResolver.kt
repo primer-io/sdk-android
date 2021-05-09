@@ -1,10 +1,12 @@
 package io.primer.android.viewmodel
 
 import io.primer.android.PaymentMethod
+import io.primer.android.UXMode
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
+import io.primer.android.payment.PaymentMethodType
 
 internal interface PaymentMethodDescriptorResolver {
 
@@ -33,6 +35,10 @@ internal class PrimerPaymentMethodDescriptorResolver(
                             paymentMethodRemoteConfig = paymentMethodRemoteConfig,
                             paymentMethod = it,
                         )
+                }
+                ?.takeUnless {
+                    // filter non-vaulted payment methods if ux mode is vault.
+                    it.config.type == "GOOGLE_PAY" && localConfig.uxMode == UXMode.VAULT
                 }
                 ?.let { list.add(it) }
         }
