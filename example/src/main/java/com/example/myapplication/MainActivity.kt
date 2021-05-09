@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity() {
                         "ExampleApp",
                         "TokenizationSuccess: ${event.data.tokenType} ${event.data.token}"
                     )
+                    Handler(Looper.getMainLooper()).post {
+                        UniversalCheckout.showSuccess(autoDismissDelay = 2500)
+                    }
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
@@ -104,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card))
+        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card, paypal))
 
         showCheckout()
 
@@ -149,7 +152,6 @@ class ClientTokenRequest(
     override fun getBody(): ByteArray {
         val body = """
             {
-                "staging": true,
                 "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
                 "checkout": {
                     "paymentFlow": "PREFER_VAULT"

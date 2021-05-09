@@ -16,5 +16,6 @@
     <color name="primer_button_disabled">#1F000000</color>
 
     <color name="paypal_gold">#FFFFC439</color>
+    <color name="paypal_blue">#FFBEE4FE</color>
     <color name="klarna">#FFB3C7</color>
 </resources>
