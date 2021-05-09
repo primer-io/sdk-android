@@ -26,7 +26,6 @@ import io.primer.android.ui.components.ButtonPrimary
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.Collections

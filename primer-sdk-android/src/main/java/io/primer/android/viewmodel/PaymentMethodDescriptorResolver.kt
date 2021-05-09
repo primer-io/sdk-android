@@ -6,7 +6,6 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
-import io.primer.android.payment.PaymentMethodType
 
 internal interface PaymentMethodDescriptorResolver {
 
