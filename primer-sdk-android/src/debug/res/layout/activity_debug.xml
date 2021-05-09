@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:padding="8dp">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/primer_app_danger" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <include layout="@layout/fragment_select_payment_method" />
+        <Button
+            style="@style/Primer.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Primary.Button.Text" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/primer_app_danger" />
-
-</LinearLayout>
+        <Button
+            style="@style/Primer.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Primary.Button.Text" />
+    </LinearLayout>
+</ScrollView>
