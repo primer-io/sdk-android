@@ -135,6 +135,7 @@ internal class PrimerViewModel(
         when (val result = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
+
                 vaultedPaymentMethods.postValue(paymentModelTokens)
 
                 if (getSelectedPaymentMethodId().isEmpty() && paymentModelTokens.isNotEmpty()) {
@@ -160,12 +161,7 @@ internal class PrimerViewModel(
 
     private fun getInitialViewStatus(
         vaultedPaymentMethods: List<PaymentMethodTokenInternal>,
-    ): ViewStatus =
-        if (vaultedPaymentMethods.isNotEmpty()) {
-            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-        } else {
-            ViewStatus.SELECT_PAYMENT_METHOD
-        }
+    ): ViewStatus = ViewStatus.SELECT_PAYMENT_METHOD
 
     override fun onCleared() {
         super.onCleared()
