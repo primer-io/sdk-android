@@ -60,17 +60,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/saved_payment_method_label" />
 
-    <Button
-        android:id="@+id/payAllButton"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:stateListAnimator="@null"
-        android:text="pay £466"
-        app:layout_constraintBottom_toTopOf="@id/other_ways_to_pay_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
-
     <include
         android:id="@+id/saved_payment_method"
         layout="@layout/payment_method_item"
@@ -80,6 +69,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
+
+    <io.primer.android.ui.components.PayButton
+        android:id="@+id/payAllButton"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/pay_button_height"
+        android:layout_marginTop="@dimen/medium_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/saved_payment_method" />
 
     <TextView
         android:id="@+id/other_ways_to_pay_label"

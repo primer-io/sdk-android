@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/saved_payment_method_item"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    tools:layout_margin="8dp">
 
     <TextView
         android:id="@+id/title_label"
@@ -23,8 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/payment_method_icon"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/test_mail_com"
-        tools:visibility="invisible" />
+        tools:text="@string/test_mail_com" />
 
     <TextView
         android:id="@+id/last_four_label"
@@ -60,6 +60,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H,2:3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/ic_visa_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

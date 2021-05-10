@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.AppCompat.PrimerUniversalCheckout" parent="Theme.AppCompat">
+    <style name="Theme.AppCompat.PrimerUniversalCheckout" parent="Theme.MaterialComponents">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
@@ -12,6 +12,7 @@
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/primer_app_primary</item>
         <item name="bottomSheetDialogTheme">@style/Primer.BottomSheet</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Primer.NewButton</item>
     </style>
 
     <style name="Theme.AppCompat.WebView" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -38,6 +39,65 @@
     <style name="Primer.BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
     </style>
+
+    <!-- region TextAppearance -->
+    <style name="TextAppearance.Primer" parent="Primer.Text" />
+    <!-- endregion -->
+
+    <!-- region Button -->
+    <style name="Primer.Button.Overlay">
+        <item name="colorPrimary">@color/primer_button_primary</item>
+    </style>
+
+    <style name="TextAppearance.Primer.NewButton">
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="fontWeight">500</item>
+    </style>
+
+    <style name="TextAppearance.Primer.NewButton.Pay">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="fontWeight">500</item>
+    </style>
+
+    <style name="Primer.NewButton" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/Primer.Button.Overlay</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Primer.NewButton</item>
+    </style>
+
+    <style name="Primer.NewButton.Primary">
+        <item name="android:textColor">@color/button_primary_text_color</item>
+        <item name="backgroundTint">@color/button_primary_color</item>
+    </style>
+
+    <style name="Primer.NewButton.Pay" parent="Primer.NewButton.Primary">
+        <item name="android:textAppearance">@style/TextAppearance.Primer.NewButton.Pay</item>
+    </style>
+    <!-- endregion -->
+
+    <!-- region progress indicator -->
+    <style name="Primer.ProgressIndicator" />
+
+    <style name="Primer.ProgressIndicator.Circular" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="indicatorColor">?colorPrimary</item>
+        <item name="showAnimationBehavior">inward</item>
+        <item name="hideAnimationBehavior">outward</item>
+        <item name="showDelay">0</item>
+        <item name="minHideDelay">30</item>
+        <item name="indicatorSize">28dp</item>
+        <item name="indicatorInset">4dp</item>
+        <item name="indicatorDirectionCircular">clockwise</item>
+    </style>
+
+    <style name="Primer.ProgressIndicator.Circular.Small" parent="Widget.MaterialComponents.CircularProgressIndicator.Small" />
+    <!-- endregion -->
 
     <style name="Primer.Button" />
 
@@ -82,7 +142,7 @@
 
     <style name="Primer.Text.FormLabelSmall">
         <item name="android:textColor">@color/primer_text_color_muted</item>
-        <item name="android:textSize">11dp</item>
+        <item name="android:textSize">11sp</item>
     </style>
 
     <style name="Primer.Text.Small.Muted" parent="Primer.Text.Small">
