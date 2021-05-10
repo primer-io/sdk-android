@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import io.primer.android.R
+import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.MonetaryAmount
@@ -34,6 +35,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private val checkoutConfig: CheckoutConfig by inject()
+    private val theme: UniversalCheckoutTheme by inject()
 
     private lateinit var primerViewModel: PrimerViewModel
     private lateinit var tokenizationViewModel: TokenizationViewModel
@@ -96,6 +98,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         otherWaysPayLabel = view.findViewById(R.id.other_ways_to_pay_label)
         paymentMethodsContainer = view.findViewById(R.id.primer_sheet_payment_methods_list)
 
+        payAllButton.setTheme(theme)
+
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             paymentMethods.forEach { paymentMethod ->
                 val button: View = paymentMethod.createButton(paymentMethodsContainer)
@@ -131,9 +135,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
 
-//            val monetaryAmount = MonetaryAmount.create("", null).apply {
-//                //setUxMode(checkoutConfig.uxMode)
-//            }
             payAllButton.amount = checkoutConfig.monetaryAmount
 
             if (it.isSelected) {

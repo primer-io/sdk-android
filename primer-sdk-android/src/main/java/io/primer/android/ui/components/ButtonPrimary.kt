@@ -66,6 +66,7 @@ class ButtonPrimary(ctx: Context, attrs: AttributeSet) :
                         android.R.attr.state_pressed
                     }
                 ),
+                // FIXME default value should come from resources
                 IntArray(1) { Color.parseColor("#FFFFFFFF") },
             ),
             GradientDrawable().apply {

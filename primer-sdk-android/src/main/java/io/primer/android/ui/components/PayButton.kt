@@ -2,6 +2,11 @@ package io.primer.android.ui.components
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Button
@@ -9,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.primer.android.R
+import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.model.dto.MonetaryAmount
 
 private const val FADE_IN_DURATION_MS = 900L
@@ -90,5 +96,29 @@ class PayButton @JvmOverloads constructor(
             .start()
         button.text = notLoadingText
         button.isEnabled = true
+    }
+
+    // copied over from ButtonPrimary, should be reworked alongside UniversalCheckoutTheme
+    fun setTheme(theme: UniversalCheckoutTheme) {
+        val buttonColor = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_pressed)),
+            intArrayOf(Color.parseColor("#FFFFFFFF")),
+        )
+        val content = GradientDrawable().apply {
+            cornerRadius = theme.buttonCornerRadius
+            color = ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_enabled),
+                    intArrayOf(-android.R.attr.state_enabled)
+                ),
+                intArrayOf(
+                    theme.buttonPrimaryColor,
+                    theme.buttonPrimaryColorDisabled,
+                    theme.buttonPrimaryColor
+                )
+            )
+            setStroke(1, theme.buttonDefaultBorderColor)
+        }
+        button.background = RippleDrawable(buttonColor, content, null)
     }
 }
