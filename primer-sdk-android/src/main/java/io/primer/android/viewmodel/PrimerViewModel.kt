@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
+import io.primer.android.UXMode
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -114,20 +115,21 @@ internal class PrimerViewModel(
         selectedPaymentMethodId.value = id
     }
 
-    fun getSelectedPaymentMethodId(): String {
-        return selectedPaymentMethodId.value ?: ""
-    }
+    fun getSelectedPaymentMethodId(): String = selectedPaymentMethodId.value ?: ""
 
     private fun initializePaymentMethodModules(
         locallyConfiguredPaymentMethods: List<PaymentMethod>,
         clientSession: ClientSession,
     ) {
         locallyConfiguredPaymentMethods.forEach { paymentMethod ->
-            paymentMethod.module.initialize(getApplication(), clientSession)
-            paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
-            paymentMethod.module.registerPaymentMethodDescriptorFactory(
-                paymentMethodDescriptorFactoryRegistry
-            )
+
+            if (checkoutConfig.uxMode == UXMode.VAULT && paymentMethod.canBeVaulted) {
+                paymentMethod.module.initialize(getApplication(), clientSession)
+                paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
+                paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                    paymentMethodDescriptorFactoryRegistry
+                )
+            }
         }
     }
 

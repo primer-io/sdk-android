@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.R
 
 enum class PaymentItemStatus {
-    Unselected, Selected, Editing
+    UNSELECTED, SELECTED, EDITING
 }
 
 sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -19,14 +19,14 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val checkIcon: ImageView = itemView.findViewById(R.id.check_icon)
         checkIcon.apply {
             when (status) {
-                PaymentItemStatus.Editing -> {
+                PaymentItemStatus.EDITING -> {
                     isInvisible = false
                     checkIcon.setImageResource(R.drawable.ic_delete)
                 }
-                PaymentItemStatus.Unselected -> {
+                PaymentItemStatus.UNSELECTED -> {
                     isInvisible = true
                 }
-                PaymentItemStatus.Selected -> {
+                PaymentItemStatus.SELECTED -> {
                     isInvisible = false
                     checkIcon.setImageResource(R.drawable.ic_check)
                 }
@@ -34,9 +34,9 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    class Apm(view: View) : ViewHolder(view) {
+    class AlternativePaymentMethod(view: View) : ViewHolder(view) {
 
-        fun bind(item: ApmData, status: PaymentItemStatus) {
+        fun bind(item: AlternativePaymentMethodData, status: PaymentItemStatus) {
             val titleLabel = itemView.findViewById<TextView>(R.id.title_label)
             val lastFourLabel = itemView.findViewById<TextView>(R.id.last_four_label)
             val expiryLabel: TextView = itemView.findViewById(R.id.expiry_label)
@@ -74,7 +74,7 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 interface PaymentMethodItemData
 
-data class ApmData(
+data class AlternativePaymentMethodData(
     val title: String,
     val tokenId: String,
 ) : PaymentMethodItemData
@@ -88,29 +88,50 @@ data class CardData(
     val tokenId: String,
 ) : PaymentMethodItemData
 
-private const val VIEW_TYPE_APM = 1
+private const val VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD = 1
 private const val VIEW_TYPE_CARD = 2
 
+enum class VaultViewAction {
+    SELECT, DELETE
+}
+
 class VaultedPaymentMethodRecyclerAdapter(
-    private val onSetSelectedWith: (String) -> Unit,
-    private val onDeleteSelectedWith: (id: String) -> Unit,
+    private val onClickWith: (id: String, action: VaultViewAction) -> Unit,
 ) : RecyclerView.Adapter<ViewHolder>() {
 
-    private var itemData: List<PaymentMethodItemData> = listOf()
-    private var selectedId: String = ""
-    private var isEditing: Boolean = false
+    var selectedPaymentMethodId: String? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    var itemData: List<PaymentMethodItemData> = listOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    var isEditing: Boolean = false
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     private fun getStatusForItemWith(id: String): PaymentItemStatus {
-        if (isEditing) return PaymentItemStatus.Editing
-        return if (selectedId == id) PaymentItemStatus.Selected else PaymentItemStatus.Unselected
+        if (isEditing) return PaymentItemStatus.EDITING
+        return if (selectedPaymentMethodId == id) {
+            PaymentItemStatus.SELECTED
+        } else {
+            PaymentItemStatus.UNSELECTED
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            VIEW_TYPE_APM -> {
+            VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD -> {
                 val view = inflater.inflate(R.layout.payment_method_item_vault, parent, false)
-                ViewHolder.Apm(view)
+                ViewHolder.AlternativePaymentMethod(view)
             }
             VIEW_TYPE_CARD -> {
                 val view = inflater.inflate(R.layout.payment_method_item_vault, parent, false)
@@ -120,31 +141,19 @@ class VaultedPaymentMethodRecyclerAdapter(
         }
     }
 
-    fun setEditingStatusAs(isEditing: Boolean) {
-        this.isEditing = isEditing
-        notifyDataSetChanged()
-    }
-
-    fun updateDataWith(itemData: List<PaymentMethodItemData>) {
-        this.itemData = itemData
-    }
-
-    fun setSelectedIdWith(id: String) {
-        this.selectedId = id
-    }
-
     private fun invokeListener(id: String) {
-        if (isEditing) onDeleteSelectedWith(id) else {
-            onSetSelectedWith(id)
-            setSelectedIdWith(id)
-            notifyDataSetChanged()
+        if (isEditing) {
+            onClickWith(id, VaultViewAction.DELETE)
+        } else {
+            onClickWith(id, VaultViewAction.SELECT)
+            selectedPaymentMethodId = id
         }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
-            is ViewHolder.Apm -> {
-                val item = itemData[position] as ApmData
+            is ViewHolder.AlternativePaymentMethod -> {
+                val item = itemData[position] as AlternativePaymentMethodData
                 holder.itemView.setOnClickListener {
                     invokeListener(item.tokenId)
                 }
@@ -163,7 +172,7 @@ class VaultedPaymentMethodRecyclerAdapter(
     override fun getItemViewType(position: Int): Int =
         when (itemData[position]) {
             is CardData -> VIEW_TYPE_CARD
-            is ApmData -> VIEW_TYPE_APM
+            is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
             else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
         }
 }

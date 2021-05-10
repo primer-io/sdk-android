@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.R
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import io.primer.android.ui.ApmData
+import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.CardData
 import io.primer.android.ui.PaymentMethodItemData
+import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -42,7 +43,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
         private set(value) {
             field = value
 
-            adapter.setEditingStatusAs(isEditing)
+            adapter.isEditing = isEditing
 
             view?.findViewById<TextView>(R.id.vault_title_label)?.apply {
                 text = if (isEditing) getString(R.string.edit_saved_payment_methods)
@@ -53,45 +54,43 @@ class VaultedPaymentMethodsFragment : Fragment() {
                 if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
         }
 
-    private var adapter: VaultedPaymentMethodRecyclerAdapter = VaultedPaymentMethodRecyclerAdapter(
-        ::onSetSelectedWith,
-        ::onDeleteSelectedWith,
-    )
+    private var adapter: VaultedPaymentMethodRecyclerAdapter =
+        VaultedPaymentMethodRecyclerAdapter(::onClickWith)
 
     private fun configureRecyclerView(view: View, paymentMethods: List<PaymentMethodItemData>) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.vault_recycler_view)
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
+        ContextCompat.getDrawable(requireContext(), R.drawable.divider)?.let {
+            itemDecorator.setDrawable(it)
+        }
         recyclerView.addItemDecoration(itemDecorator)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter.updateDataWith(paymentMethods)
-        adapter.setSelectedIdWith(viewModel.getSelectedPaymentMethodId())
+        adapter.itemData = paymentMethods
+        adapter.selectedPaymentMethodId = viewModel.getSelectedPaymentMethodId()
         recyclerView.adapter = adapter
     }
 
     private fun generateItemDataFromPaymentMethods(
         paymentMethods: List<PaymentMethodTokenInternal>,
-    ): List<PaymentMethodItemData> {
-        return paymentMethods.map {
-            when (it.paymentInstrumentType) {
-                "KLARNA_CUSTOMER_TOKEN" -> {
-                    val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
-                    ApmData(email ?: "Klarna Payment Method", it.token)
-                }
-                "GOCARDLESS_MANDATE" -> {
-                    ApmData("Direct Debit Mandate", it.token)
-                }
-                "PAYMENT_CARD" -> {
-                    val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
-                    val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
-                    val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
-                    val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
-                    val network = it.paymentInstrumentData?.network ?: "unknown"
-                    CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
-                }
-                else -> {
-                    ApmData("title", it.token)
-                }
+    ): List<PaymentMethodItemData> = paymentMethods.map {
+        when (it.paymentInstrumentType) {
+            "KLARNA_CUSTOMER_TOKEN" -> {
+                val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
+                AlternativePaymentMethodData(email ?: "Klarna Payment Method", it.token)
+            }
+            "GOCARDLESS_MANDATE" -> {
+                AlternativePaymentMethodData("Direct Debit Mandate", it.token)
+            }
+            "PAYMENT_CARD" -> {
+                val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
+                val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
+                val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
+                val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
+                val network = it.paymentInstrumentData?.network ?: "unknown"
+                CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
+            }
+            else -> {
+                AlternativePaymentMethodData("title", it.token)
             }
         }
     }
@@ -109,22 +108,30 @@ class VaultedPaymentMethodsFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? = inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
 
-    private fun onSetSelectedWith(id: String) = viewModel.setSelectedPaymentMethodId(id)
+    private fun onClickWith(id: String, action: VaultViewAction) {
+        when (action) {
+            VaultViewAction.SELECT -> viewModel.setSelectedPaymentMethodId(id)
+            VaultViewAction.DELETE -> onDeleteSelectedWith(id)
+        }
+    }
 
     private fun onDeleteSelectedWith(id: String) {
         val dialog = AlertDialog.Builder(view?.context, R.style.Primer_AlertDialog)
-            .setTitle("Are you sure you want to delete this card?")
+            .setTitle(getString(R.string.payment_method_deletion_message))
             // positive button as delete since it defaults to right
-            .setPositiveButton("Delete") { dialog, _ ->
+            .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
                 // delete payment method from vault then dismiss
                 val methodToBeDeleted = paymentMethods.find {
                     it.token == id
                 }
 
-                if (methodToBeDeleted == null) dialog.dismiss()
-                else tokenizationViewModel.deleteToken(methodToBeDeleted)
+                if (methodToBeDeleted == null) {
+                    dialog.dismiss()
+                } else {
+                    tokenizationViewModel.deleteToken(methodToBeDeleted)
+                }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.cancel()
             }
         dialog.show()

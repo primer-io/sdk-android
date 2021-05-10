@@ -110,13 +110,10 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             "PAYMENT_CARD" -> {
                 val data = method.paymentInstrumentData
                 titleLabel.text = data?.cardholderName
-                val last4: Int = data?.last4Digits ?: 0
+                val last4: Int = data?.last4Digits ?: throw Error("card data is invalid!")
                 lastFourLabel.text = getString(R.string.last_four, last4)
-                expiryLabel.text = formatExpiryDate(
-                    data?.expirationYear,
-                    data?.expirationMonth
-                )
-                setCardIcon(view, data?.network)
+                expiryLabel.text = formatExpiryDate(data.expirationYear, data.expirationMonth)
+                setCardIcon(view, data.network)
             }
             else -> {
                 iconView.setImageResource(R.drawable.ic_generic_card)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primer_border_color">#FFBEC2C4</color>
+    <color name="primer_item_background">#FFC6C6C8</color>
     <color name="primer_underline_color">#6B000000</color>
     <color name="primer_text_color_default">@android:color/black</color>
     <color name="primer_text_color_muted">#808080</color>
