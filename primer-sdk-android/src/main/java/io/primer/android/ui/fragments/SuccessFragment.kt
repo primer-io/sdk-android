@@ -48,7 +48,8 @@ class SuccessFragment : Fragment() {
         val successMessage = view.findViewById<TextView>(R.id.success_message)
 
         successMessage.text = when (successType) {
-            SuccessType.ADDED_PAYMENT_METHOD -> context?.getString(R.string.payment_method_added_message)
+            SuccessType.ADDED_PAYMENT_METHOD ->
+                context?.getString(R.string.payment_method_added_message)
             SuccessType.DEFAULT -> "Success!"
         }
 
