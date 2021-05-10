@@ -1,12 +1,13 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
-        classpath "org.koin:koin-gradle-plugin:$koinVersion"
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.0'
+        classpath "io.insert-koin:koin-gradle-plugin:$koinVersion"
     }
 }
 
@@ -20,32 +21,6 @@ apply plugin: 'kotlinx-serialization'
 
 apply from: "$rootDir/config/android-common.gradle"
 apply from: "$rootDir/config/test-dependencies.gradle"
-
-ext {
-    userOrganisation = 'primer-api'
-
-    bintrayRepo = 'android'
-    bintrayName = 'io.primer.android'
-
-    publishedGroupId = 'io.primer.android'
-    libraryName = 'android'
-    artifact = 'android'
-
-    libraryDescription = 'Primer SDK for Android'
-
-    siteUrl = 'https://github.com/primer-io/primer-sdk-android'
-    gitUrl = 'https://github.com/primer-io/primer-sdk-android.git'
-
-    libraryVersion = '1.0.0-beta.15'
-
-    developerId = 'primer-api'
-    developerName = 'Primer Developers'
-    developerEmail = 'developers@primerapi.com'
-
-    licenseName = 'MIT'
-    licenseUrl = 'https://tldrlegal.com/license/mit-license#fulltext'
-    allLicenses = ["MIT"]
-}
 
 android {
     buildTypes {
@@ -63,18 +38,17 @@ android {
     }
 
     buildTypes.each {
-        it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$libraryVersion\""
-        it.resValue 'string', 'SDK_VERSION_STRING', libraryVersion
+        it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$VERSION_NAME\""
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation Dependencies.Kotlin.Serialization.core
+    implementation Dependencies.Kotlin.Serialization.json
 
-    implementation "org.koin:koin-core:$koinVersion"
-    implementation "org.koin:koin-androidx-scope:$koinVersion"
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    implementation "io.insert-koin:koin-androidx-scope:$koinVersion"
 
     implementation Dependencies.Networking.okhttp
     implementation Dependencies.Networking.okhttpLoggingInterceptor
@@ -93,9 +67,8 @@ dependencies {
     implementation AndroidDependencies.Lifecycle.viewModelSavedState
 
     implementation 'com.google.android.gms:play-services-wallet:18.1.2'
-
-    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2'
-    implementation 'com.hbb20:ccp:2.4.5'
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3'
+    implementation 'com.hbb20:ccp:2.5.1'
 
     testImplementation TestDependencies.Kotlin.coroutines
     testImplementation TestDependencies.Android.archCore
@@ -107,7 +80,7 @@ dependencies {
 
 repositories {
     google()
-    jcenter()
+    jcenter() // livedata-testing has not migrated yet, once it does this has to be removed
     mavenCentral()
 }
 
@@ -117,17 +90,3 @@ subprojects {
 
 apply from: "$rootDir/config/analysis.gradle"
 apply from: "$rootDir/config/publish.gradle"
-
-task detektProjectBaseline(type: io.gitlab.arturbosch.detekt.DetektCreateBaselineTask) {
-    description = "Overrides current baseline."
-    ignoreFailures.set(true)
-    parallel.set(true)
-    buildUponDefaultConfig.set(true)
-    setSource(files(rootDir))
-    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-    baseline.set(file("$rootDir/config/detekt/baseline.xml"))
-    include("**/*.kt")
-    include("**/*.kts")
-    exclude("**/resources/**")
-    exclude("**/build/**")
-}

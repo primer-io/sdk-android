@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import io.primer.android.R
+import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
@@ -86,6 +87,26 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
+    private fun toggleSavedPaymentMethodViewVisibility(view: View, listIsEmpty: Boolean) {
+        val items = listOf(
+            R.id.saved_payment_method_label,
+            R.id.saved_payment_method,
+            R.id.see_all_label,
+            R.id.other_ways_to_pay_label,
+        )
+        items.forEach {
+            view.findViewById<View>(it).isVisible = !listIsEmpty
+        }
+    }
+
+    private fun setupUiIfVaultMode(view: View) {
+        if (checkoutConfig.uxMode == UXMode.VAULT) {
+            view.findViewById<TextView>(R.id.primer_sheet_title).isVisible = false
+            view.findViewById<TextView>(R.id.choose_payment_method_label).text =
+                context?.getString(R.string.add_new_payment_method)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -119,6 +140,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
             paymentMethodsContainer.requestLayout()
         }
+
+        view.findViewById<TextView>(R.id.see_all_label).setOnClickListener {
+            primerViewModel.goToVaultedPaymentMethodsView()
+        }
+
+        setupUiIfVaultMode(view)
 
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             updateVaultedMethodsUi(paymentMethods)

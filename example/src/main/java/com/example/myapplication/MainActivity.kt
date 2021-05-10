@@ -120,7 +120,6 @@ class MainActivity : AppCompatActivity() {
             amount = 1000,
             currency = "GBP"
         )
-
     }
 
     private fun onError(error: VolleyError) {
