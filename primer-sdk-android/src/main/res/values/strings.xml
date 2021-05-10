@@ -12,7 +12,7 @@
     <string name="card_network_fallback">Card</string>
     <string name="success_text">Success!</string>
     <string name="bank_account">Bank Account</string>
-    <string name="enter_card_details">Enter your card details</string>
+    <string name="enter_card_details">Enter card details</string>
     <string name="last_four">•••• %d</string>
     <string name="expiry_date">%d / %d</string>
 
@@ -73,4 +73,9 @@
     <string name="icon_showing_state">icon showing state</string>
     <string name="check_icon">check icon</string>
     <string name="payment_method_deletion_message">Are you sure you want to delete this payment method?</string>
+    <string name="credit_debit_card">Credit/debit card</string>
+    <string name="payment_method_added_message">
+        Your payment method \n
+        was successfully added!
+    </string>
 </resources>

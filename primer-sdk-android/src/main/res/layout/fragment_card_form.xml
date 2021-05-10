@@ -14,7 +14,7 @@
         android:layout_marginBottom="@dimen/primer_form_title_margin" >
 
         <TextView
-            style="@style/Primer.Text.Title"
+            style="@style/Primer.Text.Title.Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

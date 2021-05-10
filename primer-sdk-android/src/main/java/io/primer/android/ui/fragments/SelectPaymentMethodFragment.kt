@@ -70,15 +70,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun toggleSavedPaymentMethodViewVisibility(view: View, listIsEmpty: Boolean) {
+    private fun toggleSavedPaymentMethodViewVisibility(view: View, showView: Boolean) {
         val items = listOf(
             R.id.saved_payment_method_label,
             R.id.saved_payment_method,
             R.id.see_all_label,
-            R.id.other_ways_to_pay_label,
         )
         items.forEach {
-            view.findViewById<View>(it).isVisible = !listIsEmpty
+            view.findViewById<View>(it).isVisible = showView
         }
     }
 
@@ -153,18 +152,20 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
 
-            toggleSavedPaymentMethodViewVisibility(view, paymentMethods.isEmpty())
+            val showView = paymentMethods.isNotEmpty() && checkoutConfig.uxMode != UXMode.VAULT
 
-            if (paymentMethods.isEmpty()) return@observe
+            toggleSavedPaymentMethodViewVisibility(view, showView)
 
-            val id = primerViewModel.getSelectedPaymentMethodId()
+            if (showView) {
+                val id = primerViewModel.getSelectedPaymentMethodId()
 
-            // select new id if can't find selected id
-            val method = paymentMethods.find { it.token == id } ?: paymentMethods[0]
+                // select new id if can't find selected id
+                val method = paymentMethods.find { it.token == id } ?: paymentMethods[0]
 
-            primerViewModel.setSelectedPaymentMethodId(method.token)
+                primerViewModel.setSelectedPaymentMethodId(method.token)
 
-            configureSavedPaymentMethodView(view, method)
+                configureSavedPaymentMethodView(view, method)
+            }
         }
 
         view.findViewById<SelectPaymentMethodTitle>(R.id.primer_sheet_title_layout).apply {

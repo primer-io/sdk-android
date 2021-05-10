@@ -19,6 +19,7 @@ import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.ui.fragments.SuccessType
 import org.json.JSONObject
 import java.util.*
 
@@ -48,7 +49,10 @@ class MainActivity : AppCompatActivity() {
                 is CheckoutEvent.TokenAddedToVault -> {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
                     Handler(Looper.getMainLooper()).post {
-                        UniversalCheckout.showSuccess(autoDismissDelay = 2500)
+                        UniversalCheckout.showSuccess(
+                            autoDismissDelay = 5000,
+                            SuccessType.ADDED_PAYMENT_METHOD,
+                        )
                     }
                 }
                 is CheckoutEvent.ApiError -> {
