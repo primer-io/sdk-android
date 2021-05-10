@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -16,9 +15,7 @@ import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.ui.components.PayButton
 import io.primer.android.viewmodel.PrimerViewModel
