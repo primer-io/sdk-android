@@ -129,13 +129,13 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             setUxMode(checkoutConfig.uxMode)
         }
 
+        payAllButton.amount = checkoutConfig.monetaryAmount
+
         view.findViewById<ConstraintLayout>(R.id.saved_payment_method).setOnClickListener {
             it.isSelected = !it.isSelected
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
-
-            payAllButton.amount = checkoutConfig.monetaryAmount
 
             if (it.isSelected) {
                 // TODO

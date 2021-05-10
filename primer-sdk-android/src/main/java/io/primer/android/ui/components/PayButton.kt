@@ -16,6 +16,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.primer.android.R
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.ui.PayAmountText
 
 private const val FADE_IN_DURATION_MS = 900L
 private const val FADE_OUT_DURATION_MS = 300L
@@ -48,7 +49,8 @@ class PayButton @JvmOverloads constructor(
             text = if (value == null) {
                 resources.getString(R.string.pay)
             } else {
-                resources.getString(R.string.pay_specific_amount, "${value.currency}${value.value}")
+                val amountValue = PayAmountText.generate(context, value)
+                resources.getString(R.string.pay_specific_amount, amountValue)
             }
         }
 

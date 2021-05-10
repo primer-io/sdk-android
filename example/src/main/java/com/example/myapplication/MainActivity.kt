@@ -116,7 +116,9 @@ class MainActivity : AppCompatActivity() {
     private fun showCheckout() {
         UniversalCheckout.showCheckout(
             context = this,
-            listener = eventListener
+            listener = eventListener,
+            amount = 1000,
+            currency = "GBP"
         )
 
     }
