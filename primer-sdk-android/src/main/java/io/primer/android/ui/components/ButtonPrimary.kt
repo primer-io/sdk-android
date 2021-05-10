@@ -20,18 +20,19 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class ButtonPrimary(ctx: Context, attrs: AttributeSet) :
-    LinearLayout(ctx, attrs),
-    DIAppComponent {
+class ButtonPrimary(
+    ctx: Context,
+    attrs: AttributeSet,
+) : LinearLayout(ctx, attrs), DIAppComponent {
 
-    private val mText: TextView
-    private val mProgress: ProgressBar
+    private val textView: TextView
+    private val progressBar: ProgressBar
     private val theme: UniversalCheckoutTheme by inject()
 
     var text: CharSequence
-        get() = mText.text
+        get() = textView.text
         set(value) {
-            mText.text = value
+            textView.text = value
         }
 
     init {
@@ -42,51 +43,40 @@ class ButtonPrimary(ctx: Context, attrs: AttributeSet) :
         gravity = Gravity.CENTER
         orientation = HORIZONTAL
         background = createBackground()
-        mText = findViewById(R.id.button_primary_cta_text)
-        mProgress = findViewById(R.id.button_primary_cta_progress)
+        textView = findViewById(R.id.button_primary_cta_text)
+        progressBar = findViewById(R.id.button_primary_cta_progress)
         text = attrs.getAttributeValue(R.styleable.ButtonPrimary_buttonText)
 
-        layoutParams = LayoutParams(
-            LayoutParams.MATCH_PARENT,
-            LayoutParams.WRAP_CONTENT,
-        )
+        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 
         requestLayout()
     }
 
     fun setProgress(active: Boolean) {
-        mProgress.visibility = if (active) View.VISIBLE else View.GONE
+        progressBar.visibility = if (active) View.VISIBLE else View.GONE
     }
 
     private fun createBackground(): Drawable {
-        return RippleDrawable(
-            ColorStateList(
-                arrayOf(
-                    IntArray(1) {
-                        android.R.attr.state_pressed
-                    }
-                ),
-                // FIXME default value should come from resources
-                IntArray(1) { Color.parseColor("#FFFFFFFF") },
-            ),
-            GradientDrawable().apply {
-                cornerRadius = theme.buttonCornerRadius
-                color = ColorStateList(
-                    arrayOf(
-                        IntArray(1) { android.R.attr.state_enabled },
-                        IntArray(1) { -android.R.attr.state_enabled }
-                    ),
-                    IntArray(2) {
-                        when (it) {
-                            0 -> theme.buttonPrimaryColor
-                            1 -> theme.buttonPrimaryColorDisabled
-                            else -> theme.buttonPrimaryColor
-                        }
-                    }
-                )
-                setStroke(1, theme.buttonDefaultBorderColor)
-            },
-            null
+        val buttonColor = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_pressed)),
+            // FIXME default value should come from resources
+            intArrayOf(Color.parseColor("#FFFFFFFF")),
         )
+        val content = GradientDrawable().apply {
+            cornerRadius = theme.buttonCornerRadius
+            color = ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_enabled),
+                    intArrayOf(-android.R.attr.state_enabled)
+                ),
+                intArrayOf(
+                    theme.buttonPrimaryColor,
+                    theme.buttonPrimaryColorDisabled,
+                    theme.buttonPrimaryColor
+                )
+            )
+            setStroke(1, theme.buttonDefaultBorderColor)
+        }
+        return RippleDrawable(buttonColor, content, null)
     }
 }
