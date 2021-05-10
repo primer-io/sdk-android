@@ -19,10 +19,9 @@
         tools:enabled="false"
         tools:text="Pay $99" />
 
-    <!--style="@style/Primer.ProgressIndicator.Circular.Small"-->
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressIndicator"
-
+        style="@style/Primer.ProgressIndicator.Circular.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:alpha="0"

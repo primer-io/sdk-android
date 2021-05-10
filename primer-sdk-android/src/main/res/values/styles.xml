@@ -79,6 +79,7 @@
 
     <style name="Primer.NewButton.Pay" parent="Primer.NewButton.Primary">
         <item name="android:textAppearance">@style/TextAppearance.Primer.NewButton.Pay</item>
+        <item name="cornerRadius">@dimen/pay_button_radius</item>
     </style>
     <!-- endregion -->
 
