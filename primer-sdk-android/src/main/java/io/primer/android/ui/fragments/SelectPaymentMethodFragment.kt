@@ -14,8 +14,11 @@ import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.SelectPaymentMethodTitle
+import io.primer.android.ui.components.PayButton
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
@@ -40,7 +43,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private lateinit var expiryLabel: TextView
     private lateinit var iconView: ImageView
     private lateinit var savedPaymentMethod: ViewGroup
-    private lateinit var payAllButton: Button
+    private lateinit var payAllButton: PayButton
     private lateinit var otherWaysPayLabel: TextView
     private lateinit var paymentMethodsContainer: ViewGroup
 
@@ -127,6 +130,11 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
+
+//            val monetaryAmount = MonetaryAmount.create("", null).apply {
+//                //setUxMode(checkoutConfig.uxMode)
+//            }
+            payAllButton.amount = checkoutConfig.monetaryAmount
 
             if (it.isSelected) {
                 // TODO

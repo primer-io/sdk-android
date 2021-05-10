@@ -34,4 +34,7 @@
 
     <dimen name="elevation_selected">5dp</dimen>
     <dimen name="elevation_unselected">0dp</dimen>
+
+    <!-- Pay Button -->
+    <dimen name="pay_button_height">40dp</dimen>
 </resources>
