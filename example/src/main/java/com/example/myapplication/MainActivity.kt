@@ -152,6 +152,7 @@ class ClientTokenRequest(
     override fun getBody(): ByteArray {
         val body = """
             {
+                "staging": true,
                 "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
                 "checkout": {
                     "paymentFlow": "PREFER_VAULT"
