@@ -16,7 +16,7 @@ ext {
                     coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}",
             ],
             Koin   : [
-                    test: "org.koin:koin-test:$koinVersion"
+                    test: "io.insert-koin:koin-test:$koinVersion"
             ],
             Android: [
                     testRunner  : "androidx.test:runner:1.1.1",
