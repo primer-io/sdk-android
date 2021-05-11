@@ -37,6 +37,9 @@ class VaultedPaymentMethodsFragment : Fragment() {
     private lateinit var readOnlyHeaderLinearLayout: ViewGroup
     private lateinit var editHeaderLinearLayout: ViewGroup
 
+    private lateinit var vaultTitleLabel: TextView
+    private lateinit var editLabel: TextView
+
     private var paymentMethods: List<PaymentMethodTokenInternal> = listOf()
 
     private var isEditing = false
@@ -45,13 +48,10 @@ class VaultedPaymentMethodsFragment : Fragment() {
 
             adapter.isEditing = isEditing
 
-            view?.findViewById<TextView>(R.id.vault_title_label)?.apply {
-                text = if (isEditing) getString(R.string.edit_saved_payment_methods)
-                else getString(R.string.other_ways_to_pay)
-            }
+            vaultTitleLabel.text = if (isEditing) getString(R.string.edit_saved_payment_methods)
+            else getString(R.string.other_ways_to_pay)
 
-            view?.findViewById<TextView>(R.id.edit_vaulted_payment_methods)?.text =
-                if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
+            editLabel.text = if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
         }
 
     private var adapter: VaultedPaymentMethodRecyclerAdapter =
@@ -118,13 +118,12 @@ class VaultedPaymentMethodsFragment : Fragment() {
     private fun onDeleteSelectedWith(id: String) {
         val dialog = AlertDialog.Builder(view?.context, R.style.Primer_AlertDialog)
             .setTitle(getString(R.string.payment_method_deletion_message))
-            // positive button as delete since it defaults to right
             .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
-                // delete payment method from vault then dismiss
                 val methodToBeDeleted = paymentMethods.find {
                     it.token == id
                 }
 
+                // FIXME: add loading view for this.
                 if (methodToBeDeleted == null) {
                     dialog.dismiss()
                 } else {
@@ -139,6 +138,9 @@ class VaultedPaymentMethodsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        vaultTitleLabel = view.findViewById<TextView>(R.id.vault_title_label)
+        editLabel = view.findViewById<TextView>(R.id.edit_vaulted_payment_methods)
 
         readOnlyHeaderLinearLayout = view.findViewById(
             R.id.primer_view_vaulted_payment_methods_header

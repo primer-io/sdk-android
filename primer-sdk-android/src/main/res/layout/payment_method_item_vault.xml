@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="@string/_1234"
+        android:text="@string/last_four_with_dots"
         android:textColor="@android:color/black"
         android:textSize="@dimen/primer_text_size_sm"
         app:layout_constraintEnd_toStartOf="@+id/check_icon"

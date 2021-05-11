@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
                     Handler(Looper.getMainLooper()).post {
                         UniversalCheckout.showSuccess(
-                            autoDismissDelay = 5000,
+                            autoDismissDelay = 10000,
                             SuccessType.ADDED_PAYMENT_METHOD,
                         )
                     }

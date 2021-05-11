@@ -160,7 +160,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 val id = primerViewModel.getSelectedPaymentMethodId()
 
                 // select new id if can't find selected id
-                val method = paymentMethods.find { it.token == id } ?: paymentMethods[0]
+                val method = paymentMethods.find { it.token == id } ?: paymentMethods.first()
 
                 primerViewModel.setSelectedPaymentMethodId(method.token)
 

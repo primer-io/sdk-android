@@ -112,18 +112,11 @@ class VaultedPaymentMethodRecyclerAdapter(
         }
 
     var isEditing: Boolean = false
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
-    private fun getStatusForItemWith(id: String): PaymentItemStatus {
-        if (isEditing) return PaymentItemStatus.EDITING
-        return if (selectedPaymentMethodId == id) {
-            PaymentItemStatus.SELECTED
-        } else {
-            PaymentItemStatus.UNSELECTED
-        }
+    private fun getStatusForItemWith(id: String) = when {
+        isEditing -> PaymentItemStatus.EDITING
+        selectedPaymentMethodId == id -> PaymentItemStatus.SELECTED
+        else -> PaymentItemStatus.UNSELECTED
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
