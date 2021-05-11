@@ -10,14 +10,6 @@ internal class WebBrowserInteropActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d("URL", ">>> WebBrowserInteropActivity")
-
-        Toast.makeText(
-            this,
-            "hello",
-            Toast.LENGTH_SHORT
-        ).show()
-
         WebviewInteropRegister.handleResult(intent.data)
 
         finish()

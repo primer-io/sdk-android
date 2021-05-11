@@ -1,6 +1,7 @@
 package io.primer.android
 
 import android.net.Uri
+import android.util.Log
 import io.primer.android.logging.Logger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
@@ -46,6 +47,8 @@ internal class WebviewInteropRegister {
 
         fun handleResult(uri: Uri?) {
             val callback = callbacks[uri?.host]
+
+            Log.d("URL", ">>> handling result: $uri,\ncallback=$callback")
 
             if (callback != null) {
                 callback.result = uri
