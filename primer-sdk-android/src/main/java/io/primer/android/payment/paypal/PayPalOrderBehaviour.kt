@@ -1,7 +1,6 @@
 package io.primer.android.payment.paypal
 
 import android.net.Uri
-import android.util.Log
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
 

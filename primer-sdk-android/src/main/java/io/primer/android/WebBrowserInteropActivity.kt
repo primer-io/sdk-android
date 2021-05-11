@@ -2,8 +2,6 @@ package io.primer.android
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 
 internal class WebBrowserInteropActivity : Activity() {
 
