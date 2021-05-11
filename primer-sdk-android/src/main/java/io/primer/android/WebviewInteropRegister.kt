@@ -22,7 +22,7 @@ internal class WebviewInteropRegister {
     companion object {
 
         private val log = Logger("WebviewInteropActivity")
-        private val callbacks: MutableMap<String, Callback> = HashMap()
+        private val callbacks: MutableMap<String, Callback> = mutableMapOf()
         private var packageName: String = ""
 
         fun init(name: String) {
