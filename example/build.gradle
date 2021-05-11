@@ -13,13 +13,15 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "io.primer.sampleapp"
+        applicationId "io.primer.sample"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [appId: applicationId.toLowerCase()]
     }
 
     buildTypes {
