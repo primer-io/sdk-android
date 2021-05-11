@@ -64,8 +64,11 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val expiryLabel: TextView = itemView.findViewById(R.id.expiry_label)
             titleLabel.text = item.title
             lastFourLabel.text = itemView.context.getString(R.string.last_four, item.lastFour)
-            expiryLabel.text =
-                itemView.context.getString(R.string.expiry_date, item.expiryMonth, item.expiryYear)
+            expiryLabel.text = itemView.context.getString(
+                R.string.expiry_date,
+                item.expiryMonth,
+                item.expiryYear,
+            )
             setCardIcon(item.network)
             configureCheckIcon(itemView, status)
         }
@@ -162,10 +165,9 @@ class VaultedPaymentMethodRecyclerAdapter(
 
     override fun getItemCount(): Int = itemData.size
 
-    override fun getItemViewType(position: Int): Int =
-        when (itemData[position]) {
-            is CardData -> VIEW_TYPE_CARD
-            is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
-            else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
-        }
+    override fun getItemViewType(position: Int): Int = when (itemData[position]) {
+        is CardData -> VIEW_TYPE_CARD
+        is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
+        else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
+    }
 }
