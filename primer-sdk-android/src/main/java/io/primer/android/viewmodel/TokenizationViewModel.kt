@@ -2,7 +2,6 @@ package io.primer.android.viewmodel
 
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -297,9 +296,6 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         body.put("currencyCode", checkoutConfig.monetaryAmount?.currency)
         body.put("returnUrl", returnUrl)
         body.put("cancelUrl", cancelUrl)
-
-        Log.d("URL", "> returnUrl: $returnUrl")
-        Log.d("URL", "> cancelUrl: $cancelUrl")
 
         viewModelScope.launch {
             when (val result = model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)) {
