@@ -21,12 +21,10 @@ internal class PayPalOrderBehaviour(
     }
 
     override fun onSuccess(uri: Uri) {
-        Log.d("URL", ">>> onSuccess: $uri")
         paypal.setTokenizableValue("paypalOrderId", uri.getQueryParameter("token") ?: "")
     }
 
     override fun onCancel(uri: Uri?) {
-        Log.d("URL", ">>> onCancel: $uri")
         // no op
     }
 }

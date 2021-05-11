@@ -48,8 +48,6 @@ internal class WebviewInteropRegister {
         fun handleResult(uri: Uri?) {
             val callback = callbacks[uri?.host]
 
-            Log.d("URL", ">>> handling result: $uri,\ncallback=$callback")
-
             if (callback != null) {
                 callback.result = uri
             }
