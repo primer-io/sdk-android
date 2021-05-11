@@ -14,7 +14,7 @@
     <string name="bank_account">Bank Account</string>
     <string name="enter_card_details">Enter card details</string>
     <string name="last_four">•••• %d</string>
-    <string name="expiry_date">%d / %d</string>
+    <string name="expiry_date">%1$s / %2$s</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>

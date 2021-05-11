@@ -73,9 +73,6 @@ class SuccessFragment : Fragment() {
 
         fun newInstance(delay: Int, successType: SuccessType): SuccessFragment {
             return SuccessFragment().apply {
-
-                val context = this.context
-
                 arguments = Bundle().apply {
                     putLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY, delay.toLong())
                     putString(SUCCESS_FRAGMENT_MESSAGE_KEY, successType.toString())
