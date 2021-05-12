@@ -2,6 +2,10 @@ package io.primer.android.ui
 
 private val INVALID_CHARACTER = Regex("[^0-9]")
 
+private const val LUHN_CONSTANT_A: Int = 2
+private const val LUHN_CONSTANT_B: Int = 9
+private const val LUHN_CONSTANT_C: Int = 10
+
 internal class CardNumberFormatter private constructor(
     private val value: String,
     private val autoInsert: Boolean,
@@ -54,18 +58,18 @@ internal class CardNumberFormatter private constructor(
         digits.forEachIndexed { n, c ->
             var digit = Character.getNumericValue(c)
 
-            if ((n % 2) == 0) {
-                digit *= 2
+            if ((n % LUHN_CONSTANT_A) == 0) {
+                digit *= LUHN_CONSTANT_A
             }
 
-            if (digit > 9) {
-                digit -= 9
+            if (digit > LUHN_CONSTANT_B) {
+                digit -= LUHN_CONSTANT_B
             }
 
             checksum += digit
         }
 
-        return (checksum % 10) == 0
+        return (checksum % LUHN_CONSTANT_C) == 0
     }
 
     companion object {

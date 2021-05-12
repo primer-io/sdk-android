@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.primer.android.ui.components.ButtonDefaultLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/paypal_preview_button"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/primer_payment_method_preview_button_height"
     android:background="@drawable/button_light"
-    android:backgroundTint="@color/paypal_gold"
+    android:backgroundTint="@color/paypal_blue"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center"
@@ -12,9 +12,9 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/primer_payment_method_preview_button_height"
+        android:layout_height="wrap_content"
         android:scaleType="center"
         android:scaleX="0.65"
         android:scaleY="0.65"
         android:src="@drawable/icon_paypal" />
-</LinearLayout>
+</io.primer.android.ui.components.ButtonDefaultLayout>

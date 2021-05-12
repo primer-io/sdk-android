@@ -6,6 +6,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
@@ -15,14 +16,33 @@ import io.primer.android.model.dto.CheckoutExitReason
 private const val SUCCESS_FRAGMENT_DISMISS_DELAY_KEY = "SUCCESS_FRAGMENT_DISMISS_DELAY"
 private const val SUCCESS_FRAGMENT_DISMISS_DELAY_DEFAULT = 3000L
 
+private const val SUCCESS_FRAGMENT_MESSAGE_KEY = "SUCCESS_FRAGMENT_MESSAGE"
+private const val SUCCESS_FRAGMENT_MESSAGE_DEFAULT = "Success!"
+
+enum class SuccessType {
+    DEFAULT, ADDED_PAYMENT_METHOD
+}
+
 class SuccessFragment : Fragment() {
 
     private var delay: Long? = null
+    private var message: String? = null
+
+    private fun generateSuccessMessageFor(successType: SuccessType) = when (successType) {
+        SuccessType.ADDED_PAYMENT_METHOD -> {
+            context?.getString(R.string.payment_method_added_message)
+        }
+        SuccessType.DEFAULT -> {
+            SUCCESS_FRAGMENT_MESSAGE_DEFAULT
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             delay = it.getLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY)
+            val successType = enumValueOf<SuccessType>(it.getString(SUCCESS_FRAGMENT_MESSAGE_KEY)!!)
+            message = generateSuccessMessageFor(successType)
         }
     }
 
@@ -36,6 +56,11 @@ class SuccessFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val successMessage = view.findViewById<TextView>(R.id.success_message)
+
+        successMessage.text = message
+
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
@@ -46,10 +71,11 @@ class SuccessFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(delay: Int): SuccessFragment {
+        fun newInstance(delay: Int, successType: SuccessType): SuccessFragment {
             return SuccessFragment().apply {
                 arguments = Bundle().apply {
                     putLong(SUCCESS_FRAGMENT_DISMISS_DELAY_KEY, delay.toLong())
+                    putString(SUCCESS_FRAGMENT_MESSAGE_KEY, successType.toString())
                 }
             }
         }

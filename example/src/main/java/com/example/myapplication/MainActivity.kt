@@ -19,6 +19,7 @@ import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.ui.fragments.SuccessType
 import org.json.JSONObject
 import java.util.*
 
@@ -41,11 +42,17 @@ class MainActivity : AppCompatActivity() {
                         "ExampleApp",
                         "TokenizationSuccess: ${event.data.tokenType} ${event.data.token}"
                     )
+                    Handler(Looper.getMainLooper()).post {
+                        UniversalCheckout.showSuccess(autoDismissDelay = 2500)
+                    }
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
                     Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
                     Handler(Looper.getMainLooper()).post {
-                        UniversalCheckout.showSuccess(autoDismissDelay = 2500)
+                        UniversalCheckout.showSuccess(
+                            autoDismissDelay = 10000,
+                            SuccessType.ADDED_PAYMENT_METHOD,
+                        )
                     }
                 }
                 is CheckoutEvent.ApiError -> {
@@ -104,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeCheckout(token: String) {
         UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(googlePay, paypal, klarna, card))
+        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card, paypal))
 
         showCheckout()
 
@@ -114,7 +121,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-        UniversalCheckout.showCheckout(
+        UniversalCheckout.showVault(
             context = this,
             amount = 200,
             currency = "GBP",
@@ -124,7 +131,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onError(error: VolleyError) {
         Log.e("ExampleApp", "Volley Error when getting client token: $error")
-        Log.e("ExampleApp", String(error.networkResponse.data))
+        Log.e("ExampleApp", String(error.networkResponse.data ?: byteArrayOf()))
     }
 }
 

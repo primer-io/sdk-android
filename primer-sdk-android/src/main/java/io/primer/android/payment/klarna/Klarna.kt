@@ -22,6 +22,8 @@ data class Klarna(
 
     override val identifier: String = KLARNA_IDENTIFIER
 
+    override val canBeVaulted: Boolean = true
+
     @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
         override fun initialize(applicationContext: Context, clientSession: ClientSession) {
