@@ -28,7 +28,14 @@ import java.util.Locale
 
 enum class UXMode {
     CHECKOUT,
-    VAULT,
+    VAULT;
+
+    val isNotVault: Boolean
+        get() = this != VAULT
+    val isVault: Boolean
+        get() = this == VAULT
+    val isCheckout: Boolean
+        get() = this == CHECKOUT
 }
 
 object UniversalCheckout {
