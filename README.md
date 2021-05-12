@@ -1,3 +1,5 @@
+[![Maven Central](https://img.shields.io/maven-central/v/io.primer/android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.primer%22%20AND%20a:%22android%22)
+
 # primer-sdk-android
 
 ## Tooling
