@@ -19,6 +19,7 @@ import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 import org.json.JSONObject
 import java.util.*
@@ -51,13 +52,16 @@ class MainActivity : AppCompatActivity() {
                     Handler(Looper.getMainLooper()).post {
                         UniversalCheckout.showSuccess(
                             autoDismissDelay = 10000,
-                            SuccessType.ADDED_PAYMENT_METHOD,
+                            SuccessType.VAULT_TOKENIZATION_SUCCESS,
                         )
                     }
                 }
                 is CheckoutEvent.ApiError -> {
                     Log.e("ExampleApp", "${event.data}")
-                    UniversalCheckout.dismiss()
+                    UniversalCheckout.showError(
+                        autoDismissDelay = 10000,
+                        ErrorType.VAULT_TOKENIZATION_FAILED,
+                    )
                 }
                 is CheckoutEvent.Exit -> {
                     if (event.data.reason == CheckoutExitReason.EXIT_SUCCESS) {

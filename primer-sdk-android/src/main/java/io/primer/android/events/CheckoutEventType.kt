@@ -7,7 +7,7 @@ enum class CheckoutEventType {
     TOKEN_REMOVED_FROM_VAULT,
     EXIT,
     API_ERROR,
-
+    SHOW_ERROR,
     TOGGLE_LOADING,
     SHOW_SUCCESS,
     DISMISS_INTERNAL

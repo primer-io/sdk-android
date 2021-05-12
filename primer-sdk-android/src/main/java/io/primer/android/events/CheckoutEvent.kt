@@ -4,6 +4,7 @@ import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
 sealed class CheckoutEvent(
@@ -39,4 +40,7 @@ sealed class CheckoutEvent(
 
     class ShowSuccess(val delay: Int = 3000, val successType: SuccessType) :
         PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
+        
+    class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
+        PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
 }

@@ -31,10 +31,12 @@ import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
 import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
-import io.primer.android.ui.fragments.SuccessFragment
+import io.primer.android.ui.fragments.SessionCompleteFragment
+import io.primer.android.ui.fragments.SessionCompleteViewType
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.viewmodel.GenericSavedStateAndroidViewModelFactory
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
@@ -223,7 +225,16 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     onExit(it.data)
                 }
                 is CheckoutEvent.ShowSuccess -> {
-                    openFragment(SuccessFragment.newInstance(it.delay, it.successType))
+                    openFragment(SessionCompleteFragment.newInstance(
+                        it.delay,
+                        SessionCompleteViewType.Success(it.successType)
+                    ))
+                }
+                is CheckoutEvent.ShowError -> {
+                    openFragment(SessionCompleteFragment.newInstance(
+                        it.delay,
+                        SessionCompleteViewType.Error(it.errorType)
+                    ))
                 }
                 is CheckoutEvent.ToggleProgressIndicator -> {
                     onToggleProgressIndicator(it.data)
