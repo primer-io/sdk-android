@@ -25,9 +25,6 @@ apply from: "$rootDir/config/test-dependencies.gradle"
 android {
     buildTypes {
         debug {
-            buildConfigField 'String', 'NAME', "\"value\""
-            manifestPlaceholders = [key: "value"]
-
             minifyEnabled false
             debuggable true
         }
