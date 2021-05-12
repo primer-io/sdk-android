@@ -58,7 +58,7 @@
     <style name="TextAppearance.Primer.NewButton.Pay">
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="fontWeight">500</item>
+        <item name="fontWeight">700</item>
     </style>
 
     <style name="Primer.NewButton" parent="Widget.MaterialComponents.Button">
@@ -99,6 +99,8 @@
 
     <style name="Primer.ProgressIndicator.Circular.Small" parent="Widget.MaterialComponents.CircularProgressIndicator.Small" />
     <!-- endregion -->
+
+    // FIXME deprecate this button in favour of Primer.NewButton
 
     <style name="Primer.Button" />
 

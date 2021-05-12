@@ -160,12 +160,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
-
-            if (it.isSelected) {
-                // TODO
-            } else {
-                // TODO
-            }
         }
     }
 
