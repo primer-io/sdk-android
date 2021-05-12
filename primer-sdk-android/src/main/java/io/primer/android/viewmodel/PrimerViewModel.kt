@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
-import io.primer.android.UXMode
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -123,7 +122,9 @@ internal class PrimerViewModel(
     ) {
         locallyConfiguredPaymentMethods.forEach { paymentMethod ->
 
-            if (checkoutConfig.uxMode.isNotVault || (checkoutConfig.uxMode.isVault && paymentMethod.canBeVaulted)) {
+            if (checkoutConfig.uxMode.isNotVault ||
+                (checkoutConfig.uxMode.isVault && paymentMethod.canBeVaulted)
+            ) {
                 paymentMethod.module.initialize(getApplication(), clientSession)
                 paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
                 paymentMethod.module.registerPaymentMethodDescriptorFactory(
