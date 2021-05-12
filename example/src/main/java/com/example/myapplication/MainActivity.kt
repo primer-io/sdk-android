@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-        UniversalCheckout.showVault(
+        UniversalCheckout.showCheckout(
             context = this,
             listener = eventListener,
             amount = 1000,
