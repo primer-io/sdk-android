@@ -64,7 +64,7 @@
         layout="@layout/payment_method_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_vertical_margin"
+        android:layout_marginTop="@dimen/large_vertical_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
@@ -76,18 +76,40 @@
         android:layout_marginTop="@dimen/xl_vertical_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saved_payment_method" />
+        app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
+
+    <View
+        android:id="@+id/otherWaysToPayStartDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/primer_text_color_muted"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/other_ways_to_pay_label"
+        app:layout_constraintEnd_toStartOf="@+id/other_ways_to_pay_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/other_ways_to_pay_label" />
+
+    <View
+        android:id="@+id/otherWaysToPayEndDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/primer_text_color_muted"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/other_ways_to_pay_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/other_ways_to_pay_label"
+        app:layout_constraintTop_toTopOf="@+id/other_ways_to_pay_label" />
 
     <TextView
         android:id="@+id/other_ways_to_pay_label"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xxl_vertical_margin"
-        android:text="@string/available_payment_methods"
+        android:text="@string/other_ways_of_paying"
         android:textColor="@color/primer_text_color_muted"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/payAllButton" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payAllButton" />
 
     <!-- TODO consider recyclerview here -->
     <LinearLayout
