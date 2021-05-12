@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.primer.android.ui.components.ButtonDefaultLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_preview_button"
     android:layout_width="match_parent"
     android:layout_height="@dimen/primer_payment_method_preview_button_height"

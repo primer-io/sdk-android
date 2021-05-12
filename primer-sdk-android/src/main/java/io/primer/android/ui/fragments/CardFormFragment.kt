@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -26,7 +26,6 @@ import io.primer.android.ui.components.ButtonPrimary
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.ViewStatus
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.Collections
@@ -42,7 +41,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private lateinit var inputs: Map<String, TextInputEditText>
     private lateinit var submitButton: ButtonPrimary
-    private lateinit var goBackButton: ImageView
+    private lateinit var cancelButton: Button
 
     private lateinit var errorText: TextView
     private lateinit var viewModel: PrimerViewModel
@@ -76,7 +75,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
         )
         submitButton = view.findViewById(R.id.card_form_submit_button)
-        goBackButton = view.findViewById(R.id.card_form_go_back)
+        cancelButton = view.findViewById(R.id.nav_cancel_button)
         errorText = view.findViewById(R.id.card_form_error_message)
 
         tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
@@ -88,13 +87,6 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         tokenizationViewModel.tokenizationError.observe(viewLifecycleOwner) {
             errorText.text = requireContext().getText(R.string.payment_method_error)
             errorText.visibility = View.VISIBLE
-        }
-        tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) { paymentMethodToken ->
-            if (paymentMethodToken != null) {
-                if (checkoutConfig.uxMode == UXMode.VAULT) {
-                    viewModel.viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-                }
-            }
         }
 
         tokenizationViewModel.validationErrors.observe(
@@ -129,7 +121,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             }
         }
 
-        goBackButton.setOnClickListener {
+        cancelButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
@@ -228,12 +220,11 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun onUXModeChanged(mode: UXMode) {
         submitButton.text = when (mode) {
-            UXMode.VAULT -> requireContext().getString(R.string.confirm)
+            UXMode.VAULT -> requireContext().getString(R.string.add_card)
             UXMode.CHECKOUT -> PayAmountText.generate(
                 requireContext(),
                 checkoutConfig.monetaryAmount
             )
-            else -> ""
         }
     }
 

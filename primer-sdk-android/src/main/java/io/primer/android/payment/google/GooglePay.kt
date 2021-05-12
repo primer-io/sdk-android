@@ -33,6 +33,8 @@ data class GooglePay(
 
     override val identifier: String = GOOGLE_PAY_IDENTIFIER
 
+    override val canBeVaulted: Boolean = false
+
     internal val allowedCardAuthMethods: List<String> = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
     internal val billingAddressRequired: Boolean = false
 

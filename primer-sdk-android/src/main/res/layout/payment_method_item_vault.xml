@@ -9,7 +9,7 @@
     android:clickable="true"
     android:focusable="true"
     android:drawSelectorOnTop="true"
-    android:background="@drawable/saved_payment_method_item">
+    android:background="@drawable/saved_payment_method_item_underlined">
 
     <TextView
         android:id="@+id/title_label"
@@ -31,11 +31,11 @@
         android:id="@+id/last_four_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/medium_large_padding"
+        android:layout_marginEnd="8dp"
         android:text="@string/last_four_with_dots"
         android:textColor="@android:color/black"
         android:textSize="@dimen/primer_text_size_sm"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/check_icon"
         app:layout_constraintTop_toTopOf="@+id/title_label" />
 
     <TextView
@@ -63,5 +63,17 @@
         app:layout_constraintDimensionRatio="H,2:3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/check_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/check_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_check"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

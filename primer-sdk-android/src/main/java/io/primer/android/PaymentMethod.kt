@@ -31,6 +31,8 @@ interface PaymentMethod {
     //  this interface) at runtime
     val identifier: String
 
+    val canBeVaulted: Boolean
+
     @Transient
     val module: PaymentMethodModule
 

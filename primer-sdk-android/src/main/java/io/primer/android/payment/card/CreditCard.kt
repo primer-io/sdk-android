@@ -60,7 +60,7 @@ internal class CreditCard(
 
         text.text = when (checkoutConfig.uxMode) {
             UXMode.CHECKOUT -> container.context.getString(R.string.pay_by_card)
-            UXMode.VAULT -> container.context.getString(R.string.add_card)
+            UXMode.VAULT -> container.context.getString(R.string.credit_debit_card)
         }
 
         return button
