@@ -7,6 +7,9 @@
     <dimen name="primer_border_width">1dp</dimen>
     <dimen name="primer_list_margin">16dp</dimen>
 
+
+    <dimen name="success_width">300dp</dimen>
+
     <!--  Forms  -->
     <dimen name="primer_form_title_margin">28dp</dimen>
     <dimen name="primer_input_spacing_vert">21dp</dimen>

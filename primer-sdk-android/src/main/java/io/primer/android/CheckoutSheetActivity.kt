@@ -243,7 +243,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     onExit(it.data)
                 }
                 is CheckoutEvent.ShowSuccess -> {
-                    openFragment(SuccessFragment.newInstance(it.delay))
+                    openFragment(SuccessFragment.newInstance(it.delay, it.successType))
                 }
                 is CheckoutEvent.ToggleProgressIndicator -> {
                     onToggleProgressIndicator(it.data)

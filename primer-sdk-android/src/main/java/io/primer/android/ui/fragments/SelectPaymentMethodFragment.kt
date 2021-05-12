@@ -60,50 +60,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     ): View? =
         inflater.inflate(R.layout.fragment_select_payment_method, container, false)
 
-    private fun renderAlternativeSavedPaymentMethodView(view: View, title: String?) {
-        listOf(titleLabel, lastFourLabel, expiryLabel).forEach {
-            it.isVisible = false
-        }
-
-        titleLabel.apply {
-            isVisible = true
-            text = title
-        }
-    }
-
-    private fun formatExpiryDate(year: Int?, month: Int?): String {
-        return "$month / $year"
-    }
-
-    private fun setCardIcon(view: View, network: String?) {
-        val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
-        when (network) {
-            "Visa" -> iconView.setImageResource(R.drawable.ic_visa_card)
-            "Mastercard" -> iconView.setImageResource(R.drawable.ic_mastercard_card)
-            else -> iconView.setImageResource(R.drawable.ic_generic_card)
-        }
-    }
-
-    private fun toggleSavedPaymentMethodViewVisibility(view: View, listIsEmpty: Boolean) {
-        val items = listOf(
-            R.id.saved_payment_method_label,
-            R.id.saved_payment_method,
-            R.id.see_all_label,
-            R.id.other_ways_to_pay_label,
-        )
-        items.forEach {
-            view.findViewById<View>(it).isVisible = !listIsEmpty
-        }
-    }
-
-    private fun setupUiIfVaultMode(view: View) {
-        if (checkoutConfig.uxMode == UXMode.VAULT) {
-            view.findViewById<TextView>(R.id.primer_sheet_title).isVisible = false
-            view.findViewById<TextView>(R.id.choose_payment_method_label).text =
-                context?.getString(R.string.add_new_payment_method)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -163,6 +119,48 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
+    private fun renderAlternativeSavedPaymentMethodView(view: View, title: String?) {
+        listOf(titleLabel, lastFourLabel, expiryLabel).forEach {
+            it.isVisible = false
+        }
+
+        titleLabel.apply {
+            isVisible = true
+            text = title
+        }
+    }
+
+    private fun formatExpiryDate(year: Int?, month: Int?): String =
+        "$month / $year"
+
+    private fun setCardIcon(view: View, network: String?) {
+        val iconView = view.findViewById<ImageView>(R.id.payment_method_icon)
+        when (network) {
+            "Visa" -> iconView.setImageResource(R.drawable.ic_visa_card)
+            "Mastercard" -> iconView.setImageResource(R.drawable.ic_mastercard_card)
+            else -> iconView.setImageResource(R.drawable.ic_generic_card)
+        }
+    }
+
+    private fun toggleSavedPaymentMethodViewVisibility(view: View, showView: Boolean) {
+        val items = listOf(
+            R.id.saved_payment_method_label,
+            R.id.saved_payment_method,
+            R.id.see_all_label,
+        )
+        items.forEach {
+            view.findViewById<View>(it).isVisible = showView
+        }
+    }
+
+    private fun setupUiIfVaultMode(view: View) {
+        if (checkoutConfig.uxMode == UXMode.VAULT) {
+            view.findViewById<TextView>(R.id.primer_sheet_title).isVisible = false
+            view.findViewById<TextView>(R.id.choose_payment_method_label).text =
+                context?.getString(R.string.add_new_payment_method)
+        }
+    }
+
     private fun updateVaultedMethodsUi(paymentMethods: List<PaymentMethodTokenInternal>) {
         if (paymentMethods.isEmpty()) {
             hideSavedPaymentMethodView()
@@ -214,13 +212,10 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             "PAYMENT_CARD" -> {
                 val data = paymentMethod.paymentInstrumentData
                 titleLabel.text = data?.cardholderName
-                val last4: Int = data?.last4Digits ?: 0
+                val last4: Int = data?.last4Digits ?: throw Error("card data is invalid!")
                 lastFourLabel.text = getString(R.string.last_four, last4)
-                expiryLabel.text = formatExpiryDate(
-                    data?.expirationYear,
-                    data?.expirationMonth
-                )
-                setCardIcon(view, data?.network)
+                expiryLabel.text = formatExpiryDate(data.expirationYear, data.expirationMonth)
+                setCardIcon(view, data.network)
             }
             else -> {
                 iconView.setImageResource(R.drawable.ic_generic_card)

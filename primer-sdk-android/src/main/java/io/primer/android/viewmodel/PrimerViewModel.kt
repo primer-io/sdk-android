@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
+import io.primer.android.UXMode
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -62,6 +63,8 @@ internal class PrimerViewModel(
     private val log = Logger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
 
+    private var selectedPaymentMethodId = MutableLiveData<String>("")
+
     val keyboardVisible = MutableLiveData(false)
 
     val viewStatus: MutableLiveData<ViewStatus> =
@@ -108,16 +111,25 @@ internal class PrimerViewModel(
         subscription = EventBus.subscribe(this)
     }
 
+    fun setSelectedPaymentMethodId(id: String) {
+        selectedPaymentMethodId.value = id
+    }
+
+    fun getSelectedPaymentMethodId(): String = selectedPaymentMethodId.value ?: ""
+
     private fun initializePaymentMethodModules(
         locallyConfiguredPaymentMethods: List<PaymentMethod>,
         clientSession: ClientSession,
     ) {
         locallyConfiguredPaymentMethods.forEach { paymentMethod ->
-            paymentMethod.module.initialize(getApplication(), clientSession)
-            paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
-            paymentMethod.module.registerPaymentMethodDescriptorFactory(
-                paymentMethodDescriptorFactoryRegistry
-            )
+
+            if (checkoutConfig.uxMode == UXMode.VAULT && paymentMethod.canBeVaulted) {
+                paymentMethod.module.initialize(getApplication(), clientSession)
+                paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
+                paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                    paymentMethodDescriptorFactoryRegistry
+                )
+            }
         }
     }
 
@@ -125,7 +137,12 @@ internal class PrimerViewModel(
         when (val result = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
                 val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
+
                 vaultedPaymentMethods.postValue(paymentModelTokens)
+
+                if (getSelectedPaymentMethodId().isEmpty() && paymentModelTokens.isNotEmpty()) {
+                    setSelectedPaymentMethodId(paymentModelTokens[0].token)
+                }
 
                 val descriptors: List<PaymentMethodDescriptor> =
                     paymentMethodDescriptorResolver.resolve(clientSession)
@@ -146,12 +163,7 @@ internal class PrimerViewModel(
 
     private fun getInitialViewStatus(
         vaultedPaymentMethods: List<PaymentMethodTokenInternal>,
-    ): ViewStatus =
-        if (vaultedPaymentMethods.isNotEmpty()) {
-            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
-        } else {
-            ViewStatus.SELECT_PAYMENT_METHOD
-        }
+    ): ViewStatus = ViewStatus.SELECT_PAYMENT_METHOD
 
     override fun onCleared() {
         super.onCleared()

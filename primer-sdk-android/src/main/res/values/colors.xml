@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primer_border_color">#FFBEC2C4</color>
+    <color name="primer_item_background">#FFC6C6C8</color>
     <color name="primer_underline_color">#6B000000</color>
     <color name="primer_text_color_default">@android:color/black</color>
     <color name="primer_text_color_muted">#808080</color>
@@ -9,6 +10,7 @@
     <color name="primer_app_primary">#FF2C98F0</color>
     <color name="primer_app_primary_muted">#402C98F0</color>
     <color name="primer_app_danger">#FFEB001B</color>
+    <color name="primer_android_red">#FFFF1744</color>
 
     <color name="primer_button_primary">@color/primer_app_primary</color>
     <color name="primer_button_primary_text_color">@android:color/white</color>
@@ -16,5 +18,6 @@
     <color name="primer_button_primary_disabled">#1F000000</color>
 
     <color name="paypal_gold">#FFFFC439</color>
+    <color name="paypal_blue">#FFBEE4FE</color>
     <color name="klarna">#FFB3C7</color>
 </resources>

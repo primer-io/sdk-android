@@ -14,6 +14,7 @@ import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.ui.fragments.SuccessType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -140,8 +141,8 @@ object UniversalCheckout {
     /**
      * Show a success screen then dismiss
      */
-    fun showSuccess(autoDismissDelay: Int = 3000) {
-        checkout.showSuccess(autoDismissDelay)
+    fun showSuccess(autoDismissDelay: Int = 3000, successType: SuccessType = SuccessType.DEFAULT) {
+        checkout.showSuccess(autoDismissDelay, successType)
     }
 }
 
@@ -247,8 +248,8 @@ internal class InternalUniversalCheckout constructor(
         EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
     }
 
-    fun showSuccess(autoDismissDelay: Int = 3000) {
-        EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay))
+    fun showSuccess(autoDismissDelay: Int = 3000, successType: SuccessType) {
+        EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay, successType))
     }
 
     @Suppress("LongParameterList")
