@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
-import io.primer.android.UXMode
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
@@ -63,7 +62,7 @@ internal class PrimerViewModel(
     private val log = Logger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
 
-    private var selectedPaymentMethodId = MutableLiveData<String>("")
+    private var selectedPaymentMethodId = MutableLiveData("")
 
     val keyboardVisible = MutableLiveData(false)
 
@@ -81,11 +80,11 @@ internal class PrimerViewModel(
     val selectedPaymentMethod: LiveData<PaymentMethodDescriptor?> = _selectedPaymentMethod
 
     fun goToVaultedPaymentMethodsView() {
-        viewStatus.value = ViewStatus.VIEW_VAULTED_PAYMENT_METHODS
+        viewStatus.postValue(ViewStatus.VIEW_VAULTED_PAYMENT_METHODS)
     }
 
     fun goToSelectPaymentMethodsView() {
-        viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
+        viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
     }
 
     fun selectPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
@@ -123,7 +122,9 @@ internal class PrimerViewModel(
     ) {
         locallyConfiguredPaymentMethods.forEach { paymentMethod ->
 
-            if (checkoutConfig.uxMode == UXMode.VAULT && paymentMethod.canBeVaulted) {
+            if (checkoutConfig.uxMode.isNotVault ||
+                (checkoutConfig.uxMode.isVault && paymentMethod.canBeVaulted)
+            ) {
                 paymentMethod.module.initialize(getApplication(), clientSession)
                 paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
                 paymentMethod.module.registerPaymentMethodDescriptorFactory(

@@ -121,11 +121,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCheckout() {
-        UniversalCheckout.showVault(
+        UniversalCheckout.showCheckout(
             context = this,
-            amount = 200,
-            currency = "GBP",
-            listener = eventListener
+            listener = eventListener,
+            amount = 1000,
+            currency = "GBP"
         )
     }
 

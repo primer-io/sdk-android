@@ -13,8 +13,9 @@
     <color name="primer_android_red">#FFFF1744</color>
 
     <color name="primer_button_primary">@color/primer_app_primary</color>
-    <color name="primer_button_primary_fg">@android:color/white</color>
-    <color name="primer_button_disabled">#1F000000</color>
+    <color name="primer_button_primary_text_color">@android:color/white</color>
+    <color name="primer_button_primary_disabled_text_color">#5d6269</color>
+    <color name="primer_button_primary_disabled">#1F000000</color>
 
     <color name="paypal_gold">#FFFFC439</color>
     <color name="paypal_blue">#FFBEE4FE</color>

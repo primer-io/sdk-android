@@ -14,6 +14,7 @@ import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
+import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.Serialization
 import io.primer.android.model.dto.CheckoutConfig
@@ -89,6 +90,66 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
+    // region KLARNA-related observers
+    private val klarnaPaymentDataObserver =
+        Observer<KlarnaPaymentData> { (paymentUrl, redirectUrl) ->
+            // TODO  a klarna flow that is not recurring requires this:
+            // val intent = Intent(this, WebViewActivity::class.java).apply {
+            //     putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+            //     putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+            // }
+            // startActivity(intent)
+
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
+            startActivityForResult(intent, KLARNA_REQUEST_CODE)
+        }
+
+    private val klarnaVaultedObserver = Observer<JSONObject> { data ->
+        val paymentMethod: PaymentMethodDescriptor? =
+            primerViewModel.selectedPaymentMethod.value
+
+        val klarna = paymentMethod as? KlarnaDescriptor
+            ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
+
+        klarna.setTokenizableValue(
+            "klarnaCustomerToken",
+            data.optString("customerTokenId")
+        )
+        klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
+
+        tokenizationViewModel.tokenize()
+    }
+    // endregion
+
+    // region PAYPAL-related observers
+    private val confirmPayPalBillingAgreementObserver = Observer<JSONObject> { data: JSONObject ->
+        val paymentMethod: PaymentMethodDescriptor? =
+            primerViewModel.selectedPaymentMethod.value
+
+        val paypal = paymentMethod as? PayPalDescriptor
+            ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
+
+        paypal.setTokenizableValue(
+            "paypalBillingAgreementId",
+            data.getString("billingAgreementId")
+        )
+        paypal.setTokenizableValue("externalPayerInfo", data.getJSONObject("externalPayerInfo"))
+        paypal.setTokenizableValue("shippingAddress", data.getJSONObject("shippingAddress"))
+
+        tokenizationViewModel.tokenize()
+    }
+
+    private val payPalBillingAgreementUrlObserver = Observer { uri: String ->
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        startActivity(intent)
+    }
+
+    private val payPalOrderObserver = Observer { uri: String ->
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        startActivity(intent)
+    }
+    // endregion
+
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
         it?.let {
             when (val behaviour = it.selectedBehaviour) {
@@ -157,64 +218,23 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
 
         // region KLARNA
-        tokenizationViewModel.klarnaPaymentData.observe(this) { (paymentUrl, redirectUrl) ->
-            // TODO  a klarna flow that is not recurring requires this:
-            // val intent = Intent(this, WebViewActivity::class.java).apply {
-            //     putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-            //     putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-            // }
-            // startActivity(intent)
-
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
-            startActivityForResult(intent, KLARNA_REQUEST_CODE)
-        }
-
-        tokenizationViewModel.vaultedKlarnaPayment.observe(this) { data ->
-            val paymentMethod: PaymentMethodDescriptor? =
-                primerViewModel.selectedPaymentMethod.value
-            val klarna = paymentMethod as? KlarnaDescriptor
-                ?: return@observe // if we are getting an emission here it means we're currently dealing with klarna
-
-            klarna.setTokenizableValue(
-                "klarnaCustomerToken",
-                data.optString("customerTokenId")
-            )
-            klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
-
-            tokenizationViewModel.tokenize()
-        }
-
+        tokenizationViewModel.klarnaPaymentData.observe(this, klarnaPaymentDataObserver)
+        tokenizationViewModel.vaultedKlarnaPayment.observe(this, klarnaVaultedObserver)
         tokenizationViewModel.klarnaError.observe(this) {
-            // TODO
+            // TODO (note that API errors are being pushed to host from Model.kt)
         }
         // endregion
 
         // region PAYPAL
-        tokenizationViewModel.payPalBillingAgreementUrl.observe(this) { uri: String ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-            startActivity(intent)
-        }
-
-        tokenizationViewModel.confirmPayPalBillingAgreement.observe(this) { data: JSONObject ->
-            val paymentMethod: PaymentMethodDescriptor? =
-                primerViewModel.selectedPaymentMethod.value
-            val paypal = paymentMethod as? PayPalDescriptor
-                ?: return@observe // if we are getting an emission here it means we're currently dealing with paypal
-
-            paypal.setTokenizableValue(
-                "paypalBillingAgreementId",
-                data.getString("billingAgreementId")
-            )
-            paypal.setTokenizableValue("externalPayerInfo", data.getJSONObject("externalPayerInfo"))
-            paypal.setTokenizableValue("shippingAddress", data.getJSONObject("shippingAddress"))
-
-            tokenizationViewModel.tokenize()
-        }
-
-        tokenizationViewModel.payPalOrder.observe(this) { uri: String ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-            startActivity(intent)
-        }
+        tokenizationViewModel.payPalBillingAgreementUrl.observe(
+            this,
+            payPalBillingAgreementUrlObserver
+        )
+        tokenizationViewModel.confirmPayPalBillingAgreement.observe(
+            this,
+            confirmPayPalBillingAgreementObserver
+        )
+        tokenizationViewModel.payPalOrder.observe(this, payPalOrderObserver)
         // endregion
 
         subscription = EventBus.subscribe {

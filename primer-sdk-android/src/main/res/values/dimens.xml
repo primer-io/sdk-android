@@ -5,7 +5,7 @@
 
     <dimen name="primer_corner_radius">6dp</dimen>
     <dimen name="primer_border_width">1dp</dimen>
-    <dimen name="primer_list_margin">13dp</dimen>
+    <dimen name="primer_list_margin">16dp</dimen>
 
 
     <dimen name="success_width">300dp</dimen>
@@ -34,7 +34,13 @@
 
     <dimen name="medium_vertical_margin">8dp</dimen>
     <dimen name="large_vertical_margin">16dp</dimen>
+    <dimen name="xl_vertical_margin">24dp</dimen>
+    <dimen name="xxl_vertical_margin">28dp</dimen>
 
     <dimen name="elevation_selected">5dp</dimen>
     <dimen name="elevation_unselected">0dp</dimen>
+
+    <!-- Pay Button -->
+    <dimen name="pay_button_height">40dp</dimen>
+    <dimen name="pay_button_radius">2dp</dimen>
 </resources>

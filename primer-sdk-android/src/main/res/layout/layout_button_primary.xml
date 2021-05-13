@@ -4,7 +4,7 @@
         android:id="@+id/button_primary_cta_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/primer_button_primary_fg"
+        android:textColor="@color/primer_button_primary_text_color"
         style="@style/Primer.Button.Text.Primary"
         android:minHeight="44dp"
         android:gravity="center"
