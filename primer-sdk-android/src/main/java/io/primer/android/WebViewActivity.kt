@@ -56,6 +56,7 @@ internal class WebViewActivity : AppCompatActivity() {
                 }
             }
 
+            @Suppress("SwallowedException") // exception is not being swallowed
             private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
                 try {
                     intent.apply {
@@ -67,6 +68,7 @@ internal class WebViewActivity : AppCompatActivity() {
                 }
             }
 
+            @Suppress("SwallowedException") // exception is not being swallowed
             @SuppressLint("QueryPermissionsNeeded")
             private fun handleIntentOnAndroid10OrBelow(intent: Intent) {
                 if (intent.resolveActivity(packageManager) != null) {

@@ -8,13 +8,15 @@ import io.primer.android.R
 import io.primer.android.UXMode
 import io.primer.android.model.dto.MonetaryAmount
 
-internal class SelectPaymentMethodTitle(context: Context, attrs: AttributeSet? = null) :
-    LinearLayout(context, attrs) {
+internal class SelectPaymentMethodTitle(
+    context: Context,
+    attrs: AttributeSet? = null,
+) : LinearLayout(context, attrs) {
 
     private var uxMode: UXMode? = null
     private var amount: MonetaryAmount? = null
 
-    fun setUXMode(uxMode: UXMode) {
+    fun setUxMode(uxMode: UXMode) {
         this.uxMode = uxMode
         update()
     }
