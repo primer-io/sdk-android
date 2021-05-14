@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.primer.android.R
@@ -83,7 +84,7 @@ class PayButton @JvmOverloads constructor(
         progressIndicator.isVisible = true
         progressIndicator
             .animate()
-            .alpha(1f)
+            .alpha(0.5f)
             .setDuration(FADE_IN_DURATION_MS)
             .start()
     }

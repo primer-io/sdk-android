@@ -17,6 +17,7 @@
     <string name="enter_card_details">Enter card details</string>
     <string name="last_four">•••• %d</string>
     <string name="expiry_date">%1$d / %2$d</string>
+    <string name="available_payment_methods">Available payment methods</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>

@@ -47,6 +47,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
             field = value
 
             adapter.isEditing = isEditing
+            adapter.notifyDataSetChanged()
 
             vaultTitleLabel.text = if (isEditing) getString(R.string.edit_saved_payment_methods)
             else getString(R.string.other_ways_to_pay)

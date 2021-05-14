@@ -1,168 +1,42 @@
 package com.example.myapplication
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Response
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
-import io.primer.android.CheckoutEventListener
-import io.primer.android.UniversalCheckout
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.payment.card.Card
-import io.primer.android.payment.gocardless.GoCardless
-import io.primer.android.payment.google.GooglePay
-import io.primer.android.payment.klarna.Klarna
-import io.primer.android.payment.paypal.PayPal
-import io.primer.android.ui.fragments.SuccessType
-import org.json.JSONObject
-import java.util.*
-
-//private const val CLIENT_TOKEN_URI: String = "https://api.staging.primer.io/auth/client-token"
-
-private const val CLIENT_TOKEN_URI: String =
-        "https://us-central1-primerdemo-8741b.cloudfunctions.net/clientToken"
-private const val CUSTOMER_ID: String = "will-123"
-private const val API_KEY: String = "b91c117b-3a89-4773-bfc7-58a24d8328a6"
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.myapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private val eventListener = object : CheckoutEventListener {
-        override fun onCheckoutEvent(event: CheckoutEvent) {
-            Log.i("ExampleApp", "Checkout event! ${event.type.name}")
-
-            when (event) {
-                is CheckoutEvent.TokenizationSuccess -> {
-                    Log.i(
-                        "ExampleApp",
-                        "TokenizationSuccess: ${event.data.tokenType} ${event.data.token}"
-                    )
-                    Handler(Looper.getMainLooper()).post {
-                        UniversalCheckout.showSuccess(autoDismissDelay = 2500)
-                    }
-                }
-                is CheckoutEvent.TokenAddedToVault -> {
-                    Log.i("ExampleApp", "Customer added a new payment method: ${event.data.token}")
-                    Handler(Looper.getMainLooper()).post {
-                        UniversalCheckout.showSuccess(
-                            autoDismissDelay = 10000,
-                            SuccessType.ADDED_PAYMENT_METHOD,
-                        )
-                    }
-                }
-                is CheckoutEvent.ApiError -> {
-                    Log.e("ExampleApp", "${event.data}")
-                    UniversalCheckout.dismiss()
-                }
-                is CheckoutEvent.Exit -> {
-                    if (event.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
-                        Log.i("ExampleApp", "Awesome")
-                    }
-                }
-            }
-        }
-    }
-
-    private val card = Card()
-
-    private val paypal = PayPal()
-
-    private val klarna = Klarna()
-
-    private val googlePay = GooglePay(
-        totalPrice = "0.01",
-        countryCode = "UK",
-        currencyCode = "GBP",
-    )
-
-    private val goCardless = GoCardless(
-        companyName = "Luko AB",
-        companyAddress = "123 French St, Francetown, France, FR3NCH",
-        customerName = "Will Knowles",
-        customerEmail = "will.jk01@gmail.com",
-        customerAddressPostalCode = "864918",
-        customerAddressLine1 = "123 Fake St",
-        customerAddressCity = "Paris",
-        customerAddressCountryCode = "FR"
-    )
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: AppMainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
 
-        val queue = Volley.newRequestQueue(this)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
-        queue.add(
-            ClientTokenRequest(
-                { response ->
-                    val token = response.getString("clientToken")
-                    initializeCheckout(token)
-                },
-                { error -> onError(error) }
-            )
-        )
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
+        viewModel = ViewModelProvider(this).get(AppMainViewModel::class.java)
+
     }
 
-    private fun initializeCheckout(token: String) {
-        UniversalCheckout.initialize(this, token, Locale("sv", "SE"))
-        UniversalCheckout.loadPaymentMethods(listOf(googlePay, klarna, card, paypal))
-
-        showCheckout()
-
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            showCheckout()
-        }
-    }
-
-    private fun showCheckout() {
-        UniversalCheckout.showCheckout(
-            context = this,
-            listener = eventListener,
-            amount = 1000,
-            currency = "GBP"
-        )
-    }
-
-    private fun onError(error: VolleyError) {
-        Log.e("ExampleApp", "Volley Error when getting client token: $error")
-        Log.e("ExampleApp", String(error.networkResponse.data ?: byteArrayOf()))
-    }
-}
-
-class ClientTokenRequest(
-    onSuccess: Response.Listener<JSONObject>,
-    onError: Response.ErrorListener,
-) : JsonObjectRequest(
-    Method.POST,
-    CLIENT_TOKEN_URI,
-    JSONObject().apply { put("customerId", CUSTOMER_ID) },
-    onSuccess,
-    onError,
-) {
-
-    override fun getHeaders(): MutableMap<String, String> =
-            HashMap<String, String>().apply {
-                if (API_KEY.isNotEmpty()) {
-                    put("X-Api-Key", API_KEY)
-                }
-            }
-
-    override fun getBody(): ByteArray {
-        val body = """
-            {
-                "staging": true,
-                "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
-                "checkout": {
-                    "paymentFlow": "PREFER_VAULT"
-                }
-            }
-        """.trimIndent()
-        return body.toByteArray()
+    override fun onSupportNavigateUp(): Boolean {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        return navController.navigateUp(appBarConfiguration)
+                || super.onSupportNavigateUp()
     }
 }
