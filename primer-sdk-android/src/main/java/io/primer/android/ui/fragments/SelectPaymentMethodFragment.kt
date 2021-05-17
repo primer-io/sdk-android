@@ -207,6 +207,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 renderAlternativeSavedPaymentMethodView(title)
                 iconView.setImageResource(R.drawable.ic_klarna_card)
             }
+            "PAYPAL_BILLING_AGREEMENT" -> {
+                val title =
+                    paymentMethod.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
+                renderAlternativeSavedPaymentMethodView(title)
+                iconView.setImageResource(R.drawable.ic_paypal_card)
+            }
             "GOCARDLESS_MANDATE" -> {
                 renderAlternativeSavedPaymentMethodView("Direct Debit")
                 iconView.setImageResource(R.drawable.ic_directdebit_card)
