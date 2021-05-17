@@ -78,18 +78,22 @@ class VaultedPaymentMethodsFragment : Fragment() {
         when (it.paymentInstrumentType) {
             "KLARNA_CUSTOMER_TOKEN" -> {
                 val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
-                AlternativePaymentMethodData(email ?: "Klarna Payment Method",
-                                             it.token,
-                                             AlternativePaymentMethodType.Klarna)
+                AlternativePaymentMethodData(
+                    email ?: "Klarna Payment Method",
+                    it.token,
+                    AlternativePaymentMethodType.Klarna,
+                )
             }
             "PAYPAL_BILLING_AGREEMENT" -> {
                 val title = it.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
                 AlternativePaymentMethodData(title, it.token, AlternativePaymentMethodType.PayPal)
             }
             "GOCARDLESS_MANDATE" -> {
-                AlternativePaymentMethodData("Direct Debit Mandate",
-                                             it.token,
-                                             AlternativePaymentMethodType.DirectDebit)
+                AlternativePaymentMethodData(
+                    "Direct Debit Mandate",
+                    it.token,
+                    AlternativePaymentMethodType.DirectDebit,
+                )
             }
             "PAYMENT_CARD" -> {
                 val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
@@ -100,9 +104,11 @@ class VaultedPaymentMethodsFragment : Fragment() {
                 CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
             }
             else -> {
-                AlternativePaymentMethodData("saved payment method",
-                                             it.token,
-                                             AlternativePaymentMethodType.Generic)
+                AlternativePaymentMethodData(
+                    "saved payment method",
+                    it.token,
+                    AlternativePaymentMethodType.Generic,
+                )
             }
         }
     }

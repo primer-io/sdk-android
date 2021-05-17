@@ -10,7 +10,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import io.primer.android.R
