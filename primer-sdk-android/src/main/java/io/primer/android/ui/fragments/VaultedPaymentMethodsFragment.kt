@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.R
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.ui.AlternativePaymentMethodData
+import io.primer.android.ui.AlternativePaymentMethodType
 import io.primer.android.ui.CardData
 import io.primer.android.ui.PaymentMethodItemData
 import io.primer.android.ui.VaultViewAction
@@ -47,6 +48,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
             field = value
 
             adapter.isEditing = isEditing
+            adapter.notifyDataSetChanged()
 
             vaultTitleLabel.text = if (isEditing) getString(R.string.edit_saved_payment_methods)
             else getString(R.string.other_ways_to_pay)
@@ -76,10 +78,22 @@ class VaultedPaymentMethodsFragment : Fragment() {
         when (it.paymentInstrumentType) {
             "KLARNA_CUSTOMER_TOKEN" -> {
                 val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
-                AlternativePaymentMethodData(email ?: "Klarna Payment Method", it.token)
+                AlternativePaymentMethodData(
+                    email ?: "Klarna Payment Method",
+                    it.token,
+                    AlternativePaymentMethodType.Klarna,
+                )
+            }
+            "PAYPAL_BILLING_AGREEMENT" -> {
+                val title = it.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
+                AlternativePaymentMethodData(title, it.token, AlternativePaymentMethodType.PayPal)
             }
             "GOCARDLESS_MANDATE" -> {
-                AlternativePaymentMethodData("Direct Debit Mandate", it.token)
+                AlternativePaymentMethodData(
+                    "Direct Debit Mandate",
+                    it.token,
+                    AlternativePaymentMethodType.DirectDebit,
+                )
             }
             "PAYMENT_CARD" -> {
                 val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
@@ -90,7 +104,11 @@ class VaultedPaymentMethodsFragment : Fragment() {
                 CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
             }
             else -> {
-                AlternativePaymentMethodData("title", it.token)
+                AlternativePaymentMethodData(
+                    "saved payment method",
+                    it.token,
+                    AlternativePaymentMethodType.Generic,
+                )
             }
         }
     }

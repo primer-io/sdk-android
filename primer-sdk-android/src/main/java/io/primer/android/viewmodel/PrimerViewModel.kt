@@ -62,7 +62,8 @@ internal class PrimerViewModel(
     private val log = Logger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
 
-    private var selectedPaymentMethodId = MutableLiveData("")
+    private var _selectedPaymentMethodId = MutableLiveData("")
+    var selectedPaymentMethodId: LiveData<String> = _selectedPaymentMethodId
 
     val keyboardVisible = MutableLiveData(false)
 
@@ -111,10 +112,10 @@ internal class PrimerViewModel(
     }
 
     fun setSelectedPaymentMethodId(id: String) {
-        selectedPaymentMethodId.value = id
+        _selectedPaymentMethodId.value = id
     }
 
-    fun getSelectedPaymentMethodId(): String = selectedPaymentMethodId.value ?: ""
+    fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value ?: ""
 
     private fun initializePaymentMethodModules(
         locallyConfiguredPaymentMethods: List<PaymentMethod>,

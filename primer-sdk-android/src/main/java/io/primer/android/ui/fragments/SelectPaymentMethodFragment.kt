@@ -12,7 +12,10 @@ import androidx.fragment.app.Fragment
 import io.primer.android.R
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.SelectPaymentMethodTitle
@@ -90,6 +93,19 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         payAllButton.setTheme(theme)
         payAllButton.amount = checkoutConfig.monetaryAmount
 
+        payAllButton.setOnClickListener {
+            payAllButton.showProgress()
+            primerViewModel.vaultedPaymentMethods.value?.find {
+                it.token == primerViewModel.getSelectedPaymentMethodId()
+            }?.run {
+                EventBus.broadcast(
+                    CheckoutEvent.TokenSelected(
+                        PaymentMethodTokenAdapter.internalToExternal(this)
+                    )
+                )
+            }
+        }
+
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             addPaymentMethodsToList(paymentMethods)
         }
@@ -107,11 +123,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             setUxMode(checkoutConfig.uxMode)
         }
 
+        payAllButton.isEnabled = false
+
         savedPaymentMethod.setOnClickListener {
             it.isSelected = !it.isSelected
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
+            payAllButton.isEnabled = it.isSelected
         }
     }
 
@@ -171,7 +190,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             savedPaymentLabel,
             savedPaymentMethod,
             seeAllLabel,
-            otherWaysPayLabel,
             otherWaysToPayStartDivider,
             otherWaysToPayEndDivider,
         ).forEach {
@@ -188,6 +206,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                     paymentMethod.paymentInstrumentData?.sessionData?.billingAddress?.email
                 renderAlternativeSavedPaymentMethodView(title)
                 iconView.setImageResource(R.drawable.ic_klarna_card)
+            }
+            "PAYPAL_BILLING_AGREEMENT" -> {
+                val title =
+                    paymentMethod.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
+                renderAlternativeSavedPaymentMethodView(title)
+                iconView.setImageResource(R.drawable.ic_paypal_card)
             }
             "GOCARDLESS_MANDATE" -> {
                 renderAlternativeSavedPaymentMethodView("Direct Debit")

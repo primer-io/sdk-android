@@ -28,6 +28,7 @@
         android:alpha="0"
         android:indeterminate="true"
         android:visibility="invisible"
+        android:indeterminateTint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/button"
         app:layout_constraintEnd_toEndOf="@+id/button"
         app:layout_constraintStart_toStartOf="@+id/button"

@@ -74,6 +74,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/pay_button_height"
         android:layout_marginTop="@dimen/xl_vertical_margin"
+        android:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saved_payment_method" />
@@ -102,10 +103,11 @@
 
     <TextView
         android:id="@+id/other_ways_to_pay_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xxl_vertical_margin"
-        android:text="@string/other_ways_of_paying"
+        android:textAllCaps="true"
+        android:text="@string/available_payment_methods"
         android:textColor="@color/primer_text_color_muted"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

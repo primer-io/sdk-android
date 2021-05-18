@@ -13,6 +13,10 @@ enum class PaymentItemStatus {
     UNSELECTED, SELECTED, EDITING
 }
 
+enum class AlternativePaymentMethodType {
+    PayPal, Klarna, DirectDebit, Generic
+}
+
 sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     internal fun configureCheckIcon(itemView: View, status: PaymentItemStatus) {
@@ -36,6 +40,20 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     class AlternativePaymentMethod(view: View) : ViewHolder(view) {
 
+        private fun setCardIcon(type: AlternativePaymentMethodType) {
+            val iconView = itemView.findViewById<ImageView>(R.id.payment_method_icon)
+            when (type) {
+                AlternativePaymentMethodType.PayPal ->
+                    iconView.setImageResource(R.drawable.ic_paypal_card)
+                AlternativePaymentMethodType.Klarna ->
+                    iconView.setImageResource(R.drawable.ic_klarna_card)
+                AlternativePaymentMethodType.DirectDebit ->
+                    iconView.setImageResource(R.drawable.ic_directdebit_card)
+                AlternativePaymentMethodType.Generic ->
+                    iconView.setImageResource(R.drawable.ic_generic_card)
+            }
+        }
+
         fun bind(item: AlternativePaymentMethodData, status: PaymentItemStatus) {
             val titleLabel = itemView.findViewById<TextView>(R.id.title_label)
             val lastFourLabel = itemView.findViewById<TextView>(R.id.last_four_label)
@@ -43,6 +61,7 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             titleLabel.text = item.title
             lastFourLabel.text = ""
             expiryLabel.text = ""
+            setCardIcon(item.type)
             configureCheckIcon(itemView, status)
         }
     }
@@ -80,6 +99,7 @@ interface PaymentMethodItemData
 data class AlternativePaymentMethodData(
     val title: String,
     val tokenId: String,
+    val type: AlternativePaymentMethodType,
 ) : PaymentMethodItemData
 
 data class CardData(

@@ -83,7 +83,7 @@ class PayButton @JvmOverloads constructor(
         progressIndicator.isVisible = true
         progressIndicator
             .animate()
-            .alpha(1f)
+            .alpha(0.5f)
             .setDuration(FADE_IN_DURATION_MS)
             .start()
     }
