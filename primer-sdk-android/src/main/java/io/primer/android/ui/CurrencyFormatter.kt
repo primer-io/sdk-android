@@ -5,6 +5,8 @@ import java.text.NumberFormat
 import java.util.Currency
 
 internal class CurrencyFormatter private constructor() {
+
+    // FIXME this shouldn't be static
     companion object {
 
         fun format(amount: MonetaryAmount?): String? {

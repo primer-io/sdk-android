@@ -1,4 +1,6 @@
 <resources>
+    <string name="pay">Pay</string>
+    <string name="pay_specific_amount">Pay %s</string>
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Add a payment method</string>
     <string name="pay_by_card">Pay by card</string>
@@ -15,6 +17,7 @@
     <string name="enter_card_details">Enter card details</string>
     <string name="last_four">•••• %d</string>
     <string name="expiry_date">%1$d / %2$d</string>
+    <string name="available_payment_methods">Available payment methods</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>
@@ -62,8 +65,8 @@
     <string name="klarna">Klarna</string>
     <string name="choose_payment_method">Choose payment method</string>
     <string name="saved_payment_methods">Saved payment methods</string>
-    <string name="available_payment_methods">Available payment methods</string>
-    <string name="see_all">see all</string>
+    <string name="other_ways_of_paying">Other ways of paying</string>
+    <string name="manage">Manage</string>
     <string name="mastercard">Mastercard</string>
     <string name="john_doe">John Doe</string>
     <string name="last_four_with_dots">•••• 1234</string>

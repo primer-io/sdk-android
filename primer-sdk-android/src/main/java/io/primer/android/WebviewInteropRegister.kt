@@ -5,7 +5,6 @@ import io.primer.android.logging.Logger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
 import java.util.UUID
-import kotlin.collections.HashMap
 
 internal class WebviewInteropRegister {
 
@@ -22,7 +21,7 @@ internal class WebviewInteropRegister {
     companion object {
 
         private val log = Logger("WebviewInteropActivity")
-        private val callbacks: MutableMap<String, Callback> = HashMap()
+        private val callbacks: MutableMap<String, Callback> = mutableMapOf()
         private var packageName: String = ""
 
         fun init(name: String) {

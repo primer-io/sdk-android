@@ -1,3 +1,5 @@
+[![Maven Central](https://img.shields.io/maven-central/v/io.primer/android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.primer%22%20AND%20a:%22android%22) [![CircleCI](https://circleci.com/gh/primer-io/primer-sdk-android.svg?style=svg&circle-token=fdbf8380fcad091297915de921787f7297946cd3)](https://app.circleci.com/pipelines/github/primer-io/primer-sdk-android)
+
 # primer-sdk-android
 
 ## Tooling

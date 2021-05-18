@@ -10,5 +10,6 @@ enum class CheckoutEventType {
     SHOW_ERROR,
     TOGGLE_LOADING,
     SHOW_SUCCESS,
-    DISMISS_INTERNAL
+    DISMISS_INTERNAL,
+    TOKEN_SELECTED
 }

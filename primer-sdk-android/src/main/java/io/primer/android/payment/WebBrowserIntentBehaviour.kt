@@ -16,6 +16,7 @@ internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehavio
 
         initialize()
 
+        // FIXME this should be injected
         val interopRegister = WebviewInteropRegister.register(this)
 
         getUri(interopRegister.cancelUrl, interopRegister.successUrl)

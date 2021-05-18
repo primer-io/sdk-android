@@ -43,4 +43,7 @@ sealed class CheckoutEvent(
         
     class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
         PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
+
+    class TokenSelected(val data: PaymentMethodToken) :
+        PublicCheckoutEvent(CheckoutEventType.TOKEN_SELECTED)
 }
