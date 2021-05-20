@@ -43,7 +43,6 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
         single<Model> {
             Model(
                 clientToken = get(),
-                config = get(),
                 okHttpClient = get(),
                 json = get()
             )

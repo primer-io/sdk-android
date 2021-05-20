@@ -10,13 +10,10 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
@@ -83,7 +80,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun tokenize() {
         viewModelScope.launch {
             val method = paymentMethod ?: return@launch // FIXME this is failing silently
-            when (val result = model.tokenize(method)) {
+            when (val result = model.tokenize(method, checkoutConfig.uxMode)) {
                 is OperationResult.Success -> {
                     val paymentMethodToken: PaymentMethodTokenInternal = result.data
                     tokenizationData.postValue(paymentMethodToken)

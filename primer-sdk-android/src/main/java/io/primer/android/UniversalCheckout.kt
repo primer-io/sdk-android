@@ -54,12 +54,6 @@ object UniversalCheckout {
         theme: UniversalCheckoutTheme? = null,
     ) {
         val decodedToken = ClientToken.fromString(clientToken)
-        val config = CheckoutConfig(
-            clientToken = clientToken,
-            locale = locale,
-            countryCode = countryCode,
-            packageName = context.packageName
-        )
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
@@ -82,9 +76,16 @@ object UniversalCheckout {
 
         val json = Serialization.json
 
-        val model = Model(decodedToken, config, okHttpClient, json)
+        val model = Model(decodedToken, okHttpClient, json)
 
-        checkout = InternalUniversalCheckout(model, Dispatchers.IO, clientToken, locale, theme)
+        checkout = InternalUniversalCheckout(
+            model,
+            Dispatchers.IO,
+            clientToken,
+            locale,
+            countryCode,
+            theme,
+        )
     }
 
     /**
@@ -103,7 +104,6 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
-        countryCode: CountryCode? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -111,7 +111,6 @@ object UniversalCheckout {
             context = context,
             listener = listener,
             amount = amount,
-            countryCode = countryCode,
             currency = currency,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi
@@ -123,7 +122,6 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
-        countryCode: CountryCode? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -131,7 +129,6 @@ object UniversalCheckout {
             context = context,
             listener = listener,
             amount = amount,
-            countryCode = countryCode,
             currency = currency,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi
@@ -165,6 +162,7 @@ internal class InternalUniversalCheckout constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val fullToken: String,
     private val locale: Locale,
+    private val countryCode: CountryCode? = null,
     private val theme: UniversalCheckoutTheme? = null,
 ) {
 
@@ -216,7 +214,6 @@ internal class InternalUniversalCheckout constructor(
     fun showVault(
         context: Context,
         listener: CheckoutEventListener,
-        countryCode: CountryCode? = null,
         amount: Int? = null,
         currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
@@ -225,8 +222,6 @@ internal class InternalUniversalCheckout constructor(
         show(
             context = context,
             listener = listener,
-            locale = locale,
-            countryCode = countryCode,
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
@@ -239,7 +234,6 @@ internal class InternalUniversalCheckout constructor(
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
-        countryCode: CountryCode? = null,
         amount: Int? = null,
         currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
@@ -248,9 +242,7 @@ internal class InternalUniversalCheckout constructor(
         show(
             context = context,
             listener = listener,
-            locale = locale,
             uxMode = UXMode.CHECKOUT,
-            countryCode = countryCode,
             amount = amount,
             currency = currency,
             doNotShowUi = doNotShowUi,
@@ -275,8 +267,6 @@ internal class InternalUniversalCheckout constructor(
     private fun show(
         context: Context,
         listener: CheckoutEventListener,
-        locale: Locale = Locale.getDefault(),
-        countryCode: CountryCode? = null,
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
