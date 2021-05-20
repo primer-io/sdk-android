@@ -10,10 +10,13 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
@@ -135,7 +138,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: KlarnaDescriptor) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
-                val countryCode = checkoutConfig.locale.country
+
+                val countryCode = checkoutConfig.countryCode?.toString()
                 val locale = checkoutConfig.locale.toLanguageTag()
                 val currencyCode = checkoutConfig.monetaryAmount?.currency
 
@@ -217,7 +221,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
         val localeData = JSONObject().apply {
-            val countryCode = checkoutConfig.locale.country
+            val countryCode = checkoutConfig.countryCode?.toString()
             val locale = checkoutConfig.locale.toLanguageTag()
             val currencyCode = checkoutConfig.monetaryAmount?.currency
 

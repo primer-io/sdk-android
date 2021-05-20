@@ -22,6 +22,7 @@ import io.primer.android.CheckoutEventListener
 import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.klarna.Klarna
@@ -37,7 +38,7 @@ class SecondFragment : Fragment() {
     private lateinit var viewModel: AppMainViewModel
 
     private var amount: Int = 1000
-    private var currency: String = "SEK"
+    private var currency: String = "EUR"
 
     private val card = Card()
     private val paypal = PayPal()
@@ -65,7 +66,13 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.setOnClickListener {
             activity?.let {
-                UniversalCheckout.showVault(it, listener, amount, currency)
+                UniversalCheckout.showVault(
+                    it,
+                    listener,
+                    amount,
+                    currency,
+                    countryCode = CountryCode.DE,
+                )
             }
         }
 
@@ -135,6 +142,10 @@ class SecondFragment : Fragment() {
                 }
                 is CheckoutEvent.ApiError -> {
                     UniversalCheckout.dismiss()
+                    AlertDialog.Builder(context)
+                        .setTitle("❌ error!")
+                        .setMessage(e.data.description)
+                        .show()
                 }
                 is CheckoutEvent.Exit -> {
                     if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
@@ -159,7 +170,7 @@ class SecondFragment : Fragment() {
 
     private fun initializeCheckoutWith(token: String) {
         activity?.let {
-            UniversalCheckout.initialize(it, token, Locale("sv", "SE"))
+            UniversalCheckout.initialize(it, token)
         }
     }
 

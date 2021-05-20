@@ -11,6 +11,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
@@ -48,13 +49,15 @@ object UniversalCheckout {
     fun initialize(
         context: Context,
         clientToken: String,
-        locale: Locale,
+        locale: Locale = Locale.getDefault(),
+        countryCode: CountryCode? = null,
         theme: UniversalCheckoutTheme? = null,
     ) {
         val decodedToken = ClientToken.fromString(clientToken)
         val config = CheckoutConfig(
             clientToken = clientToken,
             locale = locale,
+            countryCode = countryCode,
             packageName = context.packageName
         )
 
@@ -100,6 +103,7 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        countryCode: CountryCode? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -107,6 +111,7 @@ object UniversalCheckout {
             context = context,
             listener = listener,
             amount = amount,
+            countryCode = countryCode,
             currency = currency,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi
@@ -118,6 +123,7 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        countryCode: CountryCode? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -125,6 +131,7 @@ object UniversalCheckout {
             context = context,
             listener = listener,
             amount = amount,
+            countryCode = countryCode,
             currency = currency,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi
@@ -209,6 +216,7 @@ internal class InternalUniversalCheckout constructor(
     fun showVault(
         context: Context,
         listener: CheckoutEventListener,
+        countryCode: CountryCode? = null,
         amount: Int? = null,
         currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
@@ -218,6 +226,7 @@ internal class InternalUniversalCheckout constructor(
             context = context,
             listener = listener,
             locale = locale,
+            countryCode = countryCode,
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
@@ -230,6 +239,7 @@ internal class InternalUniversalCheckout constructor(
     fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
+        countryCode: CountryCode? = null,
         amount: Int? = null,
         currency: String? = null,
         isStandalonePaymentMethod: Boolean = false,
@@ -240,6 +250,7 @@ internal class InternalUniversalCheckout constructor(
             listener = listener,
             locale = locale,
             uxMode = UXMode.CHECKOUT,
+            countryCode = countryCode,
             amount = amount,
             currency = currency,
             doNotShowUi = doNotShowUi,
@@ -264,7 +275,8 @@ internal class InternalUniversalCheckout constructor(
     private fun show(
         context: Context,
         listener: CheckoutEventListener,
-        locale: Locale,
+        locale: Locale = Locale.getDefault(),
+        countryCode: CountryCode? = null,
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
@@ -282,6 +294,7 @@ internal class InternalUniversalCheckout constructor(
             clientToken = fullToken,
             packageName = context.packageName,
             locale = locale,
+            countryCode = countryCode,
             uxMode = uxMode,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi,
