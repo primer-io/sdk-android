@@ -32,7 +32,6 @@ import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
 import io.primer.android.ui.fragments.CheckoutSheetFragment
-import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
@@ -245,16 +244,20 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     onExit(it.data)
                 }
                 is CheckoutEvent.ShowSuccess -> {
-                    openFragment(SessionCompleteFragment.newInstance(
-                        it.delay,
-                        SessionCompleteViewType.Success(it.successType)
-                    ))
+                    openFragment(
+                        SessionCompleteFragment.newInstance(
+                            it.delay,
+                            SessionCompleteViewType.Success(it.successType),
+                        )
+                    )
                 }
                 is CheckoutEvent.ShowError -> {
-                    openFragment(SessionCompleteFragment.newInstance(
-                        it.delay,
-                        SessionCompleteViewType.Error(it.errorType)
-                    ))
+                    openFragment(
+                        SessionCompleteFragment.newInstance(
+                            it.delay,
+                            SessionCompleteViewType.Error(it.errorType),
+                        )
+                    )
                 }
                 is CheckoutEvent.ToggleProgressIndicator -> {
                     onToggleProgressIndicator(it.data)
@@ -268,11 +271,12 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private fun ensureClicksGoThrough() {
-        window.addFlags(
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
+        window
+            .addFlags(
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
     }
 
     override fun onResume() {

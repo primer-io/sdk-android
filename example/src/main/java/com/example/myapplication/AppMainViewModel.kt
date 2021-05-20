@@ -43,7 +43,7 @@ class AppMainViewModel : ViewModel() {
     private fun fetchClientToken() {
         val mediaType = "application/json; charset=utf-8"
         val currentUserId = "customer8"
-        val body = ClientTokenRequest(currentUserId)
+        val body = ClientTokenRequest(currentUserId, "SE")
         val json = Gson().toJson(body)
         val request = Request.Builder()
             .url(CLIENT_TOKEN_URI)
@@ -104,7 +104,10 @@ class AppMainViewModel : ViewModel() {
     }
 }
 
-data class ClientTokenRequest(@SerializedName("customerId") val id: String)
+data class ClientTokenRequest(
+    @SerializedName("customerId") val id: String,
+    @SerializedName("customerCountryCode") val countryCode: String,
+)
 data class ClientTokenResponse(val clientToken: String, val expirationDate: String)
 
 data class TransactionRequest(

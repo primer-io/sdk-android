@@ -1,5 +1,6 @@
 package io.primer.android.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -28,23 +29,8 @@ enum class ErrorType {
 }
 
 sealed class SessionCompleteViewType {
-    class Success(successType: SuccessType) : SessionCompleteViewType() {
-
-        var message: String = when (successType) {
-            SuccessType.DEFAULT -> "Success!"
-            SuccessType.VAULT_TOKENIZATION_SUCCESS -> "Your payment method was successfully added!"
-            SuccessType.PAYMENT_SUCCESS -> "Your payment request completed successfully!"
-        }
-    }
-
-    class Error(errorType: ErrorType) : SessionCompleteViewType() {
-
-        var message: String = when (errorType) {
-            ErrorType.DEFAULT -> "Error!"
-            ErrorType.VAULT_TOKENIZATION_FAILED -> "Your payment method couldn’t be added. Please try again."
-            ErrorType.PAYMENT_FAILED -> "Your payment request was unsuccessful."
-        }
-    }
+    class Success(val successType: SuccessType) : SessionCompleteViewType()
+    class Error(val errorType: ErrorType) : SessionCompleteViewType()
 }
 
 class SessionCompleteFragment : Fragment() {
@@ -92,18 +78,48 @@ class SessionCompleteFragment : Fragment() {
 
     companion object {
 
+        private fun getSuccessMessage(successType: SuccessType, context: Context): String {
+            return when (successType) {
+                SuccessType.DEFAULT ->
+                    context.getString(R.string.success_text)
+                SuccessType.VAULT_TOKENIZATION_SUCCESS ->
+                    context.getString(R.string.payment_method_added_message)
+                SuccessType.PAYMENT_SUCCESS ->
+                    context.getString(R.string.payment_request_completed_successfully)
+            }
+        }
+
+        private fun getErrorMessage(errorType: ErrorType, context: Context): String {
+            return when (errorType) {
+                ErrorType.DEFAULT ->
+                    context.getString(R.string.error_default)
+                ErrorType.VAULT_TOKENIZATION_FAILED ->
+                    context.getString(R.string.payment_method_not_added_message)
+                ErrorType.PAYMENT_FAILED ->
+                    context.getString(R.string.payment_request_unsuccessful)
+            }
+        }
+
         fun newInstance(delay: Int, viewType: SessionCompleteViewType): SessionCompleteFragment {
             return SessionCompleteFragment().apply {
                 arguments = Bundle().apply {
 
-                    when (viewType) {
-                        is SessionCompleteViewType.Error -> {
-                            putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, true)
-                            putString(SESSION_COMPLETE_MESSAGE_KEY, viewType.message)
-                        }
-                        is SessionCompleteViewType.Success -> {
-                            putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, false)
-                            putString(SESSION_COMPLETE_MESSAGE_KEY, viewType.message)
+                    context?.let {
+                        when (viewType) {
+                            is SessionCompleteViewType.Error -> {
+                                putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, true)
+                                putString(
+                                    SESSION_COMPLETE_MESSAGE_KEY,
+                                    getErrorMessage(viewType.errorType, it),
+                                )
+                            }
+                            is SessionCompleteViewType.Success -> {
+                                putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, false)
+                                putString(
+                                    SESSION_COMPLETE_MESSAGE_KEY,
+                                    getSuccessMessage(viewType.successType, it),
+                                )
+                            }
                         }
                     }
 

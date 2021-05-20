@@ -26,6 +26,7 @@ import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
+import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 import java.util.Locale
 
@@ -42,6 +43,8 @@ class SecondFragment : Fragment() {
     private val card = Card()
     private val paypal = PayPal()
     private val klarna = Klarna()
+
+    private val locale = Locale("se", "SE")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,12 +132,16 @@ class SecondFragment : Fragment() {
                     Handler(Looper.getMainLooper()).post {
                         UniversalCheckout.showSuccess(
                             autoDismissDelay = 10000,
-                            SuccessType.ADDED_PAYMENT_METHOD,
+                            SuccessType.VAULT_TOKENIZATION_SUCCESS,
                         )
                     }
                 }
                 is CheckoutEvent.ApiError -> {
                     UniversalCheckout.dismiss()
+                    UniversalCheckout.showError(
+                        autoDismissDelay = 10000,
+                        ErrorType.VAULT_TOKENIZATION_FAILED,
+                    )
                 }
                 is CheckoutEvent.Exit -> {
                     if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
@@ -159,7 +166,7 @@ class SecondFragment : Fragment() {
 
     private fun initializeCheckoutWith(token: String) {
         activity?.let {
-            UniversalCheckout.initialize(it, token, Locale("sv", "SE"))
+            UniversalCheckout.initialize(it, token, locale)
         }
     }
 

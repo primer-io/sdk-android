@@ -40,7 +40,7 @@ sealed class CheckoutEvent(
 
     class ShowSuccess(val delay: Int = 3000, val successType: SuccessType) :
         PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
-        
+
     class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
         PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
 
