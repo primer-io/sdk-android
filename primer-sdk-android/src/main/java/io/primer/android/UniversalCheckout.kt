@@ -11,6 +11,7 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
+import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
@@ -48,15 +49,11 @@ object UniversalCheckout {
     fun initialize(
         context: Context,
         clientToken: String,
-        locale: Locale,
+        locale: Locale = Locale.getDefault(),
+        countryCode: CountryCode? = null,
         theme: UniversalCheckoutTheme? = null,
     ) {
         val decodedToken = ClientToken.fromString(clientToken)
-        val config = CheckoutConfig(
-            clientToken = clientToken,
-            locale = locale,
-            packageName = context.packageName
-        )
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
@@ -79,9 +76,16 @@ object UniversalCheckout {
 
         val json = Serialization.json
 
-        val model = Model(decodedToken, config, okHttpClient, json)
+        val model = Model(decodedToken, okHttpClient, json)
 
-        checkout = InternalUniversalCheckout(model, Dispatchers.IO, clientToken, locale, theme)
+        checkout = InternalUniversalCheckout(
+            model,
+            Dispatchers.IO,
+            clientToken,
+            locale,
+            countryCode,
+            theme,
+        )
     }
 
     /**
@@ -158,6 +162,7 @@ internal class InternalUniversalCheckout constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val fullToken: String,
     private val locale: Locale,
+    private val countryCode: CountryCode? = null,
     private val theme: UniversalCheckoutTheme? = null,
 ) {
 
@@ -217,7 +222,6 @@ internal class InternalUniversalCheckout constructor(
         show(
             context = context,
             listener = listener,
-            locale = locale,
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
@@ -238,7 +242,6 @@ internal class InternalUniversalCheckout constructor(
         show(
             context = context,
             listener = listener,
-            locale = locale,
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
@@ -264,7 +267,6 @@ internal class InternalUniversalCheckout constructor(
     private fun show(
         context: Context,
         listener: CheckoutEventListener,
-        locale: Locale,
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
@@ -282,6 +284,7 @@ internal class InternalUniversalCheckout constructor(
             clientToken = fullToken,
             packageName = context.packageName,
             locale = locale,
+            countryCode = countryCode,
             uxMode = uxMode,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi,

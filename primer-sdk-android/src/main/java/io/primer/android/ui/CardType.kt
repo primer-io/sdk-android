@@ -1,7 +1,6 @@
 package io.primer.android.ui
 
-// FIXME why are these properties unused?
-internal class CardType(type: Type, val gaps: List<Int>) {
+internal class CardType() {
 
     enum class Type {
         UNKOWN,

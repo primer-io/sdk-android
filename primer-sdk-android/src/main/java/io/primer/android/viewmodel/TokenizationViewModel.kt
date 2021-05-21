@@ -80,7 +80,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun tokenize() {
         viewModelScope.launch {
             val method = paymentMethod ?: return@launch // FIXME this is failing silently
-            when (val result = model.tokenize(method)) {
+            when (val result = model.tokenize(method, checkoutConfig.uxMode)) {
                 is OperationResult.Success -> {
                     val paymentMethodToken: PaymentMethodTokenInternal = result.data
                     tokenizationData.postValue(paymentMethodToken)
@@ -135,7 +135,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: KlarnaDescriptor) {
         viewModelScope.launch {
             val localeData = JSONObject().apply {
-                val countryCode = checkoutConfig.locale.country
+
+                val countryCode = checkoutConfig.countryCode?.toString()
                 val locale = checkoutConfig.locale.toLanguageTag()
                 val currencyCode = checkoutConfig.monetaryAmount?.currency
 
@@ -217,7 +218,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
         val localeData = JSONObject().apply {
-            val countryCode = checkoutConfig.locale.country
+            val countryCode = checkoutConfig.countryCode?.toString()
             val locale = checkoutConfig.locale.toLanguageTag()
             val currencyCode = checkoutConfig.monetaryAmount?.currency
 
