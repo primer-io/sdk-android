@@ -81,11 +81,11 @@
         Your payment method \n
         was successfully added!
     </string>
-    <string name="payment_request_completed_successfully">Your payment request completed successfully!</string>
+    <string name="payment_request_completed_successfully">Your payment completed successfully!</string>
     <string name="payment_method_not_added_message">
         Your payment method couldn’t be added.
     </string>
     <string name="error_default">Error!</string>
-    <string name="payment_request_unsuccessful">Your payment request was unsuccessful.</string>
+    <string name="payment_request_unsuccessful">Your payment was unsuccessful.</string>
 
 </resources>

@@ -38,7 +38,7 @@ class SecondFragment : Fragment() {
     private val paypal = PayPal()
     private val klarna = Klarna()
 
-    private val locale = Locale("se", "SE")
+    // private val locale = Locale("se", "SE")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
