@@ -119,36 +119,3 @@ data class TransactionRequest(
 )
 
 data class TransactionResponse(val message: String)
-
-//
-//class ClientTokenRequest(
-//    onSuccess: Response.Listener<JSONObject>,
-//    onError: Response.ErrorListener,
-//) : JsonObjectRequest(
-//    Method.POST,
-//    CLIENT_TOKEN_URI,
-//    JSONObject().apply { put("customerId", CUSTOMER_ID) },
-//    onSuccess,
-//    onError,
-//) {
-//
-//    override fun getHeaders(): MutableMap<String, String> =
-//        HashMap<String, String>().apply {
-//            if (API_KEY.isNotEmpty()) {
-//                put("X-Api-Key", API_KEY)
-//            }
-//        }
-//
-//    override fun getBody(): ByteArray {
-//        val body = """
-//            {
-//                "staging": true,
-//                "customerId": "hCYs6vHqYCa7o3893C4s9Y464P13",
-//                "checkout": {
-//                    "paymentFlow": "PREFER_VAULT"
-//                }
-//            }
-//        """.trimIndent()
-//        return body.toByteArray()
-//    }
-//}

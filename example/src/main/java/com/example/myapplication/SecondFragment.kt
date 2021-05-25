@@ -8,16 +8,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
-import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
 import io.primer.android.CheckoutEventListener
 import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
@@ -28,7 +23,6 @@ import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
-import java.util.Locale
 
 class SecondFragment : Fragment() {
 
@@ -68,7 +62,7 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.setOnClickListener {
             activity?.let {
-                UniversalCheckout.showVault(it, listener, amount, currency)
+                UniversalCheckout.showVault(it, listener)
             }
         }
 
@@ -110,6 +104,12 @@ class SecondFragment : Fragment() {
                 else -> {
                 }
             }
+        }
+    }
+
+    private fun initializeCheckoutWith(token: String) {
+        activity?.let {
+            UniversalCheckout.initialize(it, token)
         }
     }
 
@@ -164,12 +164,6 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun initializeCheckoutWith(token: String) {
-        activity?.let {
-            UniversalCheckout.initialize(it, token, locale)
-        }
-    }
-
     private fun onSelect(token: PaymentMethodToken) {
         setBusyAs(true)
         viewModel.createTransaction(
@@ -196,47 +190,4 @@ class SecondFragment : Fragment() {
             }
         }
     }
-}
-
-class PaymentMethodItem(
-    private val token: PaymentMethodToken,
-    private val onSelect: (token: PaymentMethodToken) -> Unit,
-) : Item<GroupieViewHolder>() {
-
-    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        val tokenLabel = viewHolder.itemView.findViewById<TextView>(R.id.token_title)
-        val icon = viewHolder.itemView.findViewById<ImageView>(R.id.icon_view)
-
-        viewHolder.itemView.setOnClickListener { onSelect(token) }
-
-        println(token)
-
-        when (token.paymentInstrumentType) {
-            "KLARNA_CUSTOMER_TOKEN" -> {
-                tokenLabel.text = token.paymentInstrumentData?.sessionData?.billingAddress?.email
-                        ?: "Pay with Klarna"
-                icon.setImageResource(R.drawable.ic_klarna_card)
-            }
-            "PAYPAL_BILLING_AGREEMENT" -> {
-                tokenLabel.text = token.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
-                icon.setImageResource(R.drawable.ic_paypal_card)
-            }
-            "PAYMENT_CARD" -> {
-                tokenLabel.text =
-                    ("Card ending with " + token.paymentInstrumentData?.last4Digits.toString())
-                icon.setImageResource(R.drawable.ic_klarna_card)
-                when (token.paymentInstrumentData?.network) {
-                    "Visa" -> icon.setImageResource(io.primer.android.R.drawable.ic_visa_card)
-                    "Mastercard" -> icon.setImageResource(io.primer.android.R.drawable.ic_mastercard_card)
-                    else -> icon.setImageResource(io.primer.android.R.drawable.ic_generic_card)
-                }
-            }
-            else -> {
-                tokenLabel.text = "Saved card"
-                icon.setImageResource(R.drawable.ic_generic_card)
-            }
-        }
-    }
-
-    override fun getLayout(): Int = R.layout.payment_method_item_row
 }

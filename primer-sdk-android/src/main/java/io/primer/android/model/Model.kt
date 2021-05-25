@@ -4,7 +4,6 @@ import io.primer.android.UXMode
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
@@ -58,7 +57,6 @@ internal suspend inline fun Call.await(): Response =
 // FIXME extract parsing to collaborator
 internal class Model constructor(
     private val clientToken: ClientToken,
-    private val config: CheckoutConfig,
     private val okHttpClient: OkHttpClient,
     private val json: Json
 ) {
@@ -146,11 +144,12 @@ internal class Model constructor(
 
     suspend fun tokenize(
         tokenizable: PaymentMethodDescriptor,
+        uxMode: UXMode,
     ): OperationResult<PaymentMethodTokenInternal> {
 
         val requestBody = JSONObject().apply {
             put("paymentInstrument", tokenizable.toPaymentInstrument())
-            if (config.uxMode == UXMode.VAULT) {
+            if (uxMode.isVault) {
                 put("tokenType", TokenType.MULTI_USE.name)
                 put("paymentFlow", "VAULT")
             }
