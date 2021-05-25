@@ -140,7 +140,7 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
-        coEvery { model.tokenize(any()) } returns OperationResult.Success(mockk())
+        coEvery { model.tokenize(any(), UXMode.CHECKOUT) } returns OperationResult.Success(mockk())
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
@@ -151,6 +151,6 @@ class TokenizationViewModelTest : KoinTest {
 
         viewModel.tokenize()
 
-        coVerify { model.tokenize(paymentMethodDescriptor) }
+        coVerify { model.tokenize(paymentMethodDescriptor, UXMode.CHECKOUT) }
     }
 }
