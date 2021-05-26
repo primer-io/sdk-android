@@ -1,18 +1,14 @@
 package io.primer.android
 
-import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
+import io.primer.android.di.DIAppComponent
+import org.koin.core.component.KoinApiExtension
 
 internal class WebViewActivity : AppCompatActivity() {
 
@@ -39,8 +35,12 @@ internal class WebViewActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_webview)
 
+        setSupportActionBar(findViewById(R.id.primerWebviewToolbar))
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val webView = findViewById<WebView>(R.id.webView).apply {
-            settings.setSupportZoom(true)
+            settings.setSupportZoom(false)
             settings.loadsImagesAutomatically = true
             settings.javaScriptEnabled = true
             settings.useWideViewPort = true
@@ -49,38 +49,6 @@ internal class WebViewActivity : AppCompatActivity() {
         // FIXME we need to instantiate this dynamically (right now it's tied to klarna)
         webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
             override fun handleIntent(intent: Intent) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    handleIntentOnAndroid11OrAbove(intent)
-                } else {
-                    handleIntentOnAndroid10OrBelow(intent)
-                }
-            }
-
-            @Suppress("SwallowedException") // exception is not being swallowed
-            private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
-                try {
-                    intent.apply {
-                        flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_REQUIRE_NON_BROWSER
-                    }
-                    startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    cannotHandleIntent(intent)
-                }
-            }
-
-            @Suppress("SwallowedException") // exception is not being swallowed
-            @SuppressLint("QueryPermissionsNeeded")
-            private fun handleIntentOnAndroid10OrBelow(intent: Intent) {
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
-                } else {
-                    cannotHandleIntent(intent)
-                }
-            }
-
-            private fun cannotHandleIntent(intent: Intent) {
-                setResult(RESULT_ERROR, intent)
-                finish()
             }
 
             override fun handleResult(resultCode: Int, intent: Intent) {
@@ -92,6 +60,11 @@ internal class WebViewActivity : AppCompatActivity() {
         url?.let {
             webView.loadUrl(it)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
 
@@ -108,7 +81,12 @@ internal abstract class KlarnaWebViewClient(
         if (isDeeplink) {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(request?.url.toString())
-            handleIntent(intent)
+
+            // FIXME base this dynamically on the redirect url value
+            if (intent.data?.toString()?.contains("primer://") == true) {
+                handleResult(AppCompatActivity.RESULT_OK, intent)
+            }
+
             return true
         }
 

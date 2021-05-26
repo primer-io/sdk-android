@@ -66,6 +66,7 @@ class SecondFragment : Fragment() {
                     it, 
                     listener,
                     customScheme = "primer",
+                    preferWebView = true,
                 )
             }
         }
@@ -130,15 +131,16 @@ class SecondFragment : Fragment() {
         override fun onCheckoutEvent(e: CheckoutEvent) {
             when (e) {
                 is CheckoutEvent.TokenizationSuccess -> {
-                    UniversalCheckout.dismiss()
+//                    UniversalCheckout.dismiss()
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
-                    Handler(Looper.getMainLooper()).post {
-                        UniversalCheckout.showSuccess(
-                            autoDismissDelay = 10000,
-                            SuccessType.VAULT_TOKENIZATION_SUCCESS,
-                        )
-                    }
+                    UniversalCheckout.dismiss()
+//                    Handler(Looper.getMainLooper()).post {
+//                        UniversalCheckout.showSuccess(
+//                            autoDismissDelay = 10000,
+//                            SuccessType.VAULT_TOKENIZATION_SUCCESS,
+//                        )
+//                    }
                 }
                 is CheckoutEvent.ApiError -> {
                     UniversalCheckout.dismiss()
@@ -148,6 +150,7 @@ class SecondFragment : Fragment() {
                     )
                 }
                 is CheckoutEvent.Exit -> {
+
                     if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
                         Log.i("ExampleApp", "Awesome")
                     }
