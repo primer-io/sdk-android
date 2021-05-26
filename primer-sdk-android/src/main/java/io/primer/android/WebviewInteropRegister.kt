@@ -4,6 +4,7 @@ import android.net.Uri
 import io.primer.android.logging.Logger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
+import java.util.UUID
 
 internal class WebviewInteropRegister {
 
@@ -22,23 +23,22 @@ internal class WebviewInteropRegister {
         private val log = Logger("WebviewInteropActivity")
         private val callbacks: MutableMap<String, Callback> = mutableMapOf()
         private lateinit var scheme: String
-        private lateinit var host: String
 
-        fun init(scheme: String, host: String) {
+        fun init(scheme: String) {
             log.info("Initializing: $scheme")
             this.scheme = scheme
-            this.host = host
         }
 
         fun register(behaviour: WebBrowserIntentBehaviour): Callback {
+            val id = UUID.randomUUID().toString()
             val callback = Callback(
-                id = host,
-                cancelUrl = "$scheme://$host/cancel",
-                successUrl = "$scheme://$host/success",
+                id = id,
+                cancelUrl = "$scheme://$id/cancel",
+                successUrl = "$scheme://$id/success",
                 behaviour = behaviour
             )
 
-            callbacks[host] = callback
+            callbacks[id] = callback
 
             return callback
         }

@@ -66,7 +66,6 @@ class SecondFragment : Fragment() {
                     it, 
                     listener,
                     customScheme = "primer",
-                    customHost = "io.primer.klarna",
                 )
             }
         }

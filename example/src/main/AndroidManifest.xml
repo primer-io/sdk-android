@@ -27,7 +27,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="primer" android:host="io.primer.klarna" />
+                <data android:scheme="primer" />
             </intent-filter>
         </activity>
     </application>
