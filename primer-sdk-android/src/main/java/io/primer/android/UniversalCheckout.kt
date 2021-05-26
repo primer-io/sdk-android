@@ -309,7 +309,7 @@ internal class InternalUniversalCheckout constructor(
         this.subscription = EventBus.subscribe(eventBusListener)
 
         val scheme = context.packageName.let {
-            customScheme ?: it.substring(0, it.lastIndexOf('.')) + "primer"
+            context.packageName + ".primer"
         }
 
         val host = customHost ?: "klarna" // default to klarna for now
