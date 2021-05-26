@@ -62,7 +62,12 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.setOnClickListener {
             activity?.let {
-                UniversalCheckout.showVault(it, listener)
+                UniversalCheckout.showVault(
+                    it, 
+                    listener,
+                    customScheme = "primer",
+                    customHost = "io.primer.klarna",
+                )
             }
         }
 

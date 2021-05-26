@@ -22,23 +22,24 @@ internal class WebviewInteropRegister {
 
         private val log = Logger("WebviewInteropActivity")
         private val callbacks: MutableMap<String, Callback> = mutableMapOf()
-        private var packageName: String = ""
+        private lateinit var scheme: String
+        private lateinit var host: String
 
-        fun init(name: String) {
-            log.info("Initializing: $name")
-            packageName = name
+        fun init(scheme: String, host: String) {
+            log.info("Initializing: $scheme")
+            this.scheme = scheme
+            this.host = host
         }
 
         fun register(behaviour: WebBrowserIntentBehaviour): Callback {
-            val id = UUID.randomUUID().toString()
             val callback = Callback(
-                id = id,
-                cancelUrl = "$packageName.primer://$id/cancel",
-                successUrl = "$packageName.primer://$id/success",
+                id = host,
+                cancelUrl = "$scheme://$host/cancel",
+                successUrl = "$scheme://$host/success",
                 behaviour = behaviour
             )
 
-            callbacks[id] = callback
+            callbacks[host] = callback
 
             return callback
         }

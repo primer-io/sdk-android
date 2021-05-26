@@ -105,6 +105,8 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        customScheme: String? = null,
+        customHost: String? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -113,6 +115,8 @@ object UniversalCheckout {
             listener = listener,
             amount = amount,
             currency = currency,
+            customScheme = customScheme,
+            customHost = customHost,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi
         )
@@ -123,6 +127,8 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        customScheme: String? = null,
+        customHost: String? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -131,6 +137,8 @@ object UniversalCheckout {
             listener = listener,
             amount = amount,
             currency = currency,
+            customScheme = customScheme,
+            customHost = customHost,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi
         )
@@ -224,6 +232,8 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        customScheme: String?,
+        customHost: String?,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -233,6 +243,8 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
+            customScheme = customScheme,
+            customHost = customHost,
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod
         )
@@ -244,6 +256,8 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        customScheme: String?,
+        customHost: String?,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
     ) {
@@ -253,6 +267,8 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
+            customScheme = customScheme,
+            customHost = customHost,
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
         )
@@ -282,6 +298,8 @@ internal class InternalUniversalCheckout constructor(
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
+        customScheme: String?,
+        customHost: String?,
         isStandalonePaymentMethod: Boolean,
         doNotShowUi: Boolean,
     ) {
@@ -290,7 +308,13 @@ internal class InternalUniversalCheckout constructor(
         this.listener = listener
         this.subscription = EventBus.subscribe(eventBusListener)
 
-        WebviewInteropRegister.init(context.packageName)
+        val scheme = context.packageName.let {
+            customScheme ?: it.substring(0, it.lastIndexOf('.')) + "primer"
+        }
+
+        val host = customHost ?: "klarna" // default to klarna for now
+
+        WebviewInteropRegister.init(scheme, host)
 
         val config = CheckoutConfig(
             clientToken = fullToken,
