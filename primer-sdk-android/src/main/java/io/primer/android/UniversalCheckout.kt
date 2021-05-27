@@ -308,9 +308,7 @@ internal class InternalUniversalCheckout constructor(
         this.listener = listener
         this.subscription = EventBus.subscribe(eventBusListener)
 
-        val scheme = context.packageName.let {
-            webBrowserRedirectScheme ?: it.substring(0, it.lastIndexOf('.')) + ".primer"
-        }
+        val scheme = webBrowserRedirectScheme ?: context.packageName.let { "$it.primer" }
 
         WebviewInteropRegister.init(scheme)
 

@@ -8,7 +8,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import io.primer.android.logging.Logger
 
 internal class WebViewActivity : AppCompatActivity() {
 
