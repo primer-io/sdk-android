@@ -16,7 +16,7 @@ import okhttp3.Response
 import java.io.IOException
 
 private const val BACKEND_ROOT: String = "https://us-central1-primerdemo-8741b.cloudfunctions.net"
-private const val CLIENT_TOKEN_URI: String = "$BACKEND_ROOT/clientTokenProduction"
+private const val CLIENT_TOKEN_URI: String = "$BACKEND_ROOT/clientToken"
 private const val TRANSACTION_URI: String = "$BACKEND_ROOT/transaction"
 
 enum class TransactionState { SUCCESS, ERROR, IDLE }
