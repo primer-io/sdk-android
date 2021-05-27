@@ -1,5 +1,7 @@
 package io.primer.android.ui
 
+const val CARD_PADDING: Int = 8
+
 internal class CardType() {
 
     enum class Type {
@@ -28,8 +30,8 @@ internal class CardType() {
     ) : Comparable<Descriptor> {
 
         private val weight: Int = lower.length
-        private val min = lower.padEnd(8, '0')
-        private val max = (upper ?: lower).padEnd(8, '9')
+        private val min = lower.padEnd(CARD_PADDING, '0')
+        private val max = (upper ?: lower).padEnd(CARD_PADDING, '9')
 
         override fun compareTo(other: Descriptor): Int {
             return weight - other.weight

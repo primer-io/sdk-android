@@ -112,14 +112,14 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerViewModel.selectedPaymentMethod.value
 
         val klarna = paymentMethod as? KlarnaDescriptor
-                ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
+            ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
             data.optString("customerTokenId")
         )
         klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
-        
+
         tokenizationViewModel.tokenize()
     }
     // endregion
@@ -130,7 +130,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerViewModel.selectedPaymentMethod.value
 
         val paypal = paymentMethod as? PayPalDescriptor
-                ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
+            ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
 
         paypal.setTokenizableValue(
             "paypalBillingAgreementId",
@@ -276,8 +276,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         window
             .addFlags(
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
     }
 
@@ -293,7 +293,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         when (requestCode) {
             KLARNA_REQUEST_CODE -> {
                 // TODO  a klarna flow that is not recurring will need this
-                 handleKlarnaRequestResult(resultCode, data)
+                handleKlarnaRequestResult(resultCode, data)
             }
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> {

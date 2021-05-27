@@ -65,7 +65,6 @@ class SecondFragment : Fragment() {
                 UniversalCheckout.showVault(
                     it, 
                     listener,
-                    customScheme = "primer",
                     preferWebView = true,
                 )
             }

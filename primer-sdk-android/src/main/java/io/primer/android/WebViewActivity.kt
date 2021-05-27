@@ -3,12 +3,12 @@ package io.primer.android
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import io.primer.android.di.DIAppComponent
-import org.koin.core.component.KoinApiExtension
+import io.primer.android.logging.Logger
 
 internal class WebViewActivity : AppCompatActivity() {
 
@@ -80,11 +80,16 @@ internal abstract class KlarnaWebViewClient(
 
         if (isDeeplink) {
             val intent = Intent(Intent.ACTION_VIEW)
+
             intent.data = Uri.parse(request?.url.toString())
 
-            // FIXME base this dynamically on the redirect url value
-            if (intent.data?.toString()?.contains("primer://") == true) {
-                handleResult(AppCompatActivity.RESULT_OK, intent)
+            Log.d("Primer Web View", "captureUrl: $captureUrl")
+            Log.d("Primer Web View", "scheme: ${intent.data?.scheme}")
+
+            intent.data?.scheme?.let {
+                if (captureUrl != null && it.contains(captureUrl)) {
+                    handleResult(AppCompatActivity.RESULT_OK, intent)
+                }
             }
 
             return true
