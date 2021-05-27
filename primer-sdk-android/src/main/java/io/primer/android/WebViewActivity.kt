@@ -68,7 +68,7 @@ internal class WebViewActivity : AppCompatActivity() {
 }
 
 internal abstract class KlarnaWebViewClient(
-    private val captureUrl: String?,
+    private val captureUrl: String?, // scheme from redirectUrl (Klarna hppRedirectUrl)
 ) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

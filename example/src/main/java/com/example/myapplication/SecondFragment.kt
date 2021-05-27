@@ -72,7 +72,7 @@ class SecondFragment : Fragment() {
 
         binding.checkoutButton.setOnClickListener {
             activity?.let {
-//                UniversalCheckout.showCheckout(it, listener, amount, currency)
+                UniversalCheckout.showCheckout(it, listener, amount, currency)
             }
         }
 
