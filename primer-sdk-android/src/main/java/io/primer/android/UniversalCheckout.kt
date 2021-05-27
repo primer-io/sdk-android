@@ -105,16 +105,20 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        webBrowserRedirectScheme: String? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
+        preferWebView: Boolean = false,
     ) {
         checkout.showVault(
             context = context,
             listener = listener,
             amount = amount,
             currency = currency,
+            webBrowserRedirectScheme = webBrowserRedirectScheme,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
-            doNotShowUi = doNotShowUi
+            doNotShowUi = doNotShowUi,
+            preferWebView = preferWebView,
         )
     }
 
@@ -123,16 +127,20 @@ object UniversalCheckout {
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        webBrowserRedirectScheme: String? = null,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
+        preferWebView: Boolean = false,
     ) {
         checkout.showCheckout(
             context = context,
             listener = listener,
             amount = amount,
             currency = currency,
+            webBrowserRedirectScheme = webBrowserRedirectScheme,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
-            doNotShowUi = doNotShowUi
+            doNotShowUi = doNotShowUi,
+            preferWebView = preferWebView,
         )
     }
 
@@ -224,8 +232,10 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        webBrowserRedirectScheme: String?,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
+        preferWebView: Boolean = false,
     ) {
         show(
             context = context,
@@ -233,8 +243,10 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.VAULT,
             amount = amount,
             currency = currency,
+            webBrowserRedirectScheme = webBrowserRedirectScheme,
             doNotShowUi = doNotShowUi,
-            isStandalonePaymentMethod = isStandalonePaymentMethod
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+            preferWebView = preferWebView,
         )
     }
 
@@ -244,8 +256,10 @@ internal class InternalUniversalCheckout constructor(
         listener: CheckoutEventListener,
         amount: Int? = null,
         currency: String? = null,
+        webBrowserRedirectScheme: String?,
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
+        preferWebView: Boolean = false,
     ) {
         show(
             context = context,
@@ -253,8 +267,10 @@ internal class InternalUniversalCheckout constructor(
             uxMode = UXMode.CHECKOUT,
             amount = amount,
             currency = currency,
+            webBrowserRedirectScheme = webBrowserRedirectScheme,
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
+            preferWebView = preferWebView,
         )
     }
 
@@ -282,15 +298,19 @@ internal class InternalUniversalCheckout constructor(
         uxMode: UXMode,
         amount: Int?,
         currency: String?,
+        webBrowserRedirectScheme: String?,
         isStandalonePaymentMethod: Boolean,
         doNotShowUi: Boolean,
+        preferWebView: Boolean,
     ) {
         subscription?.unregister()
 
         this.listener = listener
         this.subscription = EventBus.subscribe(eventBusListener)
 
-        WebviewInteropRegister.init(context.packageName)
+        val scheme = webBrowserRedirectScheme ?: context.packageName.let { "$it.primer" }
+
+        WebviewInteropRegister.init(scheme)
 
         val config = CheckoutConfig(
             clientToken = fullToken,
@@ -303,6 +323,7 @@ internal class InternalUniversalCheckout constructor(
             amount = amount,
             currency = currency,
             theme = theme,
+            preferWebView = preferWebView,
         )
 
         paymentMethods.forEach { Serialization.addModule(it.serializersModule) }

@@ -27,6 +27,8 @@
 
     <style name="Primer" />
 
+    <style name="Primer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="Primer.BottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="android:windowIsFloating">false</item>

@@ -22,6 +22,7 @@ data class CheckoutConfig(
     val isStandalonePaymentMethod: Boolean,
     val doNotShowUi: Boolean,
     val theme: UniversalCheckoutTheme,
+    val preferWebView: Boolean,
 ) {
 
     // FIXME move Locale to Klarna
@@ -36,6 +37,7 @@ data class CheckoutConfig(
         currency: String? = null,
         amount: Int? = null,
         theme: UniversalCheckoutTheme? = null,
+        preferWebView: Boolean = false,
     ) : this(
         clientToken = clientToken,
         packageName = packageName,
@@ -45,7 +47,8 @@ data class CheckoutConfig(
         countryCode = countryCode,
         monetaryAmount = MonetaryAmount.create(currency = currency, value = amount),
         isStandalonePaymentMethod = isStandalonePaymentMethod,
-        theme = theme ?: UniversalCheckoutTheme.getDefault()
+        theme = theme ?: UniversalCheckoutTheme.getDefault(),
+        preferWebView = preferWebView,
     )
 }
 

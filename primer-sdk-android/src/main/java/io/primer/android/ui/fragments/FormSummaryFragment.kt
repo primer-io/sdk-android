@@ -14,6 +14,9 @@ import io.primer.android.ui.FormSummaryState
 import io.primer.android.ui.InteractiveSummaryItem
 import io.primer.android.ui.TextSummaryItem
 
+const val TOP_MARGIN_LARGE: Int = 64
+const val TOP_MARGIN_SMALL: Int = 28
+
 internal class FormSummaryFragment : FormChildFragment() {
 
     private lateinit var layout: ViewGroup
@@ -101,7 +104,7 @@ internal class FormSummaryFragment : FormChildFragment() {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        params.topMargin = if (isFirst) 64 else 28
+        params.topMargin = if (isFirst) TOP_MARGIN_LARGE else TOP_MARGIN_SMALL
 
         view.layoutParams = params
 

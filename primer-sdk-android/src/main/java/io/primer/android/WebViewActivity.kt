@@ -1,18 +1,13 @@
 package io.primer.android
 
-import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.content.Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 
 internal class WebViewActivity : AppCompatActivity() {
 
@@ -39,8 +34,12 @@ internal class WebViewActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_webview)
 
+        setSupportActionBar(findViewById(R.id.primerWebviewToolbar))
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val webView = findViewById<WebView>(R.id.webView).apply {
-            settings.setSupportZoom(true)
+            settings.setSupportZoom(false)
             settings.loadsImagesAutomatically = true
             settings.javaScriptEnabled = true
             settings.useWideViewPort = true
@@ -49,38 +48,6 @@ internal class WebViewActivity : AppCompatActivity() {
         // FIXME we need to instantiate this dynamically (right now it's tied to klarna)
         webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
             override fun handleIntent(intent: Intent) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    handleIntentOnAndroid11OrAbove(intent)
-                } else {
-                    handleIntentOnAndroid10OrBelow(intent)
-                }
-            }
-
-            @Suppress("SwallowedException") // exception is not being swallowed
-            private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
-                try {
-                    intent.apply {
-                        flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_REQUIRE_NON_BROWSER
-                    }
-                    startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    cannotHandleIntent(intent)
-                }
-            }
-
-            @Suppress("SwallowedException") // exception is not being swallowed
-            @SuppressLint("QueryPermissionsNeeded")
-            private fun handleIntentOnAndroid10OrBelow(intent: Intent) {
-                if (intent.resolveActivity(packageManager) != null) {
-                    startActivity(intent)
-                } else {
-                    cannotHandleIntent(intent)
-                }
-            }
-
-            private fun cannotHandleIntent(intent: Intent) {
-                setResult(RESULT_ERROR, intent)
-                finish()
             }
 
             override fun handleResult(resultCode: Int, intent: Intent) {
@@ -93,10 +60,15 @@ internal class WebViewActivity : AppCompatActivity() {
             webView.loadUrl(it)
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
+    }
 }
 
 internal abstract class KlarnaWebViewClient(
-    private val captureUrl: String?,
+    private val captureUrl: String?, // scheme from redirectUrl (Klarna hppRedirectUrl)
 ) : WebViewClient() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -107,8 +79,18 @@ internal abstract class KlarnaWebViewClient(
 
         if (isDeeplink) {
             val intent = Intent(Intent.ACTION_VIEW)
+
             intent.data = Uri.parse(request?.url.toString())
-            handleIntent(intent)
+
+            Log.d("Primer Web View", "captureUrl: $captureUrl")
+            Log.d("Primer Web View", "scheme: ${intent.data?.scheme}")
+
+            intent.data?.scheme?.let {
+                if (captureUrl != null && it.contains(captureUrl)) {
+                    handleResult(AppCompatActivity.RESULT_OK, intent)
+                }
+            }
+
             return true
         }
 

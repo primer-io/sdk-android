@@ -94,15 +94,17 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     // region KLARNA-related observers
     private val klarnaPaymentDataObserver =
         Observer<KlarnaPaymentData> { (paymentUrl, redirectUrl) ->
-            // TODO  a klarna flow that is not recurring requires this:
-            // val intent = Intent(this, WebViewActivity::class.java).apply {
-            //     putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-            //     putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-            // }
-            // startActivity(intent)
-
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
-            startActivityForResult(intent, KLARNA_REQUEST_CODE)
+            if (checkoutConfig.preferWebView) {
+                // TODO  a klarna flow that is not recurring requires this:
+                val intent = Intent(this, WebViewActivity::class.java).apply {
+                    putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
+                    putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+                }
+                startActivityForResult(intent, KLARNA_REQUEST_CODE)
+            } else {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
+                startActivity(intent)
+            }
         }
 
     private val klarnaVaultedObserver = Observer<JSONObject> { data ->
@@ -281,7 +283,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     override fun onResume() {
         super.onResume()
-        WebviewInteropRegister.invokeAll()
+        if (!checkoutConfig.preferWebView) {
+            WebviewInteropRegister.invokeAll()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -289,7 +293,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         when (requestCode) {
             KLARNA_REQUEST_CODE -> {
                 // TODO  a klarna flow that is not recurring will need this
-                // handleKlarnaRequestResult(resultCode, data)
+                handleKlarnaRequestResult(resultCode, data)
             }
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> {
@@ -301,7 +305,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun handleKlarnaRequestResult(resultCode: Int, data: Intent?) {
         when (resultCode) {
             RESULT_OK -> {
-                val redirectUrl = data?.extras?.getString(WebViewActivity.REDIRECT_URL_KEY)
+                val redirectUrl = data?.data.toString()
                 val paymentMethod = primerViewModel.selectedPaymentMethod.value
                 val klarna = paymentMethod as? KlarnaDescriptor
 

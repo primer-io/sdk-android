@@ -4,6 +4,8 @@ import io.primer.android.model.dto.MonetaryAmount
 import java.text.NumberFormat
 import java.util.Currency
 
+const val AMOUNT_DIVIDER: Int = 100
+
 internal class CurrencyFormatter private constructor() {
 
     // FIXME this shouldn't be static
@@ -19,7 +21,7 @@ internal class CurrencyFormatter private constructor() {
 
             format.currency = currency
 
-            return format.format(amount.value.toDouble() / 100)
+            return format.format(amount.value.toDouble() / AMOUNT_DIVIDER)
         }
     }
 }
