@@ -43,8 +43,8 @@ internal class GooglePayDescriptor constructor(
         get() = VaultCapability.SINGLE_USE_AND_VAULT
 
     val merchantId: String?
-        get() = config.options["merchantId"]?.toString()
-            ?.replace("\"", "") // FIXME issue with kotlin serialization here
+        get() = config.options?.merchantId
+//            ?.replace("\"", "") // FIXME issue with kotlin serialization here
 
     override fun createButton(container: ViewGroup): View =
         LayoutInflater.from(container.context).inflate(

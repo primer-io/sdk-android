@@ -1,6 +1,7 @@
 package io.primer.android.payment.klarna
 
 import android.content.Context
+import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.model.OrderItem
@@ -14,6 +15,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
+@Keep
 @Serializable
 data class Klarna(
     val orderDescription: String? = null,
@@ -51,6 +53,6 @@ data class Klarna(
 
 private val klarnaSerializationModule: SerializersModule = SerializersModule {
     polymorphic(PaymentMethod::class) {
-        subclass(Klarna::class)
+        subclass(Klarna::class, Klarna.serializer())
     }
 }

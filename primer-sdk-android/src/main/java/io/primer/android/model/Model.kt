@@ -12,6 +12,7 @@ import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.Call
@@ -93,7 +94,9 @@ internal class Model constructor(
             }
 
             // TODO move parsing somewhere else
-            val clientSession = json.decodeFromString<ClientSession>(jsonBody.toString())
+            val clientSession = json
+                .decodeFromString(ClientSession.serializer(), jsonBody.toString())
+
             this.clientSession = clientSession
 
             OperationResult.Success(clientSession)
@@ -134,7 +137,10 @@ internal class Model constructor(
             val array = jsonBody.getJSONArray("data")
 
             // TODO move parsing somewhere else
-            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(array.toString())
+            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(
+                ListSerializer(PaymentMethodTokenInternal.serializer()),
+                array.toString(),
+            )
 
             OperationResult.Success(list)
         } catch (error: Throwable) {
@@ -181,7 +187,9 @@ internal class Model constructor(
                 response.body()?.close()
                 continuation.resume(json)
             }
-            val token: PaymentMethodTokenInternal = json.decodeFromString(jsonBody.toString())
+            val token: PaymentMethodTokenInternal = json
+                .decodeFromString(PaymentMethodTokenInternal.serializer(), jsonBody.toString())
+            
             EventBus.broadcast(
                 CheckoutEvent.TokenizationSuccess(
                     PaymentMethodTokenAdapter.internalToExternal(token)

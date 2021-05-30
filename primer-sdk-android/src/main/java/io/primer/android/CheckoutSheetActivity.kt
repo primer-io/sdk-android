@@ -45,6 +45,7 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.json.JSONObject
@@ -179,9 +180,14 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         super.onCreate(savedInstanceState)
 
         val json = Serialization.json
-        val checkoutConfig = intent.unmarshal<CheckoutConfig>("config", json) ?: return
-        val locallyConfiguredPaymentMethods =
-            intent.unmarshal<List<PaymentMethod>>("paymentMethods", json) ?: return
+
+        val checkoutConfig = intent
+            .getStringExtra("config")
+            ?.let { json.decodeFromString(CheckoutConfig.serializer(), it) } ?: return
+
+        val locallyConfiguredPaymentMethods = intent
+            .getStringExtra("paymentMethods")
+            ?.let { json.decodeFromString<List<PaymentMethod>>(it) } ?: return
 
         if (checkoutConfig.doNotShowUi) {
             ensureClicksGoThrough()

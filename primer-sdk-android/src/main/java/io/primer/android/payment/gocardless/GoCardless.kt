@@ -1,6 +1,7 @@
 package io.primer.android.payment.gocardless
 
 import android.content.Context
+import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.model.dto.ClientSession
@@ -13,6 +14,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
+@Keep
 @Serializable
 data class GoCardless(
     val companyName: String,
@@ -58,6 +60,6 @@ data class GoCardless(
 
 private val goCardlessSerializationModule: SerializersModule = SerializersModule {
     polymorphic(PaymentMethod::class) {
-        subclass(GoCardless::class)
+        subclass(GoCardless::class, GoCardless.serializer())
     }
 }

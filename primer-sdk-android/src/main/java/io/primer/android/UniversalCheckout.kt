@@ -2,6 +2,7 @@ package io.primer.android
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
@@ -326,15 +327,22 @@ internal class InternalUniversalCheckout constructor(
             preferWebView = preferWebView,
         )
 
-        paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
-        val json = Serialization.json
+        try {
+            paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
 
-        Intent(context, CheckoutSheetActivity::class.java)
-            .apply {
-                putExtra("config", json.encodeToString(serializer(), config))
-                putExtra("paymentMethods", json.encodeToString(serializer(), paymentMethods))
-            }
-            .run { context.startActivity(this) }
+            val json = Serialization.json
+
+            Intent(context, CheckoutSheetActivity::class.java)
+                .apply {
+                    putExtra("config", json
+                        .encodeToString(CheckoutConfig.serializer(), config))
+                    putExtra("paymentMethods", json
+                        .encodeToString(serializer(), paymentMethods))
+                }
+                .run { context.startActivity(this) }
+        } catch (e: Exception) {
+            Log.e("UniversalCheckout", e.message.toString())
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 
 internal class WebViewActivity : AppCompatActivity() {
@@ -34,7 +35,11 @@ internal class WebViewActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_webview)
 
-        setSupportActionBar(findViewById(R.id.primerWebviewToolbar))
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.primerWebviewToolbar)
+
+        toolbar.title = "Add Klarna"
+
+        setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

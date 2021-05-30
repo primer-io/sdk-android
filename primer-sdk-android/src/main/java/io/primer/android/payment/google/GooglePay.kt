@@ -1,5 +1,6 @@
 package io.primer.android.payment.google
 
+import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
@@ -8,6 +9,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
+@Keep
 @Serializable
 data class GooglePay(
     val merchantName: String? = null,
@@ -46,6 +48,6 @@ data class GooglePay(
 
 private val googlePaySerializationModule: SerializersModule = SerializersModule {
     polymorphic(PaymentMethod::class) {
-        subclass(GooglePay::class)
+        subclass(GooglePay::class, GooglePay.serializer())
     }
 }
