@@ -1,13 +1,17 @@
 package io.primer.android
 
+import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toolbar
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
 internal class WebViewActivity : AppCompatActivity() {
@@ -22,6 +26,9 @@ internal class WebViewActivity : AppCompatActivity() {
 
         // url called/loaded by the webview when finishing up
         const val REDIRECT_URL_KEY = "REDIRECT_URL_KEY"
+
+        // https://www.bankid.com/assets/bankid/rp/bankid-relying-party-guidelines-v3.5.pdf
+        const val BANKID_SCHEME = "bankid"
 
         const val RESULT_ERROR = 1234
     }
@@ -53,6 +60,45 @@ internal class WebViewActivity : AppCompatActivity() {
         // FIXME we need to instantiate this dynamically (right now it's tied to klarna)
         webView.webViewClient = object : KlarnaWebViewClient(captureUrl) {
             override fun handleIntent(intent: Intent) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    Log.d("Primer Web View", "Android 11+, data: ${intent.data}")
+                    handleIntentOnAndroid11OrAbove(intent)
+                } else {
+                    Log.d("Primer Web View", "Android 10-, data: ${intent.data}")
+                    handleIntentOnAndroid10OrBelow(intent)
+                }
+            }
+
+            @RequiresApi(Build.VERSION_CODES.R)
+            @Suppress("SwallowedException") // exception is not being swallowed
+            private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
+                try {
+                    intent.apply {
+                        flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
+                    }
+                    startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    Log.e("Primer Web View", "handle intent error: $e")
+                    cannotHandleIntent(intent)
+                }
+            }
+
+            @Suppress("SwallowedException") // exception is not being swallowed
+            @SuppressLint("QueryPermissionsNeeded")
+            private fun handleIntentOnAndroid10OrBelow(intent: Intent) {
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent)
+                } else {
+                    Log.e("Primer Web View", "intent.resolveActivity(packageManager) is null")
+                    cannotHandleIntent(intent)
+                }
+            }
+
+            private fun cannotHandleIntent(intent: Intent) {
+                Log.e("Primer Web View", "Cannot handle intent: ${intent.data}")
+//                setResult(RESULT_ERROR, intent)
+//                finish()
             }
 
             override fun handleResult(resultCode: Int, intent: Intent) {
@@ -93,6 +139,9 @@ internal abstract class KlarnaWebViewClient(
             intent.data?.scheme?.let {
                 if (captureUrl != null && it.contains(captureUrl)) {
                     handleResult(AppCompatActivity.RESULT_OK, intent)
+                }
+                if (it.contains(WebViewActivity.BANKID_SCHEME)) {
+                    handleIntent(intent)
                 }
             }
 
