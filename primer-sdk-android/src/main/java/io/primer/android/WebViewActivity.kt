@@ -74,8 +74,8 @@ internal class WebViewActivity : AppCompatActivity() {
             private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
                 try {
                     intent.apply {
-                        flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
                     }
                     startActivity(intent)
                 } catch (e: ActivityNotFoundException) {

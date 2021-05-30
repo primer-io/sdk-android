@@ -334,10 +334,14 @@ internal class InternalUniversalCheckout constructor(
 
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {
-                    putExtra("config", json
-                        .encodeToString(CheckoutConfig.serializer(), config))
-                    putExtra("paymentMethods", json
-                        .encodeToString(serializer(), paymentMethods))
+                    putExtra(
+                        "config",
+                        json.encodeToString(CheckoutConfig.serializer(), config),
+                    )
+                    putExtra(
+                        "paymentMethods",
+                        json.encodeToString(serializer(), paymentMethods),
+                    )
                 }
                 .run { context.startActivity(this) }
         } catch (e: Exception) {

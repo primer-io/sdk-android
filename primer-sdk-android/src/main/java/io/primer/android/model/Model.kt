@@ -13,7 +13,6 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.Callback
@@ -189,12 +188,13 @@ internal class Model constructor(
             }
             val token: PaymentMethodTokenInternal = json
                 .decodeFromString(PaymentMethodTokenInternal.serializer(), jsonBody.toString())
-            
+
             EventBus.broadcast(
                 CheckoutEvent.TokenizationSuccess(
                     PaymentMethodTokenAdapter.internalToExternal(token)
                 )
             )
+
             if (token.tokenType == TokenType.MULTI_USE) {
                 EventBus.broadcast(
                     CheckoutEvent.TokenAddedToVault(
