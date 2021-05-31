@@ -27,6 +27,9 @@ internal class WebViewActivity : AppCompatActivity() {
         // url called/loaded by the webview when finishing up
         const val REDIRECT_URL_KEY = "REDIRECT_URL_KEY"
 
+        // toolbar title
+        const val TOOLBAR_TITLE_KEY = "TOOLBAR_TITLE_KEY"
+
         // https://www.bankid.com/assets/bankid/rp/bankid-relying-party-guidelines-v3.5.pdf
         const val BANKID_SCHEME = "bankid"
 
@@ -44,7 +47,7 @@ internal class WebViewActivity : AppCompatActivity() {
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.primerWebviewToolbar)
 
-        toolbar.title = "Add Klarna"
+        toolbar.title = intent.extras?.getString(TOOLBAR_TITLE_KEY) ?: ""
 
         setSupportActionBar(toolbar)
 

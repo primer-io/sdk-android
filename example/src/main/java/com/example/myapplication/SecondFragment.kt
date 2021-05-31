@@ -33,7 +33,7 @@ class SecondFragment : Fragment() {
 
     private val card = Card()
     private val paypal = PayPal()
-    private val klarna = Klarna()
+    private val klarna = Klarna(webViewTitle = "Add Klarna 💰")
 
     // private val locale = Locale("se", "SE")
 

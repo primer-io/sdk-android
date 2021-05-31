@@ -96,11 +96,22 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private val klarnaPaymentDataObserver =
         Observer<KlarnaPaymentData> { (paymentUrl, redirectUrl) ->
             if (checkoutConfig.preferWebView) {
+
+                val paymentMethod = primerViewModel.selectedPaymentMethod.value
+
+                val title: String = if (paymentMethod is KlarnaDescriptor) {
+                    paymentMethod.options.webViewTitle
+                } else {
+                    ""
+                }
+
                 // TODO  a klarna flow that is not recurring requires this:
                 val intent = Intent(this, WebViewActivity::class.java).apply {
                     putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
                     putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
+                    putExtra(WebViewActivity.TOOLBAR_TITLE_KEY, title)
                 }
+
                 startActivityForResult(intent, KLARNA_REQUEST_CODE)
             } else {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
@@ -113,7 +124,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerViewModel.selectedPaymentMethod.value
 
         val klarna = paymentMethod as? KlarnaDescriptor
-            ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
+                ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
@@ -131,7 +142,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerViewModel.selectedPaymentMethod.value
 
         val paypal = paymentMethod as? PayPalDescriptor
-            ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
+                ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
 
         paypal.setTokenizableValue(
             "paypalBillingAgreementId",
@@ -282,8 +293,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         window
             .addFlags(
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                        or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
     }
 
