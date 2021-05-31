@@ -119,6 +119,7 @@ class SecondFragment : Fragment() {
                     setBusyAs(false)
                     viewModel.resetTransactionState()
                 }
+
                 else -> {
                 }
             }
@@ -157,10 +158,13 @@ class SecondFragment : Fragment() {
                 }
                 is CheckoutEvent.ApiError -> {
                     UniversalCheckout.dismiss()
-                    UniversalCheckout.showError(
-                        autoDismissDelay = 10000,
-                        ErrorType.VAULT_TOKENIZATION_FAILED,
-                    )
+                    AlertDialog.Builder(context)
+                        .setMessage("Something went wrong!")
+                        .show()
+//                    UniversalCheckout.showError(
+//                        autoDismissDelay = 10000,
+//                        ErrorType.VAULT_TOKENIZATION_FAILED,
+//                    )
                 }
                 is CheckoutEvent.Exit -> {
 
