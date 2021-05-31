@@ -2,8 +2,6 @@ package com.example.myapplication
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +20,6 @@ import io.primer.android.payment.card.Card
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.ErrorType
-import io.primer.android.ui.fragments.SuccessType
 
 class SecondFragment : Fragment() {
 
@@ -59,6 +56,7 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.isVisible = false
         binding.checkoutButton.isVisible = false
+        binding.klarnaButton.isVisible = false
 
         binding.vaultButton.setOnClickListener {
             activity?.let {
@@ -66,6 +64,20 @@ class SecondFragment : Fragment() {
                     it, 
                     listener,
                     preferWebView = true,
+                )
+            }
+        }
+
+        binding.klarnaButton.setOnClickListener {
+            activity?.let {
+                UniversalCheckout.loadPaymentMethods(listOf(klarna))
+                setBusyAs(true)
+                UniversalCheckout.showVault(
+                    it,
+                    listener,
+                    preferWebView = true,
+                    isStandalonePaymentMethod = true,
+                    doNotShowUi = true,
                 )
             }
         }
@@ -79,6 +91,8 @@ class SecondFragment : Fragment() {
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
             binding.vaultButton.isVisible = token != null
             binding.checkoutButton.isVisible = token != null
+            binding.klarnaButton.isVisible = token != null
+
             if (token != null) {
                 initializeCheckoutWith(token)
                 UniversalCheckout.loadPaymentMethods(listOf(klarna, card, paypal))
@@ -171,14 +185,23 @@ class SecondFragment : Fragment() {
     }
 
     private fun onSelect(token: PaymentMethodToken) {
-        setBusyAs(true)
-        viewModel.createTransaction(
-            token.token,
-            amount,
-            true,
-            currency,
-            token.paymentInstrumentType,
-        )
+        AlertDialog.Builder(context)
+            .setTitle("Payment confirmation")
+            .setMessage("Would you like to pay?")
+            .setPositiveButton("Yes") { dialog, which ->
+                setBusyAs(true)
+                viewModel.createTransaction(
+                    token.token,
+                    amount,
+                    true,
+                    currency,
+                    token.paymentInstrumentType,
+                )
+            }
+            .setNegativeButton("Cancel") { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     internal fun fetchSavedPaymentMethods() {
