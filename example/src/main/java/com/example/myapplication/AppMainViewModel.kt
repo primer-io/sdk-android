@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,17 +14,19 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.IOException
-
-private const val BACKEND_ROOT: String = "https://us-central1-primerdemo-8741b.cloudfunctions.net"
-private const val CLIENT_TOKEN_URI: String = "$BACKEND_ROOT/clientToken"
-private const val TRANSACTION_URI: String = "$BACKEND_ROOT/transaction"
 
 enum class TransactionState { SUCCESS, ERROR, IDLE }
 
+@Keep
 class AppMainViewModel : ViewModel() {
 
-    private val client = OkHttpClient()
+    private val root: String = "https://us-central1-primerdemo-8741b.cloudfunctions.net"
+    private val clientTokenUri: String = "$root/clientToken"
+    private val transactionUri: String = "$root/transaction"
+
+    private val client: OkHttpClient = OkHttpClient()
 
     private val _clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
 
@@ -41,13 +44,14 @@ class AppMainViewModel : ViewModel() {
     }
 
     private fun fetchClientToken() {
-        val mediaType = "application/json; charset=utf-8"
-        val currentUserId = "customer8"
-        val body = ClientTokenRequest(currentUserId, "SE")
+        val mimeType = MediaType.get("application/json")
+        val body = ClientTokenRequest("customer8", "SE")
         val json = Gson().toJson(body)
+
+        val reqBody = RequestBody.create(mimeType, json)
         val request = Request.Builder()
-            .url(CLIENT_TOKEN_URI)
-            .post(RequestBody.create(MediaType.get(mediaType), json.toString()))
+            .url(clientTokenUri)
+            .post(reqBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -60,9 +64,11 @@ class AppMainViewModel : ViewModel() {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
+                    val stringified = response.body()?.string()
+
                     val tokenResponse = GsonBuilder()
                         .create()
-                        .fromJson(response.body()?.string(), ClientTokenResponse::class.java)
+                        .fromJson(stringified, ClientTokenResponse::class.java)
 
                     _clientToken.postValue(tokenResponse.clientToken)
                 }
@@ -80,8 +86,9 @@ class AppMainViewModel : ViewModel() {
         val mediaType = "application/json; charset=utf-8"
         val body = TransactionRequest(paymentMethod, amount, capture, currencyCode, type)
         val json = Gson().toJson(body)
+
         val request = Request.Builder()
-            .url(TRANSACTION_URI)
+            .url(transactionUri)
             .post(RequestBody.create(MediaType.get(mediaType), json.toString()))
             .build()
 
@@ -104,12 +111,16 @@ class AppMainViewModel : ViewModel() {
     }
 }
 
+@Keep
 data class ClientTokenRequest(
     @SerializedName("customerId") val id: String,
     @SerializedName("customerCountryCode") val countryCode: String,
 )
+
+@Keep
 data class ClientTokenResponse(val clientToken: String, val expirationDate: String)
 
+@Keep
 data class TransactionRequest(
     @SerializedName("paymentMethod") val paymentMethod: String,
     @SerializedName("amount") val amount: Int,
@@ -118,4 +129,4 @@ data class TransactionRequest(
     @SerializedName("type") val type: String,
 )
 
-data class TransactionResponse(val message: String)
+//data class TransactionResponse(val message: String)

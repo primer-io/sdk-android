@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/primerWebviewAppbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Primer.AppBarOverlay">

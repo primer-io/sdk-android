@@ -1,6 +1,7 @@
 package io.primer.android.payment.card
 
 import android.content.Context
+import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.model.dto.ClientSession
@@ -13,6 +14,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
+@Keep
 @Serializable
 class Card : PaymentMethod {
 
@@ -47,6 +49,6 @@ class Card : PaymentMethod {
 
 private val cardSerializationModule: SerializersModule = SerializersModule {
     polymorphic(PaymentMethod::class) {
-        subclass(Card::class)
+        subclass(Card::class, Card.serializer())
     }
 }
