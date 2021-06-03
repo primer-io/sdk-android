@@ -1,6 +1,6 @@
 package io.primer.android.model.dto
 
-import kotlinx.serialization.SerialName
+// import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -124,12 +124,12 @@ data class BillingAddress(
     val email: String,
 )
 
-//@Serializable
-//data class TokenDetails(
+//  @Serializable
+//  data class TokenDetails(
 //    val type: String? = null,
 //    val brand: String? = null,
 //    @SerialName("masked_number")
 //    val maskedNumber: String? = null,
 //    @SerialName("expiry_date")
 //    val expiryDate: String? = null,
-//)
+//  )
