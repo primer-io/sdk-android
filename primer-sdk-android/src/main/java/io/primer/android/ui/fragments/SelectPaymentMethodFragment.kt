@@ -190,7 +190,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             savedPaymentLabel,
             savedPaymentMethod,
             seeAllLabel,
-            sheetTitle,
             payAllButton,
             otherWaysToPayStartDivider,
             otherWaysToPayEndDivider,

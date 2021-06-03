@@ -116,7 +116,7 @@ data class ExternalPayerInfo(
 data class SessionData(
     val recurringDescription: String? = null,
     val billingAddress: BillingAddress? = null,
-    val tokenDetails: TokenDetails? = null,
+//    val tokenDetails: TokenDetails? = null,
 )
 
 @Serializable
@@ -124,12 +124,12 @@ data class BillingAddress(
     val email: String,
 )
 
-@Serializable
-data class TokenDetails(
-    val type: String? = null,
-    val brand: String? = null,
-    @SerialName("masked_number")
-    val maskedNumber: String? = null,
-    @SerialName("expiry_date")
-    val expiryDate: String? = null,
-)
+//@Serializable
+//data class TokenDetails(
+//    val type: String? = null,
+//    val brand: String? = null,
+//    @SerialName("masked_number")
+//    val maskedNumber: String? = null,
+//    @SerialName("expiry_date")
+//    val expiryDate: String? = null,
+//)

@@ -21,8 +21,8 @@ class PaymentMethodItem(
 
         when (token.paymentInstrumentType) {
             "KLARNA_CUSTOMER_TOKEN" -> {
-                val account = token.paymentInstrumentData?.sessionData?.tokenDetails?.maskedNumber
-                tokenLabel.text = "From bank account $account" ?: "Pay with Klarna"
+                val account = token.paymentInstrumentData?.sessionData?.billingAddress?.email
+                tokenLabel.text = "Email: $account" ?: "Pay with Klarna"
                 icon.setImageResource(R.drawable.ic_klarna_card)
             }
             "PAYPAL_BILLING_AGREEMENT" -> {
