@@ -20,7 +20,15 @@ internal object EventBus {
 
         return object : SubscriptionHandle {
             override fun unregister() {
-                subscribers.remove(l)
+//                subscribers.remove(l)
+                /*
+                The above code does not deregister the listener properly and
+                results in possible duplication of listeners.
+                Documentation assumes only one listener object at any moment
+                so it's better that we clear all listeners whenever we unsubscribe
+                in order to avoid the scenario of onTokenizeSuccess being called twice.
+                */
+                subscribers.clear()
             }
         }
     }
