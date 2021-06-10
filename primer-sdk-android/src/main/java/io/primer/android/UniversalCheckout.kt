@@ -111,6 +111,7 @@ object UniversalCheckout {
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        clearAllListeners: Boolean = false,
     ) {
         checkout.showVault(
             context = context,
@@ -121,6 +122,7 @@ object UniversalCheckout {
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi,
             preferWebView = preferWebView,
+            clearAllListeners = clearAllListeners,
         )
     }
 
@@ -133,6 +135,7 @@ object UniversalCheckout {
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        clearAllListeners: Boolean = false,
     ) {
         checkout.showCheckout(
             context = context,
@@ -143,6 +146,7 @@ object UniversalCheckout {
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi,
             preferWebView = preferWebView,
+            clearAllListeners = clearAllListeners,
         )
     }
 
@@ -238,6 +242,7 @@ internal class InternalUniversalCheckout constructor(
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        clearAllListeners: Boolean,
     ) {
         show(
             context = context,
@@ -249,6 +254,7 @@ internal class InternalUniversalCheckout constructor(
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             preferWebView = preferWebView,
+            clearAllListeners = clearAllListeners,
         )
     }
 
@@ -262,6 +268,7 @@ internal class InternalUniversalCheckout constructor(
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        clearAllListeners: Boolean,
     ) {
         show(
             context = context,
@@ -273,6 +280,7 @@ internal class InternalUniversalCheckout constructor(
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             preferWebView = preferWebView,
+            clearAllListeners = clearAllListeners,
         )
     }
 
@@ -304,8 +312,9 @@ internal class InternalUniversalCheckout constructor(
         isStandalonePaymentMethod: Boolean,
         doNotShowUi: Boolean,
         preferWebView: Boolean,
+        clearAllListeners: Boolean,
     ) {
-        subscription?.unregister()
+        subscription?.unregister(clearAllListeners)
 
         this.listener = listener
         this.subscription = EventBus.subscribe(eventBusListener)
