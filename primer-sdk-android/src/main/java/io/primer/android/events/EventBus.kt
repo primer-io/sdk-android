@@ -1,7 +1,5 @@
 package io.primer.android.events
 
-import android.util.Log
-
 @Deprecated(message = "EventBus needs to be removed.") // FIXME drop event bus
 internal object EventBus {
 
