@@ -20,6 +20,7 @@ import io.primer.android.model.Serialization
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
@@ -300,7 +301,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     override fun onResume() {
         super.onResume()
-        if (!checkoutConfig.preferWebView) {
+        if (!checkoutConfig.preferWebView ||
+            primerViewModel.selectedPaymentMethod.value?.identifier != KLARNA_IDENTIFIER
+        ) {
             WebviewInteropRegister.invokeAll()
         }
     }

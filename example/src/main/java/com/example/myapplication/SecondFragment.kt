@@ -64,6 +64,7 @@ class SecondFragment : Fragment() {
                     it, 
                     listener,
                     preferWebView = true,
+                    clearAllListeners = true,
                 )
             }
         }
@@ -78,13 +79,15 @@ class SecondFragment : Fragment() {
                     preferWebView = true,
                     isStandalonePaymentMethod = true,
                     doNotShowUi = true,
+                    clearAllListeners = true,
                 )
             }
         }
 
         binding.checkoutButton.setOnClickListener {
             activity?.let {
-                UniversalCheckout.showCheckout(it, listener, amount, currency)
+                UniversalCheckout
+                    .showCheckout(it, listener, amount, currency, clearAllListeners = true)
             }
         }
 

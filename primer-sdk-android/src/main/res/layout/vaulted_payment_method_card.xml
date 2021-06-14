@@ -30,11 +30,12 @@
         <TextView
             android:id="@+id/item_description"
             style="@style/Primer.Text.Small"
-            android:layout_width="0dp"
+            android:layout_width="225dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:paddingEnd="8dp" />
 
         <Button
             android:id="@+id/item_delete_button"
