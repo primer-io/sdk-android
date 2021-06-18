@@ -153,8 +153,11 @@ object UniversalCheckout {
     /**
      * Dismiss the checkout
      */
-    fun dismiss() {
+    fun dismiss(clearListeners: Boolean = false) {
         checkout.dismiss()
+        if (clearListeners) {
+            checkout.clearListener()
+        }
     }
 
     /**
@@ -199,6 +202,10 @@ internal class InternalUniversalCheckout constructor(
                 listener?.onCheckoutEvent(e)
             }
         }
+    }
+
+    fun clearListener() {
+        listener = null
     }
 
     fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
