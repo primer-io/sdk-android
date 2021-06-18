@@ -160,10 +160,8 @@ internal abstract class KlarnaWebViewClient(
     private fun handleDeepLink(request: WebResourceRequest?): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
 
-        try {
-            intent.data = Uri.parse(request?.url.toString())
-        } catch (e: NullPointerException) {
-
+        request?.url.let { uri ->
+            intent.data = Uri.parse(uri.toString())
         }
 
         intent.data?.scheme?.let { scheme ->
@@ -183,9 +181,7 @@ internal abstract class KlarnaWebViewClient(
                             handleResult(RESULT_ERROR, intent)
                         }
                     }
-                } catch (e: UnsupportedOperationException ) {
-                    handleResult(AppCompatActivity.RESULT_CANCELED, intent)
-                } catch (e: NullPointerException) {
+                } catch (e: UnsupportedOperationException) {
                     handleResult(AppCompatActivity.RESULT_CANCELED, intent)
                 }
             } else if (scheme.contains(WebViewActivity.BANKID_SCHEME)) {
