@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.CheckoutEventListener
@@ -20,6 +21,7 @@ import io.primer.android.payment.card.Card
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.ErrorType
+import java.lang.IllegalArgumentException
 
 class SecondFragment : Fragment() {
 
@@ -148,10 +150,10 @@ class SecondFragment : Fragment() {
         override fun onCheckoutEvent(e: CheckoutEvent) {
             when (e) {
                 is CheckoutEvent.TokenizationSuccess -> {
-//                    UniversalCheckout.dismiss()
+                   UniversalCheckout.dismiss(true)
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
-                    UniversalCheckout.dismiss()
+//                    UniversalCheckout.dismiss()
 //                    Handler(Looper.getMainLooper()).post {
 //                        UniversalCheckout.showSuccess(
 //                            autoDismissDelay = 10000,
@@ -174,16 +176,19 @@ class SecondFragment : Fragment() {
                     if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
                         Log.i("ExampleApp", "Awesome")
                     }
-                    fetchSavedPaymentMethods()
+
+                    val nav = findNavController()
+                    nav.popBackStack()
                 }
                 is CheckoutEvent.TokenSelected -> {
-                    viewModel.createTransaction(
-                        e.data.token,
-                        amount,
-                        true,
-                        currency,
-                        e.data.paymentInstrumentType,
-                    )
+                    UniversalCheckout.dismiss(true)
+//                    viewModel.createTransaction(
+//                        e.data.token,
+//                        amount,
+//                        true,
+//                        currency,
+//                        e.data.paymentInstrumentType,
+//                    )
                 }
                 else -> {
                 }
@@ -225,5 +230,10 @@ class SecondFragment : Fragment() {
                 binding.paymentMethodList.adapter = adapter
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("second fragment 🔥", "🔥")
     }
 }
