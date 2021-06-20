@@ -139,7 +139,7 @@ internal abstract class KlarnaWebViewClient(
         val isDeeplink = !isHttp && !isHttps
 
         if (isDeeplink) {
-            handleDeepLink(request)
+            return handleDeepLink(request)
         }
 
         val requestUrl = request?.url?.toString()
