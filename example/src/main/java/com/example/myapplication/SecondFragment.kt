@@ -179,6 +179,8 @@ class SecondFragment : Fragment() {
                         Log.i("ExampleApp", "Awesome")
                     }
 
+                    fetchSavedPaymentMethods()
+
                     // Timer("SettingUp", false).schedule(500L) {
                     //     activity?.runOnUiThread {
                     //         val nav = findNavController()
