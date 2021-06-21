@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import kotlin.concurrent.schedule
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.CheckoutEventListener
@@ -22,6 +23,7 @@ import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.ui.fragments.ErrorType
 import java.lang.IllegalArgumentException
+import java.util.Timer
 
 class SecondFragment : Fragment() {
 
@@ -177,8 +179,12 @@ class SecondFragment : Fragment() {
                         Log.i("ExampleApp", "Awesome")
                     }
 
-                    val nav = findNavController()
-                    nav.popBackStack()
+                    // Timer("SettingUp", false).schedule(500L) {
+                    //     activity?.runOnUiThread {
+                    //         val nav = findNavController()
+                    //         nav.popBackStack()
+                    //     }
+                    // }
                 }
                 is CheckoutEvent.TokenSelected -> {
                     UniversalCheckout.dismiss(true)
