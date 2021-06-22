@@ -216,11 +216,11 @@ internal class Model constructor(
     private fun completionHandler(error: Error?) {
         if (error == null) {
             EventBus.broadcast(
-                CheckoutEvent.ShowSuccess(3000, SuccessType.PAYMENT_SUCCESS)
+                CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS)
             )
         } else {
             EventBus.broadcast(
-                CheckoutEvent.ShowError(3000, ErrorType.PAYMENT_FAILED)
+                CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED)
             )
         }
     }
