@@ -13,6 +13,7 @@ import android.webkit.WebViewClient
 import android.widget.Toolbar
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
 
 internal class WebViewActivity : AppCompatActivity() {
 
@@ -32,6 +33,12 @@ internal class WebViewActivity : AppCompatActivity() {
 
         // https://www.bankid.com/assets/bankid/rp/bankid-relying-party-guidelines-v3.5.pdf
         const val BANKID_SCHEME = "bankid"
+
+        const val STATE_QUERY_PARAM_KEY = "state"
+
+        const val CANCEL_STATE_QUERY_PARAM = "cancel"
+
+        const val SUCCESS_STATE_QUERY_PARAM = "success"
 
         const val RESULT_ERROR = 1234
     }
@@ -132,27 +139,12 @@ internal abstract class KlarnaWebViewClient(
         val isDeeplink = !isHttp && !isHttps
 
         if (isDeeplink) {
-            val intent = Intent(Intent.ACTION_VIEW)
-
-            intent.data = Uri.parse(request?.url.toString())
-
-            Log.d("Primer Web View", "captureUrl: $captureUrl")
-            Log.d("Primer Web View", "scheme: ${intent.data?.scheme}")
-
-            intent.data?.scheme?.let {
-                if (captureUrl != null && it.contains(captureUrl)) {
-                    handleResult(AppCompatActivity.RESULT_OK, intent)
-                }
-                if (it.contains(WebViewActivity.BANKID_SCHEME)) {
-                    handleIntent(intent)
-                }
-            }
-
-            return true
+            return handleDeepLink(request)
         }
 
         val requestUrl = request?.url?.toString()
         val shouldOverride = captureUrl != null && requestUrl?.contains(captureUrl) ?: false
+
         if (shouldOverride) requestUrl?.let {
 
             val canceled = requestUrl.contains("state=cancel")
@@ -163,6 +155,41 @@ internal abstract class KlarnaWebViewClient(
             handleResult(resultCode, intent)
         }
         return shouldOverride
+    }
+
+    private fun handleDeepLink(request: WebResourceRequest?): Boolean {
+        val intent = Intent(Intent.ACTION_VIEW)
+
+        request?.url.let { uri ->
+            intent.data = Uri.parse(uri.toString())
+        }
+
+        intent.data?.scheme?.let { scheme ->
+            if (captureUrl != null && scheme.contains(captureUrl)) {
+                try {
+                    val state = intent.data?.getQueryParameter(
+                        WebViewActivity.STATE_QUERY_PARAM_KEY
+                    )
+                    when (state) {
+                        WebViewActivity.CANCEL_STATE_QUERY_PARAM -> {
+                            handleResult(AppCompatActivity.RESULT_CANCELED, intent)
+                        }
+                        WebViewActivity.SUCCESS_STATE_QUERY_PARAM -> {
+                            handleResult(AppCompatActivity.RESULT_OK, intent)
+                        }
+                        else -> {
+                            handleResult(RESULT_ERROR, intent)
+                        }
+                    }
+                } catch (e: UnsupportedOperationException) {
+                    handleResult(AppCompatActivity.RESULT_CANCELED, intent)
+                }
+            } else if (scheme.contains(WebViewActivity.BANKID_SCHEME)) {
+                handleIntent(intent)
+            }
+        }
+
+        return true
     }
 
     abstract fun handleIntent(intent: Intent)
