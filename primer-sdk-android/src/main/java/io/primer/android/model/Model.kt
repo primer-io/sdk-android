@@ -10,6 +10,8 @@ import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.ui.fragments.ErrorType
+import io.primer.android.ui.fragments.SuccessType
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.builtins.ListSerializer
@@ -191,7 +193,8 @@ internal class Model constructor(
 
             EventBus.broadcast(
                 CheckoutEvent.TokenizationSuccess(
-                    PaymentMethodTokenAdapter.internalToExternal(token)
+                    PaymentMethodTokenAdapter.internalToExternal(token),
+                    ::completionHandler,
                 )
             )
 
@@ -207,6 +210,18 @@ internal class Model constructor(
         } catch (error: Throwable) {
 
             OperationResult.Error(error)
+        }
+    }
+
+    private fun completionHandler(error: Error?) {
+        if (error == null) {
+            EventBus.broadcast(
+                CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS)
+            )
+        } else {
+            EventBus.broadcast(
+                CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED)
+            )
         }
     }
 

@@ -15,7 +15,10 @@ sealed class CheckoutEvent(
     abstract class PublicCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, true)
     abstract class PrivateCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, false)
 
-    class TokenizationSuccess(val data: PaymentMethodToken) :
+    class TokenizationSuccess(
+        val data: PaymentMethodToken,
+        val completionHandler: (Error?) -> Unit,
+    ) :
         PublicCheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
     class TokenizationError(val data: APIError) :
