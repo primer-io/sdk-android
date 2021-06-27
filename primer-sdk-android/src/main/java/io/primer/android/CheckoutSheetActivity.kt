@@ -17,6 +17,7 @@ import io.primer.android.events.EventBus
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.Serialization
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
@@ -242,7 +243,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         tokenizationViewModel.klarnaPaymentData.observe(this, klarnaPaymentDataObserver)
         tokenizationViewModel.vaultedKlarnaPayment.observe(this, klarnaVaultedObserver)
         tokenizationViewModel.klarnaError.observe(this) {
-            // TODO (note that API errors are being pushed to host from Model.kt)
+            val apiError = APIError("Failed to add Klarna payment method.")
+            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
         }
         // endregion
 
@@ -311,14 +313,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE -> {
-                // TODO  a klarna flow that is not recurring will need this
-                handleKlarnaRequestResult(resultCode, data)
-            }
+            KLARNA_REQUEST_CODE ->handleKlarnaRequestResult(resultCode, data)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
-            else -> {
-                // TODO error: unexpected request code
-            }
+            else -> Unit
         }
     }
 

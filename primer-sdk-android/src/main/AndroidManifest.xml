@@ -13,6 +13,7 @@
         <activity
             android:name=".CheckoutSheetActivity"
             android:label=""
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
