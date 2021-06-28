@@ -54,7 +54,6 @@ import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-
 @KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
@@ -126,8 +125,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val paymentMethod: PaymentMethodDescriptor? =
             primerViewModel.selectedPaymentMethod.value
 
-        val klarna = paymentMethod as? KlarnaDescriptor
-                ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
+        // if we are getting an emission here it means we should currently be dealing with klarna
+        val klarna = paymentMethod as? KlarnaDescriptor ?: return@Observer
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
@@ -144,8 +143,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val paymentMethod: PaymentMethodDescriptor? =
             primerViewModel.selectedPaymentMethod.value
 
-        val paypal = paymentMethod as? PayPalDescriptor
-                ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
+        // if we are getting an emission here it means we should currently be dealing with paypal
+        val paypal = paymentMethod as? PayPalDescriptor ?: return@Observer
 
         paypal.setTokenizableValue(
             "paypalBillingAgreementId",
@@ -297,7 +296,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         window
             .addFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
     }
 
