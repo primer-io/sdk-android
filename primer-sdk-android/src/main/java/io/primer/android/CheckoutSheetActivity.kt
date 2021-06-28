@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
-import io.primer.android.di.DIAppComponent
 import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
+import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -53,6 +53,7 @@ import kotlinx.serialization.serializer
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
+
 
 @KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
@@ -126,7 +127,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerViewModel.selectedPaymentMethod.value
 
         val klarna = paymentMethod as? KlarnaDescriptor
-            ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
+                ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
@@ -144,7 +145,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             primerViewModel.selectedPaymentMethod.value
 
         val paypal = paymentMethod as? PayPalDescriptor
-            ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
+                ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
 
         paypal.setTokenizableValue(
             "paypalBillingAgreementId",
@@ -295,9 +296,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun ensureClicksGoThrough() {
         window
             .addFlags(
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
     }
 
@@ -313,7 +313,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE ->handleKlarnaRequestResult(resultCode, data)
+            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> Unit
         }

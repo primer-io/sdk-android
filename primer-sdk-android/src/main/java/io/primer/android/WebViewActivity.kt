@@ -123,6 +123,8 @@ internal class WebViewActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        findViewById<WebView>(R.id.webView).stopLoading()
+        setResult(AppCompatActivity.RESULT_CANCELED, Intent())
         finish()
         return true
     }
