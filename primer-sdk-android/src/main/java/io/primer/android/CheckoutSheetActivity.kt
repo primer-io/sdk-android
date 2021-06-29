@@ -9,14 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
-import io.primer.android.di.DIAppComponent
 import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
+import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.Serialization
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
@@ -124,8 +125,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val paymentMethod: PaymentMethodDescriptor? =
             primerViewModel.selectedPaymentMethod.value
 
-        val klarna = paymentMethod as? KlarnaDescriptor
-            ?: return@Observer // if we are getting an emission here it means we're currently dealing with klarna
+        // if we are getting an emission here it means we should currently be dealing with klarna
+        val klarna = paymentMethod as? KlarnaDescriptor ?: return@Observer
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
@@ -142,8 +143,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val paymentMethod: PaymentMethodDescriptor? =
             primerViewModel.selectedPaymentMethod.value
 
-        val paypal = paymentMethod as? PayPalDescriptor
-            ?: return@Observer // if we are getting an emission here it means we're currently dealing with paypal
+        // if we are getting an emission here it means we should currently be dealing with paypal
+        val paypal = paymentMethod as? PayPalDescriptor ?: return@Observer
 
         paypal.setTokenizableValue(
             "paypalBillingAgreementId",
@@ -242,7 +243,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         tokenizationViewModel.klarnaPaymentData.observe(this, klarnaPaymentDataObserver)
         tokenizationViewModel.vaultedKlarnaPayment.observe(this, klarnaVaultedObserver)
         tokenizationViewModel.klarnaError.observe(this) {
-            // TODO (note that API errors are being pushed to host from Model.kt)
+            val apiError = APIError("Failed to add Klarna payment method.")
+            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
         }
         // endregion
 
@@ -293,8 +295,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun ensureClicksGoThrough() {
         window
             .addFlags(
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
     }
@@ -311,14 +312,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE -> {
-                // TODO  a klarna flow that is not recurring will need this
-                handleKlarnaRequestResult(resultCode, data)
-            }
+            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
-            else -> {
-                // TODO error: unexpected request code
-            }
+            else -> Unit
         }
     }
 

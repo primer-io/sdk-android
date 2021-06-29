@@ -193,8 +193,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         if (redirectUrl == null || klarna == null ||
             klarna.config.id == null || klarnaAuthToken == null
         ) {
-            // TODO error: missing fields
-            return
+            return klarnaError.postValue(Unit)
         }
 
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
@@ -203,8 +202,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun handleRecurringKlarnaRequestResult(klarna: KlarnaDescriptor?, klarnaAuthToken: String) {
 
         if (klarna == null || klarna.config.id == null) {
-            // TODO error: missing fields
-            return
+            return klarnaError.postValue(Unit)
         }
 
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
