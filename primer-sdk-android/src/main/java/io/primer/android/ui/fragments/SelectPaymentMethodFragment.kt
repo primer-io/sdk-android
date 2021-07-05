@@ -99,6 +99,13 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             primerViewModel.vaultedPaymentMethods.value?.find {
                 it.token == primerViewModel.getSelectedPaymentMethodId()
             }?.run {
+
+                paymentMethodsContainer.children.forEach { v ->
+                    v.isEnabled = false
+                }
+
+                seeAllLabel.isEnabled = false
+
                 EventBus.broadcast(
                     CheckoutEvent.TokenSelected(
                         PaymentMethodTokenAdapter.internalToExternal(this)
@@ -132,9 +139,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
             payAllButton.isEnabled = it.isSelected
-            paymentMethodsContainer.children.forEach { v ->
-                v.isEnabled = !it.isSelected
-            }
         }
     }
 

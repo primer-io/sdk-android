@@ -189,7 +189,7 @@ class SecondFragment : Fragment() {
                     // }
                 }
                 is CheckoutEvent.TokenSelected -> {
-                    UniversalCheckout.dismiss(true)
+//                    UniversalCheckout.dismiss(true)
 //                    viewModel.createTransaction(
 //                        e.data.token,
 //                        amount,
