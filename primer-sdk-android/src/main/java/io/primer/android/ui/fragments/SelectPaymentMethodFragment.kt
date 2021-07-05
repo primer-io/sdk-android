@@ -100,11 +100,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 it.token == primerViewModel.getSelectedPaymentMethodId()
             }?.run {
 
-                paymentMethodsContainer.children.forEach { v ->
-                    v.isEnabled = false
-                }
-
-                seeAllLabel.isEnabled = false
+                toggleButtons(false)
 
                 EventBus.broadcast(
                     CheckoutEvent.TokenSelected(
@@ -148,6 +144,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         sheetTitle.isVisible = false
         payAllButton.isVisible = false
         choosePaymentMethodLabel.text = context?.getString(R.string.add_new_payment_method)
+    }
+
+    private fun toggleButtons(enabled: Boolean) {
+        paymentMethodsContainer.children.forEach { v ->
+            v.isEnabled = enabled
+        }
+
+        seeAllLabel.isEnabled = enabled
     }
 
     private fun addPaymentMethodsToList(paymentMethods: List<PaymentMethodDescriptor>) {
