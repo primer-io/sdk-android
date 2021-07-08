@@ -153,6 +153,7 @@ class SecondFragment : Fragment() {
             when (e) {
                 is CheckoutEvent.TokenizationSuccess -> {
 //                    e.completionHandler(null)
+                    UniversalCheckout.dismiss()
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
 //                    UniversalCheckout.dismiss()
@@ -189,14 +190,14 @@ class SecondFragment : Fragment() {
                     // }
                 }
                 is CheckoutEvent.TokenSelected -> {
-                    UniversalCheckout.dismiss(true)
-//                    viewModel.createTransaction(
-//                        e.data.token,
-//                        amount,
-//                        true,
-//                        currency,
-//                        e.data.paymentInstrumentType,
-//                    )
+//                    UniversalCheckout.dismiss(true)
+                    viewModel.createTransaction(
+                        e.data.token,
+                        amount,
+                        true,
+                        currency,
+                        e.data.paymentInstrumentType,
+                    )
                 }
                 else -> {
                 }
