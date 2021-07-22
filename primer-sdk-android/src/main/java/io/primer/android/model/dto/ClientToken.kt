@@ -15,8 +15,8 @@ internal data class ClientToken(
 
         val json = Serialization.json
 
-        private fun isSmallerThan(t1: Long, t2: Long): Boolean {
-            return t1 < t2
+        private fun isGreaterThan(t1: Long, t2: Long): Boolean {
+            return t1 > t2
         }
 
         fun fromString(encoded: String): ClientToken {
@@ -31,7 +31,7 @@ internal data class ClientToken(
 
                     val currentTime = System.currentTimeMillis() / 1000
 
-                    val isExpired = isSmallerThan(token.exp.toLong(), currentTime)
+                    val isExpired = isGreaterThan(token.exp.toLong(), currentTime)
 
                     if (isExpired) throw IllegalArgumentException()
 
