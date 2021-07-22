@@ -3,8 +3,7 @@ package io.primer.android.model.dto
 import android.util.Base64
 import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
-
-private const val DIVIDER = 1000
+import java.util.concurrent.TimeUnit
 
 @Serializable
 internal data class ClientToken(
@@ -17,8 +16,8 @@ internal data class ClientToken(
 
         val json = Serialization.json
 
-        private fun isGreaterThan(t1: Long, t2: Long): Boolean {
-            return t1 > t2
+        private fun checkIfExpired(expInSeconds: Long): Boolean {
+            return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) >= expInSeconds
         }
 
         @Throws(IllegalArgumentException::class)
@@ -32,17 +31,15 @@ internal data class ClientToken(
                 if (decoded.contains("\"accessToken\":")) {
                     val token = json.decodeFromString(serializer(), decoded)
 
-                    val currentTime = System.currentTimeMillis() / DIVIDER
+                    val isExpired = checkIfExpired(token.exp.toLong())
 
-                    val isExpired = isGreaterThan(currentTime, token.exp.toLong())
-
-                    if (isExpired) throw IllegalArgumentException()
+                    if (isExpired) throw IllegalArgumentException("client token has expired.")
 
                     return token
                 }
             }
 
-            throw IllegalArgumentException()
+            throw IllegalArgumentException("client token is invalid.")
         }
     }
 }
