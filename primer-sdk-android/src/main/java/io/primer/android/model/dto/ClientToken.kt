@@ -3,6 +3,7 @@ package io.primer.android.model.dto
 import android.util.Base64
 import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
+import java.io.IOException
 
 @Serializable
 internal data class ClientToken(
@@ -19,6 +20,7 @@ internal data class ClientToken(
             return t1 > t2
         }
 
+        @Throws(IllegalArgumentException::class)
         fun fromString(encoded: String): ClientToken {
             val tokens = encoded.split(".")
 
