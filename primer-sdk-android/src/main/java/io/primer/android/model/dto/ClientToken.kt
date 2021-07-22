@@ -32,9 +32,11 @@ internal data class ClientToken(
                 if (decoded.contains("\"accessToken\":")) {
                     val token = json.decodeFromString(serializer(), decoded)
 
+                    println("🚀 token: $token")
+
                     val currentTime = System.currentTimeMillis() / DIVIDER
 
-                    val isExpired = isGreaterThan(token.exp.toLong(), currentTime)
+                    val isExpired = isGreaterThan(currentTime, token.exp.toLong())
 
                     if (isExpired) throw IllegalArgumentException()
 
