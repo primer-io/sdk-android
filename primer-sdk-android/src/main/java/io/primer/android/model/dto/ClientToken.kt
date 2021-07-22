@@ -3,7 +3,8 @@ package io.primer.android.model.dto
 import android.util.Base64
 import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
-import java.io.IOException
+
+private const val DIVIDER = 1000
 
 @Serializable
 internal data class ClientToken(
@@ -31,7 +32,7 @@ internal data class ClientToken(
                 if (decoded.contains("\"accessToken\":")) {
                     val token = json.decodeFromString(serializer(), decoded)
 
-                    val currentTime = System.currentTimeMillis() / 1000
+                    val currentTime = System.currentTimeMillis() / DIVIDER
 
                     val isExpired = isGreaterThan(token.exp.toLong(), currentTime)
 
