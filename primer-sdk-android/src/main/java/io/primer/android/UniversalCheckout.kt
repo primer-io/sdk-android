@@ -56,7 +56,15 @@ object UniversalCheckout {
         countryCode: CountryCode? = null,
         theme: UniversalCheckoutTheme? = null,
     ) {
-        val decodedToken = ClientToken.fromString(clientToken)
+
+        lateinit var decodedToken: ClientToken
+
+        try {
+            decodedToken = ClientToken.fromString(clientToken)
+        } catch (e: IllegalArgumentException) {
+            val apiError = APIError("Client token has expired.")
+            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
+        }
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
