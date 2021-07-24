@@ -152,7 +152,7 @@ class SecondFragment : Fragment() {
         override fun onCheckoutEvent(e: CheckoutEvent) {
             when (e) {
                 is CheckoutEvent.TokenizationSuccess -> {
-//                    e.completionHandler(null)
+                    e.completionHandler(null)
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
 //                    UniversalCheckout.dismiss()
