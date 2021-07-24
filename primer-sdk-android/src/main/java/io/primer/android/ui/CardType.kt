@@ -202,10 +202,10 @@ private val CARD_GAPS_4_8_12 = listOf(
     CARD_NUM_GAP_12
 )
 
-private const val CARD_NUM_LEN_12 = 14
-private const val CARD_NUM_LEN_13 = 14
+private const val CARD_NUM_LEN_12 = 12
+private const val CARD_NUM_LEN_13 = 13
 private const val CARD_NUM_LEN_14 = 14
-private const val CARD_NUM_LEN_15 = 14
+private const val CARD_NUM_LEN_15 = 15
 private const val CARD_NUM_LEN_16 = 16
 private const val CARD_NUM_LEN_17 = 17
 private const val CARD_NUM_LEN_18 = 18
