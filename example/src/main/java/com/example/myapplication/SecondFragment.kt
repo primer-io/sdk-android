@@ -65,7 +65,7 @@ class SecondFragment : Fragment() {
         binding.vaultButton.setOnClickListener {
             activity?.let {
                 UniversalCheckout.showVault(
-                    it, 
+                    it,
                     listener,
                     preferWebView = true,
                     clearAllListeners = true,
@@ -144,7 +144,7 @@ class SecondFragment : Fragment() {
         _binding = null
     }
 
-    private fun setBusyAs(isBusy: Boolean) {
+    internal fun setBusyAs(isBusy: Boolean) {
         binding.walletProgressBar.isVisible = isBusy
     }
 
@@ -152,7 +152,15 @@ class SecondFragment : Fragment() {
         override fun onCheckoutEvent(e: CheckoutEvent) {
             when (e) {
                 is CheckoutEvent.TokenizationSuccess -> {
-                    e.completionHandler(null)
+                    UniversalCheckout.dismiss()
+                    setBusyAs(true)
+                    viewModel.createTransaction(
+                        e.data.token,
+                        amount,
+                        true,
+                        currency,
+                        e.data.paymentInstrumentType,
+                    )
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
 //                    UniversalCheckout.dismiss()
