@@ -65,7 +65,7 @@ class SecondFragment : Fragment() {
         binding.vaultButton.setOnClickListener {
             activity?.let {
                 UniversalCheckout.showVault(
-                    it, 
+                    it,
                     listener,
                     preferWebView = true,
                     clearAllListeners = true,
@@ -144,7 +144,7 @@ class SecondFragment : Fragment() {
         _binding = null
     }
 
-    private fun setBusyAs(isBusy: Boolean) {
+    internal fun setBusyAs(isBusy: Boolean) {
         binding.walletProgressBar.isVisible = isBusy
     }
 

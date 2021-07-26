@@ -2,10 +2,6 @@ package io.primer.android.ui
 
 private val INVALID_CHARACTER = Regex("[^0-9]")
 
-private const val LUHN_CONSTANT_A: Int = 2
-private const val LUHN_CONSTANT_B: Int = 9
-private const val LUHN_CONSTANT_C: Int = 10
-
 internal class CardNumberFormatter private constructor(
     private val value: String,
     private val autoInsert: Boolean,
@@ -51,25 +47,22 @@ internal class CardNumberFormatter private constructor(
 
     fun getCvvLength(): Int = meta.cvvLength
 
+    @Suppress("MagicNumber")
     private fun isLuhnValid(): Boolean {
-        val digits = value.substring(0, value.lastIndex)
-        var checksum = value.substring(value.lastIndex).toInt()
-
-        digits.forEachIndexed { n, c ->
-            var digit = Character.getNumericValue(c)
-
-            if ((n % LUHN_CONSTANT_A) == 0) {
-                digit *= LUHN_CONSTANT_A
+        var sum = 0
+        var alternate = false
+        for (i in value.length - 1 downTo 0) {
+            var n = value.substring(i, i + 1).toInt()
+            if (alternate) {
+                n *= 2
+                if (n > 9) {
+                    n = n % 10 + 1
+                }
             }
-
-            if (digit > LUHN_CONSTANT_B) {
-                digit -= LUHN_CONSTANT_B
-            }
-
-            checksum += digit
+            sum += n
+            alternate = !alternate
         }
-
-        return (checksum % LUHN_CONSTANT_C) == 0
+        return sum % 10 == 0
     }
 
     companion object {
