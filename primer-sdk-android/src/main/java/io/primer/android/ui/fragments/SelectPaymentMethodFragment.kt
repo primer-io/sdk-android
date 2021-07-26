@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import io.primer.android.R
@@ -98,6 +99,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             primerViewModel.vaultedPaymentMethods.value?.find {
                 it.token == primerViewModel.getSelectedPaymentMethodId()
             }?.run {
+
+                toggleButtons(false)
+
                 EventBus.broadcast(
                     CheckoutEvent.TokenSelected(
                         PaymentMethodTokenAdapter.internalToExternal(this)
@@ -140,6 +144,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         sheetTitle.isVisible = false
         payAllButton.isVisible = false
         choosePaymentMethodLabel.text = context?.getString(R.string.add_new_payment_method)
+    }
+
+    private fun toggleButtons(enabled: Boolean) {
+        paymentMethodsContainer.children.forEach { v ->
+            v.isEnabled = enabled
+        }
+
+        seeAllLabel.isEnabled = enabled
     }
 
     private fun addPaymentMethodsToList(paymentMethods: List<PaymentMethodDescriptor>) {

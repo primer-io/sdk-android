@@ -45,7 +45,7 @@ class AppMainViewModel : ViewModel() {
 
     private fun fetchClientToken() {
         val mimeType = MediaType.get("application/json")
-        val body = ClientTokenRequest("customer8", "SE")
+        val body = ClientTokenRequest("customer8", "SE", "staging")
         val json = Gson().toJson(body)
 
         val reqBody = RequestBody.create(mimeType, json)
@@ -115,6 +115,7 @@ class AppMainViewModel : ViewModel() {
 data class ClientTokenRequest(
     @SerializedName("customerId") val id: String,
     @SerializedName("customerCountryCode") val countryCode: String,
+    @SerializedName("environment") val environment: String,
 )
 
 @Keep

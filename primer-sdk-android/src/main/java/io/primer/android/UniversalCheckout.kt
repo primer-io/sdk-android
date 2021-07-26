@@ -48,7 +48,11 @@ object UniversalCheckout {
 
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
+     *
+     * @param clientToken base64 string containing information about this Primer session.
+     * It expires after 24 hours. Passing in an expired client token will throw an [IllegalArgumentException].
      */
+    @Throws(IllegalArgumentException::class)
     fun initialize(
         context: Context,
         clientToken: String,
@@ -56,7 +60,8 @@ object UniversalCheckout {
         countryCode: CountryCode? = null,
         theme: UniversalCheckoutTheme? = null,
     ) {
-        val decodedToken = ClientToken.fromString(clientToken)
+
+        val decodedToken: ClientToken = ClientToken.fromString(clientToken)
 
         // FIXME inject these dependencies
         val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
