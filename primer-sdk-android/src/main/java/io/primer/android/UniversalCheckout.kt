@@ -42,7 +42,10 @@ enum class UXMode {
         get() = this == CHECKOUT
 }
 
-object UniversalCheckout {
+@Deprecated("This object has been renamed to Primer.")
+typealias UniversalCheckout = Primer
+
+object Primer {
 
     private lateinit var checkout: InternalUniversalCheckout
 

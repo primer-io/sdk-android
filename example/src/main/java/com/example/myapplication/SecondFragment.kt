@@ -9,11 +9,10 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import kotlin.concurrent.schedule
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.CheckoutEventListener
+import io.primer.android.Primer
 import io.primer.android.UniversalCheckout
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.CheckoutExitReason
@@ -21,9 +20,6 @@ import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
-import io.primer.android.ui.fragments.ErrorType
-import java.lang.IllegalArgumentException
-import java.util.Timer
 
 class SecondFragment : Fragment() {
 
@@ -64,7 +60,7 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.setOnClickListener {
             activity?.let {
-                UniversalCheckout.showVault(
+                Primer.showVault(
                     it,
                     listener,
                     preferWebView = true,
@@ -75,9 +71,9 @@ class SecondFragment : Fragment() {
 
         binding.klarnaButton.setOnClickListener {
             activity?.let {
-                UniversalCheckout.loadPaymentMethods(listOf(klarna))
+                Primer.loadPaymentMethods(listOf(klarna))
                 setBusyAs(true)
-                UniversalCheckout.showVault(
+                Primer.showVault(
                     it,
                     listener,
                     preferWebView = true,
@@ -102,7 +98,7 @@ class SecondFragment : Fragment() {
 
             if (token != null) {
                 initializeCheckoutWith(token)
-                UniversalCheckout.loadPaymentMethods(listOf(klarna, card, paypal))
+                Primer.loadPaymentMethods(listOf(klarna, card, paypal))
                 fetchSavedPaymentMethods()
             }
         }
@@ -110,7 +106,7 @@ class SecondFragment : Fragment() {
         viewModel.transactionState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 TransactionState.SUCCESS -> {
-                    UniversalCheckout.dismiss()
+                    Primer.dismiss()
                     AlertDialog.Builder(context)
                         .setMessage("Payment successful!")
                         .show()
