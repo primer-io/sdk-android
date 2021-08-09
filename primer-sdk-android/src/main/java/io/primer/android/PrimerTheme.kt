@@ -21,7 +21,7 @@ private const val INPUT_BACKGROUND_COLOR_DEFAULT = "#FFFFFFFF"
 
 @Serializable
 // FIXME consider resource references instead of values
-data class UniversalCheckoutTheme constructor(
+data class PrimerTheme constructor(
     val buttonCornerRadius: Float,
     val inputCornerRadius: Float,
 
@@ -53,7 +53,7 @@ data class UniversalCheckoutTheme constructor(
         private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
 
         // FIXME unnecessary indirection
-        fun getDefault(): UniversalCheckoutTheme {
+        fun getDefault(): PrimerTheme {
             return create()
         }
 
@@ -74,8 +74,8 @@ data class UniversalCheckoutTheme constructor(
             primaryColor: String? = null,
             inputBackgroundColor: String? = null,
             windowMode: WindowMode = WindowMode.BOTTOM_SHEET,
-        ): UniversalCheckoutTheme {
-            return UniversalCheckoutTheme(
+        ): PrimerTheme {
+            return PrimerTheme(
                 buttonCornerRadius = buttonCornerRadius ?: BUTTON_CORNER_RADIUS_DEFAULT,
                 inputCornerRadius = inputCornerRadius ?: INPUT_CORNER_RADIUS_DEFAULT,
                 backgroundColor = hexToColorInt(backgroundColor, BACKGROUND_COLOR_DEFAULT),
