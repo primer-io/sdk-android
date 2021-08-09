@@ -11,7 +11,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.UXMode
-import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppContext
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
@@ -50,7 +50,7 @@ class TokenizationViewModelTest : KoinTest {
     private lateinit var model: Model
 
     // FIXME we're forced to provide a theme in tests because of the static calls that happen if you don't
-    private val theme = UniversalCheckoutTheme(
+    private val theme = PrimerTheme(
         0f,
         0f,
         Color.BLACK,
@@ -64,7 +64,7 @@ class TokenizationViewModelTest : KoinTest {
         Color.BLACK,
         Color.BLACK,
         Color.BLACK,
-        UniversalCheckoutTheme.WindowMode.FULL_HEIGHT
+        PrimerTheme.WindowMode.FULL_HEIGHT
     )
 
     private val config = CheckoutConfig(
