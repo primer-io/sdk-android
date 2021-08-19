@@ -208,7 +208,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         this.checkoutConfig = checkoutConfig
 
-        DIAppContext.init(this, checkoutConfig, locallyConfiguredPaymentMethods)
+        DIAppContext.init(applicationContext, checkoutConfig, locallyConfiguredPaymentMethods)
 
         val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
         val paymentMethodDescriptorFactoryRegistry =
