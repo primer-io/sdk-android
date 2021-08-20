@@ -8,44 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import kotlin.concurrent.schedule
+import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentSecondBinding
+import com.example.myapplication.models.TransactionState
 import com.xwray.groupie.GroupieAdapter
-import io.primer.android.CheckoutEventListener
 import io.primer.android.UniversalCheckout
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.dto.PaymentMethodToken
-import io.primer.android.payment.card.Card
-import io.primer.android.payment.klarna.Klarna
-import io.primer.android.payment.paypal.PayPal
-import io.primer.android.ui.fragments.ErrorType
-import java.lang.IllegalArgumentException
-import java.util.Timer
+import io.primer.android.threeds.data.models.ResponseCode
 
 class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: AppMainViewModel
-
-    private var amount: Int = 1000
-    private var currency: String = "SEK"
-
-    private val card = Card()
-    private val paypal = PayPal()
-    private val klarna = Klarna(webViewTitle = "Add Klarna 💰")
-
-    // private val locale = Locale("se", "SE")
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(AppMainViewModel::class.java)
-    }
+    private val viewModel: AppMainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,77 +35,99 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchClientToken()
+
         binding.vaultButton.isVisible = false
         binding.checkoutButton.isVisible = false
-        binding.klarnaButton.isVisible = false
 
         binding.vaultButton.setOnClickListener {
-            activity?.let {
+            activity?.let { activityContext ->
                 UniversalCheckout.showVault(
-                    it,
-                    listener,
+                    activityContext,
+                    viewModel.listener,
+                    viewModel.amount.value,
+                    viewModel.countryCode.value?.currencyCode.toString(),
+                    is3DSAtTokenizationEnabled = viewModel.threeDsEnabled.value ?: false,
+                    debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+                    isStandalonePaymentMethod = viewModel.isStandalonePaymentMethod,
                     preferWebView = true,
+                    webBrowserRedirectScheme = "primer",
                     clearAllListeners = true,
-                )
-            }
-        }
-
-        binding.klarnaButton.setOnClickListener {
-            activity?.let {
-                UniversalCheckout.loadPaymentMethods(listOf(klarna))
-                setBusyAs(true)
-                UniversalCheckout.showVault(
-                    it,
-                    listener,
-                    preferWebView = true,
-                    isStandalonePaymentMethod = true,
-                    doNotShowUi = true,
-                    clearAllListeners = true,
+                    orderId = viewModel.orderId.value,
+                    userDetails = viewModel.userDetails.value
                 )
             }
         }
 
         binding.checkoutButton.setOnClickListener {
-            activity?.let {
-                UniversalCheckout
-                    .showCheckout(it, listener, amount, currency, clearAllListeners = true)
+            activity?.let { activityContext ->
+                UniversalCheckout.showCheckout(
+                    activityContext,
+                    viewModel.listener,
+                    viewModel.amount.value,
+                    viewModel.countryCode.value?.currencyCode.toString(),
+                    is3DSAtTokenizationEnabled = viewModel.threeDsEnabled.value ?: false,
+                    debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+                    isStandalonePaymentMethod = viewModel.isStandalonePaymentMethod,
+                    preferWebView = true,
+                    clearAllListeners = true,
+                    webBrowserRedirectScheme = "primer",
+                    orderId = viewModel.orderId.value,
+                    userDetails = viewModel.userDetails.value
+                )
             }
         }
 
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
-            binding.vaultButton.isVisible = token != null
+            if (viewModel.vaultDisabled) {
+                binding.vaultButton.isVisible = false
+            } else {
+                binding.vaultButton.isVisible = token != null
+            }
+
             binding.checkoutButton.isVisible = token != null
-            binding.klarnaButton.isVisible = token != null
 
             if (token != null) {
                 initializeCheckoutWith(token)
-                UniversalCheckout.loadPaymentMethods(listOf(klarna, card, paypal))
-                fetchSavedPaymentMethods()
+                UniversalCheckout.loadPaymentMethods(viewModel.generatePaymentMethodList())
+                viewModel.fetchSavedPaymentMethods()
             }
         }
 
-        viewModel.transactionState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                TransactionState.SUCCESS -> {
-                    UniversalCheckout.dismiss()
-                    AlertDialog.Builder(context)
-                        .setMessage("Payment successful!")
-                        .show()
-                    setBusyAs(false)
-                    viewModel.resetTransactionState()
-                }
-                TransactionState.IDLE -> {
-                }
-                TransactionState.ERROR -> {
-                    AlertDialog.Builder(context)
-                        .setMessage("Something went wrong, please try a different payment method.")
-                        .show()
-                    setBusyAs(false)
-                    viewModel.resetTransactionState()
-                }
+        viewModel.isBusy.observe(viewLifecycleOwner) { isBusy ->
+            binding.walletProgressBar.isVisible = isBusy
+        }
 
-                else -> {
+        viewModel.transactionState.observe(viewLifecycleOwner) { state ->
+            val message = when (state) {
+                TransactionState.SUCCESS -> requireContext().getString(R.string.success_text)
+                TransactionState.ERROR -> requireContext().getString(R.string.something_went_wrong)
+                else -> return@observe
+            }
+            UniversalCheckout.dismiss()
+            AlertDialog.Builder(context).setMessage(message).show()
+            viewModel.resetTransactionState()
+        }
+
+        viewModel.vaultedPaymentTokens.observe(viewLifecycleOwner) {
+            val adapter = GroupieAdapter()
+            it.forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
+            binding.paymentMethodList.adapter = adapter
+        }
+
+        viewModel.threeDsResult.observe(viewLifecycleOwner) {
+            val message = it?.let {
+                when (it.responseCode) {
+                    ResponseCode.AUTH_SUCCESS -> getString(R.string.three_ds_success_message)
+                    else -> getString(R.string.three_ds_error_message,
+                                      it.responseCode,
+                                      it.reasonCode,
+                                      it.reasonText)
                 }
+            }
+            message?.let {
+                AlertDialog.Builder(context).setMessage(it).show()
+                viewModel.clearThreeDsResult()
             }
         }
     }
@@ -139,106 +138,22 @@ class SecondFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    internal fun setBusyAs(isBusy: Boolean) {
-        binding.walletProgressBar.isVisible = isBusy
-    }
-
-    private val listener = object : CheckoutEventListener {
-        override fun onCheckoutEvent(e: CheckoutEvent) {
-            when (e) {
-                is CheckoutEvent.TokenizationSuccess -> {
-//                    e.completionHandler(null)
-                    UniversalCheckout.dismiss()
-                }
-                is CheckoutEvent.TokenAddedToVault -> {
-//                    UniversalCheckout.dismiss()
-//                    Handler(Looper.getMainLooper()).post {
-//                        UniversalCheckout.showSuccess(
-//                            autoDismissDelay = 10000,
-//                            SuccessType.VAULT_TOKENIZATION_SUCCESS,
-//                        )
-//                    }
-                }
-                is CheckoutEvent.ApiError -> {
-//                    UniversalCheckout.dismiss()
-                    AlertDialog.Builder(context)
-                        .setMessage("Something went wrong!")
-                        .show()
-//                    UniversalCheckout.showError(
-//                        autoDismissDelay = 10000,
-//                        ErrorType.VAULT_TOKENIZATION_FAILED,
-//                    )
-                }
-                is CheckoutEvent.Exit -> {
-
-                    if (e.data.reason == CheckoutExitReason.EXIT_SUCCESS) {
-                        Log.i("ExampleApp", "Awesome")
-                    }
-
-                    fetchSavedPaymentMethods()
-
-                    // Timer("SettingUp", false).schedule(500L) {
-                    //     activity?.runOnUiThread {
-                    //         val nav = findNavController()
-                    //         nav.popBackStack()
-                    //     }
-                    // }
-                }
-                is CheckoutEvent.TokenSelected -> {
-//                    UniversalCheckout.dismiss(true)
-                    viewModel.createTransaction(
-                        e.data.token,
-                        amount,
-                        true,
-                        currency,
-                        e.data.paymentInstrumentType,
-                    )
-                }
-                else -> {
-                }
-            }
-        }
+    private fun onConfirmDialogAction(token: PaymentMethodToken) {
+        viewModel.createTransaction(token.token, token.paymentInstrumentType)
     }
 
     private fun onSelect(token: PaymentMethodToken) {
         AlertDialog.Builder(context)
             .setTitle("Payment confirmation")
             .setMessage("Would you like to pay?")
-            .setPositiveButton("Yes") { dialog, which ->
-                setBusyAs(true)
-                viewModel.createTransaction(
-                    token.token,
-                    amount,
-                    true,
-                    currency,
-                    token.paymentInstrumentType,
-                )
-            }
-            .setNegativeButton("Cancel") { dialog, which ->
-                dialog.dismiss()
-            }
+            .setPositiveButton("Yes") { _, _ -> onConfirmDialogAction(token) }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
-    internal fun fetchSavedPaymentMethods() {
-
-        activity?.runOnUiThread { setBusyAs(true) }
-
-        UniversalCheckout.getSavedPaymentMethods {
-            activity?.runOnUiThread {
-                setBusyAs(false)
-                val adapter = GroupieAdapter()
-                it.forEach { t ->
-                    adapter.add(PaymentMethodItem(t, ::onSelect))
-                }
-                binding.paymentMethodList.adapter = adapter
-            }
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {

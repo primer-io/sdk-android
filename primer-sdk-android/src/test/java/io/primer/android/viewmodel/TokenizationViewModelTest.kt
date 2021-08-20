@@ -13,8 +13,8 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppContext
+import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
-import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
@@ -25,6 +25,7 @@ import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.card.CreditCard
+import kotlinx.coroutines.flow.flowOf
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -45,6 +46,9 @@ class TokenizationViewModelTest : KoinTest {
 
     @RelaxedMockK
     private lateinit var primerViewModel: PrimerViewModel
+
+    @RelaxedMockK
+    private lateinit var tokenizationInteractor: TokenizationInteractor
 
     @RelaxedMockK
     private lateinit var model: Model
@@ -85,6 +89,7 @@ class TokenizationViewModelTest : KoinTest {
             modules(
                 module {
                     single { model }
+                    single { tokenizationInteractor }
                     single { config }
                 }
             )
@@ -132,7 +137,7 @@ class TokenizationViewModelTest : KoinTest {
     }
 
     @Test
-    fun `tokenization relies on Model instance`() {
+    fun `tokenization relies on TokenizationInteractor instance`() {
         val mockJson: JSONObject = mockk()
         every { mockJson.optString(CARD_NAME_FILED_NAME) } returns "name"
         every { mockJson.optString(CARD_NUMBER_FIELD_NAME) } returns "number"
@@ -140,7 +145,7 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
-        coEvery { model.tokenize(any(), UXMode.CHECKOUT) } returns OperationResult.Success(mockk())
+        coEvery { tokenizationInteractor.tokenize(any()) } returns flowOf("token")
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
@@ -151,6 +156,6 @@ class TokenizationViewModelTest : KoinTest {
 
         viewModel.tokenize()
 
-        coVerify { model.tokenize(paymentMethodDescriptor, UXMode.CHECKOUT) }
+        coVerify { tokenizationInteractor.tokenize(any()) }
     }
 }

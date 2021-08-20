@@ -9,28 +9,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/payment_method_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/vault_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/klarna_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/add_klarna"
-        app:backgroundTint="@color/primer"
-        app:cornerRadius="8sp"
-        app:layout_constraintBottom_toTopOf="@+id/vault_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/checkout_button" />
 
     <Button
         android:id="@+id/vault_button"
@@ -67,8 +54,8 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/primer_android_red"
         android:indeterminate="true"
-        android:indeterminateTintMode="src_atop"
         android:indeterminateTint="@color/primer"
+        android:indeterminateTintMode="src_atop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

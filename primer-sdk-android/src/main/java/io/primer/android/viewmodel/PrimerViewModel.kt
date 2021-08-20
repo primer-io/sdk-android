@@ -80,6 +80,9 @@ internal class PrimerViewModel(
     private val _selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
     val selectedPaymentMethod: LiveData<PaymentMethodDescriptor?> = _selectedPaymentMethod
 
+    private val _checkoutEvent = MutableLiveData<CheckoutEvent>()
+    val checkoutEvent: LiveData<CheckoutEvent> = _checkoutEvent
+
     fun goToVaultedPaymentMethodsView() {
         viewStatus.postValue(ViewStatus.VIEW_VAULTED_PAYMENT_METHODS)
     }
@@ -90,6 +93,10 @@ internal class PrimerViewModel(
 
     fun selectPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
         _selectedPaymentMethod.value = paymentMethodDescriptor
+    }
+
+    fun setCheckoutEvent(event: CheckoutEvent) {
+        _checkoutEvent.postValue(event)
     }
 
     fun fetchConfiguration(locallyConfiguredPaymentMethods: List<PaymentMethod>) {

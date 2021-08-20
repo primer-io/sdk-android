@@ -1,6 +1,7 @@
 package io.primer.android.model
 
-import io.primer.android.UXMode
+import io.primer.android.data.exception.HttpException
+import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.APIError
@@ -8,14 +9,18 @@ import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import io.primer.android.model.dto.TokenType
-import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.ui.fragments.ErrorType
-import io.primer.android.ui.fragments.SuccessType
+import io.primer.android.threeds.data.models.BeginAuthRequest
+import io.primer.android.threeds.data.models.BeginAuthResponse
+import io.primer.android.threeds.data.models.PostAuthResponse
 import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType
@@ -60,7 +65,7 @@ internal suspend inline fun Call.await(): Response =
 internal class Model constructor(
     private val clientToken: ClientToken,
     private val okHttpClient: OkHttpClient,
-    private val json: Json
+    private val json: Json,
 ) {
 
     private var clientSession: ClientSession? = null
@@ -149,29 +154,25 @@ internal class Model constructor(
         }
     }
 
-    suspend fun tokenize(
-        tokenizable: PaymentMethodDescriptor,
-        uxMode: UXMode,
-    ): OperationResult<PaymentMethodTokenInternal> {
+    fun tokenize(
+        tokenizationRequest: TokenizationRequest,
+    ): Flow<PaymentMethodTokenInternal> =
+        flow {
 
-        val requestBody = JSONObject().apply {
-            put("paymentInstrument", tokenizable.toPaymentInstrument())
-            if (uxMode.isVault) {
-                put("tokenType", TokenType.MULTI_USE.name)
-                put("paymentFlow", "VAULT")
-            }
-        }
+            val map =
+                json.encodeToJsonElement(tokenizationRequest).jsonObject
+                    .filterNot { it.key == "type" }
+            val body =
+                RequestBody.create(MediaType.get("application/json"), json.encodeToString(map))
 
-        val body = toJsonRequestBody(requestBody)
+            // FIXME extra endpoint construction to collaborator (non-static call)
+            val url =
+                APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
+            val request = Request.Builder()
+                .url(url)
+                .post(body)
+                .build()
 
-        // FIXME extra endpoint construction to collaborator (non-static call)
-        val url = APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
-        val request = Request.Builder()
-            .url(url)
-            .post(body)
-            .build()
-
-        return try {
             val response: Response = okHttpClient
                 .newCall(request)
                 .await()
@@ -179,8 +180,7 @@ internal class Model constructor(
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
                 // TODO extract error parsing to collaborator & pass error through OperationResult
-                EventBus.broadcast(CheckoutEvent.TokenizationError(error))
-                return OperationResult.Error(Throwable())
+                throw HttpException(response.code(), error)
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
@@ -191,39 +191,8 @@ internal class Model constructor(
             val token: PaymentMethodTokenInternal = json
                 .decodeFromString(PaymentMethodTokenInternal.serializer(), jsonBody.toString())
 
-            EventBus.broadcast(
-                CheckoutEvent.TokenizationSuccess(
-                    PaymentMethodTokenAdapter.internalToExternal(token),
-                    ::completionHandler,
-                )
-            )
-
-            if (token.tokenType == TokenType.MULTI_USE) {
-                EventBus.broadcast(
-                    CheckoutEvent.TokenAddedToVault(
-                        PaymentMethodTokenAdapter.internalToExternal(token)
-                    )
-                )
-            }
-
-            OperationResult.Success(token)
-        } catch (error: Throwable) {
-
-            OperationResult.Error(error)
+            emit(token)
         }
-    }
-
-    private fun completionHandler(error: Error?) {
-        if (error == null) {
-            EventBus.broadcast(
-                CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS)
-            )
-        } else {
-            EventBus.broadcast(
-                CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED)
-            )
-        }
-    }
 
     suspend fun deleteToken(token: PaymentMethodTokenInternal): OperationResult<Unit> {
 
@@ -298,6 +267,94 @@ internal class Model constructor(
             OperationResult.Error(error)
         }
     }
+
+    fun get3dsAuthToken(
+        token: String,
+        beginAuthRequest: BeginAuthRequest,
+    ): Flow<BeginAuthResponse> =
+        flow {
+
+            val baseUrl = "${clientSession?.pciUrl}/3ds/$token/auth"
+            val request = Request.Builder()
+                .url(baseUrl)
+                .post(
+                    RequestBody.create(
+                        MediaType.get("application/json"),
+                        Json.encodeToString(beginAuthRequest)
+                    )
+                )
+                .build()
+
+            val response: Response = okHttpClient
+                .newCall(request)
+                .await()
+
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                throw HttpException(response.code(), error)
+            }
+
+            val body: ResponseBody? = response.body()
+
+            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                body?.close()
+                continuation.resume(json)
+            }
+
+            // TODO move parsing somewhere else
+            val data = json.decodeFromString(
+                BeginAuthResponse.serializer(),
+                jsonBody.toString(),
+            )
+
+            emit(data)
+        }
+
+    fun continue3dsAuth(
+        threeDSTokenId: String,
+    ): Flow<PostAuthResponse> =
+        flow {
+
+            val baseUrl = "${clientSession?.pciUrl}/3ds/$threeDSTokenId/continue"
+            val request = Request.Builder()
+                .url(baseUrl)
+                .post(RequestBody.create(MediaType.get("application/json"), "{}"))
+                .build()
+
+            val response: Response = okHttpClient
+                .newCall(request)
+                .await()
+
+            if (!response.isSuccessful) {
+                val error = APIError.create(response)
+                // TODO extract error parsing to collaborator & pass error through OperationResult
+                throw HttpException(response.code(), error)
+            }
+
+            val body: ResponseBody? = response.body()
+
+            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
+                val json = JSONObject(response.body()?.string() ?: "{}")
+                body?.close()
+                continuation.resume(json)
+            }
+
+            // TODO move parsing somewhere else
+            val data = json.decodeFromString(
+                PostAuthResponse.serializer(),
+                jsonBody.toString(),
+            )
+
+            emit(data)
+        }
+
+    fun getClientSession() =
+        flow {
+            require(clientSession != null)
+            clientSession?.let { emit(it) }
+        }
 
     private fun toJsonRequestBody(requestBody: JSONObject?): RequestBody {
         val mimeType = MediaType.get("application/json")

@@ -11,5 +11,7 @@ enum class CheckoutEventType {
     TOGGLE_LOADING,
     SHOW_SUCCESS,
     DISMISS_INTERNAL,
-    TOKEN_SELECTED
+    TOKEN_SELECTED,
+    START_3DS,
+    CLEAR_LISTENERS
 }

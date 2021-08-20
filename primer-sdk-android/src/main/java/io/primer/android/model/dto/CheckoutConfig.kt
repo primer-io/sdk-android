@@ -2,6 +2,9 @@ package io.primer.android.model.dto
 
 import io.primer.android.UXMode
 import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.model.PrimerDebugOptions
+import io.primer.android.model.UserDetails
+import io.primer.android.threeds.data.models.ThreeDsAmount
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -19,10 +22,15 @@ data class CheckoutConfig(
     @Serializable(with = LocaleSerializer::class) val locale: Locale,
     val countryCode: CountryCode?,
     val monetaryAmount: MonetaryAmount?,
+    val threeDsAmount: ThreeDsAmount,
     val isStandalonePaymentMethod: Boolean,
     val doNotShowUi: Boolean,
     val theme: UniversalCheckoutTheme,
     val preferWebView: Boolean,
+    val is3DSAtTokenizationEnabled: Boolean,
+    val debugOptions: PrimerDebugOptions?,
+    val orderId: String?,
+    val userDetails: UserDetails?,
 ) {
 
     // FIXME move Locale to Klarna
@@ -38,6 +46,10 @@ data class CheckoutConfig(
         amount: Int? = null,
         theme: UniversalCheckoutTheme? = null,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
     ) : this(
         clientToken = clientToken,
         packageName = packageName,
@@ -46,13 +58,18 @@ data class CheckoutConfig(
         doNotShowUi = doNotShowUi,
         countryCode = countryCode,
         monetaryAmount = MonetaryAmount.create(currency = currency, value = amount),
+        threeDsAmount = ThreeDsAmount(amount, currency),
         isStandalonePaymentMethod = isStandalonePaymentMethod,
         theme = theme ?: UniversalCheckoutTheme.getDefault(),
         preferWebView = preferWebView,
+        is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+        debugOptions = debugOptions,
+        orderId = orderId,
+        userDetails = userDetails
     )
 }
 
-object LocaleSerializer : KSerializer<Locale> {
+internal object LocaleSerializer : KSerializer<Locale> {
 
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
         "Locale",

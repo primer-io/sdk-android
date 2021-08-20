@@ -3,11 +3,14 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.Serialization
+import io.primer.android.model.UserDetails
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
@@ -80,11 +83,21 @@ object UniversalCheckout {
                     .let { chain.proceed(it) }
             }
             .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor { chain: Interceptor.Chain ->
+                chain.request().newBuilder()
+                    .url(chain.request().url().toString().replace("localhost", "10.0.2.2")).build()
+                    .let { chain.proceed(it) }
+            }
             .build()
 
         val json = Serialization.json
 
         val model = Model(decodedToken, okHttpClient, json)
+
+        // we want to clear subscriptions
+        if (::checkout.isInitialized) {
+            checkout.unregisterSubscription()
+        }
 
         checkout = InternalUniversalCheckout(
             model,
@@ -116,6 +129,10 @@ object UniversalCheckout {
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean = false,
     ) {
         checkout.showVault(
@@ -128,6 +145,10 @@ object UniversalCheckout {
             doNotShowUi = doNotShowUi,
             preferWebView = preferWebView,
             clearAllListeners = clearAllListeners,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails
         )
     }
 
@@ -140,6 +161,10 @@ object UniversalCheckout {
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean = false,
     ) {
         checkout.showCheckout(
@@ -151,7 +176,11 @@ object UniversalCheckout {
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi,
             preferWebView = preferWebView,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
             clearAllListeners = clearAllListeners,
+            orderId = orderId,
+            userDetails = userDetails
         )
     }
 
@@ -205,12 +234,22 @@ internal class InternalUniversalCheckout constructor(
         override fun onEvent(e: CheckoutEvent) {
             if (e.public) {
                 listener?.onCheckoutEvent(e)
+            } else when (e) {
+                is CheckoutEvent.ClearListeners -> {
+                    clearListener()
+                }
+                else -> {
+                }
             }
         }
     }
 
     fun clearListener() {
         listener = null
+    }
+
+    fun unregisterSubscription() {
+        subscription?.unregister()
     }
 
     fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
@@ -254,6 +293,10 @@ internal class InternalUniversalCheckout constructor(
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean,
     ) {
         show(
@@ -266,6 +309,10 @@ internal class InternalUniversalCheckout constructor(
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             preferWebView = preferWebView,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails,
             clearAllListeners = clearAllListeners,
         )
     }
@@ -280,6 +327,10 @@ internal class InternalUniversalCheckout constructor(
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean,
     ) {
         show(
@@ -292,6 +343,10 @@ internal class InternalUniversalCheckout constructor(
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             preferWebView = preferWebView,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails,
             clearAllListeners = clearAllListeners,
         )
     }
@@ -324,6 +379,10 @@ internal class InternalUniversalCheckout constructor(
         isStandalonePaymentMethod: Boolean,
         doNotShowUi: Boolean,
         preferWebView: Boolean,
+        is3DSAtTokenizationEnabled: Boolean,
+        debugOptions: PrimerDebugOptions?,
+        orderId: String?,
+        userDetails: UserDetails?,
         clearAllListeners: Boolean,
     ) {
         subscription?.unregister(clearAllListeners)
@@ -346,10 +405,15 @@ internal class InternalUniversalCheckout constructor(
             amount = amount,
             currency = currency,
             theme = theme,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails,
             preferWebView = preferWebView,
         )
 
         try {
+            Serialization.addModule(tokenizationSerializationModule)
             paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
 
             val json = Serialization.json

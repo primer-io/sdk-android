@@ -28,7 +28,9 @@ internal class SelectPaymentMethodTitle(
 
     private fun update() {
         findViewById<TextView>(R.id.primer_sheet_title).text = when (uxMode) {
-            UXMode.CHECKOUT -> PayAmountText.generate(context, amount)
+            UXMode.CHECKOUT -> {
+                PayAmountText.generate(context, amount)
+            }
             UXMode.VAULT -> "" // this is for displaying amount, title sits above
             else -> ""
         }
