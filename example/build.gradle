@@ -62,6 +62,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation "com.xwray:groupie:2.9.0"
 
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+
     testImplementation 'junit:junit:4.13.2'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
