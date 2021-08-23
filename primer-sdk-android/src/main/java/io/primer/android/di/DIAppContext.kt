@@ -15,7 +15,8 @@ internal object DIAppContext {
         app = koinApplication {
             androidContext(context)
             modules(
-                CheckoutConfigModule(config, paymentMethods)
+                CheckoutConfigModule(config, paymentMethods),
+                tokenizationModule()
             )
         }
     }

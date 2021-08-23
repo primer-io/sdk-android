@@ -10,7 +10,7 @@ buildscript {
                 kotlinGradlePlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
                 androidJunit5      : 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1',
                 staticAnalysis     : [
-                        ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:9.4.1',
+                        ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:10.1.0',
                 ]
         ]
     }

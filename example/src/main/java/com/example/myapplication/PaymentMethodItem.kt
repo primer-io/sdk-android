@@ -17,8 +17,6 @@ class PaymentMethodItem(
 
         viewHolder.itemView.setOnClickListener { onSelect(token) }
 
-        println(token)
-
         when (token.paymentInstrumentType) {
             "KLARNA_CUSTOMER_TOKEN" -> {
                 val account = token.paymentInstrumentData?.sessionData?.billingAddress?.email

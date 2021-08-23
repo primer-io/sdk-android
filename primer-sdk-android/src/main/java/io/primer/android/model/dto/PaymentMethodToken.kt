@@ -1,6 +1,6 @@
 package io.primer.android.model.dto
 
-// import kotlinx.serialization.SerialName
+import io.primer.android.threeds.data.models.ResponseCode
 import kotlinx.serialization.Serializable
 
 /**
@@ -10,19 +10,40 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class PaymentMethodTokenInternal(
+internal data class PaymentMethodTokenInternal(
     val token: String,
     val analyticsId: String,
     val tokenType: TokenType,
     val paymentInstrumentType: String,
     val paymentInstrumentData: PaymentInstrumentData? = null,
     val vaultData: VaultData? = null,
+    val threeDSecureAuthentication: AuthenticationDetails? = null,
 ) {
 
     @Serializable
     data class VaultData(
         val customerId: String,
     )
+
+    @Serializable
+    data class AuthenticationDetails(
+        val responseCode: ResponseCode,
+        val reasonCode: String?,
+        val reasonText: String?,
+        val protocolVersion: String?,
+        val challengeIssued: Boolean?,
+    )
+
+    internal fun setClientThreeDsError(errorMessage: String) =
+        this.copy(
+            threeDSecureAuthentication = AuthenticationDetails(
+                ResponseCode.SKIPPED,
+                "CLIENT_ERROR",
+                errorMessage,
+                "",
+                false
+            )
+        )
 }
 
 internal object PaymentMethodTokenAdapter {
@@ -47,7 +68,16 @@ internal object PaymentMethodTokenAdapter {
             ),
             vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
                 customerId = token.vaultData.customerId
-            )
+            ),
+            threeDSecureAuthentication = token.threeDSecureAuthentication?.let {
+                PaymentMethodToken.AuthenticationDetails(
+                    it.responseCode,
+                    it.reasonCode,
+                    it.reasonText,
+                    it.protocolVersion,
+                    it.challengeIssued
+                )
+            }
         )
     }
 
@@ -69,13 +99,24 @@ internal object PaymentMethodTokenAdapter {
             if (token.vaultData == null) null
             else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
 
+        val threeDSecureAuthentication = token.threeDSecureAuthentication?.let {
+            PaymentMethodTokenInternal.AuthenticationDetails(
+                it.responseCode,
+                it.reasonCode,
+                it.reasonText,
+                it.protocolVersion,
+                it.challengeIssued
+            )
+        }
+
         return PaymentMethodTokenInternal(
             token = token.token,
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
             paymentInstrumentData = paymentInstrumentData,
-            vaultData = vaultData
+            vaultData = vaultData,
+            threeDSecureAuthentication = threeDSecureAuthentication
         )
     }
 }
@@ -87,10 +128,19 @@ data class PaymentMethodToken(
     val paymentInstrumentType: String,
     val paymentInstrumentData: PaymentInstrumentData?,
     val vaultData: VaultData?,
+    val threeDSecureAuthentication: AuthenticationDetails? = null,
 ) {
 
     data class VaultData(
         val customerId: String,
+    )
+
+    data class AuthenticationDetails(
+        val responseCode: ResponseCode,
+        val reasonCode: String?,
+        val reasonText: String?,
+        val protocolVersion: String?,
+        val challengeIssued: Boolean?,
     )
 }
 
@@ -116,20 +166,9 @@ data class ExternalPayerInfo(
 data class SessionData(
     val recurringDescription: String? = null,
     val billingAddress: BillingAddress? = null,
-//    val tokenDetails: TokenDetails? = null,
 )
 
 @Serializable
 data class BillingAddress(
     val email: String,
 )
-
-//  @Serializable
-//  data class TokenDetails(
-//    val type: String? = null,
-//    val brand: String? = null,
-//    @SerialName("masked_number")
-//    val maskedNumber: String? = null,
-//    @SerialName("expiry_date")
-//    val expiryDate: String? = null,
-//  )

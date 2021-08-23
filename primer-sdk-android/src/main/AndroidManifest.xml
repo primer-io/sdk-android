@@ -10,6 +10,10 @@
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
 
+        <meta-data
+            android:name="parentApplicationId"
+            android:value="${applicationId}" />
+
         <activity
             android:name=".CheckoutSheetActivity"
             android:label=""
@@ -34,6 +38,23 @@
             android:name=".WebViewActivity"
             android:label=""
             android:theme="@style/Theme.AppCompat.WebView" />
+
+        <activity
+            android:name=".threeds.ui.ThreeDsActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="requestor.${applicationId}"
+                    android:scheme="primer_android_3ds" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

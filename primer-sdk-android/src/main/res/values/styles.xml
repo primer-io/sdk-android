@@ -25,6 +25,13 @@
         <item name="colorAccent">@android:color/white</item>
     </style>
 
+    <style name="Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" parent="Theme.AppCompat.PrimerUniversalCheckout">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
     <style name="Primer" />
 
     <style name="Primer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

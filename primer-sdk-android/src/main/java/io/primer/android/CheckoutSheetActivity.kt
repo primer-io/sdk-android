@@ -33,6 +33,7 @@ import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
+import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
@@ -48,8 +49,6 @@ import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -91,6 +90,36 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         if (!initFinished && it != ViewStatus.INITIALIZING) {
             initFinished = true
+        }
+    }
+
+    private val checkoutEventObserver = Observer<CheckoutEvent> {
+        when (it) {
+            is CheckoutEvent.DismissInternal -> {
+                onExit(it.data)
+            }
+            is CheckoutEvent.ShowSuccess -> {
+                openFragment(
+                    SessionCompleteFragment.newInstance(
+                        it.delay,
+                        SessionCompleteViewType.Success(it.successType),
+                    )
+                )
+            }
+            is CheckoutEvent.ShowError -> {
+                openFragment(
+                    SessionCompleteFragment.newInstance(
+                        it.delay,
+                        SessionCompleteViewType.Error(it.errorType),
+                    )
+                )
+            }
+            is CheckoutEvent.ToggleProgressIndicator -> {
+                onToggleProgressIndicator(it.data)
+            }
+            is CheckoutEvent.Start3DS -> {
+                startActivity(ThreeDsActivity.getLaunchIntent(this))
+            }
         }
     }
 
@@ -194,13 +223,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         val json = Serialization.json
 
-        val checkoutConfig = intent
-            .getStringExtra("config")
-            ?.let { json.decodeFromString(CheckoutConfig.serializer(), it) } ?: return
+        val checkoutConfig = intent.getStringExtra("config")
+            ?.let { json.decodeFromString(CheckoutConfig.serializer(), it) }
+            ?: return
 
-        val locallyConfiguredPaymentMethods = intent
-            .getStringExtra("paymentMethods")
-            ?.let { json.decodeFromString<List<PaymentMethod>>(it) } ?: return
+        val locallyConfiguredPaymentMethods = intent.getStringExtra("paymentMethods")?.let {
+            json.decodeFromString<List<PaymentMethod>>(it)
+        } ?: return
 
         if (checkoutConfig.doNotShowUi) {
             ensureClicksGoThrough()
@@ -208,7 +237,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         this.checkoutConfig = checkoutConfig
 
-        DIAppContext.init(this, checkoutConfig, locallyConfiguredPaymentMethods)
+        DIAppContext.init(applicationContext, checkoutConfig, locallyConfiguredPaymentMethods)
 
         val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
         val paymentMethodDescriptorFactoryRegistry =
@@ -234,6 +263,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         primerViewModel.viewStatus.observe(this, viewStatusObserver)
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
+        primerViewModel.checkoutEvent.observe(this, checkoutEventObserver)
 
         tokenizationViewModel.tokenizationCanceled.observe(this) {
             onExit(CheckoutExitReason.DISMISSED_BY_USER)
@@ -262,27 +292,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         subscription = EventBus.subscribe {
             when (it) {
-                is CheckoutEvent.DismissInternal -> {
-                    onExit(it.data)
-                }
-                is CheckoutEvent.ShowSuccess -> {
-                    openFragment(
-                        SessionCompleteFragment.newInstance(
-                            it.delay,
-                            SessionCompleteViewType.Success(it.successType),
-                        )
-                    )
-                }
-                is CheckoutEvent.ShowError -> {
-                    openFragment(
-                        SessionCompleteFragment.newInstance(
-                            it.delay,
-                            SessionCompleteViewType.Error(it.errorType),
-                        )
-                    )
-                }
-                is CheckoutEvent.ToggleProgressIndicator -> {
-                    onToggleProgressIndicator(it.data)
+                is CheckoutEvent.Start3DS,
+                is CheckoutEvent.DismissInternal,
+                is CheckoutEvent.ShowSuccess,
+                is CheckoutEvent.ShowError,
+                is CheckoutEvent.ToggleProgressIndicator,
+                -> primerViewModel.setCheckoutEvent(it)
+                else -> {
                 }
             }
         }
@@ -295,8 +311,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun ensureClicksGoThrough() {
         window
             .addFlags(
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
     }
 
@@ -359,6 +375,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             EventBus.broadcast(
                 CheckoutEvent.Exit(CheckoutExitInfo(reason))
             )
+            EventBus.broadcast(CheckoutEvent.ClearListeners)
             finish()
         }
     }
@@ -392,12 +409,4 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
     }
-}
-
-private inline fun <reified T> Intent.unmarshal(
-    name: String,
-    json: Json,
-): T? {
-    val serialized = getStringExtra(name)
-    return serialized?.let { json.decodeFromString(serializer(), it) }
 }

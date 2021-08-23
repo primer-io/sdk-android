@@ -15,4 +15,28 @@
     <string name="add_payment_method">Add payment method</string>
     <string name="show_checkout">Show Checkout</string>
     <string name="add_klarna">Add Klarna</string>
+    <string name="add_customer_id">add customer ID</string>
+    <string name="customer_id">Customer ID</string>
+    <string name="country">Country</string>
+    <string name="amount">Amount</string>
+    <string name="currency">Currency</string>
+    <string name="environment">Environment</string>
+    <string name="cards">Cards</string>
+    <string name="paypal">PayPal</string>
+    <string name="klarna">Klarna</string>
+    <string name="something_went_wrong">
+        Something went wrong, please try a different payment method.
+    </string>
+    <string name="google_pay">Google Pay</string>
+
+    <string-array name="countries">
+        <item>SE</item>
+        <item>DE</item>
+        <item>AU</item>
+    </string-array>
+
+
+    <string name="three_ds_success_message">3DS was successful</string>
+    <string name="three_ds_error_message">3DS response code %1$s, reason code: %2$s, and reason text: %3$s</string>
+
 </resources>

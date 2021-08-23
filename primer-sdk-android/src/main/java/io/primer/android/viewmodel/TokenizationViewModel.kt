@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
+import io.primer.android.domain.tokenization.TokenizationInteractor
+import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.model.APIEndpoint
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
@@ -20,6 +22,8 @@ import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -41,6 +45,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     private val model: Model by inject()
     private val checkoutConfig: CheckoutConfig by inject()
+    private val tokenizationInteractor: TokenizationInteractor by inject()
 
     val submitted = MutableLiveData(false)
     val tokenizationStatus = MutableLiveData(TokenizationStatus.NONE)
@@ -75,22 +80,24 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    fun isValid(): Boolean = paymentMethod != null && (validationErrors.value?.isEmpty() == true)
+    fun isValid(): Boolean =
+        paymentMethod != null && (validationErrors.value?.isEmpty() == true)
 
     fun tokenize() {
         viewModelScope.launch {
-            val method = paymentMethod ?: return@launch // FIXME this is failing silently
-            when (val result = model.tokenize(method, checkoutConfig.uxMode)) {
-                is OperationResult.Success -> {
-                    val paymentMethodToken: PaymentMethodTokenInternal = result.data
-                    tokenizationData.postValue(paymentMethodToken)
-                    tokenizationStatus.postValue(TokenizationStatus.SUCCESS)
-                }
-                is OperationResult.Error -> {
-                    tokenizationError.postValue(Unit)
+            tokenizationInteractor.tokenize(
+                TokenizationParams(
+                    paymentMethod ?: return@launch,
+                    checkoutConfig.uxMode,
+                    checkoutConfig.is3DSAtTokenizationEnabled
+                )
+            )
+                .catch {
                     tokenizationStatus.postValue(TokenizationStatus.ERROR)
                 }
-            }
+                .collect {
+                    tokenizationStatus.postValue(TokenizationStatus.SUCCESS)
+                }
         }
     }
 

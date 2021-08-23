@@ -12,5 +12,6 @@ ext {
             mockk                  : "1.10.5",
             okhttp                 : "3.12.1",
             xJunitRunner           : "1.1.2",
+            primer3ds              : "1.0.0",
     ]
 }

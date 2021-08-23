@@ -14,5 +14,6 @@ data class PaymentMethodRemoteConfig(
 @Keep
 @Serializable
 data class PaymentMethodRemoteConfigOptions(
-    val merchantId: String? = null
+    val merchantId: String? = null,
+    val threeDSecureEnabled: Boolean? = null
 )

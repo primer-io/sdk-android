@@ -35,18 +35,22 @@ sealed class CheckoutEvent(
 
     class ApiError(val data: APIError) : PublicCheckoutEvent(CheckoutEventType.API_ERROR)
 
-    class ToggleProgressIndicator(val data: Boolean) :
-        PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
-
-    class DismissInternal(val data: CheckoutExitReason) :
-        PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
-
-    class ShowSuccess(val delay: Int = 3000, val successType: SuccessType) :
-        PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
-
-    class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
-        PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
-
     class TokenSelected(val data: PaymentMethodToken) :
         PublicCheckoutEvent(CheckoutEventType.TOKEN_SELECTED)
+
+    internal class ToggleProgressIndicator(val data: Boolean) :
+        PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
+
+    internal class DismissInternal(val data: CheckoutExitReason) :
+        PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
+
+    internal class ShowSuccess(val delay: Int = 3000, val successType: SuccessType) :
+        PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
+
+    internal class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
+        PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
+
+    internal object Start3DS : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
+
+    internal object ClearListeners : PrivateCheckoutEvent(CheckoutEventType.CLEAR_LISTENERS)
 }

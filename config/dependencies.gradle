@@ -14,5 +14,8 @@ ext {
                     okhttp                  : "com.squareup.okhttp3:okhttp:${Versions.okhttp}",
                     okhttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}",
             ],
+            ThreeDs   : [
+                    primer3ds       : "io.primer:3ds-android:${Versions.primer3ds}",
+            ]
     ]
 }

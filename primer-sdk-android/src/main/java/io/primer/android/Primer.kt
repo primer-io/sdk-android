@@ -3,11 +3,14 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.Serialization
+import io.primer.android.model.UserDetails
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitReason
@@ -86,13 +89,23 @@ object Primer {
                     .let { chain.proceed(it) }
             }
             .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor { chain: Interceptor.Chain ->
+                chain.request().newBuilder()
+                    .url(chain.request().url().toString().replace("localhost", "10.0.2.2")).build()
+                    .let { chain.proceed(it) }
+            }
             .build()
 
         val json = Serialization.json
 
         val model = Model(decodedToken, okHttpClient, json)
 
-        primer = InternalPrimer(
+        // we want to clear subscriptions
+        if (::checkout.isInitialized) {
+            checkout.unregisterSubscription()
+        }
+
+        primer =  InternalPrimer(
             model,
             Dispatchers.IO,
             clientToken,
@@ -122,6 +135,10 @@ object Primer {
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean = false,
     ) {
         primer.showVault(
@@ -134,6 +151,10 @@ object Primer {
             doNotShowUi = doNotShowUi,
             preferWebView = preferWebView,
             clearAllListeners = clearAllListeners,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails
         )
     }
 
@@ -146,6 +167,10 @@ object Primer {
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean = false,
     ) {
         primer.showCheckout(
@@ -157,7 +182,11 @@ object Primer {
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             doNotShowUi = doNotShowUi,
             preferWebView = preferWebView,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
             clearAllListeners = clearAllListeners,
+            orderId = orderId,
+            userDetails = userDetails
         )
     }
 
@@ -211,12 +240,22 @@ internal class InternalPrimer constructor(
         override fun onEvent(e: CheckoutEvent) {
             if (e.public) {
                 listener?.onCheckoutEvent(e)
+            } else when (e) {
+                is CheckoutEvent.ClearListeners -> {
+                    clearListener()
+                }
+                else -> {
+                }
             }
         }
     }
 
     fun clearListener() {
         listener = null
+    }
+
+    fun unregisterSubscription() {
+        subscription?.unregister()
     }
 
     fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
@@ -260,6 +299,10 @@ internal class InternalPrimer constructor(
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean,
     ) {
         show(
@@ -272,6 +315,10 @@ internal class InternalPrimer constructor(
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             preferWebView = preferWebView,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails,
             clearAllListeners = clearAllListeners,
         )
     }
@@ -286,6 +333,10 @@ internal class InternalPrimer constructor(
         isStandalonePaymentMethod: Boolean = false,
         doNotShowUi: Boolean = false,
         preferWebView: Boolean = false,
+        is3DSAtTokenizationEnabled: Boolean = false,
+        debugOptions: PrimerDebugOptions? = null,
+        orderId: String? = null,
+        userDetails: UserDetails? = null,
         clearAllListeners: Boolean,
     ) {
         show(
@@ -298,6 +349,10 @@ internal class InternalPrimer constructor(
             doNotShowUi = doNotShowUi,
             isStandalonePaymentMethod = isStandalonePaymentMethod,
             preferWebView = preferWebView,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails,
             clearAllListeners = clearAllListeners,
         )
     }
@@ -330,6 +385,10 @@ internal class InternalPrimer constructor(
         isStandalonePaymentMethod: Boolean,
         doNotShowUi: Boolean,
         preferWebView: Boolean,
+        is3DSAtTokenizationEnabled: Boolean,
+        debugOptions: PrimerDebugOptions?,
+        orderId: String?,
+        userDetails: UserDetails?,
         clearAllListeners: Boolean,
     ) {
         subscription?.unregister(clearAllListeners)
@@ -352,10 +411,15 @@ internal class InternalPrimer constructor(
             amount = amount,
             currency = currency,
             theme = theme,
+            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
+            debugOptions = debugOptions,
+            orderId = orderId,
+            userDetails = userDetails,
             preferWebView = preferWebView,
         )
 
         try {
+            Serialization.addModule(tokenizationSerializationModule)
             paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
 
             val json = Serialization.json

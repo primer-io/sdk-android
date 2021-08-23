@@ -25,12 +25,13 @@ apply from: "$rootDir/config/test-dependencies.gradle"
 android {
     buildTypes {
         debug {
-            minifyEnabled false
+            minifyEnabled true
             debuggable true
+            consumerProguardFiles 'proguard-rules.pro'
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
         }
     }
 
@@ -46,6 +47,7 @@ dependencies {
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-androidx-scope:$koinVersion"
+    implementation "io.insert-koin:koin-android-viewmodel:$koinVersion"
 
     implementation Dependencies.Networking.okhttp
     implementation Dependencies.Networking.okhttpLoggingInterceptor
@@ -67,6 +69,9 @@ dependencies {
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3'
     implementation 'com.hbb20:ccp:2.5.1'
 
+    compileOnly Dependencies.ThreeDs.primer3ds
+    testCompileOnly Dependencies.ThreeDs.primer3ds
+
     testImplementation TestDependencies.Kotlin.coroutines
     testImplementation TestDependencies.Android.archCore
     testImplementation TestDependencies.Android.liveData
@@ -79,6 +84,13 @@ repositories {
     google()
     jcenter() // livedata-testing has not migrated yet, once it does this has to be removed
     mavenCentral()
+    maven {
+        url "${ARTIFACTORY_3DS_URL}"
+        credentials {
+            username System.getenv("PRIMER_ANDROID_ARTIFACTORY_3DS_USERNAME") ?: "${PRIMER_ANDROID_ARTIFACTORY_3DS_USERNAME}"
+            password System.getenv("PRIMER_ANDROID_ARTIFACTORY_3DS_PASSWORD") ?: "${PRIMER_ANDROID_ARTIFACTORY_3DS_PASSWORD}"
+        }
+    }
 }
 
 subprojects {
