@@ -60,7 +60,7 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.setOnClickListener {
             activity?.let {
-                Primer.showVault(
+                UniversalCheckout.showVault(
                     it,
                     listener,
                     preferWebView = true,
@@ -71,9 +71,9 @@ class SecondFragment : Fragment() {
 
         binding.klarnaButton.setOnClickListener {
             activity?.let {
-                Primer.loadPaymentMethods(listOf(klarna))
+                UniversalCheckout.loadPaymentMethods(listOf(klarna))
                 setBusyAs(true)
-                Primer.showVault(
+                UniversalCheckout.showVault(
                     it,
                     listener,
                     preferWebView = true,
@@ -98,7 +98,7 @@ class SecondFragment : Fragment() {
 
             if (token != null) {
                 initializeCheckoutWith(token)
-                Primer.loadPaymentMethods(listOf(klarna, card, paypal))
+                UniversalCheckout.loadPaymentMethods(listOf(klarna, card, paypal))
                 fetchSavedPaymentMethods()
             }
         }
@@ -106,7 +106,7 @@ class SecondFragment : Fragment() {
         viewModel.transactionState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 TransactionState.SUCCESS -> {
-                    Primer.dismiss()
+                    UniversalCheckout.dismiss()
                     AlertDialog.Builder(context)
                         .setMessage("Payment successful!")
                         .show()
