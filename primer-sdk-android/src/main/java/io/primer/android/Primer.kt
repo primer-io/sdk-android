@@ -101,11 +101,11 @@ object Primer {
         val model = Model(decodedToken, okHttpClient, json)
 
         // we want to clear subscriptions
-        if (::checkout.isInitialized) {
-            checkout.unregisterSubscription()
+        if (::primer.isInitialized) {
+            primer.unregisterSubscription()
         }
 
-        primer =  InternalPrimer(
+        primer = InternalPrimer(
             model,
             Dispatchers.IO,
             clientToken,
