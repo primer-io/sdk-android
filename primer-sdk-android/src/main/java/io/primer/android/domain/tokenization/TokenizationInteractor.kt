@@ -11,6 +11,8 @@ import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
+import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator.Companion.THREE_DS_CLASS_NOT_LOADED_ERROR
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.onEach
 internal class TokenizationInteractor(
     private val tokenizationRepository: TokenizationRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
+    private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val eventDispatcher: EventDispatcher,
 ) {
 
@@ -32,8 +35,12 @@ internal class TokenizationInteractor(
                     params.paymentMethodDescriptor.config.options?.threeDSecureEnabled == true
                 when {
                     perform3ds -> {
-                        paymentMethodRepository.setPaymentMethod(it)
-                        eventDispatcher.dispatchEvents(listOf(CheckoutEvent.Start3DS))
+                        if (threeDsSdkClassValidator.is3dsSdkIncluded()) {
+                            paymentMethodRepository.setPaymentMethod(it)
+                            eventDispatcher.dispatchEvents(listOf(CheckoutEvent.Start3DS))
+                        } else dispatchEvents(
+                            it.setClientThreeDsError(THREE_DS_CLASS_NOT_LOADED_ERROR)
+                        )
                     }
                     else -> dispatchEvents(it)
                 }

@@ -53,6 +53,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+    testOptions {
+        unitTests {
+            all {
+                maxHeapSize = "1024m"
+            }
+        }
+    }
 }
 
 dependencies {
