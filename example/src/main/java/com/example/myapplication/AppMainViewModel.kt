@@ -69,6 +69,9 @@ class AppMainViewModel : ViewModel() {
     val customerId: LiveData<String> = _customerId
     fun setCustomerId(id: String): Unit = _customerId.postValue(id)
 
+    private val _transactionResponse: MutableLiveData<String> = MutableLiveData()
+    val transactionResponse: LiveData<String> = _transactionResponse
+
     val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
 
     private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(50)
@@ -144,7 +147,7 @@ class AppMainViewModel : ViewModel() {
         val body = ClientTokenRequest(customerId.value ?: return,
                                       (environment.value ?: return).environment,
                                       countryCode.value.toString())
-        val request = generateRequest(body, PrimerRoutes.clientTokenUri)
+        val request = generateRequest(body, PrimerRoutes.clientToken)
 
         client.cache()?.delete()
 
@@ -171,16 +174,15 @@ class AppMainViewModel : ViewModel() {
     fun createTransaction(paymentMethod: String, type: String) {
         setBusy(true)
 
-        val amount = _amount.value!!
-        val currencyCode = countryCode.value!!.currencyCode.toString()
-        val body = TransactionRequest(paymentMethod, amount, true, currencyCode, type)
-        val request = generateRequest(body, PrimerRoutes.transactionUri)
+        val amount = _amount.value ?: return
+        val currencyCode = (countryCode.value ?: return).currencyCode.toString()
+        val body = TransactionRequest(paymentMethod, amount, true, currencyCode)
+        val request = generateRequest(body, PrimerRoutes.payments)
 
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
-                println("View Model 👮🏻👮🏻👮🏻 $e")
                 _transactionState.postValue(TransactionState.ERROR)
                 setBusy(false)
             }
@@ -189,10 +191,10 @@ class AppMainViewModel : ViewModel() {
                 setBusy(false)
                 response.use {
                     if (response.isSuccessful) {
-                        println("View Model 💃🏻💃🏻 $response")
+                        _transactionResponse.postValue(response.body()?.string())
                         _transactionState.postValue(TransactionState.SUCCESS)
                     } else {
-                        println("View Model 👮🏻👮🏻 $response")
+                        _transactionResponse.postValue(response.body()?.string())
                         _transactionState.postValue(TransactionState.ERROR)
                     }
                 }

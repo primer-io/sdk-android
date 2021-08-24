@@ -9,11 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
+import io.primer.android.Primer
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.logging.Logger
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
+import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
@@ -142,6 +144,12 @@ internal class PrimerViewModel(
         }
     }
 
+    private fun handleError(description: String) {
+        val error = APIError(description)
+        val event = CheckoutEvent.ApiError(error)
+        EventBus.broadcast(event)
+    }
+
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) =
         when (val result = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
@@ -159,13 +167,25 @@ internal class PrimerViewModel(
                 _paymentMethods.postValue(descriptors)
 
                 if (checkoutConfig.isStandalonePaymentMethod) {
-                    _selectedPaymentMethod.postValue(descriptors.first())
+                    if (descriptors.isEmpty()) {
+                        val description = """
+                            |Failed to initialise due to missing configuration. Please ensure the 
+                            |requested payment method have been configured in Primer's dashboard.
+                        """.trimMargin()
+                        handleError(description)
+                    } else {
+                        _selectedPaymentMethod.postValue(descriptors.first())
+                    }
                 } else {
                     viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
                 }
             }
             is OperationResult.Error -> {
-                // TODO proper error handling
+                val description = """
+                    |Failed to initialise due to a failed network call. Please ensure 
+                    |your internet connection is stable and try again.
+                """.trimMargin()
+                handleError(description)
                 log("Failed to get payment methods: ${result.error.message}")
             }
         }
@@ -193,6 +213,10 @@ internal class PrimerViewModel(
                         PaymentMethodTokenAdapter.externalToInternal(e.data)
                     )
                 }
+            }
+            is CheckoutEvent.ApiError -> {
+                println(e.data.description)
+                Primer.dismiss()
             }
         }
     }

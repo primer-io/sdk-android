@@ -100,7 +100,7 @@ class SecondFragment : Fragment() {
 
         viewModel.transactionState.observe(viewLifecycleOwner) { state ->
             val message = when (state) {
-                TransactionState.SUCCESS -> requireContext().getString(R.string.success_text)
+                TransactionState.SUCCESS -> viewModel.transactionResponse.value ?: "success"
                 TransactionState.ERROR -> requireContext().getString(R.string.something_went_wrong)
                 else -> return@observe
             }
@@ -109,9 +109,9 @@ class SecondFragment : Fragment() {
             viewModel.resetTransactionState()
         }
 
-        viewModel.vaultedPaymentTokens.observe(viewLifecycleOwner) {
+        viewModel.vaultedPaymentTokens.observe(viewLifecycleOwner) { token ->
             val adapter = GroupieAdapter()
-            it.forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
+            token.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
             binding.paymentMethodList.adapter = adapter
         }
 
