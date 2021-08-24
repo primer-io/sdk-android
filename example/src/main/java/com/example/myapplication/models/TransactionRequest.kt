@@ -9,5 +9,4 @@ data class TransactionRequest(
     @SerializedName("amount") val amount: Int,
     @SerializedName("capture") val capture: Boolean,
     @SerializedName("currencyCode") val currencyCode: String,
-    @SerializedName("type") val type: String,
 ) : ExampleAppRequestBody
