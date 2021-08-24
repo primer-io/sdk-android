@@ -170,7 +170,7 @@ internal class PrimerViewModel(
                     if (descriptors.isEmpty()) {
                         val description = """
                             |Failed to initialise due to missing configuration. Please ensure the 
-                            |requested payment method have been configured in Primer's dashboard.
+                            |requested payment method has been configured in Primer's dashboard.
                         """.trimMargin()
                         handleError(description)
                     } else {
