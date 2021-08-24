@@ -12,7 +12,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
-import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -34,7 +34,7 @@ internal class CheckoutSheetFragment :
         fun newInstance() = CheckoutSheetFragment()
     }
 
-    private val theme: UniversalCheckoutTheme by inject()
+    private val theme: PrimerTheme by inject()
 
     private lateinit var viewModel: PrimerViewModel
 
@@ -72,7 +72,7 @@ internal class CheckoutSheetFragment :
 
     override fun onStart() {
         super.onStart()
-        if (theme.windowMode == UniversalCheckoutTheme.WindowMode.FULL_HEIGHT) {
+        if (theme.windowMode == PrimerTheme.WindowMode.FULL_HEIGHT) {
             setFullHeight()
         }
     }

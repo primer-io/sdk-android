@@ -45,9 +45,15 @@ enum class UXMode {
         get() = this == CHECKOUT
 }
 
-object UniversalCheckout {
+@Deprecated("This object has been renamed to Primer.")
+typealias UniversalCheckout = Primer
 
-    private lateinit var checkout: InternalUniversalCheckout
+@Deprecated("This object has been renamed to PrimerTheme.")
+typealias UniversalCheckoutTheme = PrimerTheme
+
+object Primer {
+
+    private lateinit var primer: InternalPrimer
 
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider
@@ -61,7 +67,7 @@ object UniversalCheckout {
         clientToken: String,
         locale: Locale = Locale.getDefault(),
         countryCode: CountryCode? = null,
-        theme: UniversalCheckoutTheme? = null,
+        theme: PrimerTheme? = null,
     ) {
 
         val decodedToken: ClientToken = ClientToken.fromString(clientToken)
@@ -95,11 +101,11 @@ object UniversalCheckout {
         val model = Model(decodedToken, okHttpClient, json)
 
         // we want to clear subscriptions
-        if (::checkout.isInitialized) {
-            checkout.unregisterSubscription()
+        if (::primer.isInitialized) {
+            primer.unregisterSubscription()
         }
 
-        checkout = InternalUniversalCheckout(
+        primer = InternalPrimer(
             model,
             Dispatchers.IO,
             clientToken,
@@ -113,11 +119,11 @@ object UniversalCheckout {
      * Load the provided payment methods for use with the SDK
      */
     fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
-        checkout.paymentMethods = paymentMethods
+        primer.paymentMethods = paymentMethods
     }
 
     fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
-        checkout.getSavedPaymentMethods(callback)
+        primer.getSavedPaymentMethods(callback)
     }
 
     fun showVault(
@@ -135,7 +141,7 @@ object UniversalCheckout {
         userDetails: UserDetails? = null,
         clearAllListeners: Boolean = false,
     ) {
-        checkout.showVault(
+        primer.showVault(
             context = context,
             listener = listener,
             amount = amount,
@@ -167,7 +173,7 @@ object UniversalCheckout {
         userDetails: UserDetails? = null,
         clearAllListeners: Boolean = false,
     ) {
-        checkout.showCheckout(
+        primer.showCheckout(
             context = context,
             listener = listener,
             amount = amount,
@@ -188,9 +194,9 @@ object UniversalCheckout {
      * Dismiss the checkout
      */
     fun dismiss(clearListeners: Boolean = false) {
-        checkout.dismiss()
+        primer.dismiss()
         if (clearListeners) {
-            checkout.clearListener()
+            primer.clearListener()
         }
     }
 
@@ -198,31 +204,31 @@ object UniversalCheckout {
      * Toggle the loading screen
      */
     fun showProgressIndicator(visible: Boolean) {
-        checkout.showProgressIndicator(visible)
+        primer.showProgressIndicator(visible)
     }
 
     /**
      * Show a success screen then dismiss
      */
     fun showSuccess(autoDismissDelay: Int = 3000, successType: SuccessType = SuccessType.DEFAULT) {
-        checkout.showSuccess(autoDismissDelay, successType)
+        primer.showSuccess(autoDismissDelay, successType)
     }
 
     /**
      * Show a error screen then dismiss
      */
     fun showError(autoDismissDelay: Int = 3000, errorType: ErrorType = ErrorType.DEFAULT) {
-        checkout.showError(autoDismissDelay, errorType)
+        primer.showError(autoDismissDelay, errorType)
     }
 }
 
-internal class InternalUniversalCheckout constructor(
+internal class InternalPrimer constructor(
     private val model: Model,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val fullToken: String,
     private val locale: Locale,
     private val countryCode: CountryCode? = null,
-    private val theme: UniversalCheckoutTheme? = null,
+    private val theme: PrimerTheme? = null,
 ) {
 
     internal var paymentMethods: List<PaymentMethod> = emptyList()
@@ -431,7 +437,7 @@ internal class InternalUniversalCheckout constructor(
                 }
                 .run { context.startActivity(this) }
         } catch (e: Exception) {
-            Log.e("UniversalCheckout", e.message.toString())
+            Log.e("Primer", e.message.toString())
             val apiError = APIError("View failed to load.")
             EventBus.broadcast(CheckoutEvent.ApiError(apiError))
         }

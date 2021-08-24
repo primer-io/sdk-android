@@ -130,7 +130,6 @@ class AppMainViewModel : ViewModel() {
 
     private fun generateRequest(body: ExampleAppRequestBody, uri: String): Request {
         val mimeType = MediaType.get("application/json")
-
         val json = Gson().toJson(body)
 
         val reqBody = RequestBody.create(mimeType, json)
