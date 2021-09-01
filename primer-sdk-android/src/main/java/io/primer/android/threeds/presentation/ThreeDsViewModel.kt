@@ -72,7 +72,7 @@ internal class ThreeDsViewModel(
                             transaction.authenticationRequestParameters,
                             checkoutConfig,
                             protocolVersion,
-                            ChallengePreference.REQUESTED_BY_REQUESTOR
+                            ChallengePreference.REQUESTED_DUE_TO_MANDATE
                         )
                     )
                         .catch {
