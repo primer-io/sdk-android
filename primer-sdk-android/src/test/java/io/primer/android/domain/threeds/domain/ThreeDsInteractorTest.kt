@@ -16,6 +16,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.BinData
 import io.primer.android.model.dto.PaymentInstrumentData
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
@@ -480,7 +481,7 @@ internal class ThreeDsInteractorTest {
                 UUID.randomUUID().toString(),
                 TokenType.MULTI_USE,
                 "PAYMENT_CARD",
-                PaymentInstrumentData(network = "VISA")
+                PaymentInstrumentData(network = "VISA", binData = BinData("VISA"))
             )
     }
 }

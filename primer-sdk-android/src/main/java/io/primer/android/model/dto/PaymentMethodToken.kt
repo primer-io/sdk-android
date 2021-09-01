@@ -155,6 +155,7 @@ data class PaymentInstrumentData(
     val externalPayerInfo: ExternalPayerInfo? = null,
     val klarnaCustomerToken: String? = null,
     val sessionData: SessionData? = null,
+    val binData: BinData? = null
 )
 
 @Serializable
@@ -171,4 +172,9 @@ data class SessionData(
 @Serializable
 data class BillingAddress(
     val email: String,
+)
+
+@Serializable
+data class BinData(
+    val network: String? = null,
 )

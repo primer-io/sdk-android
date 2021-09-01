@@ -96,32 +96,32 @@ internal class DefaultThreeDsInteractor(
                 threeDsInitParams.locale,
                 keys
             )
-        }
+        }.flowOn(dispatcher)
             .doOnError {
                 logger.warn(PRIMER_3DS_INIT_ERROR)
                 dispatchEvents(
                     paymentMethodRepository.getPaymentMethod()
                         .setClientThreeDsError(it.message.orEmpty())
                 )
-            }.flowOn(dispatcher)
+            }
 
     override fun authenticateSdk(
         protocolVersion: ProtocolVersion,
     ) =
         threeDsServiceRepository.performProviderAuth(
             CardNetwork.valueOf(
-                paymentMethodRepository.getPaymentMethod().paymentInstrumentData?.network.orEmpty()
-                    .toUpperCase()
+                paymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                    ?.binData?.network.orEmpty().toUpperCase()
             ),
             protocolVersion
-        )
+        ).flowOn(dispatcher)
             .doOnError {
                 dispatchEvents(
                     paymentMethodRepository.getPaymentMethod().setClientThreeDsError(
                         it.message.orEmpty()
                     )
                 )
-            }.flowOn(dispatcher)
+            }
 
     override fun beginRemoteAuth(
         threeDsParams: ThreeDsParams,
@@ -129,7 +129,7 @@ internal class DefaultThreeDsInteractor(
         threeDsRepository.begin3DSAuth(
             paymentMethodRepository.getPaymentMethod().token,
             threeDsParams.toBeginAuthRequest()
-        ).onEach {
+        ).flowOn(dispatcher).onEach {
             // we mark flow ended and send results if there is no challenge
             if (it.authentication.responseCode != ResponseCode.CHALLENGE) {
                 dispatchEvents(it.token)
@@ -162,6 +162,7 @@ internal class DefaultThreeDsInteractor(
 
     override fun continueRemoteAuth(sdkTokenId: String) =
         threeDsRepository.continue3DSAuth(sdkTokenId)
+            .flowOn(dispatcher)
             .onEach { dispatchEvents(it.token) }
             .doOnError { dispatchEvents(paymentMethodRepository.getPaymentMethod()) }
 

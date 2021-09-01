@@ -165,7 +165,7 @@ internal class NetceteraThreeDsServiceRepository(
         when (cardNetwork) {
             CardNetwork.VISA -> DsRidValues.VISA
             CardNetwork.AMEX -> DsRidValues.AMEX
-            CardNetwork.DINERS_CLUB -> DsRidValues.DINERS
+            CardNetwork.DINERS_CLUB, CardNetwork.DISCOVER -> DsRidValues.DINERS
             CardNetwork.UNIONPAY -> DsRidValues.UNION
             CardNetwork.JCB -> DsRidValues.JCB
             CardNetwork.MASTERCARD -> DsRidValues.MASTERCARD
