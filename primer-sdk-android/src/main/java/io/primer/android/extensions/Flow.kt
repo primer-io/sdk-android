@@ -16,9 +16,9 @@ internal fun <T> Flow<T>.doOnError(
             collect { value ->
                 emit(value)
             }
-        } catch (e: Exception) {
-            onError(e)
-            throw e
+        } catch (expected: Exception) {
+            onError(expected)
+            throw expected
         }
     }.flowOn(dispatcher)
 }

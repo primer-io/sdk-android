@@ -10,7 +10,7 @@ internal class CardNumberFormatter private constructor(
     private val meta = CardType.lookup(value)
 
     override fun toString(): String {
-        val max = meta.lengths.maxOrNull() ?: 16
+        val max = meta.lengths.maxOrNull() ?: META_DEFAULT_LENGTH
 
         val formatted = buildString {
             value.forEachIndexed { index, c ->
@@ -66,6 +66,8 @@ internal class CardNumberFormatter private constructor(
     }
 
     companion object {
+
+        const val META_DEFAULT_LENGTH = 16
 
         fun fromString(str: String, autoInsert: Boolean = false): CardNumberFormatter {
             return CardNumberFormatter(str.replace(INVALID_CHARACTER, ""), autoInsert)

@@ -46,7 +46,7 @@ data class APIError(
             return json.decodeFromJsonElement(getErrorFromContent(response.body()))
         }
 
-        fun create(e: IOException?): APIError {
+        fun create(ignored: IOException?): APIError {
             return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
         }
 
@@ -73,7 +73,7 @@ data class APIError(
                     val jsonString = "{\"description\": \"$message\"}"
                     return json.parseToJsonElement(jsonString).jsonObject
                 }
-            } catch (ex: Exception) {
+            } catch (ignored: Exception) {
                 log.warn("Failed to decode json response")
                 log.warn(content)
             }

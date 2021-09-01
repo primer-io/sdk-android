@@ -2,7 +2,7 @@ package io.primer.android.ui
 
 const val CARD_PADDING: Int = 8
 
-internal class CardType() {
+internal class CardType {
 
     enum class Type {
         UNKOWN,

@@ -50,10 +50,13 @@ internal class VaultedPaymentMethodView(context: Context, private val attributes
     fun setEditable(isEditable: Boolean) {
         deleteButton.visibility = if (isEditable) View.VISIBLE else View.INVISIBLE
         contentLayout.background = if (isEditable) listItemEditable else listItemNormal
-        contentLayout.elevation = if (isEditable) 12f else 0f
+        contentLayout.elevation =
+            if (isEditable) EDITABLE_VIEW_ELEVATION else DEFAULT_VIEW_ELEVATION
     }
 
-    fun getView(): View {
-        return view
+    private companion object {
+
+        const val EDITABLE_VIEW_ELEVATION = 12f
+        const val DEFAULT_VIEW_ELEVATION = 0f
     }
 }

@@ -20,7 +20,7 @@ internal class ThreeDsConfigValidator {
                 try {
                     val currency = Currency.getInstance(threeDsConfigParams.currency)
                     if (currency == null) errors.add(CURRENCY_MISSING_ERROR)
-                } catch (e: Exception) {
+                } catch (ignored: Exception) {
                     errors.add(CURRENCY_MISSING_ERROR)
                 }
             }
