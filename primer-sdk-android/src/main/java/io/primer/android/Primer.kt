@@ -3,6 +3,7 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import io.primer.android.data.session.datasource.LocalClientSessionDataSource
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -98,7 +99,7 @@ object Primer {
 
         val json = Serialization.json
 
-        val model = Model(decodedToken, okHttpClient, json)
+        val model = Model(decodedToken, okHttpClient, LocalClientSessionDataSource(), json)
 
         // we want to clear subscriptions
         if (::primer.isInitialized) {

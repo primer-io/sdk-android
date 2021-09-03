@@ -54,6 +54,10 @@ data class APIError(
             return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
         }
 
+        fun createDefaultWithMessage(message: String): APIError {
+            return APIError(message)
+        }
+
         private fun getErrorFromContent(body: ResponseBody?): JsonObject {
             if (body == null) {
                 return DEFAULT_ERROR_ELEMENT.jsonObject

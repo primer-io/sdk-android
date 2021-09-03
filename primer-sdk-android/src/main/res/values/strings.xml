@@ -4,6 +4,7 @@
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Add a payment method</string>
     <string name="pay_by_card">Pay by card</string>
+    <string name="pay_by_mobile">Pay by mobile</string>
     <string name="add_bank_account">Add bank account</string>
     <string name="other_ways_to_pay">Other ways to pay</string>
     <string name="edit_saved_payment_methods">Edit saved cards</string>

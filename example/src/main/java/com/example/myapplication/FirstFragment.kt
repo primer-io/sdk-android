@@ -133,6 +133,9 @@ class FirstFragment : Fragment() {
         binding.googlePayCheckBox.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setUseGooglePay(isChecked)
         }
+        binding.payByMobileCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setUsePayMobile(isChecked)
+        }
     }
 
     private fun configureNextButton() {

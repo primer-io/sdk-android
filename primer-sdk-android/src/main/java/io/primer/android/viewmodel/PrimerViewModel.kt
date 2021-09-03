@@ -22,6 +22,7 @@ import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
+import io.primer.android.payment.VaultCapability
 import kotlinx.coroutines.launch
 import java.util.Collections
 
@@ -52,14 +53,6 @@ internal class PrimerViewModel(
     private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     private val paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
 ) : AndroidViewModel(application), EventBus.EventListener {
-
-    companion object {
-
-        // FIXME drop this. consider activityViewModels().
-        fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
-            return ViewModelProvider(owner).get(PrimerViewModel::class.java)
-        }
-    }
 
     private val log = Logger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
@@ -124,7 +117,8 @@ internal class PrimerViewModel(
         _selectedPaymentMethodId.value = id
     }
 
-    fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value ?: ""
+    fun getSelectedPaymentMethodId(): String =
+        _selectedPaymentMethodId.value ?: ""
 
     private fun initializePaymentMethodModules(
         locallyConfiguredPaymentMethods: List<PaymentMethod>,
@@ -153,7 +147,9 @@ internal class PrimerViewModel(
     private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) =
         when (val result = model.getVaultedPaymentMethods(clientSession)) {
             is OperationResult.Success -> {
-                val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data
+                val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data.filter {
+                    DISALLOWED_PAYMENT_METHOD_TYPES.contains(it.paymentInstrumentType).not()
+                }
 
                 vaultedPaymentMethods.postValue(paymentModelTokens)
 
@@ -163,6 +159,13 @@ internal class PrimerViewModel(
 
                 val descriptors: List<PaymentMethodDescriptor> =
                     paymentMethodDescriptorResolver.resolve(clientSession)
+                        .filter {
+                            it.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT ||
+                                (
+                                    it.vaultCapability == VaultCapability.VAULT_ONLY &&
+                                        checkoutConfig.uxMode.isVault
+                                    )
+                        }
 
                 _paymentMethods.postValue(descriptors)
 
@@ -192,7 +195,8 @@ internal class PrimerViewModel(
 
     private fun getInitialViewStatus(
         vaultedPaymentMethods: List<PaymentMethodTokenInternal>,
-    ): ViewStatus = ViewStatus.SELECT_PAYMENT_METHOD
+    ): ViewStatus =
+        ViewStatus.SELECT_PAYMENT_METHOD
 
     override fun onCleared() {
         super.onCleared()
@@ -218,6 +222,16 @@ internal class PrimerViewModel(
                 println(e.data.description)
                 Primer.dismiss()
             }
+        }
+    }
+
+    companion object {
+
+        private val DISALLOWED_PAYMENT_METHOD_TYPES = listOf("APAYA")
+
+        // FIXME drop this. consider activityViewModels().
+        fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
+            return ViewModelProvider(owner).get(PrimerViewModel::class.java)
         }
     }
 }

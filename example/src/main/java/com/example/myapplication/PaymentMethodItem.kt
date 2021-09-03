@@ -27,6 +27,11 @@ class PaymentMethodItem(
                 tokenLabel.text = token.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
                 icon.setImageResource(R.drawable.ic_paypal_card)
             }
+            "APAYA" -> {
+                tokenLabel.text =
+                    "${token.paymentInstrumentData?.hashedIdentifier}"
+                icon.setImageResource(R.drawable.ic_mobile)
+            }
             "PAYMENT_CARD" -> {
                 tokenLabel.text =
                     ("Card ending with " + token.paymentInstrumentData?.last4Digits.toString())
@@ -44,5 +49,6 @@ class PaymentMethodItem(
         }
     }
 
-    override fun getLayout(): Int = R.layout.payment_method_item_row
+    override fun getLayout(): Int =
+        R.layout.payment_method_item_row
 }

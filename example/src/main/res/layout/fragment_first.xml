@@ -6,145 +6,166 @@
     android:layout_height="match_parent"
     tools:context=".FirstFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/customerIdTextFieldLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="32dp"
-        android:hint="@string/customer_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        android:layout_height="match_parent"
+        android:layout_marginBottom="72dp"
+        android:fillViewport="true">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/customerIdTextField"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:singleLine="true" />
+            android:layout_height="wrap_content">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/customerIdTextFieldLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:hint="@string/customer_id"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/environmentMenu"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/environment"
-        app:layout_constraintEnd_toEndOf="@+id/customerIdTextFieldLayout"
-        app:layout_constraintStart_toStartOf="@+id/customerIdTextFieldLayout"
-        app:layout_constraintTop_toBottomOf="@+id/customerIdTextFieldLayout">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/customerIdTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true" />
 
-        <AutoCompleteTextView
-            android:id="@+id/environmentTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="none"
-            android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/environmentMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@string/environment"
+                app:layout_constraintEnd_toEndOf="@+id/customerIdTextFieldLayout"
+                app:layout_constraintStart_toStartOf="@+id/customerIdTextFieldLayout"
+                app:layout_constraintTop_toBottomOf="@+id/customerIdTextFieldLayout">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/countryMenu"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/country"
-        app:layout_constraintEnd_toEndOf="@+id/customerIdTextFieldLayout"
-        app:layout_constraintStart_toStartOf="@+id/customerIdTextFieldLayout"
-        app:layout_constraintTop_toBottomOf="@+id/environmentMenu">
+                <AutoCompleteTextView
+                    android:id="@+id/environmentTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="none"
+                    android:singleLine="true" />
 
-        <AutoCompleteTextView
-            android:layout_weight="1"
-            android:id="@+id/countryTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="none"
-            android:editable="false" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/countryMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="@string/country"
+                app:layout_constraintEnd_toEndOf="@+id/customerIdTextFieldLayout"
+                app:layout_constraintStart_toStartOf="@+id/customerIdTextFieldLayout"
+                app:layout_constraintTop_toBottomOf="@+id/environmentMenu">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/currencyTextFieldLayout"
-        android:layout_width="100dp"
-        android:layout_height="0dp"
-        android:hint="@string/currency"
-        app:layout_constraintStart_toStartOf="@+id/customerIdTextFieldLayout"
-        app:layout_constraintTop_toTopOf="@+id/amountTextFieldLayout">
+                <AutoCompleteTextView
+                    android:id="@+id/countryTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:editable="false"
+                    android:imeOptions="actionDone"
+                    android:inputType="none" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/currencyTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/currencyTextFieldLayout"
+                android:layout_width="100dp"
+                android:layout_height="0dp"
+                android:hint="@string/currency"
+                app:layout_constraintStart_toStartOf="@+id/customerIdTextFieldLayout"
+                app:layout_constraintTop_toTopOf="@+id/amountTextFieldLayout">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/amountTextFieldLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:hint="@string/amount"
-        app:layout_constraintEnd_toEndOf="@+id/customerIdTextFieldLayout"
-        app:layout_constraintStart_toEndOf="@+id/currencyTextFieldLayout"
-        app:layout_constraintTop_toBottomOf="@+id/countryMenu">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/currencyTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/amountTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="numberDecimal"
-            android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/amountTextFieldLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:hint="@string/amount"
+                app:layout_constraintEnd_toEndOf="@+id/customerIdTextFieldLayout"
+                app:layout_constraintStart_toEndOf="@+id/currencyTextFieldLayout"
+                app:layout_constraintTop_toBottomOf="@+id/countryMenu">
 
-    <CheckBox
-        android:id="@+id/klarnaCheckBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/klarna"
-        app:layout_constraintEnd_toEndOf="@+id/amountTextFieldLayout"
-        app:layout_constraintStart_toStartOf="@+id/currencyTextFieldLayout"
-        app:layout_constraintTop_toBottomOf="@+id/currencyTextFieldLayout" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/amountTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true" />
 
-    <CheckBox
-        android:id="@+id/paypalCheckBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/paypal"
-        app:layout_constraintEnd_toEndOf="@+id/klarnaCheckBox"
-        app:layout_constraintStart_toStartOf="@+id/klarnaCheckBox"
-        app:layout_constraintTop_toBottomOf="@+id/klarnaCheckBox" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <CheckBox
-        android:id="@+id/cardCheckBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/cards"
-        app:layout_constraintEnd_toEndOf="@+id/paypalCheckBox"
-        app:layout_constraintStart_toStartOf="@+id/paypalCheckBox"
-        app:layout_constraintTop_toBottomOf="@+id/paypalCheckBox" />
 
-    <CheckBox
-        android:id="@+id/googlePayCheckBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/google_pay"
-        app:layout_constraintEnd_toEndOf="@+id/paypalCheckBox"
-        app:layout_constraintStart_toStartOf="@+id/paypalCheckBox"
-        app:layout_constraintTop_toBottomOf="@+id/cardCheckBox" />
+            <CheckBox
+                android:id="@+id/klarnaCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/klarna"
+                app:layout_constraintEnd_toEndOf="@+id/amountTextFieldLayout"
+                app:layout_constraintStart_toStartOf="@+id/currencyTextFieldLayout"
+                app:layout_constraintTop_toBottomOf="@+id/currencyTextFieldLayout" />
+
+            <CheckBox
+                android:id="@+id/paypalCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/paypal"
+                app:layout_constraintEnd_toEndOf="@+id/klarnaCheckBox"
+                app:layout_constraintStart_toStartOf="@+id/klarnaCheckBox"
+                app:layout_constraintTop_toBottomOf="@+id/klarnaCheckBox" />
+
+            <CheckBox
+                android:id="@+id/cardCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/cards"
+                app:layout_constraintEnd_toEndOf="@+id/paypalCheckBox"
+                app:layout_constraintStart_toStartOf="@+id/paypalCheckBox"
+                app:layout_constraintTop_toBottomOf="@+id/paypalCheckBox" />
+
+            <CheckBox
+                android:id="@+id/googlePayCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/google_pay"
+                app:layout_constraintEnd_toEndOf="@+id/paypalCheckBox"
+                app:layout_constraintStart_toStartOf="@+id/paypalCheckBox"
+                app:layout_constraintTop_toBottomOf="@+id/cardCheckBox" />
+
+            <CheckBox
+                android:id="@+id/payByMobileCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/pay_by_mobile"
+                app:layout_constraintEnd_toEndOf="@+id/paypalCheckBox"
+                app:layout_constraintStart_toStartOf="@+id/googlePayCheckBox"
+                app:layout_constraintTop_toBottomOf="@+id/googlePayCheckBox" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/nextButton"
@@ -159,5 +180,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

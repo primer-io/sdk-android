@@ -9,30 +9,34 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
-import io.primer.android.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.KlarnaPaymentData
+import io.primer.android.model.BaseWebFlowPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.Serialization
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.payment.APAYA_IDENTIFIER
 import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
+import io.primer.android.payment.apaya.ApayaDescriptor
+import io.primer.android.payment.apaya.ApayaDescriptor.Companion.APAYA_REQUEST_CODE
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
+import io.primer.android.ui.base.webview.WebViewActivity
+import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
@@ -123,33 +127,35 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
-    // region KLARNA-related observers
-    private val klarnaPaymentDataObserver =
-        Observer<KlarnaPaymentData> { (paymentUrl, redirectUrl) ->
+    // region Web-based payment methods
+    private val webFlowPaymentDataObserver =
+        Observer<BaseWebFlowPaymentData> { paymentData ->
             if (checkoutConfig.preferWebView) {
+                val title =
+                    when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
+                        is KlarnaDescriptor -> paymentMethod.options.webViewTitle
+                        is ApayaDescriptor -> paymentMethod.options.webViewTitle
+                        else -> throw IllegalStateException("Unknown payment method.")
+                    }
 
-                val paymentMethod = primerViewModel.selectedPaymentMethod.value
-
-                val title: String = if (paymentMethod is KlarnaDescriptor) {
-                    paymentMethod.options.webViewTitle
-                } else {
-                    ""
-                }
-
-                // TODO  a klarna flow that is not recurring requires this:
-                val intent = Intent(this, WebViewActivity::class.java).apply {
-                    putExtra(WebViewActivity.PAYMENT_URL_KEY, paymentUrl)
-                    putExtra(WebViewActivity.CAPTURE_URL_KEY, redirectUrl)
-                    putExtra(WebViewActivity.TOOLBAR_TITLE_KEY, title)
-                }
-
-                startActivityForResult(intent, KLARNA_REQUEST_CODE)
+                startActivityForResult(
+                    WebViewActivity.getLaunchIntent(
+                        this,
+                        paymentData.redirectUrl,
+                        paymentData.returnUrl,
+                        title,
+                        paymentData.getWebViewClientType()
+                    ),
+                    paymentData.getRequestCode()
+                )
             } else {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentData.redirectUrl))
                 startActivity(intent)
             }
         }
+    //endregion
 
+    // region KLARNA-related observers
     private val klarnaVaultedObserver = Observer<JSONObject> { data ->
         val paymentMethod: PaymentMethodDescriptor? =
             primerViewModel.selectedPaymentMethod.value
@@ -195,6 +201,15 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         startActivity(intent)
     }
     // endregion
+
+    private val apayaValidationObserver = Observer<Unit> {
+        val paymentMethod: PaymentMethodDescriptor? =
+            primerViewModel.selectedPaymentMethod.value
+
+        if (paymentMethod !is ApayaDescriptor) return@Observer
+        tokenizationViewModel.tokenize()
+    }
+    //endregion
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
         it?.let {
@@ -270,12 +285,17 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
 
         // region KLARNA
-        tokenizationViewModel.klarnaPaymentData.observe(this, klarnaPaymentDataObserver)
+        tokenizationViewModel.klarnaPaymentData.observe(this, webFlowPaymentDataObserver)
         tokenizationViewModel.vaultedKlarnaPayment.observe(this, klarnaVaultedObserver)
         tokenizationViewModel.klarnaError.observe(this) {
             val apiError = APIError("Failed to add Klarna payment method.")
             EventBus.broadcast(CheckoutEvent.ApiError(apiError))
         }
+        // endregion
+
+        // region apaya
+        tokenizationViewModel.apayaValidationData.observe(this, apayaValidationObserver)
+        tokenizationViewModel.apayaPaymentData.observe(this, webFlowPaymentDataObserver)
         // endregion
 
         // region PAYPAL
@@ -319,7 +339,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onResume() {
         super.onResume()
         if (!checkoutConfig.preferWebView ||
-            primerViewModel.selectedPaymentMethod.value?.identifier != KLARNA_IDENTIFIER
+            setOf(KLARNA_IDENTIFIER, APAYA_IDENTIFIER)
+                .contains(primerViewModel.selectedPaymentMethod.value?.identifier)
+                .not()
         ) {
             WebviewInteropRegister.invokeAll()
         }
@@ -328,20 +350,19 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
+            KLARNA_REQUEST_CODE, APAYA_REQUEST_CODE -> handleWebFlowRequestResult(resultCode, data)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> Unit
         }
     }
 
-    private fun handleKlarnaRequestResult(resultCode: Int, data: Intent?) {
+    private fun handleWebFlowRequestResult(resultCode: Int, data: Intent?) {
         when (resultCode) {
             RESULT_OK -> {
                 val redirectUrl = data?.data.toString()
                 val paymentMethod = primerViewModel.selectedPaymentMethod.value
-                val klarna = paymentMethod as? KlarnaDescriptor
 
-                tokenizationViewModel.handleKlarnaRequestResult(klarna, redirectUrl)
+                tokenizationViewModel.handleWebFlowRequestResult(paymentMethod, redirectUrl)
             }
             RESULT_ERROR -> {
                 onExit(CheckoutExitReason.ERROR)

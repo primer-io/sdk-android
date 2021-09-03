@@ -1,0 +1,137 @@
+package io.primer.android.ui.base.webview
+
+import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import android.webkit.URLUtil
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
+
+internal abstract class BaseWebViewClient(
+    private val activity: WebViewActivity,
+    private val returnUrl: String?,
+) : WebViewClient() {
+
+    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        val isDeeplink = URLUtil.isNetworkUrl(request?.url?.toString().orEmpty()).not()
+        return if (isDeeplink) {
+            handleDeepLink(request)
+        } else {
+            handleNetworkUrl(request)
+        }
+    }
+
+    abstract fun getUrlState(url: String): UrlState
+
+    abstract fun getCaptureUrl(url: String?): String?
+
+    protected open fun handleDeepLink(request: WebResourceRequest?): Boolean {
+        val intent = Intent(Intent.ACTION_VIEW)
+        request?.url.let { uri ->
+            intent.apply { data = uri }
+        }
+        intent.data?.let { data ->
+            if (canCaptureUrl(data.scheme)) {
+                onUrlCaptured(intent)
+            }
+        }
+        return true
+    }
+
+    protected open fun handleNetworkUrl(request: WebResourceRequest?): Boolean {
+        val requestUrl = request?.url?.toString()
+        val shouldOverride = canCaptureUrl(requestUrl)
+        if (shouldOverride) {
+            requestUrl?.let {
+                onUrlCaptured(Intent().apply { data = it.toUri() })
+            }
+        }
+        return shouldOverride
+    }
+
+    protected open fun handleResult(resultCode: Int, intent: Intent) {
+        activity.apply {
+            setResult(resultCode, intent)
+            finish()
+        }
+    }
+
+    protected open fun handleIntent(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Log.d(TAG, "Android 11+, data: ${intent.data}")
+            handleIntentOnAndroid11OrAbove(intent)
+        } else {
+            Log.d(TAG, "Android 10-, data: ${intent.data}")
+            handleIntentOnAndroid10OrBelow(intent)
+        }
+    }
+
+    protected open fun cannotHandleIntent(intent: Intent) {
+        Log.e(TAG, "Cannot handle intent: ${intent.data}")
+        activity.apply {
+            setResult(WebViewActivity.RESULT_ERROR, intent)
+            finish()
+        }
+    }
+
+    protected open fun onUrlCaptured(intent: Intent) {
+        try {
+            val resultCode = when (getUrlState(intent.data.toString())) {
+                UrlState.CANCELLED -> AppCompatActivity.RESULT_CANCELED
+                UrlState.ERROR -> WebViewActivity.RESULT_ERROR
+                else -> AppCompatActivity.RESULT_OK
+            }
+            handleResult(resultCode, intent)
+        } catch (e: UnsupportedOperationException) {
+            handleResult(AppCompatActivity.RESULT_CANCELED, intent)
+        }
+    }
+
+    protected open fun canCaptureUrl(url: String?): Boolean {
+        val captureUrl = getCaptureUrl(returnUrl)
+        return captureUrl?.let { url.orEmpty().contains(captureUrl) } == true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    @Suppress("SwallowedException") // exception is not being swallowed
+    private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
+        try {
+            intent.apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
+            }
+            activity.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Log.e(TAG, "handle intent error: $e")
+            cannotHandleIntent(intent)
+        }
+    }
+
+    @Suppress("SwallowedException") // exception is not being swallowed
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun handleIntentOnAndroid10OrBelow(intent: Intent) {
+        if (intent.resolveActivity(activity.packageManager) != null) {
+            activity.startActivity(intent)
+        } else {
+            Log.e(TAG, "intent.resolveActivity(packageManager) is null")
+            cannotHandleIntent(intent)
+        }
+    }
+
+    internal enum class UrlState {
+        CANCELLED,
+        ERROR,
+        SUCCESS
+    }
+
+    protected companion object {
+
+        const val TAG: String = "BaseWebViewClient"
+    }
+}

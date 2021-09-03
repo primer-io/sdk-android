@@ -11,3 +11,12 @@ internal fun Throwable.toCheckoutErrorEvent() =
         is IOException -> CheckoutEvent.ApiError(APIError.create(this))
         else -> CheckoutEvent.ApiError(APIError.createDefault())
     }
+
+internal fun Throwable.toTokenizationErrorEvent(message: String? = null) =
+    if (message.isNullOrBlank().not()) {
+        CheckoutEvent.TokenizationError(APIError.createDefaultWithMessage(message.orEmpty()))
+    } else when (this) {
+        is HttpException -> CheckoutEvent.TokenizationError(error)
+        is IOException -> CheckoutEvent.TokenizationError(APIError.create(this))
+        else -> CheckoutEvent.TokenizationError(APIError.createDefault())
+    }

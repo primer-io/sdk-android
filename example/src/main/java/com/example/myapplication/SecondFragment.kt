@@ -138,6 +138,7 @@ class SecondFragment : Fragment() {
         }
     }
 
+
     private fun onConfirmDialogAction(token: PaymentMethodToken) {
         viewModel.createTransaction(token.token, token.paymentInstrumentType)
     }

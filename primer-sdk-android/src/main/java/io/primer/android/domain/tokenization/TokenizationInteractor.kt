@@ -6,7 +6,7 @@ import io.primer.android.domain.tokenization.repository.TokenizationRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
-import io.primer.android.extensions.toCheckoutErrorEvent
+import io.primer.android.extensions.toTokenizationErrorEvent
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
@@ -45,7 +45,7 @@ internal class TokenizationInteractor(
                     else -> dispatchEvents(it)
                 }
             }
-            .doOnError { eventDispatcher.dispatchEvents(listOf(it.toCheckoutErrorEvent())) }
+            .doOnError { eventDispatcher.dispatchEvents(listOf(it.toTokenizationErrorEvent())) }
             .map { it.token }
     }
 

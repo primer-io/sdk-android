@@ -2,6 +2,7 @@ package io.primer.android.di
 
 import io.primer.android.BuildConfig
 import io.primer.android.PaymentMethod
+import io.primer.android.data.session.datasource.LocalClientSessionDataSource
 import io.primer.android.events.EventDispatcher
 import io.primer.android.infrastructure.metadata.datasource.MetaDataSource
 import io.primer.android.model.Model
@@ -43,12 +44,16 @@ internal val CheckoutConfigModule = { config: CheckoutConfig, paymentMethods: Li
         single { Serialization.json }
         single {
             Model(
-                clientToken = get(),
-                okHttpClient = get(),
-                json = get()
+                get(),
+                get(),
+                get(),
+                get()
             )
         }
 
+        single {
+            LocalClientSessionDataSource()
+        }
         single<PaymentMethodRepository> { PaymentMethodDataRepository() }
 
         single {

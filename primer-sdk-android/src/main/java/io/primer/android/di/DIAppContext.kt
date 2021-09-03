@@ -16,6 +16,7 @@ internal object DIAppContext {
             androidContext(context)
             modules(
                 CheckoutConfigModule(config, paymentMethods),
+                apayaModule(),
                 tokenizationModule()
             )
         }

@@ -1,6 +1,7 @@
 package io.primer.android.model
 
 import io.primer.android.data.exception.HttpException
+import io.primer.android.data.session.datasource.LocalClientSessionDataSource
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -65,6 +66,7 @@ internal suspend inline fun Call.await(): Response =
 internal class Model constructor(
     private val clientToken: ClientToken,
     private val okHttpClient: OkHttpClient,
+    private val localClientSessionDataSource: LocalClientSessionDataSource,
     private val json: Json,
 ) {
 
@@ -104,6 +106,8 @@ internal class Model constructor(
                 .decodeFromString(ClientSession.serializer(), jsonBody.toString())
 
             this.clientSession = clientSession
+
+            localClientSessionDataSource.updateClientSession(clientSession)
 
             OperationResult.Success(clientSession)
         } catch (error: Throwable) {

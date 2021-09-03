@@ -22,6 +22,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.UserDetails
 import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.TokenType
+import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
@@ -63,11 +64,13 @@ class AppMainViewModel : ViewModel() {
     private val _threeDsResult: MutableLiveData<PaymentMethodToken.AuthenticationDetails?> =
         MutableLiveData<PaymentMethodToken.AuthenticationDetails?>()
     val threeDsResult: LiveData<PaymentMethodToken.AuthenticationDetails?> = _threeDsResult
-    fun clearThreeDsResult(): Unit = _threeDsResult.postValue(null)
+    fun clearThreeDsResult(): Unit =
+        _threeDsResult.postValue(null)
 
     private val _customerId: MutableLiveData<String> = MutableLiveData<String>("customer8")
     val customerId: LiveData<String> = _customerId
-    fun setCustomerId(id: String): Unit = _customerId.postValue(id)
+    fun setCustomerId(id: String): Unit =
+        _customerId.postValue(id)
 
     private val _transactionResponse: MutableLiveData<String> = MutableLiveData()
     val transactionResponse: LiveData<String> = _transactionResponse
@@ -77,7 +80,8 @@ class AppMainViewModel : ViewModel() {
     private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(50)
     val amount: LiveData<Int> = _amount
     val amountStringified: String get() = String.format("%.2f", _amount.value!!.toDouble() / 100)
-    fun setAmount(amount: Int): Unit = _amount.postValue(amount)
+    fun setAmount(amount: Int): Unit =
+        _amount.postValue(amount)
 
     val countryCode: MutableLiveData<CountryCode> = MutableLiveData<CountryCode>(CountryCode.GB)
 
@@ -88,33 +92,44 @@ class AppMainViewModel : ViewModel() {
         MutableLiveData(TransactionState.IDLE)
     val transactionState: LiveData<TransactionState> = _transactionState
 
-    fun resetTransactionState(): Unit = _transactionState.postValue(TransactionState.IDLE)
+    fun resetTransactionState(): Unit =
+        _transactionState.postValue(TransactionState.IDLE)
 
-    private fun canLaunch(id: String?, amt: Int?) = !id.isNullOrEmpty() && (amt ?: 0) > 0
+    private fun canLaunch(id: String?, amt: Int?) =
+        !id.isNullOrEmpty() && (amt ?: 0) > 0
 
     val canLaunchPrimer: MutableLiveData<Boolean> =
         CombinedLiveData(customerId, _amount, ::canLaunch)
 
     private val _useKlarna: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private val useKlarna: LiveData<Boolean> = _useKlarna
-    fun setUseKlarna(use: Boolean): Unit = _useKlarna.postValue(use)
+    fun setUseKlarna(use: Boolean): Unit =
+        _useKlarna.postValue(use)
 
     private val _usePayPal: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private val usePayPal: LiveData<Boolean> = _usePayPal
-    fun setUsePayPal(use: Boolean): Unit = _usePayPal.postValue(use)
+    fun setUsePayPal(use: Boolean): Unit =
+        _usePayPal.postValue(use)
 
     private val _useCard: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private val useCard: LiveData<Boolean> = _useCard
-    fun setUseCard(use: Boolean): Unit = _useCard.postValue(use)
+    fun setUseCard(use: Boolean): Unit =
+        _useCard.postValue(use)
 
     private val _useGooglePay: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private val useGooglePay: LiveData<Boolean> = _useGooglePay
-    fun setUseGooglePay(use: Boolean): Unit = _useGooglePay.postValue(use)
+    fun setUseGooglePay(use: Boolean): Unit =
+        _useGooglePay.postValue(use)
+
+    private val _usePayMobile: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val usePayMobile: LiveData<Boolean> = _usePayMobile
+    fun setUsePayMobile(use: Boolean): Unit =
+        _usePayMobile.postValue(use)
 
     val vaultDisabled: Boolean get() = isStandalonePaymentMethod && useGooglePay.value == true
 
     val isStandalonePaymentMethod: Boolean
-        get() = listOf(useKlarna.value, usePayPal.value, useCard.value, useGooglePay.value)
+        get() = listOf(useKlarna.value, usePayPal.value, useCard.value, useGooglePay.value, usePayMobile.value)
             .count { it == true } == 1
 
     fun generatePaymentMethodList(): List<PaymentMethod> {
@@ -128,6 +143,8 @@ class AppMainViewModel : ViewModel() {
             countryCode = countryCode.value!!.toString(),
             currencyCode = countryCode.value!!.currencyCode.toString(),
         ))
+        if (usePayMobile.value == true) list.add(Apaya())
+
         return list
     }
 
@@ -204,7 +221,8 @@ class AppMainViewModel : ViewModel() {
 
     private val _isBusy: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val isBusy: LiveData<Boolean> = _isBusy
-    internal fun setBusy(busy: Boolean) = _isBusy.postValue(busy);
+    internal fun setBusy(busy: Boolean) =
+        _isBusy.postValue(busy);
 
     fun fetchSavedPaymentMethods() {
         setBusy(true)
@@ -228,7 +246,9 @@ class AppMainViewModel : ViewModel() {
                 }
                 is CheckoutEvent.TokenAddedToVault -> {
                 }
-                is CheckoutEvent.ApiError -> {
+                is CheckoutEvent.ApiError,
+                is CheckoutEvent.TokenizationError,
+                -> {
                     UniversalCheckout.dismiss()
                 }
                 is CheckoutEvent.Exit -> {
@@ -245,8 +265,8 @@ class AppMainViewModel : ViewModel() {
     internal fun handleTokenData(paymentMethodToken: PaymentMethodToken) {
         when {
             paymentMethodToken.tokenType == TokenType.SINGLE_USE
-                    && (paymentMethodToken.threeDSecureAuthentication?.responseCode == ResponseCode.AUTH_SUCCESS
-                    || paymentMethodToken.threeDSecureAuthentication == null) -> {
+                && (paymentMethodToken.threeDSecureAuthentication?.responseCode == ResponseCode.AUTH_SUCCESS
+                || paymentMethodToken.threeDSecureAuthentication == null) -> {
                 createTransaction(paymentMethodToken.token,
                                   paymentMethodToken.paymentInstrumentType)
             }

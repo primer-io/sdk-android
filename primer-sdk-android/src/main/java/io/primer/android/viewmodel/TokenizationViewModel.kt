@@ -10,9 +10,13 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
+import io.primer.android.domain.payments.apaya.ApayaInteractor
+import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
+import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.model.APIEndpoint
+import io.primer.android.model.ApayaPaymentData
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
@@ -20,10 +24,12 @@ import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -45,6 +51,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     private val model: Model by inject()
     private val checkoutConfig: CheckoutConfig by inject()
+    private val apayaInteractor: ApayaInteractor by inject()
     private val tokenizationInteractor: TokenizationInteractor by inject()
 
     val submitted = MutableLiveData(false)
@@ -67,6 +74,9 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     val goCardlessMandate = MutableLiveData<JSONObject>()
     val goCardlessMandateError = MutableLiveData<Unit>()
+
+    val apayaPaymentData = MutableLiveData<ApayaPaymentData>()
+    val apayaValidationData = MutableLiveData<Unit>()
 
     fun resetPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor? = null) {
         paymentMethod = paymentMethodDescriptor
@@ -116,6 +126,16 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
 
     fun userCanceled() {
         _tokenizationCanceled.postValue(Unit)
+    }
+
+    fun handleWebFlowRequestResult(
+        paymentMethodDescriptor: PaymentMethodDescriptor?,
+        redirectUrl: String?,
+    ) {
+        when (paymentMethodDescriptor) {
+            is KlarnaDescriptor -> handleKlarnaRequestResult(paymentMethodDescriptor, redirectUrl)
+            is ApayaDescriptor -> handleApayaRequestResult(paymentMethodDescriptor, redirectUrl)
+        }
     }
 
     // region GOOGLE PAY
@@ -192,7 +212,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
         }
     }
 
-    fun handleKlarnaRequestResult(klarna: KlarnaDescriptor?, redirectUrl: String?) {
+    private fun handleKlarnaRequestResult(klarna: KlarnaDescriptor?, redirectUrl: String?) {
         // TODO move uri parsing to collaborator
         val uri = Uri.parse(redirectUrl)
         val klarnaAuthToken = uri.getQueryParameter("token")
@@ -329,6 +349,42 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                     goCardlessMandateError.postValue(Unit)
                 }
             }
+        }
+    }
+    // endregion
+
+    // region Apaya
+    fun getApayaToken(merchantId: String, merchantAccountId: String) {
+        viewModelScope.launch {
+            apayaInteractor.createClientSession(
+                ApayaSessionParams(
+                    merchantId,
+                    merchantAccountId,
+                    checkoutConfig.locale,
+                    checkoutConfig.currency.orEmpty()
+                )
+            ).collect { apayaPaymentData.postValue(it) }
+        }
+    }
+
+    private fun handleApayaRequestResult(apaya: ApayaDescriptor?, redirectUrl: String?) {
+        viewModelScope.launch {
+            val params = ApayaWebResultParams(Uri.parse(redirectUrl))
+            apayaInteractor.validateWebResultParams(ApayaWebResultParams(Uri.parse(redirectUrl)))
+                .onEach {
+                    // TODO this needs a different approach using polymorphism for all payment descriptors!
+                    apaya?.apply {
+                        setTokenizableValue("mx", params.mxNumber)
+                        setTokenizableValue("mnc", params.mnc)
+                        setTokenizableValue("mcc", params.mcc)
+                        setTokenizableValue("hashedIdentifier", params.hashedIdentifier)
+                        setTokenizableValue("productId", apaya.config.options?.merchantId.orEmpty())
+                        setTokenizableValue("currencyCode", checkoutConfig.currency.orEmpty())
+                    }
+                }
+                .collect {
+                    apayaValidationData.postValue(it)
+                }
         }
     }
     // endregion

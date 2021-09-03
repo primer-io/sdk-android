@@ -8,7 +8,8 @@ import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 
 internal interface PaymentMethodDescriptorResolver {
 
-    suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> = emptyList()
+    suspend fun resolve(clientSession: ClientSession): List<PaymentMethodDescriptor> =
+        emptyList()
 }
 
 internal class PrimerPaymentMethodDescriptorResolver(

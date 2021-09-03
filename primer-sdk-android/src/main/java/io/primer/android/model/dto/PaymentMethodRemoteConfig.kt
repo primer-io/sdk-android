@@ -7,13 +7,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PaymentMethodRemoteConfig(
     val id: String? = null, // FIXME how come id can be null but not the other fields?
-    val type: String, // FIXME what is this?
-    val options: PaymentMethodRemoteConfigOptions? = null
+    val type: String, // FIXME what is this?,
+    val options: PaymentMethodRemoteConfigOptions? = null,
 )
 
 @Keep
 @Serializable
 data class PaymentMethodRemoteConfigOptions(
     val merchantId: String? = null,
-    val threeDSecureEnabled: Boolean? = null
+    val merchantAccountId: String? = null,
+    val threeDSecureEnabled: Boolean? = null,
 )

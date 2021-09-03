@@ -64,7 +64,13 @@ internal object PaymentMethodTokenAdapter {
                 token.paymentInstrumentData.gocardlessMandateId,
                 token.paymentInstrumentData.externalPayerInfo,
                 token.paymentInstrumentData.klarnaCustomerToken,
-                token.paymentInstrumentData.sessionData
+                token.paymentInstrumentData.sessionData,
+                token.paymentInstrumentData.mx,
+                token.paymentInstrumentData.mnc,
+                token.paymentInstrumentData.mcc,
+                token.paymentInstrumentData.hashedIdentifier,
+                token.paymentInstrumentData.currencyCode,
+                token.paymentInstrumentData.productId
             ),
             vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
                 customerId = token.vaultData.customerId
@@ -93,7 +99,13 @@ internal object PaymentMethodTokenAdapter {
                 token.paymentInstrumentData.gocardlessMandateId,
                 token.paymentInstrumentData.externalPayerInfo,
                 token.paymentInstrumentData.klarnaCustomerToken,
-                token.paymentInstrumentData.sessionData
+                token.paymentInstrumentData.sessionData,
+                token.paymentInstrumentData.mx,
+                token.paymentInstrumentData.mnc,
+                token.paymentInstrumentData.mcc,
+                token.paymentInstrumentData.hashedIdentifier,
+                token.paymentInstrumentData.currencyCode,
+                token.paymentInstrumentData.productId
             )
         val vaultData =
             if (token.vaultData == null) null
@@ -155,6 +167,13 @@ data class PaymentInstrumentData(
     val externalPayerInfo: ExternalPayerInfo? = null,
     val klarnaCustomerToken: String? = null,
     val sessionData: SessionData? = null,
+    // apaya
+    val mx: String? = null,
+    val mnc: Int? = null,
+    val mcc: Int? = null,
+    val hashedIdentifier: String? = null,
+    val currencyCode: String? = null,
+    val productId: String? = null,
     val binData: BinData? = null
 )
 
