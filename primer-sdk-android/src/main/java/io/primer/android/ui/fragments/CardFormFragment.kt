@@ -221,9 +221,9 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     private fun onUXModeChanged(mode: UXMode) {
         submitButton.text = when (mode) {
             UXMode.VAULT -> requireContext().getString(R.string.add_card)
-            UXMode.CHECKOUT -> PayAmountText.generate(
-                requireContext(),
-                checkoutConfig.monetaryAmount
+            UXMode.CHECKOUT -> String.format(
+                requireContext().getString(R.string.pay_specific_amount),
+                PayAmountText.generate(requireContext(), checkoutConfig.monetaryAmount),
             )
         }
     }
