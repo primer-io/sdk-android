@@ -15,7 +15,8 @@ import kotlinx.serialization.modules.polymorphic
 
 @Keep
 @Serializable
-data class Apaya(val webViewTitle: String = "Pay by mobile") : PaymentMethod {
+data class Apaya(val webViewTitle: String = "Pay by mobile", val mobilePhone: String? = null) :
+    PaymentMethod {
 
     override val identifier: String = APAYA_IDENTIFIER
 

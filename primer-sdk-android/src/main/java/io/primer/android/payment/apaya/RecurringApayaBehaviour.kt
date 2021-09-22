@@ -16,8 +16,8 @@ internal data class RecurringApayaBehaviour constructor(
     override fun getUri(cancelUrl: String, returnUrl: String) {
         apaya.config.let { config ->
             tokenizationViewModel?.getApayaToken(
-                config.options?.merchantId.orEmpty(),
                 config.options?.merchantAccountId.orEmpty(),
+                apaya.options.mobilePhone.orEmpty()
             )
         }
     }

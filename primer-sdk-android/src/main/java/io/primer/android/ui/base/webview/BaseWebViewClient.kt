@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.webkit.URLUtil
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -15,6 +16,7 @@ import androidx.core.net.toUri
 
 internal abstract class BaseWebViewClient(
     private val activity: WebViewActivity,
+    private val url: String?,
     private val returnUrl: String?,
 ) : WebViewClient() {
 
@@ -24,6 +26,17 @@ internal abstract class BaseWebViewClient(
             handleDeepLink(request)
         } else {
             handleNetworkUrl(request)
+        }
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?,
+    ) {
+        super.onReceivedError(view, request, error)
+        if (request?.url?.toString() == url) {
+            cannotHandleIntent(Intent(request?.url?.toString()))
         }
     }
 

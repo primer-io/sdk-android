@@ -354,14 +354,14 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     // endregion
 
     // region Apaya
-    fun getApayaToken(merchantId: String, merchantAccountId: String) {
+    fun getApayaToken(merchantAccountId: String, mobilePhone: String) {
         viewModelScope.launch {
             apayaInteractor.createClientSession(
                 ApayaSessionParams(
-                    merchantId,
                     merchantAccountId,
                     checkoutConfig.locale,
-                    checkoutConfig.currency.orEmpty()
+                    checkoutConfig.currency.orEmpty(),
+                    mobilePhone
                 )
             ).collect { apayaPaymentData.postValue(it) }
         }

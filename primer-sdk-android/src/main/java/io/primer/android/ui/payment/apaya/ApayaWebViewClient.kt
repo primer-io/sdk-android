@@ -6,8 +6,9 @@ import io.primer.android.ui.base.webview.BaseWebViewClient
 
 internal class ApayaWebViewClient(
     activity: WebViewActivity,
+    url: String?,
     returnUrl: String?,
-) : BaseWebViewClient(activity, returnUrl) {
+) : BaseWebViewClient(activity, url, returnUrl) {
 
     override fun getUrlState(url: String): UrlState {
         return when (Uri.parse(url).getQueryParameter(URL_STATUS_PARAM_NAME)) {

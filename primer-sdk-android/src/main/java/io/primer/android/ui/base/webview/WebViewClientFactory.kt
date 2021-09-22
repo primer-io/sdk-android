@@ -9,12 +9,13 @@ internal interface WebViewClientFactory {
 
         fun getWebViewClient(
             activity: WebViewActivity,
+            url: String?,
             captureUrl: String?,
             type: WebViewClientType,
         ): BaseWebViewClient {
             return when (type) {
-                WebViewClientType.KLARNA -> KlarnaWebViewClient(activity, captureUrl)
-                WebViewClientType.APAYA -> ApayaWebViewClient(activity, captureUrl)
+                WebViewClientType.KLARNA -> KlarnaWebViewClient(activity, url, captureUrl)
+                WebViewClientType.APAYA -> ApayaWebViewClient(activity, url, captureUrl)
             }
         }
     }

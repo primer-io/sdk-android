@@ -48,7 +48,9 @@ internal class WebViewActivity : AppCompatActivity() {
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
         val type = intent.extras?.getSerializable(WEB_VIEW_CLIENT_TYPE) as WebViewClientType
-        webView.webViewClient = WebViewClientFactory.getWebViewClient(this, captureUrl, type)
+        webView.webViewClient = WebViewClientFactory.getWebViewClient(
+            this, url, captureUrl, type
+        )
 
         url?.let {
             webView.loadUrl(it)

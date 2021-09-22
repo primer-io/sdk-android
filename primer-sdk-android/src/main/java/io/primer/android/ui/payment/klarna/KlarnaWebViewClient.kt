@@ -10,8 +10,9 @@ import io.primer.android.ui.base.webview.BaseWebViewClient
 
 internal class KlarnaWebViewClient(
     activity: WebViewActivity,
+    val url: String?,
     val returnUrl: String?,
-) : BaseWebViewClient(activity, returnUrl) {
+) : BaseWebViewClient(activity, url, returnUrl) {
 
     override fun getUrlState(url: String): UrlState {
         return when (url.toUri().getQueryParameter(STATE_QUERY_PARAM_KEY)) {
