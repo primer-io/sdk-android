@@ -3,20 +3,20 @@ package io.primer.android.domain.threeds.validation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.primer.android.UXMode
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.threeds.domain.models.ThreeDsConfigParams
 import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator
 import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.AMOUNT_MISSING_ERROR
 import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CURRENCY_MISSING_ERROR
 import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.ORDER_ID_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_ADDRESS_LINE_1_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_CITY_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_COUNTRY_CODE_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_EMAIL_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_FIRST_NAME_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_LAST_NAME_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_MISSING_ERROR
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.USER_DETAILS_POSTAL_CODE_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_ADDRESS_LINE_1_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_CITY_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_COUNTRY_CODE_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_EMAIL_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_FIRST_NAME_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_LAST_NAME_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_DETAILS_MISSING_ERROR
+import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator.Companion.CUSTOMER_POSTAL_CODE_MISSING_ERROR
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
@@ -43,7 +43,7 @@ internal class ThreeDsConfigValidatorTest {
 
     @Test
     fun `validate() should throw IllegalArgumentException with message AMOUNT_MISSING_ERROR when UxMode is CHECKOUT`() {
-        every { configParams.uxMode }.returns(UXMode.CHECKOUT)
+        every { configParams.paymentMethodIntent }.returns(PaymentMethodIntent.CHECKOUT)
         every { configParams.amount }.returns(0)
 
         val exception = assertThrows<IllegalArgumentException> {
@@ -113,7 +113,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_DETAILS_MISSING_ERROR)),
             exception.message
         )
     }
@@ -129,7 +129,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_FIRST_NAME_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_FIRST_NAME_MISSING_ERROR)),
             exception.message
         )
     }
@@ -145,7 +145,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_LAST_NAME_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_LAST_NAME_MISSING_ERROR)),
             exception.message
         )
     }
@@ -161,7 +161,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_EMAIL_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_EMAIL_MISSING_ERROR)),
             exception.message
         )
     }
@@ -177,7 +177,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_CITY_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_CITY_MISSING_ERROR)),
             exception.message
         )
     }
@@ -193,7 +193,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_ADDRESS_LINE_1_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_ADDRESS_LINE_1_MISSING_ERROR)),
             exception.message
         )
     }
@@ -209,7 +209,7 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_POSTAL_CODE_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_POSTAL_CODE_MISSING_ERROR)),
             exception.message
         )
     }
@@ -225,14 +225,14 @@ internal class ThreeDsConfigValidatorTest {
         }
 
         assertEquals(
-            validator.getFormattedMessage(listOf(USER_DETAILS_COUNTRY_CODE_MISSING_ERROR)),
+            validator.getFormattedMessage(listOf(CUSTOMER_COUNTRY_CODE_MISSING_ERROR)),
             exception.message
         )
     }
 
     @Test
     fun `validate() should throw IllegalArgumentException with error messages joined when inputs are missing and when UxMode is CHECKOUT`() {
-        every { configParams.uxMode }.returns(UXMode.CHECKOUT)
+        every { configParams.paymentMethodIntent }.returns(PaymentMethodIntent.CHECKOUT)
         every { configParams.amount }.returns(0)
         every { configParams.currency }.returns("")
         every { configParams.orderId }.returns("")
@@ -257,14 +257,14 @@ internal class ThreeDsConfigValidatorTest {
                     AMOUNT_MISSING_ERROR,
                     CURRENCY_MISSING_ERROR,
                     ORDER_ID_MISSING_ERROR,
-                    USER_DETAILS_MISSING_ERROR,
-                    USER_DETAILS_FIRST_NAME_MISSING_ERROR,
-                    USER_DETAILS_LAST_NAME_MISSING_ERROR,
-                    USER_DETAILS_EMAIL_MISSING_ERROR,
-                    USER_DETAILS_CITY_MISSING_ERROR,
-                    USER_DETAILS_ADDRESS_LINE_1_MISSING_ERROR,
-                    USER_DETAILS_POSTAL_CODE_MISSING_ERROR,
-                    USER_DETAILS_COUNTRY_CODE_MISSING_ERROR
+                    CUSTOMER_DETAILS_MISSING_ERROR,
+                    CUSTOMER_FIRST_NAME_MISSING_ERROR,
+                    CUSTOMER_LAST_NAME_MISSING_ERROR,
+                    CUSTOMER_EMAIL_MISSING_ERROR,
+                    CUSTOMER_CITY_MISSING_ERROR,
+                    CUSTOMER_ADDRESS_LINE_1_MISSING_ERROR,
+                    CUSTOMER_POSTAL_CODE_MISSING_ERROR,
+                    CUSTOMER_COUNTRY_CODE_MISSING_ERROR
                 )
             ),
             exception.message

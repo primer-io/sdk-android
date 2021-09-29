@@ -2,7 +2,6 @@ package io.primer.android.ui.components
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
@@ -13,8 +12,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.di.DIAppComponent
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -27,7 +26,7 @@ class ButtonPrimary(
 
     private val textView: TextView
     private val progressBar: ProgressBar
-    private val theme: UniversalCheckoutTheme by inject()
+    private val theme: PrimerTheme by inject()
 
     var text: CharSequence
         get() = textView.text
@@ -57,26 +56,21 @@ class ButtonPrimary(
     }
 
     private fun createBackground(): Drawable {
-        val buttonColor = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_pressed)),
-            // FIXME default value should come from resources
-            intArrayOf(Color.parseColor("#FFFFFFFF")),
-        )
+        val splash = theme.splashColor.getColor(context)
+        val rippleColor = ColorStateList.valueOf(splash)
         val content = GradientDrawable().apply {
-            cornerRadius = theme.buttonCornerRadius
+            cornerRadius = theme.defaultCornerRadius.getDimension(context)
             color = ColorStateList(
                 arrayOf(
                     intArrayOf(android.R.attr.state_enabled),
                     intArrayOf(-android.R.attr.state_enabled)
                 ),
                 intArrayOf(
-                    theme.buttonPrimaryColor,
-                    theme.buttonPrimaryColorDisabled,
-                    theme.buttonPrimaryColor
+                    theme.mainButton.defaultColor.getColor(context),
+                    theme.mainButton.disabledColor.getColor(context),
                 )
             )
-            setStroke(1, theme.buttonDefaultBorderColor)
         }
-        return RippleDrawable(buttonColor, content, null)
+        return RippleDrawable(rippleColor, content, null)
     }
 }

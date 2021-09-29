@@ -3,17 +3,19 @@ package io.primer.android.ui.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.textfield.TextInputEditText
+import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.UXMode
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
@@ -26,6 +28,7 @@ import io.primer.android.ui.components.ButtonPrimary
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import java.util.Collections
@@ -41,21 +44,17 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private lateinit var inputs: Map<String, TextInputEditText>
     private lateinit var submitButton: ButtonPrimary
-    private lateinit var cancelButton: Button
+    private lateinit var cancelButton: TextView
+    private lateinit var title: TextView
 
     private lateinit var errorText: TextView
-    private lateinit var viewModel: PrimerViewModel
-    private lateinit var tokenizationViewModel: TokenizationViewModel
 
-    private val checkoutConfig: CheckoutConfig by inject()
+    private val primerViewModel: PrimerViewModel by activityViewModels()
+    private val tokenizationViewModel: TokenizationViewModel by viewModel()
+    private val checkoutConfig: PrimerConfig by inject()
+    private val theme: PrimerTheme by inject()
     private val dirtyMap: MutableMap<String, Boolean> = HashMap()
     private var firstMount: Boolean = true
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = PrimerViewModel.getInstance(requireActivity())
-        tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,20 +66,40 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         inputs = mapOf(
             CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name_input),
             CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number_input),
             CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry_input),
             CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
         )
+
+        inputs.values.forEach { t ->
+            val fontSize = theme.input.text.fontsize.getDimension(requireContext())
+            t.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            t.setTextColor(theme.input.text.defaultColor.getColor(requireContext()))
+            when (theme.inputMode) {
+                PrimerTheme.InputMode.UNDERLINED -> {
+                    val res = requireContext().resources
+                    val topPadding = res
+                        .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_top)
+                    val horizontalPadding = res
+                        .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
+                    val bottomPadding = res
+                        .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_bottom)
+                    t.setPadding(horizontalPadding, topPadding, horizontalPadding, bottomPadding)
+                }
+                PrimerTheme.InputMode.OUTLINED -> Unit
+            }
+        }
+
         submitButton = view.findViewById(R.id.card_form_submit_button)
         cancelButton = view.findViewById(R.id.nav_cancel_button)
         errorText = view.findViewById(R.id.card_form_error_message)
+        title = view.findViewById(R.id.card_form_title)
 
         tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
-                TokenizationStatus.LOADING -> toggleLoading(true)
+                TokenizationStatus.LOADING, TokenizationStatus.SUCCESS -> toggleLoading(true)
                 else -> toggleLoading(false)
             }
         }
@@ -102,10 +121,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             }
         )
 
-        viewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
-        onUXModeChanged(checkoutConfig.uxMode)
+        primerViewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
+        onUXModeChanged(checkoutConfig.paymentMethodIntent)
 
-        tokenizationViewModel.resetPaymentMethod(viewModel.selectedPaymentMethod.value)
+        tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
 
         inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())
         inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(TextInputMask.CardNumber())
@@ -121,6 +140,11 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             }
         }
 
+        cancelButton.setTextColor(theme.systemText.defaultColor.getColor(requireContext()))
+        cancelButton.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            theme.systemText.fontsize.getDimension(requireContext()),
+        )
         cancelButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -129,10 +153,17 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             submitButton.performClick()
         }
 
+        renderTitle()
+
         focusFirstInput()
     }
 
+    private fun renderTitle() {
+        title.setTextColor(theme.titleText.defaultColor.getColor(requireContext()))
+    }
+
     private fun toggleLoading(on: Boolean) {
+        submitButton.isEnabled = on.not()
         submitButton.setProgress(on)
         if (on) {
             errorText.visibility = View.INVISIBLE
@@ -218,10 +249,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun onUXModeChanged(mode: UXMode) {
+    private fun onUXModeChanged(mode: PaymentMethodIntent) {
         submitButton.text = when (mode) {
-            UXMode.VAULT -> requireContext().getString(R.string.add_card)
-            UXMode.CHECKOUT -> String.format(
+            PaymentMethodIntent.VAULT -> requireContext().getString(R.string.add_card)
+            PaymentMethodIntent.CHECKOUT -> String.format(
                 requireContext().getString(R.string.pay_specific_amount),
                 PayAmountText.generate(requireContext(), checkoutConfig.monetaryAmount),
             )

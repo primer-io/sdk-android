@@ -7,7 +7,6 @@ import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 
 @Keep
 @Serializable

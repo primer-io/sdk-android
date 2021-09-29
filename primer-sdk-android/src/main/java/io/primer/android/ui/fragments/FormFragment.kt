@@ -5,15 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
+import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.FormErrorState
 import io.primer.android.ui.FormViewState
 import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.json.JSONObject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 enum class FormActionType {
     SUBMIT_PRESS,
@@ -45,11 +48,11 @@ interface FormActionListener {
 // FIXME move to gocardless as it's only used there
 open class FormFragment(
     private val state: FormViewState? = null, // FIXME this should not be passed via ctor
-) : Fragment(), FormActionListenerOwner {
+) : Fragment(), FormActionListenerOwner, DIAppComponent {
 
     private lateinit var viewModel: FormViewModel
-    private lateinit var tokenizationViewModel: TokenizationViewModel
-    private lateinit var primerViewModel: PrimerViewModel
+    private val primerViewModel: PrimerViewModel by activityViewModels()
+    private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
     private var formActionListener: FormActionListener? = null
 
     override fun onCreateView(
@@ -63,8 +66,6 @@ open class FormFragment(
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
-        tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
-        primerViewModel = PrimerViewModel.getInstance(requireActivity())
 
         tokenizationViewModel.tokenizationData.observe(viewLifecycleOwner) {
             onTokenizeSuccess()

@@ -1,3 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="sheet_corner_radius">16dp</dimen>
+    <dimen name="border_width">3dp</dimen>
 </resources>

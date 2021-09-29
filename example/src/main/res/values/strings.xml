@@ -7,6 +7,7 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="test_deprecated_checkout">Test Deprecated Checkout</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
@@ -14,6 +15,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_payment_method">Add payment method</string>
     <string name="show_checkout">Show Checkout</string>
+    <string name="show_payment_method">Show Payment Method</string>
     <string name="add_klarna">Add Klarna</string>
     <string name="add_apaya">Pay by mobile</string>
     <string name="add_customer_id">Add customer ID</string>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.primer.android.ui.components.TextInputWidget xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/form_input_layout"
-    style="@style/Primer.FormInput.Layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -9,6 +8,5 @@
         android:id="@+id/form_input_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionNext"
-        android:theme="@style/Primer.FormInput.Input" />
+        android:imeOptions="actionNext" />
 </io.primer.android.ui.components.TextInputWidget>

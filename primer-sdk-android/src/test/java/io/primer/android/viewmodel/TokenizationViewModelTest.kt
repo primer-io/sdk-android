@@ -1,6 +1,5 @@
 package io.primer.android.viewmodel
 
-import android.graphics.Color
 import com.jraska.livedata.test
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -10,12 +9,10 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.UXMode
-import io.primer.android.PrimerTheme
-import io.primer.android.di.DIAppContext
+import io.primer.android.domain.payments.apaya.ApayaInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
@@ -27,17 +24,11 @@ import io.primer.android.payment.card.Card
 import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.flow.flowOf
 import org.json.JSONObject
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.koin.core.KoinApplication
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
-import org.koin.dsl.module
 import org.koin.test.KoinTest
-import java.util.Locale
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class TokenizationViewModelTest : KoinTest {
@@ -45,7 +36,7 @@ class TokenizationViewModelTest : KoinTest {
     private lateinit var viewModel: TokenizationViewModel
 
     @RelaxedMockK
-    private lateinit var primerViewModel: PrimerViewModel
+    private lateinit var apayaInteractor: ApayaInteractor
 
     @RelaxedMockK
     private lateinit var tokenizationInteractor: TokenizationInteractor
@@ -53,57 +44,14 @@ class TokenizationViewModelTest : KoinTest {
     @RelaxedMockK
     private lateinit var model: Model
 
-    // FIXME we're forced to provide a theme in tests because of the static calls that happen if you don't
-    private val theme = PrimerTheme(
-        0f,
-        0f,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        Color.BLACK,
-        PrimerTheme.WindowMode.FULL_HEIGHT
-    )
-
-    private val config = CheckoutConfig(
-        clientToken = "t0k3n",
-        packageName = "pkg",
-        uxMode = UXMode.VAULT,
-        locale = Locale.UK,
-        amount = null,
-        isStandalonePaymentMethod = false,
-        theme = theme
-    )
+    @RelaxedMockK
+    private lateinit var config: PrimerConfig
 
     @BeforeEach
     internal fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
 
-        val testApp: KoinApplication = startKoin {
-            modules(
-                module {
-                    single { model }
-                    single { tokenizationInteractor }
-                    single { config }
-                }
-            )
-        }
-
-        // FIXME we have to hack this this way because of DIAppComponent and DIAppContext
-        DIAppContext.app = testApp
-
-        viewModel = TokenizationViewModel()
-    }
-
-    @AfterEach
-    fun tearDown() {
-        stopKoin()
+        viewModel = TokenizationViewModel(model, config, tokenizationInteractor, apayaInteractor)
     }
 
     @Test

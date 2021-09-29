@@ -1,60 +1,49 @@
 package io.primer.android.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.PaymentMethod
 import io.primer.android.Primer
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.logging.Logger
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.ClientSession
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.model.dto.PrimerPaymentMethod
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
+import io.primer.android.payment.PaymentMethodDescriptorMapping
+import io.primer.android.payment.DefaultPaymentMethodMapping
+import io.primer.android.payment.PaymentMethodListFactory
+import io.primer.android.payment.card.Card
+import io.primer.android.payment.gocardless.GoCardless
+import io.primer.android.payment.google.GooglePay
+import io.primer.android.payment.klarna.Klarna
+import io.primer.android.payment.paypal.PayPal
 import io.primer.android.payment.VaultCapability
+import io.primer.android.payment.apaya.Apaya
 import kotlinx.coroutines.launch
 import java.util.Collections
 
-internal class PrimerViewModelFactory(
-    private val model: Model,
-    private val checkoutConfig: CheckoutConfig,
-    private val paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
-    private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
-    private val primerPaymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
-) : AndroidViewModelAssistedFactory<PrimerViewModel> {
-
-    override fun create(application: Application, handle: SavedStateHandle): PrimerViewModel =
-        PrimerViewModel(
-            application,
-            model,
-            checkoutConfig,
-            paymentMethodCheckerRegistry,
-            paymentMethodDescriptorFactoryRegistry,
-            primerPaymentMethodDescriptorResolver
-        )
-}
-
 internal class PrimerViewModel(
-    application: Application,
+    private val application: Application,
     private val model: Model,
-    private val checkoutConfig: CheckoutConfig,
+    private val config: PrimerConfig,
     private val paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
     private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
-    private val paymentMethodDescriptorResolver: PrimerPaymentMethodDescriptorResolver,
-) : AndroidViewModel(application), EventBus.EventListener {
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
+) : ViewModel(), EventBus.EventListener {
 
-    private val log = Logger("view-model")
+    private val log = DefaultLogger("view-model")
     private lateinit var subscription: EventBus.SubscriptionHandle
 
     private var _selectedPaymentMethodId = MutableLiveData("")
@@ -68,6 +57,9 @@ internal class PrimerViewModel(
     val vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
         Collections.emptyList()
     )
+
+    private val _primerViewModelSetupException = MutableLiveData<Exception>()
+    val primerViewModelSetupException: LiveData<Exception> = _primerViewModelSetupException
 
     private val _paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(emptyList())
     val paymentMethods: LiveData<List<PaymentMethodDescriptor>> = _paymentMethods
@@ -94,15 +86,15 @@ internal class PrimerViewModel(
         _checkoutEvent.postValue(event)
     }
 
-    fun fetchConfiguration(locallyConfiguredPaymentMethods: List<PaymentMethod>) {
+    fun fetchConfiguration() {
         viewModelScope.launch {
             when (val result = model.getConfiguration()) {
                 is OperationResult.Success -> {
                     val clientSession: ClientSession = result.data
-
-                    initializePaymentMethodModules(locallyConfiguredPaymentMethods, clientSession)
-
-                    handleVaultedPaymentMethods(clientSession)
+                    val mapping = DefaultPaymentMethodMapping(config.settings)
+                    val factory = PaymentMethodListFactory(mapping)
+                    val paymentMethods = initializePaymentMethodModules(clientSession, factory)
+                    handleVaultedPaymentMethods(clientSession, paymentMethods)
                 }
                 is OperationResult.Error -> {
                     log("Failed to get configuration: $result")
@@ -121,21 +113,50 @@ internal class PrimerViewModel(
         _selectedPaymentMethodId.value ?: ""
 
     private fun initializePaymentMethodModules(
-        locallyConfiguredPaymentMethods: List<PaymentMethod>,
         clientSession: ClientSession,
-    ) {
-        locallyConfiguredPaymentMethods.forEach { paymentMethod ->
+        factory: PaymentMethodListFactory,
+    ): MutableList<PaymentMethod> {
 
-            if (checkoutConfig.uxMode.isNotVault ||
-                (checkoutConfig.uxMode.isVault && paymentMethod.canBeVaulted)
-            ) {
-                paymentMethod.module.initialize(getApplication(), clientSession)
-                paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
-                paymentMethod.module.registerPaymentMethodDescriptorFactory(
-                    paymentMethodDescriptorFactoryRegistry
-                )
+        val paymentMethods = factory.buildWith(clientSession.paymentMethods)
+
+        if (config.isStandalonePaymentMethod) {
+            paymentMethods.find { p ->
+                val matches: Boolean = when (config.intent.paymentMethod) {
+                    PrimerPaymentMethod.KLARNA -> p is Klarna
+                    PrimerPaymentMethod.GOOGLE_PAY -> p is GooglePay
+                    PrimerPaymentMethod.PAYPAL -> p is PayPal
+                    PrimerPaymentMethod.CARD -> p is Card
+                    PrimerPaymentMethod.GOCARDLESS -> p is GoCardless
+                    PrimerPaymentMethod.APAYA -> p is Apaya
+                    else -> false
+                }
+                matches
+            }?.let { paymentMethod ->
+                if (config.paymentMethodIntent.isNotVault ||
+                    (config.paymentMethodIntent.isVault && paymentMethod.canBeVaulted)
+                ) {
+                    paymentMethod.module.initialize(application, clientSession)
+                    paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
+                    paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                        paymentMethodDescriptorFactoryRegistry
+                    )
+                }
+            }
+        } else {
+            paymentMethods.forEach { paymentMethod ->
+                if (config.paymentMethodIntent.isNotVault ||
+                    (config.paymentMethodIntent.isVault && paymentMethod.canBeVaulted)
+                ) {
+                    paymentMethod.module.initialize(application, clientSession)
+                    paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
+                    paymentMethod.module.registerPaymentMethodDescriptorFactory(
+                        paymentMethodDescriptorFactoryRegistry
+                    )
+                }
             }
         }
+
+        return paymentMethods
     }
 
     private fun handleError(description: String) {
@@ -144,54 +165,64 @@ internal class PrimerViewModel(
         EventBus.broadcast(event)
     }
 
-    private suspend fun handleVaultedPaymentMethods(clientSession: ClientSession) =
-        when (val result = model.getVaultedPaymentMethods(clientSession)) {
-            is OperationResult.Success -> {
-                val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data.filter {
-                    DISALLOWED_PAYMENT_METHOD_TYPES.contains(it.paymentInstrumentType).not()
-                }
+    private suspend fun handleVaultedPaymentMethods(
+        clientSession: ClientSession,
+        configuredPaymentMethods: MutableList<PaymentMethod>,
+    ) = when (val result = model.getVaultedPaymentMethods(clientSession)) {
+        is OperationResult.Success -> {
+            val paymentModelTokens: List<PaymentMethodTokenInternal> = result.data.filter {
+                DISALLOWED_PAYMENT_METHOD_TYPES.contains(it.paymentInstrumentType).not()
+            }
 
-                vaultedPaymentMethods.postValue(paymentModelTokens)
+            vaultedPaymentMethods.postValue(paymentModelTokens)
 
-                if (getSelectedPaymentMethodId().isEmpty() && paymentModelTokens.isNotEmpty()) {
-                    setSelectedPaymentMethodId(paymentModelTokens[0].token)
-                }
+            if (getSelectedPaymentMethodId().isEmpty() && paymentModelTokens.isNotEmpty()) {
+                setSelectedPaymentMethodId(paymentModelTokens[0].token)
+            }
 
-                val descriptors: List<PaymentMethodDescriptor> =
-                    paymentMethodDescriptorResolver.resolve(clientSession)
-                        .filter {
-                            it.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT ||
-                                (
-                                    it.vaultCapability == VaultCapability.VAULT_ONLY &&
-                                        checkoutConfig.uxMode.isVault
-                                    )
-                        }
+            val paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
+                localConfig = config,
+                localPaymentMethods = configuredPaymentMethods,
+                paymentMethodDescriptorFactoryRegistry = paymentMethodDescriptorFactoryRegistry,
+                availabilityCheckers = paymentMethodCheckerRegistry
+            )
 
-                _paymentMethods.postValue(descriptors)
+            val descriptors: List<PaymentMethodDescriptor> =
+                paymentMethodDescriptorResolver.resolve(clientSession)
+                    .filter { descriptor ->
+                        isValidPaymentDescriptor(descriptor)
+                    }
 
-                if (checkoutConfig.isStandalonePaymentMethod) {
-                    if (descriptors.isEmpty()) {
-                        val description = """
+            _paymentMethods.postValue(descriptors)
+
+            val mapping = PaymentMethodDescriptorMapping(descriptors)
+
+            if (config.isStandalonePaymentMethod) {
+                val paymentMethod = config.intent.paymentMethod
+                val descriptor = mapping.getDescriptorFor(paymentMethod)
+
+                if (descriptor != null) {
+                    _selectedPaymentMethod.postValue(descriptor)
+                } else {
+                    val description = """
                             |Failed to initialise due to missing configuration. Please ensure the 
                             |requested payment method has been configured in Primer's dashboard.
                         """.trimMargin()
-                        handleError(description)
-                    } else {
-                        _selectedPaymentMethod.postValue(descriptors.first())
-                    }
-                } else {
-                    viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
+                    handleError(description)
                 }
+            } else {
+                viewStatus.postValue(getInitialViewStatus(paymentModelTokens))
             }
-            is OperationResult.Error -> {
-                val description = """
+        }
+        is OperationResult.Error -> {
+            val description = """
                     |Failed to initialise due to a failed network call. Please ensure 
                     |your internet connection is stable and try again.
                 """.trimMargin()
-                handleError(description)
-                log("Failed to get payment methods: ${result.error.message}")
-            }
+            handleError(description)
+            log("Failed to get payment methods: ${result.error.message}")
         }
+    }
 
     private fun getInitialViewStatus(
         vaultedPaymentMethods: List<PaymentMethodTokenInternal>,
@@ -220,18 +251,19 @@ internal class PrimerViewModel(
             }
             is CheckoutEvent.ApiError -> {
                 println(e.data.description)
-                Primer.dismiss()
+                Primer.instance.dismiss()
             }
         }
     }
 
+    private fun isValidPaymentDescriptor(descriptor: PaymentMethodDescriptor) = (
+        descriptor.vaultCapability == VaultCapability.VAULT_ONLY &&
+            config.paymentMethodIntent.isVault
+        ) ||
+        descriptor.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT
+
     companion object {
 
         private val DISALLOWED_PAYMENT_METHOD_TYPES = listOf("APAYA")
-
-        // FIXME drop this. consider activityViewModels().
-        fun getInstance(owner: ViewModelStoreOwner): PrimerViewModel {
-            return ViewModelProvider(owner).get(PrimerViewModel::class.java)
-        }
     }
 }

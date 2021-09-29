@@ -5,7 +5,6 @@
     android:id="@+id/payment_method_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/saved_payment_method_item"
     android:clickable="true"
     android:focusable="true"
     tools:layout_margin="8dp">
@@ -19,7 +18,6 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="@dimen/medium_large_padding"
         android:gravity="center_vertical"
-        android:textColor="@android:color/black"
         android:textIsSelectable="false"
         android:textSize="@dimen/primer_text_size_sm"
         android:ellipsize="end"
@@ -36,7 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/medium_large_padding"
         android:text="@string/last_four_with_dots"
-        android:textColor="@android:color/black"
         android:textSize="@dimen/primer_text_size_sm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/title_label" />
@@ -46,7 +43,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/expires_12_21"
-        android:textColor="@android:color/black"
         android:textSize="@dimen/primer_text_size_s"
         app:layout_constraintBottom_toBottomOf="@+id/title_label"
         app:layout_constraintEnd_toEndOf="@+id/last_four_label" />

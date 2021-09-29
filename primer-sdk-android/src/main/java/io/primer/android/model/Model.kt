@@ -2,12 +2,12 @@ package io.primer.android.model
 
 import io.primer.android.data.exception.HttpException
 import io.primer.android.data.session.datasource.LocalClientSessionDataSource
+import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.ClientSession
-import io.primer.android.model.dto.ClientToken
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.threeds.data.models.BeginAuthRequest
@@ -64,7 +64,7 @@ internal suspend inline fun Call.await(): Response =
 // FIXME drop Model class (in favour of something like PrimerService or PrimerApi)
 // FIXME extract parsing to collaborator
 internal class Model constructor(
-    private val clientToken: ClientToken,
+    private val clientTokenDataSource: LocalClientTokenDataSource,
     private val okHttpClient: OkHttpClient,
     private val localClientSessionDataSource: LocalClientSessionDataSource,
     private val json: Json,
@@ -79,7 +79,7 @@ internal class Model constructor(
     suspend fun getConfiguration(): OperationResult<ClientSession> {
 
         val request = Request.Builder()
-            .url(clientToken.configurationUrl)
+            .url(clientTokenDataSource.getClientToken().configurationUrl)
             .get()
             .build()
 

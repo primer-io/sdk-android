@@ -1,7 +1,7 @@
 package io.primer.android.payment.paypal
 
 import android.net.Uri
-import io.primer.android.logging.Logger
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
 
@@ -10,7 +10,7 @@ internal class PayPalBillingAgreementBehaviour constructor(
     private val paypal: PayPalDescriptor,
 ) : WebBrowserIntentBehaviour() {
 
-    private val log = Logger("paypal.billingagreement")
+    private val log = DefaultLogger("paypal.billingagreement")
 
     override fun initialize() {
         // FIXME it should be passed instead like so: tokenize(paymentMethod)

@@ -1,6 +1,8 @@
 package io.primer.android.ui.fragments
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -17,6 +19,8 @@ import com.hbb20.CountryCodePicker
 import io.primer.android.R
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.FormField
+
+private const val BOTTOM_MARGIN = 16
 
 internal class FormFieldsFragment : FormChildFragment() {
 
@@ -37,7 +41,7 @@ internal class FormFieldsFragment : FormChildFragment() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
             ).apply {
-                bottomMargin = 16
+                bottomMargin = BOTTOM_MARGIN
             }
         }
 
@@ -54,6 +58,8 @@ internal class FormFieldsFragment : FormChildFragment() {
                 inputField.inputType = getInputType(field.inputType)
                 inputField.addTextChangedListener(listenerToTextWatcher(l))
                 inputField.text = SpannableStringBuilder(initialValue)
+
+                inputField.backgroundTintList = ColorStateList.valueOf(Color.RED)
 
                 val hintText = ctx.getString(field.labelId)
 
@@ -115,7 +121,7 @@ internal class FormFieldsFragment : FormChildFragment() {
                 picker.setCountryForNameCode(initialValue)
 
                 picker.setOnCountryChangeListener {
-                    l.onValueChange(picker.selectedCountryCode)
+                    l.onValueChange(picker.selectedCountryNameCode)
                 }
 
                 inputLayout.layoutParams = createLayoutParams()
@@ -157,6 +163,8 @@ internal class FormFieldsFragment : FormChildFragment() {
                         val inputField = inputLayout.findViewById<TextInputEditText>(
                             R.id.form_input_field
                         )
+
+                        inputLayout.boxStrokeErrorColor = ColorStateList.valueOf(Color.RED)
 
                         inputField.error = if (value == null) null else requireContext().getString(
                             value.errorId,

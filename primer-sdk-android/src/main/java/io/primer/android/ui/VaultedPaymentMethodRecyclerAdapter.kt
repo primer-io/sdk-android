@@ -5,8 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
+import io.primer.android.PrimerTheme
 import io.primer.android.R
 
 enum class PaymentItemStatus {
@@ -19,13 +21,21 @@ enum class AlternativePaymentMethodType {
 
 sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    internal fun configureCheckIcon(itemView: View, status: PaymentItemStatus) {
+    internal fun configureCheckIcon(
+        itemView: View,
+        status: PaymentItemStatus,
+        theme: PrimerTheme,
+    ) {
         val checkIcon: ImageView = itemView.findViewById(R.id.check_icon)
         checkIcon.apply {
             when (status) {
                 PaymentItemStatus.EDITING -> {
                     isInvisible = false
                     checkIcon.setImageResource(R.drawable.ic_delete)
+                    DrawableCompat.setTint(
+                        DrawableCompat.wrap(checkIcon.drawable),
+                        theme.errorText.defaultColor.getColor(context)
+                    )
                 }
                 PaymentItemStatus.UNSELECTED -> {
                     isInvisible = true
@@ -33,12 +43,16 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 PaymentItemStatus.SELECTED -> {
                     isInvisible = false
                     checkIcon.setImageResource(R.drawable.ic_check)
+                    DrawableCompat.setTint(
+                        DrawableCompat.wrap(checkIcon.drawable),
+                        theme.primaryColor.getColor(context)
+                    )
                 }
             }
         }
     }
 
-    class AlternativePaymentMethod(view: View) : ViewHolder(view) {
+    class AlternativePaymentMethod(view: View, val theme: PrimerTheme) : ViewHolder(view) {
 
         private fun setCardIcon(type: AlternativePaymentMethodType) {
             val iconView = itemView.findViewById<ImageView>(R.id.payment_method_icon)
@@ -55,18 +69,23 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         fun bind(item: AlternativePaymentMethodData, status: PaymentItemStatus) {
+
             val titleLabel = itemView.findViewById<TextView>(R.id.title_label)
             val lastFourLabel = itemView.findViewById<TextView>(R.id.last_four_label)
             val expiryLabel: TextView = itemView.findViewById(R.id.expiry_label)
             titleLabel.text = item.title
             lastFourLabel.text = ""
             expiryLabel.text = ""
+
+            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(itemView.context)
+            titleLabel.setTextColor(textColor)
+
             setCardIcon(item.type)
-            configureCheckIcon(itemView, status)
+            configureCheckIcon(itemView, status, theme)
         }
     }
 
-    class Card(view: View) : ViewHolder(view) {
+    class Card(view: View, val theme: PrimerTheme) : ViewHolder(view) {
 
         private fun setCardIcon(network: String?) {
             val iconView = itemView.findViewById<ImageView>(R.id.payment_method_icon)
@@ -88,8 +107,14 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 item.expiryMonth,
                 item.expiryYear,
             )
+
+            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(itemView.context)
+            titleLabel.setTextColor(textColor)
+            lastFourLabel.setTextColor(textColor)
+            expiryLabel.setTextColor(textColor)
+
             setCardIcon(item.network)
-            configureCheckIcon(itemView, status)
+            configureCheckIcon(itemView, status, theme)
         }
     }
 }
@@ -120,6 +145,7 @@ enum class VaultViewAction {
 
 class VaultedPaymentMethodRecyclerAdapter(
     private val onClickWith: (id: String, action: VaultViewAction) -> Unit,
+    private val theme: PrimerTheme,
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     var selectedPaymentMethodId: String? = null
@@ -136,22 +162,23 @@ class VaultedPaymentMethodRecyclerAdapter(
 
     var isEditing: Boolean = false
 
-    private fun getStatusForItemWith(id: String) = when {
-        isEditing -> PaymentItemStatus.EDITING
-        selectedPaymentMethodId == id -> PaymentItemStatus.SELECTED
-        else -> PaymentItemStatus.UNSELECTED
-    }
+    private fun getStatusForItemWith(id: String) =
+        when {
+            isEditing -> PaymentItemStatus.EDITING
+            selectedPaymentMethodId == id -> PaymentItemStatus.SELECTED
+            else -> PaymentItemStatus.UNSELECTED
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD -> {
                 val view = inflater.inflate(R.layout.payment_method_item_vault, parent, false)
-                ViewHolder.AlternativePaymentMethod(view)
+                ViewHolder.AlternativePaymentMethod(view, theme)
             }
             VIEW_TYPE_CARD -> {
                 val view = inflater.inflate(R.layout.payment_method_item_vault, parent, false)
-                ViewHolder.Card(view)
+                ViewHolder.Card(view, theme)
             }
             else -> throw IllegalStateException("View type \"$viewType\" not valid")
         }
@@ -183,11 +210,13 @@ class VaultedPaymentMethodRecyclerAdapter(
         }
     }
 
-    override fun getItemCount(): Int = itemData.size
+    override fun getItemCount(): Int =
+        itemData.size
 
-    override fun getItemViewType(position: Int): Int = when (itemData[position]) {
-        is CardData -> VIEW_TYPE_CARD
-        is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
-        else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
-    }
+    override fun getItemViewType(position: Int): Int =
+        when (itemData[position]) {
+            is CardData -> VIEW_TYPE_CARD
+            is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
+            else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
+        }
 }

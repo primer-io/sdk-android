@@ -1,10 +1,10 @@
 package io.primer.android.threeds.domain.models
 
-import io.primer.android.UXMode
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.PaymentMethodIntent
+import io.primer.android.model.dto.PrimerConfig
 
 internal data class ThreeDsConfigParams(
-    val uxMode: UXMode,
+    val paymentMethodIntent: PaymentMethodIntent,
     val amount: Int,
     val currency: String,
     val orderId: String,
@@ -19,19 +19,19 @@ internal data class ThreeDsConfigParams(
 ) {
 
     constructor(
-        checkoutConfig: CheckoutConfig,
+        config: PrimerConfig,
     ) : this(
-        checkoutConfig.uxMode,
-        checkoutConfig.threeDsAmount.amount ?: 0,
-        checkoutConfig.threeDsAmount.currency.orEmpty(),
-        checkoutConfig.orderId.orEmpty(),
-        checkoutConfig.userDetails != null,
-        checkoutConfig.userDetails?.firstName.orEmpty(),
-        checkoutConfig.userDetails?.lastName.orEmpty(),
-        checkoutConfig.userDetails?.email.orEmpty(),
-        checkoutConfig.userDetails?.addressLine1.orEmpty(),
-        checkoutConfig.userDetails?.city.orEmpty(),
-        checkoutConfig.userDetails?.postalCode.orEmpty(),
-        checkoutConfig.userDetails?.countryCode?.name.orEmpty(),
+        config.paymentMethodIntent,
+        config.settings.order.amount ?: 0,
+        config.settings.order.currency.orEmpty(),
+        config.settings.order.id.orEmpty(),
+        config.settings.customer.detailsAvailable, // can't this be a getter param instead?
+        config.settings.customer.firstName.orEmpty(),
+        config.settings.customer.lastName.orEmpty(),
+        config.settings.customer.email.orEmpty(),
+        config.settings.customer.billingAddress?.line1.orEmpty(),
+        config.settings.customer.billingAddress?.city.orEmpty(),
+        config.settings.customer.billingAddress?.postalCode.orEmpty(),
+        config.settings.customer.billingAddress?.country.orEmpty(),
     )
 }

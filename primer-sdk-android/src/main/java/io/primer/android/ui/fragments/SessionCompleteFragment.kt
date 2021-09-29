@@ -1,6 +1,5 @@
 package io.primer.android.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,10 +9,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.CheckoutExitReason
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
 private const val SESSION_COMPLETE_DISMISS_DELAY_KEY = "SUCCESS_FRAGMENT_DISMISS_DELAY"
 private const val SESSION_COMPLETE_DISMISS_DELAY_DEFAULT = 3000L
@@ -33,19 +36,13 @@ sealed class SessionCompleteViewType {
     class Error(val errorType: ErrorType) : SessionCompleteViewType()
 }
 
-class SessionCompleteFragment : Fragment() {
+@KoinApiExtension
+class SessionCompleteFragment : Fragment(), DIAppComponent {
 
-    private var delay: Long? = null
-    private var isError: Boolean = false
-    private var message: String? = null
+    private val theme: PrimerTheme by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            delay = it.getLong(SESSION_COMPLETE_DISMISS_DELAY_KEY)
-            isError = it.getBoolean(SESSION_COMPLETE_IS_ERROR_KEY)
-            message = it.getString(SESSION_COMPLETE_MESSAGE_KEY)
-        }
     }
 
     override fun onCreateView(
@@ -61,9 +58,14 @@ class SessionCompleteFragment : Fragment() {
 
         val messageLabel = view.findViewById<TextView>(R.id.session_complete_message)
 
-        messageLabel.text = message
+        messageLabel.text = arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
+            messageLabel.context.getString(it)
+        }
 
-        if (isError) {
+        val textColor = theme.titleText.defaultColor.getColor(requireContext())
+        messageLabel.setTextColor(textColor)
+
+        if (arguments?.getBoolean(SESSION_COMPLETE_IS_ERROR_KEY) == true) {
             val icon = view.findViewById<ImageView>(R.id.session_complete_icon)
             icon.setImageResource(R.drawable.ic_error)
         }
@@ -72,57 +74,48 @@ class SessionCompleteFragment : Fragment() {
             {
                 EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
             },
-            delay ?: SESSION_COMPLETE_DISMISS_DELAY_DEFAULT
+            arguments?.getLong(SESSION_COMPLETE_DISMISS_DELAY_KEY)
+                ?: SESSION_COMPLETE_DISMISS_DELAY_DEFAULT
         )
     }
 
     companion object {
 
-        private fun getSuccessMessage(successType: SuccessType, context: Context): String {
+        private fun getSuccessMessage(successType: SuccessType): Int {
             return when (successType) {
-                SuccessType.DEFAULT ->
-                    context.getString(R.string.success_text)
-                SuccessType.VAULT_TOKENIZATION_SUCCESS ->
-                    context.getString(R.string.payment_method_added_message)
-                SuccessType.PAYMENT_SUCCESS ->
-                    context.getString(R.string.payment_request_completed_successfully)
+                SuccessType.DEFAULT -> R.string.success_text
+                SuccessType.VAULT_TOKENIZATION_SUCCESS -> R.string.payment_method_added_message
+                SuccessType.PAYMENT_SUCCESS -> R.string.payment_request_completed_successfully
             }
         }
 
-        private fun getErrorMessage(errorType: ErrorType, context: Context): String {
+        private fun getErrorMessage(errorType: ErrorType): Int {
             return when (errorType) {
-                ErrorType.DEFAULT ->
-                    context.getString(R.string.error_default)
-                ErrorType.VAULT_TOKENIZATION_FAILED ->
-                    context.getString(R.string.payment_method_not_added_message)
-                ErrorType.PAYMENT_FAILED ->
-                    context.getString(R.string.payment_request_unsuccessful)
+                ErrorType.DEFAULT -> R.string.error_default
+                ErrorType.VAULT_TOKENIZATION_FAILED -> R.string.payment_method_not_added_message
+                ErrorType.PAYMENT_FAILED -> R.string.payment_request_unsuccessful
             }
         }
 
         fun newInstance(delay: Int, viewType: SessionCompleteViewType): SessionCompleteFragment {
             return SessionCompleteFragment().apply {
                 arguments = Bundle().apply {
-
-                    context?.let {
-                        when (viewType) {
-                            is SessionCompleteViewType.Error -> {
-                                putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, true)
-                                putString(
-                                    SESSION_COMPLETE_MESSAGE_KEY,
-                                    getErrorMessage(viewType.errorType, it),
-                                )
-                            }
-                            is SessionCompleteViewType.Success -> {
-                                putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, false)
-                                putString(
-                                    SESSION_COMPLETE_MESSAGE_KEY,
-                                    getSuccessMessage(viewType.successType, it),
-                                )
-                            }
+                    when (viewType) {
+                        is SessionCompleteViewType.Error -> {
+                            putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, true)
+                            putInt(
+                                SESSION_COMPLETE_MESSAGE_KEY,
+                                getErrorMessage(viewType.errorType),
+                            )
+                        }
+                        is SessionCompleteViewType.Success -> {
+                            putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, false)
+                            putInt(
+                                SESSION_COMPLETE_MESSAGE_KEY,
+                                getSuccessMessage(viewType.successType),
+                            )
                         }
                     }
-
                     putLong(SESSION_COMPLETE_DISMISS_DELAY_KEY, delay.toLong())
                 }
             }

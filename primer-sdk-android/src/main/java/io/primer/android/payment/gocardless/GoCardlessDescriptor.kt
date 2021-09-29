@@ -3,11 +3,13 @@ package io.primer.android.payment.gocardless
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import io.primer.android.PrimerTheme
 import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
@@ -22,7 +24,8 @@ internal class GoCardlessDescriptor(
     val options: GoCardless,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
-    private val checkoutConfig: CheckoutConfig by inject()
+    private val localConfig: PrimerConfig by inject()
+    private val theme: PrimerTheme by inject()
 
     override val identifier: String
         get() = GOCARDLESS_IDENTIFIER
@@ -30,7 +33,7 @@ internal class GoCardlessDescriptor(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             GoCardlessViewFragment::newInstance,
-            returnToPreviousOnBack = !checkoutConfig.isStandalonePaymentMethod
+            returnToPreviousOnBack = !localConfig.isStandalonePaymentMethod
         )
 
     override val type: PaymentMethodType
@@ -39,10 +42,15 @@ internal class GoCardlessDescriptor(
     override val vaultCapability: VaultCapability
         get() = VaultCapability.VAULT_ONLY
 
-    override fun createButton(container: ViewGroup): View =
-        LayoutInflater.from(container.context).inflate(
+    override fun createButton(container: ViewGroup): View {
+        val button = LayoutInflater.from(container.context).inflate(
             R.layout.payment_method_button_direct_debit,
             container,
             false
         )
+        val text = button.findViewById<TextView>(R.id.direct_debit_button_text)
+        text.setTextColor(theme.paymentMethodButton.text.defaultColor.getColor(container.context))
+
+        return button
+    }
 }

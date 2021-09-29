@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.BuildConfig
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.ChallengePreference
 import io.primer.android.threeds.data.models.ResponseCode
@@ -25,7 +25,7 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
-    private val checkoutConfig: CheckoutConfig,
+    private val config: PrimerConfig,
 ) : ViewModel() {
 
     private val _threeDsInitEvent = MutableLiveData<Unit>()
@@ -43,13 +43,13 @@ internal class ThreeDsViewModel(
 
     fun startThreeDsFlow() {
         viewModelScope.launch {
-            threeDsInteractor.validate(ThreeDsConfigParams(checkoutConfig))
+            threeDsInteractor.validate(ThreeDsConfigParams(config))
                 .catch { _threeDsFinishedEvent.postValue(Unit) }.collect {
                     threeDsInteractor.initialize(
                         ThreeDsInitParams(
-                            checkoutConfig.debugOptions?.is3DSSanityCheckEnabled
+                            config.settings.options.debugOptions?.is3DSSanityCheckEnabled
                                 ?: BuildConfig.DEBUG.not(),
-                            checkoutConfig.locale
+                            config.settings.options.locale
                         )
                     ).catch {
                         _threeDsFinishedEvent.postValue(Unit)
@@ -70,7 +70,7 @@ internal class ThreeDsViewModel(
                     threeDsInteractor.beginRemoteAuth(
                         ThreeDsParams(
                             transaction.authenticationRequestParameters,
-                            checkoutConfig,
+                            config,
                             protocolVersion,
                             ChallengePreference.REQUESTED_DUE_TO_MANDATE
                         )

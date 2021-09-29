@@ -38,7 +38,7 @@
         android:id="@+id/saved_payment_method_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:layout_marginTop="@dimen/primer_list_margin"
         android:layout_marginEnd="@dimen/small_padding"
         android:text="@string/saved_payment_methods"
         android:textColor="@color/primer_text_color_muted"
@@ -53,7 +53,6 @@
         android:fontFamily="@font/roboto_medium"
         android:text="@string/manage"
         android:textAllCaps="true"
-        android:textColor="@color/primer_button_primary"
         app:layout_constraintBaseline_toBaselineOf="@id/saved_payment_method_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/saved_payment_method_label" />
@@ -63,7 +62,7 @@
         layout="@layout/payment_method_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:layout_marginTop="@dimen/primer_list_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/saved_payment_method_label" />
@@ -117,11 +116,10 @@
         android:id="@+id/primer_sheet_payment_methods_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_vertical_margin"
         android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

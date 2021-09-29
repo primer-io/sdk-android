@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
@@ -15,7 +15,7 @@ import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
 internal class KlarnaDescriptor constructor(
-    val checkoutConfig: CheckoutConfig,
+    val localConfig: PrimerConfig,
     val options: Klarna,
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {

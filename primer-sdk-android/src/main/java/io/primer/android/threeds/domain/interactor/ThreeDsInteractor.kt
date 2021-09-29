@@ -2,10 +2,14 @@ package io.primer.android.threeds.domain.interactor
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import io.primer.android.completion.ResumeHandlerFactory
+import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
-import io.primer.android.logging.Logger
+import io.primer.android.extensions.toResumeErrorEvent
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
@@ -25,12 +29,10 @@ import io.primer.android.threeds.domain.respository.ThreeDsConfigurationReposito
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
 import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator
 import io.primer.android.threeds.helpers.ProtocolVersion
-import io.primer.android.ui.fragments.ErrorType
-import io.primer.android.ui.fragments.SuccessType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 
@@ -69,28 +71,25 @@ internal class DefaultThreeDsInteractor(
     private val threeDsServiceRepository: ThreeDsServiceRepository,
     private val threeDsRepository: ThreeDsRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
+    private val clientTokenRepository: ClientTokenRepository,
     private val threeDsAppUrlRepository: ThreeDsAppUrlRepository,
     private val threeDsConfigurationRepository: ThreeDsConfigurationRepository,
     private val threeDsConfigValidator: ThreeDsConfigValidator,
+    private val resumeHandlerFactory: ResumeHandlerFactory,
     private val eventDispatcher: EventDispatcher,
-    private val logger: Logger,
+    private val logger: DefaultLogger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ThreeDsInteractor {
 
     override suspend fun validate(threeDsConfigParams: ThreeDsConfigParams) =
         threeDsConfigValidator.validate(threeDsConfigParams).doOnError {
-            dispatchEvents(
-                paymentMethodRepository.getPaymentMethod()
-                    .setClientThreeDsError(
-                        it.message.orEmpty()
-                    )
-            )
+            handleErrorEvent(it)
         }
 
     override suspend fun initialize(
         threeDsInitParams: ThreeDsInitParams,
     ) =
-        threeDsConfigurationRepository.getConfiguration().flatMapConcat { keys ->
+        threeDsConfigurationRepository.getConfiguration().flatMapLatest { keys ->
             threeDsServiceRepository.initializeProvider(
                 threeDsInitParams.is3DSSanityCheckEnabled,
                 threeDsInitParams.locale,
@@ -99,10 +98,7 @@ internal class DefaultThreeDsInteractor(
         }.flowOn(dispatcher)
             .doOnError {
                 logger.warn(PRIMER_3DS_INIT_ERROR)
-                dispatchEvents(
-                    paymentMethodRepository.getPaymentMethod()
-                        .setClientThreeDsError(it.message.orEmpty())
-                )
+                handleErrorEvent(it)
             }
 
     override fun authenticateSdk(
@@ -116,11 +112,7 @@ internal class DefaultThreeDsInteractor(
             protocolVersion
         ).flowOn(dispatcher)
             .doOnError {
-                dispatchEvents(
-                    paymentMethodRepository.getPaymentMethod().setClientThreeDsError(
-                        it.message.orEmpty()
-                    )
-                )
+                handleErrorEvent(it)
             }
 
     override fun beginRemoteAuth(
@@ -132,13 +124,10 @@ internal class DefaultThreeDsInteractor(
         ).flowOn(dispatcher).onEach {
             // we mark flow ended and send results if there is no challenge
             if (it.authentication.responseCode != ResponseCode.CHALLENGE) {
-                dispatchEvents(it.token)
+                handleAuthEvent(it.token, it.resumeToken)
             }
         }.doOnError {
-            dispatchEvents(
-                paymentMethodRepository.getPaymentMethod()
-                    .setClientThreeDsError(it.message.orEmpty())
-            )
+            handleErrorEvent(it)
         }
 
     override fun performChallenge(
@@ -153,18 +142,14 @@ internal class DefaultThreeDsInteractor(
             threeDsAppUrlRepository.getAppUrl(transaction)
         )
             .doOnError {
-                dispatchEvents(
-                    authResponse.token.setClientThreeDsError(
-                        it.message.orEmpty()
-                    )
-                )
+                handleErrorEvent(it)
             }
 
     override fun continueRemoteAuth(sdkTokenId: String) =
         threeDsRepository.continue3DSAuth(sdkTokenId)
             .flowOn(dispatcher)
-            .onEach { dispatchEvents(it.token) }
-            .doOnError { dispatchEvents(paymentMethodRepository.getPaymentMethod()) }
+            .onEach { handleAuthEvent(it.token, it.resumeToken) }
+            .doOnError { handleErrorEvent(it) }
 
     override fun cleanup() =
         try {
@@ -172,12 +157,40 @@ internal class DefaultThreeDsInteractor(
         } catch (_: Exception) {
         }
 
-    private fun dispatchEvents(token: PaymentMethodTokenInternal) {
+    private fun handleAuthEvent(token: PaymentMethodTokenInternal, resumeToken: String? = null) {
+        when (clientTokenRepository.getClientTokenIntent()) {
+            ClientTokenIntent.`3DS_AUTHENTICATION` -> {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.ResumeSuccess(
+                        resumeToken.orEmpty(),
+                        resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType)
+                    )
+                )
+            }
+            else -> dispatchTokenEvents(token)
+        }
+    }
+
+    private fun handleErrorEvent(throwable: Throwable) {
+        when (clientTokenRepository.getClientTokenIntent()) {
+            ClientTokenIntent.`3DS_AUTHENTICATION` -> {
+                eventDispatcher.dispatchEvent(
+                    throwable.toResumeErrorEvent(throwable.message.orEmpty())
+                )
+            }
+            else -> dispatchTokenEvents(
+                paymentMethodRepository.getPaymentMethod()
+                    .setClientThreeDsError(throwable.message.orEmpty())
+            )
+        }
+    }
+
+    private fun dispatchTokenEvents(token: PaymentMethodTokenInternal) {
         val externalToken = PaymentMethodTokenAdapter.internalToExternal(token)
         val events = mutableListOf<CheckoutEvent>(
             CheckoutEvent.TokenizationSuccess(
                 externalToken,
-                ::completionHandler
+                resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType)
             )
         )
         if (token.tokenType == TokenType.MULTI_USE) {
@@ -186,23 +199,9 @@ internal class DefaultThreeDsInteractor(
         eventDispatcher.dispatchEvents(events)
     }
 
-    private fun completionHandler(error: Error?) {
-        if (error == null) {
-            eventDispatcher.dispatchEvents(
-                listOf(CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS))
-            )
-        } else {
-            eventDispatcher.dispatchEvents(
-                listOf(
-                    CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED)
-                )
-            )
-        }
-    }
-
     companion object {
 
-        const val PRIMER_3DS_INIT_ERROR = "Cannot perform 3DS. Continue without 3DS. " +
+        const val PRIMER_3DS_INIT_ERROR = "Cannot perform 3DS. Continue without 3DS." +
             "Please check debug options in order to run 3DS in debug mode."
     }
 }

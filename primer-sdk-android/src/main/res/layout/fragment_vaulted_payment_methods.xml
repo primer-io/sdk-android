@@ -16,36 +16,37 @@
         <ImageButton
             android:id="@+id/vaulted_payment_methods_go_back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|start"
             android:background="@drawable/icon_button"
             android:contentDescription="@string/go_back_description"
             android:scaleType="fitCenter"
             android:src="@drawable/icon_go_back" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="32dp"
-            android:layout_weight="1"
-            android:paddingEnd="11dp">
+            android:layout_marginStart="16dp"
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/vault_title_label"
                 style="@style/Primer.Text.Title.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
                 android:layout_weight="1"
                 android:text="@string/other_ways_to_pay" />
 
-            <Button
+            <TextView
                 android:id="@+id/edit_vaulted_payment_methods"
-                style="@style/Primer.Button.Text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/roboto_medium"
                 android:gravity="center_vertical|end"
-                android:text="@string/edit" />
+                android:text="@string/edit"
+                android:textAllCaps="true"/>
         </LinearLayout>
     </LinearLayout>
 

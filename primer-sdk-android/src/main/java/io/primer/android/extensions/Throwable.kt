@@ -20,3 +20,12 @@ internal fun Throwable.toTokenizationErrorEvent(message: String? = null) =
         is IOException -> CheckoutEvent.TokenizationError(APIError.create(this))
         else -> CheckoutEvent.TokenizationError(APIError.createDefault())
     }
+
+internal fun Throwable.toResumeErrorEvent(message: String? = null) =
+    if (message.isNullOrBlank().not()) {
+        CheckoutEvent.ResumeError(APIError.createDefaultWithMessage(message.orEmpty()))
+    } else when (this) {
+        is HttpException -> CheckoutEvent.ResumeError(error)
+        is IOException -> CheckoutEvent.ResumeError(APIError.create(this))
+        else -> CheckoutEvent.ResumeError(APIError.createDefault())
+    }

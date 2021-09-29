@@ -1,7 +1,7 @@
 package io.primer.android
 
 import android.net.Uri
-import io.primer.android.logging.Logger
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
 import java.util.UUID
@@ -20,7 +20,7 @@ internal class WebviewInteropRegister {
     @KoinApiExtension
     companion object {
 
-        private val log = Logger("WebviewInteropActivity")
+        private val log = DefaultLogger("WebviewInteropActivity")
         private val callbacks: MutableMap<String, Callback> = mutableMapOf()
         private lateinit var scheme: String
 

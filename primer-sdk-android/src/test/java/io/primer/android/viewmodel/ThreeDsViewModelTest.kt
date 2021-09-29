@@ -11,7 +11,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode
@@ -37,7 +37,7 @@ class ThreeDsViewModelTest {
     internal lateinit var threeDsInteractor: ThreeDsInteractor
 
     @RelaxedMockK
-    internal lateinit var checkoutConfig: CheckoutConfig
+    internal lateinit var checkoutConfig: PrimerConfig
 
     private lateinit var viewModel: ThreeDsViewModel
 

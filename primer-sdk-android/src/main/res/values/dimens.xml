@@ -3,8 +3,6 @@
     <dimen name="primer_checkout_sheet_padding_vert">22dp</dimen>
     <dimen name="primer_checkout_sheet_padding_horiz">14dp</dimen>
 
-    <dimen name="primer_corner_radius">6dp</dimen>
-    <dimen name="primer_border_width">1dp</dimen>
     <dimen name="primer_list_margin">16dp</dimen>
 
 
@@ -32,7 +30,7 @@
     <dimen name="medium_padding">8dp</dimen>
     <dimen name="medium_large_padding">10dp</dimen>
 
-    <dimen name="medium_vertical_margin">8dp</dimen>
+    <dimen name="medium_vertical_margin">4dp</dimen>
     <dimen name="large_vertical_margin">16dp</dimen>
     <dimen name="xl_vertical_margin">24dp</dimen>
     <dimen name="xxl_vertical_margin">28dp</dimen>
@@ -42,5 +40,36 @@
 
     <!-- Pay Button -->
     <dimen name="pay_button_height">40dp</dimen>
-    <dimen name="pay_button_radius">2dp</dimen>
+
+    <dimen name="primer_underlined_input_padding_top">16dp</dimen>
+    <dimen name="primer_underlined_input_padding_horizontal">12dp</dimen>
+    <dimen name="primer_underlined_input_padding_bottom">4dp</dimen>
+    <dimen name="primer_pay_button_height">40dp</dimen>
+
+    <!-- PRIMER THEME -->
+    <dimen name="primer_default_border_width">1dp</dimen>
+    <dimen name="primer_default_corner_radius">6dp</dimen>
+    <dimen name="primer_bottom_sheet_corner_radius">24dp</dimen>
+
+    <!-- text -->
+    <dimen name="primer_default_fontsize">18sp</dimen>
+    <dimen name="primer_title_fontsize">20sp</dimen>
+    <dimen name="primer_amount_label_fontsize">34sp</dimen>
+    <dimen name="primer_subtitle_fontsize">14sp</dimen>
+    <dimen name="primer_system_text_fontsize">@dimen/primer_subtitle_fontsize</dimen>
+
+    <!--  custom colors for payment method buttons in universal checkout -->
+    <dimen name="primer_payment_method_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_payment_method_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
+    <dimen name="primer_payment_method_button_border_width">1dp</dimen>
+
+    <!--  custom colors for main buttons ("PAY", "NEXT", etc.) in universal checkout -->
+    <dimen name="primer_main_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_main_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
+    <dimen name="primer_main_button_border_width">0dp</dimen>
+
+    <!--  custom colors for text inputs in universal checkout -->
+    <dimen name="primer_input_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_input_fontsize">@dimen/primer_default_fontsize</dimen>
+    <dimen name="primer_input_border_width">1dp</dimen>
 </resources>

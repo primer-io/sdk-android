@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
@@ -14,7 +14,7 @@ import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PaymentMethodChecker
 
 internal class GooglePayDescriptor constructor(
-    val checkoutConfig: CheckoutConfig,
+    val localConfig: PrimerConfig,
     val options: GooglePay,
     val googlePayFacade: GooglePayFacade,
     paymentMethodChecker: PaymentMethodChecker,

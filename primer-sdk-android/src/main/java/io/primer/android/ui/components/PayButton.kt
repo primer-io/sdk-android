@@ -3,17 +3,14 @@ package io.primer.android.ui.components
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.UniversalCheckoutTheme
 import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.ui.PayAmountText
 
@@ -26,7 +23,7 @@ class PayButton @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val button: Button
+    private val button: MaterialButton
     private val progressIndicator: CircularProgressIndicator
 
     var text: CharSequence?
@@ -66,7 +63,8 @@ class PayButton @JvmOverloads constructor(
         button.isEnabled = enabled
     }
 
-    override fun isEnabled(): Boolean = button.isEnabled
+    override fun isEnabled(): Boolean =
+        button.isEnabled
 
     @SuppressLint("ClickableViewAccessibility")
     override fun performClick(): Boolean =
@@ -88,38 +86,17 @@ class PayButton @JvmOverloads constructor(
             .start()
     }
 
-    fun hideProgress() {
-        progressIndicator
-            .animate()
-            .alpha(1f)
-            .setDuration(FADE_OUT_DURATION_MS)
-            .withEndAction { progressIndicator.isVisible = false }
-            .start()
-        button.text = notLoadingText
-        button.isEnabled = true
-    }
-
-    // copied over from ButtonPrimary, should be reworked alongside UniversalCheckoutTheme
-    fun setTheme(theme: UniversalCheckoutTheme) {
-        val buttonColor = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_pressed)),
-            intArrayOf(Color.parseColor("#FFFFFFFF")),
-        )
-        val content = GradientDrawable().apply {
-            cornerRadius = theme.buttonCornerRadius
-            color = ColorStateList(
-                arrayOf(
-                    intArrayOf(android.R.attr.state_enabled),
-                    intArrayOf(-android.R.attr.state_enabled)
-                ),
-                intArrayOf(
-                    theme.buttonPrimaryColor,
-                    theme.buttonPrimaryColorDisabled,
-                    theme.buttonPrimaryColor
-                )
-            )
-            setStroke(1, theme.buttonDefaultBorderColor)
-        }
-        button.background = RippleDrawable(buttonColor, content, null)
+    fun setTheme(theme: PrimerTheme) {
+        val enabledStates = intArrayOf(android.R.attr.state_enabled)
+        val disabledStates = intArrayOf(-android.R.attr.state_enabled)
+        val states = arrayOf(enabledStates, disabledStates)
+        val enabledColor = theme.mainButton.defaultColor.getColor(context)
+        val disabledColor = theme.mainButton.disabledColor.getColor(context)
+        val colors = intArrayOf(enabledColor, disabledColor)
+        val strokeColor = theme.mainButton.border.defaultColor.getColor(context)
+        button.cornerRadius = theme.mainButton.cornerRadius.getPixels(context)
+        button.strokeWidth = theme.mainButton.border.width.getPixels(context)
+        button.strokeColor = ColorStateList.valueOf(strokeColor)
+        button.backgroundTintList = ColorStateList(states, colors)
     }
 }

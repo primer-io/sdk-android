@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.R
-import io.primer.android.UXMode
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodType
@@ -22,13 +22,13 @@ internal class PayPalDescriptor constructor(
     private val options: PayPal,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
-    private val checkoutConfig: CheckoutConfig by inject()
+    private val localConfig: PrimerConfig by inject()
 
     override val identifier: String
         get() = PAYPAL_IDENTIFIER
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (checkoutConfig.uxMode == UXMode.VAULT) {
+        get() = if (localConfig.paymentMethodIntent == PaymentMethodIntent.VAULT) {
             PayPalBillingAgreementBehaviour(this)
         } else {
             PayPalOrderBehaviour(this)

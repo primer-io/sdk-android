@@ -3,6 +3,7 @@ package io.primer.android.payment.gocardless
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
@@ -35,8 +36,8 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddress
 class GoCardlessViewFragment : FormFragment() {
 
     private lateinit var viewModel: FormViewModel
-    private lateinit var primerViewModel: PrimerViewModel
-    private lateinit var tokenizationViewModel: TokenizationViewModel
+    private val primerViewModel: PrimerViewModel by activityViewModels()
+    private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
     private var readyToTokenize = false
 
     private val options: GoCardless
@@ -47,8 +48,6 @@ class GoCardlessViewFragment : FormFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(FormViewModel::class.java)
-        primerViewModel = PrimerViewModel.getInstance(requireActivity())
-        tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
 
         showFormScene(
             IBANViewState(
@@ -111,17 +110,18 @@ class GoCardlessViewFragment : FormFragment() {
             return
         }
 
-        val hasName = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME).isNotEmpty()
-        val hasEmail = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_EMAIL).isNotEmpty()
+        val hasIban = viewModel.getValue(DD_FIELD_NAME_IBAN).isNotBlank()
+        val hasName = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME).isNotBlank()
+        val hasEmail = viewModel.getValue(DD_FIELD_NAME_CUSTOMER_EMAIL).isNotBlank()
         val hasAddress =
-            viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1).isNotEmpty() &&
-                viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY).isNotEmpty() &&
-                viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE).isNotEmpty() &&
-                viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE).isNotEmpty()
+            viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1).isNotBlank() &&
+                viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY).isNotBlank() &&
+                viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE).isNotBlank() &&
+                viewModel.getValue(DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE).isNotBlank()
 
         var nextScene = scene
 
-        if (nextScene == GoCardlessFormSceneState.Scene.IBAN) {
+        if (nextScene == GoCardlessFormSceneState.Scene.IBAN && hasIban) {
             nextScene = GoCardlessFormSceneState.Scene.CUSTOMER_NAME
         }
 
@@ -140,14 +140,17 @@ class GoCardlessViewFragment : FormFragment() {
         if (nextScene == GoCardlessFormSceneState.Scene.SUMMARY) {
             readyToTokenize = true
         }
-
-        when (nextScene) {
-            GoCardlessFormSceneState.Scene.CUSTOMER_NAME -> showCustomerNameView(R.string.next)
-            GoCardlessFormSceneState.Scene.CUSTOMER_EMAIL -> showCustomerEmailView(R.string.next)
-            GoCardlessFormSceneState.Scene.ADDRESS -> showAddressView(R.string.next)
-            GoCardlessFormSceneState.Scene.SUMMARY -> showSummaryView()
-            else -> {
-                // ??
+        if (nextScene != scene) {
+            when (nextScene) {
+                GoCardlessFormSceneState.Scene.CUSTOMER_NAME -> showCustomerNameView(R.string.next)
+                GoCardlessFormSceneState.Scene.CUSTOMER_EMAIL -> showCustomerEmailView(
+                    R.string.next
+                )
+                GoCardlessFormSceneState.Scene.ADDRESS -> showAddressView(R.string.next)
+                GoCardlessFormSceneState.Scene.SUMMARY -> showSummaryView()
+                else -> {
+                    // ??
+                }
             }
         }
     }

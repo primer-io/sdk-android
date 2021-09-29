@@ -17,7 +17,6 @@ internal data class RecurringApayaBehaviour constructor(
         apaya.config.let { config ->
             tokenizationViewModel?.getApayaToken(
                 config.options?.merchantAccountId.orEmpty(),
-                apaya.options.mobilePhone.orEmpty()
             )
         }
     }

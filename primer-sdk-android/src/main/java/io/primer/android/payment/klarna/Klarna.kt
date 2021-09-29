@@ -19,7 +19,7 @@ import kotlinx.serialization.modules.polymorphic
 data class Klarna(
     val orderDescription: String? = null,
     val orderItems: List<OrderItem> = emptyList(),
-    val webViewTitle: String = "Klarna",
+    val webViewTitle: String? = "Klarna",
 ) : PaymentMethod {
 
     override val identifier: String = KLARNA_IDENTIFIER

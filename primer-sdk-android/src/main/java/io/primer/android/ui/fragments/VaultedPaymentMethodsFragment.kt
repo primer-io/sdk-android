@@ -1,18 +1,23 @@
 package io.primer.android.ui.fragments
 
 import android.app.AlertDialog
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.AlternativePaymentMethodType
@@ -22,17 +27,21 @@ import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
 const val DEFAULT_LAST_FOUR: Int = 1234
 const val DEFAULT_MONTH: Int = 1
 const val DEFAULT_YEAR: Int = 2021
 
 @KoinApiExtension
-class VaultedPaymentMethodsFragment : Fragment() {
+class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
-    private lateinit var viewModel: PrimerViewModel
-    private lateinit var tokenizationViewModel: TokenizationViewModel
+    private val theme: PrimerTheme by inject()
+
+    private val viewModel: PrimerViewModel by activityViewModels()
+    private val tokenizationViewModel: TokenizationViewModel by viewModel()
 
     // FIXME replace with view binding
     private lateinit var readOnlyHeaderLinearLayout: ViewGroup
@@ -57,7 +66,7 @@ class VaultedPaymentMethodsFragment : Fragment() {
         }
 
     private var adapter: VaultedPaymentMethodRecyclerAdapter =
-        VaultedPaymentMethodRecyclerAdapter(::onClickWith)
+        VaultedPaymentMethodRecyclerAdapter(::onClickWith, theme)
 
     private fun configureRecyclerView(view: View, paymentMethods: List<PaymentMethodItemData>) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.vault_recycler_view)
@@ -74,57 +83,56 @@ class VaultedPaymentMethodsFragment : Fragment() {
 
     private fun generateItemDataFromPaymentMethods(
         paymentMethods: List<PaymentMethodTokenInternal>,
-    ): List<PaymentMethodItemData> = paymentMethods.map {
-        when (it.paymentInstrumentType) {
-            "KLARNA_CUSTOMER_TOKEN" -> {
-                val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
-                AlternativePaymentMethodData(
-                    email ?: "Klarna Payment Method",
-                    it.token,
-                    AlternativePaymentMethodType.Klarna,
-                )
-            }
-            "PAYPAL_BILLING_AGREEMENT" -> {
-                val title = it.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
-                AlternativePaymentMethodData(title, it.token, AlternativePaymentMethodType.PayPal)
-            }
-            "GOCARDLESS_MANDATE" -> {
-                AlternativePaymentMethodData(
-                    "Direct Debit Mandate",
-                    it.token,
-                    AlternativePaymentMethodType.DirectDebit,
-                )
-            }
-            "PAYMENT_CARD" -> {
-                val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
-                val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
-                val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
-                val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
-                val network = it.paymentInstrumentData?.network ?: "unknown"
-                CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
-            }
-            else -> {
-                AlternativePaymentMethodData(
-                    "saved payment method",
-                    it.token,
-                    AlternativePaymentMethodType.Generic,
-                )
+    ): List<PaymentMethodItemData> =
+        paymentMethods.map {
+            when (it.paymentInstrumentType) {
+                "KLARNA_CUSTOMER_TOKEN" -> {
+                    val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
+                    AlternativePaymentMethodData(
+                        email ?: "Klarna Payment Method",
+                        it.token,
+                        AlternativePaymentMethodType.Klarna,
+                    )
+                }
+                "PAYPAL_BILLING_AGREEMENT" -> {
+                    val title = it.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
+                    AlternativePaymentMethodData(
+                        title,
+                        it.token,
+                        AlternativePaymentMethodType.PayPal,
+                    )
+                }
+                "GOCARDLESS_MANDATE" -> {
+                    AlternativePaymentMethodData(
+                        "Direct Debit Mandate",
+                        it.token,
+                        AlternativePaymentMethodType.DirectDebit,
+                    )
+                }
+                "PAYMENT_CARD" -> {
+                    val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
+                    val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
+                    val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
+                    val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
+                    val network = it.paymentInstrumentData?.network ?: "unknown"
+                    CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
+                }
+                else -> {
+                    AlternativePaymentMethodData(
+                        "saved payment method",
+                        it.token,
+                        AlternativePaymentMethodType.Generic,
+                    )
+                }
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = PrimerViewModel.getInstance(requireActivity())
-        tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? = inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
+    ): View? =
+        inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
 
     private fun onClickWith(id: String, action: VaultViewAction) {
         when (action) {
@@ -157,14 +165,16 @@ class VaultedPaymentMethodsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vaultTitleLabel = view.findViewById<TextView>(R.id.vault_title_label)
-        editLabel = view.findViewById<TextView>(R.id.edit_vaulted_payment_methods)
+        vaultTitleLabel = view.findViewById(R.id.vault_title_label)
+
+        vaultTitleLabel.setTextColor(theme.titleText.defaultColor.getColor(requireContext()))
 
         readOnlyHeaderLinearLayout = view.findViewById(
             R.id.primer_view_vaulted_payment_methods_header
         )
 
         editHeaderLinearLayout = view.findViewById(R.id.primer_edit_vaulted_payment_methods_header)
+        renderEditLabel(view)
 
         viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { data ->
 
@@ -178,13 +188,26 @@ class VaultedPaymentMethodsFragment : Fragment() {
             configureRecyclerView(view, generateItemDataFromPaymentMethods(paymentMethods))
         }
 
-        view.findViewById<View>(R.id.vaulted_payment_methods_go_back).setOnClickListener {
+        val iconButton = view.findViewById<ImageButton>(R.id.vaulted_payment_methods_go_back)
+        iconButton.setOnClickListener {
             viewModel.goToSelectPaymentMethodsView()
         }
+        iconButton.imageTintList = ColorStateList.valueOf(
+            theme.titleText.defaultColor.getColor(requireContext())
+        )
 
-        view.findViewById<Button>(R.id.edit_vaulted_payment_methods).setOnClickListener {
+        view.findViewById<TextView>(R.id.edit_vaulted_payment_methods).setOnClickListener {
             isEditing = !isEditing
         }
+    }
+
+    private fun renderEditLabel(view: View) {
+        editLabel = view.findViewById(R.id.edit_vaulted_payment_methods)
+        editLabel.setTextColor(theme.systemText.defaultColor.getColor(requireContext()))
+        editLabel.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            theme.systemText.fontsize.getDimension(requireContext()),
+        )
     }
 
     companion object {

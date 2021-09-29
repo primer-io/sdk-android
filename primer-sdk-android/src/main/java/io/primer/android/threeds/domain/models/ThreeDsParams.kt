@@ -1,7 +1,7 @@
 package io.primer.android.threeds.domain.models
 
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.threeds.data.models.Address
 import io.primer.android.threeds.data.models.BeginAuthRequest
 import io.primer.android.threeds.data.models.ChallengePreference
@@ -32,26 +32,26 @@ internal data class ThreeDsParams(
 
     constructor(
         authenticationRequestParameters: AuthenticationRequestParameters,
-        checkoutConfig: CheckoutConfig,
+        config: PrimerConfig,
         protocolVersion: ProtocolVersion,
         challengePreference: ChallengePreference,
     ) : this(
         protocolVersion,
         challengePreference,
-        checkoutConfig.threeDsAmount.amount ?: 0,
-        checkoutConfig.threeDsAmount.currency.orEmpty(),
-        checkoutConfig.orderId.orEmpty(),
-        checkoutConfig.userDetails?.firstName.orEmpty(),
-        checkoutConfig.userDetails?.email.orEmpty(),
+        config.settings.order.amount ?: 0,
+        config.settings.order.currency.orEmpty(),
+        config.settings.order.id.orEmpty(),
+        config.settings.customer.firstName.orEmpty(),
+        config.settings.customer.email.orEmpty(),
         authenticationRequestParameters.sdkAppID.orEmpty(),
         authenticationRequestParameters.sdkTransactionID.orEmpty(),
         authenticationRequestParameters.deviceData.orEmpty(),
         authenticationRequestParameters.sdkEphemeralPublicKey.orEmpty(),
         authenticationRequestParameters.sdkReferenceNumber.orEmpty(),
-        checkoutConfig.userDetails?.addressLine1.orEmpty(),
-        checkoutConfig.userDetails?.city.orEmpty(),
-        checkoutConfig.userDetails?.postalCode.orEmpty(),
-        checkoutConfig.userDetails?.countryCode?.name.orEmpty(),
+        config.settings.customer.billingAddress?.line1.orEmpty(),
+        config.settings.customer.billingAddress?.city.orEmpty(),
+        config.settings.customer.billingAddress?.postalCode.orEmpty(),
+        config.settings.customer.billingAddress?.country.orEmpty(),
     )
 }
 

@@ -4,12 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import io.primer.android.PrimerTheme
 import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.R
-import io.primer.android.UXMode
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
@@ -37,7 +40,8 @@ internal class CreditCard(
     encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
 ) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent {
 
-    private val checkoutConfig: CheckoutConfig by inject()
+    private val checkoutConfig: PrimerConfig by inject()
+    private val theme: PrimerTheme by inject()
 
     // FIXME identifiers should not be needed to identify instances of a class
     override val identifier = PAYMENT_CARD_IDENTIFIER
@@ -57,11 +61,26 @@ internal class CreditCard(
             false
         )
         val text = button.findViewById<TextView>(R.id.card_preview_button_text)
+        val drawable = ContextCompat.getDrawable(
+            container.context,
+            R.drawable.credit_card_icon
+        )
 
-        text.text = when (checkoutConfig.uxMode) {
-            UXMode.CHECKOUT -> container.context.getString(R.string.pay_by_card)
-            UXMode.VAULT -> container.context.getString(R.string.credit_debit_card)
+        text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+
+        text.setTextColor(theme.paymentMethodButton.text.defaultColor.getColor(container.context))
+
+        text.text = when (checkoutConfig.paymentMethodIntent) {
+            PaymentMethodIntent.CHECKOUT -> container.context.getString(R.string.pay_by_card)
+            PaymentMethodIntent.VAULT -> container.context.getString(R.string.credit_debit_card)
         }
+
+        val icon = text.compoundDrawables
+
+        DrawableCompat.setTint(
+            DrawableCompat.wrap(icon[0]),
+            theme.paymentMethodButton.text.defaultColor.getColor(container.context)
+        )
 
         return button
     }

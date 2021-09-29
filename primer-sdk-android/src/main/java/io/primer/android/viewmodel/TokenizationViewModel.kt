@@ -5,8 +5,6 @@ import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
@@ -20,8 +18,8 @@ import io.primer.android.model.ApayaPaymentData
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
@@ -30,29 +28,21 @@ import io.primer.android.payment.klarna.KlarnaDescriptor
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.inject
 import java.util.Collections
 
 @KoinApiExtension // FIXME inject dependencies via ctor
-internal class TokenizationViewModel : ViewModel(), DIAppComponent {
-
-    companion object {
-
-        fun getInstance(owner: ViewModelStoreOwner): TokenizationViewModel {
-            return ViewModelProvider(owner).get(TokenizationViewModel::class.java)
-        }
-    }
+internal class TokenizationViewModel(
+    private val model: Model,
+    private val config: PrimerConfig,
+    private val tokenizationInteractor: TokenizationInteractor,
+    private val apayaInteractor: ApayaInteractor
+) : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
-
-    private val model: Model by inject()
-    private val checkoutConfig: CheckoutConfig by inject()
-    private val apayaInteractor: ApayaInteractor by inject()
-    private val tokenizationInteractor: TokenizationInteractor by inject()
 
     val submitted = MutableLiveData(false)
     val tokenizationStatus = MutableLiveData(TokenizationStatus.NONE)
@@ -98,10 +88,11 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
             tokenizationInteractor.tokenize(
                 TokenizationParams(
                     paymentMethod ?: return@launch,
-                    checkoutConfig.uxMode,
-                    checkoutConfig.is3DSAtTokenizationEnabled
+                    config.paymentMethodIntent,
+                    config.settings.options.is3DSOnVaultingEnabled
                 )
             )
+                .onStart { tokenizationStatus.postValue(TokenizationStatus.LOADING) }
                 .catch {
                     tokenizationStatus.postValue(TokenizationStatus.ERROR)
                 }
@@ -159,29 +150,20 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     // endregion
 
     // region KLARNA
+
+    private fun generateLocaleJson(): JSONObject = JSONObject().apply {
+        val countryCode = config.settings.order.countryCode?.toString()
+        val locale = config.settings.options.locale.toLanguageTag()
+        val currencyCode = config.settings.order.currency
+
+        put("countryCode", countryCode)
+        put("currencyCode", currencyCode)
+        put("localeCode", locale)
+    }
+
     fun createKlarnaPaymentSession(id: String, returnUrl: String, klarna: KlarnaDescriptor) {
         viewModelScope.launch {
-            val localeData = JSONObject().apply {
-
-                val countryCode = checkoutConfig.countryCode?.toString()
-                val locale = checkoutConfig.locale.toLanguageTag()
-                val currencyCode = checkoutConfig.monetaryAmount?.currency
-
-                put("countryCode", countryCode)
-                put("currencyCode", currencyCode)
-                put("localeCode", locale)
-            }
-
-            val orderItems = JSONArray().apply {
-                klarna.options.orderItems.forEach {
-                    val item = JSONObject().apply {
-                        put("name", it.name)
-                        put("unitAmount", it.unitAmount)
-                        put("quantity", it.quantity)
-                    }
-                    put(item)
-                }
-            }
+            val localeData = generateLocaleJson()
 
             // FIXME a klarna flow that is not recurring requires every url to start with https://
             val body = JSONObject().apply {
@@ -236,15 +218,7 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     }
 
     fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
-        val localeData = JSONObject().apply {
-            val countryCode = checkoutConfig.countryCode?.toString()
-            val locale = checkoutConfig.locale.toLanguageTag()
-            val currencyCode = checkoutConfig.monetaryAmount?.currency
-
-            put("countryCode", countryCode)
-            put("currencyCode", currencyCode)
-            put("localeCode", locale)
-        }
+        val localeData = generateLocaleJson()
 
         val body = JSONObject()
         val sessionId = klarnaPaymentData.value?.sessionId
@@ -312,8 +286,8 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
-        body.put("amount", checkoutConfig.monetaryAmount?.value)
-        body.put("currencyCode", checkoutConfig.monetaryAmount?.currency)
+        body.put("amount", config.settings.order.amount)
+        body.put("currencyCode", config.settings.order.currency)
         body.put("returnUrl", returnUrl)
         body.put("cancelUrl", cancelUrl)
 
@@ -354,14 +328,14 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
     // endregion
 
     // region Apaya
-    fun getApayaToken(merchantAccountId: String, mobilePhone: String) {
+    fun getApayaToken(merchantAccountId: String) {
         viewModelScope.launch {
             apayaInteractor.createClientSession(
                 ApayaSessionParams(
                     merchantAccountId,
-                    checkoutConfig.locale,
-                    checkoutConfig.currency.orEmpty(),
-                    mobilePhone
+                    config.settings.options.locale,
+                    config.settings.order.currency.orEmpty(),
+                    config.settings.customer.mobilePhone.orEmpty()
                 )
             ).collect { apayaPaymentData.postValue(it) }
         }
@@ -379,7 +353,10 @@ internal class TokenizationViewModel : ViewModel(), DIAppComponent {
                         setTokenizableValue("mcc", params.mcc)
                         setTokenizableValue("hashedIdentifier", params.hashedIdentifier)
                         setTokenizableValue("productId", apaya.config.options?.merchantId.orEmpty())
-                        setTokenizableValue("currencyCode", checkoutConfig.currency.orEmpty())
+                        setTokenizableValue(
+                            "currencyCode",
+                            localConfig.settings.order.currency.orEmpty()
+                        )
                     }
                 }
                 .collect {

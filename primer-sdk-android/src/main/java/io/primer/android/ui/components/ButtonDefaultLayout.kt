@@ -6,42 +6,38 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.widget.LinearLayout
-import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppComponent
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class ButtonDefaultLayout(ctx: Context, attrs: AttributeSet? = null) :
-    LinearLayout(ctx, attrs),
-    DIAppComponent {
+class ButtonDefaultLayout(
+    ctx: Context,
+    attrs: AttributeSet? = null,
+) : LinearLayout(ctx, attrs), DIAppComponent {
 
-    private val theme: UniversalCheckoutTheme by inject()
+    private val theme: PrimerTheme by inject()
 
     init {
-        background = RippleDrawable(
-            ColorStateList(
-                arrayOf(IntArray(0)),
-                IntArray(1) { theme.buttonDefaultBorderColor },
-            ),
-            GradientDrawable().apply {
-                cornerRadius = theme.buttonCornerRadius
-                color = ColorStateList(
-                    arrayOf(
-                        IntArray(1) { android.R.attr.state_enabled },
-                        IntArray(1) { -android.R.attr.state_enabled }
-                    ),
-                    IntArray(2) {
-                        when (it) {
-                            0 -> theme.buttonDefaultColor
-                            1 -> theme.buttonDefaultColorDisabled
-                            else -> theme.buttonDefaultColor
-                        }
-                    }
-                )
-                setStroke(1, theme.buttonDefaultBorderColor)
-            },
-            null
-        )
+        render()
+    }
+
+    private fun generateButtonContent(context: Context): GradientDrawable {
+        val content = GradientDrawable()
+        val strokeColor = theme.paymentMethodButton.border.defaultColor.getColor(context)
+        val width = theme.paymentMethodButton.border.width.getPixels(context)
+        content.setStroke(width, strokeColor)
+        val background = theme.paymentMethodButton.defaultColor.getColor(context)
+        content.color = ColorStateList.valueOf(background)
+        content.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
+        return content
+    }
+
+    private fun render() {
+        val content = generateButtonContent(context)
+        val splash = theme.splashColor.getColor(context)
+        val rippleColor = ColorStateList.valueOf(splash)
+        background = RippleDrawable(rippleColor, content, null)
     }
 }

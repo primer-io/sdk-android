@@ -4,448 +4,378 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import io.primer.android.data.session.datasource.LocalClientSessionDataSource
+import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
+import io.primer.android.extensions.toCheckoutErrorEvent
 import io.primer.android.model.Model
-import io.primer.android.model.OperationResult
 import io.primer.android.model.PrimerDebugOptions
+import io.primer.android.model.OperationResult
 import io.primer.android.model.Serialization
-import io.primer.android.model.UserDetails
-import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.CheckoutConfig
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.ClientSession
-import io.primer.android.model.dto.ClientToken
-import io.primer.android.model.dto.CountryCode
+import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.model.dto.PrimerPaymentMethod
 import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.CountryCode
+import io.primer.android.model.dto.ClientSession
+import io.primer.android.model.dto.Customer
+import io.primer.android.data.token.model.ClientToken
+import io.primer.android.events.EventDispatcher
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.model.dto.PrimerIntent
+import io.primer.android.payment.apaya.Apaya
+import io.primer.android.payment.gocardless.GoCardless
+import io.primer.android.payment.google.GooglePay
+import io.primer.android.payment.klarna.Klarna
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.serializer
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.component.KoinApiExtension
+import java.lang.ref.WeakReference
 import java.util.Locale
 
-enum class UXMode {
-    CHECKOUT,
-    VAULT;
-
-    val isNotVault: Boolean
-        get() = this != VAULT
-    val isVault: Boolean
-        get() = this == VAULT
-    val isCheckout: Boolean
-        get() = this == CHECKOUT
-}
-
 @Deprecated("This object has been renamed to Primer.")
-typealias UniversalCheckout = Primer
+val UniversalCheckout: PrimerInterface = Primer.instance
 
 @Deprecated("This object has been renamed to PrimerTheme.")
 typealias UniversalCheckoutTheme = PrimerTheme
 
-object Primer {
+class Primer private constructor() : PrimerInterface {
 
-    private lateinit var primer: InternalPrimer
-
-    /**
-     * Initializes the Primer SDK with the Application context and a client token Provider
-     *
-     * @param clientToken base64 string containing information about this Primer session.
-     * It expires after 24 hours. Passing in an expired client token will throw an [IllegalArgumentException].
-     */
-    @Throws(IllegalArgumentException::class)
-    fun initialize(
-        context: Context,
-        clientToken: String,
-        locale: Locale = Locale.getDefault(),
-        countryCode: CountryCode? = null,
-        theme: PrimerTheme? = null,
-    ) {
-
-        val decodedToken: ClientToken = ClientToken.fromString(clientToken)
-
-        // FIXME inject these dependencies
-        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
-            level =
-                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-                else HttpLoggingInterceptor.Level.NONE
-        }
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor { chain: Interceptor.Chain ->
-                chain.request().newBuilder()
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Primer-SDK-Version", BuildConfig.SDK_VERSION_STRING)
-                    .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
-                    .addHeader("Primer-Client-Token", decodedToken.accessToken)
-                    .build()
-                    .let { chain.proceed(it) }
-            }
-            .addInterceptor(httpLoggingInterceptor)
-            .addInterceptor { chain: Interceptor.Chain ->
-                chain.request().newBuilder()
-                    .url(chain.request().url().toString().replace("localhost", "10.0.2.2")).build()
-                    .let { chain.proceed(it) }
-            }
-            .build()
-
-        val json = Serialization.json
-
-        val model = Model(decodedToken, okHttpClient, LocalClientSessionDataSource(), json)
-
-        // we want to clear subscriptions
-        if (::primer.isInitialized) {
-            primer.unregisterSubscription()
-        }
-
-        primer = InternalPrimer(
-            model,
-            Dispatchers.IO,
-            clientToken,
-            locale,
-            countryCode,
-            theme,
-        )
-    }
-
-    /**
-     * Load the provided payment methods for use with the SDK
-     */
-    fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
-        primer.paymentMethods = paymentMethods
-    }
-
-    fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
-        primer.getSavedPaymentMethods(callback)
-    }
-
-    fun showVault(
-        context: Context,
-        listener: CheckoutEventListener,
-        amount: Int? = null,
-        currency: String? = null,
-        webBrowserRedirectScheme: String? = null,
-        isStandalonePaymentMethod: Boolean = false,
-        doNotShowUi: Boolean = false,
-        preferWebView: Boolean = false,
-        is3DSAtTokenizationEnabled: Boolean = false,
-        debugOptions: PrimerDebugOptions? = null,
-        orderId: String? = null,
-        userDetails: UserDetails? = null,
-        clearAllListeners: Boolean = false,
-    ) {
-        primer.showVault(
-            context = context,
-            listener = listener,
-            amount = amount,
-            currency = currency,
-            webBrowserRedirectScheme = webBrowserRedirectScheme,
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            doNotShowUi = doNotShowUi,
-            preferWebView = preferWebView,
-            clearAllListeners = clearAllListeners,
-            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
-            debugOptions = debugOptions,
-            orderId = orderId,
-            userDetails = userDetails
-        )
-    }
-
-    fun showCheckout(
-        context: Context,
-        listener: CheckoutEventListener,
-        amount: Int? = null,
-        currency: String? = null,
-        webBrowserRedirectScheme: String? = null,
-        isStandalonePaymentMethod: Boolean = false,
-        doNotShowUi: Boolean = false,
-        preferWebView: Boolean = false,
-        is3DSAtTokenizationEnabled: Boolean = false,
-        debugOptions: PrimerDebugOptions? = null,
-        orderId: String? = null,
-        userDetails: UserDetails? = null,
-        clearAllListeners: Boolean = false,
-    ) {
-        primer.showCheckout(
-            context = context,
-            listener = listener,
-            amount = amount,
-            currency = currency,
-            webBrowserRedirectScheme = webBrowserRedirectScheme,
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            doNotShowUi = doNotShowUi,
-            preferWebView = preferWebView,
-            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
-            debugOptions = debugOptions,
-            clearAllListeners = clearAllListeners,
-            orderId = orderId,
-            userDetails = userDetails
-        )
-    }
-
-    /**
-     * Dismiss the checkout
-     */
-    fun dismiss(clearListeners: Boolean = false) {
-        primer.dismiss()
-        if (clearListeners) {
-            primer.clearListener()
-        }
-    }
-
-    /**
-     * Toggle the loading screen
-     */
-    fun showProgressIndicator(visible: Boolean) {
-        primer.showProgressIndicator(visible)
-    }
-
-    /**
-     * Show a success screen then dismiss
-     */
-    fun showSuccess(autoDismissDelay: Int = 3000, successType: SuccessType = SuccessType.DEFAULT) {
-        primer.showSuccess(autoDismissDelay, successType)
-    }
-
-    /**
-     * Show a error screen then dismiss
-     */
-    fun showError(autoDismissDelay: Int = 3000, errorType: ErrorType = ErrorType.DEFAULT) {
-        primer.showError(autoDismissDelay, errorType)
-    }
-}
-
-internal class InternalPrimer constructor(
-    private val model: Model,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val fullToken: String,
-    private val locale: Locale,
-    private val countryCode: CountryCode? = null,
-    private val theme: PrimerTheme? = null,
-) {
-
-    internal var paymentMethods: List<PaymentMethod> = emptyList()
-
-    private var listener: CheckoutEventListener? = null
+    internal var paymentMethods: MutableList<PaymentMethod> = mutableListOf()
+    private var listener: WeakReference<CheckoutEventListener>? = null
+    private var config: PrimerConfig = PrimerConfig()
     private var subscription: EventBus.SubscriptionHandle? = null
+
+    private val eventDispatcher = EventDispatcher()
 
     private val eventBusListener = object : EventBus.EventListener {
         override fun onEvent(e: CheckoutEvent) {
             if (e.public) {
-                listener?.onCheckoutEvent(e)
-            } else when (e) {
-                is CheckoutEvent.ClearListeners -> {
-                    clearListener()
-                }
-                else -> {
-                }
+                listener?.get()?.onCheckoutEvent(e)
             }
         }
     }
 
-    fun clearListener() {
-        listener = null
+    @Throws(IllegalArgumentException::class)
+    override fun configure(
+        config: PrimerConfig?,
+        listener: CheckoutEventListener?,
+    ) {
+        listener?.let { l -> setListener(l) }
+        config?.let {
+            this.config = config
+        }
     }
 
-    fun unregisterSubscription() {
-        subscription?.unregister()
+    override fun showUniversalCheckout(context: Context, clientToken: String) {
+        config.intent = PrimerIntent(PaymentMethodIntent.CHECKOUT, PrimerPaymentMethod.ANY)
+        show(context, clientToken)
     }
 
-    fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
-        // FIXME this needs to be moved to a viewmodel
-        CoroutineScope(ioDispatcher).launch {
+    override fun showVaultManager(context: Context, clientToken: String) {
+        config.intent = PrimerIntent(PaymentMethodIntent.VAULT, PrimerPaymentMethod.ANY)
+        show(context, clientToken)
+    }
+
+    override fun showPaymentMethod(
+        context: Context,
+        clientToken: String,
+        paymentMethod: PrimerPaymentMethod,
+        intent: PaymentMethodIntent,
+    ) {
+        val flow = if (intent == PaymentMethodIntent.VAULT) PaymentMethodIntent.VAULT
+        else PaymentMethodIntent.CHECKOUT
+        config.intent = PrimerIntent(flow, paymentMethod)
+        show(context, clientToken)
+    }
+
+    override fun fetchSavedPaymentInstruments(clientToken: String) {
+        setupAndVerifyClientToken(clientToken)
+        val model = getModel(clientToken)
+        CoroutineScope(Dispatchers.IO).launch {
             when (val configResult = model.getConfiguration()) {
                 is OperationResult.Success -> {
                     val clientSession: ClientSession = configResult.data
                     when (val result = model.getVaultedPaymentMethods(clientSession)) {
-                        is OperationResult.Success -> {
-                            val paymentMethodTokens: List<PaymentMethodTokenInternal> = result.data
-                            callback(
-                                paymentMethodTokens.map {
-                                    PaymentMethodTokenAdapter.internalToExternal(
-                                        it
-                                    )
+                        is OperationResult.Success -> eventDispatcher.dispatchEvent(
+                            CheckoutEvent.SavedPaymentInstrumentsFetched(
+                                result.data.map {
+                                    PaymentMethodTokenAdapter.internalToExternal(it)
                                 }
                             )
-                        }
-                        is OperationResult.Error -> {
-                            callback(listOf())
-                            // TODO anything else?
-                        }
+                        )
+                        is OperationResult.Error -> eventDispatcher.dispatchEvent(
+                            result.error.toCheckoutErrorEvent()
+                        )
                     }
                 }
-                is OperationResult.Error -> {
-                    callback(listOf())
-                    // TODO anything else?
-                }
+                is OperationResult.Error -> eventDispatcher.dispatchEvent(
+                    configResult.error.toCheckoutErrorEvent()
+                )
             }
         }
     }
 
-    @KoinApiExtension
-    fun showVault(
-        context: Context,
-        listener: CheckoutEventListener,
-        amount: Int? = null,
-        currency: String? = null,
-        webBrowserRedirectScheme: String?,
-        isStandalonePaymentMethod: Boolean = false,
-        doNotShowUi: Boolean = false,
-        preferWebView: Boolean = false,
-        is3DSAtTokenizationEnabled: Boolean = false,
-        debugOptions: PrimerDebugOptions? = null,
-        orderId: String? = null,
-        userDetails: UserDetails? = null,
-        clearAllListeners: Boolean,
-    ) {
-        show(
-            context = context,
-            listener = listener,
-            uxMode = UXMode.VAULT,
-            amount = amount,
-            currency = currency,
-            webBrowserRedirectScheme = webBrowserRedirectScheme,
-            doNotShowUi = doNotShowUi,
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            preferWebView = preferWebView,
-            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
-            debugOptions = debugOptions,
-            orderId = orderId,
-            userDetails = userDetails,
-            clearAllListeners = clearAllListeners,
-        )
+    override fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val model = getModel(config.clientTokenBase64.orEmpty())
+            when (val configResult = model.getConfiguration()) {
+                is OperationResult.Success -> {
+                    val clientSession: ClientSession = configResult.data
+                    when (val result = model.getVaultedPaymentMethods(clientSession)) {
+                        is OperationResult.Success -> callBackWithTokens(result.data, callback)
+                        is OperationResult.Error -> callback(listOf())
+                    }
+                }
+                is OperationResult.Error -> callback(listOf())
+            }
+        }
     }
 
-    @KoinApiExtension
-    fun showCheckout(
-        context: Context,
-        listener: CheckoutEventListener,
-        amount: Int? = null,
-        currency: String? = null,
-        webBrowserRedirectScheme: String?,
-        isStandalonePaymentMethod: Boolean = false,
-        doNotShowUi: Boolean = false,
-        preferWebView: Boolean = false,
-        is3DSAtTokenizationEnabled: Boolean = false,
-        debugOptions: PrimerDebugOptions? = null,
-        orderId: String? = null,
-        userDetails: UserDetails? = null,
-        clearAllListeners: Boolean,
-    ) {
-        show(
-            context = context,
-            listener = listener,
-            uxMode = UXMode.CHECKOUT,
-            amount = amount,
-            currency = currency,
-            webBrowserRedirectScheme = webBrowserRedirectScheme,
-            doNotShowUi = doNotShowUi,
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            preferWebView = preferWebView,
-            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
-            debugOptions = debugOptions,
-            orderId = orderId,
-            userDetails = userDetails,
-            clearAllListeners = clearAllListeners,
-        )
+    /**
+     * Private method to set and subscribe using passed in listener. Clears previous subscriptions.
+     */
+    private fun setListener(listener: CheckoutEventListener) {
+        subscription?.unregister(true)
+        this.listener = null
+        this.listener = WeakReference(listener)
+        subscription = EventBus.subscribe(eventBusListener)
     }
 
-    fun dismiss() {
+    /**
+     * Private method to instantiate [CheckoutSheetActivity] and initialise the SDK.
+     * Also configures any redirect schemes.
+     */
+    private fun show(context: Context, clientToken: String) {
+        if (clientToken.isBlank()) {
+            Log.e("Primer SDK", "client token not provided")
+            eventDispatcher.dispatchEvent(
+                CheckoutEvent.ApiError(APIError("Client token not provided."))
+            )
+            return
+        }
+
+        setupAndVerifyClientToken(clientToken)
+
+        val scheme =
+            config.settings.options.redirectScheme ?: context.packageName.let { "$it.primer" }
+        WebviewInteropRegister.init(scheme)
+
+        try {
+            // TODO: refactor the way we pass in the config.
+            Serialization.addModule(tokenizationSerializationModule)
+            val encodedConfig = Serialization.json.encodeToString(PrimerConfig.serializer(), config)
+            Intent(context, CheckoutSheetActivity::class.java)
+                .apply { putExtra("config", encodedConfig) }
+                .run { context.startActivity(this) }
+        } catch (e: Exception) {
+            Log.e("Primer", e.message.toString())
+            val message = """
+                Failed to configure Primer SDK due to serialization exception. 
+                Please raise an issue in the SDK's public repository:
+                https://github.com/primer-io/primer-sdk-android
+            """.trimIndent()
+            val apiError = APIError(message)
+            eventDispatcher.dispatchEvent(CheckoutEvent.ApiError(apiError))
+        }
+    }
+
+    override fun dismiss(clearListeners: Boolean) {
         EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_CLIENT))
     }
 
-    fun showProgressIndicator(visible: Boolean) {
-        EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
-    }
-
-    fun showSuccess(autoDismissDelay: Int = 3000, successType: SuccessType) {
+    override fun showSuccess(autoDismissDelay: Int, successType: SuccessType) {
         EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay, successType))
     }
 
-    fun showError(autoDismissDelay: Int = 3000, errorType: ErrorType) {
+    override fun showError(autoDismissDelay: Int, errorType: ErrorType) {
         EventBus.broadcast(CheckoutEvent.ShowError(autoDismissDelay, errorType))
     }
 
-    @Suppress("LongParameterList")
-    @KoinApiExtension
-    private fun show(
+    /**
+     *
+     *
+     *
+     * Deprecated methods
+     *
+     *
+     *
+     */
+    override fun initialize(
+        context: Context,
+        clientToken: String,
+        locale: Locale,
+        countryCode: CountryCode?,
+        theme: PrimerTheme?
+    ) {
+        setupAndVerifyClientToken(clientToken)
+        config.theme = theme ?: PrimerTheme.create()
+        config.settings.options.locale = locale
+        config.settings.order.countryCode = countryCode
+
+        // we want to clear subscriptions
+        subscription?.unregister()
+    }
+
+    override fun loadPaymentMethods(paymentMethods: List<PaymentMethod>) {
+        this.paymentMethods = paymentMethods.toMutableList()
+    }
+
+    override fun showCheckout(
         context: Context,
         listener: CheckoutEventListener,
-        uxMode: UXMode,
         amount: Int?,
         currency: String?,
         webBrowserRedirectScheme: String?,
         isStandalonePaymentMethod: Boolean,
         doNotShowUi: Boolean,
         preferWebView: Boolean,
-        is3DSAtTokenizationEnabled: Boolean,
         debugOptions: PrimerDebugOptions?,
         orderId: String?,
-        userDetails: UserDetails?,
+        customer: Customer?,
         clearAllListeners: Boolean,
     ) {
-        subscription?.unregister(clearAllListeners)
+        config.settings.order.amount = amount
+        config.settings.order.currency = currency
+        config.intent = PrimerIntent.build(false, paymentMethods)
+        config.settings.options.redirectScheme = webBrowserRedirectScheme
+        config.settings.options.showUI = doNotShowUi.not()
+        config.settings.options.preferWebView = preferWebView
+        // 3DS
+        config.settings.options.debugOptions = debugOptions
+        config.settings.order.id = orderId
+        customer?.let { config.settings.customer = customer }
 
-        this.listener = listener
-        this.subscription = EventBus.subscribe(eventBusListener)
-
-        val scheme = webBrowserRedirectScheme ?: context.packageName.let { "$it.primer" }
-
-        WebviewInteropRegister.init(scheme)
-
-        val config = CheckoutConfig(
-            clientToken = fullToken,
-            packageName = context.packageName,
-            locale = locale,
-            countryCode = countryCode,
-            uxMode = uxMode,
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            doNotShowUi = doNotShowUi,
-            amount = amount,
-            currency = currency,
-            theme = theme,
-            is3DSAtTokenizationEnabled = is3DSAtTokenizationEnabled,
-            debugOptions = debugOptions,
-            orderId = orderId,
-            userDetails = userDetails,
-            preferWebView = preferWebView,
-        )
-
-        try {
-            Serialization.addModule(tokenizationSerializationModule)
-            paymentMethods.forEach { Serialization.addModule(it.serializersModule) }
-
-            val json = Serialization.json
-
-            Intent(context, CheckoutSheetActivity::class.java)
-                .apply {
-                    putExtra(
-                        "config",
-                        json.encodeToString(CheckoutConfig.serializer(), config),
-                    )
-                    putExtra(
-                        "paymentMethods",
-                        json.encodeToString(serializer(), paymentMethods),
-                    )
-                }
-                .run { context.startActivity(this) }
-        } catch (e: Exception) {
-            Log.e("Primer", e.message.toString())
-            val apiError = APIError("View failed to load.")
-            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
+        setListener(listener)
+        paymentMethods.find { it is Klarna }?.also {
+            if (it is Klarna) {
+                config.settings.order.description = it.orderDescription
+                config.settings.order.items = it.orderItems
+                config.settings.options.klarnaWebViewTitle = it.webViewTitle
+            }
         }
+        paymentMethods.find { it is Apaya }?.also {
+            if (it is Apaya) {
+                config.settings.options.apayaWebViewTitle = it.webViewTitle
+                config.settings.customer =
+                    config.settings.customer.copy(mobilePhone = it.mobilePhone)
+            }
+        }
+        paymentMethods.find { it is GooglePay }?.also {
+            if (it is GooglePay) {
+                config.settings.business = config.settings.business.copy(name = it.merchantName)
+                config.settings.options.googlePayAllowedCardNetworks = it.allowedCardNetworks
+                config.settings.options.googlePayButtonStyle = it.buttonStyle
+            }
+        }
+        paymentMethods.find { it is GoCardless }?.also {
+            if (it is GoCardless) {
+                config.settings.customer = config.settings.customer.copy(
+                    firstName = it.customerName,
+                    email = it.customerEmail
+                )
+            }
+        }
+        show(context, config.clientTokenBase64.orEmpty())
     }
-}
 
-interface CheckoutEventListener {
+    override fun showVault(
+        context: Context,
+        listener: CheckoutEventListener,
+        amount: Int?,
+        currency: String?,
+        webBrowserRedirectScheme: String?,
+        isStandalonePaymentMethod: Boolean,
+        doNotShowUi: Boolean,
+        preferWebView: Boolean,
+        is3DSOnVaultingEnabled: Boolean,
+        debugOptions: PrimerDebugOptions?,
+        orderId: String?,
+        customer: Customer?,
+        clearAllListeners: Boolean,
+    ) {
+        config.settings.order.amount = amount
+        config.settings.order.currency = currency
+        config.intent = PrimerIntent.build(true, paymentMethods)
+        config.settings.options.redirectScheme = webBrowserRedirectScheme
+        config.settings.options.showUI = doNotShowUi.not()
+        config.settings.options.preferWebView = preferWebView
+        // 3DS
+        config.settings.options.is3DSOnVaultingEnabled = is3DSOnVaultingEnabled
+        config.settings.options.debugOptions = debugOptions
+        config.settings.order.id = orderId
+        customer?.let { config.settings.customer = customer }
 
-    fun onCheckoutEvent(e: CheckoutEvent)
+        setListener(listener)
+        paymentMethods.find { it is Klarna }?.also {
+            if (it is Klarna) {
+                config.settings.order.description = it.orderDescription
+                config.settings.order.items = it.orderItems
+                config.settings.options.klarnaWebViewTitle = it.webViewTitle
+            }
+        }
+        paymentMethods.find { it is Apaya }?.also {
+            if (it is Apaya) {
+                config.settings.options.apayaWebViewTitle = it.webViewTitle
+                config.settings.customer =
+                    config.settings.customer.copy(mobilePhone = it.mobilePhone)
+            }
+        }
+        paymentMethods.find { it is GooglePay }?.also {
+            if (it is GooglePay) {
+                config.settings.business = config.settings.business.copy(name = it.merchantName)
+                config.settings.options.googlePayAllowedCardNetworks = it.allowedCardNetworks
+                config.settings.options.googlePayButtonStyle = it.buttonStyle
+            }
+        }
+        paymentMethods.find { it is GoCardless }?.also {
+            if (it is GoCardless) {
+                config.settings.customer = config.settings.customer.copy(
+                    firstName = it.customerName,
+                    email = it.customerEmail
+                )
+            }
+        }
+        show(context, config.clientTokenBase64.orEmpty())
+    }
+
+    override fun showProgressIndicator(visible: Boolean) {
+        EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
+    }
+
+    private fun callBackWithTokens(
+        tokens: List<PaymentMethodTokenInternal>,
+        callback: (List<PaymentMethodToken>) -> Unit,
+    ) = callback(tokens.map { PaymentMethodTokenAdapter.internalToExternal(it) })
+
+    private fun setupAndVerifyClientToken(clientToken: String) {
+        ClientToken.fromString(clientToken)
+        this.config.clientTokenBase64 = clientToken
+    }
+
+    private fun getModel(clientToken: String): Model {
+        val decodedToken: ClientToken = ClientToken.fromString(clientToken)
+        val accessToken = decodedToken.accessToken
+        val sdkVersion = BuildConfig.SDK_VERSION_STRING
+        val okHttpClient = HttpClientFactory(accessToken, sdkVersion).build()
+        return Model(
+            LocalClientTokenDataSource(decodedToken),
+            okHttpClient,
+            LocalClientSessionDataSource(),
+            Serialization.json
+        )
+    }
+
+    companion object {
+
+        /**
+         * Singleton instance of [Primer]. Use this to call SDK methods.
+         */
+        val instance: PrimerInterface by lazy { Primer() }
+    }
 }

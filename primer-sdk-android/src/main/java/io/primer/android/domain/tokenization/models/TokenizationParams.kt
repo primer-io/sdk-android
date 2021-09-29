@@ -1,6 +1,6 @@
 package io.primer.android.domain.tokenization.models
 
-import io.primer.android.UXMode
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.data.tokenization.models.TokenizationCheckoutRequest
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.data.tokenization.models.TokenizationVaultRequest
@@ -12,20 +12,20 @@ import org.json.JSONObject
 
 internal data class TokenizationParams(
     val paymentMethodDescriptor: PaymentMethodDescriptor,
-    val uxMode: UXMode,
-    val is3DSAtTokenizationEnabled: Boolean,
+    val paymentMethodIntent: PaymentMethodIntent,
+    val is3DSOnVaultingEnabled: Boolean,
 )
 
 internal fun TokenizationParams.toTokenizationRequest(): TokenizationRequest {
-    return when (uxMode) {
-        UXMode.CHECKOUT -> TokenizationCheckoutRequest(
+    return when (paymentMethodIntent) {
+        PaymentMethodIntent.CHECKOUT -> TokenizationCheckoutRequest(
             paymentMethodDescriptor.toPaymentInstrument().toJson()
         )
-        UXMode.VAULT -> TokenizationVaultRequest(
+        PaymentMethodIntent.VAULT -> TokenizationVaultRequest(
             paymentMethodDescriptor.toPaymentInstrument()
                 .toJson(),
             TokenType.MULTI_USE.name,
-            uxMode.toString()
+            paymentMethodIntent.toString()
         )
     }
 }

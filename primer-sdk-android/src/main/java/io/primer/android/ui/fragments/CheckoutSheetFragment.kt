@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
@@ -35,16 +36,10 @@ internal class CheckoutSheetFragment :
     }
 
     private val theme: PrimerTheme by inject()
-
-    private lateinit var viewModel: PrimerViewModel
+    private val viewModel: PrimerViewModel by activityViewModels()
 
     override fun onKeyboardVisibilityChanged(visible: Boolean) {
         viewModel.keyboardVisible.value = visible
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = PrimerViewModel.getInstance(requireActivity())
     }
 
     @SuppressLint("RestrictedApi")

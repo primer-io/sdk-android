@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.viewmodels.AppMainViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +38,6 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+            || super.onSupportNavigateUp()
     }
 }

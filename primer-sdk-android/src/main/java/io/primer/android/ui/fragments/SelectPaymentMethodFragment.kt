@@ -1,6 +1,8 @@
 package io.primer.android.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,21 +12,27 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.dto.CheckoutConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.ui.components.PayButton
 import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import android.content.res.ColorStateList
+import io.primer.android.PaymentMethodIntent
 
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
@@ -32,14 +40,16 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     companion object {
 
         @JvmStatic
-        fun newInstance() = SelectPaymentMethodFragment()
+        fun newInstance() =
+            SelectPaymentMethodFragment()
     }
 
-    private val checkoutConfig: CheckoutConfig by inject()
-    private val theme: UniversalCheckoutTheme by inject()
+    private val localConfig: PrimerConfig by inject()
+    private val resumeHandlerFactory: ResumeHandlerFactory by inject()
+    private val paymentMethodRepository: PaymentMethodRepository by inject()
+    private val theme: PrimerTheme by inject()
 
-    private lateinit var primerViewModel: PrimerViewModel
-    private lateinit var tokenizationViewModel: TokenizationViewModel
+    private val primerViewModel: PrimerViewModel by activityViewModels()
 
     private lateinit var sheetTitle: TextView
     private lateinit var titleLabel: TextView
@@ -56,12 +66,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private lateinit var otherWaysToPayStartDivider: View
     private lateinit var otherWaysToPayEndDivider: View
     private lateinit var paymentMethodsContainer: ViewGroup
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        primerViewModel = PrimerViewModel.getInstance(requireActivity())
-        tokenizationViewModel = TokenizationViewModel.getInstance(requireActivity())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,10 +93,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         otherWaysToPayEndDivider = view.findViewById(R.id.otherWaysToPayEndDivider)
         paymentMethodsContainer = view.findViewById(R.id.primer_sheet_payment_methods_list)
 
+        context?.let { c -> render(c) }
+
         setupUiForVaultModeIfNeeded()
 
         payAllButton.setTheme(theme)
-        payAllButton.amount = checkoutConfig.monetaryAmount
+        payAllButton.amount = localConfig.monetaryAmount
 
         payAllButton.setOnClickListener {
             payAllButton.showProgress()
@@ -102,9 +108,11 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
                 toggleButtons(false)
 
+                paymentMethodRepository.setPaymentMethod(this)
                 EventBus.broadcast(
                     CheckoutEvent.TokenSelected(
-                        PaymentMethodTokenAdapter.internalToExternal(this)
+                        PaymentMethodTokenAdapter.internalToExternal(this),
+                        resumeHandlerFactory.getResumeHandler(this.paymentInstrumentType)
                     )
                 )
             }
@@ -123,14 +131,15 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
 
         selectPaymentMethodTitle.apply {
-            setAmount(checkoutConfig.monetaryAmount)
-            setUxMode(checkoutConfig.uxMode)
+            setAmount(localConfig.monetaryAmount)
+            setUxMode(localConfig.paymentMethodIntent)
         }
 
         payAllButton.isEnabled = false
 
         savedPaymentMethod.setOnClickListener {
             it.isSelected = !it.isSelected
+
             val elevation =
                 if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
             it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
@@ -138,12 +147,79 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun setupUiForVaultModeIfNeeded() {
-        if (checkoutConfig.uxMode.isNotVault) return
+    private fun render(context: Context) {
+        renderTitle(context)
+        renderSavedPaymentMethodItem(context)
+        renderSubtitles(context)
+        renderManageLabel(context)
+    }
 
-        sheetTitle.isVisible = false
-        payAllButton.isVisible = false
-        choosePaymentMethodLabel.text = context?.getString(R.string.add_new_payment_method)
+    private fun renderTitle(context: Context) {
+        val color = theme.titleText.defaultColor.getColor(context)
+        choosePaymentMethodLabel.setTextColor(color)
+        val fontSize = theme.titleText.fontsize.getDimension(context)
+        choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+    }
+
+    private val buttonStates = arrayOf(
+        intArrayOf(-android.R.attr.state_selected),
+        intArrayOf(android.R.attr.state_selected),
+    )
+
+    private fun generateButtonContent(context: Context): GradientDrawable {
+        val contentDrawable = GradientDrawable()
+        val border = theme.paymentMethodButton.border
+        val unSelectedColor = border.defaultColor.getColor(context)
+        val selectedColor = border.selectedColor.getColor(context)
+        val colors = intArrayOf(unSelectedColor, selectedColor)
+        val borderStates = ColorStateList(buttonStates, colors)
+        val width = border.width.getPixels(context)
+        contentDrawable.setStroke(width, borderStates)
+        val background = theme.paymentMethodButton.defaultColor.getColor(context)
+        contentDrawable.setColor(background)
+        contentDrawable.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
+        return contentDrawable
+    }
+
+    private fun renderSavedPaymentMethodItem(context: Context) {
+        val contentDrawable = generateButtonContent(context)
+        val splash = theme.splashColor.getColor(context)
+        val pressedStates = ColorStateList.valueOf(splash)
+        val rippleDrawable = RippleDrawable(pressedStates, contentDrawable, null)
+        savedPaymentMethod.background = rippleDrawable
+        val textColor = theme.paymentMethodButton.text.defaultColor.getColor(context)
+        titleLabel.setTextColor(textColor)
+        savedPaymentLabel.setTextColor(textColor)
+        lastFourLabel.setTextColor(textColor)
+        expiryLabel.setTextColor(textColor)
+    }
+
+    private fun renderSubtitles(context: Context) {
+        val color = theme.subtitleText.defaultColor.getColor(context)
+        val fontSize = theme.subtitleText.fontsize.getDimension(context)
+        savedPaymentLabel.setTextColor(color)
+        otherWaysPayLabel.setTextColor(color)
+        savedPaymentLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+        otherWaysPayLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+    }
+
+    private fun renderManageLabel(context: Context) {
+        seeAllLabel.setTextColor(theme.systemText.defaultColor.getColor(context))
+        seeAllLabel.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            theme.systemText.fontsize.getDimension(requireContext()),
+        )
+    }
+
+    private fun setupUiForVaultModeIfNeeded() {
+        when (localConfig.intent.paymentMethodIntent) {
+            PaymentMethodIntent.CHECKOUT -> return
+            PaymentMethodIntent.VAULT -> {
+                sheetTitle.isVisible = false
+                payAllButton.isVisible = false
+                choosePaymentMethodLabel.text = context?.getString(R.string.add_new_payment_method)
+            }
+        }
     }
 
     private fun toggleButtons(enabled: Boolean) {
@@ -176,7 +252,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
     private fun updateVaultedMethodsUi(paymentMethods: List<PaymentMethodTokenInternal>) {
         val shouldShowSavedPaymentMethod =
-            paymentMethods.isNotEmpty() && checkoutConfig.uxMode.isNotVault
+            paymentMethods.isNotEmpty() && localConfig.paymentMethodIntent.isNotVault
 
         if (shouldShowSavedPaymentMethod) {
             showSavedPaymentMethodView()
@@ -234,6 +310,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 val data = paymentMethod.paymentInstrumentData
                 titleLabel.text = data?.cardholderName
                 val last4: Int = data?.last4Digits ?: throw Error("card data is invalid!")
+
                 lastFourLabel.text = getString(R.string.last_four, last4)
                 // FIXME should use string resources (and pulled out to be testable)
                 expiryLabel.text = "${data.expirationYear} / ${data.expirationMonth}"

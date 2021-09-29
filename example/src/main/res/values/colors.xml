@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
+<!--    <color name="purple_200">#FFBB86FC</color>-->
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
@@ -8,4 +8,75 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primer">#ff826f</color>
+
+    <color name="test_blue">#FF2196F3</color>
+    <color name="test_green">#FF4CAF50</color>
+    <color name="test_purple">#FF673AB7</color>
+    <color name="test_white">#FFFFFFFF</color>
+    <color name="test_yellow">#FFFFEB3B</color>
+    <color name="test_pink">#FFFF80AB</color>
+
+<!--    <color name="primer_background">@color/primer</color>-->
+<!--    <color name="primer_input_cursor">@color/primer</color>-->
+
+    <!--  🦜 tropical example  -->
+    <color name="tropical_1">#007043</color>
+    <color name="tropical_2">#FFAAB0</color>
+    <color name="tropical_3">#FFD083</color>
+    <color name="tropical_4">#BCEAF6</color>
+    <color name="tropical_5">#C86218</color>
+    <color name="tropical_6">#03919B</color>
+    <color name="tropical_7">#EC5064</color>
+    <color name="tropical_8">#0A5947</color>
+    <color name="tropical_9">#1F8276</color>
+    <color name="tropical_10">#E6F4BE</color>
+
+    <!--  override these Primer color values  -->
+<!--    <color name="primer_primary">@color/tropical_10</color>-->
+<!--    <color name="primer_background">@color/tropical_1</color>-->
+<!--    <color name="primer_disabled">@color/tropical_8</color>-->
+<!--    <color name="primer_title">@color/tropical_10</color>-->
+<!--    <color name="primer_subtitle">@color/tropical_3</color>-->
+<!--    <color name="primer_system_text">@color/tropical_4</color>-->
+<!--    <color name="primer_amount">@color/tropical_10</color>-->
+<!--    <color name="primer_payment_method_button_border">@color/tropical_9</color>-->
+<!--    <color name="primer_payment_method_button_border_selected">@color/tropical_3</color>-->
+<!--    <color name="primer_payment_method_button_text">@color/tropical_3</color>-->
+<!--    <color name="primer_payment_method_button">@color/tropical_9</color>-->
+<!--    <color name="primer_main_button_text">@color/tropical_4</color>-->
+<!--    <color name="primer_main_button">@color/tropical_2</color>-->
+<!--    <color name="primer_input_border">@color/tropical_3</color>-->
+<!--    <color name="primer_input_text">@color/tropical_3</color>-->
+<!--    <color name="primer_input_cursor">@color/tropical_3</color>-->
+
+    <!--  🌌 night example  -->
+    <color name="apple_dark_1">#8E8E93</color>
+    <color name="apple_dark_2">#48484A</color>
+    <color name="apple_dark_3">#2C2C2E</color>
+    <color name="apple_dark_4">#1C1C1E</color>
+    <color name="apple_dark_5">#F2F2F7</color>
+    <color name="apple_dark_6">#0A84FF</color>
+    <color name="apple_dark_7">#FF375F</color>
+    <color name="apple_dark_8">#FFD60A</color>
+    <color name="apple_dark_9">#FF9F0A</color>
+    <color name="apple_dark_10">#FF453A</color>
+
+    <!--  override these Primer color values  -->
+<!--    <color name="primer_primary">@color/apple_dark_6</color>-->
+<!--    <color name="primer_background">@color/apple_dark_4</color>-->
+<!--    <color name="primer_disabled">@color/apple_dark_3</color>-->
+<!--    <color name="primer_title">@color/apple_dark_5</color>-->
+<!--    <color name="primer_subtitle">@color/apple_dark_1</color>-->
+<!--    <color name="primer_system_text">@color/apple_dark_6</color>-->
+<!--    <color name="primer_amount">@color/apple_dark_5</color>-->
+<!--    <color name="primer_payment_method_button_border">@color/apple_dark_3</color>-->
+<!--    <color name="primer_payment_method_button_border_selected">@color/apple_dark_6</color>-->
+<!--    <color name="primer_payment_method_button_text">@color/apple_dark_5</color>-->
+<!--    <color name="primer_payment_method_button">@color/apple_dark_4</color>-->
+<!--    <color name="primer_main_button_text">@color/apple_dark_5</color>-->
+<!--    <color name="primer_main_button">@color/apple_dark_6</color>-->
+<!--    <color name="primer_input_border">@color/apple_dark_1</color>-->
+<!--    <color name="primer_input_text">@color/apple_dark_5</color>-->
+<!--    <color name="primer_input_cursor">@color/apple_dark_5</color>-->
+
 </resources>

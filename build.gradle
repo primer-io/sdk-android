@@ -1,16 +1,16 @@
 buildscript {
     ext {
         projectJvmTarget = JavaVersion.VERSION_1_8
-        kotlinVersion = '1.4.32'
+        kotlinVersion = '1.5.21'
 
-        koinVersion = '2.2.2'
+        koinVersion = '2.2.3'
 
         projectDependencies = [
                 androidGradlePlugin: 'com.android.tools.build:gradle:4.2.1',
                 kotlinGradlePlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
                 androidJunit5      : 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1',
                 staticAnalysis     : [
-                        ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:10.1.0',
+                        ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:10.2.0',
                 ]
         ]
     }
@@ -22,8 +22,8 @@ buildscript {
     }
 
     dependencies {
-        classpath projectDependencies.androidGradlePlugin
-        classpath projectDependencies.kotlinGradlePlugin
+        classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21"
         classpath projectDependencies.staticAnalysis.ktlintGradle
         classpath projectDependencies.androidJunit5
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'

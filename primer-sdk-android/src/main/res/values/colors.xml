@@ -16,8 +16,65 @@
     <color name="primer_button_primary_text_color">@android:color/white</color>
     <color name="primer_button_primary_disabled_text_color">#5d6269</color>
     <color name="primer_button_primary_disabled">#1F000000</color>
+    <color name="primer_secondary">@android:color/black</color>
 
     <color name="paypal_gold">#FFFFC439</color>
     <color name="paypal_blue">#FFBEE4FE</color>
     <color name="klarna">#FFB3C7</color>
+
+    <!--  PRIMER THEME  -->
+    <!--  override these values for custom theming  -->
+
+    <!--  primary color for buttons, borders, etc. -->
+    <color name="primer_primary">@color/primer_app_primary</color>
+
+    <!--  default color for SDK background -->
+    <color name="primer_background">@color/primer_app_background</color>
+
+    <!--  default color for disabled borders, buttons, etc. -->
+    <color name="primer_disabled">#8FBEC2C4</color>
+
+    <!--  default color for errors -->
+    <color name="primer_error">@color/primer_android_red</color>
+
+    <!--  default color for all text views -->
+    <color name="primer_default_text">@color/primer_secondary</color>
+
+    <!--  custom color resource for title text -->
+    <color name="primer_title">@color/primer_secondary</color>
+
+    <!--  custom color resource for subtitle text -->
+    <color name="primer_subtitle">#808080</color>
+
+    <!--  custom color for system text and links -->
+    <color name="primer_system_text">@color/primer_primary</color>
+
+    <!--  custom color for amount label in universal checkout -->
+    <color name="primer_amount">@color/primer_secondary</color>
+
+    <!--  custom colors for payment method buttons in universal checkout -->
+    <color name="primer_payment_method_button_border">@color/primer_disabled</color>
+    <color name="primer_payment_method_button_border_selected">@color/primer_primary</color>
+    <color name="primer_payment_method_button_border_error">@color/primer_error</color>
+    <color name="primer_payment_method_button_text">@color/primer_secondary</color>
+    <color name="primer_payment_method_button">@color/primer_background</color>
+    <color name="primer_payment_method_button_disabled">@color/primer_background</color>
+    <color name="primer_payment_method_button_error">@color/primer_disabled</color>
+
+    <!--  custom colors for main buttons ("PAY", "NEXT", etc.) in universal checkout -->
+    <color name="primer_main_button_border">@color/primer_disabled</color>
+    <color name="primer_main_button_border_selected">@color/primer_primary</color>
+    <color name="primer_main_button_border_error">@color/primer_error</color>
+    <color name="primer_main_button_text">@android:color/white</color>
+    <color name="primer_main_button">@color/primer_primary</color>
+    <color name="primer_main_button_disabled">@color/primer_disabled</color>
+    <color name="primer_main_button_error">@color/primer_error</color>
+
+    <!--  custom colors for text inputs in universal checkout -->
+    <color name="primer_input_border">@color/primer_primary</color>
+    <color name="primer_input_border_selected">@color/primer_primary</color>
+    <color name="primer_input_border_error">@color/primer_error</color>
+    <color name="primer_input_background">@color/primer_background</color>
+    <color name="primer_input_text">@color/primer_disabled</color>
+    <color name="primer_input_cursor">@color/primer_primary</color>
 </resources>

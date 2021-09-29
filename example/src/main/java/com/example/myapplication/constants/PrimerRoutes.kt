@@ -8,4 +8,5 @@ object PrimerRoutes {
 
     const val payments: String = "$root/payments"
 
+    const val resumeToken: String = "$root/resume"
 }

@@ -1,5 +1,6 @@
 package io.primer.android.events
 
+import io.primer.android.completion.ResumeHandler
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
@@ -17,7 +18,7 @@ sealed class CheckoutEvent(
 
     class TokenizationSuccess(
         val data: PaymentMethodToken,
-        val completionHandler: (Error?) -> Unit,
+        val resumeHandler: ResumeHandler,
     ) :
         PublicCheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
@@ -30,13 +31,28 @@ sealed class CheckoutEvent(
     class TokenRemovedFromVault(val data: PaymentMethodToken) :
         PublicCheckoutEvent(CheckoutEventType.TOKEN_REMOVED_FROM_VAULT)
 
+    class ResumeSuccess(
+        val resumeToken: String,
+        val resumeHandler: ResumeHandler,
+    ) :
+        PublicCheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
+
+    class ResumeError(val data: APIError) :
+        PublicCheckoutEvent(CheckoutEventType.RESUME_ERR0R)
+
     class Exit(val data: CheckoutExitInfo) :
         PublicCheckoutEvent(CheckoutEventType.EXIT)
 
     class ApiError(val data: APIError) : PublicCheckoutEvent(CheckoutEventType.API_ERROR)
 
-    class TokenSelected(val data: PaymentMethodToken) :
+    class TokenSelected(
+        val data: PaymentMethodToken,
+        val resumeHandler: ResumeHandler,
+    ) :
         PublicCheckoutEvent(CheckoutEventType.TOKEN_SELECTED)
+
+    class SavedPaymentInstrumentsFetched(val data: List<PaymentMethodToken>) :
+        PublicCheckoutEvent(CheckoutEventType.SAVED_PAYMENT_INSTRUMENT_FETCHED)
 
     internal class ToggleProgressIndicator(val data: Boolean) :
         PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
@@ -51,6 +67,4 @@ sealed class CheckoutEvent(
         PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
 
     internal object Start3DS : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
-
-    internal object ClearListeners : PrivateCheckoutEvent(CheckoutEventType.CLEAR_LISTENERS)
 }

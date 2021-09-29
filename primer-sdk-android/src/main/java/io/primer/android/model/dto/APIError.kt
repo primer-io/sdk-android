@@ -1,6 +1,6 @@
 package io.primer.android.model.dto
 
-import io.primer.android.logging.Logger
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -36,7 +36,7 @@ data class APIError(
 
         private val json = Serialization.json
 
-        private val log = Logger("api-error")
+        private val log = DefaultLogger("api-error")
 
         private val DEFAULT_ERROR_ELEMENT = json.parseToJsonElement(
             "{\"description\":\"Unknown Client Error\"}"

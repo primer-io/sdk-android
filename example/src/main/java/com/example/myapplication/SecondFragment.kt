@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,13 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.example.myapplication.components.PaymentMethodItem
+import com.example.myapplication.datamodels.TransactionState
+import com.example.myapplication.viewmodels.AppMainViewModel
+import io.primer.android.Primer
 import androidx.fragment.app.activityViewModels
+import com.example.myapplication.constants.ThemeList
 import com.example.myapplication.databinding.FragmentSecondBinding
-import com.example.myapplication.models.TransactionState
+import com.example.myapplication.utils.CheckoutListener
 import com.xwray.groupie.GroupieAdapter
-import io.primer.android.UniversalCheckout
-import io.primer.android.model.PrimerDebugOptions
+import io.primer.android.PaymentMethodIntent
+import io.primer.android.model.dto.*
 import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.payment.card.Card
+import io.primer.android.payment.google.GooglePay
 import io.primer.android.threeds.data.models.ResponseCode
 
 class SecondFragment : Fragment() {
@@ -35,46 +43,37 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.fetchClientToken()
-
         binding.vaultButton.isVisible = false
         binding.checkoutButton.isVisible = false
+        binding.showPaymentMethodButton.isVisible = false
 
+        // VAULT MANAGER
         binding.vaultButton.setOnClickListener {
-            activity?.let { activityContext ->
-                UniversalCheckout.showVault(
-                    activityContext,
-                    viewModel.listener,
-                    viewModel.amount.value,
-                    viewModel.countryCode.value?.currencyCode.toString(),
-                    is3DSAtTokenizationEnabled = viewModel.threeDsEnabled.value ?: false,
-                    debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-                    isStandalonePaymentMethod = viewModel.isStandalonePaymentMethod,
-                    preferWebView = true,
-                    webBrowserRedirectScheme = "primer",
-                    clearAllListeners = true,
-                    orderId = viewModel.orderId.value,
-                    userDetails = viewModel.userDetails.value
-                )
+            viewModel.clientToken.value?.let { token ->
+                activity?.let { context -> Primer.instance.showVaultManager(context, token) }
             }
         }
 
+        // UNIVERSAL CHECKOUT
         binding.checkoutButton.setOnClickListener {
-            activity?.let { activityContext ->
-                UniversalCheckout.showCheckout(
-                    activityContext,
-                    viewModel.listener,
-                    viewModel.amount.value,
-                    viewModel.countryCode.value?.currencyCode.toString(),
-                    is3DSAtTokenizationEnabled = viewModel.threeDsEnabled.value ?: false,
-                    debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-                    isStandalonePaymentMethod = viewModel.isStandalonePaymentMethod,
-                    preferWebView = true,
-                    clearAllListeners = true,
-                    webBrowserRedirectScheme = "primer",
-                    orderId = viewModel.orderId.value,
-                    userDetails = viewModel.userDetails.value
-                )
+            viewModel.clientToken.value?.let { token ->
+                activity?.let { context -> Primer.instance.showUniversalCheckout(context, token) }
+            }
+        }
+
+        // SHOW PAYMENT METHOD
+        binding.showPaymentMethodButton.setOnClickListener {
+            viewModel.clientToken.value?.let { token ->
+                viewModel.paymentMethodList.firstOrNull()?.let { paymentMethod ->
+                    activity?.let { context ->
+                        Primer.instance.showPaymentMethod(
+                            context,
+                            token,
+                            viewModel.getPrimerPaymentMethod(paymentMethod),
+                            PaymentMethodIntent.VAULT
+                        )
+                    }
+                }
             }
         }
 
@@ -86,25 +85,21 @@ class SecondFragment : Fragment() {
             }
 
             binding.checkoutButton.isVisible = token != null
+            binding.showPaymentMethodButton.isVisible =
+                token != null && viewModel.isStandalonePaymentMethod
 
             if (token != null) {
-                initializeCheckoutWith(token)
-                UniversalCheckout.loadPaymentMethods(viewModel.generatePaymentMethodList())
-                viewModel.fetchSavedPaymentMethods()
+                initializeCheckout()
+                fetchSavedPaymentMethods(token)
             }
-        }
-
-        viewModel.isBusy.observe(viewLifecycleOwner) { isBusy ->
-            binding.walletProgressBar.isVisible = isBusy
         }
 
         viewModel.transactionState.observe(viewLifecycleOwner) { state ->
             val message = when (state) {
-                TransactionState.SUCCESS -> viewModel.transactionResponse.value ?: "success"
+                TransactionState.SUCCESS -> viewModel.transactionResponse.value.toString()
                 TransactionState.ERROR -> requireContext().getString(R.string.something_went_wrong)
                 else -> return@observe
             }
-            UniversalCheckout.dismiss()
             AlertDialog.Builder(context).setMessage(message).show()
             viewModel.resetTransactionState()
         }
@@ -119,10 +114,12 @@ class SecondFragment : Fragment() {
             val message = it?.let {
                 when (it.responseCode) {
                     ResponseCode.AUTH_SUCCESS -> getString(R.string.three_ds_success_message)
-                    else -> getString(R.string.three_ds_error_message,
-                                      it.responseCode,
-                                      it.reasonCode,
-                                      it.reasonText)
+                    else -> getString(
+                        R.string.three_ds_error_message,
+                        it.responseCode,
+                        it.reasonCode,
+                        it.reasonText
+                    )
                 }
             }
             message?.let {
@@ -130,17 +127,48 @@ class SecondFragment : Fragment() {
                 viewModel.clearThreeDsResult()
             }
         }
+
+        viewModel.fetchClientToken()
     }
 
-    private fun initializeCheckoutWith(token: String) {
-        activity?.let {
-            UniversalCheckout.initialize(it, token)
+    private fun initializeCheckout() = activity?.let {
+        viewModel.configure(listener)
+    }
+
+    private val listener = CheckoutListener(
+        onTokenizeSuccess = { token, completionHandler ->
+            viewModel.createTransaction(token, completionHandler)
+        },
+        onTokenSelected = { token, completionHandler ->
+            viewModel.createTransaction(token, completionHandler)
+        },
+        onResumeSuccess = { resumeToken, completionHandler ->
+            viewModel.resumePayment(resumeToken, completionHandler)
+        },
+        onResumeError = {
+            Primer.instance.dismiss(true)
+            AlertDialog.Builder(context).setMessage(it.toString()).show()
+        },
+        onSavedPaymentInstrumentsFetched = {
+            setBusy(false)
+            viewModel.vaultedPaymentTokens.postValue(it)
+            val adapter = GroupieAdapter()
+            it.forEach { t ->
+                adapter.add(PaymentMethodItem(t, ::onSelect))
+            }
+            binding.paymentMethodList.adapter = adapter
+        },
+        onApiError = {
+            Primer.instance.dismiss(true)
+            AlertDialog.Builder(context).setMessage(it.toString()).show()
+        },
+        onExit = {
+            viewModel.clientToken.value?.let { token -> fetchSavedPaymentMethods(token) }
         }
-    }
-
+    )
 
     private fun onConfirmDialogAction(token: PaymentMethodToken) {
-        viewModel.createTransaction(token.token, token.paymentInstrumentType)
+        viewModel.createTransaction(token)
     }
 
     private fun onSelect(token: PaymentMethodToken) {
@@ -150,6 +178,15 @@ class SecondFragment : Fragment() {
             .setPositiveButton("Yes") { _, _ -> onConfirmDialogAction(token) }
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    private fun setBusy(isBusy: Boolean) {
+        binding.walletProgressBar.isVisible = isBusy
+    }
+
+    private fun fetchSavedPaymentMethods(token: String) {
+        activity?.runOnUiThread { setBusy(true) }
+        Primer.instance.fetchSavedPaymentInstruments(token)
     }
 
     override fun onDestroyView() {

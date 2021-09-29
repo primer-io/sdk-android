@@ -1,8 +1,8 @@
 package io.primer.android.payment
 
 import io.primer.android.PaymentMethod
-import io.primer.android.model.dto.CheckoutConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 /**
@@ -21,12 +21,12 @@ class PaymentMethodDescriptorFactoryRegistry(
     private val factories: MutableMap<String, PaymentMethodDescriptorFactory> = mutableMapOf()
 
     fun create(
-        checkoutConfig: CheckoutConfig,
+        localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
     ): PaymentMethodDescriptor? =
         factories[paymentMethodRemoteConfig.type]?.create(
-            checkoutConfig = checkoutConfig,
+            localConfig = localConfig,
             paymentMethodRemoteConfig = paymentMethodRemoteConfig,
             paymentMethod = paymentMethod,
             paymentMethodCheckers = paymentMethodCheckers
@@ -36,7 +36,7 @@ class PaymentMethodDescriptorFactoryRegistry(
         factories[id] = factory
     }
 
-    fun unregister(id: PaymentMethodDescriptorFactory) {
+    fun unregister(id: String) {
         factories.remove(id)
     }
 

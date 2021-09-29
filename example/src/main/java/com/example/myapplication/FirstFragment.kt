@@ -1,28 +1,22 @@
 package com.example.myapplication
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Filter
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentFirstBinding
-import com.example.myapplication.models.CountryCode
-import com.example.myapplication.models.PrimerEnv
+import com.example.myapplication.datamodels.AppCountryCode
+import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.utils.UnfilteredArrayAdapter
+import com.example.myapplication.viewmodels.AppMainViewModel
+import io.primer.android.model.dto.CountryCode
 
 
 /**
@@ -96,7 +90,7 @@ class FirstFragment : Fragment() {
                 CountryCode.values(),
             ))
             addTextChangedListener { editable ->
-                viewModel.countryCode.postValue(CountryCode.valueOf(editable.toString()))
+                viewModel.countryCode.postValue(AppCountryCode.valueOf(editable.toString()))
             }
         }
     }
@@ -119,28 +113,35 @@ class FirstFragment : Fragment() {
 
     private fun configureCheckBoxes() {
         binding.klarnaCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setUseKlarna(isChecked)
+            viewModel.useKlarna.postValue(isChecked)
         }
 
         binding.paypalCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setUsePayPal(isChecked)
+            viewModel.usePayPal.postValue(isChecked)
         }
 
         binding.cardCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setUseCard(isChecked)
+            viewModel.useCard.postValue(isChecked)
         }
 
         binding.googlePayCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setUseGooglePay(isChecked)
+            viewModel.useGooglePay.postValue(isChecked)
         }
         binding.payByMobileCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setUsePayMobile(isChecked)
+            viewModel.usePayMobile.postValue(isChecked)
+        }
+        binding.payByMobileCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.usePayMobile.postValue(isChecked)
         }
     }
 
     private fun configureNextButton() {
         binding.nextButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+
+        binding.buttonSecond.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_DeprecatedFeatureFragment)
         }
     }
 

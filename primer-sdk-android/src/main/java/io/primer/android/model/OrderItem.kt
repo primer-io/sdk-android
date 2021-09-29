@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrderItem(
     val name: String,
-    val unitAmount: Int,
-    val quantity: Int? = null,
-    val reference: String? = null,
+    val unitAmount: Int? = null,
+    val quantity: Int,
+    val isPending: Boolean = false,
 )

@@ -1,7 +1,7 @@
 package io.primer.android.threeds.di
 
 import com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
-import io.primer.android.logging.Logger
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.threeds.data.repository.NetceteraThreeDsServiceRepository
 import io.primer.android.threeds.data.repository.ThreeDsAppUrlDataRepository
 import io.primer.android.threeds.data.repository.ThreeDsConfigurationDataRepository
@@ -26,7 +26,7 @@ internal val threeDsModule = module {
 
     single { ThreeDsConfigValidator() }
 
-    factory { Logger(LOGGER_TAG_3DS) }
+    factory { DefaultLogger(LOGGER_TAG_3DS) }
 
     single<ThreeDsConfigurationRepository> { ThreeDsConfigurationDataRepository(get()) }
 
@@ -34,6 +34,8 @@ internal val threeDsModule = module {
 
     single<ThreeDsInteractor> {
         DefaultThreeDsInteractor(
+            get(),
+            get(),
             get(),
             get(),
             get(),

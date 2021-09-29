@@ -7,7 +7,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
-import io.primer.android.UniversalCheckoutTheme
+import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppComponent
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -17,7 +17,7 @@ class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(ctx, attrs),
     DIAppComponent {
 
-    private val theme: UniversalCheckoutTheme by inject()
+    private val theme: PrimerTheme by inject()
 
     init {
         background = RippleDrawable(
@@ -30,7 +30,7 @@ class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
                 IntArray(1) { Color.parseColor("#FFFFFFFF") },
             ),
             GradientDrawable().apply {
-                cornerRadius = theme.buttonCornerRadius
+                cornerRadius = theme.defaultCornerRadius.getDimension(context)
                 color = ColorStateList(
                     arrayOf(
                         IntArray(1) { android.R.attr.state_enabled },
@@ -38,13 +38,13 @@ class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
                     ),
                     IntArray(2) {
                         when (it) {
-                            0 -> theme.buttonPrimaryColor
-                            1 -> theme.buttonPrimaryColorDisabled
-                            else -> theme.buttonPrimaryColor
+                            0 -> theme.mainButton.defaultColor.getColor(context)
+                            1 -> theme.mainButton.disabledColor.getColor(context)
+                            else -> theme.mainButton.disabledColor.getColor(context)
                         }
                     }
                 )
-                setStroke(1, theme.buttonDefaultBorderColor)
+                setStroke(1, theme.mainButton.border.defaultColor.getColor(context))
             },
             null
         )
