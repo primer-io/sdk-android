@@ -60,6 +60,7 @@ interface PrimerInterface {
      * @param clientToken base64 string containing information about this Primer session.
      * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
      */
+    @Deprecated("This method is deprecated and will be removed in next release.")
     fun fetchSavedPaymentInstruments(clientToken: String)
 
     /**

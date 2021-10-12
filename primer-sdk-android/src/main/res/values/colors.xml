@@ -34,6 +34,9 @@
     <!--  default color for disabled borders, buttons, etc. -->
     <color name="primer_disabled">#8FBEC2C4</color>
 
+    <!--  custom color resource for placeholders/hints text -->
+    <color name="primer_hint">#E1DEDA</color>
+
     <!--  default color for errors -->
     <color name="primer_error">@color/primer_android_red</color>
 
@@ -71,10 +74,10 @@
     <color name="primer_main_button_error">@color/primer_error</color>
 
     <!--  custom colors for text inputs in universal checkout -->
-    <color name="primer_input_border">@color/primer_primary</color>
+    <color name="primer_input_border">@color/primer_hint</color>
     <color name="primer_input_border_selected">@color/primer_primary</color>
     <color name="primer_input_border_error">@color/primer_error</color>
     <color name="primer_input_background">@color/primer_background</color>
-    <color name="primer_input_text">@color/primer_disabled</color>
+    <color name="primer_input_text">@color/primer_secondary</color>
     <color name="primer_input_cursor">@color/primer_primary</color>
 </resources>

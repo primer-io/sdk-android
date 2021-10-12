@@ -52,7 +52,7 @@ internal class ApayaInteractor(
 
     internal companion object {
 
-        const val RETURN_URL = "primer.io/apaya/"
+        const val RETURN_URL = "primer.io"
         private const val APAYA_FAILED_CREATE_SESSION =
             "The call to create an Apaya payment session (token & redirectUrl) failed."
     }

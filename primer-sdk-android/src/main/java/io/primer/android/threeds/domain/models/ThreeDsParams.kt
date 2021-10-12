@@ -33,10 +33,10 @@ internal data class ThreeDsParams(
     constructor(
         authenticationRequestParameters: AuthenticationRequestParameters,
         config: PrimerConfig,
-        protocolVersion: ProtocolVersion,
         challengePreference: ChallengePreference,
     ) : this(
-        protocolVersion,
+        ProtocolVersion.values()
+            .first { authenticationRequestParameters.messageVersion == it.versionNumber },
         challengePreference,
         config.settings.order.amount ?: 0,
         config.settings.order.currency.orEmpty(),

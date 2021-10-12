@@ -28,7 +28,6 @@ import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
 import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator
-import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -46,9 +45,7 @@ internal interface ThreeDsInteractor {
         threeDsInitParams: ThreeDsInitParams,
     ): Flow<Unit>
 
-    fun authenticateSdk(
-        protocolVersion: ProtocolVersion,
-    ): Flow<Transaction>
+    fun authenticateSdk(): Flow<Transaction>
 
     fun beginRemoteAuth(
         threeDsParams: ThreeDsParams,
@@ -101,16 +98,16 @@ internal class DefaultThreeDsInteractor(
                 handleErrorEvent(it)
             }
 
-    override fun authenticateSdk(
-        protocolVersion: ProtocolVersion,
-    ) =
-        threeDsServiceRepository.performProviderAuth(
-            CardNetwork.valueOf(
-                paymentMethodRepository.getPaymentMethod().paymentInstrumentData
-                    ?.binData?.network.orEmpty().toUpperCase()
-            ),
-            protocolVersion
-        ).flowOn(dispatcher)
+    override fun authenticateSdk() =
+        threeDsConfigurationRepository.getProtocolVersion().flatMapLatest { protocolVersion ->
+            threeDsServiceRepository.performProviderAuth(
+                CardNetwork.valueOf(
+                    paymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                        ?.binData?.network.orEmpty().uppercase()
+                ),
+                protocolVersion
+            )
+        }.flowOn(dispatcher)
             .doOnError {
                 handleErrorEvent(it)
             }

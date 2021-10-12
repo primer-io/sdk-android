@@ -16,7 +16,6 @@ import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ThreeDsConfigParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsParams
-import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -62,8 +61,7 @@ internal class ThreeDsViewModel(
 
     fun performAuthorization() {
         viewModelScope.launch {
-            val protocolVersion = ProtocolVersion.V_210
-            threeDsInteractor.authenticateSdk(protocolVersion)
+            threeDsInteractor.authenticateSdk()
                 .catch {
                     _threeDsFinishedEvent.postValue(Unit)
                 }.collect { transaction ->
@@ -71,7 +69,6 @@ internal class ThreeDsViewModel(
                         ThreeDsParams(
                             transaction.authenticationRequestParameters,
                             config,
-                            protocolVersion,
                             ChallengePreference.REQUESTED_DUE_TO_MANDATE
                         )
                     )

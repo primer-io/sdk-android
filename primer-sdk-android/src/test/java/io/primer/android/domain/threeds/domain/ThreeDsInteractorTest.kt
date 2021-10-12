@@ -312,11 +312,14 @@ internal class ThreeDsInteractorTest {
     @Test
     fun `performProviderAuth() should return transaction when repository performProviderAuth() was success`() {
         val transactionMock = mockk<Transaction>(relaxed = true)
+        every { threeDsConfigurationRepository.getProtocolVersion() }.returns(
+            flowOf(ProtocolVersion.V_210)
+        )
         coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
             flowOf(transactionMock)
         )
         runBlockingTest {
-            val transaction = interactor.authenticateSdk(ProtocolVersion.V_210).first()
+            val transaction = interactor.authenticateSdk().first()
             assertEquals(transactionMock, transaction)
         }
         coVerify { threeDsServiceRepository.performProviderAuth(any(), any()) }
@@ -324,6 +327,9 @@ internal class ThreeDsInteractorTest {
 
     @Test
     fun `performProviderAuth() should dispatch token error events when repository performProviderAuth() failed and Intent was CHECKOUT`() {
+        every { threeDsConfigurationRepository.getProtocolVersion() }.returns(
+            flowOf(ProtocolVersion.V_210)
+        )
         coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
             flow {
                 throw Exception("3DS init failed.")
@@ -334,7 +340,7 @@ internal class ThreeDsInteractorTest {
 
         assertThrows<Exception> {
             runBlockingTest {
-                interactor.authenticateSdk(ProtocolVersion.V_210).first()
+                interactor.authenticateSdk().first()
             }
         }
 
@@ -347,6 +353,9 @@ internal class ThreeDsInteractorTest {
 
     @Test
     fun `performProviderAuth() should dispatch resume error events when repository performProviderAuth() failed and Intent was 3DS_AUTHENTICATION`() {
+        every { threeDsConfigurationRepository.getProtocolVersion() }.returns(
+            flowOf(ProtocolVersion.V_210)
+        )
         coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
             flow {
                 throw Exception("3DS init failed.")
@@ -360,7 +369,7 @@ internal class ThreeDsInteractorTest {
 
         assertThrows<Exception> {
             runBlockingTest {
-                interactor.authenticateSdk(ProtocolVersion.V_210).first()
+                interactor.authenticateSdk().first()
             }
         }
 

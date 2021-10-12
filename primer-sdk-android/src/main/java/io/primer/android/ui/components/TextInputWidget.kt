@@ -18,26 +18,31 @@ class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
 
     init {
         val colors = intArrayOf(
-            theme.input.text.defaultColor.getColor(context),
             theme.input.border.defaultColor.getColor(context),
+            theme.input.border.selectedColor.getColor(context),
         )
 
         val states = arrayOf(
-            intArrayOf(android.R.attr.state_pressed),
-            intArrayOf(-android.R.attr.state_pressed),
+            intArrayOf(-android.R.attr.state_focused),
+            intArrayOf(android.R.attr.state_focused),
         )
 
         val colorStateList = ColorStateList(states, colors)
 
         setBoxStrokeColorStateList(colorStateList)
-        hintTextColor = colorStateList
+
+        val hintColors = intArrayOf(
+            theme.input.hintText.defaultColor.getColor(context),
+            theme.input.border.selectedColor.getColor(context),
+        )
 
         val hintTextStates = arrayOf(
             intArrayOf(-android.R.attr.state_focused),
             intArrayOf(android.R.attr.state_focused),
         )
 
-        defaultHintTextColor = ColorStateList(hintTextStates, colors)
+        hintTextColor = ColorStateList(hintTextStates, hintColors)
+        defaultHintTextColor = ColorStateList(hintTextStates, hintColors)
 
         boxStrokeErrorColor = ColorStateList.valueOf(
             theme.input.border.errorColor.getColor(context)

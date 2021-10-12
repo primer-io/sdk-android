@@ -253,6 +253,15 @@ data class PrimerTheme internal constructor(
                 ),
             )
 
+            val styledHintInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = input?.hintText?.defaultColor ?: R.color.primer_subtitle
+                ),
+                fontsize = ResourceDimension.valueOf(
+                    default = input?.hintText?.fontsize ?: R.dimen.primer_input_fontsize,
+                ),
+            )
+
             val styledInput = InputTheme(
                 backgroundColor = ResourceColor.valueOf(
                     default = input?.backgroundColor ?: backgroundColor
@@ -260,6 +269,7 @@ data class PrimerTheme internal constructor(
                 ),
                 border = styledInputBorder,
                 text = styledInputText,
+                hintText = styledHintInputText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = input?.cornerRadius ?: defaultCornerRadius
                         ?: R.dimen.primer_default_corner_radius,
@@ -467,8 +477,13 @@ data class PrimerTheme internal constructor(
                 width = styledDefaultBorder.width,
             )
 
-            val styledInputHintText = TextTheme(
+            val styledInputText = TextTheme(
                 defaultColor = ResourceColor.valueOf(R.color.primer_input_text),
+                fontsize = ResourceDimension.valueOf(R.dimen.primer_text_size_md),
+            )
+
+            val styledInputHintText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_subtitle),
                 fontsize = ResourceDimension.valueOf(R.dimen.primer_text_size_md),
             )
 
@@ -479,7 +494,8 @@ data class PrimerTheme internal constructor(
                     DynamicColor.valueOf(inputBackgroundColor)
                 },
                 border = styledInputBorder,
-                text = styledInputHintText,
+                text = styledInputText,
+                hintText = styledInputHintText,
                 cornerRadius = if (inputCornerRadius == null) {
                     styledDefaultCornerRadius
                 } else {
@@ -535,6 +551,7 @@ data class BorderThemeData(
 data class InputThemeData(
     @ColorRes val backgroundColor: Int? = null,
     val text: TextThemeData? = null,
+    val hintText: TextThemeData? = null,
     val border: BorderThemeData? = null,
     @DimenRes val cornerRadius: Int? = null,
 )
@@ -570,5 +587,6 @@ internal data class InputTheme(
     val backgroundColor: ColorData,
     val cornerRadius: DimensionData,
     val text: TextTheme,
+    val hintText: TextTheme,
     val border: BorderTheme,
 )

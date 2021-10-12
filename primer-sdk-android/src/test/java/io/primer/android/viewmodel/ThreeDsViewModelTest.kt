@@ -2,6 +2,7 @@ package io.primer.android.viewmodel
 
 import android.app.Activity
 import com.jraska.livedata.test
+import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -17,6 +18,7 @@ import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ChallengeStatusData
+import io.primer.android.threeds.helpers.ProtocolVersion
 import io.primer.android.threeds.presentation.ThreeDsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -26,7 +28,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.component.KoinApiExtension
+import org.mockito.Mockito.mock
 import kotlin.Exception
+import org.mockito.Mockito.`when`
 
 @ExperimentalCoroutinesApi
 @KoinApiExtension
@@ -89,12 +93,12 @@ class ThreeDsViewModelTest {
     fun `performAuthorization() should receive finished event when interactor authenticateSdk() failed`() {
         val observer = viewModel.threeDsFinishedEvent.test()
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk()
         }.returns(flow { throw Exception() })
 
         viewModel.performAuthorization()
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
+        coVerify { threeDsInteractor.authenticateSdk() }
 
         observer.assertValue(Unit)
     }
@@ -102,10 +106,14 @@ class ThreeDsViewModelTest {
     @Test
     fun `performAuthorization() should receive finished event when interactor beginRemoteAuth() failed`() {
         val transaction = mockk<Transaction>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+
         val observer = viewModel.threeDsFinishedEvent.test()
 
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk()
         }.returns(flowOf(transaction))
 
         coEvery {
@@ -114,7 +122,7 @@ class ThreeDsViewModelTest {
 
         viewModel.performAuthorization()
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
+        coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
 
         observer.assertValue(Unit)
@@ -124,11 +132,15 @@ class ThreeDsViewModelTest {
     fun `performAuthorization() should receive challenge required event when interactor beginRemoteAuth() was success and response code is CHALLENGE`() {
         val transaction = mockk<Transaction>(relaxed = true)
         val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+
         val observer = viewModel.challengeRequiredEvent.test()
 
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
         every { authResponse.authentication.responseCode }.returns(ResponseCode.CHALLENGE)
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk()
         }.returns(flowOf(transaction))
 
         coEvery {
@@ -137,7 +149,7 @@ class ThreeDsViewModelTest {
 
         viewModel.performAuthorization()
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
+        coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
 
         assertEquals(transaction, observer.value().transaction)
@@ -145,13 +157,18 @@ class ThreeDsViewModelTest {
     }
 
     @Test
-    fun `performAuthorization() should receive fnished event when interactor beginRemoteAuth() was success and response code is not CHALLENGE`() {
+    fun `performAuthorization() should receive finished event when interactor beginRemoteAuth() was success and response code is not CHALLENGE`() {
         val transaction = mockk<Transaction>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+
         val authResponse = mockk<BeginAuthResponse>(relaxed = true)
         val observer = viewModel.threeDsFinishedEvent.test()
 
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
+
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk()
         }.returns(flowOf(transaction))
 
         coEvery {
@@ -160,7 +177,7 @@ class ThreeDsViewModelTest {
 
         viewModel.performAuthorization()
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
+        coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
 
         observer.assertValue(Unit)
