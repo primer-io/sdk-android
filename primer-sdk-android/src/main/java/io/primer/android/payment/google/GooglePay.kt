@@ -3,7 +3,7 @@ package io.primer.android.payment.google
 import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
-import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
+import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -32,7 +32,7 @@ data class GooglePay(
         }
     }
 
-    override val identifier: String = GOOGLE_PAY_IDENTIFIER
+    override val type = PaymentMethodType.GOOGLE_PAY
 
     override val canBeVaulted: Boolean = false
 

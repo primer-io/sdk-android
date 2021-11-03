@@ -1,5 +1,6 @@
 package io.primer.android
 
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodChecker
@@ -26,10 +27,7 @@ import kotlinx.serialization.modules.SerializersModule
  */
 interface PaymentMethod {
 
-    // FIXME this is here for backwards compatibility as we're still relying on identifiers
-    //  ideally all payment methods would be parsed into the respective classes (that implement
-    //  this interface) at runtime
-    val identifier: String
+    val type: PaymentMethodType
 
     val canBeVaulted: Boolean
 

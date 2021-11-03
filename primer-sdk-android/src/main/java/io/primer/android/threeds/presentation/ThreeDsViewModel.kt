@@ -13,7 +13,6 @@ import io.primer.android.threeds.data.models.ChallengePreference
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
-import io.primer.android.threeds.domain.models.ThreeDsConfigParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsParams
 import kotlinx.coroutines.flow.catch
@@ -42,20 +41,17 @@ internal class ThreeDsViewModel(
 
     fun startThreeDsFlow() {
         viewModelScope.launch {
-            threeDsInteractor.validate(ThreeDsConfigParams(config))
-                .catch { _threeDsFinishedEvent.postValue(Unit) }.collect {
-                    threeDsInteractor.initialize(
-                        ThreeDsInitParams(
-                            config.settings.options.debugOptions?.is3DSSanityCheckEnabled
-                                ?: BuildConfig.DEBUG.not(),
-                            config.settings.options.locale
-                        )
-                    ).catch {
-                        _threeDsFinishedEvent.postValue(Unit)
-                    }.collect {
-                        _threeDsInitEvent.postValue(it)
-                    }
-                }
+            threeDsInteractor.initialize(
+                ThreeDsInitParams(
+                    config.settings.options.debugOptions?.is3DSSanityCheckEnabled
+                        ?: BuildConfig.DEBUG.not(),
+                    config.settings.options.locale
+                )
+            ).catch {
+                _threeDsFinishedEvent.postValue(Unit)
+            }.collect {
+                _threeDsInitEvent.postValue(it)
+            }
         }
     }
 

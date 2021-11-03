@@ -2,7 +2,7 @@ package io.primer.android.payment.gocardless
 
 import io.primer.android.PaymentMethod
 import io.primer.android.model.dto.PrimerSettings
-import io.primer.android.payment.PaymentMethodFactory
+import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
 import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
 import io.primer.android.utils.Success

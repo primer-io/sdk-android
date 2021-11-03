@@ -1,6 +1,6 @@
 package io.primer.android.model
 
-import io.primer.android.model.dto.ClientSession
+import io.primer.android.data.configuration.model.Configuration
 
 internal class APIEndpoint {
 
@@ -22,7 +22,7 @@ internal class APIEndpoint {
         const val DELETE_TOKEN = "/payment-instruments/{id}/vault"
 
         fun get(
-            session: ClientSession,
+            session: Configuration,
             target: Target,
             pathname: String,
             params: Map<String, String>? = null,

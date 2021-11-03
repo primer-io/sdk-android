@@ -2,6 +2,7 @@ package io.primer.android.threeds.di
 
 import com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 import io.primer.android.logging.DefaultLogger
+import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
 import io.primer.android.threeds.data.repository.NetceteraThreeDsServiceRepository
 import io.primer.android.threeds.data.repository.ThreeDsAppUrlDataRepository
 import io.primer.android.threeds.data.repository.ThreeDsConfigurationDataRepository
@@ -12,19 +13,19 @@ import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator
 import io.primer.android.threeds.presentation.ThreeDsViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 internal val threeDsModule = module {
-    single<ThreeDsRepository> { ThreeDsDataRepository(get()) }
+
+    single { Remote3DSAuthDataSource(get()) }
+
+    single<ThreeDsRepository> { ThreeDsDataRepository(get(), get()) }
 
     single { ThreeDS2ServiceInstance.get() }
 
     single<ThreeDsServiceRepository> { NetceteraThreeDsServiceRepository(get(), get()) }
-
-    single { ThreeDsConfigValidator() }
 
     factory { DefaultLogger(LOGGER_TAG_3DS) }
 
@@ -34,7 +35,6 @@ internal val threeDsModule = module {
 
     single<ThreeDsInteractor> {
         DefaultThreeDsInteractor(
-            get(),
             get(),
             get(),
             get(),

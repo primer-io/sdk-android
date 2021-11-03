@@ -21,6 +21,13 @@
     <color name="paypal_gold">#FFFFC439</color>
     <color name="paypal_blue">#FFBEE4FE</color>
     <color name="klarna">#FFB3C7</color>
+    <color name="hoolah">#D63727</color>
+    <color name="pay_nl_ideal">#CC0670</color>
+    <color name="giropay">#000268</color>
+    <color name="twint">#000000</color>
+    <color name="sofort">#EF809F</color>
+    <color name="trustly">#0EE06E</color>
+    <color name="alipay">#1677FF</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

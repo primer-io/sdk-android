@@ -34,12 +34,12 @@ import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import java.util.Collections
 
-@KoinApiExtension // FIXME inject dependencies via ctor
+@KoinApiExtension
 internal class TokenizationViewModel(
     private val model: Model,
     private val config: PrimerConfig,
     private val tokenizationInteractor: TokenizationInteractor,
-    private val apayaInteractor: ApayaInteractor
+    private val apayaInteractor: ApayaInteractor,
 ) : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null

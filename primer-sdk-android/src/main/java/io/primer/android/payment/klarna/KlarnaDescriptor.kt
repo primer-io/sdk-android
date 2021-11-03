@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import org.koin.core.component.KoinApiExtension
@@ -25,14 +24,11 @@ internal class KlarnaDescriptor constructor(
         const val KLARNA_REQUEST_CODE = 1000
     }
 
-    override val identifier: String
-        get() = KLARNA_IDENTIFIER
-
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = RecurringKlarnaBehaviour(this)
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.SIMPLE_BUTTON
+    override val type: PaymentMethodUiType
+        get() = PaymentMethodUiType.SIMPLE_BUTTON
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.SINGLE_USE_AND_VAULT

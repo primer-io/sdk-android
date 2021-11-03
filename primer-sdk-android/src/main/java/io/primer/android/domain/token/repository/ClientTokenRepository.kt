@@ -6,6 +6,10 @@ internal interface ClientTokenRepository {
 
     fun getClientTokenIntent(): ClientTokenIntent
 
+    fun getStatusUrl(): String?
+
+    fun getRedirectUrl(): String?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

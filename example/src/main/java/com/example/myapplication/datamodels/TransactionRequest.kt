@@ -10,6 +10,7 @@ data class TransactionRequest(
     @SerializedName("amount") val amount: Int,
     @SerializedName("customerId") val customerId: String,
     @SerializedName("currencyCode") val currencyCode: String,
+    @SerializedName("countryCode") val countryCode: String,
     @SerializedName("environment") val environment: String,
 ) : ExampleAppRequestBody {
     companion object {
@@ -23,6 +24,7 @@ data class TransactionRequest(
                 config.settings.order.amount!!,
                 config.settings.customer.id!!,
                 config.settings.order.currency!!,
+                config.settings.order.countryCode?.name.orEmpty(),
                 environment,
             )
         }

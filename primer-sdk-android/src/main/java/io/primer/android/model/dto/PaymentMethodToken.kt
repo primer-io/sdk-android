@@ -70,7 +70,8 @@ internal object PaymentMethodTokenAdapter {
                 token.paymentInstrumentData.mcc,
                 token.paymentInstrumentData.hashedIdentifier,
                 token.paymentInstrumentData.currencyCode,
-                token.paymentInstrumentData.productId
+                token.paymentInstrumentData.productId,
+                token.paymentInstrumentData.paymentMethodType
             ),
             vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
                 customerId = token.vaultData.customerId
@@ -105,7 +106,8 @@ internal object PaymentMethodTokenAdapter {
                 token.paymentInstrumentData.mcc,
                 token.paymentInstrumentData.hashedIdentifier,
                 token.paymentInstrumentData.currencyCode,
-                token.paymentInstrumentData.productId
+                token.paymentInstrumentData.productId,
+                token.paymentInstrumentData.paymentMethodType
             )
         val vaultData =
             if (token.vaultData == null) null
@@ -174,7 +176,10 @@ data class PaymentInstrumentData(
     val hashedIdentifier: String? = null,
     val currencyCode: String? = null,
     val productId: String? = null,
-    val binData: BinData? = null
+    // async
+    val paymentMethodType: String? = null,
+    // bin
+    val binData: BinData? = null,
 )
 
 @Serializable

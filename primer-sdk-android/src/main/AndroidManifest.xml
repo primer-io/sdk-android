@@ -40,6 +40,11 @@
             android:theme="@style/Theme.AppCompat.WebView" />
 
         <activity
+            android:name=".ui.payment.async.AsyncPaymentMethodWebViewActivity"
+            android:label=""
+            android:theme="@style/Theme.AppCompat.WebView" />
+
+        <activity
             android:name=".threeds.ui.ThreeDsActivity"
             android:label=""
             android:launchMode="singleTask"

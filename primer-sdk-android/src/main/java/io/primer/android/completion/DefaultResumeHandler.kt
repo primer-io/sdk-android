@@ -5,12 +5,15 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.APIError
+import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 import java.lang.Error
 
 internal open class DefaultResumeHandler(
     private val clientTokenRepository: ClientTokenRepository,
+    private val paymentMethodRepository: PaymentMethodRepository,
     private val eventDispatcher: EventDispatcher,
     private var logger: Logger
 ) :
@@ -45,7 +48,25 @@ internal open class DefaultResumeHandler(
         }
     }
 
-    protected open fun handleClientToken(clientToken: String) = Unit
+    protected open fun handleClientToken(clientToken: String) {
+        checkCorrectFlowLaunched()
+    }
+
+    private fun checkCorrectFlowLaunched() {
+        require(
+            getPaymentInstrumentType().intent == clientTokenRepository.getClientTokenIntent() ||
+                getPaymentMethodType().intent == clientTokenRepository.getClientTokenIntent()
+        ) { RESUME_INTENT_ERROR }
+    }
+
+    private fun getPaymentInstrumentType() = PaymentMethodType.safeValueOf(
+        paymentMethodRepository.getPaymentMethod().paymentInstrumentType
+    )
+
+    private fun getPaymentMethodType() = PaymentMethodType.safeValueOf(
+        paymentMethodRepository.getPaymentMethod()
+            .paymentInstrumentData?.paymentMethodType
+    )
 
     private fun callIfNotHandled(function: () -> Unit) = synchronized(this) {
         if (handlerUsed.not()) {
@@ -56,8 +77,9 @@ internal open class DefaultResumeHandler(
         }
     }
 
-    private companion object {
+    protected companion object {
 
         const val HANDLER_USED_ERROR = "ResumeHandler can be used only once."
+        const val RESUME_INTENT_ERROR = "Unexpected client token intent"
     }
 }

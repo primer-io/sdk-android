@@ -140,7 +140,8 @@ internal abstract class BaseWebViewClient(
     internal enum class UrlState {
         CANCELLED,
         ERROR,
-        SUCCESS
+        PROCESSING,
+        SUCCESS,
     }
 
     protected companion object {

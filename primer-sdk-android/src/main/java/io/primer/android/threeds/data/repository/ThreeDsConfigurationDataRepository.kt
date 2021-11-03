@@ -1,7 +1,7 @@
 package io.primer.android.threeds.data.repository
 
 import io.primer.android.model.Model
-import io.primer.android.model.dto.Environment
+import io.primer.android.data.configuration.model.Environment
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.helpers.ProtocolVersion

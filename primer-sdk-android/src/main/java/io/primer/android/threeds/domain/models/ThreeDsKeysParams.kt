@@ -1,6 +1,6 @@
 package io.primer.android.threeds.domain.models
 
-import io.primer.android.model.dto.Environment
+import io.primer.android.data.configuration.model.Environment
 import io.primer.android.model.dto.ThreeDsSecureCertificate
 
 internal data class ThreeDsKeysParams(

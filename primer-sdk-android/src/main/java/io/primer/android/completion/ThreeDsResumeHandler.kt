@@ -1,30 +1,22 @@
 package io.primer.android.completion
 
-import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 
 internal class ThreeDsResumeHandler(
-    private val clientTokenRepository: ClientTokenRepository,
+    clientTokenRepository: ClientTokenRepository,
+    paymentMethodRepository: PaymentMethodRepository,
     private val eventDispatcher: EventDispatcher,
     logger: Logger
-) : DefaultResumeHandler(clientTokenRepository, eventDispatcher, logger) {
+) : DefaultResumeHandler(clientTokenRepository, paymentMethodRepository, eventDispatcher, logger) {
 
     override fun handleClientToken(clientToken: String) {
-        when (clientTokenRepository.getClientTokenIntent()) {
-            ClientTokenIntent.`3DS_AUTHENTICATION` -> eventDispatcher.dispatchEvent(
-                CheckoutEvent.Start3DS
-            )
-            else -> eventDispatcher.dispatchEvent(
-                CheckoutEvent.ResumeError(APIError(RESUME_INTENT_ERROR))
-            )
-        }
-    }
-
-    private companion object {
-        const val RESUME_INTENT_ERROR = "Unexpected client token intent"
+        super.handleClientToken(clientToken)
+        eventDispatcher.dispatchEvent(
+            CheckoutEvent.Start3DS
+        )
     }
 }

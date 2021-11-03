@@ -11,6 +11,8 @@ internal data class ClientToken(
     val intent: ClientTokenIntent,
     val accessToken: String,
     val exp: Int,
+    val statusUrl: String? = null,
+    val redirectUrl: String? = null
 ) {
 
     companion object {
@@ -26,7 +28,7 @@ internal data class ClientToken(
             val tokens = encoded.split(".")
 
             for (elm in tokens) {
-                val bytes = Base64.decode(elm, Base64.DEFAULT)
+                val bytes = Base64.decode(elm, Base64.URL_SAFE)
                 val decoded = String(bytes)
 
                 if (decoded.contains("\"accessToken\":")) {

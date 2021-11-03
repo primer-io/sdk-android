@@ -10,7 +10,8 @@ enum class AppCountryCode(val currencyCode: CurrencyCode) {
     TR(CurrencyCode.TL),
     GE(CurrencyCode.GEL),
     JP(CurrencyCode.JPY),
-    KR(CurrencyCode.KRW);
+    KR(CurrencyCode.KRW),
+    SG(CurrencyCode.SGD);
 
     val mapped: CountryCode get() = CountryCode.valueOf(this.name)
 }

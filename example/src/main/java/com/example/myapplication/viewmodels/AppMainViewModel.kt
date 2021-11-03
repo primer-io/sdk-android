@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.myapplication.repositories.ClientTokenRepository
 import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.datamodels.*
+import com.example.myapplication.repositories.ClientSessionRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
@@ -14,6 +15,7 @@ import io.primer.android.CheckoutEventListener
 import io.primer.android.PaymentMethod
 import io.primer.android.Primer
 import io.primer.android.completion.ResumeHandler
+import io.primer.android.model.OrderItem
 import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.dto.*
 import io.primer.android.payment.apaya.Apaya
@@ -30,6 +32,8 @@ import java.util.UUID
 class AppMainViewModel : ViewModel() {
 
     private val clientTokenRepository = ClientTokenRepository()
+    private val clientSessionRepository = ClientSessionRepository()
+
     private val paymentsRepository = PaymentsRepository()
     private val resumeRepository = ResumeRepository()
 
@@ -125,6 +129,7 @@ class AppMainViewModel : ViewModel() {
                         amount = getAmountConverted(),
                         currency = countryCode.value!!.currencyCode.name,
                         countryCode = countryCode.value!!.mapped,
+                        items = listOf(OrderItem("name", "description", 100, 10))
                     ),
                     customer = Customer(
                         id = "customer8",
@@ -139,7 +144,14 @@ class AppMainViewModel : ViewModel() {
                             countryCode = countryCode.value!!.mapped
                         )
                     ),
-                    business = Business(),
+                    business = Business(
+                        name = "Primer", address = Address(
+                            line1 = "1 Test Street",
+                            postalCode = "12345",
+                            city = "Stockholm",
+                            countryCode = countryCode.value!!.mapped
+                        )
+                    ),
                     options = Options(
                         preferWebView = true,
                         debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
@@ -163,6 +175,32 @@ class AppMainViewModel : ViewModel() {
         ) { t -> clientToken.postValue(t) }
     }
 
+    fun fetchClientSession() {
+        clientSessionRepository.fetch(
+            customerId.value ?: return,
+            orderId.value ?: return,
+            (environment.value ?: return).environment,
+            getAmountConverted(),
+            countryCode.value?.currencyCode?.name!!,
+            config.settings.customer.let {
+                CustomerRequest(
+                    it.firstName,
+                    it.lastName,
+                    it.mobilePhone,
+                    it.email,
+                    it.billingAddress?.toAddressRequest(),
+                    it.shippingAddress?.toAddressRequest(),
+                )
+            },
+            config.settings.order.let {
+                OrderRequest(
+                    countryCode.value?.mapped!!,
+                    it.items.map { it.toOrderItemRequest() })
+            },
+            client
+        ) { t -> clientToken.postValue(t) }
+    }
+
     fun createTransaction(
         paymentMethod: PaymentMethodToken,
         completion: ResumeHandler? = null
@@ -176,7 +214,7 @@ class AppMainViewModel : ViewModel() {
             client,
             { result ->
                 _transactionResponse.postValue(result)
-                if (result.requiredAction?.name == RequiredActionName.`3DS_AUTHENTICATION`) {
+                if (result.requiredAction?.name != null) {
                     _transactionId.postValue(result.id)
                     completion?.handleNewClientToken(result.requiredAction.clientToken.orEmpty())
                 }
@@ -196,7 +234,11 @@ class AppMainViewModel : ViewModel() {
     }
 
     fun resumePayment(token: String, completion: ResumeHandler? = null) {
-        val body = ResumePaymentRequest(_transactionId.value.orEmpty(), token)
+        val body = ResumePaymentRequest(
+            _transactionId.value.orEmpty(),
+            token,
+            environment.value?.environment.orEmpty()
+        )
         resumeRepository.create(
             body,
             client,

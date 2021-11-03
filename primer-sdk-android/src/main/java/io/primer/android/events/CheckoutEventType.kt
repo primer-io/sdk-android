@@ -15,5 +15,6 @@ enum class CheckoutEventType {
     SHOW_SUCCESS,
     DISMISS_INTERNAL,
     TOKEN_SELECTED,
-    START_3DS
+    START_3DS,
+    START_ASYNC_FLOW
 }

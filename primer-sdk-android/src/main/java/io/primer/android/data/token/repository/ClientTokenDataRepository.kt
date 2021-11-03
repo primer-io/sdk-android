@@ -13,6 +13,10 @@ internal class ClientTokenDataRepository(
         clientToken
     )
 
+    override fun getRedirectUrl() = clientTokenDataSource.getClientToken().redirectUrl
+
+    override fun getStatusUrl() = clientTokenDataSource.getClientToken().statusUrl
+
     override fun getClientTokenIntent(): ClientTokenIntent {
         return clientTokenDataSource.getClientToken().intent
     }

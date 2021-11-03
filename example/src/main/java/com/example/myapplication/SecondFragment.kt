@@ -128,7 +128,7 @@ class SecondFragment : Fragment() {
             }
         }
 
-        viewModel.fetchClientToken()
+        viewModel.fetchClientSession()
     }
 
     private fun initializeCheckout() = activity?.let {

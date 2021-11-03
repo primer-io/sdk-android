@@ -59,3 +59,7 @@
 -keepclasseswithmembers class io.primer.android.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+-keep public enum io.primer.android.**{
+    *;
+}

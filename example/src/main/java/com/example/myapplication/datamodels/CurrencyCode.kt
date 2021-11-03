@@ -8,5 +8,6 @@ enum class CurrencyCode(val symbol: String) {
     TL("₺"),
     GEL("₾"),
     JPY("¥"),
-    KRW("₩")
+    KRW("₩"),
+    SGD("$")
 }

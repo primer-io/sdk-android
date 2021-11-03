@@ -39,7 +39,7 @@ internal class CheckoutSheetFragment :
     private val viewModel: PrimerViewModel by activityViewModels()
 
     override fun onKeyboardVisibilityChanged(visible: Boolean) {
-        viewModel.keyboardVisible.value = visible
+        viewModel.setKeyboardVisibility(visible)
     }
 
     @SuppressLint("RestrictedApi")

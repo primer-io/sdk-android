@@ -6,12 +6,12 @@ import kotlinx.serialization.Serializable
 internal data class BeginAuthRequest(
     val maxProtocolVersion: String,
     val challengePreference: ChallengePreference,
-    val amount: Int,
-    val currencyCode: String,
-    val orderId: String,
-    val customer: Customer,
+    val amount: Int? = null,
+    val currencyCode: String ? = null,
+    val orderId: String? = null,
+    val customer: Customer? = null,
     val device: SDKAuthData,
-    val billingAddress: Address,
+    val billingAddress: Address? = null,
     val shippingAddress: Address? = null,
     val customerAccount: CustomerAccount? = null,
 )

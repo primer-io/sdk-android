@@ -11,9 +11,8 @@ import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.payment.APAYA_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import org.koin.core.component.KoinApiExtension
@@ -32,12 +31,10 @@ internal class ApayaDescriptor constructor(
     }
     private val theme: PrimerTheme by inject()
 
-    override val identifier: String = APAYA_IDENTIFIER
-
     override val selectedBehaviour: SelectedPaymentMethodBehaviour = RecurringApayaBehaviour(this)
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.SIMPLE_BUTTON
+    override val type: PaymentMethodUiType
+        get() = PaymentMethodUiType.SIMPLE_BUTTON
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.VAULT_ONLY

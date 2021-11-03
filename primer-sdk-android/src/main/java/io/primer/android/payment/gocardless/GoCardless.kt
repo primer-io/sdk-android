@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
-import io.primer.android.model.dto.ClientSession
-import io.primer.android.payment.GOCARDLESS_IDENTIFIER
+import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
@@ -28,13 +28,13 @@ data class GoCardless(
     val customerAddressPostalCode: String? = null,
 ) : PaymentMethod {
 
-    override val identifier: String = GOCARDLESS_IDENTIFIER
+    override val type = PaymentMethodType.GOCARDLESS
 
     override val canBeVaulted: Boolean = true
 
     @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, clientSession: ClientSession) {
+        override fun initialize(applicationContext: Context, configuration: Configuration) {
             // no-op
         }
 
@@ -48,7 +48,7 @@ data class GoCardless(
             paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
         ) {
             paymentMethodDescriptorFactoryRegistry.register(
-                GOCARDLESS_IDENTIFIER,
+                type,
                 GoCardlessPaymentMethodDescriptorFactory()
             )
         }

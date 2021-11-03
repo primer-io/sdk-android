@@ -14,6 +14,7 @@ import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_MONTH_FIELD_NAME
@@ -63,7 +64,7 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
-        val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
+        val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
             Card(),
@@ -94,7 +95,7 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
         coEvery { tokenizationInteractor.tokenize(any()) } returns flowOf("token")
-        val paymentMethodConfig = PaymentMethodRemoteConfig("id", "type")
+        val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
             Card(),

@@ -21,6 +21,7 @@ internal object DIAppContext {
                 ),
                 PaymentMethodsModule(),
                 apayaModule(),
+                asyncPaymentMethodModule(),
                 tokenizationModule(),
                 NetworkModule()
             )

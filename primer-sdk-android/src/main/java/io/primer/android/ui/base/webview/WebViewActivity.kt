@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import io.primer.android.R
 
-internal class WebViewActivity : AppCompatActivity() {
+internal open class WebViewActivity : AppCompatActivity() {
 
     private val webView by lazy { findViewById<WebView>(R.id.webView) }
 
@@ -19,6 +19,8 @@ internal class WebViewActivity : AppCompatActivity() {
 
         setupViews()
         setupWebView()
+        setupWebViewClient()
+        loadPaymentsUrl()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -26,6 +28,15 @@ internal class WebViewActivity : AppCompatActivity() {
         setResult(RESULT_CANCELED, Intent())
         finish()
         return true
+    }
+
+    protected open fun setupWebViewClient() {
+        val url = intent.extras?.getString(PAYMENT_URL_KEY)
+        val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
+        val type = intent.extras?.getSerializable(WEB_VIEW_CLIENT_TYPE) as WebViewClientType
+        webView.webViewClient = WebViewClientFactory.getWebViewClient(
+            this, url, captureUrl, type
+        )
     }
 
     private fun setupViews() {
@@ -43,15 +54,13 @@ internal class WebViewActivity : AppCompatActivity() {
                 loadsImagesAutomatically = true
                 javaScriptEnabled = true
                 useWideViewPort = true
+                domStorageEnabled = true
             }
         }
-        val url = intent.extras?.getString(PAYMENT_URL_KEY)
-        val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
-        val type = intent.extras?.getSerializable(WEB_VIEW_CLIENT_TYPE) as WebViewClientType
-        webView.webViewClient = WebViewClientFactory.getWebViewClient(
-            this, url, captureUrl, type
-        )
+    }
 
+    private fun loadPaymentsUrl() {
+        val url = intent.extras?.getString(PAYMENT_URL_KEY)
         url?.let {
             webView.loadUrl(it)
         }
@@ -74,13 +83,13 @@ internal class WebViewActivity : AppCompatActivity() {
             }
         }
 
-        private const val WEB_VIEW_CLIENT_TYPE = "WEB_VIEW_CLIENT_TYPE"
-
-        // url to load in the webview
-        private const val PAYMENT_URL_KEY = "URL_KEY"
+        const val WEB_VIEW_CLIENT_TYPE = "WEB_VIEW_CLIENT_TYPE"
 
         // toolbar title
-        private const val TOOLBAR_TITLE_KEY = "TOOLBAR_TITLE_KEY"
+        const val TOOLBAR_TITLE_KEY = "TOOLBAR_TITLE_KEY"
+
+        // url to load in the webview
+        const val PAYMENT_URL_KEY = "URL_KEY"
 
         // url called/loaded by the webview when finishing up
         const val REDIRECT_URL_KEY = "REDIRECT_URL_KEY"

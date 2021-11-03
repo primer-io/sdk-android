@@ -17,16 +17,17 @@ import io.primer.android.model.Serialization
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.payment.APAYA_IDENTIFIER
-import io.primer.android.payment.KLARNA_IDENTIFIER
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor.Companion.APAYA_REQUEST_CODE
+import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
+import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
+import io.primer.android.payment.async.AsyncPaymentMethodDescriptor.Companion.ASYNC_METHOD_REQUEST_CODE
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import io.primer.android.payment.google.InitialCheckRequiredBehaviour
@@ -36,6 +37,7 @@ import io.primer.android.payment.paypal.PayPalDescriptor
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
@@ -43,7 +45,7 @@ import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
 import io.primer.android.ui.fragments.SessionCompleteViewType
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
-import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
+import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
@@ -119,6 +121,21 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             }
             is CheckoutEvent.Start3DS -> {
                 startActivity(ThreeDsActivity.getLaunchIntent(this))
+            }
+            is CheckoutEvent.StartAsyncFlow -> {
+                startActivityForResult(
+                    AsyncPaymentMethodWebViewActivity.getLaunchIntent(
+                        this,
+                        it.redirectUrl,
+                        it.statusUrl,
+                        (
+                            primerViewModel.selectedPaymentMethod?.value as?
+                                AsyncPaymentMethodDescriptor
+                            )?.title.orEmpty(),
+                        WebViewClientType.ASYNC
+                    ),
+                    ASYNC_METHOD_REQUEST_CODE
+                )
             }
         }
     }
@@ -222,6 +239,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 is InitialCheckRequiredBehaviour -> {
                     behaviour.execute(this, tokenizationViewModel)
                 }
+                is AsyncPaymentMethodBehaviour -> {
+                    behaviour.execute(tokenizationViewModel)
+                }
                 else -> {
                     // TODO what should we do here?
                 }
@@ -246,20 +266,12 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         DIAppContext.init(applicationContext, config)
 
-        val paymentMethodRegistry = PrimerPaymentMethodCheckerRegistry
-        val paymentMethodDescriptorFactoryRegistry =
-            PaymentMethodDescriptorFactoryRegistry(paymentMethodRegistry)
-
         primerViewModel.fetchConfiguration()
 
         sheet = CheckoutSheetFragment.newInstance()
 
         primerViewModel.viewStatus.observe(this, viewStatusObserver)
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
-        primerViewModel.primerViewModelSetupException.observe(this) { e ->
-            val apiError = APIError(e.message ?: "Failed to load checkout")
-            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
-        }
         primerViewModel.checkoutEvent.observe(this, checkoutEventObserver)
 
         tokenizationViewModel.tokenizationCanceled.observe(this) {
@@ -294,6 +306,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         subscription = EventBus.subscribe {
             when (it) {
+                is CheckoutEvent.StartAsyncFlow,
                 is CheckoutEvent.Start3DS,
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
@@ -321,8 +334,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onResume() {
         super.onResume()
         if (!config.settings.options.preferWebView ||
-            setOf(KLARNA_IDENTIFIER, APAYA_IDENTIFIER)
-                .contains(primerViewModel.selectedPaymentMethod.value?.identifier)
+            setOf(PaymentMethodType.KLARNA, PaymentMethodType.APAYA)
+                .contains(primerViewModel.selectedPaymentMethod.value?.config?.type)
                 .not()
         ) {
             WebviewInteropRegister.invokeAll()
@@ -332,7 +345,12 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE, APAYA_REQUEST_CODE -> handleWebFlowRequestResult(resultCode, data)
+            KLARNA_REQUEST_CODE, APAYA_REQUEST_CODE ->
+                handleWebFlowRequestResult(
+                    resultCode,
+                    data
+                )
+            ASYNC_METHOD_REQUEST_CODE -> handleAsyncFlowRequestResult(resultCode)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> Unit
         }
@@ -346,6 +364,17 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
                 tokenizationViewModel.handleWebFlowRequestResult(paymentMethod, redirectUrl)
             }
+            RESULT_ERROR -> {
+                onExit(CheckoutExitReason.ERROR)
+            }
+            RESULT_CANCELED -> {
+                onExit(CheckoutExitReason.DISMISSED_BY_USER)
+            }
+        }
+    }
+
+    private fun handleAsyncFlowRequestResult(resultCode: Int) {
+        when (resultCode) {
             RESULT_ERROR -> {
                 onExit(CheckoutExitReason.ERROR)
             }

@@ -47,5 +47,5 @@ internal data class PrimerIntent(
 @Serializable
 enum class PrimerPaymentMethod {
 
-    ANY, CARD, KLARNA, PAYPAL, GOOGLE_PAY, GOCARDLESS, APAYA
+    ANY, CARD, KLARNA, PAYPAL, GOOGLE_PAY, GOCARDLESS, APAYA, ASYNC
 }

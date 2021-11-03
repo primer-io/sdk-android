@@ -1,23 +1,18 @@
 package io.primer.android.model
 
 import io.primer.android.data.exception.HttpException
-import io.primer.android.data.session.datasource.LocalClientSessionDataSource
-import io.primer.android.data.token.datasource.LocalClientTokenDataSource
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.ClientSession
+import io.primer.android.data.configuration.model.Configuration
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
-import io.primer.android.threeds.data.models.BeginAuthRequest
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.PostAuthResponse
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
@@ -29,7 +24,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
-import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.coroutines.resume
@@ -64,99 +58,14 @@ internal suspend inline fun Call.await(): Response =
 // FIXME drop Model class (in favour of something like PrimerService or PrimerApi)
 // FIXME extract parsing to collaborator
 internal class Model constructor(
-    private val clientTokenDataSource: LocalClientTokenDataSource,
     private val okHttpClient: OkHttpClient,
-    private val localClientSessionDataSource: LocalClientSessionDataSource,
+    private val localConfigurationDataSource: LocalConfigurationDataSource,
     private val json: Json,
 ) {
 
-    private var clientSession: ClientSession? = null
-
     // FIXME avoid this null-assertion
-    private val session: ClientSession
-        get() = clientSession!!
-
-    suspend fun getConfiguration(): OperationResult<ClientSession> {
-
-        val request = Request.Builder()
-            .url(clientTokenDataSource.getClientToken().configurationUrl)
-            .get()
-            .build()
-
-        return try {
-            val response: Response = okHttpClient
-                .newCall(request)
-                .await()
-
-            if (!response.isSuccessful) {
-                val error = APIError.create(response)
-                // TODO extract error parsing to collaborator & pass error through OperationResult
-                EventBus.broadcast(CheckoutEvent.ApiError(error))
-                return OperationResult.Error(Throwable())
-            }
-
-            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body()?.string() ?: "{}")
-                response.body()?.close()
-                continuation.resume(json)
-            }
-
-            // TODO move parsing somewhere else
-            val clientSession = json
-                .decodeFromString(ClientSession.serializer(), jsonBody.toString())
-
-            this.clientSession = clientSession
-
-            localClientSessionDataSource.updateClientSession(clientSession)
-
-            OperationResult.Success(clientSession)
-        } catch (error: Throwable) {
-            OperationResult.Error(error)
-        }
-    }
-
-    suspend fun getVaultedPaymentMethods(
-        clientSession: ClientSession,
-    ): OperationResult<List<PaymentMethodTokenInternal>> {
-
-        val baseUrl = "${clientSession.pciUrl}/payment-instruments"
-        val request = Request.Builder()
-            .url(baseUrl)
-            .get()
-            .build()
-
-        return try {
-            val response: Response = okHttpClient
-                .newCall(request)
-                .await()
-
-            if (!response.isSuccessful) {
-                val error = APIError.create(response)
-                // TODO extract error parsing to collaborator & pass error through OperationResult
-                EventBus.broadcast(CheckoutEvent.ApiError(error))
-                return OperationResult.Error(Throwable())
-            }
-
-            val body: ResponseBody? = response.body()
-
-            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body()?.string() ?: "{}")
-                body?.close()
-                continuation.resume(json)
-            }
-            val array = jsonBody.getJSONArray("data")
-
-            // TODO move parsing somewhere else
-            val list = json.decodeFromString<List<PaymentMethodTokenInternal>>(
-                ListSerializer(PaymentMethodTokenInternal.serializer()),
-                array.toString(),
-            )
-
-            OperationResult.Success(list)
-        } catch (error: Throwable) {
-            OperationResult.Error(error)
-        }
-    }
+    private val session: Configuration
+        get() = localConfigurationDataSource.getConfiguration()
 
     fun tokenize(
         tokenizationRequest: TokenizationRequest,
@@ -272,92 +181,9 @@ internal class Model constructor(
         }
     }
 
-    fun get3dsAuthToken(
-        token: String,
-        beginAuthRequest: BeginAuthRequest,
-    ): Flow<BeginAuthResponse> =
-        flow {
-
-            val baseUrl = "${clientSession?.pciUrl}/3ds/$token/auth"
-            val request = Request.Builder()
-                .url(baseUrl)
-                .post(
-                    RequestBody.create(
-                        MediaType.get("application/json"),
-                        Json.encodeToString(beginAuthRequest)
-                    )
-                )
-                .build()
-
-            val response: Response = okHttpClient
-                .newCall(request)
-                .await()
-
-            if (!response.isSuccessful) {
-                val error = APIError.create(response)
-                // TODO extract error parsing to collaborator & pass error through OperationResult
-                throw HttpException(response.code(), error)
-            }
-
-            val body: ResponseBody? = response.body()
-
-            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body()?.string() ?: "{}")
-                body?.close()
-                continuation.resume(json)
-            }
-
-            // TODO move parsing somewhere else
-            val data = json.decodeFromString(
-                BeginAuthResponse.serializer(),
-                jsonBody.toString(),
-            )
-
-            emit(data)
-        }
-
-    fun continue3dsAuth(
-        threeDSTokenId: String,
-    ): Flow<PostAuthResponse> =
-        flow {
-
-            val baseUrl = "${clientSession?.pciUrl}/3ds/$threeDSTokenId/continue"
-            val request = Request.Builder()
-                .url(baseUrl)
-                .post(RequestBody.create(MediaType.get("application/json"), "{}"))
-                .build()
-
-            val response: Response = okHttpClient
-                .newCall(request)
-                .await()
-
-            if (!response.isSuccessful) {
-                val error = APIError.create(response)
-                // TODO extract error parsing to collaborator & pass error through OperationResult
-                throw HttpException(response.code(), error)
-            }
-
-            val body: ResponseBody? = response.body()
-
-            val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-                val json = JSONObject(response.body()?.string() ?: "{}")
-                body?.close()
-                continuation.resume(json)
-            }
-
-            // TODO move parsing somewhere else
-            val data = json.decodeFromString(
-                PostAuthResponse.serializer(),
-                jsonBody.toString(),
-            )
-
-            emit(data)
-        }
-
     fun getClientSession() =
         flow {
-            require(clientSession != null)
-            clientSession?.let { emit(it) }
+            emit(session)
         }
 
     private fun toJsonRequestBody(requestBody: JSONObject?): RequestBody {

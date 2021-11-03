@@ -31,6 +31,7 @@ fun TransactionStatus.toTransactionState(): TransactionState {
     }
 }
 
+@Keep
 data class RequiredActionData(
     val name: RequiredActionName,
     val description: String,

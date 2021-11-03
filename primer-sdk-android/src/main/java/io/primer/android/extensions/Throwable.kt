@@ -5,8 +5,10 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.APIError
 import java.io.IOException
 
-internal fun Throwable.toCheckoutErrorEvent() =
-    when (this) {
+internal fun Throwable.toCheckoutErrorEvent(message: String? = null) =
+    if (message.isNullOrBlank().not()) {
+        CheckoutEvent.ApiError(APIError.createDefaultWithMessage(message.orEmpty()))
+    } else when (this) {
         is HttpException -> CheckoutEvent.ApiError(error)
         is IOException -> CheckoutEvent.ApiError(APIError.create(this))
         else -> CheckoutEvent.ApiError(APIError.createDefault())

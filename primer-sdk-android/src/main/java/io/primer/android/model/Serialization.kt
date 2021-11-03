@@ -8,6 +8,7 @@ internal object Serialization {
 
     private var _json: Json = Json {
         ignoreUnknownKeys = true
+        coerceInputValues = true
         serializersModule = SerializersModule {}
     }
     val json: Json

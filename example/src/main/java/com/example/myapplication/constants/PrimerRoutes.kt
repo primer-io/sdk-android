@@ -6,6 +6,8 @@ object PrimerRoutes {
 
     const val clientToken: String = "$root/clientToken"
 
+    const val clientSession: String = "$root/clientSession"
+
     const val payments: String = "$root/payments"
 
     const val resumeToken: String = "$root/resume"

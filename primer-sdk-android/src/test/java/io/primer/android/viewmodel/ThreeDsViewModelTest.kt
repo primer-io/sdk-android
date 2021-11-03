@@ -52,40 +52,24 @@ class ThreeDsViewModelTest {
     }
 
     @Test
-    fun `startThreeDsFlow() should receive init event when initialize and validate was success`() {
+    fun `startThreeDsFlow() should receive init event when initialize was success`() {
         val observer = viewModel.threeDsInitEvent.test()
-        coEvery { threeDsInteractor.validate(any()) }.returns(flowOf(Unit))
         coEvery { threeDsInteractor.initialize(any()) }.returns(flowOf(Unit))
 
         viewModel.startThreeDsFlow()
 
-        coVerify { threeDsInteractor.validate(any()) }
         coVerify { threeDsInteractor.initialize(any()) }
         observer.assertValue(Unit)
     }
 
     @Test
-    fun `startThreeDsFlow() should receive finished event when initialize failed and validate was success`() {
+    fun `startThreeDsFlow() should receive finished event when initialize failed`() {
         val observer = viewModel.threeDsFinishedEvent.test()
-        coEvery { threeDsInteractor.validate(any()) }.returns(flowOf(Unit))
         coEvery { threeDsInteractor.initialize(any()) }.returns(flow { throw Exception() })
 
         viewModel.startThreeDsFlow()
 
-        coVerify { threeDsInteractor.validate(any()) }
         coVerify { threeDsInteractor.initialize(any()) }
-        observer.assertValue(Unit)
-    }
-
-    @Test
-    fun `startThreeDsFlow() should receive finished event when validate failed`() {
-        val observer = viewModel.threeDsFinishedEvent.test()
-        coEvery { threeDsInteractor.validate(any()) }.returns(flow { throw Exception() })
-
-        viewModel.startThreeDsFlow()
-
-        coVerify { threeDsInteractor.validate(any()) }
-
         observer.assertValue(Unit)
     }
 

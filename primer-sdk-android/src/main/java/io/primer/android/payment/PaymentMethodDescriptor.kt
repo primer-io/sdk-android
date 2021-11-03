@@ -12,11 +12,9 @@ abstract class PaymentMethodDescriptor(
     private val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
 ) {
 
-    abstract val identifier: String
-
     abstract val selectedBehaviour: SelectedPaymentMethodBehaviour
 
-    abstract val type: PaymentMethodType
+    abstract val type: PaymentMethodUiType
 
     abstract val vaultCapability: VaultCapability
 

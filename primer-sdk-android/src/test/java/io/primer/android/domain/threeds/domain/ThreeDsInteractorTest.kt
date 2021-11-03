@@ -29,7 +29,6 @@ import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ChallengeStatusData
-import io.primer.android.threeds.domain.models.ThreeDsConfigParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.models.ThreeDsParams
@@ -38,7 +37,6 @@ import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator
 import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -78,9 +76,6 @@ internal class ThreeDsInteractorTest {
     internal lateinit var threeDsAppUrlRepository: ThreeDsAppUrlRepository
 
     @RelaxedMockK
-    internal lateinit var threeDsConfigValidator: ThreeDsConfigValidator
-
-    @RelaxedMockK
     internal lateinit var resumeHandlerFactory: ResumeHandlerFactory
 
     @RelaxedMockK
@@ -104,7 +99,6 @@ internal class ThreeDsInteractorTest {
                 clientTokenRepository,
                 threeDsAppUrlRepository,
                 threeDsConfigurationRepository,
-                threeDsConfigValidator,
                 resumeHandlerFactory,
                 eventDispatcher,
                 logger,
@@ -114,66 +108,6 @@ internal class ThreeDsInteractorTest {
         every {
             paymentMethodRepository.getPaymentMethod()
         }.returns(paymentMethodTokenInternal)
-    }
-
-    @Test
-    fun `validate() should continue when config validation was success`() {
-        val configParams = mockk<ThreeDsConfigParams>(relaxed = true)
-        coEvery { threeDsConfigValidator.validate(any()) }.returns(flowOf(Unit))
-        runBlockingTest {
-            interactor.validate(configParams).first()
-        }
-        coVerify { threeDsConfigValidator.validate(any()) }
-    }
-
-    @Test
-    fun `validate() should dispatch tokenize error events when validation failed and Intent was CHECKOUT`() {
-        val configParams = mockk<ThreeDsConfigParams>(relaxed = true)
-        coEvery { threeDsConfigValidator.validate(any()) }.returns(
-            flow {
-                throw Exception("Validation failed.")
-            }
-        )
-
-        val events = slot<List<CheckoutEvent>>()
-
-        assertThrows<Exception> {
-            runBlockingTest {
-                interactor.validate(configParams).first()
-            }
-        }
-
-        coVerify { threeDsConfigValidator.validate(any()) }
-        verify { eventDispatcher.dispatchEvents(capture(events)) }
-
-        assert(events.captured.first().type == CheckoutEventType.TOKENIZE_SUCCESS)
-        assert(events.captured[1].type == CheckoutEventType.TOKEN_ADDED_TO_VAULT)
-    }
-
-    @Test
-    fun `validate() should dispatch resume error events when validation failed and Intent was 3DS_AUTHENTICATION`() {
-        val configParams = mockk<ThreeDsConfigParams>(relaxed = true)
-        coEvery { threeDsConfigValidator.validate(any()) }.returns(
-            flow {
-                throw Exception("Validation failed.")
-            }
-        )
-        every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
-        )
-
-        val event = slot<CheckoutEvent>()
-
-        assertThrows<Exception> {
-            runBlockingTest {
-                interactor.validate(configParams).first()
-            }
-        }
-
-        coVerify { threeDsConfigValidator.validate(any()) }
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
-
-        assert(event.captured.type == CheckoutEventType.RESUME_ERR0R)
     }
 
     @Test

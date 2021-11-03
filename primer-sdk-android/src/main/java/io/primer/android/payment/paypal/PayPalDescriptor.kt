@@ -3,14 +3,13 @@ package io.primer.android.payment.paypal
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.primer.android.payment.PAYPAL_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import org.koin.core.component.KoinApiExtension
@@ -24,9 +23,6 @@ internal class PayPalDescriptor constructor(
 
     private val localConfig: PrimerConfig by inject()
 
-    override val identifier: String
-        get() = PAYPAL_IDENTIFIER
-
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = if (localConfig.paymentMethodIntent == PaymentMethodIntent.VAULT) {
             PayPalBillingAgreementBehaviour(this)
@@ -34,8 +30,8 @@ internal class PayPalDescriptor constructor(
             PayPalOrderBehaviour(this)
         }
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.SIMPLE_BUTTON
+    override val type: PaymentMethodUiType
+        get() = PaymentMethodUiType.SIMPLE_BUTTON
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.SINGLE_USE_AND_VAULT

@@ -2,9 +2,9 @@ package io.primer.android.payment.google
 
 import android.content.Context
 import io.primer.android.PaymentMethodModule
-import io.primer.android.model.dto.ClientSession
-import io.primer.android.model.dto.Environment
-import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
+import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.model.Environment
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -15,8 +15,8 @@ class GooglePayModule(
 
     private lateinit var googlePayFacade: GooglePayFacade
 
-    override fun initialize(applicationContext: Context, clientSession: ClientSession) {
-        val googlePayEnvironment = if (clientSession.environment == Environment.PRODUCTION) {
+    override fun initialize(applicationContext: Context, configuration: Configuration) {
+        val googlePayEnvironment = if (configuration.environment == Environment.PRODUCTION) {
             GooglePayFacade.Environment.PRODUCTION
         } else {
             GooglePayFacade.Environment.TEST
@@ -30,7 +30,7 @@ class GooglePayModule(
         val googlePayChecker = GooglePayPaymentMethodChecker(googlePayFacade)
 
         paymentMethodCheckerRegistry.register(
-            GOOGLE_PAY_IDENTIFIER,
+            PaymentMethodType.GOOGLE_PAY,
             googlePayChecker
         )
     }
@@ -42,7 +42,7 @@ class GooglePayModule(
             GooglePayPaymentMethodDescriptorFactory(googlePayFacade)
 
         paymentMethodDescriptorFactoryRegistry.register(
-            GOOGLE_PAY_IDENTIFIER,
+            PaymentMethodType.GOOGLE_PAY,
             paymentMethodDescriptorFactory
         )
     }

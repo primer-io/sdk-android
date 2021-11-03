@@ -9,5 +9,3 @@ data class ClientTokenRequest(
     @SerializedName("environment") val environment: String,
     @SerializedName("customerCountryCode") val countryCode: String,
 ) : ExampleAppRequestBody
-
-interface ExampleAppRequestBody {}

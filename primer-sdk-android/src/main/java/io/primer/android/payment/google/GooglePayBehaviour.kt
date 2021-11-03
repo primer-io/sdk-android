@@ -1,7 +1,6 @@
 package io.primer.android.payment.google
 
 import android.app.Activity
-import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.viewmodel.PaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -25,7 +24,7 @@ internal class GooglePayBehaviour constructor(
     override fun initialize(paymentMethodCheckerRegistrar: PaymentMethodCheckerRegistry) {
         // FIXME this is not being called at the moment
         paymentMethodCheckerRegistrar.register(
-            GOOGLE_PAY_IDENTIFIER,
+            paymentMethodDescriptor.options.type,
             googlePayPaymentMethodChecker
         )
     }

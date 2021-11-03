@@ -244,6 +244,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
             button.setOnClickListener {
                 primerViewModel.selectPaymentMethod(paymentMethod)
+                toggleButtons(false)
             }
         }
 

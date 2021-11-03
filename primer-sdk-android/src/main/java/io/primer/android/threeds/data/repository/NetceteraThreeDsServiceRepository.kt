@@ -15,7 +15,7 @@ import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.R
 import io.primer.android.data.exception.ThreeDsInitException
-import io.primer.android.model.dto.Environment
+import io.primer.android.data.configuration.model.Environment
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData

@@ -3,15 +3,15 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import io.primer.android.data.session.datasource.LocalClientSessionDataSource
+import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
+import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodsDataRepository
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.data.configuration.datasource.RemoteConfigurationDataSource
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.extensions.toCheckoutErrorEvent
-import io.primer.android.model.Model
 import io.primer.android.model.PrimerDebugOptions
-import io.primer.android.model.OperationResult
 import io.primer.android.model.Serialization
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethod
@@ -19,10 +19,14 @@ import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.CountryCode
-import io.primer.android.model.dto.ClientSession
+import io.primer.android.data.configuration.repository.ConfigurationDataRepository
 import io.primer.android.model.dto.Customer
 import io.primer.android.data.token.model.ClientToken
+import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
+import io.primer.android.domain.session.CheckoutSessionInteractor
 import io.primer.android.events.EventDispatcher
+import io.primer.android.http.PrimerHttpClient
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.PrimerIntent
@@ -34,6 +38,8 @@ import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.Locale
@@ -96,43 +102,31 @@ class Primer private constructor() : PrimerInterface {
 
     override fun fetchSavedPaymentInstruments(clientToken: String) {
         setupAndVerifyClientToken(clientToken)
-        val model = getModel(clientToken)
+        val sessionInteractor = getSessionInteractor(clientToken)
+        val vaultInteractor = getVaultInteractor(clientToken)
         CoroutineScope(Dispatchers.IO).launch {
-            when (val configResult = model.getConfiguration()) {
-                is OperationResult.Success -> {
-                    val clientSession: ClientSession = configResult.data
-                    when (val result = model.getVaultedPaymentMethods(clientSession)) {
-                        is OperationResult.Success -> eventDispatcher.dispatchEvent(
-                            CheckoutEvent.SavedPaymentInstrumentsFetched(
-                                result.data.map {
-                                    PaymentMethodTokenAdapter.internalToExternal(it)
-                                }
-                            )
-                        )
-                        is OperationResult.Error -> eventDispatcher.dispatchEvent(
-                            result.error.toCheckoutErrorEvent()
-                        )
-                    }
-                }
-                is OperationResult.Error -> eventDispatcher.dispatchEvent(
-                    configResult.error.toCheckoutErrorEvent()
+            sessionInteractor.fetchCheckoutSession().flatMapLatest {
+                vaultInteractor.getVaultedTokens()
+            }.collect {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.SavedPaymentInstrumentsFetched(
+                        it.map {
+                            PaymentMethodTokenAdapter.internalToExternal(it)
+                        }
+                    )
                 )
             }
         }
     }
 
     override fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
+        val sessionInteractor = getSessionInteractor(config.clientTokenBase64.orEmpty())
+        val vaultInteractor = getVaultInteractor(config.clientTokenBase64.orEmpty())
         CoroutineScope(Dispatchers.IO).launch {
-            val model = getModel(config.clientTokenBase64.orEmpty())
-            when (val configResult = model.getConfiguration()) {
-                is OperationResult.Success -> {
-                    val clientSession: ClientSession = configResult.data
-                    when (val result = model.getVaultedPaymentMethods(clientSession)) {
-                        is OperationResult.Success -> callBackWithTokens(result.data, callback)
-                        is OperationResult.Error -> callback(listOf())
-                    }
-                }
-                is OperationResult.Error -> callback(listOf())
+            sessionInteractor.fetchCheckoutSession().flatMapLatest {
+                vaultInteractor.getVaultedTokens()
+            }.collect {
+                callBackWithTokens(it, callback)
             }
         }
     }
@@ -358,16 +352,41 @@ class Primer private constructor() : PrimerInterface {
         this.config.clientTokenBase64 = clientToken
     }
 
-    private fun getModel(clientToken: String): Model {
+    // do a cleanup here, when there is API to get tokens back!
+    private val sessionDataSource by lazy { LocalConfigurationDataSource(config.settings) }
+
+    private fun getSessionInteractor(clientToken: String): CheckoutSessionInteractor {
         val decodedToken: ClientToken = ClientToken.fromString(clientToken)
         val accessToken = decodedToken.accessToken
         val sdkVersion = BuildConfig.SDK_VERSION_STRING
         val okHttpClient = HttpClientFactory(accessToken, sdkVersion).build()
-        return Model(
-            LocalClientTokenDataSource(decodedToken),
-            okHttpClient,
-            LocalClientSessionDataSource(),
-            Serialization.json
+        return CheckoutSessionInteractor(
+            ConfigurationDataRepository(
+                RemoteConfigurationDataSource(PrimerHttpClient(okHttpClient, Serialization.json)),
+                sessionDataSource,
+                LocalClientTokenDataSource(decodedToken)
+            ),
+            eventDispatcher,
+            DefaultLogger("Primer")
+        )
+    }
+
+    private fun getVaultInteractor(clientToken: String): VaultedPaymentMethodsInteractor {
+        val decodedToken: ClientToken = ClientToken.fromString(clientToken)
+        val accessToken = decodedToken.accessToken
+        val sdkVersion = BuildConfig.SDK_VERSION_STRING
+        val okHttpClient = HttpClientFactory(accessToken, sdkVersion).build()
+        return VaultedPaymentMethodsInteractor(
+            VaultedPaymentMethodsDataRepository(
+                RemoteVaultedPaymentMethodsDataSource(
+                    PrimerHttpClient(
+                        okHttpClient,
+                        Serialization.json
+                    )
+                ),
+                sessionDataSource
+            ),
+            eventDispatcher
         )
     }
 

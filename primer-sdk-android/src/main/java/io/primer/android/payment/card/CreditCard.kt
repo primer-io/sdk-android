@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.PrimerTheme
-import io.primer.android.payment.PAYMENT_CARD_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.di.DIAppComponent
@@ -16,7 +15,7 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.CardNumberFormatter
@@ -43,14 +42,11 @@ internal class CreditCard(
     private val checkoutConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
 
-    // FIXME identifiers should not be needed to identify instances of a class
-    override val identifier = PAYMENT_CARD_IDENTIFIER
-
     // FIXME static call + instantiation makes it impossible to properly test
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
 
-    override val type: PaymentMethodType = PaymentMethodType.FORM
+    override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 

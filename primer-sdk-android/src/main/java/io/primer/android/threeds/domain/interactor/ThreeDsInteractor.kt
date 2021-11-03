@@ -19,7 +19,6 @@ import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.domain.models.ChallengeStatusData
-import io.primer.android.threeds.domain.models.ThreeDsConfigParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsParams
 import io.primer.android.threeds.domain.models.toBeginAuthRequest
@@ -27,7 +26,6 @@ import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
-import io.primer.android.threeds.domain.validation.ThreeDsConfigValidator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -36,10 +34,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 
 internal interface ThreeDsInteractor {
-
-    suspend fun validate(
-        threeDsConfigParams: ThreeDsConfigParams,
-    ): Flow<Unit>
 
     suspend fun initialize(
         threeDsInitParams: ThreeDsInitParams,
@@ -71,17 +65,11 @@ internal class DefaultThreeDsInteractor(
     private val clientTokenRepository: ClientTokenRepository,
     private val threeDsAppUrlRepository: ThreeDsAppUrlRepository,
     private val threeDsConfigurationRepository: ThreeDsConfigurationRepository,
-    private val threeDsConfigValidator: ThreeDsConfigValidator,
     private val resumeHandlerFactory: ResumeHandlerFactory,
     private val eventDispatcher: EventDispatcher,
     private val logger: DefaultLogger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ThreeDsInteractor {
-
-    override suspend fun validate(threeDsConfigParams: ThreeDsConfigParams) =
-        threeDsConfigValidator.validate(threeDsConfigParams).doOnError {
-            handleErrorEvent(it)
-        }
 
     override suspend fun initialize(
         threeDsInitParams: ThreeDsInitParams,

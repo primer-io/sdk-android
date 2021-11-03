@@ -1,6 +1,7 @@
 package io.primer.android.ui.base.webview
 
 import io.primer.android.ui.payment.apaya.ApayaWebViewClient
+import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewClient
 import io.primer.android.ui.payment.klarna.KlarnaWebViewClient
 
 internal interface WebViewClientFactory {
@@ -16,6 +17,11 @@ internal interface WebViewClientFactory {
             return when (type) {
                 WebViewClientType.KLARNA -> KlarnaWebViewClient(activity, url, captureUrl)
                 WebViewClientType.APAYA -> ApayaWebViewClient(activity, url, captureUrl)
+                WebViewClientType.ASYNC -> AsyncPaymentMethodWebViewClient(
+                    activity,
+                    url,
+                    captureUrl
+                )
             }
         }
     }
@@ -23,5 +29,6 @@ internal interface WebViewClientFactory {
 
 internal enum class WebViewClientType {
     KLARNA,
-    APAYA
+    APAYA,
+    ASYNC
 }

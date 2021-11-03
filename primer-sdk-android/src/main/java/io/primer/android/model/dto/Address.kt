@@ -1,11 +1,12 @@
 package io.primer.android.model.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 class Address(
-    val line1: String,
-    val line2: String? = null,
+    @SerialName("addressLine1") val line1: String,
+    @SerialName("addressLine2") val line2: String? = null,
     val postalCode: String,
     val city: String,
     val countryCode: CountryCode,

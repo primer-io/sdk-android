@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.payment.GOOGLE_PAY_IDENTIFIER
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.viewmodel.PaymentMethodChecker
@@ -26,9 +25,6 @@ internal class GooglePayDescriptor constructor(
         const val GOOGLE_PAY_REQUEST_CODE = GooglePayFacade.GOOGLE_PAY_REQUEST_CODE
     }
 
-    override val identifier: String
-        get() = GOOGLE_PAY_IDENTIFIER
-
     override val selectedBehaviour: SelectedPaymentMethodBehaviour =
         GooglePayBehaviour(
             paymentMethodDescriptor = this,
@@ -36,8 +32,8 @@ internal class GooglePayDescriptor constructor(
             googlePayFacade = googlePayFacade
         )
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.SIMPLE_BUTTON
+    override val type: PaymentMethodUiType
+        get() = PaymentMethodUiType.SIMPLE_BUTTON
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.SINGLE_USE_AND_VAULT

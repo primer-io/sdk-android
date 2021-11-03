@@ -5,14 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import io.primer.android.PrimerTheme
-import io.primer.android.payment.GOCARDLESS_IDENTIFIER
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.payment.PaymentMethodType
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import org.koin.core.component.KoinApiExtension
@@ -27,17 +26,14 @@ internal class GoCardlessDescriptor(
     private val localConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
 
-    override val identifier: String
-        get() = GOCARDLESS_IDENTIFIER
-
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             GoCardlessViewFragment::newInstance,
             returnToPreviousOnBack = !localConfig.isStandalonePaymentMethod
         )
 
-    override val type: PaymentMethodType
-        get() = PaymentMethodType.FORM
+    override val type: PaymentMethodUiType
+        get() = PaymentMethodUiType.FORM
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.VAULT_ONLY

@@ -5,8 +5,8 @@ import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.model.OrderItem
-import io.primer.android.model.dto.ClientSession
-import io.primer.android.payment.KLARNA_IDENTIFIER
+import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
@@ -22,13 +22,13 @@ data class Klarna(
     val webViewTitle: String? = "Klarna",
 ) : PaymentMethod {
 
-    override val identifier: String = KLARNA_IDENTIFIER
+    override val type = PaymentMethodType.KLARNA
 
     override val canBeVaulted: Boolean = true
 
     @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, clientSession: ClientSession) {
+        override fun initialize(applicationContext: Context, configuration: Configuration) {
             // no-op
         }
 
@@ -42,7 +42,7 @@ data class Klarna(
             paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
         ) {
             paymentMethodDescriptorFactoryRegistry.register(
-                KLARNA_IDENTIFIER,
+                type,
                 KlarnaPaymentMethodDescriptorFactory()
             )
         }
