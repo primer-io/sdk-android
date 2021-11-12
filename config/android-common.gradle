@@ -8,8 +8,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArgument("runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder")
-
-        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildFeatures {

@@ -77,7 +77,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation "com.xwray:groupie:2.9.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "io.primer:3ds-android:1.0.0"
+    implementation "io.primer:3ds-android:1.1.0"
     implementation 'com.google.android.material:material:1.4.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
