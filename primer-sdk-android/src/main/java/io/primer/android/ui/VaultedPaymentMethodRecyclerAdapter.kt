@@ -34,7 +34,7 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     checkIcon.setImageResource(R.drawable.ic_delete)
                     DrawableCompat.setTint(
                         DrawableCompat.wrap(checkIcon.drawable),
-                        theme.errorText.defaultColor.getColor(context)
+                        theme.errorText.defaultColor.getColor(context, theme.isDarkMode)
                     )
                 }
                 PaymentItemStatus.UNSELECTED -> {
@@ -45,7 +45,7 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     checkIcon.setImageResource(R.drawable.ic_check)
                     DrawableCompat.setTint(
                         DrawableCompat.wrap(checkIcon.drawable),
-                        theme.primaryColor.getColor(context)
+                        theme.primaryColor.getColor(context, theme.isDarkMode)
                     )
                 }
             }
@@ -77,7 +77,10 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             lastFourLabel.text = ""
             expiryLabel.text = ""
 
-            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(itemView.context)
+            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(
+                itemView.context,
+                theme.isDarkMode
+            )
             titleLabel.setTextColor(textColor)
 
             setCardIcon(item.type)
@@ -108,7 +111,10 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 item.expiryYear,
             )
 
-            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(itemView.context)
+            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(
+                itemView.context,
+                theme.isDarkMode
+            )
             titleLabel.setTextColor(textColor)
             lastFourLabel.setTextColor(textColor)
             expiryLabel.setTextColor(textColor)

@@ -78,5 +78,7 @@
 <!--    <color name="primer_input_border">@color/apple_dark_1</color>-->
 <!--    <color name="primer_input_text">@color/apple_dark_5</color>-->
 <!--    <color name="primer_input_cursor">@color/apple_dark_5</color>-->
+<!--    <color name="primer_search_input_background">@color/apple_dark_3</color>-->
+<!--    <color name="primer_search_input_text">@color/apple_dark_5</color>-->
 
 </resources>

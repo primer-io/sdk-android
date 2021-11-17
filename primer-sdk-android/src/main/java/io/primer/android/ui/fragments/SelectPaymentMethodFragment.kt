@@ -155,7 +155,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun renderTitle(context: Context) {
-        val color = theme.titleText.defaultColor.getColor(context)
+        val color = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
         choosePaymentMethodLabel.setTextColor(color)
         val fontSize = theme.titleText.fontsize.getDimension(context)
         choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
@@ -169,13 +169,13 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private fun generateButtonContent(context: Context): GradientDrawable {
         val contentDrawable = GradientDrawable()
         val border = theme.paymentMethodButton.border
-        val unSelectedColor = border.defaultColor.getColor(context)
-        val selectedColor = border.selectedColor.getColor(context)
+        val unSelectedColor = border.defaultColor.getColor(context, theme.isDarkMode)
+        val selectedColor = border.selectedColor.getColor(context, theme.isDarkMode)
         val colors = intArrayOf(unSelectedColor, selectedColor)
         val borderStates = ColorStateList(buttonStates, colors)
         val width = border.width.getPixels(context)
         contentDrawable.setStroke(width, borderStates)
-        val background = theme.paymentMethodButton.defaultColor.getColor(context)
+        val background = theme.paymentMethodButton.defaultColor.getColor(context, theme.isDarkMode)
         contentDrawable.setColor(background)
         contentDrawable.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
         return contentDrawable
@@ -183,11 +183,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
     private fun renderSavedPaymentMethodItem(context: Context) {
         val contentDrawable = generateButtonContent(context)
-        val splash = theme.splashColor.getColor(context)
+        val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val pressedStates = ColorStateList.valueOf(splash)
         val rippleDrawable = RippleDrawable(pressedStates, contentDrawable, null)
         savedPaymentMethod.background = rippleDrawable
-        val textColor = theme.paymentMethodButton.text.defaultColor.getColor(context)
+        val textColor =
+            theme.paymentMethodButton.text.defaultColor.getColor(context, theme.isDarkMode)
         titleLabel.setTextColor(textColor)
         savedPaymentLabel.setTextColor(textColor)
         lastFourLabel.setTextColor(textColor)
@@ -195,7 +196,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun renderSubtitles(context: Context) {
-        val color = theme.subtitleText.defaultColor.getColor(context)
+        val color = theme.subtitleText.defaultColor.getColor(context, theme.isDarkMode)
         val fontSize = theme.subtitleText.fontsize.getDimension(context)
         savedPaymentLabel.setTextColor(color)
         otherWaysPayLabel.setTextColor(color)
@@ -204,7 +205,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun renderManageLabel(context: Context) {
-        seeAllLabel.setTextColor(theme.systemText.defaultColor.getColor(context))
+        seeAllLabel.setTextColor(theme.systemText.defaultColor.getColor(context, theme.isDarkMode))
         seeAllLabel.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             theme.systemText.fontsize.getDimension(requireContext()),

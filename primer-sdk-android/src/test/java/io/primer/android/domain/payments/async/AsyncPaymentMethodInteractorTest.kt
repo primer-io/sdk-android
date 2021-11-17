@@ -8,6 +8,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.completion.ResumeHandler
+import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.events.CheckoutEvent
@@ -62,7 +63,7 @@ class AsyncPaymentMethodInteractorTest {
             )
         )
         testCoroutineDispatcher.runBlockingTest {
-            interactor.getPaymentFlowStatus("").first()
+            interactor(AsyncMethodParams("")).first()
         }
 
         val event = slot<CheckoutEvent>()
@@ -80,7 +81,7 @@ class AsyncPaymentMethodInteractorTest {
         )
         assertThrows<Exception> {
             testCoroutineDispatcher.runBlockingTest {
-                interactor.getPaymentFlowStatus("").first()
+                interactor(AsyncMethodParams("")).first()
             }
         }
 

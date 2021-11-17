@@ -15,7 +15,7 @@ internal class SofortPaymentMethodDescriptor(
     config: PaymentMethodRemoteConfig,
 ) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
 
-    override val title = "SOFORT BANKING"
+    override val title = "SOFORT"
 
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(

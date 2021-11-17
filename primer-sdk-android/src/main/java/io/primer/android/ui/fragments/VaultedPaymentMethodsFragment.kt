@@ -167,7 +167,12 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
         vaultTitleLabel = view.findViewById(R.id.vault_title_label)
 
-        vaultTitleLabel.setTextColor(theme.titleText.defaultColor.getColor(requireContext()))
+        vaultTitleLabel.setTextColor(
+            theme.titleText.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
 
         readOnlyHeaderLinearLayout = view.findViewById(
             R.id.primer_view_vaulted_payment_methods_header
@@ -193,7 +198,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
             viewModel.goToSelectPaymentMethodsView()
         }
         iconButton.imageTintList = ColorStateList.valueOf(
-            theme.titleText.defaultColor.getColor(requireContext())
+            theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         )
 
         view.findViewById<TextView>(R.id.edit_vaulted_payment_methods).setOnClickListener {
@@ -203,7 +208,12 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
     private fun renderEditLabel(view: View) {
         editLabel = view.findViewById(R.id.edit_vaulted_payment_methods)
-        editLabel.setTextColor(theme.systemText.defaultColor.getColor(requireContext()))
+        editLabel.setTextColor(
+            theme.systemText.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
         editLabel.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             theme.systemText.fontsize.getDimension(requireContext()),

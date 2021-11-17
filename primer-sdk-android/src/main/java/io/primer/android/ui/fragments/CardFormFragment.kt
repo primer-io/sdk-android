@@ -76,7 +76,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         inputs.values.forEach { t ->
             val fontSize = theme.input.text.fontsize.getDimension(requireContext())
             t.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
-            t.setTextColor(theme.input.text.defaultColor.getColor(requireContext()))
+            t.setTextColor(
+                theme.input.text.defaultColor.getColor(
+                    requireContext(),
+                    theme.isDarkMode
+                )
+            )
             when (theme.inputMode) {
                 PrimerTheme.InputMode.UNDERLINED -> {
                     val res = requireContext().resources
@@ -98,10 +103,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         title = view.findViewById(R.id.card_form_title)
 
         tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
-            when (status) {
-                TokenizationStatus.LOADING, TokenizationStatus.SUCCESS -> toggleLoading(true)
-                else -> toggleLoading(false)
+            val loading = when (status) {
+                TokenizationStatus.LOADING, TokenizationStatus.SUCCESS -> true
+                else -> false
             }
+            toggleLoading(loading)
+            enableSubmitButton(isSubmitButtonEnabled(status))
         }
         tokenizationViewModel.tokenizationError.observe(viewLifecycleOwner) {
             errorText.text = requireContext().getText(R.string.payment_method_error)
@@ -111,13 +118,13 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         tokenizationViewModel.validationErrors.observe(
             viewLifecycleOwner,
             {
-                setValidationErrors()
+                setValidationErrors(tokenizationViewModel.tokenizationStatus.value)
             }
         )
         tokenizationViewModel.submitted.observe(
             viewLifecycleOwner,
             {
-                setValidationErrors()
+                setValidationErrors(tokenizationViewModel.tokenizationStatus.value)
             }
         )
 
@@ -140,7 +147,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             }
         }
 
-        cancelButton.setTextColor(theme.systemText.defaultColor.getColor(requireContext()))
+        cancelButton.setTextColor(
+            theme.systemText.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
         cancelButton.setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             theme.systemText.fontsize.getDimension(requireContext()),
@@ -159,15 +171,23 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun renderTitle() {
-        title.setTextColor(theme.titleText.defaultColor.getColor(requireContext()))
+        title.setTextColor(
+            theme.titleText.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
     }
 
     private fun toggleLoading(on: Boolean) {
-        submitButton.isEnabled = on.not()
         submitButton.setProgress(on)
         if (on) {
             errorText.visibility = View.INVISIBLE
         }
+    }
+
+    private fun enableSubmitButton(enabled: Boolean) {
+        submitButton.isEnabled = enabled
     }
 
     private fun focusFirstInput() {
@@ -203,14 +223,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
                 dirtyMap[name] = true
             }
 
-            setValidationErrors()
+            setValidationErrors(tokenizationViewModel.tokenizationStatus.value)
         }
     }
 
-    private fun setValidationErrors() {
+    private fun setValidationErrors(tokenizationStatus: TokenizationStatus?) {
         val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
 
-        submitButton.isEnabled = errors.isEmpty()
+        submitButton.isEnabled = errors.isEmpty() && isSubmitButtonEnabled(tokenizationStatus)
 
         val showAll = tokenizationViewModel.submitted.value == true
 
@@ -261,6 +281,11 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun getIsDirty(name: String): Boolean {
         return dirtyMap[name] ?: false
+    }
+
+    private fun isSubmitButtonEnabled(tokenizationStatus: TokenizationStatus?): Boolean {
+        return tokenizationStatus == TokenizationStatus.NONE ||
+            tokenizationStatus == TokenizationStatus.ERROR
     }
 
     companion object {

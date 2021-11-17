@@ -38,22 +38,24 @@ class AsyncPaymentMethodViewModelTest {
     fun `getStatus() should receive finish event getPaymentFlowStatus was success`() {
         val asyncStatus = mockk<AsyncStatus>(relaxed = true)
         val observer = viewModel.statusUrlLiveData.test()
-        every { interactor.getPaymentFlowStatus(any()) }.returns(flowOf(asyncStatus))
+        every { interactor(any()) }.returns(flowOf(asyncStatus))
 
         viewModel.getStatus("")
 
-        every { interactor.getPaymentFlowStatus(any()) }
+        every { interactor(any()) }
+
         observer.assertValue(Unit)
     }
 
     @Test
     fun `getStatus() should receive error event getPaymentFlowStatus failed`() {
         val observer = viewModel.statusUrlErrorData.test()
-        every { interactor.getPaymentFlowStatus(any()) }.returns(flow { throw Exception() })
+        every { interactor(any()) }.returns(flow { throw Exception() })
 
         viewModel.getStatus("")
 
-        every { interactor.getPaymentFlowStatus(any()) }
+        every { interactor(any()) }
+
         observer.assertValue(Unit)
     }
 }

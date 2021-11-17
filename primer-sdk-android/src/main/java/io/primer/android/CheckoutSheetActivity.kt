@@ -21,6 +21,7 @@ import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.payment.apaya.ApayaDescriptor
@@ -226,28 +227,14 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
         it?.let {
-            when (val behaviour = it.selectedBehaviour) {
-                is NewFragmentBehaviour -> {
-                    openFragment(behaviour)
-                }
-                is WebBrowserIntentBehaviour -> {
-                    behaviour.execute(tokenizationViewModel)
-                }
-                is WebViewBehaviour -> {
-                    behaviour.execute(tokenizationViewModel)
-                }
-                is InitialCheckRequiredBehaviour -> {
-                    behaviour.execute(this, tokenizationViewModel)
-                }
-                is AsyncPaymentMethodBehaviour -> {
-                    behaviour.execute(tokenizationViewModel)
-                }
-                else -> {
-                    // TODO what should we do here?
-                }
-            }
+            handleBehaviour(it.selectedBehaviour)
         }
     }
+
+    private val selectedPaymentMethodBehaviourObserver =
+        Observer<SelectedPaymentMethodBehaviour?> { behaviour ->
+            handleBehaviour(behaviour)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -272,10 +259,20 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         primerViewModel.viewStatus.observe(this, viewStatusObserver)
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
+        primerViewModel.selectedPaymentMethodBehaviour.observe(
+            this,
+            selectedPaymentMethodBehaviourObserver
+        )
         primerViewModel.checkoutEvent.observe(this, checkoutEventObserver)
 
         tokenizationViewModel.tokenizationCanceled.observe(this) {
             onExit(CheckoutExitReason.DISMISSED_BY_USER)
+        }
+
+        tokenizationViewModel.error.observe(this) { d ->
+            if (d == null) return@observe
+            val apiError = APIError(d)
+            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
         }
 
         // region KLARNA
@@ -321,6 +318,12 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         if (!config.settings.options.showUI.not()) {
             openSheet()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        subscription?.unregister()
+        subscription = null
     }
 
     private fun ensureClicksGoThrough() {
@@ -431,13 +434,28 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        subscription?.unregister()
-        subscription = null
-    }
-
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
+    }
+
+    private fun handleBehaviour(behaviour: SelectedPaymentMethodBehaviour?) = when (behaviour) {
+        is NewFragmentBehaviour -> {
+            openFragment(behaviour)
+        }
+        is WebBrowserIntentBehaviour -> {
+            behaviour.execute(tokenizationViewModel)
+        }
+        is WebViewBehaviour -> {
+            behaviour.execute(tokenizationViewModel)
+        }
+        is InitialCheckRequiredBehaviour -> {
+            behaviour.execute(this, tokenizationViewModel)
+        }
+        is AsyncPaymentMethodBehaviour -> {
+            behaviour.execute(tokenizationViewModel)
+        }
+        else -> {
+            // TODO what should we do here?
+        }
     }
 }

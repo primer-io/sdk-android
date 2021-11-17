@@ -18,8 +18,8 @@ class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
 
     init {
         val colors = intArrayOf(
-            theme.input.border.defaultColor.getColor(context),
-            theme.input.border.selectedColor.getColor(context),
+            theme.input.border.defaultColor.getColor(context, theme.isDarkMode),
+            theme.input.border.selectedColor.getColor(context, theme.isDarkMode),
         )
 
         val states = arrayOf(
@@ -32,8 +32,8 @@ class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
         setBoxStrokeColorStateList(colorStateList)
 
         val hintColors = intArrayOf(
-            theme.input.hintText.defaultColor.getColor(context),
-            theme.input.border.selectedColor.getColor(context),
+            theme.input.hintText.defaultColor.getColor(context, theme.isDarkMode),
+            theme.input.border.selectedColor.getColor(context, theme.isDarkMode),
         )
 
         val hintTextStates = arrayOf(
@@ -45,7 +45,7 @@ class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
         defaultHintTextColor = ColorStateList(hintTextStates, hintColors)
 
         boxStrokeErrorColor = ColorStateList.valueOf(
-            theme.input.border.errorColor.getColor(context)
+            theme.input.border.errorColor.getColor(context, theme.isDarkMode)
         )
 
         val cornerRadius = theme.input.cornerRadius.getDimension(context)
@@ -56,7 +56,7 @@ class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                 BOX_BACKGROUND_OUTLINE
             }
             PrimerTheme.InputMode.UNDERLINED -> {
-                boxBackgroundColor = theme.input.backgroundColor.getColor(context)
+                boxBackgroundColor = theme.input.backgroundColor.getColor(context, theme.isDarkMode)
                 BOX_BACKGROUND_FILLED
             }
         }

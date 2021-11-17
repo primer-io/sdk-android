@@ -30,7 +30,7 @@ internal class PaymentMethodsDataRepository(
 ) : PaymentMethodsRepository {
 
     override fun getPaymentMethodDescriptors() =
-        configurationDataSource.getConfigurationAsFlow()
+        configurationDataSource.get()
             .mapLatest { checkoutSession ->
                 val paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
                     config,

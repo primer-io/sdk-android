@@ -28,6 +28,10 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     ADYEN_SOFORT(ClientTokenIntent.ADYEN_SOFORT_REDIRECTION),
     ADYEN_TRUSTLY(ClientTokenIntent.ADYEN_TRUSTLY_REDIRECTION),
     ADYEN_ALIPAY(ClientTokenIntent.ADYEN_ALIPAY_REDIRECTION),
+    ADYEN_VIPPS(ClientTokenIntent.ADYEN_VIPPS_REDIRECTION),
+    ADYEN_MOBILEPAY(ClientTokenIntent.ADYEN_MOBILEPAY_REDIRECTION),
+    ADYEN_IDEAL(ClientTokenIntent.ADYEN_IDEAL_REDIRECTION),
+    ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION),
     UNKNOWN;
 
     companion object {

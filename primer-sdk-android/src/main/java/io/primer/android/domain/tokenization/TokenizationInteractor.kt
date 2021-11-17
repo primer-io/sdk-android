@@ -2,8 +2,8 @@ package io.primer.android.domain.tokenization
 
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.completion.ResumeHandlerFactory
+import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
-import io.primer.android.domain.tokenization.models.toTokenizationRequest
 import io.primer.android.domain.tokenization.repository.TokenizationRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -25,10 +25,10 @@ internal class TokenizationInteractor(
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val resumeHandlerFactory: ResumeHandlerFactory,
     private val eventDispatcher: EventDispatcher,
-) {
+) : BaseInteractor<String, TokenizationParams>() {
 
-    fun tokenize(params: TokenizationParams): Flow<String> {
-        return tokenizationRepository.tokenize(params.toTokenizationRequest())
+    override fun execute(params: TokenizationParams): Flow<String> {
+        return tokenizationRepository.tokenize(params)
             .onEach {
                 val token = PaymentMethodTokenAdapter.internalToExternal(it)
                 paymentMethodRepository.setPaymentMethod(it)

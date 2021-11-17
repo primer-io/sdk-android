@@ -38,13 +38,19 @@ class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
                     ),
                     IntArray(2) {
                         when (it) {
-                            0 -> theme.mainButton.defaultColor.getColor(context)
-                            1 -> theme.mainButton.disabledColor.getColor(context)
-                            else -> theme.mainButton.disabledColor.getColor(context)
+                            0 -> theme.mainButton.defaultColor.getColor(context, theme.isDarkMode)
+                            1 -> theme.mainButton.disabledColor.getColor(context, theme.isDarkMode)
+                            else -> theme.mainButton.disabledColor.getColor(
+                                context,
+                                theme.isDarkMode
+                            )
                         }
                     }
                 )
-                setStroke(1, theme.mainButton.border.defaultColor.getColor(context))
+                setStroke(
+                    1,
+                    theme.mainButton.border.defaultColor.getColor(context, theme.isDarkMode)
+                )
             },
             null
         )

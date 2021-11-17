@@ -2,6 +2,9 @@ package io.primer.android.domain.payments.async
 
 import io.primer.android.completion.ResumeHandler
 import io.primer.android.data.exception.AsyncFlowIncompleteException
+import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.payments.async.models.AsyncMethodParams
+import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -19,14 +22,15 @@ internal class AsyncPaymentMethodInteractor(
     private val eventDispatcher: EventDispatcher,
     private val resumeHandler: ResumeHandler,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) {
+) : BaseInteractor<AsyncStatus, AsyncMethodParams>() {
 
-    fun getPaymentFlowStatus(url: String) = paymentMethodStatusRepository.getAsyncStatus(url)
-        .retry {
-            (it is AsyncFlowIncompleteException).also { retrying ->
-                if (retrying) delay(POLL_DELAY)
-            }
-        }.flowOn(dispatcher)
+    override fun execute(params: AsyncMethodParams) = paymentMethodStatusRepository.getAsyncStatus(
+        params.url
+    ).retry {
+        (it is AsyncFlowIncompleteException).also { retrying ->
+            if (retrying) delay(POLL_DELAY)
+        }
+    }.flowOn(dispatcher)
         .onEach {
             eventDispatcher.dispatchEvent(
                 CheckoutEvent.ResumeSuccess(

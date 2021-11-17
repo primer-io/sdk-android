@@ -1,21 +1,23 @@
 package io.primer.android.data.configuration.datasource
 
+import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
 import io.primer.android.data.configuration.model.Configuration
 import io.primer.android.model.dto.PrimerSettings
 import kotlinx.coroutines.flow.flowOf
 
-internal class LocalConfigurationDataSource(private val settings: PrimerSettings) {
+internal class LocalConfigurationDataSource(private val settings: PrimerSettings) :
+    BaseFlowCacheDataSource<Configuration, Configuration>() {
 
     private var configuration: Configuration? = null
 
-    fun getConfigurationAsFlow() = flowOf(requireNotNull(configuration))
+    override fun get() = flowOf(requireNotNull(configuration))
+
+    override fun update(input: Configuration) {
+        this.configuration = input
+        updateSettings(input)
+    }
 
     fun getConfiguration() = requireNotNull(configuration)
-
-    fun updateConfiguration(configuration: Configuration) {
-        this.configuration = configuration
-        updateSettings(configuration)
-    }
 
     private fun updateSettings(configuration: Configuration) =
         configuration.clientSession?.apply {

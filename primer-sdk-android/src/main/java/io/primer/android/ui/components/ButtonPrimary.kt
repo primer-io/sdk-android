@@ -56,7 +56,7 @@ class ButtonPrimary(
     }
 
     private fun createBackground(): Drawable {
-        val splash = theme.splashColor.getColor(context)
+        val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val rippleColor = ColorStateList.valueOf(splash)
         val content = GradientDrawable().apply {
             cornerRadius = theme.defaultCornerRadius.getDimension(context)
@@ -66,8 +66,8 @@ class ButtonPrimary(
                     intArrayOf(-android.R.attr.state_enabled)
                 ),
                 intArrayOf(
-                    theme.mainButton.defaultColor.getColor(context),
-                    theme.mainButton.disabledColor.getColor(context),
+                    theme.mainButton.defaultColor.getColor(context, theme.isDarkMode),
+                    theme.mainButton.disabledColor.getColor(context, theme.isDarkMode),
                 )
             )
         }

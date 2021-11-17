@@ -22,8 +22,10 @@ import io.primer.android.model.dto.CountryCode
 import io.primer.android.data.configuration.repository.ConfigurationDataRepository
 import io.primer.android.model.dto.Customer
 import io.primer.android.data.token.model.ClientToken
+import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
-import io.primer.android.domain.session.CheckoutSessionInteractor
+import io.primer.android.domain.session.ConfigurationInteractor
+import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.EventDispatcher
 import io.primer.android.http.PrimerHttpClient
 import io.primer.android.logging.DefaultLogger
@@ -41,7 +43,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
 import java.util.Locale
 
 @Deprecated("This object has been renamed to Primer.")
@@ -53,7 +54,7 @@ typealias UniversalCheckoutTheme = PrimerTheme
 class Primer private constructor() : PrimerInterface {
 
     internal var paymentMethods: MutableList<PaymentMethod> = mutableListOf()
-    private var listener: WeakReference<CheckoutEventListener>? = null
+    private var listener: CheckoutEventListener? = null
     private var config: PrimerConfig = PrimerConfig()
     private var subscription: EventBus.SubscriptionHandle? = null
 
@@ -62,7 +63,7 @@ class Primer private constructor() : PrimerInterface {
     private val eventBusListener = object : EventBus.EventListener {
         override fun onEvent(e: CheckoutEvent) {
             if (e.public) {
-                listener?.get()?.onCheckoutEvent(e)
+                listener?.onCheckoutEvent(e)
             }
         }
     }
@@ -76,6 +77,12 @@ class Primer private constructor() : PrimerInterface {
         config?.let {
             this.config = config
         }
+    }
+
+    override fun cleanup() {
+        listener = null
+        subscription?.unregister(true)
+        subscription = null
     }
 
     override fun showUniversalCheckout(context: Context, clientToken: String) {
@@ -105,8 +112,8 @@ class Primer private constructor() : PrimerInterface {
         val sessionInteractor = getSessionInteractor(clientToken)
         val vaultInteractor = getVaultInteractor(clientToken)
         CoroutineScope(Dispatchers.IO).launch {
-            sessionInteractor.fetchCheckoutSession().flatMapLatest {
-                vaultInteractor.getVaultedTokens()
+            sessionInteractor(ConfigurationParams(false)).flatMapLatest {
+                vaultInteractor(None())
             }.collect {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.SavedPaymentInstrumentsFetched(
@@ -123,8 +130,8 @@ class Primer private constructor() : PrimerInterface {
         val sessionInteractor = getSessionInteractor(config.clientTokenBase64.orEmpty())
         val vaultInteractor = getVaultInteractor(config.clientTokenBase64.orEmpty())
         CoroutineScope(Dispatchers.IO).launch {
-            sessionInteractor.fetchCheckoutSession().flatMapLatest {
-                vaultInteractor.getVaultedTokens()
+            sessionInteractor(ConfigurationParams(false)).flatMapLatest {
+                vaultInteractor(None())
             }.collect {
                 callBackWithTokens(it, callback)
             }
@@ -137,7 +144,7 @@ class Primer private constructor() : PrimerInterface {
     private fun setListener(listener: CheckoutEventListener) {
         subscription?.unregister(true)
         this.listener = null
-        this.listener = WeakReference(listener)
+        this.listener = listener
         subscription = EventBus.subscribe(eventBusListener)
     }
 
@@ -180,6 +187,7 @@ class Primer private constructor() : PrimerInterface {
     }
 
     override fun dismiss(clearListeners: Boolean) {
+        if (clearListeners) listener = null
         EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_CLIENT))
     }
 
@@ -355,12 +363,12 @@ class Primer private constructor() : PrimerInterface {
     // do a cleanup here, when there is API to get tokens back!
     private val sessionDataSource by lazy { LocalConfigurationDataSource(config.settings) }
 
-    private fun getSessionInteractor(clientToken: String): CheckoutSessionInteractor {
+    private fun getSessionInteractor(clientToken: String): ConfigurationInteractor {
         val decodedToken: ClientToken = ClientToken.fromString(clientToken)
         val accessToken = decodedToken.accessToken
         val sdkVersion = BuildConfig.SDK_VERSION_STRING
         val okHttpClient = HttpClientFactory(accessToken, sdkVersion).build()
-        return CheckoutSessionInteractor(
+        return ConfigurationInteractor(
             ConfigurationDataRepository(
                 RemoteConfigurationDataSource(PrimerHttpClient(okHttpClient, Serialization.json)),
                 sessionDataSource,

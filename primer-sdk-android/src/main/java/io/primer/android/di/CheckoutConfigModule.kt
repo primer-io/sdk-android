@@ -8,7 +8,7 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.infrastructure.metadata.datasource.MetaDataSource
 import io.primer.android.data.token.model.ClientToken
 import io.primer.android.data.token.repository.ClientTokenDataRepository
-import io.primer.android.domain.session.CheckoutSessionInteractor
+import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.logging.DefaultLogger
@@ -53,7 +53,7 @@ internal val CheckoutConfigModule = { config: PrimerConfig, clientToken: ClientT
         single<PaymentMethodRepository> { PaymentMethodDataRepository() }
 
         single {
-            CheckoutSessionInteractor(
+            ConfigurationInteractor(
                 get(),
                 get(),
                 get(named(CHECKOUT_SESSION_HANDLER_LOGGER_NAME))

@@ -129,7 +129,7 @@ class AppMainViewModel : ViewModel() {
                         amount = getAmountConverted(),
                         currency = countryCode.value!!.currencyCode.name,
                         countryCode = countryCode.value!!.mapped,
-                        items = listOf(OrderItem("name", "description", 100, 10))
+                        items = listOf(OrderItem("name", "description", 100, 66))
                     ),
                     customer = Customer(
                         id = "customer8",
@@ -145,7 +145,8 @@ class AppMainViewModel : ViewModel() {
                         )
                     ),
                     business = Business(
-                        name = "Primer", address = Address(
+                        name = "Primer",
+                        address = Address(
                             line1 = "1 Test Street",
                             postalCode = "12345",
                             city = "Stockholm",

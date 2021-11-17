@@ -1,0 +1,26 @@
+package io.primer.android.viewmodel.bank
+
+import androidx.lifecycle.viewModelScope
+import io.primer.android.di.DIAppComponent
+import io.primer.android.domain.rpc.banks.BanksFilterInteractor
+import io.primer.android.domain.rpc.banks.BanksInteractor
+import io.primer.android.domain.rpc.banks.models.IssuingBankFilterParams
+import io.primer.android.ui.BankItem
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+
+internal class DotPayBankSelectionViewModel(
+    interactor: BanksInteractor,
+    private val banksFilterInteractor: BanksFilterInteractor,
+) : BankSelectionViewModel(interactor), DIAppComponent {
+
+    fun onFilterChanged(
+        text: String
+    ) = viewModelScope.launch {
+        banksFilterInteractor(
+            IssuingBankFilterParams(text)
+        ).collect {
+            _itemsLiveData.postValue(it.map { BankItem(it.id, it.name, it.iconUrl) })
+        }
+    }
+}

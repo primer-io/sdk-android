@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.di.DIAppComponent
-import io.primer.android.domain.payments.apaya.ApayaInteractor
+import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -39,12 +39,13 @@ internal class TokenizationViewModel(
     private val model: Model,
     private val config: PrimerConfig,
     private val tokenizationInteractor: TokenizationInteractor,
-    private val apayaInteractor: ApayaInteractor,
+    private val apayaSessionInteractor: ApayaSessionInteractor,
 ) : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
 
     val submitted = MutableLiveData(false)
+    val error = MutableLiveData<String?>()
     val tokenizationStatus = MutableLiveData(TokenizationStatus.NONE)
     val tokenizationError = MutableLiveData<Unit>()
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
@@ -85,7 +86,7 @@ internal class TokenizationViewModel(
 
     fun tokenize() {
         viewModelScope.launch {
-            tokenizationInteractor.tokenize(
+            tokenizationInteractor(
                 TokenizationParams(
                     paymentMethod ?: return@launch,
                     config.paymentMethodIntent,
@@ -259,7 +260,8 @@ internal class TokenizationViewModel(
                     payPalBillingAgreementUrl.postValue(approvalUrl)
                 }
                 is OperationResult.Error -> {
-                    // TODO what should we do here?
+                    val description = "Failed to load PayPal."
+                    error.postValue(description)
                 }
             }
         }
@@ -277,7 +279,8 @@ internal class TokenizationViewModel(
                     confirmPayPalBillingAgreement.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    // TODO what should we do here?
+                    val description = "Failed to connect PayPal account."
+                    error.postValue(description)
                 }
             }
         }
@@ -298,7 +301,8 @@ internal class TokenizationViewModel(
                     payPalOrder.postValue(uri)
                 }
                 is OperationResult.Error -> {
-                    // TODO what should we do here?
+                    val description = "Failed to load PayPal."
+                    error.postValue(description)
                 }
             }
         }
@@ -330,7 +334,7 @@ internal class TokenizationViewModel(
     // region Apaya
     fun getApayaToken(merchantAccountId: String) {
         viewModelScope.launch {
-            apayaInteractor.createClientSession(
+            apayaSessionInteractor(
                 ApayaSessionParams(
                     merchantAccountId,
                     config.settings.options.locale,
@@ -344,21 +348,26 @@ internal class TokenizationViewModel(
     private fun handleApayaRequestResult(apaya: ApayaDescriptor?, redirectUrl: String?) {
         viewModelScope.launch {
             val params = ApayaWebResultParams(Uri.parse(redirectUrl))
-            apayaInteractor.validateWebResultParams(ApayaWebResultParams(Uri.parse(redirectUrl)))
-                .onEach {
-                    // TODO this needs a different approach using polymorphism for all payment descriptors!
-                    apaya?.apply {
-                        setTokenizableValue("mx", params.mxNumber)
-                        setTokenizableValue("mnc", params.mnc)
-                        setTokenizableValue("mcc", params.mcc)
-                        setTokenizableValue("hashedIdentifier", params.hashedIdentifier)
-                        setTokenizableValue("productId", apaya.config.options?.merchantId.orEmpty())
-                        setTokenizableValue(
-                            "currencyCode",
-                            localConfig.settings.order.currency.orEmpty()
-                        )
-                    }
+            apayaSessionInteractor.validateWebResultParams(
+                ApayaWebResultParams(
+                    Uri.parse(
+                        redirectUrl
+                    )
+                )
+            ).onEach {
+                // TODO this needs a different approach using polymorphism for all payment descriptors!
+                apaya?.apply {
+                    setTokenizableValue("mx", params.mxNumber)
+                    setTokenizableValue("mnc", params.mnc)
+                    setTokenizableValue("mcc", params.mcc)
+                    setTokenizableValue("hashedIdentifier", params.hashedIdentifier)
+                    setTokenizableValue("productId", apaya.config.options?.merchantId.orEmpty())
+                    setTokenizableValue(
+                        "currencyCode",
+                        localConfig.settings.order.currency.orEmpty()
+                    )
                 }
+            }
                 .collect {
                     apayaValidationData.postValue(it)
                 }

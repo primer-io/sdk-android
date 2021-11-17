@@ -10,8 +10,8 @@ internal class VaultedPaymentMethodsDataRepository(
     private val configurationDataSource: LocalConfigurationDataSource,
 ) : VaultedPaymentMethodsRepository {
 
-    override fun getVaultedPaymentMethods() = configurationDataSource.getConfigurationAsFlow()
+    override fun getVaultedPaymentMethods() = configurationDataSource.get()
         .flatMapLatest {
-            remoteVaultedPaymentMethodsDataSource.getPaymentMethods(it)
+            remoteVaultedPaymentMethodsDataSource.execute(it)
         }
 }

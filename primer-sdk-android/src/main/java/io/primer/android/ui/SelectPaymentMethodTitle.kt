@@ -42,7 +42,7 @@ internal class SelectPaymentMethodTitle(
                 PaymentMethodIntent.VAULT -> "" // this is for displaying amount, title sits above
                 else -> ""
             }
-            setTextColor(theme.amountLabelText.defaultColor.getColor(context))
+            setTextColor(theme.amountLabelText.defaultColor.getColor(context, theme.isDarkMode))
         }
     }
 }

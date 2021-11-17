@@ -34,6 +34,10 @@ abstract class PaymentMethodDescriptor(
         values.put(key, value)
     }
 
+    fun appendTokenizableValue(parent: String, key: String, value: String) {
+        values.put(parent, (values.optJSONObject(parent) ?: JSONObject()).put(key, value))
+    }
+
     open fun validate(): List<SyncValidationError> {
         return Collections.emptyList()
     }

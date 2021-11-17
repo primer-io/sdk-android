@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
+import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -21,11 +22,12 @@ internal class AsyncPaymentMethodViewModel(
 
     fun getStatus(statusUrl: String) {
         viewModelScope.launch {
-            paymentMethodInteractor.getPaymentFlowStatus(statusUrl).catch {
-                _statusUrlErrorData.postValue(Unit)
-            }.collect {
-                _statusUrlLiveData.postValue(Unit)
-            }
+            paymentMethodInteractor(AsyncMethodParams(statusUrl))
+                .catch {
+                    _statusUrlErrorData.postValue(Unit)
+                }.collect {
+                    _statusUrlLiveData.postValue(Unit)
+                }
         }
     }
 }

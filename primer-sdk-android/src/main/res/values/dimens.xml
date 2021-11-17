@@ -5,8 +5,8 @@
 
     <dimen name="primer_list_margin">16dp</dimen>
 
-
     <dimen name="success_width">300dp</dimen>
+    <dimen name="loading_height">300dp</dimen>
 
     <!--  Forms  -->
     <dimen name="primer_form_title_margin">28dp</dimen>
@@ -26,6 +26,7 @@
     <dimen name="primer_payment_method_preview_button_height">48sp</dimen>
 
     <!--  Universal Checkout view  -->
+    <dimen name="extra_small_padding">2dp</dimen>
     <dimen name="small_padding">4dp</dimen>
     <dimen name="medium_padding">8dp</dimen>
     <dimen name="medium_large_padding">10dp</dimen>
@@ -71,5 +72,7 @@
     <!--  custom colors for text inputs in universal checkout -->
     <dimen name="primer_input_corner_radius">@dimen/primer_default_corner_radius</dimen>
     <dimen name="primer_input_fontsize">@dimen/primer_default_fontsize</dimen>
+    <dimen name="primer_search_input_fontsize">@dimen/primer_text_size_sm</dimen>
     <dimen name="primer_input_border_width">1dp</dimen>
+
 </resources>

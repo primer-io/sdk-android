@@ -11,8 +11,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class ColorData {
 
-    fun getColor(context: Context): Int {
-        val isDarkTheme = UiMode.useDarkTheme(context)
+    fun getColor(context: Context, isDarkMode: Boolean?): Int {
+        val isDarkTheme = isDarkMode ?: UiMode.useDarkTheme(context)
         return when (this) {
             is ResourceColor -> {
                 val id = if (isDarkTheme) this.dark else this.default

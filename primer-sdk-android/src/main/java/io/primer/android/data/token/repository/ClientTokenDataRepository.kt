@@ -9,15 +9,15 @@ internal class ClientTokenDataRepository(
 ) : ClientTokenRepository {
 
     @Throws(IllegalArgumentException::class)
-    override fun setClientToken(clientToken: String) = clientTokenDataSource.setClientToken(
+    override fun setClientToken(clientToken: String) = clientTokenDataSource.update(
         clientToken
     )
 
-    override fun getRedirectUrl() = clientTokenDataSource.getClientToken().redirectUrl
+    override fun getRedirectUrl() = clientTokenDataSource.get().redirectUrl
 
-    override fun getStatusUrl() = clientTokenDataSource.getClientToken().statusUrl
+    override fun getStatusUrl() = clientTokenDataSource.get().statusUrl
 
     override fun getClientTokenIntent(): ClientTokenIntent {
-        return clientTokenDataSource.getClientToken().intent
+        return clientTokenDataSource.get().intent
     }
 }

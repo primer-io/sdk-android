@@ -9,7 +9,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.domain.payments.apaya.ApayaInteractor
+import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
 import io.primer.android.model.dto.PrimerConfig
@@ -37,7 +37,7 @@ class TokenizationViewModelTest : KoinTest {
     private lateinit var viewModel: TokenizationViewModel
 
     @RelaxedMockK
-    private lateinit var apayaInteractor: ApayaInteractor
+    private lateinit var apayaSessionInteractor: ApayaSessionInteractor
 
     @RelaxedMockK
     private lateinit var tokenizationInteractor: TokenizationInteractor
@@ -52,7 +52,8 @@ class TokenizationViewModelTest : KoinTest {
     internal fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
 
-        viewModel = TokenizationViewModel(model, config, tokenizationInteractor, apayaInteractor)
+        viewModel =
+            TokenizationViewModel(model, config, tokenizationInteractor, apayaSessionInteractor)
     }
 
     @Test
@@ -94,7 +95,7 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
         every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
         every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
-        coEvery { tokenizationInteractor.tokenize(any()) } returns flowOf("token")
+        coEvery { tokenizationInteractor(any()) } returns flowOf("token")
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
@@ -105,6 +106,6 @@ class TokenizationViewModelTest : KoinTest {
 
         viewModel.tokenize()
 
-        coVerify { tokenizationInteractor.tokenize(any()) }
+        coVerify { tokenizationInteractor(any()) }
     }
 }

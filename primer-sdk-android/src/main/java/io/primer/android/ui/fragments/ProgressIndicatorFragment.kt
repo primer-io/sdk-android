@@ -30,7 +30,12 @@ class ProgressIndicatorFragment : Fragment(), DIAppComponent {
 
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_bar)
 
-        progressBar.indeterminateDrawable.setTint(theme.primaryColor.getColor(requireContext()))
+        progressBar.indeterminateDrawable.setTint(
+            theme.primaryColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
     }
 
     companion object {

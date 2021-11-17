@@ -8,7 +8,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.domain.payments.apaya.ApayaInteractor.Companion.RETURN_URL
+import io.primer.android.domain.payments.apaya.ApayaSessionInteractor.Companion.RETURN_URL
 import io.primer.android.domain.payments.apaya.models.ApayaSession
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
-class ApayaInteractorTest {
+class ApayaSessionInteractorTest {
 
     @RelaxedMockK
     internal lateinit var apayaSessionParamsValidator: ApayaSessionParamsValidator
@@ -48,13 +48,13 @@ class ApayaInteractorTest {
 
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
-    private lateinit var interactor: ApayaInteractor
+    private lateinit var sessionInteractor: ApayaSessionInteractor
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor =
-            ApayaInteractor(
+        sessionInteractor =
+            ApayaSessionInteractor(
                 apayaSessionParamsValidator,
                 apayaWebResultValidator,
                 apayaRepository,
@@ -68,7 +68,7 @@ class ApayaInteractorTest {
         val webResultParams = mockk<ApayaWebResultParams>(relaxed = true)
         every { apayaWebResultValidator.validate(any()) }.returns(flowOf(Unit))
         runBlockingTest {
-            interactor.validateWebResultParams(webResultParams).first()
+            sessionInteractor.validateWebResultParams(webResultParams).first()
         }
         verify { apayaWebResultValidator.validate(any()) }
     }
@@ -86,7 +86,7 @@ class ApayaInteractorTest {
 
         assertThrows<Exception> {
             runBlockingTest {
-                interactor.validateWebResultParams(webResultParams).first()
+                sessionInteractor.validateWebResultParams(webResultParams).first()
             }
         }
 
@@ -108,7 +108,7 @@ class ApayaInteractorTest {
 
         assertThrows<Exception> {
             runBlockingTest {
-                interactor.createClientSession(sessionParams).first()
+                sessionInteractor(sessionParams).first()
             }
         }
 
@@ -131,7 +131,7 @@ class ApayaInteractorTest {
 
         assertThrows<Exception> {
             runBlockingTest {
-                interactor.createClientSession(sessionParams).first()
+                sessionInteractor(sessionParams).first()
             }
         }
 
@@ -151,7 +151,7 @@ class ApayaInteractorTest {
         every { apayaRepository.createClientSession(any()) }.returns(flowOf(session))
 
         runBlockingTest {
-            val result = interactor.createClientSession(sessionParams).first()
+            val result = sessionInteractor(sessionParams).first()
             assertEquals(result.token, session.token)
             assertEquals(result.redirectUrl, session.redirectUrl)
             assertEquals(result.returnUrl, RETURN_URL)

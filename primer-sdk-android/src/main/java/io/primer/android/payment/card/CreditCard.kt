@@ -64,7 +64,12 @@ internal class CreditCard(
 
         text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
 
-        text.setTextColor(theme.paymentMethodButton.text.defaultColor.getColor(container.context))
+        text.setTextColor(
+            theme.paymentMethodButton.text.defaultColor.getColor(
+                container.context,
+                theme.isDarkMode
+            )
+        )
 
         text.text = when (checkoutConfig.paymentMethodIntent) {
             PaymentMethodIntent.CHECKOUT -> container.context.getString(R.string.pay_by_card)
@@ -75,7 +80,10 @@ internal class CreditCard(
 
         DrawableCompat.setTint(
             DrawableCompat.wrap(icon[0]),
-            theme.paymentMethodButton.text.defaultColor.getColor(container.context)
+            theme.paymentMethodButton.text.defaultColor.getColor(
+                container.context,
+                theme.isDarkMode
+            )
         )
 
         return button

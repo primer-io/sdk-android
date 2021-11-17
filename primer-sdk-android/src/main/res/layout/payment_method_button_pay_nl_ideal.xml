@@ -13,5 +13,5 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_logo_pay_nl_ideal" />
+        android:src="@drawable/ic_logo_ideal" />
 </io.primer.android.ui.components.ButtonDefaultLayout>

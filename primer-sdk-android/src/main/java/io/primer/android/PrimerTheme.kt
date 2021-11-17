@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrimerTheme internal constructor(
+    internal val isDarkMode: Boolean?,
     internal val primaryColor: ColorData,
     internal val backgroundColor: ColorData,
     internal val splashColor: ColorData,
@@ -20,6 +21,7 @@ data class PrimerTheme internal constructor(
     internal val defaultText: TextTheme,
     internal val errorText: TextTheme,
     internal val input: InputTheme,
+    internal val searchInput: SearchInputTheme,
     internal val windowMode: WindowMode,
     internal val inputMode: InputMode,
 ) {
@@ -34,6 +36,7 @@ data class PrimerTheme internal constructor(
          * Style the Primer SDK using Android XML resources
          * */
         fun build(
+            isDarkMode: Boolean? = null,
             @ColorRes primaryColor: Int? = null,
             @ColorRes backgroundColor: Int? = null,
             @ColorRes disabledColor: Int? = null,
@@ -50,6 +53,7 @@ data class PrimerTheme internal constructor(
             systembutton: TextThemeData? = null,
             errorText: TextThemeData? = null,
             input: InputThemeData? = null,
+            searchInput: SearchInputThemeData? = null,
             inputMode: InputMode = InputMode.OUTLINED,
         ): PrimerTheme {
 
@@ -276,7 +280,40 @@ data class PrimerTheme internal constructor(
                 ),
             )
 
+            val styledSearchInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = searchInput?.text?.defaultColor ?: R.color.primer_search_input_text
+                ),
+                fontsize = ResourceDimension.valueOf(
+                    default = searchInput?.text?.fontsize ?: R.dimen.primer_search_input_fontsize,
+                ),
+            )
+
+            val styledSearchHintInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = searchInput?.hintText?.defaultColor ?: R.color.primer_subtitle
+                ),
+                fontsize = ResourceDimension.valueOf(
+                    default = searchInput?.hintText?.fontsize
+                        ?: R.dimen.primer_search_input_fontsize,
+                ),
+            )
+
+            val searchInput = SearchInputTheme(
+                backgroundColor = ResourceColor.valueOf(
+                    default = searchInput?.backgroundColor ?: backgroundColor
+                        ?: R.color.primer_search_input_background
+                ),
+                text = styledSearchInputText,
+                hintText = styledSearchHintInputText,
+                cornerRadius = ResourceDimension.valueOf(
+                    default = searchInput?.cornerRadius ?: defaultCornerRadius
+                        ?: R.dimen.primer_default_corner_radius,
+                ),
+            )
+
             return PrimerTheme(
+                isDarkMode = isDarkMode,
                 primaryColor = styledPrimaryColor,
                 backgroundColor = styledBackgroundColor,
                 splashColor = styledDisabledColor,
@@ -291,6 +328,7 @@ data class PrimerTheme internal constructor(
                 defaultText = styledDefaultText,
                 errorText = styledErrorText,
                 input = styledInput,
+                searchInput = searchInput,
                 windowMode = WindowMode.BOTTOM_SHEET,
                 inputMode = inputMode,
             )
@@ -316,6 +354,7 @@ data class PrimerTheme internal constructor(
             textMutedColor: String? = null,
             primaryColor: String? = null,
             inputBackgroundColor: String? = null,
+            searchInputBackgroundColor: String? = null,
             windowMode: WindowMode = WindowMode.BOTTOM_SHEET,
         ): PrimerTheme {
 
@@ -503,7 +542,33 @@ data class PrimerTheme internal constructor(
                 },
             )
 
+            val styledSearchInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_search_input_text),
+                fontsize = ResourceDimension.valueOf(R.dimen.primer_text_size_sm),
+            )
+
+            val styledSearchInputHintText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_subtitle),
+                fontsize = ResourceDimension.valueOf(R.dimen.primer_text_size_sm),
+            )
+
+            val styledSearchInput = SearchInputTheme(
+                backgroundColor = if (searchInputBackgroundColor == null) {
+                    ResourceColor.valueOf(R.color.primer_search_input_background)
+                } else {
+                    DynamicColor.valueOf(searchInputBackgroundColor)
+                },
+                text = styledSearchInputText,
+                hintText = styledSearchInputHintText,
+                cornerRadius = if (inputCornerRadius == null) {
+                    styledDefaultCornerRadius
+                } else {
+                    DynamicDimension.valueOf(inputCornerRadius)
+                },
+            )
+
             return PrimerTheme(
+                isDarkMode = null,
                 primaryColor = styledPrimaryColor,
                 backgroundColor = styledBackgroundColor,
                 splashColor = styledDisabledColor,
@@ -518,6 +583,7 @@ data class PrimerTheme internal constructor(
                 defaultText = styledDefaultText,
                 errorText = styledErrorText,
                 input = styledInput,
+                searchInput = styledSearchInput,
                 windowMode = windowMode,
                 inputMode = InputMode.UNDERLINED,
             )
@@ -556,6 +622,13 @@ data class InputThemeData(
     @DimenRes val cornerRadius: Int? = null,
 )
 
+data class SearchInputThemeData(
+    @ColorRes val backgroundColor: Int? = null,
+    val text: TextThemeData? = null,
+    val hintText: TextThemeData? = null,
+    @DimenRes val cornerRadius: Int? = null,
+)
+
 // Internal models
 
 @Serializable
@@ -589,4 +662,12 @@ internal data class InputTheme(
     val text: TextTheme,
     val hintText: TextTheme,
     val border: BorderTheme,
+)
+
+@Serializable
+internal data class SearchInputTheme(
+    val backgroundColor: ColorData,
+    val cornerRadius: DimensionData,
+    val text: TextTheme,
+    val hintText: TextTheme,
 )

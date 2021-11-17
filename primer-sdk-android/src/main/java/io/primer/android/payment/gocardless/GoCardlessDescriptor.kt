@@ -45,7 +45,12 @@ internal class GoCardlessDescriptor(
             false
         )
         val text = button.findViewById<TextView>(R.id.direct_debit_button_text)
-        text.setTextColor(theme.paymentMethodButton.text.defaultColor.getColor(container.context))
+        text.setTextColor(
+            theme.paymentMethodButton.text.defaultColor.getColor(
+                container.context,
+                theme.isDarkMode
+            )
+        )
 
         return button
     }

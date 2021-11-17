@@ -17,6 +17,13 @@ internal class AsyncPaymentMethodBehaviour(private val asyncMethod: AsyncPayment
         asyncMethod.setTokenizableValue("type", "OFF_SESSION_PAYMENT")
         asyncMethod.setTokenizableValue("paymentMethodType", asyncMethod.config.type.name)
         asyncMethod.setTokenizableValue("paymentMethodConfigId", asyncMethod.config.id!!)
+        // ...
+        asyncMethod.appendTokenizableValue(
+            "sessionInfo",
+            "locale",
+            asyncMethod.localConfig.settings.options.locale.toLanguageTag()
+        )
+        asyncMethod.appendTokenizableValue("sessionInfo", "platform", "ANDROID")
 
         tokenizationViewModel.tokenize()
     }

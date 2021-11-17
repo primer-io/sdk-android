@@ -19,7 +19,7 @@
     <color name="primer_secondary">@android:color/black</color>
 
     <color name="paypal_gold">#FFFFC439</color>
-    <color name="paypal_blue">#FFBEE4FE</color>
+    <color name="paypal_blue">#009CDE</color>
     <color name="klarna">#FFB3C7</color>
     <color name="hoolah">#D63727</color>
     <color name="pay_nl_ideal">#CC0670</color>
@@ -28,6 +28,8 @@
     <color name="sofort">#EF809F</color>
     <color name="trustly">#0EE06E</color>
     <color name="alipay">#1677FF</color>
+    <color name="vipps">#FF5B24</color>
+    <color name="mobilepay">#5A78FF</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->
@@ -87,4 +89,15 @@
     <color name="primer_input_background">@color/primer_background</color>
     <color name="primer_input_text">@color/primer_secondary</color>
     <color name="primer_input_cursor">@color/primer_primary</color>
+
+    <!--  custom colors for search text inputs in universal checkout -->
+    <color name="primer_search_input_background">@color/primer_bank_selection_search_background</color>
+    <color name="primer_search_input_text">@color/primer_secondary</color>
+    <color name="primer_search_input_cursor">@color/primer_primary</color>
+
+    <!--  custom colors for bank selector -->
+    <color name="primer_bank_selection_divider">#DBDBDB</color>
+    <color name="primer_bank_selection_placeholder_color">#E5E5EA</color>
+    <color name="primer_bank_selection_search_background">#08242A2F</color>
+
 </resources>

@@ -9,5 +9,10 @@ enum class CurrencyCode(val symbol: String) {
     GEL("₾"),
     JPY("¥"),
     KRW("₩"),
-    SGD("$")
+    SGD("$"),
+    CHF("fr"),
+    CNY("¥"),
+    DKK("kr"),
+    NOK("kr"),
+    PLN("zł"),
 }

@@ -16,6 +16,6 @@ class TextViewDanger(ctx: Context, attrs: AttributeSet? = null) :
     private val theme: PrimerTheme by inject()
 
     init {
-        setTextColor(theme.errorText.defaultColor.getColor(context))
+        setTextColor(theme.errorText.defaultColor.getColor(context, theme.isDarkMode))
     }
 }

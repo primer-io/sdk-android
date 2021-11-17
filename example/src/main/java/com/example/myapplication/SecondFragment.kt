@@ -131,9 +131,7 @@ class SecondFragment : Fragment() {
         viewModel.fetchClientSession()
     }
 
-    private fun initializeCheckout() = activity?.let {
-        viewModel.configure(listener)
-    }
+    private fun initializeCheckout() = viewModel.configure(listener)
 
     private val listener = CheckoutListener(
         onTokenizeSuccess = { token, completionHandler ->
@@ -196,6 +194,7 @@ class SecondFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Primer.instance.cleanup()
         Log.i("second fragment 🔥", "🔥")
     }
 }

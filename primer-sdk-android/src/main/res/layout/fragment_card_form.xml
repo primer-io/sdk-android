@@ -1,141 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/primer_form_title_margin"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/card_form_title"
-            style="@style/Primer.Text.Title.Small"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/enter_card_details" />
-
-        <TextView
-            android:id="@+id/nav_cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center_vertical|end"
-            android:text="@string/cancel"
-            android:textAllCaps="true" />
-    </LinearLayout>
-
-    <io.primer.android.ui.components.TextInputWidget
-        android:id="@+id/card_form_card_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/card_number"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/card_form_card_number_input"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:digits="0123456789 "
-            android:imeOptions="actionNext"
-            android:inputType="number" />
-    </io.primer.android.ui.components.TextInputWidget>
+            android:layout_marginBottom="@dimen/primer_form_title_margin"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/primer_input_spacing_vert" />
+            <TextView
+                android:id="@+id/card_form_title"
+                style="@style/Primer.Text.Title.Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/enter_card_details" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/nav_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical|end"
+                android:text="@string/cancel"
+                android:textAllCaps="true" />
+        </LinearLayout>
 
         <io.primer.android.ui.components.TextInputWidget
-            android:layout_height="wrap_content"
+            android:id="@+id/card_form_card_number"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_marginEnd="4dp"
-            android:layout_weight="1"
-            android:hint="@string/card_expiry"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:layout_height="wrap_content"
+            android:hint="@string/card_number">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/card_form_card_expiry_input"
+                android:id="@+id/card_form_card_number_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="0123456789/ "
+                android:digits="0123456789 "
                 android:imeOptions="actionNext"
-                android:inputType="date"/>
+                android:inputType="number" />
         </io.primer.android.ui.components.TextInputWidget>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/primer_input_spacing_vert" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <io.primer.android.ui.components.TextInputWidget
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:hint="@string/card_expiry">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/card_form_card_expiry_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789/ "
+                    android:imeOptions="actionNext"
+                    android:inputType="date" />
+            </io.primer.android.ui.components.TextInputWidget>
+
+            <io.primer.android.ui.components.TextInputWidget
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:hint="@string/card_cvv">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/card_form_card_cvv_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="4" />
+            </io.primer.android.ui.components.TextInputWidget>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/primer_input_spacing_vert" />
 
         <io.primer.android.ui.components.TextInputWidget
-            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_marginStart="4dp"
-            android:layout_weight="1"
-            android:hint="@string/card_cvv"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:layout_height="wrap_content"
+            android:hint="@string/card_holder_name">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/card_form_card_cvv_input"
+                android:id="@+id/card_form_cardholder_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="number"
-                android:maxLength="4" />
+                android:imeOptions="actionDone"
+                android:inputType="textPersonName"
+                android:maxLines="1" />
         </io.primer.android.ui.components.TextInputWidget>
 
-    </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/primer_input_spacing_vert" />
-
-    <io.primer.android.ui.components.TextInputWidget
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:hint="@string/card_holder_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/card_form_cardholder_name_input"
+        <Space
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/primer_input_spacing_vert" />
+
+        <io.primer.android.ui.components.TextViewDanger
+            android:id="@+id/card_form_error_message"
             android:layout_width="match_parent"
-            android:imeOptions="actionDone"
-            android:inputType="textPersonName"
-            android:maxLines="1"/>
-    </io.primer.android.ui.components.TextInputWidget>
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:visibility="invisible" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/primer_input_spacing_vert" />
-
-    <io.primer.android.ui.components.TextViewDanger
-        android:id="@+id/card_form_error_message"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:visibility="invisible" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <io.primer.android.ui.components.ButtonPrimary
-            android:id="@+id/card_form_submit_button"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <io.primer.android.ui.components.ButtonPrimary
+                android:id="@+id/card_form_submit_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

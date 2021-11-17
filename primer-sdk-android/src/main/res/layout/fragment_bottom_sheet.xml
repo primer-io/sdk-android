@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.primer.android.ui.components.PrimerThemedNestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<io.primer.android.ui.components.PrimerThemedFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkout_sheet_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/checkout_sheet_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/primer_checkout_sheet_padding_horiz"
-        android:paddingTop="@dimen/primer_checkout_sheet_padding_vert"
-        android:paddingRight="@dimen/primer_checkout_sheet_padding_horiz"
-        android:paddingBottom="@dimen/primer_checkout_sheet_padding_vert" />
-
-</io.primer.android.ui.components.PrimerThemedNestedScrollView>
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/primer_checkout_sheet_padding_horiz"
+    android:paddingTop="@dimen/primer_checkout_sheet_padding_vert"
+    android:paddingRight="@dimen/primer_checkout_sheet_padding_horiz"
+    android:paddingBottom="@dimen/primer_checkout_sheet_padding_vert" />

@@ -1,5 +1,6 @@
 package io.primer.android.domain.payments.apaya
 
+import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.payments.apaya.repository.ApayaRepository
@@ -15,15 +16,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
-internal class ApayaInteractor(
+internal class ApayaSessionInteractor(
     private val apayaSessionParamsValidator: ApayaSessionParamsValidator,
     private val apayaWebResultValidator: ApayaWebResultValidator,
     private val apayaRepository: ApayaRepository,
     private val eventDispatcher: EventDispatcher,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) {
+) : BaseInteractor<ApayaPaymentData, ApayaSessionParams>() {
 
-    fun createClientSession(params: ApayaSessionParams) =
+    override fun execute(params: ApayaSessionParams) =
         apayaSessionParamsValidator.validate(params)
             .catch {
                 eventDispatcher.dispatchEvent(it.toTokenizationErrorEvent(it.message))

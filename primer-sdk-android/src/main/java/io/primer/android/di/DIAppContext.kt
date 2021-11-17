@@ -23,7 +23,9 @@ internal object DIAppContext {
                 apayaModule(),
                 asyncPaymentMethodModule(),
                 tokenizationModule(),
-                NetworkModule()
+                rpcModule(),
+                NetworkModule(),
+                imageLoaderModule()
             )
         }
     }

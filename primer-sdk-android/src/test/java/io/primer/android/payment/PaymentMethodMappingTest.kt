@@ -145,4 +145,40 @@ class PaymentMethodMappingTest {
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
     }
+
+    @Test
+    fun `test maps adyen vipps correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_VIPPS)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps adyen mobilepay correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_MOBILEPAY)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps adyen ideal correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_IDEAL)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps adyen dotpay correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_DOTPAY)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
 }

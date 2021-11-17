@@ -29,6 +29,7 @@ internal class ApayaDescriptor constructor(
 
         const val APAYA_REQUEST_CODE = 1001
     }
+
     private val theme: PrimerTheme by inject()
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour = RecurringApayaBehaviour(this)
@@ -53,13 +54,21 @@ internal class ApayaDescriptor constructor(
 
         text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
 
-        text.setTextColor(theme.paymentMethodButton.text.defaultColor.getColor(container.context))
+        text.setTextColor(
+            theme.paymentMethodButton.text.defaultColor.getColor(
+                container.context,
+                theme.isDarkMode
+            )
+        )
 
         val icon = text.compoundDrawables
 
         DrawableCompat.setTint(
             DrawableCompat.wrap(icon[0]),
-            theme.paymentMethodButton.text.defaultColor.getColor(container.context)
+            theme.paymentMethodButton.text.defaultColor.getColor(
+                container.context,
+                theme.isDarkMode
+            )
         )
 
         return button

@@ -15,9 +15,9 @@ internal class ConfigurationDataRepository(
 ) : ConfigurationRepository {
 
     override fun fetchConfiguration(fromCache: Boolean): Flow<Unit> = when (fromCache) {
-        true -> localConfigurationDataSource.getConfigurationAsFlow()
-        false -> remoteConfigurationDataSource.getConfiguration(
-            localClientTokenDataSource.getClientToken().configurationUrl.orEmpty()
-        ).onEach { localConfigurationDataSource.updateConfiguration(it) }
+        true -> localConfigurationDataSource.get()
+        false -> remoteConfigurationDataSource.execute(
+            localClientTokenDataSource.get().configurationUrl.orEmpty()
+        ).onEach { localConfigurationDataSource.update(it) }
     }.map { Unit }
 }

@@ -25,10 +25,11 @@ class ButtonDefaultLayout(
 
     private fun generateButtonContent(context: Context): GradientDrawable {
         val content = GradientDrawable()
-        val strokeColor = theme.paymentMethodButton.border.defaultColor.getColor(context)
+        val strokeColor =
+            theme.paymentMethodButton.border.defaultColor.getColor(context, theme.isDarkMode)
         val width = theme.paymentMethodButton.border.width.getPixels(context)
         content.setStroke(width, strokeColor)
-        val background = theme.paymentMethodButton.defaultColor.getColor(context)
+        val background = theme.paymentMethodButton.defaultColor.getColor(context, theme.isDarkMode)
         content.color = ColorStateList.valueOf(background)
         content.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
         return content
@@ -36,7 +37,7 @@ class ButtonDefaultLayout(
 
     private fun render() {
         val content = generateButtonContent(context)
-        val splash = theme.splashColor.getColor(context)
+        val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val rippleColor = ColorStateList.valueOf(splash)
         background = RippleDrawable(rippleColor, content, null)
     }

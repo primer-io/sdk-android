@@ -14,7 +14,7 @@ internal class ThreeDsDataRepository(
     override fun begin3DSAuth(
         token: String,
         request: BeginAuthRequest,
-    ) = configurationDataSource.getConfigurationAsFlow().flatMapLatest { configuration ->
+    ) = configurationDataSource.get().flatMapLatest { configuration ->
         dataSource.get3dsAuthToken(
             configuration,
             token,
@@ -22,7 +22,7 @@ internal class ThreeDsDataRepository(
         )
     }
 
-    override fun continue3DSAuth(token: String) = configurationDataSource.getConfigurationAsFlow()
+    override fun continue3DSAuth(token: String) = configurationDataSource.get()
         .flatMapLatest { configuration ->
             dataSource.continue3dsAuth(
                 configuration,

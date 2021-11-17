@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/choose_bank_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/payment_method_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/payment_method_icon"
+            android:layout_alignBottom="@id/payment_method_icon"
+            android:src="@drawable/icon_go_back" />
+
+        <ImageView
+            android:id="@+id/payment_method_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:contentDescription="@string/go_back_description"
+            android:src="@drawable/ic_logo_ideal_dark" />
+
+        <TextView
+            android:id="@+id/choose_bank_title"
+            style="@style/Primer.Text.Title.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/payment_method_icon"
+            android:layout_marginTop="@dimen/xxl_vertical_margin"
+            android:text="@string/bank_selection_title" />
+
+
+        <View
+            android:id="@+id/choose_bank_divider_top"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/choose_bank_title"
+            android:layout_marginTop="@dimen/large_vertical_margin"
+            android:background="@drawable/divider_bank_selection" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/choose_bank_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/choose_bank_divider_top"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <View
+            android:id="@+id/choose_bank_divider_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignBottom="@id/choose_bank_recycler_view"
+            android:background="@drawable/divider_bank_selection"
+            android:visibility="gone" />
+
+        <Space
+            android:id="@+id/spacer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
+
+    <include
+        layout="@layout/error_loading_layout"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/loading_height"
+        android:layout_centerInParent="true" />
+</RelativeLayout>

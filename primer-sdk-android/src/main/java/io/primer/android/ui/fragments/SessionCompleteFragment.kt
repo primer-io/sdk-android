@@ -62,7 +62,7 @@ class SessionCompleteFragment : Fragment(), DIAppComponent {
             messageLabel.context.getString(it)
         }
 
-        val textColor = theme.titleText.defaultColor.getColor(requireContext())
+        val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         messageLabel.setTextColor(textColor)
 
         if (arguments?.getBoolean(SESSION_COMPLETE_IS_ERROR_KEY) == true) {

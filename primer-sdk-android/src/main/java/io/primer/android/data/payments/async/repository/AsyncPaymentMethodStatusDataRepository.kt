@@ -13,7 +13,7 @@ internal class AsyncPaymentMethodStatusDataRepository(
 ) : AsyncPaymentMethodStatusRepository {
 
     override fun getAsyncStatus(url: String): Flow<AsyncStatus> {
-        return asyncPaymentMethodStatusDataSource.getAsyncStatus(url).map {
+        return asyncPaymentMethodStatusDataSource.execute(url).map {
             if (it.status != AsyncMethodStatus.COMPLETE) throw AsyncFlowIncompleteException()
             AsyncStatus(it.id)
         }

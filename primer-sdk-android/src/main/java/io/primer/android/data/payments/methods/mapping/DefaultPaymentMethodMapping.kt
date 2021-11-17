@@ -34,7 +34,11 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_TWINT,
             PaymentMethodType.ADYEN_SOFORT,
             PaymentMethodType.ADYEN_TRUSTLY,
-            PaymentMethodType.ADYEN_ALIPAY -> AsyncMethodFactory(
+            PaymentMethodType.ADYEN_ALIPAY,
+            PaymentMethodType.ADYEN_VIPPS,
+            PaymentMethodType.ADYEN_MOBILEPAY,
+            PaymentMethodType.ADYEN_IDEAL,
+            PaymentMethodType.ADYEN_DOTPAY -> AsyncMethodFactory(
                 type,
                 settings
             ).build()

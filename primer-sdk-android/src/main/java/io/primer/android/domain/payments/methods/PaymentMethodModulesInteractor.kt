@@ -1,5 +1,7 @@
 package io.primer.android.domain.payments.methods
 
+import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.toCheckoutErrorEvent
@@ -24,9 +26,9 @@ internal class PaymentMethodModulesInteractor(
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) {
+) : BaseInteractor<PaymentMethodModulesInteractor.PaymentDescriptorsHolder, None>() {
 
-    fun getPaymentDescriptors() =
+    override fun execute(params: None) =
         paymentMethodsRepository.getPaymentMethodDescriptors()
             .mapLatest { descriptors -> descriptors.filter { isValidPaymentDescriptor(it) } }
             .mapLatest { descriptors ->

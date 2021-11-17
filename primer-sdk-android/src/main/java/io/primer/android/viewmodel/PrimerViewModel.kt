@@ -6,14 +6,17 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.Primer
+import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
-import io.primer.android.domain.session.CheckoutSessionInteractor
+import io.primer.android.domain.session.ConfigurationInteractor
+import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
@@ -25,7 +28,7 @@ import java.util.Collections
 @KoinApiExtension
 @ExperimentalCoroutinesApi
 internal class PrimerViewModel(
-    private val checkoutSessionInteractor: CheckoutSessionInteractor,
+    private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val vaultedPaymentMethodsInteractor: VaultedPaymentMethodsInteractor,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
@@ -52,6 +55,11 @@ internal class PrimerViewModel(
     private val _selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
     val selectedPaymentMethod: LiveData<PaymentMethodDescriptor?> = _selectedPaymentMethod
 
+    private val _selectedPaymentMethodBehaviour =
+        MutableLiveData<SelectedPaymentMethodBehaviour?>(null)
+    val selectedPaymentMethodBehaviour: LiveData<SelectedPaymentMethodBehaviour?> =
+        _selectedPaymentMethodBehaviour
+
     private val _checkoutEvent = MutableLiveData<CheckoutEvent>()
     val checkoutEvent: LiveData<CheckoutEvent> = _checkoutEvent
 
@@ -75,11 +83,15 @@ internal class PrimerViewModel(
         _keyboardVisible.postValue(visible)
     }
 
+    fun executeBehaviour(behaviour: SelectedPaymentMethodBehaviour) {
+        _selectedPaymentMethodBehaviour.value = behaviour
+    }
+
     fun fetchConfiguration() {
         viewModelScope.launch {
-            checkoutSessionInteractor.fetchCheckoutSession().flatMapLatest {
-                paymentMethodModulesInteractor.getPaymentDescriptors().zip(
-                    vaultedPaymentMethodsInteractor.getVaultedTokens()
+            configurationInteractor(ConfigurationParams(false)).flatMapLatest {
+                paymentMethodModulesInteractor(None()).zip(
+                    vaultedPaymentMethodsInteractor(None())
                 ) { descriptorsHolder, paymentModelTokens ->
                     _vaultedPaymentMethods.postValue(paymentModelTokens)
                     if (getSelectedPaymentMethodId().isEmpty() &&

@@ -29,7 +29,7 @@ internal val NetworkModule = {
                         .addHeader(SDK_CLIENT_HEADER, SDK_CLIENT_VALUE)
                         .addHeader(
                             CLIENT_TOKEN_HEADER,
-                            get<LocalClientTokenDataSource>().getClientToken().accessToken
+                            get<LocalClientTokenDataSource>().get().accessToken
                         )
                         .addHeader(SDK_API_VERSION_HEADER, SDK_API_VERSION_VALUE)
                         .build()
