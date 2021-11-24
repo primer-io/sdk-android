@@ -12,32 +12,27 @@ import java.util.Currency
 internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFactory() {
 
     override fun build(): Either<PaymentMethod, Exception> {
-        if (settings.order.amount == null) {
-            return Failure(Exception("Amount is null"))
+        if (settings.currentAmount == 0) {
+            return Failure(Exception("Amount is zero"))
         }
 
         if (settings.order.countryCode == null) {
             return Failure(Exception("Country code is null"))
         }
 
-        if (settings.order.currency == null) {
-            return Failure(Exception("Currency is null"))
-        }
+        val currency: Currency
 
         try {
-            Currency.getInstance(settings.order.currency)
+            currency = Currency.getInstance(settings.currency)
         } catch (e: IllegalArgumentException) {
             return Failure(Exception(e.message))
         }
 
         val googlePay = GooglePay(
             settings.business.name,
-            PaymentUtils.minorToAmount(
-                settings.order.amount!!,
-                Currency.getInstance(settings.order.currency)
-            ).toString(),
+            PaymentUtils.minorToAmount(settings.currentAmount, currency).toString(),
             settings.order.countryCode.toString(),
-            settings.order.currency.toString(),
+            currency.currencyCode,
             settings.options.googlePayAllowedCardNetworks,
             settings.options.googlePayButtonStyle,
         )

@@ -19,9 +19,35 @@ data class Configuration(
 
 @Serializable
 data class ClientSession(
+    val customerId: String? = null,
+    val orderId: String? = null,
+    val amount: Int? = null,
+    val currencyCode: String? = null,
     val customer: Customer? = null,
     val order: Order? = null,
-)
+    val paymentMethod: PaymentMethod? = null,
+) {
+
+    @Serializable
+    data class PaymentMethod(
+        val vaultOnSuccess: Boolean? = null,
+        val options: List<PaymentMethodOption> = listOf(),
+    )
+
+    // todo: may be better to use sealed class/polymorphism
+    @Serializable
+    data class PaymentMethodOption(
+        val type: String,
+        val surcharge: Int? = null,
+        val networks: List<NetworkOption>? = null,
+    )
+
+    @Serializable
+    data class NetworkOption(
+        val type: String,
+        val surcharge: Int = 0
+    )
+}
 
 enum class Environment(val environment: String) {
     LOCAL_DOCKER("local_dev"),

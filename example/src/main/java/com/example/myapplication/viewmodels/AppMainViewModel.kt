@@ -114,54 +114,23 @@ class AppMainViewModel : ViewModel() {
                     merchantName = "Primer",
                     totalPrice = getAmountConverted().toString(),
                     countryCode = config.settings.order.countryCode.toString(),
-                    currencyCode = config.settings.order.currency!!,
+                    currencyCode = config.settings.currency,
                 )
             )
             return list
         }
 
-    val config: PrimerConfig
-        get() {
-            return PrimerConfig(
-                settings = PrimerSettings(
-                    order = Order(
-                        id = orderId.value,
-                        amount = getAmountConverted(),
-                        currency = countryCode.value!!.currencyCode.name,
-                        countryCode = countryCode.value!!.mapped,
-                        items = listOf(OrderItem("name", "description", 100, 66))
-                    ),
-                    customer = Customer(
-                        id = "customer8",
-                        firstName = "John",
-                        lastName = "Doe",
-                        email = "dev@primer.io",
-                        mobilePhone = "123",
-                        billingAddress = Address(
-                            line1 = "1 Test Street",
-                            postalCode = "12345",
-                            city = "Stockholm",
-                            countryCode = countryCode.value!!.mapped
-                        )
-                    ),
-                    business = Business(
-                        name = "Primer",
-                        address = Address(
-                            line1 = "1 Test Street",
-                            postalCode = "12345",
-                            city = "Stockholm",
-                            countryCode = countryCode.value!!.mapped
-                        )
-                    ),
-                    options = Options(
-                        preferWebView = true,
-                        debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-                        is3DSOnVaultingEnabled = threeDsEnabled.value ?: false,
-                        redirectScheme = "primer"
-                    )
-                ),
+    val config: PrimerConfig get() = PrimerConfig(
+        // todo: refactor to reintroduce custom values through client session
+        settings = PrimerSettings(
+            options = Options(
+                preferWebView = true,
+                debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+                is3DSOnVaultingEnabled = threeDsEnabled.value ?: false,
+                redirectScheme = "primer"
             )
-        }
+        ),
+    )
 
     fun configure(listener: CheckoutEventListener) {
         Primer.instance.configure(config, listener)
@@ -177,29 +146,7 @@ class AppMainViewModel : ViewModel() {
     }
 
     fun fetchClientSession() {
-        clientSessionRepository.fetch(
-            customerId.value ?: return,
-            orderId.value ?: return,
-            (environment.value ?: return).environment,
-            getAmountConverted(),
-            countryCode.value?.currencyCode?.name!!,
-            config.settings.customer.let {
-                CustomerRequest(
-                    it.firstName,
-                    it.lastName,
-                    it.mobilePhone,
-                    it.email,
-                    it.billingAddress?.toAddressRequest(),
-                    it.shippingAddress?.toAddressRequest(),
-                )
-            },
-            config.settings.order.let {
-                OrderRequest(
-                    countryCode.value?.mapped!!,
-                    it.items.map { it.toOrderItemRequest() })
-            },
-            client
-        ) { t -> clientToken.postValue(t) }
+        clientSessionRepository.fetch(client) { t -> clientToken.postValue(t) }
     }
 
     fun createTransaction(
@@ -208,8 +155,9 @@ class AppMainViewModel : ViewModel() {
     ) {
         _transactionId.postValue(null)
 
-        val body =
-            TransactionRequest.create(paymentMethod.token, config, environment.value!!.environment)
+        val environment = environment.value!!.environment
+        val body = TransactionRequest.create(paymentMethod.token, environment)
+
         paymentsRepository.create(
             body,
             client,

@@ -16,15 +16,14 @@ data class TransactionRequest(
     companion object {
         fun create(
             paymentMethod: String,
-            config: PrimerConfig,
             environment: String,
         ): TransactionRequest {
             return TransactionRequest(
                 paymentMethod,
-                config.settings.order.amount!!,
-                config.settings.customer.id!!,
-                config.settings.order.currency!!,
-                config.settings.order.countryCode?.name.orEmpty(),
+                1000,
+                "dirk",
+                "SEK",
+                "SE",
                 environment,
             )
         }

@@ -20,8 +20,6 @@ internal abstract class AsyncPaymentMethodDescriptor constructor(
 
     abstract val title: String
 
-    open val behaviours: List<SelectedPaymentMethodBehaviour> = listOf()
-
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = AsyncPaymentMethodBehaviour(this)
 

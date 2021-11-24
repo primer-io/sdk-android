@@ -41,8 +41,8 @@ internal data class ThreeDsParams(
         ProtocolVersion.values()
             .first { authenticationRequestParameters.messageVersion == it.versionNumber },
         challengePreference,
-        config.settings.order.amount,
-        config.settings.order.currency,
+        config.settings.currentAmount,
+        config.settings.currency,
         config.settings.order.id,
         config.settings.customer.firstName,
         config.settings.customer.email,

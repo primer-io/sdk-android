@@ -9,7 +9,7 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 
-internal class PayNLIdealPaymentMethodDescriptor(
+internal class IdealPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
     config: PaymentMethodRemoteConfig,
@@ -24,4 +24,6 @@ internal class PayNLIdealPaymentMethodDescriptor(
             false
         )
     }
+
+    override fun getLoadingResourceId() = R.drawable.ic_logo_pay_nl_ideal_square
 }

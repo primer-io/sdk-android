@@ -51,4 +51,9 @@ internal class GooglePayDescriptor constructor(
             container,
             false
         )
+
+    override fun getLoadingResourceId() = when (options.buttonStyle) {
+        GooglePay.Companion.ButtonStyle.BLACK -> R.drawable.ic_logo_google_pay_black_square
+        GooglePay.Companion.ButtonStyle.WHITE -> R.drawable.ic_logo_google_pay_square
+    }
 }

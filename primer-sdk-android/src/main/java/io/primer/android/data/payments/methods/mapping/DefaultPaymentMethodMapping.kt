@@ -29,6 +29,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
             PaymentMethodType.APAYA -> ApayaFactory(settings).build()
             PaymentMethodType.PAY_NL_IDEAL,
+            PaymentMethodType.PAY_NL_PAYCONIQ,
+            PaymentMethodType.PAY_NL_GIROPAY,
             PaymentMethodType.HOOLAH,
             PaymentMethodType.ADYEN_GIROPAY,
             PaymentMethodType.ADYEN_TWINT,
@@ -38,7 +40,10 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_VIPPS,
             PaymentMethodType.ADYEN_MOBILEPAY,
             PaymentMethodType.ADYEN_IDEAL,
-            PaymentMethodType.ADYEN_DOTPAY -> AsyncMethodFactory(
+            PaymentMethodType.ADYEN_DOTPAY,
+            PaymentMethodType.MOLLIE_BANCONTACT,
+            PaymentMethodType.MOLLIE_IDEAL,
+            -> AsyncMethodFactory(
                 type,
                 settings
             ).build()

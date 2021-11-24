@@ -15,7 +15,7 @@ private const val SDK_VERSION_HEADER = "Primer-SDK-Version"
 private const val SDK_CLIENT_HEADER = "Primer-SDK-Client"
 private const val SDK_CLIENT_VALUE = "ANDROID_NATIVE"
 private const val SDK_API_VERSION_HEADER = "X-Api-Version"
-private const val SDK_API_VERSION_VALUE = "2021-09-27"
+private const val SDK_API_VERSION_VALUE = "2021-10-19"
 private const val CLIENT_TOKEN_HEADER = "Primer-Client-Token"
 
 internal val NetworkModule = {

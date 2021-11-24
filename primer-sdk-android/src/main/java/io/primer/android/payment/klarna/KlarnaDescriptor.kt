@@ -30,8 +30,7 @@ internal class KlarnaDescriptor constructor(
     override val type: PaymentMethodUiType
         get() = PaymentMethodUiType.SIMPLE_BUTTON
 
-    override val vaultCapability: VaultCapability
-        get() = VaultCapability.SINGLE_USE_AND_VAULT
+    override val vaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 
     override fun createButton(container: ViewGroup): View =
         LayoutInflater.from(container.context).inflate(
@@ -39,4 +38,6 @@ internal class KlarnaDescriptor constructor(
             container,
             false
         )
+
+    override fun getLoadingResourceId() = R.drawable.ic_logo_klarna_square
 }

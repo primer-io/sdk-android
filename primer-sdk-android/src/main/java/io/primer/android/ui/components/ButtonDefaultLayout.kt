@@ -29,8 +29,6 @@ class ButtonDefaultLayout(
             theme.paymentMethodButton.border.defaultColor.getColor(context, theme.isDarkMode)
         val width = theme.paymentMethodButton.border.width.getPixels(context)
         content.setStroke(width, strokeColor)
-        val background = theme.paymentMethodButton.defaultColor.getColor(context, theme.isDarkMode)
-        content.color = ColorStateList.valueOf(background)
         content.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
         return content
     }

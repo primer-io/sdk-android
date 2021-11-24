@@ -17,6 +17,8 @@ internal class MobilePayPaymentMethodDescriptor(
 
     override val title = "MOBILEPAY"
 
+    override fun getLoadingResourceId() = R.drawable.ic_logo_mobilepay_square
+
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(
             R.layout.payment_method_button_mobilepay,

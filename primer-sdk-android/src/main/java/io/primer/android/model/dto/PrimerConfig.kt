@@ -15,20 +15,11 @@ data class PrimerConfig(
     internal var intent: PrimerIntent = PrimerIntent()
 
     internal val monetaryAmount: MonetaryAmount?
-        get() {
-            return MonetaryAmount.create(
-                settings.order.currency,
-                settings.order.amount,
-            )
-        }
+        get() = MonetaryAmount.create(settings.currency, settings.currentAmount)
 
     internal val paymentMethodIntent: PaymentMethodIntent
-        get() {
-            return intent.paymentMethodIntent
-        }
+        get() = intent.paymentMethodIntent
 
     internal val isStandalonePaymentMethod: Boolean
-        get() {
-            return intent.paymentMethod != PrimerPaymentMethod.ANY
-        }
+        get() = intent.paymentMethod != PrimerPaymentMethod.ANY
 }

@@ -21,7 +21,7 @@ internal class HttpClientFactory(
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Primer-SDK-Version", sdkVersion)
                     .addHeader("Primer-SDK-Client", "ANDROID_NATIVE")
-                    .addHeader("X-Api-Version", "2021-09-27")
+                    .addHeader("X-Api-Version", "2021-10-19")
                     .addHeader("Primer-Client-Token", accessToken)
                     .build()
                     .let { chain.proceed(it) }

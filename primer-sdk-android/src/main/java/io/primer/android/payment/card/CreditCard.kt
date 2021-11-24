@@ -46,6 +46,8 @@ internal class CreditCard(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
 
+    override val behaviours: List<SelectedPaymentMethodBehaviour> = emptyList()
+
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT

@@ -14,6 +14,7 @@ class HttpRequestUtil {
             val reqBody = RequestBody.create(mimeType, json)
             return Request.Builder()
                 .url(uri)
+                .header("X-Api-Version", "2021-10-19")
                 .post(reqBody)
                 .build()
         }

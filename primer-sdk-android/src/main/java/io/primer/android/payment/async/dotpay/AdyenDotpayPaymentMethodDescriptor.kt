@@ -8,6 +8,7 @@ import io.primer.android.R
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
@@ -29,6 +30,8 @@ internal class AdyenDotpayPaymentMethodDescriptor(
 
     override val behaviours: List<SelectedPaymentMethodBehaviour>
         get() = listOf(AsyncPaymentMethodBehaviour(this))
+
+    override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override fun createButton(container: ViewGroup): View {
         val button = LayoutInflater.from(container.context).inflate(

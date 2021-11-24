@@ -4,6 +4,7 @@ import io.primer.android.model.dto.CountryCode
 
 enum class AppCountryCode(val currencyCode: CurrencyCode) {
     GB(CurrencyCode.GBP),
+    BE(CurrencyCode.EUR),
     DE(CurrencyCode.EUR),
     NL(CurrencyCode.EUR),
     SE(CurrencyCode.SEK),

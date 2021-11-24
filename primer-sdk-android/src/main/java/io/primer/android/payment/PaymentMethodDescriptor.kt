@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import org.json.JSONObject
 import java.util.Collections
 
@@ -14,12 +15,17 @@ abstract class PaymentMethodDescriptor(
 
     abstract val selectedBehaviour: SelectedPaymentMethodBehaviour
 
+    open val behaviours: List<SelectedPaymentMethodBehaviour> =
+        listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))
+
     abstract val type: PaymentMethodUiType
 
     abstract val vaultCapability: VaultCapability
 
     // FIXME this should not be here. a model should not be responsible creating views
     abstract fun createButton(container: ViewGroup): View
+
+    open fun getLoadingResourceId(): Int? = null
 
     // FIXME all this should not be here. a model should not be responsible for parsing itself into json
     protected fun getStringValue(key: String): String {

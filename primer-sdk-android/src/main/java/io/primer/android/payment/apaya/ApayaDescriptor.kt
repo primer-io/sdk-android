@@ -73,4 +73,6 @@ internal class ApayaDescriptor constructor(
 
         return button
     }
+
+    override fun getLoadingResourceId() = R.drawable.ic_mobile
 }

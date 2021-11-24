@@ -17,6 +17,8 @@ internal class TwintPaymentMethodDescriptor(
 
     override val title = "TWINT"
 
+    override fun getLoadingResourceId() = R.drawable.ic_logo_twint_square
+
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(
             R.layout.payment_method_button_twint,

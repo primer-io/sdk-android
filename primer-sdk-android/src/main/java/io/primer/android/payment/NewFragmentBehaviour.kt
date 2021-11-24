@@ -10,14 +10,22 @@ internal class NewFragmentBehaviour(
 
     fun execute(parent: Fragment) {
         val fragment = factory()
-        val transaction = parent.childFragmentManager.beginTransaction()
+        openFragment(parent, fragment, returnToPreviousOnBack)
+    }
 
-        if (returnToPreviousOnBack) {
-            transaction.addToBackStack(null)
-        }
-
-        transaction.replace(R.id.checkout_sheet_content, fragment)
-
-        transaction.commit()
+    private fun openFragment(
+        parent: Fragment,
+        newFragment: Fragment,
+        returnToPreviousOnBack: Boolean
+    ) {
+        parent.childFragmentManager
+            .beginTransaction()
+            .apply {
+                if (returnToPreviousOnBack) {
+                    addToBackStack(null)
+                }
+            }
+            .replace(R.id.checkout_sheet_content, newFragment)
+            .commit()
     }
 }

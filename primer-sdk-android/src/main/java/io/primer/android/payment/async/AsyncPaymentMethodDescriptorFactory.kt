@@ -7,12 +7,14 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
+import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.giropay.GiropayPaymentMethodDescriptor
 import io.primer.android.payment.async.hoolah.HoolahPaymentMethodDescriptor
 import io.primer.android.payment.async.ideal.AdyenIdealPaymentMethodDescriptor
-import io.primer.android.payment.async.ideal.PayNLIdealPaymentMethodDescriptor
+import io.primer.android.payment.async.ideal.IdealPaymentMethodDescriptor
 import io.primer.android.payment.async.mobilepay.MobilePayPaymentMethodDescriptor
+import io.primer.android.payment.async.payconiq.PayconiqPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.SofortPaymentMethodDescriptor
 import io.primer.android.payment.async.trustly.TrustyPaymentMethodDescriptor
 import io.primer.android.payment.async.twint.TwintPaymentMethodDescriptor
@@ -28,7 +30,13 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor {
         return when (paymentMethodRemoteConfig.type) {
-            PaymentMethodType.PAY_NL_IDEAL -> PayNLIdealPaymentMethodDescriptor(
+            PaymentMethodType.PAY_NL_IDEAL,
+            PaymentMethodType.MOLLIE_IDEAL -> IdealPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.PAY_NL_PAYCONIQ -> PayconiqPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
@@ -38,7 +46,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
-            PaymentMethodType.ADYEN_GIROPAY -> GiropayPaymentMethodDescriptor(
+            PaymentMethodType.ADYEN_GIROPAY,
+            PaymentMethodType.PAY_NL_GIROPAY -> GiropayPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
@@ -83,7 +92,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
-
+            PaymentMethodType.MOLLIE_BANCONTACT -> BancontactPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
             else -> throw IllegalStateException(
                 "Unknown payment type ${paymentMethodRemoteConfig.type}"
             )

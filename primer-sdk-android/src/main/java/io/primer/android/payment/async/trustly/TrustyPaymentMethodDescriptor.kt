@@ -17,6 +17,8 @@ internal class TrustyPaymentMethodDescriptor(
 
     override val title = "TRUSTLY"
 
+    override fun getLoadingResourceId() = R.drawable.ic_logo_trustly_square
+
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(
             R.layout.payment_method_button_trustly,

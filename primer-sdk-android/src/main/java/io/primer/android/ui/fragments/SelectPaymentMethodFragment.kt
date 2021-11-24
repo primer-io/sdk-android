@@ -33,6 +33,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.content.res.ColorStateList
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.payment.PaymentMethodUiType
 
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
@@ -245,7 +246,11 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
             button.setOnClickListener {
                 primerViewModel.selectPaymentMethod(paymentMethod)
-                toggleButtons(false)
+                paymentMethod.behaviours.firstOrNull()?.let {
+                    if (paymentMethod.type != PaymentMethodUiType.FORM) {
+                        primerViewModel.executeBehaviour(it)
+                    }
+                }
             }
         }
 

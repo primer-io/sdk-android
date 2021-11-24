@@ -184,6 +184,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         if (on) {
             errorText.visibility = View.INVISIBLE
         }
+        inputs.values.forEach {
+            it.isEnabled = on.not()
+            it.alpha = if (on) 0.5f else 1.0f
+        }
     }
 
     private fun enableSubmitButton(enabled: Boolean) {

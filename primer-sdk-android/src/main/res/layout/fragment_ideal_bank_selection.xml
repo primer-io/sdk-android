@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:contentDescription="@string/go_back_description"
-            android:src="@drawable/ic_logo_ideal_dark" />
+            android:contentDescription="@string/go_back_description" />
 
         <TextView
             android:id="@+id/choose_bank_title"
@@ -78,6 +77,6 @@
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/loading_height"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 </RelativeLayout>

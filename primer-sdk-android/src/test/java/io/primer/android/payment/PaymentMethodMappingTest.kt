@@ -20,7 +20,7 @@ class PaymentMethodMappingTest {
 
     private val settings: PrimerSettings = PrimerSettings(
         order = Order(
-            amount = 200,
+            amount = 50,
             currency = "USD",
             countryCode = CountryCode.US,
         )
@@ -93,9 +93,27 @@ class PaymentMethodMappingTest {
     }
 
     @Test
-    fun `test maps ideal correctly`() {
+    fun `test maps paynl ideal correctly`() {
         val factory = DefaultPaymentMethodMapping(settings)
         when (val result = factory.getPaymentMethodFor(PaymentMethodType.PAY_NL_IDEAL)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps paynl payconiq correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.PAY_NL_PAYCONIQ)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps paynl giropay correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.PAY_NL_GIROPAY)) {
             is Failure -> Assert.fail()
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
@@ -177,6 +195,24 @@ class PaymentMethodMappingTest {
     fun `test maps adyen dotpay correctly`() {
         val factory = DefaultPaymentMethodMapping(settings)
         when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_DOTPAY)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps mollie bancontact correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.MOLLIE_BANCONTACT)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps mollie ideal correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.MOLLIE_IDEAL)) {
             is Failure -> Assert.fail()
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }

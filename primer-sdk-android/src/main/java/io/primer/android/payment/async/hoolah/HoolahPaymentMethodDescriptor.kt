@@ -24,4 +24,6 @@ internal class HoolahPaymentMethodDescriptor(
             false
         )
     }
+
+    override fun getLoadingResourceId() = R.drawable.ic_logo_hoolah_square
 }

@@ -24,11 +24,9 @@ internal class IdealBankSelectionFragment(
     override fun setupViews(view: View) {
         super.setupViews(view)
         val paymentMethodIcon = view.findViewById<ImageView>(R.id.payment_method_icon)
-        paymentMethodIcon.setColorFilter(
-            theme.titleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode
-            )
+        paymentMethodIcon.setImageResource(
+            if (theme.isDarkMode == true) R.drawable.ic_logo_ideal_dark
+            else R.drawable.ic_logo_ideal_light
         )
     }
 

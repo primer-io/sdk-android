@@ -22,6 +22,8 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     GOCARDLESS,
     APAYA,
     PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION),
+    PAY_NL_PAYCONIQ(ClientTokenIntent.PAY_NL_PAYCONIQ_REDIRECTION),
+    PAY_NL_GIROPAY(ClientTokenIntent.PAY_NL_GIROPAY_REDIRECTION),
     HOOLAH(ClientTokenIntent.HOOLAH_REDIRECTION),
     ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION),
     ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION),
@@ -32,6 +34,8 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     ADYEN_MOBILEPAY(ClientTokenIntent.ADYEN_MOBILEPAY_REDIRECTION),
     ADYEN_IDEAL(ClientTokenIntent.ADYEN_IDEAL_REDIRECTION),
     ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION),
+    MOLLIE_BANCONTACT(ClientTokenIntent.MOLLIE_BANCONTACT_REDIRECTION),
+    MOLLIE_IDEAL(ClientTokenIntent.MOLLIE_IDEAL_REDIRECTION),
     UNKNOWN;
 
     companion object {

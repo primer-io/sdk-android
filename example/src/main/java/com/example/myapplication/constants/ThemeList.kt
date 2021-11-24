@@ -11,6 +11,7 @@ class ThemeList {
     companion object {
 
         val darkTheme = PrimerTheme.build(
+            isDarkMode = true,
             primaryColor = R.color.apple_dark_6,
             backgroundColor = R.color.apple_dark_4,
             disabledColor = R.color.apple_dark_3,

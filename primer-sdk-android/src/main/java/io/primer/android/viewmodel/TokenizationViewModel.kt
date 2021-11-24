@@ -153,9 +153,9 @@ internal class TokenizationViewModel(
     // region KLARNA
 
     private fun generateLocaleJson(): JSONObject = JSONObject().apply {
-        val countryCode = config.settings.order.countryCode?.toString()
+        val countryCode = config.settings.order.countryCode
         val locale = config.settings.options.locale.toLanguageTag()
-        val currencyCode = config.settings.order.currency
+        val currencyCode = config.settings.currency
 
         put("countryCode", countryCode)
         put("currencyCode", currencyCode)
@@ -289,8 +289,8 @@ internal class TokenizationViewModel(
     fun createPayPalOrder(id: String, returnUrl: String, cancelUrl: String) {
         val body = JSONObject()
         body.put("paymentMethodConfigId", id)
-        body.put("amount", config.settings.order.amount)
-        body.put("currencyCode", config.settings.order.currency)
+        body.put("amount", config.settings.currentAmount)
+        body.put("currencyCode", config.settings.currency)
         body.put("returnUrl", returnUrl)
         body.put("cancelUrl", cancelUrl)
 
@@ -338,7 +338,7 @@ internal class TokenizationViewModel(
                 ApayaSessionParams(
                     merchantAccountId,
                     config.settings.options.locale,
-                    config.settings.order.currency.orEmpty(),
+                    config.settings.currency.orEmpty(),
                     config.settings.customer.mobilePhone.orEmpty()
                 )
             ).collect { apayaPaymentData.postValue(it) }
@@ -364,7 +364,7 @@ internal class TokenizationViewModel(
                     setTokenizableValue("productId", apaya.config.options?.merchantId.orEmpty())
                     setTokenizableValue(
                         "currencyCode",
-                        localConfig.settings.order.currency.orEmpty()
+                        localConfig.settings.currency.orEmpty()
                     )
                 }
             }

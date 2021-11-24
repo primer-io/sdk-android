@@ -80,7 +80,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
 
         if (fragment != null) {
-            openFragment(fragment, initFinished)
+            openFragment(
+                fragment,
+                initFinished
+            )
         }
 
         if (!initFinished && it != ViewStatus.INITIALIZING) {

@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -24,6 +25,7 @@ import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.di.BANK_SELECTOR_SCOPE
 import io.primer.android.di.DIAppComponent
+import io.primer.android.extensions.getCollapsedSheetHeight
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.BankSelectionAdapter
 import io.primer.android.ui.BankSelectionAdapterListener
@@ -122,6 +124,9 @@ internal abstract class BaseBankSelectionFragment :
             )
         )
 
+        progressBar.updateLayoutParams<RelativeLayout.LayoutParams> {
+            this.height = view.context.getCollapsedSheetHeight()
+        }
         chooseBankParent = view.findViewById(R.id.choose_bank_parent)
         errorLayout = view.findViewById(R.id.error_layout_parent)
         space = view.findViewById(R.id.spacer)
@@ -201,6 +206,7 @@ internal abstract class BaseBankSelectionFragment :
         chooseBankParent.isVisible = false
         errorLayout.isVisible = true
         space.isVisible = false
+        adjustBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
     }
 
     private fun onLoading(showLoader: Boolean) {

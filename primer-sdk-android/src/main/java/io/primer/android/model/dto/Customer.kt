@@ -12,6 +12,7 @@ data class Customer(
     val homePhone: String? = null,
     @SerialName("mobileNumber") val mobilePhone: String? = null,
     val workPhone: String? = null,
+    val nationalDocumentId: String? = null,
     val billingAddress: Address? = null,
     val shippingAddress: Address? = null,
 ) {

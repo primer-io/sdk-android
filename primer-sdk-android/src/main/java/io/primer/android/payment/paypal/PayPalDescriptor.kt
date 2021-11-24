@@ -42,4 +42,6 @@ internal class PayPalDescriptor constructor(
             container,
             false
         )
+
+    override fun getLoadingResourceId() = R.drawable.ic_logo_paypal_square
 }
