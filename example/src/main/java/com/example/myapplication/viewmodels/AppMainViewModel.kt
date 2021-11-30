@@ -120,17 +120,18 @@ class AppMainViewModel : ViewModel() {
             return list
         }
 
-    val config: PrimerConfig get() = PrimerConfig(
-        // todo: refactor to reintroduce custom values through client session
-        settings = PrimerSettings(
-            options = Options(
-                preferWebView = true,
-                debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-                is3DSOnVaultingEnabled = threeDsEnabled.value ?: false,
-                redirectScheme = "primer"
-            )
-        ),
-    )
+    val config: PrimerConfig
+        get() = PrimerConfig(
+            // todo: refactor to reintroduce custom values through client session
+            settings = PrimerSettings(
+                options = Options(
+                    preferWebView = true,
+                    debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+                    is3DSOnVaultingEnabled = threeDsEnabled.value ?: false,
+                    redirectScheme = "primer"
+                )
+            ),
+        )
 
     fun configure(listener: CheckoutEventListener) {
         Primer.instance.configure(config, listener)
@@ -146,7 +147,13 @@ class AppMainViewModel : ViewModel() {
     }
 
     fun fetchClientSession() {
-        clientSessionRepository.fetch(client) { t -> clientToken.postValue(t) }
+        clientSessionRepository.fetch(
+            client,
+            (environment.value ?: return).environment,
+            countryCode.value?.currencyCode.toString(),
+            amount.value!!,
+            countryCode.value?.mapped!!
+        ) { t -> clientToken.postValue(t) }
     }
 
     fun createTransaction(

@@ -43,6 +43,11 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_DOTPAY,
             PaymentMethodType.MOLLIE_BANCONTACT,
             PaymentMethodType.MOLLIE_IDEAL,
+            PaymentMethodType.BUCKAROO_GIROPAY,
+            PaymentMethodType.BUCKAROO_SOFORT,
+            PaymentMethodType.BUCKAROO_IDEAL,
+            PaymentMethodType.BUCKAROO_EPS,
+            PaymentMethodType.BUCKAROO_BANCONTACT,
             -> AsyncMethodFactory(
                 type,
                 settings

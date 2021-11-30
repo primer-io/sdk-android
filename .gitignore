@@ -13,7 +13,9 @@
 /.idea/compiler.xml
 /.idea/gradle.xml
 /.idea/misc.xml
-/.idea/deploymentTargetDropDown.xml.xml
+/.idea/deploymentTargetDropDown.xml
+/.idea/vcs.xml
+/.idea/jarRepositories.xml
 
 .DS_Store
 /build

@@ -12,7 +12,8 @@ data class TransactionRequest(
     @SerializedName("currencyCode") val currencyCode: String,
     @SerializedName("countryCode") val countryCode: String,
     @SerializedName("environment") val environment: String,
-) : ExampleAppRequestBody {
+    @SerializedName("isV3") val isV3: Boolean = true,
+    ) : ExampleAppRequestBody {
     companion object {
         fun create(
             paymentMethod: String,

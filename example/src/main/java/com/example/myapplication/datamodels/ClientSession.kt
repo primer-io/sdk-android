@@ -14,7 +14,7 @@ interface ClientSession : ExampleAppRequestBody {
     val paymentMethod: PaymentMethod
 
     data class Request(
-        val environment: String,  // for cloud function
+        private val environment: String,  // for cloud function
         override val customerId: String,
         override val orderId: String,
         override val amount: Int? = null,
@@ -26,14 +26,28 @@ interface ClientSession : ExampleAppRequestBody {
 
         companion object {
 
-            fun build(): Request {
+            fun build(
+                environment: String,
+                currencyCode: String,
+                amount: Int,
+                countryCode: CountryCode
+            ): Request {
                 return Request(
-                    environment = "sandbox",
+                    environment = environment,
                     customerId = "dirk",
                     orderId = "dirk-test-10001",
-                    currencyCode = "SEK",
-                    amount = 123,
-                    order = Order(),
+                    currencyCode = currencyCode,
+                    order = Order(
+                        lineItems = listOf(
+                            LineItem(
+                                amount = amount,
+                                quantity = 1,
+                                itemId = "item-123",
+                                description = "this item",
+                                discountAmount = 0,
+                            ),
+                        )
+                    ),
                     customer = Customer(
                         emailAddress = "dirk@primer.io",
                         mobileNumber = "0841234567",
@@ -44,7 +58,7 @@ interface ClientSession : ExampleAppRequestBody {
                             postalCode = "12345",
                             city = "test",
                             state = "test",
-                            countryCode = CountryCode.SE,
+                            countryCode = countryCode.name,
                         ),
                         nationalDocumentId = "9011211234567",
                     ),
@@ -117,7 +131,7 @@ interface ClientSession : ExampleAppRequestBody {
         val postalCode: String,
         val city: String,
         val state: String,
-        val countryCode: CountryCode,
+        val countryCode: String,
     )
 
     data class PaymentMethod(

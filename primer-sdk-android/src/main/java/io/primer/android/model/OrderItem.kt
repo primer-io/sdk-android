@@ -7,7 +7,7 @@ typealias LineItem = OrderItem
 
 @Serializable
 data class OrderItem(
-    val name: String,
+    val name: String? = null,
     val itemId: String,
     val description: String,
     @SerialName("amount") val unitAmount: Int,

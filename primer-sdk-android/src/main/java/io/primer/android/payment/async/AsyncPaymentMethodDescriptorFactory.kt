@@ -9,6 +9,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
 import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
+import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor
 import io.primer.android.payment.async.giropay.GiropayPaymentMethodDescriptor
 import io.primer.android.payment.async.hoolah.HoolahPaymentMethodDescriptor
 import io.primer.android.payment.async.ideal.AdyenIdealPaymentMethodDescriptor
@@ -31,7 +32,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
     ): PaymentMethodDescriptor {
         return when (paymentMethodRemoteConfig.type) {
             PaymentMethodType.PAY_NL_IDEAL,
-            PaymentMethodType.MOLLIE_IDEAL -> IdealPaymentMethodDescriptor(
+            PaymentMethodType.MOLLIE_IDEAL,
+            PaymentMethodType.BUCKAROO_IDEAL -> IdealPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
@@ -47,7 +49,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.ADYEN_GIROPAY,
-            PaymentMethodType.PAY_NL_GIROPAY -> GiropayPaymentMethodDescriptor(
+            PaymentMethodType.PAY_NL_GIROPAY,
+            PaymentMethodType.BUCKAROO_GIROPAY -> GiropayPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
@@ -57,7 +60,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
-            PaymentMethodType.ADYEN_SOFORT -> SofortPaymentMethodDescriptor(
+            PaymentMethodType.ADYEN_SOFORT,
+            PaymentMethodType.BUCKAROO_SOFORT -> SofortPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
@@ -92,7 +96,13 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
-            PaymentMethodType.MOLLIE_BANCONTACT -> BancontactPaymentMethodDescriptor(
+            PaymentMethodType.MOLLIE_BANCONTACT,
+            PaymentMethodType.BUCKAROO_BANCONTACT -> BancontactPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.BUCKAROO_EPS -> EpsPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
