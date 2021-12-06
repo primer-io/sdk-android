@@ -2,6 +2,7 @@ package com.example.myapplication.utils
 
 import io.primer.android.CheckoutEventListener
 import io.primer.android.completion.ResumeHandler
+import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.PaymentMethodToken
@@ -14,6 +15,7 @@ class CheckoutListener(
     val onSavedPaymentInstrumentsFetched: (List<PaymentMethodToken>) -> Unit = {},
     val onApiError: (APIError) -> Unit = {},
     val onExit: () -> Unit = {},
+    val onActions: (ClientSessionActionsRequest, (String?) -> Unit) -> Unit,
 ) : CheckoutEventListener {
 
     override fun onCheckoutEvent(e: CheckoutEvent) {
@@ -28,5 +30,9 @@ class CheckoutListener(
             is CheckoutEvent.TokenSelected -> onTokenSelected(e.data, e.resumeHandler)
             else -> Unit
         }
+    }
+
+    override fun onClientSessionActions(event: CheckoutEvent.OnClientSessionActions) {
+        onActions(event.data) { token -> event.resumeHandler.handleClientToken(token) }
     }
 }

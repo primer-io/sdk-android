@@ -13,4 +13,12 @@ data class Order(
     var countryCode: CountryCode? = null,
     var description: String? = null,
     @SerialName("lineItems") var items: List<LineItem> = emptyList(),
-)
+    val fees: List<Fee> = listOf(),
+) {
+
+    @Serializable
+    data class Fee(
+        val type: String,
+        val amount: Int,
+    )
+}

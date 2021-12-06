@@ -32,6 +32,9 @@
     </string>
     <string name="google_pay">Google Pay</string>
 
+    <string name="sg">🇸🇬</string>
+    <string name="de">🇩🇪</string>
+
     <string-array name="countries">
         <item>SE</item>
         <item>DE</item>

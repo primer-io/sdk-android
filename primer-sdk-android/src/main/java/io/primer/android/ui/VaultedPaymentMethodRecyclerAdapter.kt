@@ -105,11 +105,11 @@ sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val expiryLabel: TextView = itemView.findViewById(R.id.expiry_label)
             titleLabel.text = item.title
             lastFourLabel.text = itemView.context.getString(R.string.last_four, item.lastFour)
-            expiryLabel.text = itemView.context.getString(
-                R.string.expiry_date,
-                item.expiryMonth,
-                item.expiryYear,
-            )
+
+            val expirationYear = "${item.expiryYear}"
+            val expirationMonth = "${item.expiryMonth}".padStart(2, '0')
+            expiryLabel.text = itemView.context
+                .getString(R.string.expiry_date, expirationMonth, expirationYear)
 
             val textColor = theme.paymentMethodButton.text.defaultColor.getColor(
                 itemView.context,

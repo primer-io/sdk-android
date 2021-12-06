@@ -1,6 +1,8 @@
 package io.primer.android.events
 
+import io.primer.android.completion.ActionResumeHandler
 import io.primer.android.completion.ResumeHandler
+import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
@@ -53,6 +55,11 @@ sealed class CheckoutEvent(
 
     class SavedPaymentInstrumentsFetched(val data: List<PaymentMethodToken>) :
         PublicCheckoutEvent(CheckoutEventType.SAVED_PAYMENT_INSTRUMENT_FETCHED)
+
+    class OnClientSessionActions(
+        val data: ClientSessionActionsRequest,
+        val resumeHandler: ActionResumeHandler,
+    ) : PublicCheckoutEvent(CheckoutEventType.ON_CLIENT_SESSION_ACTIONS)
 
     internal class ToggleProgressIndicator(val data: Boolean) :
         PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)

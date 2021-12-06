@@ -26,6 +26,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_FirstFragment_to_countryPickerFragment"
+            app:destination="@id/CountryPickerFragment" />
     </fragment>
 
     <fragment
@@ -40,6 +43,17 @@
         android:name="com.example.myapplication.DeprecatedFeatureFragment"
         android:label="Deprecated Checkout"
         tools:layout="@layout/fragment_deprecated_feature">
+    </fragment>
+
+    <fragment
+        android:id="@+id/CountryPickerFragment"
+        android:name="com.example.myapplication.ui.CountryPickerFragment"
+        android:label="Pick country"
+        tools:layout="@layout/fragment_country_picker">
+
+        <action
+            android:id="@+id/action_CountryPickerFragment_to_firstFragment"
+            app:destination="@id/FirstFragment" />
     </fragment>
 
 </navigation>

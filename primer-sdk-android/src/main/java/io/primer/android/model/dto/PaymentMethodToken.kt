@@ -44,6 +44,22 @@ internal data class PaymentMethodTokenInternal(
                 false
             )
         )
+
+    /**
+     * Payment method name used for surcharge, i.e. PAYPAL instead of PAYPAL_BILLING_AGREEMENT.
+     * Defaults to [paymentInstrumentType] in most cases.
+     * */
+    val surchargeType: String get() {
+        if (paymentInstrumentType == "PAYPAL_BILLING_AGREEMENT") {
+            return "PAYPAL"
+        }
+
+//        if (paymentInstrumentType == "PAYMENT_CARD") {
+//            return paymentInstrumentData?.binData?.network ?: "PAYMENT_CARD"
+//        }
+
+        return paymentInstrumentType
+    }
 }
 
 internal object PaymentMethodTokenAdapter {

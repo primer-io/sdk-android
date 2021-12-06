@@ -1,5 +1,7 @@
 package io.primer.android.ui
 
+import io.primer.android.R
+
 const val CARD_PADDING: Int = 8
 
 internal class CardType {
@@ -39,6 +41,15 @@ internal class CardType {
 
         fun matches(bin: String): Boolean {
             return bin.padEnd(8, '0') in min..max
+        }
+
+        fun getResource(): Int = when (type) {
+            Type.VISA -> R.drawable.ic_visa_card
+            Type.MASTERCARD -> R.drawable.ic_mastercard_card
+            Type.AMEX -> R.drawable.ic_amex_card
+            Type.DISCOVER -> R.drawable.ic_discover_card
+            Type.JCB -> R.drawable.ic_jcb_card
+            else -> R.drawable.ic_generic_card
         }
     }
 

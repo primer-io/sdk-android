@@ -28,11 +28,31 @@ data class ClientSession(
     val paymentMethod: PaymentMethod? = null,
 ) {
 
+    fun getCalculatedAmount(paymentMethodType: String): Int {
+        val baseAmount = order?.amount ?: 0
+        val option = paymentMethod?.options?.find { it.type == paymentMethodType }
+        val surcharge = option?.surcharge ?: 0
+        return baseAmount + surcharge
+    }
+
     @Serializable
     data class PaymentMethod(
         val vaultOnSuccess: Boolean? = null,
         val options: List<PaymentMethodOption> = listOf(),
-    )
+    ) {
+
+        val surcharges: Map<String, Int> get() {
+            val map = mutableMapOf<String, Int>()
+            options.forEach { option ->
+                if (option.type == "PAYMENT_CARD") {
+                    option.networks?.forEach { network -> map[network.type] = network.surcharge }
+                } else {
+                    map[option.type] = option.surcharge ?: 0
+                }
+            }
+            return map
+        }
+    }
 
     // todo: may be better to use sealed class/polymorphism
     @Serializable
@@ -45,7 +65,7 @@ data class ClientSession(
     @Serializable
     data class NetworkOption(
         val type: String,
-        val surcharge: Int = 0
+        val surcharge: Int,
     )
 }
 

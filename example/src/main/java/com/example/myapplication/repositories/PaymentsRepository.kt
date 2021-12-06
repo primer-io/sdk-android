@@ -20,18 +20,23 @@ class PaymentsRepository {
             callback: (TransactionResponse) -> Unit,
             stateCallback: (TransactionStatus) -> Unit,
     ) {
-        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.payments)
+        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.payments, true)
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) = stateCallback(TransactionStatus.FAILED)
 
             override fun onResponse(call: Call, response: Response) {
+
                 response.use {
                     if (response.isSuccessful) {
+
+                        val res = response.body()?.string()
+
                         val transactionResponse = GsonBuilder()
                             .setLenient()
                             .create()
-                            .fromJson(response.body()?.string(), TransactionResponse::class.java)
+                            .fromJson(res, TransactionResponse::class.java)
+
                         callback(transactionResponse)
                         stateCallback(transactionResponse.status)
                     } else {

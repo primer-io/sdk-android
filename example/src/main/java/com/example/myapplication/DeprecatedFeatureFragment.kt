@@ -13,7 +13,7 @@ import com.example.myapplication.components.PaymentMethodItem
 import com.example.myapplication.databinding.FragmentDeprecatedFeatureBinding
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.utils.CheckoutListener
-import com.example.myapplication.viewmodels.AppMainViewModel
+import com.example.myapplication.viewmodels.MainViewModel
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.UniversalCheckout
 import io.primer.android.model.dto.CountryCode
@@ -28,7 +28,7 @@ class DeprecatedFeatureFragment : Fragment() {
     private var _binding: FragmentDeprecatedFeatureBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: AppMainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     private val card = Card()
     private val paypal = PayPal()
@@ -155,10 +155,10 @@ class DeprecatedFeatureFragment : Fragment() {
 
     private val listener = CheckoutListener(
         onTokenizeSuccess = { data, handler ->
-            viewModel.createTransaction(data, handler)
+            viewModel.createPayment(data, handler)
         },
         onTokenSelected = { data, handler ->
-            viewModel.createTransaction(data, handler)
+            viewModel.createPayment(data, handler)
         },
         onResumeSuccess = { token, handler ->
             viewModel.resumePayment(token, handler)
@@ -171,7 +171,8 @@ class DeprecatedFeatureFragment : Fragment() {
             UniversalCheckout.dismiss(true)
             AlertDialog.Builder(context).setMessage(it.toString()).show()
         },
-        onExit = { fetchSavedPaymentMethods() }
+        onExit = { fetchSavedPaymentMethods() },
+        onActions = { _, _ -> },
     )
 
     private fun onSelect(data: PaymentMethodToken) {
@@ -180,7 +181,7 @@ class DeprecatedFeatureFragment : Fragment() {
             .setMessage("Would you like to pay?")
             .setPositiveButton("Yes") { _, _ ->
                 setBusyAs(true)
-                viewModel.createTransaction(data)
+                viewModel.createPayment(data)
             }
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()

@@ -15,19 +15,17 @@ import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.utils.UnfilteredArrayAdapter
-import com.example.myapplication.viewmodels.AppMainViewModel
+import com.example.myapplication.viewmodels.MainViewModel
+import com.example.myapplication.viewmodels.SettingsViewModel
 import io.primer.android.model.dto.CountryCode
 
-
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: AppMainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,19 +40,21 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         configureCustomerIdTextField()
-        configureEnvironmentTextField()
         configureCountryTextField()
-        configureCurrencyTextField()
         configureAmountTextField()
         configureNextButton()
-        configureCheckBoxes()
 
         viewModel.canLaunchPrimer.observe(viewLifecycleOwner) { canLaunch ->
             binding.nextButton.isEnabled = canLaunch
         }
 
-        viewModel.countryCode.observe(viewLifecycleOwner) { country ->
-            binding.currencyTextField.setText(country.currencyCode.symbol)
+        settingsViewModel.country.observe(viewLifecycleOwner) { country ->
+            when (country) {
+                "DE" -> binding.countryItem.setText("🇩🇪")
+                "SE" -> binding.countryItem.setText("🇸🇪")
+                "SG" -> binding.countryItem.setText("🇸🇬")
+                "NO" -> binding.countryItem.setText("🇳🇴")
+            }
         }
     }
 
@@ -67,36 +67,10 @@ class FirstFragment : Fragment() {
         }
     }
 
-    private fun configureEnvironmentTextField() {
-        binding.environmentTextField.apply {
-            setText(viewModel.environment.value.toString())
-            setAdapter(UnfilteredArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                PrimerEnv.values(),
-            ))
-            addTextChangedListener { editable ->
-                viewModel.environment.postValue(PrimerEnv.valueOf(editable.toString()))
-            }
-        }
-    }
-
     private fun configureCountryTextField() {
-        binding.countryTextField.apply {
-            setText(viewModel.countryCode.value.toString())
-            setAdapter(UnfilteredArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                CountryCode.values(),
-            ))
-            addTextChangedListener { editable ->
-                viewModel.countryCode.postValue(AppCountryCode.valueOf(editable.toString()))
-            }
+        binding.countryItem.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_countryPickerFragment)
         }
-    }
-
-    private fun configureCurrencyTextField() {
-        binding.currencyTextField.isFocusable = false
     }
 
     private fun configureAmountTextField() {
@@ -111,37 +85,9 @@ class FirstFragment : Fragment() {
         }
     }
 
-    private fun configureCheckBoxes() {
-        binding.klarnaCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.useKlarna.postValue(isChecked)
-        }
-
-        binding.paypalCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.usePayPal.postValue(isChecked)
-        }
-
-        binding.cardCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.useCard.postValue(isChecked)
-        }
-
-        binding.googlePayCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.useGooglePay.postValue(isChecked)
-        }
-        binding.payByMobileCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.usePayMobile.postValue(isChecked)
-        }
-        binding.payByMobileCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.usePayMobile.postValue(isChecked)
-        }
-    }
-
     private fun configureNextButton() {
         binding.nextButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
-
-        binding.buttonSecond.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_DeprecatedFeatureFragment)
         }
     }
 

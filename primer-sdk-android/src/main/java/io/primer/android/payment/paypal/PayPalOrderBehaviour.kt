@@ -1,6 +1,7 @@
 package io.primer.android.payment.paypal
 
 import android.net.Uri
+import io.primer.android.logging.DefaultLogger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
 
@@ -8,6 +9,8 @@ import org.koin.core.component.KoinApiExtension
 internal class PayPalOrderBehaviour(
     private val paypal: PayPalDescriptor,
 ) : WebBrowserIntentBehaviour() {
+
+    private val log = DefaultLogger("paypal.order")
 
     override fun initialize() {
         tokenizationViewModel?.resetPaymentMethod(paypal)
@@ -25,6 +28,6 @@ internal class PayPalOrderBehaviour(
     }
 
     override fun onCancel(uri: Uri?) {
-        // no op
+        log.warn("User cancelled paypal order")
     }
 }

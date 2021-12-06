@@ -63,7 +63,12 @@ class Primer private constructor() : PrimerInterface {
     private val eventBusListener = object : EventBus.EventListener {
         override fun onEvent(e: CheckoutEvent) {
             if (e.public) {
-                listener?.onCheckoutEvent(e)
+                // for backward compatibility, call separate flow onClientSessionActions
+                if (e is CheckoutEvent.OnClientSessionActions) {
+                    listener?.onClientSessionActions(e)
+                } else {
+                    listener?.onCheckoutEvent(e)
+                }
             }
         }
     }

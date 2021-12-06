@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -21,7 +20,6 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.SelectPaymentMethodTitle
@@ -32,8 +30,12 @@ import org.koin.core.component.inject
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.content.res.ColorStateList
+import android.widget.ProgressBar
+import androidx.core.view.isInvisible
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.SessionState
 import io.primer.android.payment.PaymentMethodUiType
+import io.primer.android.ui.components.PaymentMethodButtonGroupBox
 
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
@@ -64,9 +66,11 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private lateinit var seeAllLabel: TextView
     private lateinit var payAllButton: PayButton
     private lateinit var otherWaysPayLabel: TextView
-    private lateinit var otherWaysToPayStartDivider: View
-    private lateinit var otherWaysToPayEndDivider: View
     private lateinit var paymentMethodsContainer: ViewGroup
+    private lateinit var spinner: ProgressBar
+    private lateinit var savedPaymentMethodBox: PaymentMethodButtonGroupBox
+    private lateinit var savedPaymentMethodSection: ViewGroup
+    private lateinit var layout: ViewGroup
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,7 +81,32 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (!primerViewModel.surchargeDisabled) {
+            primerViewModel.reselectSavedPaymentMethod()
+        }
+        bindViewComponents()
+        renderTitle()
+        renderAmountLabel()
+        renderSubtitles()
+        renderSavedPaymentMethodItem()
+        renderManageVaultLabel()
+        renderPayButton()
+        setupUiForVaultModeIfNeeded()
 
+        addListeners()
+
+        selectPaymentMethodTitle.apply {
+            setAmount(localConfig.monetaryAmount)
+            setUxMode(localConfig.paymentMethodIntent)
+        }
+    }
+
+    /*
+    *
+    * bind view components
+    * */
+    private fun bindViewComponents() {
+        val view = view ?: return
         sheetTitle = view.findViewById(R.id.primer_sheet_title)
         titleLabel = view.findViewById(R.id.title_label)
         selectPaymentMethodTitle = view.findViewById(R.id.primer_sheet_title_layout)
@@ -90,76 +119,146 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         seeAllLabel = view.findViewById(R.id.see_all_label)
         payAllButton = view.findViewById(R.id.payAllButton)
         otherWaysPayLabel = view.findViewById(R.id.other_ways_to_pay_label)
-        otherWaysToPayStartDivider = view.findViewById(R.id.otherWaysToPayStartDivider)
-        otherWaysToPayEndDivider = view.findViewById(R.id.otherWaysToPayEndDivider)
         paymentMethodsContainer = view.findViewById(R.id.primer_sheet_payment_methods_list)
+        spinner = view.findViewById(R.id.primer_select_payment_method_spinner)
+        savedPaymentMethodBox = view.findViewById(R.id.saved_payment_method_box)
+        savedPaymentMethodSection = view.findViewById(R.id.primer_saved_payment_section)
+        layout = view.findViewById<ViewGroup>(R.id.primer_select_payment_method_layout)
+    }
 
-        context?.let { c -> render(c) }
+    /*
+    *
+    * title
+    * */
+    private fun renderTitle() {
+        val context = requireContext()
+        val textColor = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
+        choosePaymentMethodLabel.setTextColor(textColor)
+        val fontSize = theme.titleText.fontsize.getDimension(context)
+        choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+    }
 
-        setupUiForVaultModeIfNeeded()
+    /*
+    *
+    * amount label
+    * */
+    // show title label that displays total amount minus any applies surcharges
+    private fun renderAmountLabel() {
+        selectPaymentMethodTitle.setAmount(primerViewModel.amountLabelMonetaryAmount(localConfig))
+        selectPaymentMethodTitle.setUxMode(localConfig.paymentMethodIntent)
+    }
 
+    /*
+    *
+    * subtitles
+    * */
+    private fun renderSubtitles() {
+        val context = requireContext()
+        val color = theme.subtitleText.defaultColor.getColor(context, theme.isDarkMode)
+        val fontSize = theme.subtitleText.fontsize.getDimension(context)
+        savedPaymentLabel.setTextColor(color)
+        otherWaysPayLabel.setTextColor(color)
+        savedPaymentLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+        otherWaysPayLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+    }
+
+    /*
+    *
+    * saved payment method item
+    * */
+    private fun renderSavedPaymentMethodItem() {
+        val context = requireContext()
+        val contentDrawable = generateButtonContent(context)
+        val splash = theme.splashColor.getColor(context, theme.isDarkMode)
+        val pressedStates = ColorStateList.valueOf(splash)
+        val rippleDrawable = RippleDrawable(pressedStates, contentDrawable, null)
+        savedPaymentMethod.background = rippleDrawable
+        val textColor =
+            theme.paymentMethodButton.text.defaultColor.getColor(context, theme.isDarkMode)
+        titleLabel.setTextColor(textColor)
+        savedPaymentLabel.setTextColor(textColor)
+        lastFourLabel.setTextColor(textColor)
+        expiryLabel.setTextColor(textColor)
+    }
+
+    /*
+    *
+    * pay button
+    * */
+
+    private fun renderPayButton() {
+        payAllButton.isEnabled = true
         payAllButton.setTheme(theme)
-        payAllButton.amount = localConfig.monetaryAmount
+        payAllButton.setOnClickListener { onPayButtonPressed() }
+    }
 
-        payAllButton.setOnClickListener {
-            payAllButton.showProgress()
-            primerViewModel.vaultedPaymentMethods.value?.find {
-                it.token == primerViewModel.getSelectedPaymentMethodId()
-            }?.run {
+    private fun onPayButtonPressed() {
+        payAllButton.showProgress()
+        val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return
 
-                toggleButtons(false)
+        // disable buttons and links
+        disableButtons()
 
-                paymentMethodRepository.setPaymentMethod(this)
-                EventBus.broadcast(
-                    CheckoutEvent.TokenSelected(
-                        PaymentMethodTokenAdapter.internalToExternal(this),
-                        resumeHandlerFactory.getResumeHandler(this.paymentInstrumentType)
-                    )
-                )
+        // update payment method
+        paymentMethodRepository.setPaymentMethod(paymentMethod)
+
+        // get token
+        val paymentMethodToken = PaymentMethodTokenAdapter.internalToExternal(paymentMethod)
+
+        // emit event
+        val handler = resumeHandlerFactory.getResumeHandler(paymentMethod.paymentInstrumentType)
+        EventBus.broadcast(CheckoutEvent.TokenSelected(paymentMethodToken, handler))
+    }
+
+    /*
+    *
+    * add listeners
+    * */
+
+    private fun addListeners() {
+
+        // add listener for re-rendering based on session state
+        primerViewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                SessionState.AWAITING_USER -> {
+                    payAllButton.amount = localConfig.monetaryAmount
+                    renderVaultedItemSurchargeLabel()
+                    renderAmountLabel()
+                    setBusy(false)
+                }
+                else -> setBusy(true)
             }
         }
 
+        // add listener with action to navigate to vault manager fragment
+        seeAllLabel.setOnClickListener { primerViewModel.goToVaultedPaymentMethodsView() }
+
+        // add listener for populating payment method buttons list
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             addPaymentMethodsToList(paymentMethods)
         }
 
+        // add listener for displaying selected saved payment method
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
-            updateVaultedMethodsUi(paymentMethods)
-        }
-
-        seeAllLabel.setOnClickListener {
-            primerViewModel.goToVaultedPaymentMethodsView()
-        }
-
-        selectPaymentMethodTitle.apply {
-            setAmount(localConfig.monetaryAmount)
-            setUxMode(localConfig.paymentMethodIntent)
-        }
-
-        payAllButton.isEnabled = false
-
-        savedPaymentMethod.setOnClickListener {
-            it.isSelected = !it.isSelected
-
-            val elevation =
-                if (it.isSelected) R.dimen.elevation_selected else R.dimen.elevation_unselected
-            it.elevation = resources.getDimensionPixelSize(elevation).toFloat()
-            payAllButton.isEnabled = it.isSelected
+            if (primerViewModel.shouldDisplaySavedPaymentMethod) renderSelectedPaymentMethod()
+            else savedPaymentMethodSection.isVisible = false
         }
     }
 
-    private fun render(context: Context) {
-        renderTitle(context)
-        renderSavedPaymentMethodItem(context)
-        renderSubtitles(context)
-        renderManageLabel(context)
+    private fun renderVaultedItemSurchargeLabel() {
+        val text = primerViewModel.savedPaymentMethodSurchargeLabel(requireContext())
+        if (primerViewModel.surchargeDisabled) savedPaymentMethodBox.hideSurchargeFrame()
+        else savedPaymentMethodBox.showSurchargeLabel(text)
     }
 
-    private fun renderTitle(context: Context) {
-        val color = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
-        choosePaymentMethodLabel.setTextColor(color)
-        val fontSize = theme.titleText.fontsize.getDimension(context)
-        choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+    private fun setBusy(isBusy: Boolean) {
+        layout.children.iterator().forEach { it.isVisible = !isBusy }
+        if (localConfig.paymentMethodIntent.isNotVault) {
+            savedPaymentMethodSection.isVisible = !isBusy
+        } else {
+            savedPaymentMethodSection.isVisible = false
+        }
+        spinner.isInvisible = !isBusy
     }
 
     private val buttonStates = arrayOf(
@@ -182,118 +281,63 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         return contentDrawable
     }
 
-    private fun renderSavedPaymentMethodItem(context: Context) {
-        val contentDrawable = generateButtonContent(context)
-        val splash = theme.splashColor.getColor(context, theme.isDarkMode)
-        val pressedStates = ColorStateList.valueOf(splash)
-        val rippleDrawable = RippleDrawable(pressedStates, contentDrawable, null)
-        savedPaymentMethod.background = rippleDrawable
-        val textColor =
-            theme.paymentMethodButton.text.defaultColor.getColor(context, theme.isDarkMode)
-        titleLabel.setTextColor(textColor)
-        savedPaymentLabel.setTextColor(textColor)
-        lastFourLabel.setTextColor(textColor)
-        expiryLabel.setTextColor(textColor)
-    }
-
-    private fun renderSubtitles(context: Context) {
-        val color = theme.subtitleText.defaultColor.getColor(context, theme.isDarkMode)
-        val fontSize = theme.subtitleText.fontsize.getDimension(context)
-        savedPaymentLabel.setTextColor(color)
-        otherWaysPayLabel.setTextColor(color)
-        savedPaymentLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
-        otherWaysPayLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
-    }
-
-    private fun renderManageLabel(context: Context) {
+    private fun renderManageVaultLabel() {
+        val context = requireContext()
         seeAllLabel.setTextColor(theme.systemText.defaultColor.getColor(context, theme.isDarkMode))
-        seeAllLabel.setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            theme.systemText.fontsize.getDimension(requireContext()),
-        )
+        val fontSize = theme.systemText.fontsize.getDimension(requireContext())
+        seeAllLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
     }
 
-    private fun setupUiForVaultModeIfNeeded() {
-        when (localConfig.intent.paymentMethodIntent) {
-            PaymentMethodIntent.CHECKOUT -> return
-            PaymentMethodIntent.VAULT -> {
-                sheetTitle.isVisible = false
-                payAllButton.isVisible = false
-                choosePaymentMethodLabel.text = context?.getString(R.string.add_new_payment_method)
-            }
+    private fun setupUiForVaultModeIfNeeded() = when (localConfig.intent.paymentMethodIntent) {
+        PaymentMethodIntent.CHECKOUT -> Unit
+        PaymentMethodIntent.VAULT -> {
+            sheetTitle.isVisible = false
+            payAllButton.isVisible = false
+            choosePaymentMethodLabel.text = context?.getString(R.string.add_new_payment_method)
         }
-    }
-
-    private fun toggleButtons(enabled: Boolean) {
-        paymentMethodsContainer.children.forEach { v ->
-            v.isEnabled = enabled
-        }
-
-        seeAllLabel.isEnabled = enabled
     }
 
     private fun addPaymentMethodsToList(paymentMethods: List<PaymentMethodDescriptor>) {
-        paymentMethods.forEach { paymentMethod ->
-            val button: View = paymentMethod.createButton(paymentMethodsContainer)
+        val factory = primerViewModel.paymentMethodButtonGroupFactory
 
-            button.layoutParams = button.layoutParams.apply {
-                val layoutParams = this as LinearLayout.LayoutParams
-                layoutParams.topMargin =
-                    resources.getDimensionPixelSize(R.dimen.primer_list_margin)
-            }
+        val boxes = factory.build(requireContext(), paymentMethods, onClick = { paymentMethod ->
+            // ensure other buttons can't be clicked
+            disableButtons()
 
-            paymentMethodsContainer.addView(button)
+            // select payment method
+            primerViewModel.selectPaymentMethod(paymentMethod)
 
-            button.setOnClickListener {
-                primerViewModel.selectPaymentMethod(paymentMethod)
-                paymentMethod.behaviours.firstOrNull()?.let {
-                    if (paymentMethod.type != PaymentMethodUiType.FORM) {
-                        primerViewModel.executeBehaviour(it)
-                    }
+            // handle non-form cases
+            paymentMethod.behaviours.firstOrNull()?.let {
+                val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
+                if (isNotForm) {
+                    primerViewModel.executeBehaviour(it)
                 }
             }
+        })
+
+        boxes.forEachIndexed { i, box ->
+            if (primerViewModel.surchargeDisabled) {
+                box.hideSurchargeFrame().run { if (i > 0) box.setTopMargin(0) }
+            }
+            paymentMethodsContainer.addView(box)
         }
 
         paymentMethodsContainer.requestLayout()
     }
 
-    private fun updateVaultedMethodsUi(paymentMethods: List<PaymentMethodTokenInternal>) {
-        val shouldShowSavedPaymentMethod =
-            paymentMethods.isNotEmpty() && localConfig.paymentMethodIntent.isNotVault
-
-        if (shouldShowSavedPaymentMethod) {
-            showSavedPaymentMethodView()
-
-            val id = primerViewModel.getSelectedPaymentMethodId()
-            val method = paymentMethods.find { it.token == id } ?: paymentMethods.first()
-            updateSelectedPaymentMethod(method)
-        } else {
-            hideSavedPaymentMethodView()
-        }
+    private fun disableButtons() {
+        paymentMethodsContainer.children.forEach { v -> v.isEnabled = false }
+        seeAllLabel.isEnabled = false
     }
 
-    private fun showSavedPaymentMethodView() {
-        toggleSavedPaymentMethodViewVisibility(true)
-    }
+    private fun renderSelectedPaymentMethod() {
+        // ensure selected payment method is available
+        val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return
 
-    private fun hideSavedPaymentMethodView() {
-        toggleSavedPaymentMethodViewVisibility(false)
-    }
+        // hide grey box frame if surcharge is disabled / not present in session
+        if (primerViewModel.surchargeDisabled) savedPaymentMethodBox.hideSurchargeFrame()
 
-    private fun toggleSavedPaymentMethodViewVisibility(show: Boolean) {
-        listOf(
-            savedPaymentLabel,
-            savedPaymentMethod,
-            seeAllLabel,
-            payAllButton,
-            otherWaysToPayStartDivider,
-            otherWaysToPayEndDivider,
-        ).forEach {
-            it.isVisible = show
-        }
-    }
-
-    private fun updateSelectedPaymentMethod(paymentMethod: PaymentMethodTokenInternal) {
         primerViewModel.setSelectedPaymentMethodId(paymentMethod.token)
 
         when (paymentMethod.paymentInstrumentType) {
@@ -319,8 +363,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 val last4: Int = data?.last4Digits ?: throw Error("card data is invalid!")
 
                 lastFourLabel.text = getString(R.string.last_four, last4)
-                // FIXME should use string resources (and pulled out to be testable)
-                expiryLabel.text = "${data.expirationYear} / ${data.expirationMonth}"
+                val expirationYear = "${data.expirationYear}"
+                val expirationMonth = "${data.expirationMonth}".padStart(2, '0')
+                expiryLabel.text = getString(R.string.expiry_date, expirationMonth, expirationYear)
                 setCardIcon(data.network)
             }
             else -> {
@@ -330,14 +375,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun renderAlternativeSavedPaymentMethodView(title: String?) {
-        listOf(titleLabel, lastFourLabel, expiryLabel).forEach {
-            it.isVisible = false
-        }
-
-        titleLabel.apply {
-            isVisible = true
-            text = title
-        }
+        listOf(titleLabel, lastFourLabel, expiryLabel).forEach { it.isVisible = false }
+        titleLabel.isVisible = true
+        titleLabel.text = title
     }
 
     private fun setCardIcon(network: String?) {

@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,18 +10,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.myapplication.components.PaymentMethodItem
 import com.example.myapplication.datamodels.TransactionState
-import com.example.myapplication.viewmodels.AppMainViewModel
+import com.example.myapplication.viewmodels.MainViewModel
 import io.primer.android.Primer
 import androidx.fragment.app.activityViewModels
-import com.example.myapplication.constants.ThemeList
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.example.myapplication.utils.CheckoutListener
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.model.dto.*
 import io.primer.android.model.dto.PaymentMethodToken
-import io.primer.android.payment.card.Card
-import io.primer.android.payment.google.GooglePay
 import io.primer.android.threeds.data.models.ResponseCode
 
 class SecondFragment : Fragment() {
@@ -30,7 +26,7 @@ class SecondFragment : Fragment() {
     private var _binding: FragmentSecondBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: AppMainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +45,7 @@ class SecondFragment : Fragment() {
 
         // VAULT MANAGER
         binding.vaultButton.setOnClickListener {
+            viewModel.mode.postValue(MainViewModel.Mode.VAULT)
             viewModel.clientToken.value?.let { token ->
                 activity?.let { context -> Primer.instance.showVaultManager(context, token) }
             }
@@ -56,6 +53,7 @@ class SecondFragment : Fragment() {
 
         // UNIVERSAL CHECKOUT
         binding.checkoutButton.setOnClickListener {
+            viewModel.mode.postValue(MainViewModel.Mode.CHECKOUT)
             viewModel.clientToken.value?.let { token ->
                 activity?.let { context -> Primer.instance.showUniversalCheckout(context, token) }
             }
@@ -135,16 +133,16 @@ class SecondFragment : Fragment() {
 
     private val listener = CheckoutListener(
         onTokenizeSuccess = { token, completionHandler ->
-            viewModel.createTransaction(token, completionHandler)
+            viewModel.createPayment(token, completionHandler)
         },
         onTokenSelected = { token, completionHandler ->
-            viewModel.createTransaction(token, completionHandler)
+            viewModel.createPayment(token, completionHandler)
         },
         onResumeSuccess = { resumeToken, completionHandler ->
             viewModel.resumePayment(resumeToken, completionHandler)
         },
         onResumeError = {
-            Primer.instance.dismiss(true)
+//            Primer.instance.dismiss(true)
             AlertDialog.Builder(context).setMessage(it.toString()).show()
         },
         onSavedPaymentInstrumentsFetched = {
@@ -157,16 +155,17 @@ class SecondFragment : Fragment() {
             binding.paymentMethodList.adapter = adapter
         },
         onApiError = {
-            Primer.instance.dismiss(true)
+//            Primer.instance.dismiss(true)
             AlertDialog.Builder(context).setMessage(it.toString()).show()
         },
         onExit = {
             viewModel.clientToken.value?.let { token -> fetchSavedPaymentMethods(token) }
-        }
+        },
+        onActions = { request, completion -> viewModel.postAction(request, completion) }
     )
 
     private fun onConfirmDialogAction(token: PaymentMethodToken) {
-        viewModel.createTransaction(token)
+        viewModel.createPayment(token)
     }
 
     private fun onSelect(token: PaymentMethodToken) {

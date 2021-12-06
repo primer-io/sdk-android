@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -8,13 +9,19 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.myapplication.databinding.ActivityMainBinding
-import com.example.myapplication.viewmodels.AppMainViewModel
+import com.example.myapplication.datasources.CountryDataSource
+import com.example.myapplication.repositories.CountryRepository
+import com.example.myapplication.viewmodels.MainViewModel
+import com.example.myapplication.viewmodels.MainViewModelFactory
+import com.example.myapplication.viewmodels.SettingsViewModel
+import com.example.myapplication.viewmodels.SettingsViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: AppMainViewModel
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +36,18 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        viewModel = ViewModelProvider(this).get(AppMainViewModel::class.java)
+        val countryDataSource = CountryDataSource("DE")
+        val countryRepository = CountryRepository(countryDataSource)
 
+        mainViewModel = ViewModelProvider(
+            this,
+            MainViewModelFactory(countryRepository),
+        ).get(MainViewModel::class.java)
+
+        settingsViewModel = ViewModelProvider(
+            this,
+            SettingsViewModelFactory(countryRepository),
+        ).get(SettingsViewModel::class.java)
     }
 
     override fun onSupportNavigateUp(): Boolean {

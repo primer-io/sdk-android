@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.example.myapplication.repositories.ClientTokenRepository
 import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.datamodels.*
+import com.example.myapplication.repositories.ActionRepository
 import com.example.myapplication.repositories.ClientSessionRepository
+import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
@@ -15,6 +17,7 @@ import io.primer.android.CheckoutEventListener
 import io.primer.android.PaymentMethod
 import io.primer.android.Primer
 import io.primer.android.completion.ResumeHandler
+import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.model.OrderItem
 import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.dto.*
@@ -29,13 +32,24 @@ import okhttp3.OkHttpClient
 import java.util.UUID
 
 @Keep
-class AppMainViewModel : ViewModel() {
+class MainViewModel(
+    private val countryRepository: CountryRepository,
+) : ViewModel() {
 
     private val clientTokenRepository = ClientTokenRepository()
     private val clientSessionRepository = ClientSessionRepository()
+    private val actionRepository = ActionRepository()
 
     private val paymentsRepository = PaymentsRepository()
     private val resumeRepository = ResumeRepository()
+
+    enum class Mode {
+        CHECKOUT, VAULT;
+
+        val isVaulting: Boolean get() = this == VAULT
+    }
+
+    val mode = MutableLiveData(Mode.CHECKOUT)
 
     private val client: OkHttpClient = OkHttpClient.Builder().build()
 
@@ -64,11 +78,10 @@ class AppMainViewModel : ViewModel() {
 
     val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
 
-    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(50)
+    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(2000)
     val amount: LiveData<Int> = _amount
     val amountStringified: String get() = String.format("%.2f", _amount.value!!.toDouble() / 100)
-    fun setAmount(amount: Int): Unit =
-        _amount.postValue(amount)
+    fun setAmount(amount: Int): Unit = _amount.postValue(amount)
 
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.GB)
     val clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
@@ -146,17 +159,76 @@ class AppMainViewModel : ViewModel() {
         ) { t -> clientToken.postValue(t) }
     }
 
-    fun fetchClientSession() {
-        clientSessionRepository.fetch(
-            client,
-            (environment.value ?: return).environment,
-            countryCode.value?.currencyCode.toString(),
-            amount.value!!,
-            countryCode.value?.mapped!!
-        ) { t -> clientToken.postValue(t) }
+    fun fetchClientSession() = clientSessionRepository.fetch(
+        client,
+        amount.value!!,
+        countryRepository.getCountry(),
+        countryRepository.getCurrency(),
+        environment.value?.environment ?: throw Error("no environment set!")
+    ) { t -> clientToken.postValue(t) }
+
+    fun postAction(request: ClientSessionActionsRequest, completion: (String?) -> Unit) {
+
+        if (mode.value?.isVaulting == true) {
+            completion(null)
+            return
+        }
+
+        val requestAction: Action = when (val action = request.actions[0]) {
+            is ClientSessionActionsRequest.SetPaymentMethod -> {
+
+                val paymentMethodType = action.paymentMethodType ?: return
+                var binData: Map<String, Any>? = null
+
+                // check if paymentMethodType is among those configured.
+                val isConfiguredType = ClientSession.PaymentMethodOptionGroup.configuredValues
+                    .contains(paymentMethodType)
+
+                action.network?.uppercase()?.let { network ->
+                    binData = mapOf(
+                        "network" to network,
+                        "product_code" to network,
+                        "product_name" to network,
+                        "product_usage_type" to "UNKNOWN",
+                        "account_number_type" to "UNKNOWN",
+                        "account_funding_type" to "UNKNOWN",
+                        "regional_restriction" to "UNKNOWN",
+                        "prepaid_reloadable_indicator" to "NOT_APPLICABLE",
+                    )
+                }
+
+                if (!isConfiguredType) {
+                    Action(
+                        type = "UNSELECT_PAYMENT_METHOD",
+                        params = null,
+                    )
+                } else {
+                    Action(
+                        type = "SELECT_PAYMENT_METHOD",
+                        params = Action.Params(paymentMethodType, binData)
+                    )
+                }
+            }
+            is ClientSessionActionsRequest.UnsetPaymentMethod -> {
+                Action(
+                    type = "UNSELECT_PAYMENT_METHOD",
+                    params = null,
+                )
+            }
+            else -> Action(
+                type = "UNSELECT_PAYMENT_METHOD",
+                params = null,
+            )
+        }
+
+        val body = Action.Request(clientToken.value!!, listOf(requestAction))
+
+        actionRepository.post(body, client) { clientToken ->
+            completion(clientToken)
+        }
     }
 
-    fun createTransaction(
+    fun createPayment(
         paymentMethod: PaymentMethodToken,
         completion: ResumeHandler? = null
     ) {
@@ -170,6 +242,7 @@ class AppMainViewModel : ViewModel() {
             client,
             { result ->
                 _transactionResponse.postValue(result)
+
                 if (result.requiredAction?.name != null) {
                     _transactionId.postValue(result.id)
                     completion?.handleNewClientToken(result.requiredAction.clientToken.orEmpty())
@@ -224,7 +297,7 @@ class AppMainViewModel : ViewModel() {
             paymentMethodToken.tokenType == TokenType.SINGLE_USE
                 && (paymentMethodToken.threeDSecureAuthentication?.responseCode == ResponseCode.AUTH_SUCCESS
                 || paymentMethodToken.threeDSecureAuthentication == null) -> {
-                createTransaction(paymentMethodToken)
+                createPayment(paymentMethodToken)
             }
             paymentMethodToken.threeDSecureAuthentication != null -> _threeDsResult.postValue(
                 paymentMethodToken.threeDSecureAuthentication

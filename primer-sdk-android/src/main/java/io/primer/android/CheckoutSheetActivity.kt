@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
@@ -228,15 +229,41 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
     //endregion
 
-    private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
-        it?.let {
-            handleBehaviour(it.selectedBehaviour)
+    private fun emitError(error: Error) {
+        val apiError = APIError(error.message ?: "")
+        val event = CheckoutEvent.ApiError(apiError)
+        EventBus.broadcast(event)
+    }
+
+    private fun presentFragment(behaviour: SelectedPaymentMethodBehaviour?) = when (behaviour) {
+        is NewFragmentBehaviour -> openFragment(behaviour)
+        is WebBrowserIntentBehaviour -> behaviour.execute(tokenizationViewModel)
+        is WebViewBehaviour -> behaviour.execute(tokenizationViewModel)
+        is InitialCheckRequiredBehaviour -> behaviour.execute(this, tokenizationViewModel)
+        is AsyncPaymentMethodBehaviour -> behaviour.execute(tokenizationViewModel)
+        // todo: refactor to sealed class or change logic altogether
+        else -> Unit
+    }
+
+    private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
+
+        if (descriptor == null) return@Observer
+
+        val type = descriptor.config.type.toString()
+
+        val action =
+            if (type == "PAYMENT_CARD") ClientSessionActionsRequest.UnsetPaymentMethod()
+            else ClientSessionActionsRequest.SetPaymentMethod(type)
+
+        primerViewModel.dispatchAction(action, false) { error: Error? ->
+            if (error == null) presentFragment(descriptor.selectedBehaviour)
+            else emitError(error)
         }
     }
 
     private val selectedPaymentMethodBehaviourObserver =
         Observer<SelectedPaymentMethodBehaviour?> { behaviour ->
-            handleBehaviour(behaviour)
+            presentFragment(behaviour)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -439,26 +466,5 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
-    }
-
-    private fun handleBehaviour(behaviour: SelectedPaymentMethodBehaviour?) = when (behaviour) {
-        is NewFragmentBehaviour -> {
-            openFragment(behaviour)
-        }
-        is WebBrowserIntentBehaviour -> {
-            behaviour.execute(tokenizationViewModel)
-        }
-        is WebViewBehaviour -> {
-            behaviour.execute(tokenizationViewModel)
-        }
-        is InitialCheckRequiredBehaviour -> {
-            behaviour.execute(this, tokenizationViewModel)
-        }
-        is AsyncPaymentMethodBehaviour -> {
-            behaviour.execute(tokenizationViewModel)
-        }
-        else -> {
-            // TODO what should we do here?
-        }
     }
 }

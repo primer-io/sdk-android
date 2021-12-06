@@ -13,6 +13,7 @@ interface ClientSession : ExampleAppRequestBody {
     val customer: Customer
     val paymentMethod: PaymentMethod
 
+    @Keep
     data class Request(
         private val environment: String,  // for cloud function
         override val customerId: String,
@@ -27,17 +28,18 @@ interface ClientSession : ExampleAppRequestBody {
         companion object {
 
             fun build(
-                environment: String,
-                currencyCode: String,
                 amount: Int,
-                countryCode: CountryCode
+                countryCode: String,
+                currency: String,
+                environment: String,
             ): Request {
                 return Request(
                     environment = environment,
-                    customerId = "dirk",
-                    orderId = "dirk-test-10001",
-                    currencyCode = currencyCode,
+                    customerId = "test",
+                    orderId = "android-test-10001",
+                    currencyCode = currency,
                     order = Order(
+                        countryCode = countryCode,
                         lineItems = listOf(
                             LineItem(
                                 amount = amount,
@@ -46,10 +48,10 @@ interface ClientSession : ExampleAppRequestBody {
                                 description = "this item",
                                 discountAmount = 0,
                             ),
-                        )
+                        ),
                     ),
                     customer = Customer(
-                        emailAddress = "dirk@primer.io",
+                        emailAddress = "test@mail.com",
                         mobileNumber = "0841234567",
                         firstName = "John",
                         lastName = "Doe",
@@ -58,7 +60,7 @@ interface ClientSession : ExampleAppRequestBody {
                             postalCode = "12345",
                             city = "test",
                             state = "test",
-                            countryCode = countryCode.name,
+                            countryCode = countryCode,
                         ),
                         nationalDocumentId = "9011211234567",
                     ),
@@ -67,6 +69,31 @@ interface ClientSession : ExampleAppRequestBody {
                             PAYPAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
                                     amount = 50,
+                                )
+                            ),
+                            GOOGLE_PAY = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 60,
+                                )
+                            ),
+                            ADYEN_SOFORT = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 150,
+                                )
+                            ),
+                            ADYEN_IDEAL = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 120,
+                                )
+                            ),
+                            ADYEN_GIROPAY = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 130,
+                                )
+                            ),
+                            ADYEN_TRUSTLY = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 140,
                                 )
                             ),
                             PAYMENT_CARD = PaymentCardOption(
@@ -81,6 +108,11 @@ interface ClientSession : ExampleAppRequestBody {
                                             amount = 200,
                                         )
                                     ),
+                                    JCB = NetworkOption(
+                                        surcharge = SurchargeOption(
+                                            amount = 0,
+                                        )
+                                    ),
                                 )
                             ),
                         )
@@ -90,6 +122,7 @@ interface ClientSession : ExampleAppRequestBody {
         }
     }
 
+    @Keep
     data class Response(
         val clientToken: String,
         val clientTokenExpirationDate: String,
@@ -102,11 +135,13 @@ interface ClientSession : ExampleAppRequestBody {
         override val paymentMethod: PaymentMethod
     ) : ClientSession
 
+    @Keep
     data class Order(
         val countryCode: String? = null,
         val lineItems: List<LineItem>? = null,
     )
 
+    @Keep
     data class LineItem(
         val amount: Int,
         val quantity: Int,
@@ -115,6 +150,7 @@ interface ClientSession : ExampleAppRequestBody {
         val discountAmount: Int,
     )
 
+    @Keep
     data class Customer(
         val firstName: String? = null,
         val lastName: String? = null,
@@ -125,6 +161,7 @@ interface ClientSession : ExampleAppRequestBody {
         val shippingAddress: Address? = null,
     )
 
+    @Keep
     data class Address(
         val addressLine1: String,
         val addressLine2: String? = null,
@@ -134,34 +171,59 @@ interface ClientSession : ExampleAppRequestBody {
         val countryCode: String,
     )
 
+    @Keep
     data class PaymentMethod(
         val vaultOnSuccess: Boolean? = null,
         val options: PaymentMethodOptionGroup,
     )
 
+    @Keep
     data class PaymentMethodOptionGroup(
         val PAYPAL: PaymentMethodOption? = null,
         val PAYMENT_CARD: PaymentCardOption? = null,
         val GOOGLE_PAY: PaymentMethodOption? = null,
-    )
+        val ADYEN_SOFORT: PaymentMethodOption? = null,
+        val ADYEN_IDEAL: PaymentMethodOption? = null,
+        val ADYEN_GIROPAY: PaymentMethodOption? = null,
+        val ADYEN_TRUSTLY: PaymentMethodOption? = null,
+    ) {
+        
+        companion object {
+            val configuredValues: Set<String> = setOf(
+                "PAYPAL",
+                "PAYMENT_CARD",
+                "GOOGLE_PAY",
+                "ADYEN_SOFORT",
+                "ADYEN_IDEAL",
+                "ADYEN_GIROPAY",
+                "ADYEN_TRUSTLY"
+            )
+        }
+    }
 
+    @Keep
     data class PaymentMethodOption(
         val surcharge: SurchargeOption,
     )
 
+    @Keep
     data class SurchargeOption(
         val amount: Int
     )
 
+    @Keep
     data class PaymentCardOption(
         val networks: NetworkOptionGroup
     )
 
+    @Keep
     data class NetworkOptionGroup(
         val VISA: NetworkOption? = null,
         val MASTERCARD: NetworkOption? = null,
+        val JCB: NetworkOption? = null,
     )
 
+    @Keep
     data class NetworkOption(
         val surcharge: SurchargeOption
     )

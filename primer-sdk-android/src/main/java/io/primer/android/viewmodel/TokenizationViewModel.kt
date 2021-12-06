@@ -71,13 +71,13 @@ internal class TokenizationViewModel(
 
     fun resetPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor? = null) {
         paymentMethod = paymentMethodDescriptor
-        submitted.value = false
-        tokenizationStatus.value = TokenizationStatus.NONE
+        submitted.postValue(false)
+        tokenizationStatus.postValue(TokenizationStatus.NONE)
 
         if (paymentMethodDescriptor != null) {
-            validationErrors.value = paymentMethodDescriptor.validate()
+            validationErrors.postValue(paymentMethodDescriptor.validate())
         } else {
-            validationErrors.value = Collections.emptyList()
+            validationErrors.postValue(Collections.emptyList())
         }
     }
 

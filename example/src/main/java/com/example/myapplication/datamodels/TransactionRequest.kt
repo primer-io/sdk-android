@@ -26,6 +26,7 @@ data class TransactionRequest(
                 "SEK",
                 "SE",
                 environment,
+                isV3 = true,
             )
         }
     }
