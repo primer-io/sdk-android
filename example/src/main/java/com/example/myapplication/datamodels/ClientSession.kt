@@ -15,7 +15,6 @@ interface ClientSession : ExampleAppRequestBody {
 
     @Keep
     data class Request(
-        private val environment: String,  // for cloud function
         override val customerId: String,
         override val orderId: String,
         override val amount: Int? = null,
@@ -31,10 +30,8 @@ interface ClientSession : ExampleAppRequestBody {
                 amount: Int,
                 countryCode: String,
                 currency: String,
-                environment: String,
             ): Request {
                 return Request(
-                    environment = environment,
                     customerId = "test",
                     orderId = "android-test-10001",
                     currencyCode = currency,

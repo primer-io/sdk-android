@@ -22,8 +22,8 @@ class ClientSessionRepository {
         environment: String,
         callback: (token: String?) -> Unit,
     ) {
-        val body = ClientSession.Request.build(amount, countryCode, currency, environment)
-        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientSession)
+        val body = ClientSession.Request.build(amount, countryCode, currency)
+        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientSession, environment)
         client.cache()?.delete()
         client.newCall(request).enqueue(object : Callback {
 

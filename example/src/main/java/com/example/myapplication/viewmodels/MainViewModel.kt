@@ -223,7 +223,11 @@ class MainViewModel(
 
         val body = Action.Request(clientToken.value!!, listOf(requestAction))
 
-        actionRepository.post(body, client) { clientToken ->
+        actionRepository.post(
+            body,
+            environment.value?.environment.orEmpty(),
+            client
+        ) { clientToken ->
             completion(clientToken)
         }
     }
@@ -235,10 +239,11 @@ class MainViewModel(
         _transactionId.postValue(null)
 
         val environment = environment.value!!.environment
-        val body = TransactionRequest.create(paymentMethod.token, environment)
+        val body = TransactionRequest.create(paymentMethod.token)
 
         paymentsRepository.create(
             body,
+            environment,
             client,
             { result ->
                 _transactionResponse.postValue(result)
@@ -264,12 +269,12 @@ class MainViewModel(
 
     fun resumePayment(token: String, completion: ResumeHandler? = null) {
         val body = ResumePaymentRequest(
-            _transactionId.value.orEmpty(),
-            token,
-            environment.value?.environment.orEmpty()
+            token
         )
         resumeRepository.create(
+            _transactionId.value.orEmpty(),
             body,
+            environment.value?.environment.orEmpty(),
             client,
             { result ->
                 _transactionResponse.postValue(result)

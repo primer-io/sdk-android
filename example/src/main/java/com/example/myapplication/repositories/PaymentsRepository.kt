@@ -15,15 +15,20 @@ import java.io.IOException
 class PaymentsRepository {
 
     fun create(
-            body: TransactionRequest,
-            client: OkHttpClient,
-            callback: (TransactionResponse) -> Unit,
-            stateCallback: (TransactionStatus) -> Unit,
+        body: TransactionRequest,
+        environment: String,
+        client: OkHttpClient,
+        callback: (TransactionResponse) -> Unit,
+        stateCallback: (TransactionStatus) -> Unit,
     ) {
-        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.payments, true)
+        val request =
+            HttpRequestUtil.generateRequest(body, PrimerRoutes.payments, environment, true)
         client.newCall(request).enqueue(object : Callback {
 
-            override fun onFailure(call: Call, e: IOException) = stateCallback(TransactionStatus.FAILED)
+            override fun onFailure(
+                call: Call,
+                e: IOException
+            ) = stateCallback(TransactionStatus.FAILED)
 
             override fun onResponse(call: Call, response: Response) {
 

@@ -408,6 +408,7 @@ class Primer private constructor() : PrimerInterface {
         /**
          * Singleton instance of [Primer]. Use this to call SDK methods.
          */
+        @JvmStatic
         val instance: PrimerInterface by lazy { Primer() }
     }
 }

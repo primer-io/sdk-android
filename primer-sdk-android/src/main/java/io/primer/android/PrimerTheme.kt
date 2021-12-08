@@ -35,6 +35,7 @@ data class PrimerTheme internal constructor(
         /**
          * Style the Primer SDK using Android XML resources
          * */
+        @JvmStatic
         fun build(
             isDarkMode: Boolean? = null,
             @ColorRes primaryColor: Int? = null,
@@ -340,6 +341,7 @@ data class PrimerTheme internal constructor(
          * Style the Primer SDK using dynamic values.
          * */
         @Deprecated("this method will be removed in a future version.")
+        @JvmStatic
         fun create(
             buttonCornerRadius: Float? = null,
             inputCornerRadius: Float? = null,

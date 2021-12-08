@@ -1,16 +1,21 @@
 package com.example.myapplication.constants
 
-object PrimerRoutes {
+class PrimerRoutes {
 
-    private const val root: String = "https://us-central1-primerdemo-8741b.cloudfunctions.net"
 
-    const val clientToken: String = "$root/clientToken"
+    companion object {
 
-    const val clientSession: String = "$root/clientSession"
+        private const val root: String =
+            "https://us-central1-primerdemo-8741b.cloudfunctions.net/api"
 
-    const val payments: String = "$root/payments"
+        const val clientToken: String = "$root/clientToken"
 
-    const val resumeToken: String = "$root/resume"
+        const val clientSession: String = "$root/client-session"
 
-    const val actions: String = "$root/actions"
+        const val payments: String = "$root/payments"
+
+        const val actions: String = "$root/client-session/actions"
+
+        fun buildResumePaymentsUrl(id: String) = "$root/payments/${id}/resume"
+    }
 }

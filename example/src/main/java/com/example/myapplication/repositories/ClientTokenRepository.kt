@@ -21,7 +21,7 @@ class ClientTokenRepository {
         callback: (token: String?) -> Unit,
     ) {
         val body = ClientTokenRequest(customerId, environment, countryCode)
-        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientToken)
+        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientToken, environment)
         client.cache()?.delete()
         client.newCall(request).enqueue(object : Callback {
 

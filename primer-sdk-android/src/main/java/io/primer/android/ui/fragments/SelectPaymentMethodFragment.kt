@@ -31,7 +31,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.content.res.ColorStateList
 import android.widget.ProgressBar
-import androidx.core.view.isInvisible
+import androidx.core.view.isGone
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.SessionState
 import io.primer.android.payment.PaymentMethodUiType
@@ -258,7 +258,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         } else {
             savedPaymentMethodSection.isVisible = false
         }
-        spinner.isInvisible = !isBusy
+        spinner.isGone = !isBusy
     }
 
     private val buttonStates = arrayOf(

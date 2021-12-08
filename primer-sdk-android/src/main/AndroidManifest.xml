@@ -16,6 +16,7 @@
 
         <activity
             android:name=".CheckoutSheetActivity"
+            android:exported="true"
             android:label=""
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
             android:windowSoftInputMode="adjustResize">
@@ -31,11 +32,13 @@
 
         <activity
             android:name=".WebBrowserInteropActivity"
+            android:exported="true"
             android:label=""
             android:theme="@android:style/Theme.NoDisplay" />
 
         <activity
             android:name=".ui.base.webview.WebViewActivity"
+            android:exported="true"
             android:label=""
             android:theme="@style/Theme.AppCompat.WebView" />
 
@@ -46,6 +49,7 @@
 
         <activity
             android:name=".threeds.ui.ThreeDsActivity"
+            android:exported="true"
             android:label=""
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent">
