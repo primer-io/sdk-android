@@ -6,7 +6,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.17.0'
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
         classpath "io.insert-koin:koin-gradle-plugin:$koinVersion"
     }
 }

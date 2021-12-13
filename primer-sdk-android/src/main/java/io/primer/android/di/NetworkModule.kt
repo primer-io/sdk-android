@@ -9,13 +9,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 
+internal const val SDK_API_VERSION_HEADER = "X-Api-Version"
 private const val CONTENT_TYPE_HEADER = "Content-Type"
 private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 private const val SDK_VERSION_HEADER = "Primer-SDK-Version"
 private const val SDK_CLIENT_HEADER = "Primer-SDK-Client"
 private const val SDK_CLIENT_VALUE = "ANDROID_NATIVE"
-private const val SDK_API_VERSION_HEADER = "X-Api-Version"
-private const val SDK_API_VERSION_VALUE = "2021-10-19"
 private const val CLIENT_TOKEN_HEADER = "Primer-Client-Token"
 
 internal val NetworkModule = {
@@ -31,7 +30,6 @@ internal val NetworkModule = {
                             CLIENT_TOKEN_HEADER,
                             get<LocalClientTokenDataSource>().get().accessToken
                         )
-                        .addHeader(SDK_API_VERSION_HEADER, SDK_API_VERSION_VALUE)
                         .build()
                         .let { chain.proceed(it) }
                 }.addInterceptor(
@@ -52,4 +50,8 @@ internal val NetworkModule = {
             )
         }
     }
+}
+
+internal enum class ApiVersion(val version: String) {
+    CONFIGURATION_VERSION("2021-10-19")
 }

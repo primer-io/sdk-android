@@ -12,7 +12,6 @@ class CheckoutListener(
     val onTokenSelected: (PaymentMethodToken, ResumeHandler) -> Unit = { _: PaymentMethodToken, _: ResumeHandler -> },
     val onResumeSuccess: (String, ResumeHandler) -> Unit = { _: String, _: ResumeHandler -> },
     val onResumeError: (APIError) -> Unit = {},
-    val onSavedPaymentInstrumentsFetched: (List<PaymentMethodToken>) -> Unit = {},
     val onApiError: (APIError) -> Unit = {},
     val onExit: () -> Unit = {},
     val onActions: (ClientSessionActionsRequest, (String?) -> Unit) -> Unit,
@@ -24,7 +23,6 @@ class CheckoutListener(
             is CheckoutEvent.TokenizationError -> onApiError(e.data)
             is CheckoutEvent.ResumeSuccess -> onResumeSuccess(e.resumeToken, e.resumeHandler)
             is CheckoutEvent.ResumeError -> onResumeError(e.data)
-            is CheckoutEvent.SavedPaymentInstrumentsFetched -> onSavedPaymentInstrumentsFetched(e.data)
             is CheckoutEvent.ApiError -> onApiError(e.data)
             is CheckoutEvent.Exit -> onExit()
             is CheckoutEvent.TokenSelected -> onTokenSelected(e.data, e.resumeHandler)

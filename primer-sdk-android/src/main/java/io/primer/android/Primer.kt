@@ -22,10 +22,8 @@ import io.primer.android.model.dto.CountryCode
 import io.primer.android.data.configuration.repository.ConfigurationDataRepository
 import io.primer.android.model.dto.Customer
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
 import io.primer.android.domain.session.ConfigurationInteractor
-import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.EventDispatcher
 import io.primer.android.http.PrimerHttpClient
 import io.primer.android.logging.DefaultLogger
@@ -38,11 +36,6 @@ import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Deprecated("This object has been renamed to Primer.")
@@ -110,37 +103,6 @@ class Primer private constructor() : PrimerInterface {
         else PaymentMethodIntent.CHECKOUT
         config.intent = PrimerIntent(flow, paymentMethod)
         show(context, clientToken)
-    }
-
-    override fun fetchSavedPaymentInstruments(clientToken: String) {
-        setupAndVerifyClientToken(clientToken)
-        val sessionInteractor = getSessionInteractor(clientToken)
-        val vaultInteractor = getVaultInteractor(clientToken)
-        CoroutineScope(Dispatchers.IO).launch {
-            sessionInteractor(ConfigurationParams(false)).flatMapLatest {
-                vaultInteractor(None())
-            }.collect {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.SavedPaymentInstrumentsFetched(
-                        it.map {
-                            PaymentMethodTokenAdapter.internalToExternal(it)
-                        }
-                    )
-                )
-            }
-        }
-    }
-
-    override fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit) {
-        val sessionInteractor = getSessionInteractor(config.clientTokenBase64.orEmpty())
-        val vaultInteractor = getVaultInteractor(config.clientTokenBase64.orEmpty())
-        CoroutineScope(Dispatchers.IO).launch {
-            sessionInteractor(ConfigurationParams(false)).flatMapLatest {
-                vaultInteractor(None())
-            }.collect {
-                callBackWithTokens(it, callback)
-            }
-        }
     }
 
     /**

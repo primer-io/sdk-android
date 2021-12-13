@@ -9,6 +9,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -25,12 +26,14 @@ internal class PrimerHttpClient(
 
     inline fun <reified R> get(
         url: String,
+        headers: Map<String, String> = hashMapOf()
     ): Flow<R> =
         flow {
             emit(
                 executeRequest(
                     Request.Builder()
                         .url(url)
+                        .headers(Headers.of(headers))
                         .get()
                         .build()
                 )
@@ -40,12 +43,14 @@ internal class PrimerHttpClient(
     inline fun <reified T, reified R> post(
         url: String,
         request: T,
+        headers: Map<String, String> = hashMapOf(),
     ): Flow<R> =
         flow {
             emit(
                 executeRequest(
                     Request.Builder()
                         .url(url)
+                        .headers(Headers.of(headers))
                         .post(
                             RequestBody.create(
                                 MediaType.get("application/json"),

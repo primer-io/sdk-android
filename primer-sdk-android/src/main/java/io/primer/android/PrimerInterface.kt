@@ -4,7 +4,6 @@ import android.content.Context
 import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.Customer
-import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethod
 import io.primer.android.ui.fragments.ErrorType
@@ -61,17 +60,6 @@ interface PrimerInterface {
     )
 
     /**
-     * Public method query Primer Vault for saved payment instrument tokens of a given user.
-     * Ensure customer ID was specified in the client token creation API request before
-     * calling this method.
-     *
-     * @param clientToken base64 string containing information about this Primer session.
-     * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
-     */
-    @Deprecated("This method is deprecated and will be removed in next release.")
-    fun fetchSavedPaymentInstruments(clientToken: String)
-
-    /**
      * Show a success screen then dismiss
      */
     fun showSuccess(autoDismissDelay: Int = 3000, successType: SuccessType = SuccessType.DEFAULT)
@@ -91,19 +79,6 @@ interface PrimerInterface {
      */
     @Deprecated("This method is deprecated.")
     fun loadPaymentMethods(paymentMethods: List<PaymentMethod>)
-
-    /**
-     * Public method query Primer Vault for saved payment instrument tokens of a given user.
-     * Ensure customer ID was specified in the client token creation API request before
-     * calling this method.
-     *
-     * @param callback this callback will be invoked after the payment instrument tokens call completes
-     */
-    @Deprecated(
-        "This method is deprecated.",
-        ReplaceWith("fetchSavedPaymentInstruments")
-    )
-    fun getSavedPaymentMethods(callback: (List<PaymentMethodToken>) -> Unit)
 
     /**
      * Initializes the Primer SDK with the Application context and a client token Provider

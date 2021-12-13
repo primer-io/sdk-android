@@ -8,6 +8,21 @@ import okhttp3.RequestBody
 
 class HttpRequestUtil {
     companion object {
+
+        fun generateGetRequest(
+            uri: String,
+            environment: String,
+            useOldVersion: Boolean = false
+        ): Request {
+            return Request.Builder()
+                .url(uri)
+                .header("X-Api-Version", if (useOldVersion) "2021-09-27" else "2021-10-19")
+                .header("environment", environment)
+                .get()
+                .build()
+        }
+
+
         fun generateRequest(
             body: ExampleAppRequestBody,
             uri: String,

@@ -10,6 +10,7 @@ import com.example.myapplication.datamodels.*
 import com.example.myapplication.repositories.ActionRepository
 import com.example.myapplication.repositories.ClientSessionRepository
 import com.example.myapplication.repositories.CountryRepository
+import com.example.myapplication.repositories.PaymentInstrumentsRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
@@ -18,7 +19,6 @@ import io.primer.android.PaymentMethod
 import io.primer.android.Primer
 import io.primer.android.completion.ResumeHandler
 import io.primer.android.data.action.models.ClientSessionActionsRequest
-import io.primer.android.model.OrderItem
 import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.dto.*
 import io.primer.android.payment.apaya.Apaya
@@ -39,7 +39,7 @@ class MainViewModel(
     private val clientTokenRepository = ClientTokenRepository()
     private val clientSessionRepository = ClientSessionRepository()
     private val actionRepository = ActionRepository()
-
+    private val paymentInstrumentsRepository = PaymentInstrumentsRepository()
     private val paymentsRepository = PaymentsRepository()
     private val resumeRepository = ResumeRepository()
 
@@ -56,8 +56,6 @@ class MainViewModel(
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
 
     val orderId: MutableLiveData<String> = MutableLiveData<String>(UUID.randomUUID().toString())
-
-    val vaultedPaymentTokens: MutableLiveData<List<PaymentMethodToken>> = MutableLiveData(listOf())
 
     private val _threeDsEnabled: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
     val threeDsEnabled: LiveData<Boolean> = _threeDsEnabled
@@ -90,6 +88,9 @@ class MainViewModel(
     val useCard: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val useGooglePay: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val usePayMobile: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+
+    val paymentInstruments: MutableLiveData<List<PaymentMethodToken>> =
+        MutableLiveData<List<PaymentMethodToken>>()
 
     private val _transactionState: MutableLiveData<TransactionState> =
         MutableLiveData(TransactionState.IDLE)
@@ -161,6 +162,7 @@ class MainViewModel(
 
     fun fetchClientSession() = clientSessionRepository.fetch(
         client,
+        customerId.value.orEmpty(),
         amount.value!!,
         countryRepository.getCountry(),
         countryRepository.getCurrency(),
@@ -230,6 +232,15 @@ class MainViewModel(
         ) { clientToken ->
             completion(clientToken)
         }
+    }
+
+    fun fetchPaymentInstruments() {
+        paymentInstruments.postValue(listOf())
+        paymentInstrumentsRepository.fetch(
+            customerId.value.orEmpty(),
+            environment.value?.environment ?: throw Error("no environment set!"),
+            client
+        ) { t -> paymentInstruments.postValue(t) }
     }
 
     fun createPayment(

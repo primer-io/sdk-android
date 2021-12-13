@@ -53,9 +53,6 @@ sealed class CheckoutEvent(
     ) :
         PublicCheckoutEvent(CheckoutEventType.TOKEN_SELECTED)
 
-    class SavedPaymentInstrumentsFetched(val data: List<PaymentMethodToken>) :
-        PublicCheckoutEvent(CheckoutEventType.SAVED_PAYMENT_INSTRUMENT_FETCHED)
-
     class OnClientSessionActions(
         val data: ClientSessionActionsRequest,
         val resumeHandler: ActionResumeHandler,

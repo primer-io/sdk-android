@@ -27,12 +27,13 @@ interface ClientSession : ExampleAppRequestBody {
         companion object {
 
             fun build(
+                customerId: String,
                 amount: Int,
                 countryCode: String,
                 currency: String,
             ): Request {
                 return Request(
-                    customerId = "test",
+                    customerId = customerId,
                     orderId = "android-test-10001",
                     currencyCode = currency,
                     order = Order(

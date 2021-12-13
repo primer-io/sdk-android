@@ -88,7 +88,7 @@ class SecondFragment : Fragment() {
 
             if (token != null) {
                 initializeCheckout()
-                fetchSavedPaymentMethods(token)
+                fetchSavedPaymentMethods()
             }
         }
 
@@ -102,9 +102,10 @@ class SecondFragment : Fragment() {
             viewModel.resetTransactionState()
         }
 
-        viewModel.vaultedPaymentTokens.observe(viewLifecycleOwner) { token ->
+        viewModel.paymentInstruments.observe(viewLifecycleOwner) { data ->
+            setBusy(false)
             val adapter = GroupieAdapter()
-            token.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
+            data.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
             binding.paymentMethodList.adapter = adapter
         }
 
@@ -145,21 +146,12 @@ class SecondFragment : Fragment() {
 //            Primer.instance.dismiss(true)
             AlertDialog.Builder(context).setMessage(it.toString()).show()
         },
-        onSavedPaymentInstrumentsFetched = {
-            setBusy(false)
-            viewModel.vaultedPaymentTokens.postValue(it)
-            val adapter = GroupieAdapter()
-            it.forEach { t ->
-                adapter.add(PaymentMethodItem(t, ::onSelect))
-            }
-            binding.paymentMethodList.adapter = adapter
-        },
         onApiError = {
 //            Primer.instance.dismiss(true)
             AlertDialog.Builder(context).setMessage(it.toString()).show()
         },
         onExit = {
-            viewModel.clientToken.value?.let { token -> fetchSavedPaymentMethods(token) }
+            viewModel.clientToken.value?.let { _ -> fetchSavedPaymentMethods() }
         },
         onActions = { request, completion -> viewModel.postAction(request, completion) }
     )
@@ -181,9 +173,9 @@ class SecondFragment : Fragment() {
         binding.walletProgressBar.isVisible = isBusy
     }
 
-    private fun fetchSavedPaymentMethods(token: String) {
+    private fun fetchSavedPaymentMethods() {
         activity?.runOnUiThread { setBusy(true) }
-        Primer.instance.fetchSavedPaymentInstruments(token)
+        viewModel.fetchPaymentInstruments()
     }
 
     override fun onDestroyView() {

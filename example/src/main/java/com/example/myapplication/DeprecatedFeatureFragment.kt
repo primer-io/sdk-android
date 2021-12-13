@@ -129,6 +129,17 @@ class DeprecatedFeatureFragment : Fragment() {
             }
         }
 
+        viewModel.paymentInstruments.observe(viewLifecycleOwner) {
+            activity?.runOnUiThread {
+                setBusyAs(false)
+                val adapter = GroupieAdapter()
+                it.forEach { t ->
+                    adapter.add(PaymentMethodItem(t, ::onSelect))
+                }
+                binding.paymentMethodList.adapter = adapter
+            }
+        }
+
         viewModel.fetchClientToken()
     }
 
@@ -189,16 +200,7 @@ class DeprecatedFeatureFragment : Fragment() {
 
     private fun fetchSavedPaymentMethods() {
         activity?.runOnUiThread { setBusyAs(true) }
-        UniversalCheckout.getSavedPaymentMethods {
-            activity?.runOnUiThread {
-                setBusyAs(false)
-                val adapter = GroupieAdapter()
-                it.forEach { t ->
-                    adapter.add(PaymentMethodItem(t, ::onSelect))
-                }
-                binding.paymentMethodList.adapter = adapter
-            }
-        }
+        viewModel.fetchPaymentInstruments()
     }
 
     override fun onDestroyView() {

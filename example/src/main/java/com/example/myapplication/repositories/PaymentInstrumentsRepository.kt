@@ -1,30 +1,28 @@
 package com.example.myapplication.repositories
 
 import com.example.myapplication.constants.PrimerRoutes
-import com.example.myapplication.datamodels.ClientSession
-import com.example.myapplication.datamodels.ClientTokenResponse
+import com.example.myapplication.datamodels.PaymentInstrumentsResponse
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
-import io.primer.android.model.dto.CountryCode
+import io.primer.android.model.dto.PaymentMethodToken
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class ClientSessionRepository {
+class PaymentInstrumentsRepository {
 
     fun fetch(
-        client: OkHttpClient,
         customerId: String,
-        amount: Int,
-        countryCode: String,
-        currency: String,
         environment: String,
-        callback: (token: String?) -> Unit,
+        client: OkHttpClient,
+        callback: (tokens: List<PaymentMethodToken>) -> Unit,
     ) {
-        val body = ClientSession.Request.build(customerId, amount, countryCode, currency)
-        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientSession, environment)
+        val request = HttpRequestUtil.generateGetRequest(
+            PrimerRoutes.buildPaymentInstrumentsUrl(customerId),
+            environment
+        )
         client.cache()?.delete()
         client.newCall(request).enqueue(object : Callback {
 
@@ -38,9 +36,9 @@ class ClientSessionRepository {
 
                     val tokenResponse = GsonBuilder()
                         .create()
-                        .fromJson(response.body()?.string(), ClientSession.Response::class.java)
+                        .fromJson(response.body()?.string(), PaymentInstrumentsResponse::class.java)
 
-                    callback(tokenResponse.clientToken)
+                    callback(tokenResponse.data)
                 }
             }
         })
