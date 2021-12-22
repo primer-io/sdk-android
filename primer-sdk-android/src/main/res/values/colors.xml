@@ -32,6 +32,7 @@
     <color name="mobilepay">#5A78FF</color>
     <color name="bancontact">#000268</color>
     <color name="payconiq">#FF4785</color>
+    <color name="atome">#F0FF5F</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

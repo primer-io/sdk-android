@@ -41,6 +41,7 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     BUCKAROO_IDEAL(ClientTokenIntent.BUCKAROO_IDEAL_REDIRECTION),
     BUCKAROO_EPS(ClientTokenIntent.BUCKAROO_EPS_REDIRECTION),
     BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION),
+    ATOME(ClientTokenIntent.ATOME_REDIRECTION),
     UNKNOWN;
 
     companion object {

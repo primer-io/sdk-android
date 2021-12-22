@@ -60,6 +60,15 @@ interface ClientSession : ExampleAppRequestBody {
                             state = "test",
                             countryCode = countryCode,
                         ),
+                        billingAddress = Address(
+                            firstName = "John",
+                            lastName = "Doe",
+                            addressLine1 = "1 test",
+                            postalCode = "12345",
+                            city = "test",
+                            state = "test",
+                            countryCode = countryCode,
+                        ),
                         nationalDocumentId = "9011211234567",
                     ),
                     paymentMethod = PaymentMethod(
@@ -161,6 +170,8 @@ interface ClientSession : ExampleAppRequestBody {
 
     @Keep
     data class Address(
+        val firstName: String? = null,
+        val lastName: String? = null,
         val addressLine1: String,
         val addressLine2: String? = null,
         val postalCode: String,

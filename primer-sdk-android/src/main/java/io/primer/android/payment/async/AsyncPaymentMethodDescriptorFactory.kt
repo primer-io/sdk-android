@@ -7,6 +7,7 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
+import io.primer.android.payment.async.atome.AtomePaymentMethodDescriptor
 import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor
@@ -103,6 +104,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.BUCKAROO_EPS -> EpsPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.ATOME -> AtomePaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

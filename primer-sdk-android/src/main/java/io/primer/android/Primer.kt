@@ -3,11 +3,6 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
-import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodsDataRepository
-import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
-import io.primer.android.data.configuration.datasource.RemoteConfigurationDataSource
-import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -15,20 +10,12 @@ import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.Serialization
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethod
-import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.CountryCode
-import io.primer.android.data.configuration.repository.ConfigurationDataRepository
 import io.primer.android.model.dto.Customer
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
-import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.events.EventDispatcher
-import io.primer.android.http.PrimerHttpClient
-import io.primer.android.logging.DefaultLogger
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.PrimerIntent
 import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.gocardless.GoCardless
@@ -317,52 +304,9 @@ class Primer private constructor() : PrimerInterface {
         EventBus.broadcast(CheckoutEvent.ToggleProgressIndicator(visible))
     }
 
-    private fun callBackWithTokens(
-        tokens: List<PaymentMethodTokenInternal>,
-        callback: (List<PaymentMethodToken>) -> Unit,
-    ) = callback(tokens.map { PaymentMethodTokenAdapter.internalToExternal(it) })
-
     private fun setupAndVerifyClientToken(clientToken: String) {
         ClientToken.fromString(clientToken)
         this.config.clientTokenBase64 = clientToken
-    }
-
-    // do a cleanup here, when there is API to get tokens back!
-    private val sessionDataSource by lazy { LocalConfigurationDataSource(config.settings) }
-
-    private fun getSessionInteractor(clientToken: String): ConfigurationInteractor {
-        val decodedToken: ClientToken = ClientToken.fromString(clientToken)
-        val accessToken = decodedToken.accessToken
-        val sdkVersion = BuildConfig.SDK_VERSION_STRING
-        val okHttpClient = HttpClientFactory(accessToken, sdkVersion).build()
-        return ConfigurationInteractor(
-            ConfigurationDataRepository(
-                RemoteConfigurationDataSource(PrimerHttpClient(okHttpClient, Serialization.json)),
-                sessionDataSource,
-                LocalClientTokenDataSource(decodedToken)
-            ),
-            eventDispatcher,
-            DefaultLogger("Primer")
-        )
-    }
-
-    private fun getVaultInteractor(clientToken: String): VaultedPaymentMethodsInteractor {
-        val decodedToken: ClientToken = ClientToken.fromString(clientToken)
-        val accessToken = decodedToken.accessToken
-        val sdkVersion = BuildConfig.SDK_VERSION_STRING
-        val okHttpClient = HttpClientFactory(accessToken, sdkVersion).build()
-        return VaultedPaymentMethodsInteractor(
-            VaultedPaymentMethodsDataRepository(
-                RemoteVaultedPaymentMethodsDataSource(
-                    PrimerHttpClient(
-                        okHttpClient,
-                        Serialization.json
-                    )
-                ),
-                sessionDataSource
-            ),
-            eventDispatcher
-        )
     }
 
     companion object {
