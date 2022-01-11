@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.AlternativePaymentMethodType
 import io.primer.android.ui.CardData
@@ -26,8 +26,6 @@ import io.primer.android.ui.PaymentMethodItemData
 import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
 import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.TokenizationViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -41,7 +39,6 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
     private val theme: PrimerTheme by inject()
 
     private val viewModel: PrimerViewModel by activityViewModels()
-    private val tokenizationViewModel: TokenizationViewModel by viewModel()
 
     // FIXME replace with view binding
     private lateinit var readOnlyHeaderLinearLayout: ViewGroup
@@ -50,7 +47,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
     private lateinit var vaultTitleLabel: TextView
     private lateinit var editLabel: TextView
 
-    private var paymentMethods: List<PaymentMethodTokenInternal> = listOf()
+    private var paymentMethods: List<BasePaymentToken> = listOf()
 
     private var isEditing = false
         private set(value) {
@@ -82,7 +79,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
     }
 
     private fun generateItemDataFromPaymentMethods(
-        paymentMethods: List<PaymentMethodTokenInternal>,
+        paymentMethods: List<BasePaymentToken>,
     ): List<PaymentMethodItemData> =
         paymentMethods.map {
             when (it.paymentInstrumentType) {
@@ -153,7 +150,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                 if (methodToBeDeleted == null) {
                     dialog.dismiss()
                 } else {
-                    tokenizationViewModel.deleteToken(methodToBeDeleted)
+                    viewModel.deleteToken(methodToBeDeleted)
                 }
             }
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->

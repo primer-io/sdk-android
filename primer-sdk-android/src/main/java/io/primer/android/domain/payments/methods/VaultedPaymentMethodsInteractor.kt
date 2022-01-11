@@ -1,11 +1,11 @@
 package io.primer.android.domain.payments.methods
 
+import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.toCheckoutErrorEvent
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ internal class VaultedPaymentMethodsInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val eventDispatcher: EventDispatcher,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<List<PaymentMethodTokenInternal>, None>() {
+) : BaseInteractor<List<PaymentMethodVaultTokenInternal>, None>() {
 
     override fun execute(params: None) = vaultedPaymentMethodsRepository.getVaultedPaymentMethods()
         .mapLatest {

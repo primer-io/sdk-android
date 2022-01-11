@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
@@ -18,11 +19,11 @@ import io.primer.android.model.ApayaPaymentData
 import io.primer.android.model.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
+import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import kotlinx.coroutines.flow.catch
@@ -103,18 +104,18 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun deleteToken(token: PaymentMethodTokenInternal) {
-        viewModelScope.launch {
-            model.deleteToken(token)
-        }
-    }
-
     fun setTokenizableValue(key: String, value: String) {
         paymentMethod?.let { pm ->
             pm.setTokenizableValue(key, value)
             validationErrors.value = pm.validate()
         }
     }
+
+    fun setCardHasZipCode(value: Boolean) = (paymentMethod as? CreditCard)
+        ?.let { card -> card.hasPostalCode = value }
+
+    fun setCardHasCardholderName(value: Boolean) = (paymentMethod as? CreditCard)
+        ?.let { card -> card.hasCardholderName = value }
 
     fun userCanceled() {
         _tokenizationCanceled.postValue(Unit)

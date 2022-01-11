@@ -25,6 +25,7 @@
     <string name="card_number">Card number</string>
     <string name="card_expiry">Expiry date</string>
     <string name="card_cvv">CVV</string>
+    <string name="card_zip">Zip code</string>
     <string name="form_error_required">%1$s is required</string>
     <string name="form_error_invalid">%1$s is invalid</string>
     <string name="payment_method_error">Choose another payment method</string>
@@ -38,7 +39,7 @@
     <string name="address_city">City</string>
     <string name="address_state">State</string>
     <string name="address_country_code">Country</string>
-    <string name="address_postal_code">Postal Code</string>
+    <string name="address_postal_code">Postal code</string>
     <string name="dd_mandate_error">Please check that all of your information is correct</string>
     <string name="dd_cancel_message">Do you want to cancel adding a bank account?</string>
     <string name="data_will_be_lost">Your data will be erased</string>

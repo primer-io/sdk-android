@@ -1,5 +1,9 @@
 package io.primer.android.payment.card
 
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +33,7 @@ internal const val CARD_NAME_FILED_NAME = "cardholderName"
 internal const val CARD_NUMBER_FIELD_NAME = "number"
 internal const val CARD_EXPIRY_FIELD_NAME = "date"
 internal const val CARD_CVV_FIELD_NAME = "cvv"
+internal const val CARD_POSTAL_CODE_FIELD_NAME = "postalCode"
 internal const val CARD_EXPIRY_MONTH_FIELD_NAME = "expirationMonth"
 internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 
@@ -42,6 +47,9 @@ internal class CreditCard(
     private val checkoutConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
 
+    var hasPostalCode: Boolean = false
+    var hasCardholderName: Boolean = true
+
     // FIXME static call + instantiation makes it impossible to properly test
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
@@ -52,12 +60,30 @@ internal class CreditCard(
 
     override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 
+    private fun generateButtonContent(context: Context): GradientDrawable {
+        val content = GradientDrawable()
+        val strokeColor = theme.paymentMethodButton.border.defaultColor
+            .getColor(context, theme.isDarkMode)
+        val width = theme.paymentMethodButton.border.width.getPixels(context)
+        content.setStroke(width, strokeColor)
+        content.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
+        content.color = ColorStateList
+            .valueOf(theme.paymentMethodButton.defaultColor.getColor(context, theme.isDarkMode))
+        return content
+    }
+
     override fun createButton(container: ViewGroup): View {
         val button = LayoutInflater.from(container.context).inflate(
             R.layout.payment_method_button_card,
             container,
             false
         )
+
+        val content = generateButtonContent(container.context)
+        val splash = theme.splashColor.getColor(container.context, theme.isDarkMode)
+        val rippleColor = ColorStateList.valueOf(splash)
+        button.background = RippleDrawable(rippleColor, content, null)
+
         val text = button.findViewById<TextView>(R.id.card_preview_button_text)
         val drawable = ContextCompat.getDrawable(
             container.context,
@@ -114,16 +140,17 @@ internal class CreditCard(
     override fun validate(): List<SyncValidationError> {
         val errors = ArrayList<SyncValidationError>()
 
-        val name = getSanitizedValue(CARD_NAME_FILED_NAME)
-
-        if (name.isEmpty()) {
-            errors.add(
-                SyncValidationError(
-                    name = CARD_NAME_FILED_NAME,
-                    errorId = R.string.form_error_required,
-                    fieldId = R.string.card_holder_name
+        if (hasCardholderName) {
+            val name = getSanitizedValue(CARD_NAME_FILED_NAME)
+            if (name.isEmpty()) {
+                errors.add(
+                    SyncValidationError(
+                        name = CARD_NAME_FILED_NAME,
+                        errorId = R.string.form_error_required,
+                        fieldId = R.string.card_holder_name
+                    )
                 )
-            )
+            }
         }
 
         // FIXME static call (formatter should be injected)
@@ -186,6 +213,20 @@ internal class CreditCard(
                     fieldId = R.string.card_expiry
                 )
             )
+        }
+
+        if (hasPostalCode) {
+            val postalCode = getSanitizedValue(CARD_POSTAL_CODE_FIELD_NAME)
+
+            if (postalCode.isEmpty()) {
+                errors.add(
+                    SyncValidationError(
+                        name = CARD_POSTAL_CODE_FIELD_NAME,
+                        errorId = R.string.form_error_required,
+                        fieldId = R.string.card_zip
+                    )
+                )
+            }
         }
 
         return errors

@@ -75,6 +75,10 @@ class SecondFragment : Fragment() {
             }
         }
 
+        viewModel.postalCode.observe(viewLifecycleOwner) { value ->
+            binding.postalCodeLabel.text = requireContext().getString(R.string.postal_code, value)
+        }
+
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
             if (viewModel.vaultDisabled) {
                 binding.vaultButton.isVisible = false
@@ -153,7 +157,9 @@ class SecondFragment : Fragment() {
         onExit = {
             viewModel.clientToken.value?.let { _ -> fetchSavedPaymentMethods() }
         },
-        onActions = { request, completion -> viewModel.postAction(request, completion) }
+        onActions = { request, completion ->
+            viewModel.postAction(request, completion)
+        }
     )
 
     private fun onConfirmDialogAction(token: PaymentMethodToken) {

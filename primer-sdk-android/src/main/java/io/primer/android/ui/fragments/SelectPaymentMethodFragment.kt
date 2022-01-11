@@ -14,14 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.di.DIAppComponent
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.payment.PaymentMethodDescriptor
-import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.SelectPaymentMethodTitle
 import io.primer.android.ui.components.PayButton
 import io.primer.android.viewmodel.PrimerViewModel
@@ -48,8 +43,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private val localConfig: PrimerConfig by inject()
-    private val resumeHandlerFactory: ResumeHandlerFactory by inject()
-    private val paymentMethodRepository: PaymentMethodRepository by inject()
     private val theme: PrimerTheme by inject()
 
     private val primerViewModel: PrimerViewModel by activityViewModels()
@@ -199,15 +192,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         // disable buttons and links
         disableButtons()
 
-        // update payment method
-        paymentMethodRepository.setPaymentMethod(paymentMethod)
-
-        // get token
-        val paymentMethodToken = PaymentMethodTokenAdapter.internalToExternal(paymentMethod)
-
-        // emit event
-        val handler = resumeHandlerFactory.getResumeHandler(paymentMethod.paymentInstrumentType)
-        EventBus.broadcast(CheckoutEvent.TokenSelected(paymentMethodToken, handler))
+        primerViewModel.exchangePaymentMethodToken(paymentMethod)
     }
 
     /*
@@ -318,7 +303,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         boxes.forEachIndexed { i, box ->
             if (primerViewModel.surchargeDisabled) {
-                box.hideSurchargeFrame().run { if (i > 0) box.setTopMargin(0) }
+                box.hideSurchargeFrame().run { if (i > 0) box.setMargin(0) }
             }
             paymentMethodsContainer.addView(box)
         }

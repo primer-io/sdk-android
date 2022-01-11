@@ -71,6 +71,9 @@ class MainViewModel(
     fun setCustomerId(id: String): Unit =
         _customerId.postValue(id)
 
+    private val _postalCode = MutableLiveData("")
+    val postalCode: LiveData<String> = _postalCode
+
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
@@ -176,7 +179,9 @@ class MainViewModel(
             return
         }
 
-        val requestAction: Action = when (val action = request.actions[0]) {
+        val requestAction: Action?
+
+        when (val action = request.actions[0]) {
             is ClientSessionActionsRequest.SetPaymentMethod -> {
 
                 val paymentMethodType = action.paymentMethodType ?: return
@@ -186,11 +191,15 @@ class MainViewModel(
                 val isConfiguredType = ClientSession.PaymentMethodOptionGroup.configuredValues
                     .contains(paymentMethodType)
 
-                action.network?.uppercase()?.let { network ->
+                val network = action.network?.uppercase()
+
+                println("new network: action $network")
+
+                network?.let { n ->
                     binData = mapOf(
-                        "network" to network,
-                        "product_code" to network,
-                        "product_name" to network,
+                        "network" to n,
+                        "product_code" to n,
+                        "product_name" to n,
                         "product_usage_type" to "UNKNOWN",
                         "account_number_type" to "UNKNOWN",
                         "account_funding_type" to "UNKNOWN",
@@ -199,36 +208,74 @@ class MainViewModel(
                     )
                 }
 
-                if (!isConfiguredType) {
-                    Action(
+                println("new network: action $isConfiguredType")
+
+                if (network == "UNKNOWN") {
+                    println("new network: action is unknown network")
+                    requestAction = Action(
+                        type = "UNSELECT_PAYMENT_METHOD",
+                        params = null,
+                    )
+                } else if (!isConfiguredType) {
+                    requestAction = Action(
                         type = "UNSELECT_PAYMENT_METHOD",
                         params = null,
                     )
                 } else {
-                    Action(
+                    requestAction = Action(
                         type = "SELECT_PAYMENT_METHOD",
                         params = Action.Params(paymentMethodType, binData)
                     )
                 }
             }
             is ClientSessionActionsRequest.UnsetPaymentMethod -> {
-                Action(
+                requestAction = Action(
                     type = "UNSELECT_PAYMENT_METHOD",
                     params = null,
                 )
             }
-            else -> Action(
+            is ClientSessionActionsRequest.SetBillingAddress -> {
+                println("new action! postalCode: ${action.postalCode}")
+                _postalCode.postValue(action.postalCode)
+                if (action.postalCode?.isNotEmpty() == true) {
+                    val billingAddress = mapOf(
+                        "firstName" to action.firstName,
+                        "lastName" to action.lastName,
+                        "addressLine1" to action.addressLine1,
+                        "addressLine2" to action.addressLine2,
+                        "city" to action.city,
+                        "postalCode" to action.postalCode,
+                        "state" to action.state,
+                        "countryCode" to action.countryCode,
+                    )
+
+                    println("new action! billingAddress $billingAddress")
+
+                    requestAction = Action(
+                        type = "SET_BILLING_ADDRESS",
+                        params = Action.Params(billingAddress = billingAddress),
+                    )
+                } else {
+                    completion(clientToken.value)
+                    return
+                }
+            }
+            else -> requestAction = Action(
                 type = "UNSELECT_PAYMENT_METHOD",
                 params = null,
             )
         }
 
+        val environment = environment.value!!.environment
+
+        println("new network: action $requestAction")
+
         val body = Action.Request(clientToken.value!!, listOf(requestAction))
 
         actionRepository.post(
             body,
-            environment.value?.environment.orEmpty(),
-            client
+            client,
+            environment,
         ) { clientToken ->
             completion(clientToken)
         }
@@ -279,13 +326,14 @@ class MainViewModel(
     }
 
     fun resumePayment(token: String, completion: ResumeHandler? = null) {
+        val environment = environment.value!!.environment
         val body = ResumePaymentRequest(
             token
         )
         resumeRepository.create(
             _transactionId.value.orEmpty(),
             body,
-            environment.value?.environment.orEmpty(),
+            environment,
             client,
             { result ->
                 _transactionResponse.postValue(result)

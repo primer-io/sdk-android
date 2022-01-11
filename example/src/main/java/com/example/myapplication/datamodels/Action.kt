@@ -16,5 +16,6 @@ class Action(
     data class Params(
         val paymentMethodType: String? = null,
         val binData: Map<String, Any>? = null,
+        val billingAddress: Map<String, String?>? = null,
     )
 }

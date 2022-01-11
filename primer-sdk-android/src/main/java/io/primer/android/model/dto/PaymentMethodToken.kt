@@ -1,5 +1,8 @@
 package io.primer.android.model.dto
 
+import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.threeds.data.models.ResponseCode
 import kotlinx.serialization.Serializable
 
@@ -9,59 +12,6 @@ import kotlinx.serialization.Serializable
  * For now we only expose JSONObject to the public
  */
 
-@Serializable
-internal data class PaymentMethodTokenInternal(
-    val token: String,
-    val analyticsId: String,
-    val tokenType: TokenType,
-    val paymentInstrumentType: String,
-    val paymentInstrumentData: PaymentInstrumentData? = null,
-    val vaultData: VaultData? = null,
-    val threeDSecureAuthentication: AuthenticationDetails? = null,
-) {
-
-    @Serializable
-    data class VaultData(
-        val customerId: String,
-    )
-
-    @Serializable
-    data class AuthenticationDetails(
-        val responseCode: ResponseCode,
-        val reasonCode: String?,
-        val reasonText: String?,
-        val protocolVersion: String?,
-        val challengeIssued: Boolean?,
-    )
-
-    internal fun setClientThreeDsError(errorMessage: String) =
-        this.copy(
-            threeDSecureAuthentication = AuthenticationDetails(
-                ResponseCode.SKIPPED,
-                "CLIENT_ERROR",
-                errorMessage,
-                "",
-                false
-            )
-        )
-
-    /**
-     * Payment method name used for surcharge, i.e. PAYPAL instead of PAYPAL_BILLING_AGREEMENT.
-     * Defaults to [paymentInstrumentType] in most cases.
-     * */
-    val surchargeType: String get() {
-        if (paymentInstrumentType == "PAYPAL_BILLING_AGREEMENT") {
-            return "PAYPAL"
-        }
-
-//        if (paymentInstrumentType == "PAYMENT_CARD") {
-//            return paymentInstrumentData?.binData?.network ?: "PAYMENT_CARD"
-//        }
-
-        return paymentInstrumentType
-    }
-}
-
 internal object PaymentMethodTokenAdapter {
 
     fun internalToExternal(token: PaymentMethodTokenInternal): PaymentMethodToken {
@@ -70,28 +20,30 @@ internal object PaymentMethodTokenAdapter {
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
             paymentInstrumentType = token.paymentInstrumentType,
-            paymentInstrumentData = if (token.paymentInstrumentData == null) null
-            else PaymentInstrumentData(
-                token.paymentInstrumentData.network,
-                token.paymentInstrumentData.cardholderName,
-                token.paymentInstrumentData.last4Digits,
-                token.paymentInstrumentData.expirationMonth,
-                token.paymentInstrumentData.expirationYear,
-                token.paymentInstrumentData.gocardlessMandateId,
-                token.paymentInstrumentData.externalPayerInfo,
-                token.paymentInstrumentData.klarnaCustomerToken,
-                token.paymentInstrumentData.sessionData,
-                token.paymentInstrumentData.mx,
-                token.paymentInstrumentData.mnc,
-                token.paymentInstrumentData.mcc,
-                token.paymentInstrumentData.hashedIdentifier,
-                token.paymentInstrumentData.currencyCode,
-                token.paymentInstrumentData.productId,
-                token.paymentInstrumentData.paymentMethodType
-            ),
-            vaultData = if (token.vaultData == null) null else PaymentMethodToken.VaultData(
-                customerId = token.vaultData.customerId
-            ),
+            paymentInstrumentData = token.paymentInstrumentData?.let { paymentInstrumentData ->
+                PaymentInstrumentData(
+                    paymentInstrumentData.network,
+                    paymentInstrumentData.cardholderName,
+                    paymentInstrumentData.first6Digits,
+                    paymentInstrumentData.last4Digits,
+                    paymentInstrumentData.expirationMonth,
+                    paymentInstrumentData.expirationYear,
+                    paymentInstrumentData.gocardlessMandateId,
+                    paymentInstrumentData.externalPayerInfo,
+                    paymentInstrumentData.klarnaCustomerToken,
+                    paymentInstrumentData.sessionData,
+                    paymentInstrumentData.mx,
+                    paymentInstrumentData.mnc,
+                    paymentInstrumentData.mcc,
+                    paymentInstrumentData.hashedIdentifier,
+                    paymentInstrumentData.currencyCode,
+                    paymentInstrumentData.productId,
+                    paymentInstrumentData.paymentMethodType
+                )
+            },
+            vaultData = token.vaultData?.let {
+                PaymentMethodToken.VaultData(customerId = it.customerId)
+            },
             threeDSecureAuthentication = token.threeDSecureAuthentication?.let {
                 PaymentMethodToken.AuthenticationDetails(
                     it.responseCode,
@@ -100,16 +52,17 @@ internal object PaymentMethodTokenAdapter {
                     it.protocolVersion,
                     it.challengeIssued
                 )
-            }
+            },
         )
     }
 
-    fun externalToInternal(token: PaymentMethodToken): PaymentMethodTokenInternal {
+    fun externalToInternal(token: PaymentMethodToken): PaymentMethodVaultTokenInternal {
         val paymentInstrumentData =
             if (token.paymentInstrumentData == null) null
             else PaymentInstrumentData(
                 token.paymentInstrumentData.network,
                 token.paymentInstrumentData.cardholderName,
+                token.paymentInstrumentData.first6Digits,
                 token.paymentInstrumentData.last4Digits,
                 token.paymentInstrumentData.expirationMonth,
                 token.paymentInstrumentData.expirationYear,
@@ -127,10 +80,10 @@ internal object PaymentMethodTokenAdapter {
             )
         val vaultData =
             if (token.vaultData == null) null
-            else PaymentMethodTokenInternal.VaultData(customerId = token.vaultData.customerId)
+            else BasePaymentToken.VaultData(customerId = token.vaultData.customerId)
 
         val threeDSecureAuthentication = token.threeDSecureAuthentication?.let {
-            PaymentMethodTokenInternal.AuthenticationDetails(
+            BasePaymentToken.AuthenticationDetails(
                 it.responseCode,
                 it.reasonCode,
                 it.reasonText,
@@ -139,14 +92,12 @@ internal object PaymentMethodTokenAdapter {
             )
         }
 
-        return PaymentMethodTokenInternal(
-            token = token.token,
-            analyticsId = token.analyticsId,
-            tokenType = token.tokenType,
+        return PaymentMethodVaultTokenInternal(
+            id = token.token,
             paymentInstrumentType = token.paymentInstrumentType,
             paymentInstrumentData = paymentInstrumentData,
             vaultData = vaultData,
-            threeDSecureAuthentication = threeDSecureAuthentication
+            threeDSecureAuthentication = threeDSecureAuthentication,
         )
     }
 }
@@ -178,6 +129,7 @@ data class PaymentMethodToken(
 data class PaymentInstrumentData(
     val network: String? = null,
     val cardholderName: String? = null,
+    val first6Digits: Int? = null,
     val last4Digits: Int? = null,
     val expirationMonth: Int? = null,
     val expirationYear: Int? = null,

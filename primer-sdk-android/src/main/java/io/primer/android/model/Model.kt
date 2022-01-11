@@ -7,8 +7,9 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.APIError
 import io.primer.android.data.configuration.model.Configuration
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.di.ApiVersion
+import io.primer.android.di.SDK_API_VERSION_HEADER
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,6 +20,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import okhttp3.Call
 import okhttp3.Callback
+import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -83,6 +85,13 @@ internal class Model constructor(
                 APIEndpoint.get(session, APIEndpoint.Target.PCI, APIEndpoint.PAYMENT_INSTRUMENTS)
             val request = Request.Builder()
                 .url(url)
+                .headers(
+                    Headers.of(
+                        mapOf(
+                            SDK_API_VERSION_HEADER to ApiVersion.PAYMENT_INSTRUMENTS_VERSION.version
+                        )
+                    )
+                )
                 .post(body)
                 .build()
 
@@ -106,44 +115,6 @@ internal class Model constructor(
 
             emit(token)
         }
-
-    suspend fun deleteToken(token: PaymentMethodTokenInternal): OperationResult<Unit> {
-
-        // FIXME extra endpoint construction to collaborator (non-static call)
-        val url = APIEndpoint.get(
-            session,
-            APIEndpoint.Target.PCI,
-            APIEndpoint.DELETE_TOKEN,
-            params = mapOf("id" to token.token)
-        )
-        val request = Request.Builder()
-            .url(url)
-            .delete()
-            .build()
-
-        return try {
-            val response: Response = okHttpClient
-                .newCall(request)
-                .await()
-
-            if (!response.isSuccessful) {
-                val error = APIError.create(response)
-                // TODO extract error parsing to collaborator & pass error through OperationResult
-                EventBus.broadcast(CheckoutEvent.ApiError(error))
-                return OperationResult.Error(Throwable())
-            }
-
-            EventBus.broadcast(
-                CheckoutEvent.TokenRemovedFromVault(
-                    PaymentMethodTokenAdapter.internalToExternal(token)
-                )
-            ) // FIXME remove EventBus
-
-            OperationResult.Success(Unit)
-        } catch (error: Throwable) {
-            OperationResult.Error(error)
-        }
-    }
 
     suspend fun post(
         pathname: String,

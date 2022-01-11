@@ -30,9 +30,6 @@ sealed class CheckoutEvent(
     class TokenAddedToVault(val data: PaymentMethodToken) :
         PublicCheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
 
-    class TokenRemovedFromVault(val data: PaymentMethodToken) :
-        PublicCheckoutEvent(CheckoutEventType.TOKEN_REMOVED_FROM_VAULT)
-
     class ResumeSuccess(
         val resumeToken: String,
         val resumeHandler: ResumeHandler,

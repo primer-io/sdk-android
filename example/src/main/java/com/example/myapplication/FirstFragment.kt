@@ -51,6 +51,8 @@ class FirstFragment : Fragment() {
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
             when (country) {
                 "DE" -> binding.countryItem.setText("🇩🇪")
+                "GB" -> binding.countryItem.setText("🇬🇧")
+                "US" -> binding.countryItem.setText("🇺🇸")
                 "SE" -> binding.countryItem.setText("🇸🇪")
                 "SG" -> binding.countryItem.setText("🇸🇬")
                 "NO" -> binding.countryItem.setText("🇳🇴")

@@ -13,7 +13,9 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.completion.ResumeHandlerFactory
+import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
@@ -21,7 +23,6 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.model.dto.BinData
 import io.primer.android.model.dto.PaymentInstrumentData
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.PostAuthResponse
@@ -316,7 +317,7 @@ internal class ThreeDsInteractorTest {
     @Test
     fun `beginRemoteAuth() should dispatch token events when repository begin3DSAuth() was success and response code is not CHALLENGE`() {
         val beginAuthResponse = mockk<BeginAuthResponse>(relaxed = true)
-        val authDetails = mockk<PaymentMethodTokenInternal.AuthenticationDetails>(relaxed = true)
+        val authDetails = mockk<BasePaymentToken.AuthenticationDetails>(relaxed = true)
         val threeDsParams = mockk<ThreeDsParams>(relaxed = true)
 
         every { beginAuthResponse.token.threeDSecureAuthentication }.returns(authDetails)
@@ -658,11 +659,14 @@ internal class ThreeDsInteractorTest {
 
         private val paymentMethodTokenInternal =
             PaymentMethodTokenInternal(
-                UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(),
-                TokenType.MULTI_USE,
-                "PAYMENT_CARD",
-                PaymentInstrumentData(network = "VISA", binData = BinData("VISA"))
+                token = UUID.randomUUID().toString(),
+                analyticsId = UUID.randomUUID().toString(),
+                tokenType = TokenType.MULTI_USE,
+                paymentInstrumentType = "PAYMENT_CARD",
+                paymentInstrumentData = PaymentInstrumentData(
+                    network = "VISA",
+                    binData = BinData("VISA")
+                )
             )
     }
 }

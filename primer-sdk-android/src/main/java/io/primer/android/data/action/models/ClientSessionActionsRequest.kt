@@ -11,6 +11,7 @@ data class ClientSessionActionsRequest(
     enum class Type {
         SET_PAYMENT_METHOD,
         UNSET_PAYMENT_METHOD,
+        SET_BILLING_ADDRESS,
     }
 
     class SetPaymentMethod(
@@ -19,4 +20,15 @@ data class ClientSessionActionsRequest(
     ) : Action(Type.SET_PAYMENT_METHOD)
 
     class UnsetPaymentMethod : Action(Type.UNSET_PAYMENT_METHOD)
+
+    class SetBillingAddress(
+        val firstName: String? = null,
+        val lastName: String? = null,
+        val addressLine1: String? = null,
+        val addressLine2: String? = null,
+        val city: String? = null,
+        val postalCode: String? = null,
+        val state: String? = null,
+        val countryCode: String? = null,
+    ) : Action(Type.SET_BILLING_ADDRESS)
 }

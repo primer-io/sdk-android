@@ -5,21 +5,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.Primer
 import io.primer.android.SessionState
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
+import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
+import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
+import io.primer.android.domain.payments.methods.models.VaultDeleteParams
+import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
+import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -31,6 +39,7 @@ import java.util.Currency
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
@@ -41,6 +50,8 @@ internal class PrimerViewModel(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val vaultedPaymentMethodsInteractor: VaultedPaymentMethodsInteractor,
+    private val exchangeInteractor: VaultedPaymentMethodsExchangeInteractor,
+    private val vaultedPaymentMethodsDeleteInteractor: VaultedPaymentMethodsDeleteInteractor,
     private val actionInteractor: ActionInteractor,
     private val config: PrimerConfig,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
@@ -63,16 +74,17 @@ internal class PrimerViewModel(
         _state.postValue(s)
     }
 
-    val selectedSavedPaymentMethod: PaymentMethodTokenInternal?
+    val selectedSavedPaymentMethod: PaymentMethodVaultTokenInternal?
         get() = vaultedPaymentMethods.value?.find { it.token == _selectedPaymentMethodId.value }
 
     val shouldDisplaySavedPaymentMethod: Boolean
         get() = config.intent.paymentMethodIntent.isNotVault && selectedSavedPaymentMethod != null
 
-    private val _vaultedPaymentMethods = MutableLiveData<List<PaymentMethodTokenInternal>>(
+    private val _vaultedPaymentMethods = MutableLiveData<List<PaymentMethodVaultTokenInternal>>(
         Collections.emptyList()
     )
-    val vaultedPaymentMethods: LiveData<List<PaymentMethodTokenInternal>> = _vaultedPaymentMethods
+    val vaultedPaymentMethods: LiveData<List<PaymentMethodVaultTokenInternal>> =
+        _vaultedPaymentMethods
 
     private val _paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(emptyList())
     val paymentMethods: LiveData<List<PaymentMethodDescriptor>> = _paymentMethods
@@ -87,6 +99,30 @@ internal class PrimerViewModel(
 
     private val _checkoutEvent = MutableLiveData<CheckoutEvent>()
     val checkoutEvent: LiveData<CheckoutEvent> = _checkoutEvent
+
+    val showPostalCode: LiveData<Boolean> = _state.asFlow()
+        .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
+        .map { configuration ->
+            val module = configuration.checkoutModules.find { m -> m.type == "BILLING_ADDRESS" }
+            module?.options?.get("all") ?: module?.options?.get("postalCode") ?: false
+        }
+        .asLiveData()
+
+    val showCardholderName: LiveData<Boolean> = _state.asFlow()
+        .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
+        .map { configuration ->
+            val module = configuration.checkoutModules.find { m -> m.type == "CARD_INFORMATION" }
+            module?.options?.get("all") ?: module?.options?.get("cardHolderName") ?: true
+        }
+        .asLiveData()
+
+    val orderCountry: LiveData<CountryCode?> = _state.asFlow()
+        .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
+        .map { configuration -> configuration.clientSession?.order?.countryCode }
+        .asLiveData()
+
+    private val postalCode = MutableLiveData<String?>()
+    fun setPostalCode(data: String) = postalCode.postValue(data)
 
     fun goToVaultedPaymentMethodsView() {
         viewStatus.postValue(ViewStatus.VIEW_VAULTED_PAYMENT_METHODS)
@@ -173,22 +209,34 @@ internal class PrimerViewModel(
         dispatchAction(action)
     }
 
+    fun exchangePaymentMethodToken(token: PaymentMethodVaultTokenInternal) = viewModelScope.launch {
+        exchangeInteractor(VaultTokenParams(token)).collect { }
+    }
+
+    fun deleteToken(token: BasePaymentToken) = viewModelScope.launch {
+        vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(token.token)).collect { token ->
+            _vaultedPaymentMethods.value =
+                vaultedPaymentMethods.value?.filter { it.token != token }
+        }
+    }
+
     val paymentMethodButtonGroupFactory: PaymentMethodButtonGroupFactory
         get() = PaymentMethodButtonGroupFactory(actionInteractor.surcharges, formatter)
 
     private val currency: Currency
         get() = Currency.getInstance(config.monetaryAmount?.currency)
 
-    val surchargeDisabled: Boolean get() {
-        if (config.intent.paymentMethodIntent.isVault) return true
-        if (actionInteractor.surchargeDataEmptyOrZero) return true
-        return false
-    }
+    val surchargeDisabled: Boolean
+        get() {
+            if (config.intent.paymentMethodIntent.isVault) return true
+            if (actionInteractor.surchargeDataEmptyOrZero) return true
+            return false
+        }
 
     private val formatter: SurchargeFormatter
         get() = SurchargeFormatter(actionInteractor.surcharges, currency)
 
-    private val token: PaymentMethodTokenInternal?
+    private val token: BasePaymentToken?
         get() = _selectedPaymentMethodId.value
             ?.let { id -> _vaultedPaymentMethods.value?.find { it.token == id } }
 
@@ -215,6 +263,29 @@ internal class PrimerViewModel(
 
     fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value.orEmpty()
 
+    fun emitPostalCode(completion: (() -> Unit) = {}) {
+        val postalCodeValue: String = postalCode.value ?: return completion()
+        if (showPostalCode.value != true) return completion()
+
+        val currentCustomer = config.settings.customer
+        val currentBillingAddress = currentCustomer.billingAddress
+
+        val action = ClientSessionActionsRequest.SetBillingAddress(
+            firstName = currentCustomer.firstName,
+            lastName = currentCustomer.lastName,
+            addressLine1 = currentBillingAddress?.line1,
+            addressLine2 = currentBillingAddress?.line2,
+            postalCode = postalCodeValue,
+            city = currentBillingAddress?.city,
+            countryCode = currentBillingAddress?.countryCode?.name,
+        )
+
+        dispatchAction(action) { error ->
+            if (error == null) completion()
+            else setState(SessionState.ERROR)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         subscription.unregister()
@@ -222,13 +293,9 @@ internal class PrimerViewModel(
 
     override fun onEvent(e: CheckoutEvent) {
         when (e) {
-            is CheckoutEvent.TokenRemovedFromVault -> {
-                _vaultedPaymentMethods.value =
-                    vaultedPaymentMethods.value?.filter { it.token != e.data.token }
-            }
             is CheckoutEvent.TokenAddedToVault -> {
                 val hasMatch = vaultedPaymentMethods.value
-                    ?.count { it.analyticsId == e.data.analyticsId } ?: 0 > 0
+                    ?.count { it.token == e.data.token } ?: 0 > 0
                 if (hasMatch) {
                     _vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(
                         PaymentMethodTokenAdapter.externalToInternal(e.data)

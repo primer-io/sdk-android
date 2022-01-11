@@ -12,6 +12,7 @@ data class Configuration(
     val pciUrl: String,
     val coreUrl: String,
     val paymentMethods: List<PaymentMethodRemoteConfig>,
+    val checkoutModules: List<CheckoutModule> = listOf(),
     val keys: ConfigurationKeys? = null,
     val clientSession: ClientSession? = null,
     @SerialName("env") val environment: Environment,
@@ -76,3 +77,10 @@ enum class Environment(val environment: String) {
     STAGING("staging"),
     PRODUCTION("production"),
 }
+
+@Serializable
+data class CheckoutModule(
+    val type: String,
+    val requestUrl: String? = null,
+    val options: Map<String, Boolean>? = null,
+)

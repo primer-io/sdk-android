@@ -2,6 +2,7 @@ package io.primer.android.domain.tokenization
 
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.completion.ResumeHandlerFactory
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.domain.tokenization.repository.TokenizationRepository
@@ -10,7 +11,6 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
 import io.primer.android.extensions.toTokenizationErrorEvent
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator

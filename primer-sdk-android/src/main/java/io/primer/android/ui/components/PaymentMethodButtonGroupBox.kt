@@ -37,19 +37,20 @@ class PaymentMethodButtonGroupBox @JvmOverloads constructor(
         val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams = params
         setPadding(24)
-        setTopMargin()
+        setMargin()
     }
 
-    fun setTopMargin(margin: Int = 24) {
+    fun setMargin(topMargin: Int = 16, bottomMargin: Int = 16) {
         val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        params.setMargins(0, margin, 0, 0)
+        params.setMargins(0, topMargin, 0, bottomMargin)
         layoutParams = params
     }
 
-    fun hideSurchargeFrame() {
-        setPadding(0)
+    fun hideSurchargeFrame(padding: Int = 0, topMargin: Int = 24) {
+        setPadding(padding, 0, padding, 0)
         val newBackground = GradientDrawable()
         newBackground.color = ColorStateList.valueOf(Color.WHITE)
+        setMargin(topMargin = topMargin, bottomMargin = 0)
         this.background = newBackground
         label.isVisible = false
     }

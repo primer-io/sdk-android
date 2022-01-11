@@ -53,7 +53,12 @@ class TokenizationViewModelTest : KoinTest {
         MockKAnnotations.init(this, relaxed = true)
 
         viewModel =
-            TokenizationViewModel(model, config, tokenizationInteractor, apayaSessionInteractor)
+            TokenizationViewModel(
+                model,
+                config,
+                tokenizationInteractor,
+                apayaSessionInteractor,
+            )
     }
 
     @Test

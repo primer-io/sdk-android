@@ -14,6 +14,8 @@ class CountryRepository(
             "SG" -> "SGD"
             "SE" -> "SEK"
             "NO" -> "NOK"
+            "US" -> "USD"
+            "GB" -> "GBP"
             else -> "EUR"
         }
     }

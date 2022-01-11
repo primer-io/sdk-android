@@ -7,7 +7,7 @@ const val CARD_PADDING: Int = 8
 internal class CardType {
 
     enum class Type {
-        UNKOWN,
+        UNKNOWN,
         VISA,
         MASTERCARD,
         AMEX,
@@ -192,7 +192,7 @@ internal class CardType {
             return if (matching.isNotEmpty()) {
                 matching[0]
             } else {
-                Descriptor(Type.UNKOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
+                Descriptor(Type.UNKNOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
             }
         }
     }

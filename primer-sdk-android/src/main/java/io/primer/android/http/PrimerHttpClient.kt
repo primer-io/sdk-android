@@ -62,6 +62,22 @@ internal class PrimerHttpClient(
             )
         }
 
+    inline fun <reified R> delete(
+        url: String,
+        headers: Map<String, String> = hashMapOf()
+    ): Flow<R> =
+        flow {
+            emit(
+                executeRequest(
+                    Request.Builder()
+                        .url(url)
+                        .headers(Headers.of(headers))
+                        .delete()
+                        .build()
+                )
+            )
+        }
+
     private suspend inline fun <reified R> executeRequest(request: Request): R {
         val response: Response = okHttpClient
             .newCall(request)

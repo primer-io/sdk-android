@@ -16,8 +16,8 @@ class ActionRepository {
 
     fun post(
         body: Action.Request,
-        environment: String,
         client: OkHttpClient,
+        environment: String,
         callback: (token: String?) -> Unit,
     ) {
         val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.actions, environment)

@@ -4,6 +4,7 @@ import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -11,7 +12,6 @@ import io.primer.android.extensions.doOnError
 import io.primer.android.extensions.toResumeErrorEvent
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 import io.primer.android.model.dto.TokenType
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork

@@ -1,5 +1,6 @@
 package io.primer.android.domain.session
 
+import io.primer.android.data.configuration.model.Configuration
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.domain.session.repository.ConfigurationRepository
@@ -16,7 +17,7 @@ internal class ConfigurationInteractor(
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<Unit, ConfigurationParams>() {
+) : BaseInteractor<Configuration, ConfigurationParams>() {
 
     override fun execute(params: ConfigurationParams) =
         configurationRepository.fetchConfiguration(params.fromCache)

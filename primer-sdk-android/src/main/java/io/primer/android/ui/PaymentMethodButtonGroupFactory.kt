@@ -40,8 +40,12 @@ internal class PaymentMethodButtonGroupFactory(
                 val key = getSurcharge(d)
                 val box = surchargeMapping[key] ?: PaymentMethodButtonGroupBox(context).apply {
                     if (surcharges.count() != 0) {
-                        val text = formatter.formatSurchargeAsString(key, context = context)
-                        showSurchargeLabel(text)
+                        if (key == 0) {
+                            hideSurchargeFrame(24)
+                        } else {
+                            val text = formatter.formatSurchargeAsString(key, context = context)
+                            showSurchargeLabel(text)
+                        }
                     }
                 }
                 val button: View = d.createButton(box)

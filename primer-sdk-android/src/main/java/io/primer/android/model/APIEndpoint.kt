@@ -19,8 +19,6 @@ internal class APIEndpoint {
 
         const val CREATE_GOCARDLESS_MANDATE = "/gocardless/mandates"
 
-        const val DELETE_TOKEN = "/payment-instruments/{id}/vault"
-
         fun get(
             session: Configuration,
             target: Target,

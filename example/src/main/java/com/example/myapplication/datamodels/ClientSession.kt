@@ -21,7 +21,7 @@ interface ClientSession : ExampleAppRequestBody {
         override val currencyCode: String,
         override val order: Order,
         override val customer: Customer,
-        override val paymentMethod: PaymentMethod
+        override val paymentMethod: PaymentMethod,
     ) : ClientSession {
 
         companion object {
@@ -73,16 +73,16 @@ interface ClientSession : ExampleAppRequestBody {
                     ),
                     paymentMethod = PaymentMethod(
                         options = PaymentMethodOptionGroup(
-                            PAYPAL = PaymentMethodOption(
-                                surcharge = SurchargeOption(
-                                    amount = 50,
-                                )
-                            ),
-                            GOOGLE_PAY = PaymentMethodOption(
-                                surcharge = SurchargeOption(
-                                    amount = 60,
-                                )
-                            ),
+//                            PAYPAL = PaymentMethodOption(
+//                                surcharge = SurchargeOption(
+//                                    amount = 50,
+//                                )
+//                            ),
+//                            GOOGLE_PAY = PaymentMethodOption(
+//                                surcharge = SurchargeOption(
+//                                    amount = 60,
+//                                )
+//                            ),
                             ADYEN_SOFORT = PaymentMethodOption(
                                 surcharge = SurchargeOption(
                                     amount = 150,
@@ -139,7 +139,7 @@ interface ClientSession : ExampleAppRequestBody {
         override val currencyCode: String,
         override val order: Order,
         override val customer: Customer,
-        override val paymentMethod: PaymentMethod
+        override val paymentMethod: PaymentMethod,
     ) : ClientSession
 
     @Keep
@@ -196,7 +196,7 @@ interface ClientSession : ExampleAppRequestBody {
         val ADYEN_GIROPAY: PaymentMethodOption? = null,
         val ADYEN_TRUSTLY: PaymentMethodOption? = null,
     ) {
-        
+
         companion object {
             val configuredValues: Set<String> = setOf(
                 "PAYPAL",
@@ -236,4 +236,25 @@ interface ClientSession : ExampleAppRequestBody {
     data class NetworkOption(
         val surcharge: SurchargeOption
     )
+
+    @Keep
+    data class CaptureData(
+        val cardInformation: CardInformation,
+        val billingAddress: BillingAddress,
+    ) {
+
+        data class CardInformation(
+            val cardholderName: CaptureSetting
+        )
+
+        data class BillingAddress(
+            val postalCode: CaptureSetting,
+            val addressLine1: CaptureSetting,
+        )
+
+        data class CaptureSetting(
+            val capture: Boolean,
+            val required: Boolean,
+        )
+    }
 }

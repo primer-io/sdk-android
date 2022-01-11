@@ -1,6 +1,5 @@
 package io.primer.android.ui.fragments
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,17 +7,19 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.textfield.TextInputEditText
 import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.SessionState
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.di.DIAppComponent
+import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
@@ -26,6 +27,7 @@ import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
+import io.primer.android.payment.card.CARD_POSTAL_CODE_FIELD_NAME
 import io.primer.android.ui.CardType
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.PayAmountText
@@ -51,12 +53,11 @@ import kotlin.collections.HashMap
 internal class CardFormFragment : Fragment(), DIAppComponent {
 
     // view components
-    private lateinit var inputs: Map<String, TextInputEditText>
+    private lateinit var inputLayouts: MutableMap<String, TextInputWidget>
     private lateinit var submitButton: ButtonPrimary
     private lateinit var cancelButton: TextView
     private lateinit var title: TextView
     private lateinit var errorText: TextView
-    private lateinit var cardNumberInputWidget: TextInputWidget
 
     private val primerViewModel: PrimerViewModel by activityViewModels()
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
@@ -87,10 +88,41 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
         primerViewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
 
+        primerViewModel.showPostalCode.observe(viewLifecycleOwner) { showZipCode ->
+            if (showZipCode) {
+                val value: TextInputWidget = view.findViewById(R.id.card_form_postal_code)
+                inputLayouts[CARD_POSTAL_CODE_FIELD_NAME] = value
+            }
+            configureActionDone()
+            renderInputFields()
+            inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.isVisible = showZipCode
+            tokenizationViewModel.setCardHasZipCode(showZipCode)
+            tokenizationViewModel.validationErrors.postValue(
+                primerViewModel.selectedPaymentMethod.value?.validate()
+            )
+        }
+
+        primerViewModel.showCardholderName.observe(viewLifecycleOwner) { showCardholderName ->
+            inputLayouts[CARD_NAME_FILED_NAME]?.isVisible = showCardholderName
+            addInputFieldListeners()
+            tokenizationViewModel.setCardHasCardholderName(showCardholderName)
+            tokenizationViewModel.validationErrors.postValue(
+                primerViewModel.selectedPaymentMethod.value?.validate()
+            )
+        }
+
+        primerViewModel.orderCountry.observe(viewLifecycleOwner) { countryCode ->
+            inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.hint = when (countryCode) {
+                CountryCode.US -> requireContext().getString(R.string.card_zip)
+                else -> requireContext().getString(R.string.address_postal_code)
+            }
+        }
+
         renderTitle()
         renderCancelButton()
-        renderInputFields()
         renderSubmitButton()
+        focusFirstInput()
+        addInputFieldListeners()
     }
 
     // bind view components
@@ -98,14 +130,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         val view = view ?: return
         title = view.findViewById(R.id.card_form_title)
         cancelButton = view.findViewById(R.id.nav_cancel_button)
-        inputs = mapOf(
-            CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name_input),
-            CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number_input),
-            CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry_input),
-            CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv_input),
+
+        inputLayouts = mutableMapOf(
+            CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name),
+            CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number),
+            CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry),
+            CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv),
         )
         errorText = view.findViewById(R.id.card_form_error_message)
-        cardNumberInputWidget = view.findViewById(R.id.card_form_card_number)
         submitButton = view.findViewById(R.id.card_form_submit_button)
     }
 
@@ -143,12 +175,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     * */
 
     private fun renderInputFields() {
-        inputs.values.forEach { t ->
+        inputLayouts.values.forEach { t ->
             val fontSize = theme.input.text.fontsize.getDimension(requireContext())
-            t.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            t.editText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
             val color = theme.input.text.defaultColor.getColor(requireContext(), theme.isDarkMode)
-            t.setTextColor(color)
+            t.editText?.setTextColor(color)
 
             when (theme.inputMode) {
                 PrimerTheme.InputMode.UNDERLINED -> setInputFieldPadding(t)
@@ -157,23 +189,50 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
         addInputFieldListeners()
         renderCardNumberInput()
-        focusFirstInput()
     }
 
-    private fun focusFirstInput() = FieldFocuser.focus(inputs[CARD_NUMBER_FIELD_NAME])
+    private fun focusFirstInput() = FieldFocuser.focus(
+        inputLayouts[CARD_NUMBER_FIELD_NAME]?.editText
+    )
 
     private fun renderCardNumberInput() {
-        val cardNumberInput = inputs[CARD_NUMBER_FIELD_NAME]
-        cardNumberInput?.addTextChangedListener(TextInputMask.CardNumber())
-        cardNumberInput?.addTextChangedListener(afterTextChanged = ::onCardNumberInput)
+        val cardNumberInput = inputLayouts[CARD_NUMBER_FIELD_NAME]
+        cardNumberInput?.editText?.addTextChangedListener(TextInputMask.CardNumber())
+        cardNumberInput?.editText?.addTextChangedListener(afterTextChanged = ::onCardNumberInput)
         updateCardNumberInputIcon()
     }
 
     private fun onCardNumberInput(content: Editable?) {
-        network = CardType.lookup(content.toString())
+        val newNetwork = CardType.lookup(content.toString())
+        val isSameNetwork = network?.type?.equals(newNetwork.type) ?: false
+        if (isSameNetwork) {
+            return
+        }
+
+        network = newNetwork
+
         updateCardNumberInputIcon()
-        if (!primerViewModel.surchargeDisabled) updateCardNumberInputSuffix()
-        updateSubmitButton()
+
+        if (!primerViewModel.surchargeDisabled) {
+            updateCardNumberInputSuffix()
+            emitCardNetworkAction()
+        }
+    }
+
+    private fun emitCardNetworkAction() {
+        val type = "PAYMENT_CARD"
+
+        val action = if (network == null) {
+            ClientSessionActionsRequest.UnsetPaymentMethod()
+        } else {
+            ClientSessionActionsRequest.SetPaymentMethod(type, networkAsString)
+        }
+
+        primerViewModel.dispatchAction(action) {
+            activity?.runOnUiThread {
+                updateSubmitButton()
+            }
+        }
     }
 
     private fun setInputFieldPadding(view: View) {
@@ -195,8 +254,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun updateCardNumberInputIcon() {
         val resource = network?.getResource() ?: R.drawable.ic_generic_card
-        val input = inputs[CARD_NUMBER_FIELD_NAME] ?: return
-        input.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0)
+        val input = inputLayouts[CARD_NUMBER_FIELD_NAME] ?: return
+        input.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0)
     }
 
     private fun updateCardNumberInputSuffix() {
@@ -210,13 +269,36 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun addInputFieldListeners() {
-        inputs[CARD_EXPIRY_FIELD_NAME]?.addTextChangedListener(TextInputMask.ExpiryDate())
-        inputs[CARD_NUMBER_FIELD_NAME]?.addTextChangedListener(TextInputMask.CardNumber())
-        inputs[CARD_NAME_FILED_NAME]
-            ?.setOnEditorActionListener { _, _, _ -> submitButton.performClick() }
-        inputs.entries.forEach {
-            it.value.addTextChangedListener(createTextWatcher(it.key))
-            it.value.onFocusChangeListener = createFocusChangeListener(it.key)
+        inputLayouts[CARD_EXPIRY_FIELD_NAME]?.editText?.addTextChangedListener(
+            TextInputMask.ExpiryDate()
+        )
+        inputLayouts[CARD_NUMBER_FIELD_NAME]?.editText?.addTextChangedListener(
+            TextInputMask.CardNumber()
+        )
+        inputLayouts.entries.forEach {
+            it.value.editText?.addTextChangedListener(createTextWatcher(it.key))
+            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key)
+        }
+        inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]
+            ?.editText?.addTextChangedListener { primerViewModel.setPostalCode(it.toString()) }
+    }
+
+    private fun configureActionDone() {
+        inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.editText?.let { postalCodeEditText ->
+            postalCodeEditText.imeOptions = EditorInfo.IME_ACTION_DONE
+            postalCodeEditText.setOnEditorActionListener { _, _, _ ->
+                submitButton.performClick()
+            }
+            inputLayouts[CARD_NAME_FILED_NAME]?.editText?.let { cardNameEditText ->
+                cardNameEditText.imeOptions = EditorInfo.IME_ACTION_NEXT
+            }
+            return
+        }
+        inputLayouts[CARD_NAME_FILED_NAME]?.editText?.let { cardNameEditText ->
+            cardNameEditText.imeOptions = EditorInfo.IME_ACTION_DONE
+            cardNameEditText.setOnEditorActionListener { _, _, _ ->
+                submitButton.performClick()
+            }
         }
     }
 
@@ -246,7 +328,9 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun onSubmitButtonPressed() {
-        if (tokenizationViewModel.isValid()) {
+        if (!tokenizationViewModel.isValid()) return
+        tokenizationViewModel.tokenizationStatus.postValue(TokenizationStatus.LOADING)
+        primerViewModel.emitPostalCode {
             tokenizationViewModel.tokenize()
         }
     }
@@ -297,14 +381,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     private fun setBusy(isBusy: Boolean) {
         updateSubmitButton()
         if (isBusy) submitButton.isEnabled = false
-        val backgroundColor = if (isBusy) Color.rgb(226, 226, 228) else Color.WHITE
-        cardNumberInputWidget.setBackgroundColor(backgroundColor)
     }
 
     private fun toggleLoading(on: Boolean) {
         submitButton.setProgress(on)
         if (on) errorText.visibility = View.INVISIBLE
-        inputs.values.forEach {
+        inputLayouts.values.forEach {
             it.isEnabled = on.not()
             it.alpha = if (on) 0.5f else 1.0f
         }
@@ -312,9 +394,9 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun createTextWatcher(name: String): TextWatcher {
         return object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) { }
+            override fun afterTextChanged(s: Editable?) {}
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 tokenizationViewModel.setTokenizableValue(name, s.toString())
@@ -329,16 +411,10 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             if (
                 !hasFocus &&
                 !firstMount &&
-                name == CARD_NUMBER_FIELD_NAME &&
-                !primerViewModel.surchargeDisabled &&
+                name == CARD_POSTAL_CODE_FIELD_NAME &&
                 !isBeingDismissed
             ) {
-                val type = "PAYMENT_CARD"
-                val action = ClientSessionActionsRequest.SetPaymentMethod(type, networkAsString)
-                primerViewModel.dispatchAction(action) {
-                    // todo: is there a better way to handle this?
-                    activity?.runOnUiThread { updateSubmitButton() }
-                }
+                primerViewModel.emitPostalCode()
             }
 
             if (!hasFocus && firstMount && name == CARD_NUMBER_FIELD_NAME) {
@@ -362,7 +438,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
         val showAll = tokenizationViewModel.submitted.value == true
 
-        inputs.entries.forEach {
+        inputLayouts.entries.forEach {
             val dirty = getIsDirty(it.key)
             val focused = it.value.isFocused
 
@@ -377,7 +453,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun setValidationErrorState(
-        input: TextInputEditText,
+        input: TextInputWidget,
         error: SyncValidationError?,
         type: String,
     ) {
@@ -393,8 +469,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun onKeyboardVisibilityChanged(visible: Boolean) {
-        val hasFocus = inputs.entries.any { it.value.isFocused }
-        if (hasFocus && !visible) inputs.entries.forEach { it.value.clearFocus() }
+        val hasFocus = inputLayouts.entries.any { it.value.isFocused }
+        if (hasFocus && !visible) inputLayouts.entries.forEach { it.value.clearFocus() }
         else if (visible && !hasFocus) focusFirstInput()
     }
 

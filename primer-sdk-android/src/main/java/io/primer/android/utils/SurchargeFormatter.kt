@@ -2,15 +2,15 @@ package io.primer.android.utils
 
 import android.content.Context
 import io.primer.android.R
+import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.model.dto.MonetaryAmount
-import io.primer.android.model.dto.PaymentMethodTokenInternal
 
 internal class SurchargeFormatter(
     private val surcharges: Map<String, Int>,
     private val currency: java.util.Currency,
 ) {
 
-    fun getSurchargeForSavedPaymentMethod(token: PaymentMethodTokenInternal?): Int {
+    fun getSurchargeForSavedPaymentMethod(token: BasePaymentToken?): Int {
         if (token == null) return 0
         val isBillingAgreement = token.paymentInstrumentType == "PAYPAL_BILLING_AGREEMENT"
         val type = if (isBillingAgreement) "PAYPAL" else token.paymentInstrumentType

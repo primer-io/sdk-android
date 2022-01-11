@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
-class ApayaSessionInteractorTest {
+internal class ApayaSessionInteractorTest {
 
     @RelaxedMockK
     internal lateinit var apayaSessionParamsValidator: ApayaSessionParamsValidator

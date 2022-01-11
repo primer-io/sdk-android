@@ -1,6 +1,6 @@
 package io.primer.android.threeds.data.repository
 
-import io.primer.android.model.dto.PaymentMethodTokenInternal
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 
 internal class PaymentMethodDataRepository : PaymentMethodRepository {

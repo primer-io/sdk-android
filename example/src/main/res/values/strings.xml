@@ -31,9 +31,8 @@
         Something went wrong, please try a different payment method.
     </string>
     <string name="google_pay">Google Pay</string>
-
-    <string name="sg">🇸🇬</string>
-    <string name="de">🇩🇪</string>
+    <string name="zip_code">Zip code: %1$s</string>
+    <string name="postal_code">Postal code: %1$s</string>
 
     <string-array name="countries">
         <item>SE</item>
