@@ -15,6 +15,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -53,13 +54,13 @@ class AsyncPaymentResumeHandlerTest {
     }
 
     @Test
-    fun `handleNewClientToken() should dispatch StartAsyncFlow event when ClientTokenIntent is PAY_NL_IDEAL_REDIRECTION and paymentMethodType is PAY_NL_IDEAL_IDENTIFIER`() {
+    fun `handleNewClientToken() should dispatch StartAsyncFlowRedirect event when ClientTokenIntent is PAY_NL_IDEAL_REDIRECTION and paymentMethodType is PAY_NL_IDEAL_IDENTIFIER`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { clientTokenRepository.getClientTokenIntent() }.returns(
             ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
-            PAY_NL_IDEAL_IDENTIFIER
+            PaymentMethodType.PAY_NL_IDEAL.name
         )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
@@ -71,17 +72,17 @@ class AsyncPaymentResumeHandlerTest {
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }
 
-        assert(event.captured.type == CheckoutEventType.START_ASYNC_FLOW)
+        assert(event.captured.type == CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
     }
 
     @Test
-    fun `handleNewClientToken() should dispatch StartAsyncFlow event when ClientTokenIntent is HOOLAH_REDIRECTION and paymentMethodType is HOOLAH_IDENTIFIER`() {
+    fun `handleNewClientToken() should dispatch StartAsyncFlowRedirect event when ClientTokenIntent is HOOLAH_REDIRECTION and paymentMethodType is HOOLAH_IDENTIFIER`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { clientTokenRepository.getClientTokenIntent() }.returns(
             ClientTokenIntent.HOOLAH_REDIRECTION
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
-            HOOLAH_IDENTIFIER
+            PaymentMethodType.HOOLAH.name
         )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
@@ -93,7 +94,7 @@ class AsyncPaymentResumeHandlerTest {
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }
 
-        assert(event.captured.type == CheckoutEventType.START_ASYNC_FLOW)
+        assert(event.captured.type == CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
     }
 
     @Test
@@ -135,7 +136,7 @@ class AsyncPaymentResumeHandlerTest {
             ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
-            HOOLAH_IDENTIFIER
+            PaymentMethodType.HOOLAH.name
         )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
@@ -157,7 +158,7 @@ class AsyncPaymentResumeHandlerTest {
             ClientTokenIntent.HOOLAH_REDIRECTION
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
-            PAY_NL_IDEAL_IDENTIFIER
+            PaymentMethodType.PAY_NL_IDEAL.name
         )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
@@ -172,9 +173,47 @@ class AsyncPaymentResumeHandlerTest {
         assert(event.captured.type == CheckoutEventType.RESUME_ERR0R)
     }
 
-    private companion object {
+    @Test
+    fun `handleNewClientToken() should dispatch StartAsyncFlow event when ClientTokenIntent is XFERS_PAYNOW_REDIRECTION and paymentMethodType is XFERS_PAYNOW`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
+        )
+        every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
+            PaymentMethodType.XFERS_PAYNOW.name
+        )
+        every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
-        const val PAY_NL_IDEAL_IDENTIFIER = "PAY_NL_IDEAL"
-        const val HOOLAH_IDENTIFIER = "HOOLAH"
+        runBlockingTest {
+            resumeHandler.handleNewClientToken("")
+        }
+
+        val event = slot<CheckoutEvent>()
+
+        verify { eventDispatcher.dispatchEvent(capture(event)) }
+
+        assert(event.captured.type == CheckoutEventType.START_ASYNC_FLOW)
+    }
+
+    @Test
+    fun `handleNewClientToken() should dispatch resume error event when ClientTokenIntent is XFERS_PAYNOW_REDIRECTION and paymentMethodInstrumentType is not XFERS_PAYNOW_REDIRECTION`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
+        )
+        every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
+            PaymentMethodType.PAY_NL_IDEAL.name
+        )
+        every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
+
+        runBlockingTest {
+            resumeHandler.handleNewClientToken("")
+        }
+
+        val event = slot<CheckoutEvent>()
+
+        verify { eventDispatcher.dispatchEvent(capture(event)) }
+
+        assert(event.captured.type == CheckoutEventType.RESUME_ERR0R)
     }
 }

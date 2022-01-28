@@ -666,7 +666,8 @@ internal class ThreeDsInteractorTest {
                 paymentInstrumentData = PaymentInstrumentData(
                     network = "VISA",
                     binData = BinData("VISA")
-                )
+                ),
+                isVaulted = false
             )
     }
 }

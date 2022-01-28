@@ -11,7 +11,7 @@ import org.koin.core.component.inject
 
 import androidx.core.widget.doAfterTextChanged
 import io.primer.android.R
-import io.primer.android.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
+import io.primer.android.ui.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
 import android.graphics.drawable.GradientDrawable
 
 internal class SearchViewWidget(

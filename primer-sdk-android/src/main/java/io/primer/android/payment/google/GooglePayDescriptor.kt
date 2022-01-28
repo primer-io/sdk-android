@@ -10,6 +10,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
+import io.primer.android.ui.payment.LoadingState
 import io.primer.android.viewmodel.PaymentMethodChecker
 
 internal class GooglePayDescriptor constructor(
@@ -52,8 +53,10 @@ internal class GooglePayDescriptor constructor(
             false
         )
 
-    override fun getLoadingResourceId() = when (options.buttonStyle) {
-        GooglePay.Companion.ButtonStyle.BLACK -> R.drawable.ic_logo_google_pay_black_square
-        GooglePay.Companion.ButtonStyle.WHITE -> R.drawable.ic_logo_google_pay_square
+    override fun getLoadingState() = when (options.buttonStyle) {
+        GooglePay.Companion.ButtonStyle.BLACK ->
+            LoadingState(R.drawable.ic_logo_google_pay_black_square)
+        GooglePay.Companion.ButtonStyle.WHITE ->
+            LoadingState(R.drawable.ic_logo_google_pay_square)
     }
 }

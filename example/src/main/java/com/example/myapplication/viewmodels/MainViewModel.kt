@@ -141,6 +141,10 @@ class MainViewModel(
         get() = PrimerConfig(
             // todo: refactor to reintroduce custom values through client session
             settings = PrimerSettings(
+                business = Business(
+                    "Primer",
+                    address = Address("line1", "line2", "3455", "London", CountryCode.GB)
+                ),
                 options = Options(
                     preferWebView = true,
                     debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
@@ -166,6 +170,7 @@ class MainViewModel(
     fun fetchClientSession() = clientSessionRepository.fetch(
         client,
         customerId.value.orEmpty(),
+        UUID.randomUUID().toString(),
         amount.value!!,
         countryRepository.getCountry(),
         countryRepository.getCurrency(),

@@ -2,7 +2,11 @@ package io.primer.android.ui.components
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.text.InputFilter
+import android.text.Spanned
 import android.util.AttributeSet
+import android.util.TypedValue
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputLayout
 import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppComponent
@@ -10,9 +14,11 @@ import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
+internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     TextInputLayout(ctx, attrs),
     DIAppComponent {
+
+    internal var onValueChanged: (CharSequence?) -> Unit = {}
 
     private val theme: PrimerTheme by inject()
 
@@ -59,6 +65,54 @@ class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                 boxBackgroundColor = theme.input.backgroundColor.getColor(context, theme.isDarkMode)
                 BOX_BACKGROUND_FILLED
             }
+        }
+    }
+
+    internal fun setupEditTextTheme() {
+        val fontSize = theme.input.text.fontsize.getDimension(context)
+        editText?.apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            setTextColor(
+                theme.input.text.defaultColor.getColor(
+                    context,
+                    theme.isDarkMode
+                )
+            )
+        }
+    }
+
+    internal fun setupEditTextListeners() {
+        editText?.doAfterTextChanged { text -> onValueChanged(text) }
+    }
+
+    internal fun setupEditTextInputFilters(inputCharacters: String?, maxInputLength: Int?) {
+        val customFilters = arrayOf(
+            inputCharacters?.let {
+                object : InputFilter {
+                    override fun filter(
+                        source: CharSequence?,
+                        start: Int,
+                        end: Int,
+                        dest: Spanned?,
+                        dstart: Int,
+                        dend: Int
+                    ): CharSequence? {
+                        val replacedText = dest?.subSequence(dstart, dend)
+                        for (i in start until end) {
+                            if (source != null && it.contains(source[i].toString()).not())
+                                return replacedText
+                        }
+                        return null
+                    }
+                }
+            },
+            maxInputLength?.let {
+                InputFilter.LengthFilter(it)
+            }
+        ).filterNotNull()
+
+        editText?.apply {
+            filters = filters.plus(customFilters)
         }
     }
 }

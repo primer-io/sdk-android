@@ -12,6 +12,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
+import io.primer.android.ui.payment.LoadingState
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -43,5 +44,5 @@ internal class PayPalDescriptor constructor(
             false
         )
 
-    override fun getLoadingResourceId() = R.drawable.ic_logo_paypal_square
+    override fun getLoadingState() = LoadingState(R.drawable.ic_logo_paypal_square)
 }

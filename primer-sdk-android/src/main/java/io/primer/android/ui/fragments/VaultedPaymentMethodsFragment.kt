@@ -7,17 +7,14 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.databinding.FragmentVaultedPaymentMethodsBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.AlternativePaymentMethodType
@@ -25,6 +22,7 @@ import io.primer.android.ui.CardData
 import io.primer.android.ui.PaymentMethodItemData
 import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
+import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -37,15 +35,9 @@ const val DEFAULT_YEAR: Int = 2021
 class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()
+    private var binding: FragmentVaultedPaymentMethodsBinding by autoCleaned()
 
     private val viewModel: PrimerViewModel by activityViewModels()
-
-    // FIXME replace with view binding
-    private lateinit var readOnlyHeaderLinearLayout: ViewGroup
-    private lateinit var editHeaderLinearLayout: ViewGroup
-
-    private lateinit var vaultTitleLabel: TextView
-    private lateinit var editLabel: TextView
 
     private var paymentMethods: List<BasePaymentToken> = listOf()
 
@@ -56,26 +48,27 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
             adapter.isEditing = isEditing
             adapter.notifyDataSetChanged()
 
-            vaultTitleLabel.text = if (isEditing) getString(R.string.edit_saved_payment_methods)
-            else getString(R.string.other_ways_to_pay)
+            binding.vaultTitleLabel.text =
+                if (isEditing) getString(R.string.edit_saved_payment_methods)
+                else getString(R.string.other_ways_to_pay)
 
-            editLabel.text = if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
+            binding.editVaultedPaymentMethods.text =
+                if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
         }
 
-    private var adapter: VaultedPaymentMethodRecyclerAdapter =
+    private val adapter: VaultedPaymentMethodRecyclerAdapter by autoCleaned {
         VaultedPaymentMethodRecyclerAdapter(::onClickWith, theme)
+    }
 
-    private fun configureRecyclerView(view: View, paymentMethods: List<PaymentMethodItemData>) {
-        val recyclerView = view.findViewById<RecyclerView>(R.id.vault_recycler_view)
+    private fun configureRecyclerView(paymentMethods: List<PaymentMethodItemData>) {
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ContextCompat.getDrawable(requireContext(), R.drawable.divider)?.let {
             itemDecorator.setDrawable(it)
         }
-        recyclerView.addItemDecoration(itemDecorator)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.vaultRecyclerView.addItemDecoration(itemDecorator)
         adapter.itemData = paymentMethods
         adapter.selectedPaymentMethodId = viewModel.getSelectedPaymentMethodId()
-        recyclerView.adapter = adapter
+        binding.vaultRecyclerView.adapter = adapter
     }
 
     private fun generateItemDataFromPaymentMethods(
@@ -128,8 +121,10 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? =
-        inflater.inflate(R.layout.fragment_vaulted_payment_methods, container, false)
+    ): View {
+        binding = FragmentVaultedPaymentMethodsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     private fun onClickWith(id: String, action: VaultViewAction) {
         when (action) {
@@ -162,21 +157,14 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vaultTitleLabel = view.findViewById(R.id.vault_title_label)
-
-        vaultTitleLabel.setTextColor(
+        binding.vaultTitleLabel.setTextColor(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode
             )
         )
 
-        readOnlyHeaderLinearLayout = view.findViewById(
-            R.id.primer_view_vaulted_payment_methods_header
-        )
-
-        editHeaderLinearLayout = view.findViewById(R.id.primer_edit_vaulted_payment_methods_header)
-        renderEditLabel(view)
+        renderEditLabel()
 
         viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { data ->
 
@@ -187,31 +175,28 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
             paymentMethods = data
 
-            configureRecyclerView(view, generateItemDataFromPaymentMethods(paymentMethods))
+            configureRecyclerView(generateItemDataFromPaymentMethods(paymentMethods))
         }
 
-        val iconButton = view.findViewById<ImageButton>(R.id.vaulted_payment_methods_go_back)
-        iconButton.setOnClickListener {
+        binding.vaultedPaymentMethodsGoBack.setOnClickListener {
             viewModel.goToSelectPaymentMethodsView()
         }
-        iconButton.imageTintList = ColorStateList.valueOf(
+        binding.vaultedPaymentMethodsGoBack.imageTintList = ColorStateList.valueOf(
             theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         )
-
-        view.findViewById<TextView>(R.id.edit_vaulted_payment_methods).setOnClickListener {
+        binding.editVaultedPaymentMethods.setOnClickListener {
             isEditing = !isEditing
         }
     }
 
-    private fun renderEditLabel(view: View) {
-        editLabel = view.findViewById(R.id.edit_vaulted_payment_methods)
-        editLabel.setTextColor(
+    private fun renderEditLabel() = binding.editVaultedPaymentMethods.apply {
+        setTextColor(
             theme.systemText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode
             )
         )
-        editLabel.setTextSize(
+        setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
             theme.systemText.fontsize.getDimension(requireContext()),
         )

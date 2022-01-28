@@ -21,8 +21,10 @@ internal class AsyncPaymentMethodWebViewClient(
     override fun handleDeepLink(request: WebResourceRequest?): Boolean {
         request?.url?.let { uri ->
             handleIntent(
-                Intent(Intent.ACTION_VIEW).apply {
-                    data = uri
+                if (request.url.scheme == INTENT_SCHEMA) {
+                    Intent.parseUri(request.url.toString(), Intent.URI_INTENT_SCHEME)
+                } else {
+                    Intent(Intent.ACTION_VIEW).apply { data = uri }
                 }
             )
         }

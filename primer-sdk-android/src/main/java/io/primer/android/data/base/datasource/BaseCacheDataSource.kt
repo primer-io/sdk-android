@@ -2,16 +2,16 @@ package io.primer.android.data.base.datasource
 
 import kotlinx.coroutines.flow.Flow
 
-internal abstract class BaseCacheDataSource<out R, T : Any> where R : Any {
+internal interface BaseCacheDataSource<out R, T : Any> where R : Any {
 
-    abstract fun get(): R
+    fun get(): R
 
-    abstract fun update(input: T)
+    fun update(input: T) = Unit
 }
 
-internal abstract class BaseFlowCacheDataSource<out R, T : Any> where R : Any {
+internal interface BaseFlowCacheDataSource<out R, T : Any> where R : Any {
 
-    abstract fun get(): Flow<R>
+    fun get(): Flow<R>
 
-    abstract fun update(input: T)
+    fun update(input: T) = Unit
 }

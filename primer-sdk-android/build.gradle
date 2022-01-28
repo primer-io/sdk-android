@@ -38,6 +38,9 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$VERSION_NAME\""
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {

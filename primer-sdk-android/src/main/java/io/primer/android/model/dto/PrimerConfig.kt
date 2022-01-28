@@ -27,7 +27,7 @@ data class PrimerConfig(
     internal val isStandalonePaymentMethod: Boolean
         get() = intent.paymentMethod != PrimerPaymentMethod.ANY
 
-    internal fun getMonetaryAmountWithSurcharge(surchargeAmount: Int): MonetaryAmount? {
+    internal fun getMonetaryAmountWithSurcharge(): MonetaryAmount? {
         val amount = settings.currentAmount
         val currency = settings.order.currency
         return MonetaryAmount.create(currency, amount)

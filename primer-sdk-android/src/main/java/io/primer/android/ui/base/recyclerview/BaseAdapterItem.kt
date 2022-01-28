@@ -1,6 +1,6 @@
 package io.primer.android.ui.base.recyclerview
 
-internal abstract class BaseAdapterItem {
+internal interface BaseAdapterItem {
 
-    abstract fun getType(): Int
+    fun getType(): Int
 }

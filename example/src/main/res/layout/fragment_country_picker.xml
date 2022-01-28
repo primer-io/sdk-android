@@ -58,4 +58,13 @@
         android:gravity="center"
         android:orientation="horizontal"/>
 
+    <com.example.myapplication.ui.SettingsItem
+        android:id="@+id/netherlandsItem"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="12dp"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"/>
+
 </LinearLayout>

@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import io.primer.android.R
+import io.primer.android.databinding.FragmentPaymentMethodLoadingBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 
@@ -19,11 +20,21 @@ internal class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
 
     private val viewModel: PrimerViewModel by activityViewModels()
 
-    private lateinit var selectedPaymentLogo: ImageView
+    private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
-    private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> {
-        it?.getLoadingResourceId()?.let {
-            selectedPaymentLogo.setImageResource(it)
+    private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
+        descriptor?.getLoadingState()?.let {
+            binding.apply {
+                selectedPaymentLogo.setImageResource(it.imageResIs)
+                it.textResId?.let {
+                    selectedPaymentLoadingText.isVisible = true
+                    progressBar.isVisible = false
+                    selectedPaymentLoadingText.text = getString(it)
+                } ?: run {
+                    selectedPaymentLoadingText.isVisible = false
+                    progressBar.isVisible = true
+                }
+            }
         }
     }
 
@@ -31,12 +42,13 @@ internal class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? =
-        inflater.inflate(R.layout.fragment_payment_method_loading, container, false)
+    ): View {
+        binding = FragmentPaymentMethodLoadingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        selectedPaymentLogo = view.findViewById(R.id.selected_payment_logo)
 
         viewModel.selectedPaymentMethod.observe(viewLifecycleOwner, selectedPaymentMethodObserver)
     }

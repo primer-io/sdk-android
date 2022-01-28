@@ -6,15 +6,15 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.databinding.FragmentSessionCompleteBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.ui.extensions.autoCleaned
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -40,34 +40,29 @@ sealed class SessionCompleteViewType {
 class SessionCompleteFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var binding: FragmentSessionCompleteBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        return inflater.inflate(R.layout.fragment_session_complete, container, false)
+        binding = FragmentSessionCompleteBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val messageLabel = view.findViewById<TextView>(R.id.session_complete_message)
-
-        messageLabel.text = arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
-            messageLabel.context.getString(it)
+        binding.sessionCompleteMessage.text = arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
+            getString(it)
         }
 
         val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        messageLabel.setTextColor(textColor)
+        binding.sessionCompleteMessage.setTextColor(textColor)
 
         if (arguments?.getBoolean(SESSION_COMPLETE_IS_ERROR_KEY) == true) {
-            val icon = view.findViewById<ImageView>(R.id.session_complete_icon)
-            icon.setImageResource(R.drawable.ic_error)
+            binding.sessionCompleteIcon.setImageResource(R.drawable.ic_error)
         }
 
         Handler(Looper.getMainLooper()).postDelayed(

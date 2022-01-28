@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -18,6 +18,7 @@ import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.SessionState
 import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.databinding.FragmentCardFormBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.MonetaryAmount
@@ -32,8 +33,8 @@ import io.primer.android.ui.CardType
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
-import io.primer.android.ui.components.ButtonPrimary
 import io.primer.android.ui.components.TextInputWidget
+import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.utils.PaymentUtils
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
@@ -53,11 +54,8 @@ import kotlin.collections.HashMap
 internal class CardFormFragment : Fragment(), DIAppComponent {
 
     // view components
-    private lateinit var inputLayouts: MutableMap<String, TextInputWidget>
-    private lateinit var submitButton: ButtonPrimary
-    private lateinit var cancelButton: TextView
-    private lateinit var title: TextView
-    private lateinit var errorText: TextView
+    private var inputLayouts: MutableMap<String, TextInputWidget> by autoCleaned()
+    private var binding: FragmentCardFormBinding by autoCleaned()
 
     private val primerViewModel: PrimerViewModel by activityViewModels()
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
@@ -74,7 +72,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        return inflater.inflate(R.layout.fragment_card_form, container, false)
+        binding = FragmentCardFormBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,8 +89,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
         primerViewModel.showPostalCode.observe(viewLifecycleOwner) { showZipCode ->
             if (showZipCode) {
-                val value: TextInputWidget = view.findViewById(R.id.card_form_postal_code)
-                inputLayouts[CARD_POSTAL_CODE_FIELD_NAME] = value
+                inputLayouts[CARD_POSTAL_CODE_FIELD_NAME] = binding.cardFormPostalCode
             }
             configureActionDone()
             renderInputFields()
@@ -127,52 +125,52 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     // bind view components
     private fun bindViewComponents() {
-        val view = view ?: return
-        title = view.findViewById(R.id.card_form_title)
-        cancelButton = view.findViewById(R.id.nav_cancel_button)
-
         inputLayouts = mutableMapOf(
-            CARD_NAME_FILED_NAME to view.findViewById(R.id.card_form_cardholder_name),
-            CARD_NUMBER_FIELD_NAME to view.findViewById(R.id.card_form_card_number),
-            CARD_EXPIRY_FIELD_NAME to view.findViewById(R.id.card_form_card_expiry),
-            CARD_CVV_FIELD_NAME to view.findViewById(R.id.card_form_card_cvv),
+            CARD_NAME_FILED_NAME to binding.cardFormCardholderName,
+            CARD_NUMBER_FIELD_NAME to binding.cardFormCardNumber,
+            CARD_EXPIRY_FIELD_NAME to binding.cardFormCardExpiry,
+            CARD_CVV_FIELD_NAME to binding.cardFormCardCvv,
         )
-        errorText = view.findViewById(R.id.card_form_error_message)
-        submitButton = view.findViewById(R.id.card_form_submit_button)
     }
 
     /*
     *
     * title
-    * */
+    *
+    */
 
     private fun renderTitle() {
         val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        title.setTextColor(textColor)
+        binding.cardFormTitle.setTextColor(textColor)
     }
 
     /*
     *
     * cancel button
-    * */
+    *
+    */
 
     private fun renderCancelButton() {
-        val textColor = theme.systemText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        cancelButton.setTextColor(textColor)
+        binding.navCancelButton.apply {
+            val textColor =
+                theme.systemText.defaultColor.getColor(requireContext(), theme.isDarkMode)
+            setTextColor(textColor)
 
-        val fontSize = theme.systemText.fontsize.getDimension(requireContext())
-        cancelButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            val fontSize = theme.systemText.fontsize.getDimension(requireContext())
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
-        cancelButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
-            isBeingDismissed = true
+            setOnClickListener {
+                parentFragmentManager.popBackStack()
+                isBeingDismissed = true
+            }
         }
     }
 
     /*
     *
     * input fields
-    * */
+    *
+    */
 
     private fun renderInputFields() {
         inputLayouts.values.forEach { t ->
@@ -259,13 +257,13 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun updateCardNumberInputSuffix() {
-        val inputFrame = view?.findViewById<TextInputWidget>(R.id.card_form_card_number)
+        val inputFrame = binding.cardFormCardNumber
         val surcharge = primerViewModel.findSurchargeAmount("PAYMENT_CARD", networkAsString)
         val currency = localConfig.settings.order.currency
         val amount = MonetaryAmount.create(currency, surcharge)
         val amountText = "+" + PaymentUtils.amountToCurrencyString(amount)
         val surchargeText = if (surcharge > 0) amountText else ""
-        inputFrame?.suffixText = surchargeText
+        inputFrame.suffixText = surchargeText
     }
 
     private fun addInputFieldListeners() {
@@ -287,7 +285,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.editText?.let { postalCodeEditText ->
             postalCodeEditText.imeOptions = EditorInfo.IME_ACTION_DONE
             postalCodeEditText.setOnEditorActionListener { _, _, _ ->
-                submitButton.performClick()
+                binding.cardFormSubmitButton.performClick()
             }
             inputLayouts[CARD_NAME_FILED_NAME]?.editText?.let { cardNameEditText ->
                 cardNameEditText.imeOptions = EditorInfo.IME_ACTION_NEXT
@@ -297,7 +295,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         inputLayouts[CARD_NAME_FILED_NAME]?.editText?.let { cardNameEditText ->
             cardNameEditText.imeOptions = EditorInfo.IME_ACTION_DONE
             cardNameEditText.setOnEditorActionListener { _, _, _ ->
-                submitButton.performClick()
+                binding.cardFormSubmitButton.performClick()
             }
         }
     }
@@ -311,18 +309,18 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         val uxMode = localConfig.paymentMethodIntent
         val context = requireContext()
 
-        submitButton.text = when (uxMode) {
+        binding.cardFormSubmitButton.text = when (uxMode) {
             PaymentMethodIntent.VAULT -> context.getString(R.string.add_card)
             PaymentMethodIntent.CHECKOUT -> {
                 String
                     .format(
-                        requireContext().getString(R.string.pay_specific_amount),
+                        getString(R.string.pay_specific_amount),
                         PayAmountText.generate(context, primerViewModel.monetaryAmount)
                     )
             }
         }
 
-        submitButton.setOnClickListener {
+        binding.cardFormSubmitButton.setOnClickListener {
             onSubmitButtonPressed()
         }
     }
@@ -337,15 +335,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun updateSubmitButton() {
         if (localConfig.paymentMethodIntent == PaymentMethodIntent.VAULT) {
-            submitButton.text = requireContext().getString(R.string.add_card)
+            binding.cardFormSubmitButton.text = getString(R.string.add_card)
             return
         }
-        val surcharge = primerViewModel.findSurchargeAmount("PAYMENT_CARD", networkAsString)
         // todo: rename, this has no effect
-        val amount = localConfig.getMonetaryAmountWithSurcharge(surcharge)
+        val amount = localConfig.getMonetaryAmountWithSurcharge()
         val amountString = PayAmountText.generate(requireContext(), amount)
-        val label = requireContext().getString(R.string.pay_specific_amount)
-        submitButton.text = String.format(label, amountString)
+        val label = getString(R.string.pay_specific_amount)
+        binding.cardFormSubmitButton.text = String.format(label, amountString)
     }
 
     // other configuration
@@ -360,13 +357,23 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
 
         tokenizationViewModel.tokenizationError.observe(viewLifecycleOwner) {
-            errorText.text = requireContext().getText(R.string.payment_method_error)
-            errorText.visibility = View.VISIBLE
+            binding.cardFormErrorMessage.apply {
+                text = requireContext().getText(R.string.payment_method_error)
+                isVisible = true
+            }
         }
 
         tokenizationViewModel
             .validationErrors
-            .observe(viewLifecycleOwner) { setValidationErrors() }
+            .observe(viewLifecycleOwner) {
+                setValidationErrors()
+            }
+
+        tokenizationViewModel
+            .autoFocusFields
+            .observe(viewLifecycleOwner) {
+                findNextFocusIfNeeded(it)
+            }
 
         tokenizationViewModel
             .submitted
@@ -380,12 +387,12 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun setBusy(isBusy: Boolean) {
         updateSubmitButton()
-        if (isBusy) submitButton.isEnabled = false
+        if (isBusy) binding.cardFormSubmitButton.isEnabled = false
     }
 
     private fun toggleLoading(on: Boolean) {
-        submitButton.setProgress(on)
-        if (on) errorText.visibility = View.INVISIBLE
+        binding.cardFormSubmitButton.setProgress(on)
+        if (on) binding.cardFormErrorMessage.isInvisible = true
         inputLayouts.values.forEach {
             it.isEnabled = on.not()
             it.alpha = if (on) 0.5f else 1.0f
@@ -430,11 +437,36 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
     }
 
+    private fun findNextFocusIfNeeded(fields: Set<String>) {
+        val currentFocus = inputLayouts.entries.firstOrNull { it.value.hasFocus() }
+        val isValid =
+            fields.isNotEmpty() && !firstMount &&
+                fields.firstOrNull { currentFocus?.key == it } != null
+        if (isValid) {
+            when (currentFocus?.key) {
+                CARD_NUMBER_FIELD_NAME -> FieldFocuser.focus(inputLayouts[CARD_EXPIRY_FIELD_NAME])
+                CARD_EXPIRY_FIELD_NAME -> FieldFocuser.focus(inputLayouts[CARD_CVV_FIELD_NAME])
+                CARD_CVV_FIELD_NAME -> {
+                    when {
+                        primerViewModel.showPostalCode.value == true -> FieldFocuser.focus(
+                            inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]
+                        )
+                        primerViewModel.showCardholderName.value == true -> FieldFocuser.focus(
+                            inputLayouts[CARD_NAME_FILED_NAME]
+                        )
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+
     private fun setValidationErrors() {
         val tokenizationStatus = tokenizationViewModel.tokenizationStatus.value
         val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
 
-        submitButton.isEnabled = errors.isEmpty() && isSubmitButtonEnabled(tokenizationStatus)
+        binding.cardFormSubmitButton.isEnabled =
+            errors.isEmpty() && isSubmitButtonEnabled(tokenizationStatus)
 
         val showAll = tokenizationViewModel.submitted.value == true
 
@@ -462,8 +494,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             .let { input.error = it.getString(error.errorId, it.getString(error.fieldId)) }
             .run {
                 if (type == CARD_NUMBER_FIELD_NAME) {
-                    val inputFrame = view?.findViewById<TextInputWidget>(R.id.card_form_card_number)
-                    inputFrame?.suffixText = ""
+                    val inputFrame = binding.cardFormCardNumber
+                    inputFrame.suffixText = ""
                 }
             }
     }

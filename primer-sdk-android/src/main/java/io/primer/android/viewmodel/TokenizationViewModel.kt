@@ -12,6 +12,8 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
+import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
+import io.primer.android.domain.payments.paypal.models.PaypalOrderInfoParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.model.APIEndpoint
@@ -26,6 +28,7 @@ import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
+import io.primer.android.payment.paypal.PayPalDescriptor
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -41,6 +44,7 @@ internal class TokenizationViewModel(
     private val config: PrimerConfig,
     private val tokenizationInteractor: TokenizationInteractor,
     private val apayaSessionInteractor: ApayaSessionInteractor,
+    private val paypalOrderInfoInteractor: PaypalOrderInfoInteractor
 ) : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
@@ -52,6 +56,9 @@ internal class TokenizationViewModel(
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
     val validationErrors: MutableLiveData<List<SyncValidationError>> = MutableLiveData(
         Collections.emptyList()
+    )
+    val autoFocusFields: MutableLiveData<Set<String>> = MutableLiveData(
+        Collections.emptySet()
     )
     private val _tokenizationCanceled = MutableLiveData<Unit>()
     val tokenizationCanceled: LiveData<Unit> = _tokenizationCanceled
@@ -108,6 +115,7 @@ internal class TokenizationViewModel(
         paymentMethod?.let { pm ->
             pm.setTokenizableValue(key, value)
             validationErrors.value = pm.validate()
+            autoFocusFields.value = pm.getValidAutoFocusableFields()
         }
     }
 
@@ -306,6 +314,22 @@ internal class TokenizationViewModel(
                     error.postValue(description)
                 }
             }
+        }
+    }
+
+    fun getPaypalOrderInfo(payPal: PayPalDescriptor, orderId: String) {
+        viewModelScope.launch {
+            paypalOrderInfoInteractor(PaypalOrderInfoParams(payPal.config.id.orEmpty(), orderId))
+                .catch {
+                    tokenize()
+                }
+                .collect {
+                    payPal.setTokenizableValue(
+                        "externalPayerInfo",
+                        JSONObject().apply { put("email", it.email) }
+                    )
+                    tokenize()
+                }
         }
     }
     // endregion

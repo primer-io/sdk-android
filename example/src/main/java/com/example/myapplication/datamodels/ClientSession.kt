@@ -2,6 +2,7 @@ package com.example.myapplication.datamodels
 
 import androidx.annotation.Keep
 import io.primer.android.model.dto.CountryCode
+import java.util.*
 
 @Keep
 interface ClientSession : ExampleAppRequestBody {
@@ -28,13 +29,14 @@ interface ClientSession : ExampleAppRequestBody {
 
             fun build(
                 customerId: String,
+                orderId: String,
                 amount: Int,
                 countryCode: String,
                 currency: String,
             ): Request {
                 return Request(
                     customerId = customerId,
-                    orderId = "android-test-10001",
+                    orderId = "android-test-$orderId",
                     currencyCode = currency,
                     order = Order(
                         countryCode = countryCode,
@@ -73,16 +75,16 @@ interface ClientSession : ExampleAppRequestBody {
                     ),
                     paymentMethod = PaymentMethod(
                         options = PaymentMethodOptionGroup(
-//                            PAYPAL = PaymentMethodOption(
-//                                surcharge = SurchargeOption(
-//                                    amount = 50,
-//                                )
-//                            ),
-//                            GOOGLE_PAY = PaymentMethodOption(
-//                                surcharge = SurchargeOption(
-//                                    amount = 60,
-//                                )
-//                            ),
+                            PAYPAL = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 50,
+                                )
+                            ),
+                            GOOGLE_PAY = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 60,
+                                )
+                            ),
                             ADYEN_SOFORT = PaymentMethodOption(
                                 surcharge = SurchargeOption(
                                     amount = 150,

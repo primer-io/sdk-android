@@ -1,4 +1,4 @@
-package io.primer.android.extensions
+package io.primer.android.ui.extensions
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView

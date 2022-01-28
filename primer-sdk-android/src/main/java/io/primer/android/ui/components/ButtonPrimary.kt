@@ -10,40 +10,32 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.databinding.LayoutButtonPrimaryBinding
 import io.primer.android.di.DIAppComponent
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @KoinApiExtension
-class ButtonPrimary(
+internal class ButtonPrimary(
     ctx: Context,
     attrs: AttributeSet,
 ) : LinearLayout(ctx, attrs), DIAppComponent {
 
-    private val textView: TextView
-    private val progressBar: ProgressBar
+    private val binding = LayoutButtonPrimaryBinding.inflate(LayoutInflater.from(context), this)
     private val theme: PrimerTheme by inject()
 
     var text: CharSequence
-        get() = textView.text
+        get() = binding.buttonPrimaryCtaText.text
         set(value) {
-            textView.text = value
+            binding.buttonPrimaryCtaText.text = value
         }
 
     init {
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
-        inflater.inflate(R.layout.layout_button_primary, this, true)
-
         gravity = Gravity.CENTER
         orientation = HORIZONTAL
         background = createBackground()
-        textView = findViewById(R.id.button_primary_cta_text)
-        progressBar = findViewById(R.id.button_primary_cta_progress)
         text = attrs.getAttributeValue(R.styleable.ButtonPrimary_buttonText)
 
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
@@ -52,7 +44,7 @@ class ButtonPrimary(
     }
 
     fun setProgress(active: Boolean) {
-        progressBar.visibility = if (active) View.VISIBLE else View.GONE
+        binding.buttonPrimaryCtaProgress.visibility = if (active) View.VISIBLE else View.GONE
     }
 
     private fun createBackground(): Drawable {

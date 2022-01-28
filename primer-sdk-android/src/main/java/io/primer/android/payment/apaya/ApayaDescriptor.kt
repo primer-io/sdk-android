@@ -3,11 +3,11 @@ package io.primer.android.payment.apaya
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.databinding.PaymentMethodButtonPayMobileBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
@@ -15,6 +15,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
+import io.primer.android.ui.payment.LoadingState
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -41,12 +42,12 @@ internal class ApayaDescriptor constructor(
         get() = VaultCapability.VAULT_ONLY
 
     override fun createButton(container: ViewGroup): View {
-        val button = LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_pay_mobile,
+        val binding = PaymentMethodButtonPayMobileBinding.inflate(
+            LayoutInflater.from(container.context),
             container,
             false
         )
-        val text = button.findViewById<TextView>(R.id.pay_mobile_preview_button)
+        val text = binding.payMobilePreviewButton
         val drawable = ContextCompat.getDrawable(
             container.context,
             R.drawable.ic_mobile
@@ -71,8 +72,8 @@ internal class ApayaDescriptor constructor(
             )
         )
 
-        return button
+        return binding.root
     }
 
-    override fun getLoadingResourceId() = R.drawable.ic_mobile
+    override fun getLoadingState() = LoadingState(R.drawable.ic_mobile)
 }

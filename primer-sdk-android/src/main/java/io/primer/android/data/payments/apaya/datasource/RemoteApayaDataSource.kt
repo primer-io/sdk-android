@@ -8,7 +8,7 @@ import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteApayaDataSource(
     private val primerHttpClient: PrimerHttpClient,
-) : BaseDataSource<CreateSessionResponse, BaseRemoteRequest<CreateSessionRequest>>() {
+) : BaseDataSource<CreateSessionResponse, BaseRemoteRequest<CreateSessionRequest>> {
 
     override fun execute(input: BaseRemoteRequest<CreateSessionRequest>) =
         primerHttpClient.post<CreateSessionRequest, CreateSessionResponse>(

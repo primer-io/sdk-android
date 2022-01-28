@@ -13,6 +13,7 @@ internal data class PaymentMethodTokenInternal(
     override val paymentInstrumentData: PaymentInstrumentData? = null,
     override val vaultData: VaultData? = null,
     override val threeDSecureAuthentication: AuthenticationDetails? = null,
+    override val isVaulted: Boolean,
     val analyticsId: String,
     val tokenType: TokenType,
 ) : BasePaymentToken() {

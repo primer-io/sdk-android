@@ -6,7 +6,7 @@ import io.primer.android.model.dto.PrimerSettings
 import kotlinx.coroutines.flow.flowOf
 
 internal class LocalConfigurationDataSource(private val settings: PrimerSettings) :
-    BaseFlowCacheDataSource<Configuration, Configuration>() {
+    BaseFlowCacheDataSource<Configuration, Configuration> {
 
     private var configuration: Configuration? = null
 

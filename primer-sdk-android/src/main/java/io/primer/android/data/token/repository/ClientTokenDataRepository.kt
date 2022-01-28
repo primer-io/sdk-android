@@ -1,7 +1,6 @@
 package io.primer.android.data.token.repository
 
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
-import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.token.repository.ClientTokenRepository
 
 internal class ClientTokenDataRepository(
@@ -17,7 +16,7 @@ internal class ClientTokenDataRepository(
 
     override fun getStatusUrl() = clientTokenDataSource.get().statusUrl
 
-    override fun getClientTokenIntent(): ClientTokenIntent {
-        return clientTokenDataSource.get().intent
-    }
+    override fun getClientTokenIntent() = clientTokenDataSource.get().intent
+
+    override fun getQrCode() = clientTokenDataSource.get().qrCode
 }

@@ -147,5 +147,6 @@ internal abstract class BaseWebViewClient(
     protected companion object {
 
         const val TAG: String = "BaseWebViewClient"
+        const val INTENT_SCHEMA = "intent"
     }
 }

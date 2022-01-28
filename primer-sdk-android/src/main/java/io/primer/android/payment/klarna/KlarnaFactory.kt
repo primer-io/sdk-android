@@ -6,7 +6,7 @@ import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
 import io.primer.android.utils.Either
 import io.primer.android.utils.Success
 
-internal class KlarnaFactory(val settings: PrimerSettings) : PaymentMethodFactory() {
+internal class KlarnaFactory(val settings: PrimerSettings) : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
         val klarna = Klarna(

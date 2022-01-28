@@ -3,9 +3,8 @@ package io.primer.android.payment.gocardless
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import io.primer.android.PrimerTheme
-import io.primer.android.R
+import io.primer.android.databinding.PaymentMethodButtonDirectDebitBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
@@ -39,12 +38,12 @@ internal class GoCardlessDescriptor(
         get() = VaultCapability.VAULT_ONLY
 
     override fun createButton(container: ViewGroup): View {
-        val button = LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_direct_debit,
+        val binding = PaymentMethodButtonDirectDebitBinding.inflate(
+            LayoutInflater.from(container.context),
             container,
             false
         )
-        val text = button.findViewById<TextView>(R.id.direct_debit_button_text)
+        val text = binding.directDebitButtonText
         text.setTextColor(
             theme.paymentMethodButton.text.defaultColor.getColor(
                 container.context,
@@ -52,6 +51,6 @@ internal class GoCardlessDescriptor(
             )
         )
 
-        return button
+        return binding.root
     }
 }

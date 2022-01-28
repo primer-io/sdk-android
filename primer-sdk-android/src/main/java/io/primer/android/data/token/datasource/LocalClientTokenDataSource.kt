@@ -4,7 +4,7 @@ import io.primer.android.data.base.datasource.BaseCacheDataSource
 import io.primer.android.data.token.model.ClientToken
 
 internal class LocalClientTokenDataSource(private var clientToken: ClientToken) :
-    BaseCacheDataSource<ClientToken, String>() {
+    BaseCacheDataSource<ClientToken, String> {
 
     override fun get() = clientToken
 

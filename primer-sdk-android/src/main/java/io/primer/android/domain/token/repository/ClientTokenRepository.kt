@@ -10,6 +10,8 @@ internal interface ClientTokenRepository {
 
     fun getRedirectUrl(): String?
 
+    fun getQrCode(): String?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

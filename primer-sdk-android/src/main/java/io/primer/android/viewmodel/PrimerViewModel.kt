@@ -247,6 +247,13 @@ internal class PrimerViewModel(
         .getSurchargeLabelTextForPaymentMethodType(savedPaymentMethodSurcharge, context)
 
     fun amountLabelMonetaryAmount(
+        paymentMethodType: String
+    ): MonetaryAmount? = AmountLabelContentFactory.build(
+        config,
+        formatter.getSurchargeForPaymentMethodType(paymentMethodType)
+    )
+
+    fun amountLabelMonetaryAmount(
         config: PrimerConfig
     ): MonetaryAmount? = AmountLabelContentFactory.build(config, savedPaymentMethodSurcharge)
 

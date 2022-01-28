@@ -1,4 +1,4 @@
-package io.primer.android.extensions
+package io.primer.android.ui.extensions
 
 import android.widget.TextView
 import androidx.annotation.ColorInt

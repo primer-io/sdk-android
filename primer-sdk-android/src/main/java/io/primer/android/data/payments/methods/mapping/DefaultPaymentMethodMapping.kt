@@ -41,6 +41,9 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_MOBILEPAY,
             PaymentMethodType.ADYEN_IDEAL,
             PaymentMethodType.ADYEN_DOTPAY,
+//            PaymentMethodType.ADYEN_BLIK,
+//            PaymentMethodType.ADYEN_MBWAY,
+//            PaymentMethodType.ADYEN_BANK_TRANSFER,
             PaymentMethodType.MOLLIE_BANCONTACT,
             PaymentMethodType.MOLLIE_IDEAL,
             PaymentMethodType.BUCKAROO_GIROPAY,
@@ -48,7 +51,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.BUCKAROO_IDEAL,
             PaymentMethodType.BUCKAROO_EPS,
             PaymentMethodType.BUCKAROO_BANCONTACT,
-            PaymentMethodType.ATOME
+            PaymentMethodType.ATOME,
+            PaymentMethodType.XFERS_PAYNOW
             -> AsyncMethodFactory(
                 type,
                 settings

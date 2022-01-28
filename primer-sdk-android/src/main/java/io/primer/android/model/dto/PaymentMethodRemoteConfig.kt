@@ -34,6 +34,9 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     ADYEN_MOBILEPAY(ClientTokenIntent.ADYEN_MOBILEPAY_REDIRECTION),
     ADYEN_IDEAL(ClientTokenIntent.ADYEN_IDEAL_REDIRECTION),
     ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION),
+    ADYEN_BLIK(ClientTokenIntent.ADYEN_BLIK_REDIRECTION),
+    ADYEN_MBWAY(ClientTokenIntent.ADYEN_MBWAY_REDIRECTION),
+    ADYEN_BANK_TRANSFER,
     MOLLIE_BANCONTACT(ClientTokenIntent.MOLLIE_BANCONTACT_REDIRECTION),
     MOLLIE_IDEAL(ClientTokenIntent.MOLLIE_IDEAL_REDIRECTION),
     BUCKAROO_GIROPAY(ClientTokenIntent.BUCKAROO_GIROPAY_REDIRECTION),
@@ -42,6 +45,7 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     BUCKAROO_EPS(ClientTokenIntent.BUCKAROO_EPS_REDIRECTION),
     BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION),
     ATOME(ClientTokenIntent.ATOME_REDIRECTION),
+    XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION),
     UNKNOWN;
 
     companion object {

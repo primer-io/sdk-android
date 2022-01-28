@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 internal class RemoteVaultedPaymentMethodsDataSource(
     private val primerHttpClient: PrimerHttpClient,
-) : BaseDataSource<List<PaymentMethodVaultTokenInternal>, Configuration>() {
+) : BaseDataSource<List<PaymentMethodVaultTokenInternal>, Configuration> {
 
     override fun execute(input: Configuration) =
         primerHttpClient.get<PaymentMethodTokenInternalResponse>(

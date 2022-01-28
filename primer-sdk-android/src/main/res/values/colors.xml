@@ -30,9 +30,12 @@
     <color name="alipay">#1677FF</color>
     <color name="vipps">#FF5B24</color>
     <color name="mobilepay">#5A78FF</color>
+    <color name="blik">#040404</color>
     <color name="bancontact">#000268</color>
     <color name="payconiq">#FF4785</color>
+    <color name="bank_transfer">#0054A6</color>
     <color name="atome">#F0FF5F</color>
+    <color name="xfers">#941F7F</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

@@ -71,6 +71,7 @@
     </RelativeLayout>
 
     <include
+        android:id="@+id/error_layout"
         layout="@layout/error_loading_layout"
         android:visibility="gone" />
 

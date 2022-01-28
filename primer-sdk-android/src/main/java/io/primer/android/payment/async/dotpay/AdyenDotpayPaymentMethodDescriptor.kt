@@ -3,8 +3,8 @@ package io.primer.android.payment.async.dotpay
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import io.primer.android.R
+import io.primer.android.databinding.PaymentMethodButtonDotpayBinding
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
@@ -34,17 +34,17 @@ internal class AdyenDotpayPaymentMethodDescriptor(
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override fun createButton(container: ViewGroup): View {
-        val button = LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_dotpay,
+        val binding = PaymentMethodButtonDotpayBinding.inflate(
+            LayoutInflater.from(container.context),
             container,
             false
         )
 
-        val icon = button.findViewById<ImageView>(R.id.icon)
+        val icon = binding.icon
         icon.setImageResource(
             if (localConfig.theme.isDarkMode == true) R.drawable.ic_logo_dotpay_dark
             else R.drawable.ic_logo_dotpay_light
         )
-        return button
+        return binding.root
     }
 }

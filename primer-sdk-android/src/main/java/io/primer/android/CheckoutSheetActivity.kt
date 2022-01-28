@@ -47,6 +47,7 @@ import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
 import io.primer.android.ui.fragments.SessionCompleteViewType
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
+import io.primer.android.ui.fragments.forms.QrCodeFragment
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -127,7 +128,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             is CheckoutEvent.Start3DS -> {
                 startActivity(ThreeDsActivity.getLaunchIntent(this))
             }
-            is CheckoutEvent.StartAsyncFlow -> {
+            is CheckoutEvent.StartAsyncRedirectFlow -> {
                 startActivityForResult(
                     AsyncPaymentMethodWebViewActivity.getLaunchIntent(
                         this,
@@ -141,6 +142,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     ),
                     ASYNC_METHOD_REQUEST_CODE
                 )
+            }
+            is CheckoutEvent.StartAsyncFlow -> {
+                openFragment(QrCodeFragment.newInstance(it.statusUrl), true)
             }
         }
     }
@@ -256,8 +260,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             else ClientSessionActionsRequest.SetPaymentMethod(type)
 
         primerViewModel.dispatchAction(action, false) { error: Error? ->
-            if (error == null) presentFragment(descriptor.selectedBehaviour)
-            else emitError(error)
+            runOnUiThread {
+                if (error == null) presentFragment(descriptor.selectedBehaviour)
+                else emitError(error)
+            }
         }
     }
 
@@ -334,6 +340,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         subscription = EventBus.subscribe {
             when (it) {
                 is CheckoutEvent.StartAsyncFlow,
+                is CheckoutEvent.StartAsyncRedirectFlow,
                 is CheckoutEvent.Start3DS,
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,

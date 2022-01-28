@@ -2,16 +2,8 @@ package io.primer.android.ui.fragments.bank
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.RelativeLayout
-import android.widget.Space
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -25,11 +17,13 @@ import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.di.BANK_SELECTOR_SCOPE
 import io.primer.android.di.DIAppComponent
-import io.primer.android.extensions.getCollapsedSheetHeight
+import io.primer.android.ui.extensions.getCollapsedSheetHeight
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.BankSelectionAdapter
 import io.primer.android.ui.BankSelectionAdapterListener
+import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.utils.ImageLoader
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -53,15 +47,15 @@ internal abstract class BaseBankSelectionFragment :
     protected val theme: PrimerTheme by inject()
     private val imageLoader: ImageLoader by inject()
 
-    private lateinit var adapter: BankSelectionAdapter
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var chooseBankParent: RelativeLayout
-    private lateinit var errorLayout: ConstraintLayout
-    private lateinit var progressBar: ProgressBar
+    private var adapter: BankSelectionAdapter by autoCleaned {
+        BankSelectionAdapter(
+            this,
+            imageLoader,
+            theme
+        )
+    }
 
-    private lateinit var space: Space
-
-    protected abstract val layoutId: Int
+    protected abstract val baseBinding: BaseBankSelectionBinding
     protected abstract val viewModel: BankSelectionViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,18 +63,10 @@ internal abstract class BaseBankSelectionFragment :
         getKoin().getOrCreateScope(BANK_SELECTOR_SCOPE, named(BANK_SELECTOR_SCOPE))
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        return inflater.inflate(layoutId, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews(view)
-        setupListeners(view)
+        setupViews()
+        setupListeners()
         setupObservers()
         loadData()
     }
@@ -99,40 +85,33 @@ internal abstract class BaseBankSelectionFragment :
         primerViewModel.executeBehaviour(descriptor.behaviours.first())
     }
 
-    protected open fun setupViews(view: View) {
-        val title = view.findViewById<TextView>(R.id.choose_bank_title)
-        title.setTextColor(
+    protected open fun setupViews() {
+        baseBinding.chooseBankTitle.setTextColor(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode
             )
         )
 
-        val backIcon = view.findViewById<ImageView>(R.id.payment_method_back)
-        backIcon.setColorFilter(
+        baseBinding.paymentMethodBack.setColorFilter(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode
             )
         )
 
-        progressBar = view.findViewById(R.id.progress_bar)
-        progressBar.indeterminateDrawable.setTint(
+        baseBinding.progressBar.indeterminateDrawable.setTint(
             theme.primaryColor.getColor(
                 requireContext(),
                 theme.isDarkMode
             )
         )
 
-        progressBar.updateLayoutParams<RelativeLayout.LayoutParams> {
-            this.height = view.context.getCollapsedSheetHeight()
+        baseBinding.progressBar.updateLayoutParams<RelativeLayout.LayoutParams> {
+            this.height = requireContext().getCollapsedSheetHeight()
         }
-        chooseBankParent = view.findViewById(R.id.choose_bank_parent)
-        errorLayout = view.findViewById(R.id.error_layout_parent)
-        space = view.findViewById(R.id.spacer)
 
-        recyclerView = view.findViewById(R.id.choose_bank_recycler_view)
-        recyclerView.addItemDecoration(
+        baseBinding.recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
                 DividerItemDecoration.VERTICAL
@@ -144,7 +123,7 @@ internal abstract class BaseBankSelectionFragment :
             }
         )
         adapter = BankSelectionAdapter(this, imageLoader, theme)
-        recyclerView.adapter = adapter
+        baseBinding.recyclerView.adapter = adapter
 
         setupErrorViews()
         adjustBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
@@ -164,17 +143,17 @@ internal abstract class BaseBankSelectionFragment :
         }
     }
 
-    private fun setupListeners(view: View) {
-        view.findViewById<ImageView>(R.id.payment_method_back).setOnClickListener {
+    private fun setupListeners() {
+        baseBinding.paymentMethodBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-        view.findViewById<Button>(R.id.try_again).setOnClickListener {
+        baseBinding.errorLayout.tryAgain.setOnClickListener {
             loadData()
         }
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        baseBinding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                view.findViewById<View>(R.id.choose_bank_divider_bottom).visibility =
+                baseBinding.chooseBankDividerBottom.visibility =
                     when (newState == RecyclerView.SCROLL_STATE_IDLE) {
                         true -> View.INVISIBLE
                         false -> View.VISIBLE
@@ -197,25 +176,25 @@ internal abstract class BaseBankSelectionFragment :
     }
 
     private fun onLoadingSuccess() {
-        chooseBankParent.isVisible = true
-        errorLayout.isVisible = false
-        space.isVisible = true
+        baseBinding.chooseBankParent.isVisible = true
+        baseBinding.errorLayout.errorLayoutParent.isVisible = false
+        baseBinding.spacer.isVisible = true
     }
 
     private fun onLoadingError() {
-        chooseBankParent.isVisible = false
-        errorLayout.isVisible = true
-        space.isVisible = false
+        baseBinding.chooseBankParent.isVisible = false
+        baseBinding.errorLayout.errorLayoutParent.isVisible = true
+        baseBinding.spacer.isVisible = false
         adjustBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
     }
 
     private fun onLoading(showLoader: Boolean) {
-        progressBar.isVisible = showLoader
-        errorLayout.isVisible = false
+        baseBinding.progressBar.isVisible = showLoader
+        baseBinding.errorLayout.errorLayoutParent.isVisible = false
     }
 
     private fun setupErrorViews() {
-        errorLayout.findViewById<ImageView>(R.id.error_icon).imageTintList =
+        baseBinding.errorLayout.errorIcon.imageTintList =
             ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     requireContext(),
@@ -223,7 +202,7 @@ internal abstract class BaseBankSelectionFragment :
                 )
             )
 
-        errorLayout.findViewById<TextView>(R.id.error_message).setTextColor(
+        baseBinding.errorLayout.errorMessage.setTextColor(
             ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     requireContext(),

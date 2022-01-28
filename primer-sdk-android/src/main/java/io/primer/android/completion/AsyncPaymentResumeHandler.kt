@@ -1,5 +1,6 @@
 package io.primer.android.completion
 
+import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -15,11 +16,22 @@ internal class AsyncPaymentResumeHandler(
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
-        eventDispatcher.dispatchEvent(
-            CheckoutEvent.StartAsyncFlow(
-                clientTokenRepository.getRedirectUrl().orEmpty(),
-                clientTokenRepository.getStatusUrl().orEmpty()
+        if (clientTokenRepository.getClientTokenIntent()
+            == ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
+        ) {
+            eventDispatcher.dispatchEvent(
+                CheckoutEvent.StartAsyncFlow(
+                    clientTokenRepository.getQrCode().orEmpty(),
+                    clientTokenRepository.getStatusUrl().orEmpty()
+                )
             )
-        )
+        } else {
+            eventDispatcher.dispatchEvent(
+                CheckoutEvent.StartAsyncRedirectFlow(
+                    clientTokenRepository.getRedirectUrl().orEmpty(),
+                    clientTokenRepository.getStatusUrl().orEmpty()
+                )
+            )
+        }
     }
 }

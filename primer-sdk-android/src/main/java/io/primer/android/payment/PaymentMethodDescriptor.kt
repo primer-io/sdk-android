@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
+import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
 import java.util.Collections
 
@@ -25,7 +26,7 @@ abstract class PaymentMethodDescriptor(
     // FIXME this should not be here. a model should not be responsible creating views
     abstract fun createButton(container: ViewGroup): View
 
-    open fun getLoadingResourceId(): Int? = null
+    open fun getLoadingState(): LoadingState? = null
 
     // FIXME all this should not be here. a model should not be responsible for parsing itself into json
     protected fun getStringValue(key: String): String {
@@ -47,6 +48,8 @@ abstract class PaymentMethodDescriptor(
     open fun validate(): List<SyncValidationError> {
         return Collections.emptyList()
     }
+
+    open fun getValidAutoFocusableFields(): Set<String> = hashSetOf()
 
     open fun toPaymentInstrument(): JSONObject {
         return values

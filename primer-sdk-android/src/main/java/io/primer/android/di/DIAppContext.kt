@@ -20,10 +20,12 @@ internal object DIAppContext {
                     ClientToken.fromString(config.clientTokenBase64.orEmpty())
                 ),
                 PaymentMethodsModule(),
+                formsModule(),
                 apayaModule(),
                 asyncPaymentMethodModule(),
                 tokenizationModule(),
                 rpcModule(),
+                paypalModule(),
                 NetworkModule(),
                 imageLoaderModule()
             )

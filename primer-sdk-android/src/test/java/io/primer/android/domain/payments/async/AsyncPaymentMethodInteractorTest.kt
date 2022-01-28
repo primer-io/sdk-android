@@ -7,13 +7,14 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.completion.ResumeHandler
+import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -34,10 +35,13 @@ class AsyncPaymentMethodInteractorTest {
     internal lateinit var asyncPaymentMethodStatusRepository: AsyncPaymentMethodStatusRepository
 
     @RelaxedMockK
+    internal lateinit var paymentMethodRepository: PaymentMethodRepository
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
-    internal lateinit var resumeHandler: ResumeHandler
+    internal lateinit var resumeHandlerFactory: ResumeHandlerFactory
 
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
@@ -49,8 +53,9 @@ class AsyncPaymentMethodInteractorTest {
         interactor =
             AsyncPaymentMethodInteractor(
                 asyncPaymentMethodStatusRepository,
+                paymentMethodRepository,
                 eventDispatcher,
-                resumeHandler,
+                resumeHandlerFactory,
                 testCoroutineDispatcher
             )
     }

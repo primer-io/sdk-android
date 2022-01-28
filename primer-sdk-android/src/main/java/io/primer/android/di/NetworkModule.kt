@@ -54,5 +54,6 @@ internal val NetworkModule = {
 
 internal enum class ApiVersion(val version: String) {
     CONFIGURATION_VERSION("2021-10-19"),
-    PAYMENT_INSTRUMENTS_VERSION("2021-12-10")
+    PAYMENT_INSTRUMENTS_VERSION("2021-12-10"),
+    THREE_DS_VERSION("2021-12-10")
 }

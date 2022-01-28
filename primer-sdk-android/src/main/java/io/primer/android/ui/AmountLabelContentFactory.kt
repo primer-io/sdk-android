@@ -3,7 +3,7 @@ package io.primer.android.ui
 import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.model.dto.PrimerConfig
 
-internal class AmountLabelContentFactory {
+internal class AmountLabelContentFactory private constructor() {
 
     companion object {
 

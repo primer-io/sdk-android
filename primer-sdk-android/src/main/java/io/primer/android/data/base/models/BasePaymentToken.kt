@@ -10,6 +10,7 @@ internal abstract class BasePaymentToken {
     abstract val paymentInstrumentData: PaymentInstrumentData?
     abstract val vaultData: VaultData?
     abstract val threeDSecureAuthentication: AuthenticationDetails?
+    abstract val isVaulted: Boolean
 
     @Serializable
     data class VaultData(

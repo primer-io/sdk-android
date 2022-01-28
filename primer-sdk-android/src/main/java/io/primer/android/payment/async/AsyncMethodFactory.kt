@@ -8,7 +8,7 @@ import io.primer.android.utils.Either
 import io.primer.android.utils.Success
 
 internal class AsyncMethodFactory(val type: PaymentMethodType, val settings: PrimerSettings) :
-    PaymentMethodFactory() {
+    PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
         return Success(AsyncPaymentMethod(type))

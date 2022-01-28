@@ -12,7 +12,8 @@ internal data class ClientToken(
     val accessToken: String,
     val exp: Int,
     val statusUrl: String? = null,
-    val redirectUrl: String? = null
+    val redirectUrl: String? = null,
+    val qrCode: String? = null
 ) {
 
     companion object {

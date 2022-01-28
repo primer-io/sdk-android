@@ -45,6 +45,8 @@ internal class CardNumberFormatter private constructor(
             else -> isLuhnValid()
         }
 
+    fun getMaxLength() = meta.lengths.maxOf { it }
+
     fun getCvvLength(): Int = meta.cvvLength
 
     @Suppress("MagicNumber")

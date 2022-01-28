@@ -193,9 +193,13 @@
         <item name="android:textSize">@dimen/primer_text_size_sm</item>
     </style>
 
+    <style name="Primer.Text.ExtraSmall" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_s</item>
+    </style>
+
     <style name="Primer.Text.FormLabelSmall">
         <item name="android:textColor">@color/primer_text_color_muted</item>
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">@dimen/primer_text_size_s</item>
     </style>
 
     <style name="Primer.Text.Small.Muted" parent="Primer.Text.Small">

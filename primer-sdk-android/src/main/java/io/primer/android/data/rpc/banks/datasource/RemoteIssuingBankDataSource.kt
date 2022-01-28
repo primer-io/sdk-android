@@ -8,7 +8,7 @@ import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteIssuingBankDataSource(
     private val primerHttpClient: PrimerHttpClient,
-) : BaseDataSource<IssuingBankResultResponse, BaseRemoteRequest<IssuingBankRequest>>() {
+) : BaseDataSource<IssuingBankResultResponse, BaseRemoteRequest<IssuingBankRequest>> {
 
     override fun execute(input: BaseRemoteRequest<IssuingBankRequest>) =
         primerHttpClient.post<IssuingBankRequest, IssuingBankResultResponse>(

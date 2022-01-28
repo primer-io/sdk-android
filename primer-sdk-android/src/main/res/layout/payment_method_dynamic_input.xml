@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.primer.android.ui.components.TextInputWidget xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="@dimen/large_vertical_margin"
+    android:layout_marginStart="4dp">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</io.primer.android.ui.components.TextInputWidget>

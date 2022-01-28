@@ -6,7 +6,7 @@ import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteAsyncPaymentMethodStatusDataSource(
     private val primerHttpClient: PrimerHttpClient
-) : BaseDataSource<AsyncPaymentMethodStatusResponse, String>() {
+) : BaseDataSource<AsyncPaymentMethodStatusResponse, String> {
 
     override fun execute(input: String) = primerHttpClient.get<AsyncPaymentMethodStatusResponse>(
         input

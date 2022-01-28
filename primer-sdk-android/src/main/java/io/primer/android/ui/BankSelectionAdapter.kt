@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
+import io.primer.android.databinding.ItemBankSelectBinding
+import io.primer.android.databinding.ItemBankSelectDisabledBinding
+import io.primer.android.databinding.ItemBankSelectLoadingBinding
+import io.primer.android.ui.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
 import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
@@ -29,7 +31,7 @@ internal abstract class BaseBankItem(
     open val id: String,
     open val name: String,
     open val logoUrl: String
-) : BaseAdapterItem()
+) : BaseAdapterItem
 
 internal data class BankItem(
     override val id: String,
@@ -62,45 +64,60 @@ internal data class BankItemLoading(
     override fun getType() = BankItemType.BANK_ITEM_LOADING.ordinal
 }
 
+internal class BaseBankBinding(
+    val name: TextView,
+    val icon: ImageView,
+    val root: View
+)
+
+internal fun ItemBankSelectBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
+internal fun ItemBankSelectDisabledBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
+internal fun ItemBankSelectLoadingBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
+
 internal open class BaseBankViewHolder(
-    itemView: View,
+    private val binding: BaseBankBinding,
     private val imageLoader: ImageLoader,
     protected val theme: PrimerTheme,
-) : BaseViewHolder<BaseBankItem>(itemView) {
+) : BaseViewHolder<BaseBankItem>(binding.root) {
 
     override fun bind(item: BaseBankItem) {
-        val bankName = itemView.findViewById<TextView>(R.id.name)
+        val bankName = binding.name
         bankName.text = item.name
-        bankName
-            .setTextColor(theme.titleText.defaultColor.getColor(itemView.context, theme.isDarkMode))
+        bankName.setTextColor(
+            theme.titleText.defaultColor.getColor(
+                binding.root.context,
+                theme.isDarkMode
+            )
+        )
 
         imageLoader.loadImage(
-            item.logoUrl, TextDrawable(itemView.resources, item.name.first().toString()),
-            itemView.findViewById(R.id.icon)
+            item.logoUrl,
+            TextDrawable(binding.root.resources, item.name.first().toString()),
+            binding.icon
         )
     }
 
     override fun unbind() {
-        itemView.findViewById<ImageView>(R.id.icon).setImageBitmap(null)
-        imageLoader.clear(itemView.findViewById(R.id.icon))
+        binding.icon.setImageBitmap(null)
+        imageLoader.clear(binding.icon)
     }
 }
 
 internal class BankViewHolder(
-    itemView: View,
+    private val binding: ItemBankSelectBinding,
     imageLoader: ImageLoader,
     theme: PrimerTheme,
     private val listener: BankSelectionAdapterListener
-) : BaseBankViewHolder(itemView, imageLoader, theme) {
+) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
 
     override fun bind(item: BaseBankItem) {
         super.bind(item)
-        itemView.findViewById<TextView>(R.id.name).setCompoundDrawablesWithIntrinsicBoundsTinted(
+        binding.name.setCompoundDrawablesWithIntrinsicBoundsTinted(
             0,
             0,
             R.drawable.ic_arrow_right,
             0,
-            theme.input.text.defaultColor.getColor(itemView.context, theme.isDarkMode)
+            theme.input.text.defaultColor.getColor(binding.root.context, theme.isDarkMode)
         )
         itemView.setOnClickListener {
             listener.onBankSelected(item.id)
@@ -109,34 +126,33 @@ internal class BankViewHolder(
 }
 
 internal class BankViewDisabledHolder(
-    itemView: View,
+    private val binding: ItemBankSelectDisabledBinding,
     imageLoader: ImageLoader,
     theme: PrimerTheme,
-) : BaseBankViewHolder(itemView, imageLoader, theme) {
+) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
 
     override fun bind(item: BaseBankItem) {
         super.bind(item)
-        itemView.findViewById<TextView>(R.id.name).setCompoundDrawablesWithIntrinsicBoundsTinted(
+        binding.name.setCompoundDrawablesWithIntrinsicBoundsTinted(
             0,
             0,
             R.drawable.ic_arrow_right,
             0,
-            theme.input.text.defaultColor.getColor(itemView.context, theme.isDarkMode)
+            theme.input.text.defaultColor.getColor(binding.root.context, theme.isDarkMode)
         )
     }
 }
 
 internal class BankViewLoadingHolder(
-    itemView: View,
+    private val binding: ItemBankSelectLoadingBinding,
     imageLoader: ImageLoader,
     theme: PrimerTheme,
-) : BaseBankViewHolder(itemView, imageLoader, theme) {
+) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
     override fun bind(item: BaseBankItem) {
         super.bind(item)
-        val progressBar = itemView.findViewById<ProgressBar>(R.id.progress_bar)
-        progressBar.indeterminateDrawable.setTint(
+        binding.progressBar.indeterminateDrawable.setTint(
             theme.primaryColor.getColor(
-                itemView.context,
+                binding.root.context,
                 theme.isDarkMode
             )
         )
@@ -151,23 +167,26 @@ internal class BankSelectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         BankItemType.BANK_ITEM_ENABLED.ordinal -> BankViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_bank_select, parent, false,
+            ItemBankSelectBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent, false,
             ),
             imageLoader,
             theme,
             listener
         )
         BankItemType.BANK_ITEM_DISABLED.ordinal -> BankViewDisabledHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_bank_select_disabled, parent, false,
+            ItemBankSelectDisabledBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent, false,
             ),
             imageLoader,
             theme
         )
         BankItemType.BANK_ITEM_LOADING.ordinal -> BankViewLoadingHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_bank_select_loading, parent, false,
+            ItemBankSelectLoadingBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent, false,
             ),
             imageLoader,
             theme,

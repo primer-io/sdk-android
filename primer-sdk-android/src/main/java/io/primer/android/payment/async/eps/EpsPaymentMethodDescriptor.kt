@@ -8,6 +8,7 @@ import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
+import io.primer.android.ui.payment.LoadingState
 
 internal class EpsPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
@@ -17,7 +18,7 @@ internal class EpsPaymentMethodDescriptor(
 
     override val title = "EPS"
 
-    override fun getLoadingResourceId() = R.drawable.ic_logo_eps_square
+    override fun getLoadingState() = LoadingState(R.drawable.ic_logo_eps_square)
 
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(

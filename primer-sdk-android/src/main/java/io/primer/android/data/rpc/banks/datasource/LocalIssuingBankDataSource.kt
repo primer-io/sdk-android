@@ -5,7 +5,7 @@ import io.primer.android.data.rpc.banks.models.IssuingBankResponse
 import kotlinx.coroutines.flow.flowOf
 
 internal class LocalIssuingBankDataSource :
-    BaseFlowCacheDataSource<List<IssuingBankResponse>, List<IssuingBankResponse>>() {
+    BaseFlowCacheDataSource<List<IssuingBankResponse>, List<IssuingBankResponse>> {
 
     private val issuersList = mutableListOf<IssuingBankResponse>()
 

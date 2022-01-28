@@ -8,6 +8,7 @@ import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
+import io.primer.android.ui.payment.LoadingState
 
 internal class TwintPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
@@ -17,7 +18,7 @@ internal class TwintPaymentMethodDescriptor(
 
     override val title = "TWINT"
 
-    override fun getLoadingResourceId() = R.drawable.ic_logo_twint_square
+    override fun getLoadingState() = LoadingState(R.drawable.ic_logo_twint_square)
 
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(

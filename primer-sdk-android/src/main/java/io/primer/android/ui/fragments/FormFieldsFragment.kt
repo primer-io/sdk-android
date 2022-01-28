@@ -17,14 +17,16 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.hbb20.CountryCodePicker
 import io.primer.android.R
+import io.primer.android.databinding.FragmentFormFieldsBinding
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.FormField
+import io.primer.android.ui.extensions.autoCleaned
 
 private const val BOTTOM_MARGIN = 16
 
 internal class FormFieldsFragment : FormChildFragment() {
 
-    private lateinit var layout: ViewGroup
+    private var binding: FragmentFormFieldsBinding by autoCleaned()
     private val fieldIds: MutableMap<String, Int> = HashMap()
 
     interface InputChangeListener {
@@ -135,14 +137,13 @@ internal class FormFieldsFragment : FormChildFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_form_fields, container, false)
+    ): View {
+        binding = FragmentFormFieldsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        layout = view.findViewById(R.id.fragment_form_fields)
 
         viewModel.fields.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
@@ -159,7 +160,8 @@ internal class FormFieldsFragment : FormChildFragment() {
                     val value = it.value
 
                     fieldIds[key]?.let { id ->
-                        val inputLayout = layout.findViewById<TextInputLayout>(id)
+                        val inputLayout =
+                            binding.fragmentFormFields.findViewById<TextInputLayout>(id)
                         val inputField = inputLayout.findViewById<TextInputEditText>(
                             R.id.form_input_field
                         )
@@ -178,17 +180,17 @@ internal class FormFieldsFragment : FormChildFragment() {
 
     private fun clearViews() {
         fieldIds.clear()
-        layout.removeAllViews()
+        binding.fragmentFormFields.removeAllViews()
     }
 
     private fun hideView() {
         clearViews()
-        layout.visibility = View.GONE
+        binding.fragmentFormFields.visibility = View.GONE
     }
 
     private fun showFields(items: List<FormField>) {
         clearViews()
-        layout.visibility = View.VISIBLE
+        binding.fragmentFormFields.visibility = View.VISIBLE
 
         var focused: View? = null
 
@@ -197,10 +199,10 @@ internal class FormFieldsFragment : FormChildFragment() {
             if (focused == null && field.autoFocus) {
                 focused = view
             }
-            layout.addView(view)
+            binding.fragmentFormFields.addView(view)
         }
 
-        layout.requestLayout()
+        binding.fragmentFormFields.requestLayout()
 
         FieldFocuser.focus(focused?.findViewById(R.id.form_input_field))
     }

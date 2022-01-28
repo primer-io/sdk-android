@@ -1,7 +1,7 @@
 package io.primer.android.ui.base.recyclerview
 
 import androidx.recyclerview.widget.RecyclerView
-import io.primer.android.extensions.autoNotify
+import io.primer.android.ui.extensions.autoNotify
 import kotlin.properties.Delegates
 
 internal abstract class BaseRecyclerViewAdapter<T : BaseAdapterItem>(compare: (T, T) -> Boolean) :

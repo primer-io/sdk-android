@@ -7,7 +7,7 @@ import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteVaultedPaymentMethodsExchangeDataSource(
     private val primerHttpClient: PrimerHttpClient,
-) : BaseDataSource<PaymentMethodTokenInternal, BaseRemoteRequest<String>>() {
+) : BaseDataSource<PaymentMethodTokenInternal, BaseRemoteRequest<String>> {
 
     override fun execute(input: BaseRemoteRequest<String>) =
         primerHttpClient.post<Unit, PaymentMethodTokenInternal>(

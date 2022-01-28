@@ -8,7 +8,7 @@ import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteVaultedPaymentMethodDeleteDataSource(
     private val primerHttpClient: PrimerHttpClient,
-) : BaseDataSource<Unit, BaseRemoteRequest<String>>() {
+) : BaseDataSource<Unit, BaseRemoteRequest<String>> {
 
     override fun execute(input: BaseRemoteRequest<String>) =
         primerHttpClient.delete<Unit>(

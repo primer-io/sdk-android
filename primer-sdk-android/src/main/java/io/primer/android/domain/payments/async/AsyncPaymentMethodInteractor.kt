@@ -1,6 +1,6 @@
 package io.primer.android.domain.payments.async
 
-import io.primer.android.completion.ResumeHandler
+import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.exception.AsyncFlowIncompleteException
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
@@ -10,6 +10,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
 import io.primer.android.extensions.toResumeErrorEvent
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -19,8 +20,9 @@ import kotlinx.coroutines.flow.retry
 
 internal class AsyncPaymentMethodInteractor(
     private val paymentMethodStatusRepository: AsyncPaymentMethodStatusRepository,
+    private val paymentMethodRepository: PaymentMethodRepository,
     private val eventDispatcher: EventDispatcher,
-    private val resumeHandler: ResumeHandler,
+    private val resumeHandlerFactory: ResumeHandlerFactory,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseInteractor<AsyncStatus, AsyncMethodParams>() {
 
@@ -35,7 +37,9 @@ internal class AsyncPaymentMethodInteractor(
             eventDispatcher.dispatchEvent(
                 CheckoutEvent.ResumeSuccess(
                     it.resumeToken,
-                    resumeHandler
+                    resumeHandlerFactory.getResumeHandler(
+                        paymentMethodRepository.getPaymentMethod().paymentInstrumentType
+                    )
                 )
             )
         }.doOnError {

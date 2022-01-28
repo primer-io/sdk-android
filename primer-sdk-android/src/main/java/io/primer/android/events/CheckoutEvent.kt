@@ -69,6 +69,13 @@ sealed class CheckoutEvent(
 
     internal object Start3DS : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
 
-    internal class StartAsyncFlow(val redirectUrl: String, val statusUrl: String) :
-        PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
+    internal class StartAsyncRedirectFlow(
+        val redirectUrl: String,
+        val statusUrl: String,
+    ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
+
+    internal class StartAsyncFlow(
+        val qrCode: String,
+        val statusUrl: String,
+    ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 }

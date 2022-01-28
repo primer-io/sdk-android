@@ -9,7 +9,7 @@ import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.Success
 import java.util.Currency
 
-internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFactory() {
+internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
         if (settings.currentAmount == 0) {

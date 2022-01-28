@@ -7,12 +7,12 @@ import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
@@ -73,8 +73,8 @@ internal class CreditCard(
     }
 
     override fun createButton(container: ViewGroup): View {
-        val button = LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_card,
+        val binding = PaymentMethodButtonCardBinding.inflate(
+            LayoutInflater.from(container.context),
             container,
             false
         )
@@ -82,9 +82,9 @@ internal class CreditCard(
         val content = generateButtonContent(container.context)
         val splash = theme.splashColor.getColor(container.context, theme.isDarkMode)
         val rippleColor = ColorStateList.valueOf(splash)
-        button.background = RippleDrawable(rippleColor, content, null)
+        binding.cardPreviewButton.background = RippleDrawable(rippleColor, content, null)
 
-        val text = button.findViewById<TextView>(R.id.card_preview_button_text)
+        val text = binding.cardPreviewButtonText
         val drawable = ContextCompat.getDrawable(
             container.context,
             R.drawable.credit_card_icon
@@ -114,7 +114,7 @@ internal class CreditCard(
             )
         )
 
-        return button
+        return binding.root
     }
 
     // FIXME a model should not be responsible for parsing itself into json
@@ -230,6 +230,22 @@ internal class CreditCard(
         }
 
         return errors
+    }
+
+    override fun getValidAutoFocusableFields(): Set<String> {
+        val fields = hashSetOf<String>()
+        val number = CardNumberFormatter.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
+        if (number.isValid() && number.getMaxLength() == number.getValue().length) {
+            fields.add(CARD_NUMBER_FIELD_NAME)
+        }
+
+        val cvv = getSanitizedValue(CARD_CVV_FIELD_NAME)
+        if (cvv.length == number.getCvvLength()) fields.add(CARD_CVV_FIELD_NAME)
+
+        val expiry = ExpiryDateFormatter.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
+        if (expiry.isValid()) fields.add(CARD_EXPIRY_FIELD_NAME)
+
+        return fields
     }
 
     private fun getSanitizedValue(key: String): String {

@@ -53,6 +53,7 @@ internal object PaymentMethodTokenAdapter {
                     it.challengeIssued
                 )
             },
+            isVaulted = token.isVaulted
         )
     }
 
@@ -98,6 +99,7 @@ internal object PaymentMethodTokenAdapter {
             paymentInstrumentData = paymentInstrumentData,
             vaultData = vaultData,
             threeDSecureAuthentication = threeDSecureAuthentication,
+            isVaulted = token.isVaulted
         )
     }
 }
@@ -110,6 +112,7 @@ data class PaymentMethodToken(
     val paymentInstrumentData: PaymentInstrumentData?,
     val vaultData: VaultData?,
     val threeDSecureAuthentication: AuthenticationDetails? = null,
+    val isVaulted: Boolean
 ) {
 
     data class VaultData(

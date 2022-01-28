@@ -17,13 +17,14 @@ class ClientSessionRepository {
     fun fetch(
         client: OkHttpClient,
         customerId: String,
+        orderId: String,
         amount: Int,
         countryCode: String,
         currency: String,
         environment: String,
         callback: (token: String?) -> Unit,
     ) {
-        val body = ClientSession.Request.build(customerId, amount, countryCode, currency)
+        val body = ClientSession.Request.build(customerId, orderId, amount, countryCode, currency)
         val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientSession, environment)
         client.cache()?.delete()
         client.newCall(request).enqueue(object : Callback {

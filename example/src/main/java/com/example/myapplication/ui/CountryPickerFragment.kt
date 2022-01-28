@@ -39,6 +39,7 @@ class CountryPickerFragment : Fragment() {
         binding.swedenItem.setText("🇸🇪")
         binding.singaporeItem.setText("🇸🇬")
         binding.norwayItem.setText("🇳🇴")
+        binding.netherlandsItem.setText("🇳🇱")
 
         // observe country
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
@@ -48,6 +49,7 @@ class CountryPickerFragment : Fragment() {
             binding.swedenItem.isSelected = country == "SE"
             binding.singaporeItem.isSelected = country == "SG"
             binding.norwayItem.isSelected = country == "NO"
+            binding.netherlandsItem.isSelected = country == "NL"
         }
 
         // set on click listeners
@@ -78,6 +80,11 @@ class CountryPickerFragment : Fragment() {
 
         binding.norwayItem.setOnClickListener {
             settingsViewModel.setCountry("NO")
+            findNavController().navigate(R.id.action_CountryPickerFragment_to_firstFragment)
+        }
+
+        binding.netherlandsItem.setOnClickListener {
+            settingsViewModel.setCountry("NL")
             findNavController().navigate(R.id.action_CountryPickerFragment_to_firstFragment)
         }
     }

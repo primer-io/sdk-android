@@ -7,7 +7,7 @@ import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
 import io.primer.android.utils.Success
 
-internal class GoCardlessFactory(val settings: PrimerSettings) : PaymentMethodFactory() {
+internal class GoCardlessFactory(val settings: PrimerSettings) : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
         if (settings.business.name == null) {

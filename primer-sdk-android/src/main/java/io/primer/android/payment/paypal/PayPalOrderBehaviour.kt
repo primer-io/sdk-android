@@ -24,7 +24,10 @@ internal class PayPalOrderBehaviour(
 
     override fun onSuccess(uri: Uri) {
         paypal.setTokenizableValue("paypalOrderId", uri.getQueryParameter("token") ?: "")
-        tokenizationViewModel?.tokenize()
+        tokenizationViewModel?.getPaypalOrderInfo(
+            paypal,
+            uri.getQueryParameter("token").orEmpty()
+        )
     }
 
     override fun onCancel(uri: Uri?) {

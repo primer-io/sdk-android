@@ -4,37 +4,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import io.primer.android.R
+import io.primer.android.databinding.FragmentFormTitleBinding
 import io.primer.android.ui.FormProgressState
 import io.primer.android.ui.FormTitleState
+import io.primer.android.ui.extensions.autoCleaned
 
 internal class FormTitleFragment : FormChildFragment() {
 
-    private lateinit var mProgress: ViewGroup
+    private var binding: FragmentFormTitleBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_form_title, container, false)
+    ): View {
+        binding = FragmentFormTitleBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mProgress = view.findViewById(R.id.form_progress_container)
-
-        view.findViewById<ImageView>(R.id.form_title_go_back).setOnClickListener {
+        binding.formTitleGoBack.setOnClickListener {
             dispatchFormEvent(FormActionEvent.GoBack())
         }
 
-        view.findViewById<Button>(R.id.form_title_cancel_button).setOnClickListener {
+        binding.formTitleCancelButton.setOnClickListener {
             dispatchFormEvent(
                 if (viewModel.title.value?.cancelBehaviour == FormTitleState.CancelBehaviour.CANCEL)
                     FormActionEvent.Cancel()
@@ -44,8 +42,8 @@ internal class FormTitleFragment : FormChildFragment() {
         }
 
         viewModel.title.observe(viewLifecycleOwner) {
-            val titleView = view.findViewById<TextView>(R.id.form_title)
-            val descriptionView = view.findViewById<TextView>(R.id.form_title_description)
+            val titleView = binding.formTitle
+            val descriptionView = binding.formTitleDescription
 
             it?.let { state ->
                 titleView.text = requireContext().getString(state.titleId)
@@ -64,19 +62,19 @@ internal class FormTitleFragment : FormChildFragment() {
     }
 
     private fun addIndicators(state: FormProgressState?) {
-        mProgress.removeAllViews()
+        binding.formProgressContainer.removeAllViews()
 
         if (state == null) {
-            mProgress.visibility = View.GONE
+            binding.formProgressContainer.visibility = View.GONE
         } else {
-            mProgress.visibility = View.VISIBLE
+            binding.formProgressContainer.visibility = View.VISIBLE
 
             for (i in 1..state.max) {
-                mProgress.addView(createIndicator(i == state.current))
+                binding.formProgressContainer.addView(createIndicator(i == state.current))
             }
         }
 
-        mProgress.requestLayout()
+        binding.formProgressContainer.requestLayout()
     }
 
     private fun createIndicator(active: Boolean): View {

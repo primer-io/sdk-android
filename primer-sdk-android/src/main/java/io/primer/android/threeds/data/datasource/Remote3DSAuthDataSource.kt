@@ -1,6 +1,8 @@
 package io.primer.android.threeds.data.datasource
 
 import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.di.ApiVersion
+import io.primer.android.di.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import io.primer.android.threeds.data.models.BeginAuthRequest
 import io.primer.android.threeds.data.models.BeginAuthResponse
@@ -14,7 +16,8 @@ internal class Remote3DSAuthDataSource(private val httpClient: PrimerHttpClient)
         beginAuthRequest: BeginAuthRequest,
     ) = httpClient.post<BeginAuthRequest, BeginAuthResponse>(
         "${configuration.pciUrl}/3ds/$token/auth",
-        beginAuthRequest
+        beginAuthRequest,
+        mapOf(SDK_API_VERSION_HEADER to ApiVersion.THREE_DS_VERSION.version)
     )
 
     fun continue3dsAuth(
@@ -22,6 +25,7 @@ internal class Remote3DSAuthDataSource(private val httpClient: PrimerHttpClient)
         threeDSTokenId: String,
     ) = httpClient.post<Unit, PostAuthResponse>(
         "${configuration.pciUrl}/3ds/$threeDSTokenId/continue",
-        Unit
+        Unit,
+        mapOf(SDK_API_VERSION_HEADER to ApiVersion.THREE_DS_VERSION.version)
     )
 }

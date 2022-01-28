@@ -10,16 +10,18 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import io.primer.android.R
+import io.primer.android.databinding.FragmentFormSummaryBinding
 import io.primer.android.ui.FormSummaryState
 import io.primer.android.ui.InteractiveSummaryItem
 import io.primer.android.ui.TextSummaryItem
+import io.primer.android.ui.extensions.autoCleaned
 
 const val TOP_MARGIN_LARGE: Int = 64
 const val TOP_MARGIN_SMALL: Int = 28
 
 internal class FormSummaryFragment : FormChildFragment() {
 
-    private lateinit var layout: ViewGroup
+    private var binding: FragmentFormSummaryBinding by autoCleaned()
     private val updaters: MutableList<() -> Unit> = ArrayList()
 
     override fun onCreateView(
@@ -27,13 +29,12 @@ internal class FormSummaryFragment : FormChildFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.fragment_form_summary, container, false)
+        binding = FragmentFormSummaryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        layout = view.findViewById(R.id.form_summary_fragment)
 
         viewModel.summary.observe(viewLifecycleOwner) {
             if (it == null) {
@@ -46,23 +47,23 @@ internal class FormSummaryFragment : FormChildFragment() {
 
     private fun hideView() {
         updaters.clear()
-        layout.removeAllViews()
-        layout.visibility = View.GONE
+        binding.formSummaryFragment.removeAllViews()
+        binding.formSummaryFragment.visibility = View.GONE
     }
 
     private fun showView(state: FormSummaryState) {
         updaters.clear()
-        layout.removeAllViews()
-        layout.visibility = View.VISIBLE
+        binding.formSummaryFragment.removeAllViews()
+        binding.formSummaryFragment.visibility = View.VISIBLE
 
         state.items.forEach {
-            layout.addView(createItem(it))
+            binding.formSummaryFragment.addView(createItem(it))
         }
 
         updateAllViews()
 
         state.text.forEachIndexed { index, content ->
-            layout.addView(createTextView(content, isFirst = index == 0))
+            binding.formSummaryFragment.addView(createTextView(content, isFirst = index == 0))
         }
     }
 
@@ -83,7 +84,7 @@ internal class FormSummaryFragment : FormChildFragment() {
         )
 
         updaters.add {
-            view.findViewById<TextView>(R.id.form_summary_item_text).setText(item.getLabel())
+            view.findViewById<TextView>(R.id.form_summary_item_text).text = item.getLabel()
         }
 
         view.setOnClickListener {

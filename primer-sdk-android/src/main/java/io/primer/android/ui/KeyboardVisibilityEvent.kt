@@ -1,9 +1,7 @@
 package io.primer.android.ui
 
-import android.app.Activity
 import android.graphics.Rect
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -88,9 +86,5 @@ internal object KeyboardVisibilityEvent {
         val heightDiff = screenHeight - r.height()
 
         return heightDiff > screenHeight * KEYBOARD_MIN_HEIGHT_RATIO
-    }
-
-    fun getContentRoot(activity: Activity): ViewGroup {
-        return activity.findViewById(android.R.id.content)
     }
 }
