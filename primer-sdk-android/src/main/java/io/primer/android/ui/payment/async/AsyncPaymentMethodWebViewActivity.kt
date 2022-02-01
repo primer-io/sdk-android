@@ -18,7 +18,7 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         asyncPaymentMethodViewModel.getStatus(
-            intent?.extras?.getString(CAPTURE_URL_KEY).orEmpty()
+            intent?.extras?.getString(STATUS_URL_KEY).orEmpty()
         )
         setupObservers()
     }
@@ -36,16 +36,21 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
 
     internal companion object {
 
+        // url that polls payment status
+        const val STATUS_URL_KEY = "STATUS_URL_KEY"
+
         fun getLaunchIntent(
             context: Context,
             paymentUrl: String,
-            redirectUrl: String,
+            captureUrl: String,
+            statusUrl: String,
             title: String,
             webViewClientType: WebViewClientType,
         ): Intent {
             return Intent(context, AsyncPaymentMethodWebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)
-                putExtra(CAPTURE_URL_KEY, redirectUrl)
+                putExtra(CAPTURE_URL_KEY, captureUrl)
+                putExtra(STATUS_URL_KEY, statusUrl)
                 putExtra(TOOLBAR_TITLE_KEY, title)
                 putExtra(WEB_VIEW_CLIENT_TYPE, webViewClientType)
             }

@@ -1,7 +1,10 @@
 package io.primer.android.di
 
+import io.primer.android.data.deeplink.async.AsyncPaymentMethodDeeplinkDataRepository
 import io.primer.android.data.payments.async.datasource.RemoteAsyncPaymentMethodStatusDataSource
 import io.primer.android.data.payments.async.repository.AsyncPaymentMethodStatusDataRepository
+import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
+import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
@@ -20,12 +23,22 @@ internal val asyncPaymentMethodModule = {
                 get(),
             )
         }
+        single<AsyncPaymentMethodDeeplinkRepository> {
+            AsyncPaymentMethodDeeplinkDataRepository(
+                get(),
+            )
+        }
         single {
             AsyncPaymentMethodInteractor(
                 get(),
                 get(),
                 get(),
                 get()
+            )
+        }
+        single {
+            AsyncPaymentMethodDeeplinkInteractor(
+                get(),
             )
         }
 

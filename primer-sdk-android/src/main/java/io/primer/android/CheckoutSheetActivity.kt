@@ -133,6 +133,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     AsyncPaymentMethodWebViewActivity.getLaunchIntent(
                         this,
                         it.redirectUrl,
+                        tokenizationViewModel.asyncRedirectUrl.value.orEmpty(),
                         it.statusUrl,
                         (
                             primerViewModel.selectedPaymentMethod?.value as?
@@ -300,6 +301,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             selectedPaymentMethodBehaviourObserver
         )
         primerViewModel.checkoutEvent.observe(this, checkoutEventObserver)
+
+        tokenizationViewModel.getDeeplinkUrl()
 
         tokenizationViewModel.tokenizationCanceled.observe(this) {
             onExit(CheckoutExitReason.DISMISSED_BY_USER)

@@ -52,7 +52,7 @@ interface ClientSession : ExampleAppRequestBody {
                     ),
                     customer = Customer(
                         emailAddress = "test@mail.com",
-                        mobileNumber = "0841234567",
+                        mobileNumber = "80002026",
                         firstName = "John",
                         lastName = "Doe",
                         shippingAddress = Address(

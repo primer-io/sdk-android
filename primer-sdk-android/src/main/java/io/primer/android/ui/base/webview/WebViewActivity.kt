@@ -91,9 +91,6 @@ internal open class WebViewActivity : AppCompatActivity() {
         // url to load in the webview
         const val PAYMENT_URL_KEY = "URL_KEY"
 
-        // url called/loaded by the webview when finishing up
-        const val REDIRECT_URL_KEY = "REDIRECT_URL_KEY"
-
         // url that the webview should capture and not load
         const val CAPTURE_URL_KEY = "CAPTURE_URL_KEY"
 

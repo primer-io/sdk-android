@@ -9,6 +9,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -47,6 +48,9 @@ class TokenizationViewModelTest : KoinTest {
     private lateinit var paypalOrderInfoInteractor: PaypalOrderInfoInteractor
 
     @RelaxedMockK
+    private lateinit var asyncDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
+
+    @RelaxedMockK
     private lateinit var model: Model
 
     @RelaxedMockK
@@ -62,7 +66,8 @@ class TokenizationViewModelTest : KoinTest {
                 config,
                 tokenizationInteractor,
                 apayaSessionInteractor,
-                paypalOrderInfoInteractor
+                paypalOrderInfoInteractor,
+                asyncDeeplinkInteractor
             )
     }
 

@@ -3,6 +3,7 @@ package io.primer.android.ui.base.webview
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.webkit.URLUtil
@@ -20,8 +21,18 @@ internal abstract class BaseWebViewClient(
     private val returnUrl: String?,
 ) : WebViewClient() {
 
+    private val numberOfBrowserApps by lazy {
+        activity.packageManager.queryIntentActivities(
+            Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(SAMPLE_URL)
+            },
+            0
+        ).map { it.activityInfo.packageName }.toSet().size
+    }
+
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        val isDeeplink = URLUtil.isNetworkUrl(request?.url?.toString().orEmpty()).not()
+        val isDeeplink = URLUtil.isNetworkUrl(request?.url?.toString().orEmpty()).not() ||
+            canAnyAppHandleUrl(request)
         return if (isDeeplink) {
             handleDeepLink(request)
         } else {
@@ -111,6 +122,15 @@ internal abstract class BaseWebViewClient(
         return captureUrl?.let { url.orEmpty().contains(captureUrl) } == true
     }
 
+    protected fun getIntentFromRequest(request: WebResourceRequest?) =
+        request?.url?.let { uri ->
+            if (request.url.scheme == INTENT_SCHEMA) {
+                Intent.parseUri(request.url.toString(), Intent.URI_INTENT_SCHEME)
+            } else {
+                Intent(Intent.ACTION_VIEW).apply { data = uri }
+            }
+        }
+
     @RequiresApi(Build.VERSION_CODES.R)
     @Suppress("SwallowedException") // exception is not being swallowed
     private fun handleIntentOnAndroid11OrAbove(intent: Intent) {
@@ -137,6 +157,15 @@ internal abstract class BaseWebViewClient(
         }
     }
 
+    private fun canAnyAppHandleUrl(request: WebResourceRequest?): Boolean {
+        val intent = getIntentFromRequest(request)
+        val numberOfApps = intent?.let {
+            activity.packageManager.queryIntentActivities(intent, 0)
+                .map { it.activityInfo.packageName }.toSet().size
+        }
+        return numberOfApps != numberOfBrowserApps
+    }
+
     internal enum class UrlState {
         CANCELLED,
         ERROR,
@@ -148,5 +177,6 @@ internal abstract class BaseWebViewClient(
 
         const val TAG: String = "BaseWebViewClient"
         const val INTENT_SCHEMA = "intent"
+        const val SAMPLE_URL = "https://primer.io"
     }
 }

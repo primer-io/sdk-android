@@ -3,7 +3,12 @@
     package="io.primer.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
     <application>
 
         <meta-data
@@ -46,6 +51,24 @@
             android:name=".ui.payment.async.AsyncPaymentMethodWebViewActivity"
             android:label=""
             android:theme="@style/Theme.AppCompat.WebView" />
+
+        <activity
+            android:name=".ui.deeplink.async.AsyncPaymentMethodDeeplinkActivity"
+            android:exported="true"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="requestor.${applicationId}"
+                    android:scheme="primersdk" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".threeds.ui.ThreeDsActivity"

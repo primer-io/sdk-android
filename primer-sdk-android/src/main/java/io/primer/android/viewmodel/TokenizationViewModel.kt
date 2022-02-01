@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.DIAppComponent
+import io.primer.android.domain.base.None
+import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
@@ -44,7 +46,8 @@ internal class TokenizationViewModel(
     private val config: PrimerConfig,
     private val tokenizationInteractor: TokenizationInteractor,
     private val apayaSessionInteractor: ApayaSessionInteractor,
-    private val paypalOrderInfoInteractor: PaypalOrderInfoInteractor
+    private val paypalOrderInfoInteractor: PaypalOrderInfoInteractor,
+    private val asyncPaymentMethodDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
 ) : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
@@ -76,6 +79,9 @@ internal class TokenizationViewModel(
 
     val apayaPaymentData = MutableLiveData<ApayaPaymentData>()
     val apayaValidationData = MutableLiveData<Unit>()
+
+    private val _asyncRedirectUrl = MutableLiveData<String>()
+    val asyncRedirectUrl: LiveData<String> = _asyncRedirectUrl
 
     fun resetPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor? = null) {
         paymentMethod = paymentMethodDescriptor
@@ -124,6 +130,12 @@ internal class TokenizationViewModel(
 
     fun setCardHasCardholderName(value: Boolean) = (paymentMethod as? CreditCard)
         ?.let { card -> card.hasCardholderName = value }
+
+    fun getDeeplinkUrl() = viewModelScope.launch {
+        asyncPaymentMethodDeeplinkInteractor(None()).collect {
+            _asyncRedirectUrl.postValue(it)
+        }
+    }
 
     fun userCanceled() {
         _tokenizationCanceled.postValue(Unit)
