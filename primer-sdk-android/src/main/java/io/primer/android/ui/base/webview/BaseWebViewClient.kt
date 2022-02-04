@@ -21,13 +21,13 @@ internal abstract class BaseWebViewClient(
     private val returnUrl: String?,
 ) : WebViewClient() {
 
-    private val numberOfBrowserApps by lazy {
+    private val browserApps by lazy {
         activity.packageManager.queryIntentActivities(
             Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(SAMPLE_URL)
             },
             0
-        ).map { it.activityInfo.packageName }.toSet().size
+        ).map { it.activityInfo.packageName }.toSet()
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -159,11 +159,11 @@ internal abstract class BaseWebViewClient(
 
     private fun canAnyAppHandleUrl(request: WebResourceRequest?): Boolean {
         val intent = getIntentFromRequest(request)
-        val numberOfApps = intent?.let {
+        val apps = intent?.let {
             activity.packageManager.queryIntentActivities(intent, 0)
-                .map { it.activityInfo.packageName }.toSet().size
-        }
-        return numberOfApps != numberOfBrowserApps
+                .map { it.activityInfo.packageName }.toSet()
+        } ?: emptySet()
+        return apps.minus(browserApps).isEmpty().not()
     }
 
     internal enum class UrlState {
