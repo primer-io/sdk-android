@@ -18,6 +18,7 @@ class HttpRequestUtil {
                 .url(uri)
                 .header("X-Api-Version", if (useOldVersion) "2021-09-27" else "2021-10-19")
                 .header("environment", environment)
+                .header("x-api-key", "ccee2be8-df08-4c79-856d-40085349e9da")
                 .get()
                 .build()
         }
@@ -36,6 +37,7 @@ class HttpRequestUtil {
                 .url(uri)
                 .header("X-Api-Version", if (useOldVersion) "2021-09-27" else "2021-10-19")
                 .header("environment", environment)
+                .header("x-api-key", "ccee2be8-df08-4c79-856d-40085349e9da")
                 .post(reqBody)
                 .build()
         }

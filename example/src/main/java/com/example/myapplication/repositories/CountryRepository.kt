@@ -17,6 +17,7 @@ class CountryRepository(
             "US" -> "USD"
             "GB" -> "GBP"
             "NL" -> "EUR"
+            "PL" -> "PLN"
             else -> "EUR"
         }
     }

@@ -33,7 +33,7 @@ internal class BlikLocalFormDataSource : BaseFlowCacheDataSource<FormDataRespons
 
     private companion object {
 
-        const val FORM_ID = "otpCode"
+        const val FORM_ID = "blikCode"
         const val FORM_MAX_INPUT = 6
         const val FORM_VALIDATION = "^(\\d){6}$"
     }
