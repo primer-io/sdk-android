@@ -117,6 +117,7 @@
     <string name="input_hint_form_blik_otp">6 digit code</string>
     <string name="input_title_phone_number">Type your phone number</string>
     <string name="input_hint_form_phone_number">Phone number</string>
+    <string name="payment_method_blik_loading_placeholder">Complete your payment in Blik app</string>
     <string name="payment_method_mb_way_loading_placeholder">Complete your payment in Mb Way app</string>
     <string name="input_title_bank_details">Provide bank details</string>
 

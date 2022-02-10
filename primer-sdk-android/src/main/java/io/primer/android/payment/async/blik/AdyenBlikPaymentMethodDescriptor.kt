@@ -31,6 +31,7 @@ internal class AdyenBlikPaymentMethodDescriptor(
 
     override fun getLoadingState() = LoadingState(
         R.drawable.ic_logo_blik_square,
+        R.string.payment_method_blik_loading_placeholder
     )
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
