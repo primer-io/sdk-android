@@ -15,7 +15,7 @@ data class PrimerSettings(
 
     val currentAmount: Int
         @Throws
-        get() = order.totalOrderAmount ?: order.amount ?: throw Exception(AMOUNT_EXCEPTION)
+        get() = order.amount ?: order.totalOrderAmount ?: throw Exception(AMOUNT_EXCEPTION)
 
     companion object {
         private const val EXCEPTION_MESSAGE = "required but not found. Please set this value"
