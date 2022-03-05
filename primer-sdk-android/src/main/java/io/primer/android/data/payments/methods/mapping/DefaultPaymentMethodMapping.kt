@@ -31,6 +31,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.PAY_NL_IDEAL,
             PaymentMethodType.PAY_NL_PAYCONIQ,
             PaymentMethodType.PAY_NL_GIROPAY,
+            PaymentMethodType.PAY_NL_P24,
             PaymentMethodType.HOOLAH,
             PaymentMethodType.ADYEN_GIROPAY,
             PaymentMethodType.ADYEN_TWINT,

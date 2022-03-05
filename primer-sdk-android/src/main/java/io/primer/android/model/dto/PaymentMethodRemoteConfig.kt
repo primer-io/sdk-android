@@ -26,6 +26,7 @@ enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
     PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION),
     PAY_NL_PAYCONIQ(ClientTokenIntent.PAY_NL_PAYCONIQ_REDIRECTION),
     PAY_NL_GIROPAY(ClientTokenIntent.PAY_NL_GIROPAY_REDIRECTION),
+    PAY_NL_P24(ClientTokenIntent.PAY_NL_P24_REDIRECTION),
     HOOLAH(ClientTokenIntent.HOOLAH_REDIRECTION),
     ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION),
     ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION),

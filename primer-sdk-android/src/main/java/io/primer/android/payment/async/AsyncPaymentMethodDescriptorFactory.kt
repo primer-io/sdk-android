@@ -138,6 +138,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.PAY_NL_P24,
             PaymentMethodType.MOLLIE_P24 -> P24PaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
