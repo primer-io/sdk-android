@@ -48,6 +48,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.MOLLIE_BANCONTACT,
             PaymentMethodType.MOLLIE_IDEAL,
             PaymentMethodType.MOLLIE_P24,
+            PaymentMethodType.MOLLIE_GIROPAY,
             PaymentMethodType.BUCKAROO_GIROPAY,
             PaymentMethodType.BUCKAROO_SOFORT,
             PaymentMethodType.BUCKAROO_IDEAL,

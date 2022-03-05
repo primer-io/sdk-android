@@ -54,6 +54,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.MOLLIE_GIROPAY,
             PaymentMethodType.ADYEN_GIROPAY,
             PaymentMethodType.PAY_NL_GIROPAY,
             PaymentMethodType.BUCKAROO_GIROPAY -> GiropayPaymentMethodDescriptor(
