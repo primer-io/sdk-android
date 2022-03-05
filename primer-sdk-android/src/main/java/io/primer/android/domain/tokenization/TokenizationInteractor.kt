@@ -18,6 +18,7 @@ import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator.Companion.THRE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 
 internal class TokenizationInteractor(
     private val tokenizationRepository: TokenizationRepository,
@@ -29,6 +30,9 @@ internal class TokenizationInteractor(
 
     override fun execute(params: TokenizationParams): Flow<String> {
         return tokenizationRepository.tokenize(params)
+            .onStart {
+                eventDispatcher.dispatchEvent(CheckoutEvent.TokenizationStarted)
+            }
             .onEach {
                 val token = PaymentMethodTokenAdapter.internalToExternal(it)
                 paymentMethodRepository.setPaymentMethod(it)

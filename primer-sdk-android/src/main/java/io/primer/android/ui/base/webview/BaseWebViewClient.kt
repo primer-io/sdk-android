@@ -112,7 +112,7 @@ internal abstract class BaseWebViewClient(
                 else -> AppCompatActivity.RESULT_OK
             }
             handleResult(resultCode, intent)
-        } catch (e: UnsupportedOperationException) {
+        } catch (ignored: UnsupportedOperationException) {
             handleResult(AppCompatActivity.RESULT_CANCELED, intent)
         }
     }

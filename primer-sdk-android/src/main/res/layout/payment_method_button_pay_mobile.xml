@@ -17,5 +17,5 @@
         android:drawablePadding="10dp"
         android:gravity="center"
         android:text="@string/pay_by_mobile"
-        app:drawableStartCompat="@drawable/ic_mobile" />
+        app:drawableStartCompat="@drawable/ic_logo_apaya" />
 </io.primer.android.ui.components.ButtonDefaultLayout>

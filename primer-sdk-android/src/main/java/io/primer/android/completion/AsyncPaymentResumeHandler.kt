@@ -28,6 +28,8 @@ internal class AsyncPaymentResumeHandler(
         } else {
             eventDispatcher.dispatchEvent(
                 CheckoutEvent.StartAsyncRedirectFlow(
+                    paymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                        ?.paymentMethodType?.split("_")?.last().orEmpty(),
                     clientTokenRepository.getRedirectUrl().orEmpty(),
                     clientTokenRepository.getStatusUrl().orEmpty()
                 )

@@ -32,7 +32,7 @@ internal class AdyenIdealPaymentMethodDescriptor(
 
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_pay_nl_ideal,
+            R.layout.payment_method_button_ideal,
             container,
             false
         )

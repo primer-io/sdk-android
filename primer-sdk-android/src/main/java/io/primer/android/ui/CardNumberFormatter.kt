@@ -49,6 +49,8 @@ internal class CardNumberFormatter private constructor(
 
     fun getCvvLength(): Int = meta.cvvLength
 
+    fun getCardType(): CardType.Type = meta.type
+
     @Suppress("MagicNumber")
     private fun isLuhnValid(): Boolean {
         var sum = 0

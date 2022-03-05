@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/icon_button"
         android:scaleType="fitCenter"
-        android:src="@drawable/credit_card_icon" />
+        android:src="@drawable/ic_logo_credit_card" />
 
     <LinearLayout
         android:id="@+id/item_content_layout"

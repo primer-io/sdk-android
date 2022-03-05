@@ -3,6 +3,7 @@ package io.primer.android.domain.payments.methods
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.toCheckoutErrorEvent
 import io.primer.android.logging.Logger
@@ -16,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onStart
 import org.koin.core.component.KoinApiExtension
 
 @ExperimentalCoroutinesApi
@@ -30,6 +32,7 @@ internal class PaymentMethodModulesInteractor(
 
     override fun execute(params: None) =
         paymentMethodsRepository.getPaymentMethodDescriptors()
+            .onStart { eventDispatcher.dispatchEvent(CheckoutEvent.PreparationStarted) }
             .mapLatest { descriptors -> descriptors.filter { isValidPaymentDescriptor(it) } }
             .mapLatest { descriptors ->
                 val mapping = PaymentMethodDescriptorMapping(descriptors)

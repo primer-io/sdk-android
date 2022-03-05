@@ -13,6 +13,7 @@ import io.primer.android.SessionState
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.data.configuration.model.CheckoutModuleType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -103,7 +104,10 @@ internal class PrimerViewModel(
     val showPostalCode: LiveData<Boolean> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
         .map { configuration ->
-            val module = configuration.checkoutModules.find { m -> m.type == "BILLING_ADDRESS" }
+            val module =
+                configuration.checkoutModules.find { m ->
+                    m.type == CheckoutModuleType.BILLING_ADDRESS
+                }
             module?.options?.get("all") ?: module?.options?.get("postalCode") ?: false
         }
         .asLiveData()
@@ -111,7 +115,10 @@ internal class PrimerViewModel(
     val showCardholderName: LiveData<Boolean> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
         .map { configuration ->
-            val module = configuration.checkoutModules.find { m -> m.type == "CARD_INFORMATION" }
+            val module =
+                configuration.checkoutModules.find { m ->
+                    m.type == CheckoutModuleType.CARD_INFORMATION
+                }
             module?.options?.get("all") ?: module?.options?.get("cardHolderName") ?: true
         }
         .asLiveData()

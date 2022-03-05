@@ -5,12 +5,12 @@ import io.primer.android.PaymentMethod
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethod
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.PaymentMethodListFactory
 import io.primer.android.payment.apaya.Apaya
-import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.gocardless.GoCardless
 import io.primer.android.payment.google.GooglePay
@@ -53,7 +53,34 @@ internal class PaymentMethodsDataRepository(
                     PrimerPaymentMethod.CARD -> p is Card
                     PrimerPaymentMethod.GOCARDLESS -> p is GoCardless
                     PrimerPaymentMethod.APAYA -> p is Apaya
-                    PrimerPaymentMethod.ASYNC -> p is AsyncPaymentMethod
+                    PrimerPaymentMethod.ATOME -> p.type == PaymentMethodType.ATOME
+                    PrimerPaymentMethod.PAY_NL_IDEAL -> p.type == PaymentMethodType.PAY_NL_IDEAL
+                    PrimerPaymentMethod.PAY_NL_PAYCONIQ ->
+                        p.type == PaymentMethodType.PAY_NL_PAYCONIQ
+                    PrimerPaymentMethod.PAY_NL_GIROPAY ->
+                        p.type == PaymentMethodType.PAY_NL_GIROPAY
+                    PrimerPaymentMethod.HOOLAH -> p.type == PaymentMethodType.HOOLAH
+                    PrimerPaymentMethod.ADYEN_GIROPAY -> p.type == PaymentMethodType.ADYEN_GIROPAY
+                    PrimerPaymentMethod.ADYEN_TWINT -> p.type == PaymentMethodType.ADYEN_TWINT
+                    PrimerPaymentMethod.ADYEN_SOFORT -> p.type == PaymentMethodType.ADYEN_SOFORT
+                    PrimerPaymentMethod.ADYEN_TRUSTLY -> p.type == PaymentMethodType.ADYEN_TRUSTLY
+                    PrimerPaymentMethod.ADYEN_ALIPAY -> p.type == PaymentMethodType.ADYEN_ALIPAY
+                    PrimerPaymentMethod.ADYEN_VIPPS -> p.type == PaymentMethodType.ADYEN_VIPPS
+                    PrimerPaymentMethod.ADYEN_MOBILEPAY ->
+                        p.type == PaymentMethodType.ADYEN_MOBILEPAY
+                    PrimerPaymentMethod.MOLLIE_BANCONTACT ->
+                        p.type == PaymentMethodType.MOLLIE_BANCONTACT
+                    PrimerPaymentMethod.MOLLIE_IDEAL -> p.type == PaymentMethodType.MOLLIE_IDEAL
+                    PrimerPaymentMethod.BUCKAROO_GIROPAY ->
+                        p.type == PaymentMethodType.BUCKAROO_GIROPAY
+                    PrimerPaymentMethod.BUCKAROO_SOFORT ->
+                        p.type == PaymentMethodType.BUCKAROO_SOFORT
+                    PrimerPaymentMethod.BUCKAROO_IDEAL ->
+                        p.type == PaymentMethodType.BUCKAROO_IDEAL
+                    PrimerPaymentMethod.BUCKAROO_EPS ->
+                        p.type == PaymentMethodType.BUCKAROO_EPS
+                    PrimerPaymentMethod.BUCKAROO_BANCONTACT ->
+                        p.type == PaymentMethodType.BUCKAROO_BANCONTACT
                     else -> false
                 }
                 matches

@@ -87,7 +87,7 @@ internal class CreditCard(
         val text = binding.cardPreviewButtonText
         val drawable = ContextCompat.getDrawable(
             container.context,
-            R.drawable.credit_card_icon
+            R.drawable.ic_logo_credit_card
         )
 
         text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)

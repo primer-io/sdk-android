@@ -153,6 +153,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     // region Web-based payment methods
     private val webFlowPaymentDataObserver =
         Observer<BaseWebFlowPaymentData> { paymentData ->
+            EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
             if (config.settings.options.preferWebView) {
                 val title =
                     when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
@@ -215,11 +216,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private val payPalBillingAgreementUrlObserver = Observer { uri: String ->
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
 
     private val payPalOrderObserver = Observer { uri: String ->
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }

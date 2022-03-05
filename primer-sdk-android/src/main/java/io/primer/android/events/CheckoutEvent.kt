@@ -2,6 +2,7 @@ package io.primer.android.events
 
 import io.primer.android.completion.ActionResumeHandler
 import io.primer.android.completion.ResumeHandler
+import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
@@ -70,6 +71,7 @@ sealed class CheckoutEvent(
     internal object Start3DS : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
 
     internal class StartAsyncRedirectFlow(
+        val title: String,
         val redirectUrl: String,
         val statusUrl: String,
     ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
@@ -78,4 +80,18 @@ sealed class CheckoutEvent(
         val qrCode: String,
         val statusUrl: String,
     ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
+
+    // components helpers
+    internal class ConfigurationSuccess(
+        val paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>
+    ) : PrivateCheckoutEvent(CheckoutEventType.CONFIGURATION_SUCCESS)
+
+    internal object TokenizationStarted :
+        PrivateCheckoutEvent(CheckoutEventType.TOKENIZE_STARTED)
+
+    internal object PreparationStarted :
+        PrivateCheckoutEvent(CheckoutEventType.PREPARATION_STARTED)
+
+    internal object PaymentMethodPresented :
+        PrivateCheckoutEvent(CheckoutEventType.PAYMENT_METHOD_PRESENTED)
 }
