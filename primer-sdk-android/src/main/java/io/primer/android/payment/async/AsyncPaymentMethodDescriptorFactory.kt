@@ -124,6 +124,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.MOLLIE_EPS,
+            PaymentMethodType.PAY_NL_EPS,
             PaymentMethodType.BUCKAROO_EPS -> EpsPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
