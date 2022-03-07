@@ -13,6 +13,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.databinding.FragmentVaultedPaymentMethodsBinding
 import io.primer.android.di.DIAppComponent
@@ -128,8 +134,13 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
     private fun onClickWith(id: String, action: VaultViewAction) {
         when (action) {
-            VaultViewAction.SELECT -> viewModel.setSelectedPaymentMethodId(id)
-            VaultViewAction.DELETE -> onDeleteSelectedWith(id)
+            VaultViewAction.SELECT -> {
+                logSelectedPaymentMethodId(id)
+                viewModel.setSelectedPaymentMethodId(id)
+            }
+            VaultViewAction.DELETE -> {
+                onDeleteSelectedWith(id)
+            }
         }
     }
 
@@ -145,10 +156,12 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                 if (methodToBeDeleted == null) {
                     dialog.dismiss()
                 } else {
+                    logDeletePaymentMethodDialogAction(id, ObjectId.DELETE)
                     viewModel.deleteToken(methodToBeDeleted)
                 }
             }
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                logDeletePaymentMethodDialogAction(id, ObjectId.CANCEL)
                 dialog.cancel()
             }
         dialog.show()
@@ -201,6 +214,28 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
             theme.systemText.fontsize.getDimension(requireContext()),
         )
     }
+
+    private fun logSelectedPaymentMethodId(id: String) =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.LIST_ITEM,
+                Place.PAYMENT_METHODS_LIST,
+                ObjectId.SELECT,
+                PaymentInstrumentIdContextParams(id)
+            )
+        )
+
+    private fun logDeletePaymentMethodDialogAction(id: String, objectId: ObjectId) =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.ALERT,
+                Place.PAYMENT_METHODS_LIST,
+                objectId,
+                PaymentInstrumentIdContextParams(id)
+            )
+        )
 
     companion object {
 

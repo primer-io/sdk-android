@@ -7,8 +7,15 @@ import android.view.ViewGroup
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 
 import io.primer.android.R
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.PaymentMethodContextParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.databinding.FragmentDynamicFormBinding
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.components.TextInputWidget
@@ -91,6 +98,8 @@ internal class DynamicFormFragment : BaseFormFragment() {
         nextButton.setOnClickListener {
             val descriptor =
                 primerViewModel.selectedPaymentMethod.value as AsyncPaymentMethodDescriptor
+            logAnalyticsSubmit(descriptor.config.type)
+
             viewModel.collectData().forEach {
                 descriptor.appendTokenizableValue("sessionInfo", it.first, it.second.toString())
             }
@@ -99,6 +108,17 @@ internal class DynamicFormFragment : BaseFormFragment() {
             }
         }
     }
+
+    private fun logAnalyticsSubmit(paymentMethodType: PaymentMethodType) =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                Place.DYNAMIC_FORM,
+                ObjectId.SUBMIT,
+                PaymentMethodContextParams(paymentMethodType)
+            )
+        )
 
     companion object {
         fun newInstance() = DynamicFormFragment()

@@ -2,6 +2,7 @@ package io.primer.android.model.dto
 
 import io.primer.android.PrimerTheme
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.analytics.data.models.Place
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -32,4 +33,8 @@ data class PrimerConfig(
         val currency = settings.order.currency
         return MonetaryAmount.create(currency, amount)
     }
+
+    internal fun toPlace() =
+        if (intent.paymentMethodIntent == PaymentMethodIntent.CHECKOUT)
+            Place.UNIVERSAL_CHECKOUT else Place.VAULT_MANAGER
 }

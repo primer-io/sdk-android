@@ -30,6 +30,7 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get(named(RESUME_HANDLER_LOGGER_NAME))
             )
         }

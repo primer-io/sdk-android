@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.analytics.data.models.TimerId
+import io.primer.android.analytics.data.models.TimerType
+import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
@@ -293,6 +296,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         DIAppContext.init(applicationContext, config)
 
+        primerViewModel.initializeAnalytics()
+
+        addTimerDurationEvent(TimerType.START)
+
         primerViewModel.fetchConfiguration()
 
         sheet = CheckoutSheetFragment.newInstance()
@@ -449,6 +456,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private fun onExit(reason: CheckoutExitReason) {
         if (!exited) {
+            addTimerDurationEvent(TimerType.END)
             exited = true
             EventBus.broadcast(
                 CheckoutEvent.Exit(CheckoutExitInfo(reason))
@@ -480,4 +488,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
     }
+
+    private fun addTimerDurationEvent(type: TimerType) = primerViewModel.addAnalyticsEvent(
+        TimerAnalyticsParams(
+            TimerId.CHECKOUT_DURATION,
+            type
+        )
+    )
 }

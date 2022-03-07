@@ -156,7 +156,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     * */
 
     private fun addListeners() {
-
         // add listener for re-rendering based on session state
         primerViewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {

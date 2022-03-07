@@ -9,11 +9,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.databinding.FragmentSessionCompleteBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.presentation.base.BaseViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import io.primer.android.ui.extensions.autoCleaned
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -40,6 +46,7 @@ sealed class SessionCompleteViewType {
 class SessionCompleteFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()
+    private val viewModel: BaseViewModel by viewModel()
     private var binding: FragmentSessionCompleteBinding by autoCleaned()
 
     override fun onCreateView(
@@ -53,6 +60,17 @@ class SessionCompleteFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val place =
+            if (arguments?.getBoolean(SESSION_COMPLETE_IS_ERROR_KEY) == true) Place.ERROR_SCREEN
+            else Place.SUCCESS_SCREEN
+
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.VIEW,
+                ObjectType.VIEW,
+                place
+            )
+        )
 
         binding.sessionCompleteMessage.text = arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
             getString(it)

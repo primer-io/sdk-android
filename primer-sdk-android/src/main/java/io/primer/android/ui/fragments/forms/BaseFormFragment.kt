@@ -6,6 +6,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.primer.android.PrimerTheme
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.PaymentMethodContextParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.presentation.payment.forms.FormsViewModel
@@ -31,6 +37,7 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        logAnalyticsViewed()
         tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
 
         viewModel.formLiveData.observe(viewLifecycleOwner) { form ->
@@ -50,8 +57,16 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
             )
         )
         backIcon.setOnClickListener {
+            logAnalyticsBackPressed()
             parentFragmentManager.popBackStack()
         }
+    }
+
+    protected open fun setupForm(form: Form) {
+        setupBackIcon()
+        setupTitle(form.title)
+        setupDescription(form.description)
+        setupLogo(form.logo)
     }
 
     private fun setupTitle(title: Int?) {
@@ -79,10 +94,27 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
         formIcon.setImageResource(logo)
     }
 
-    protected open fun setupForm(form: Form) {
-        setupBackIcon()
-        setupTitle(form.title)
-        setupDescription(form.description)
-        setupLogo(form.logo)
-    }
+    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.VIEW,
+            ObjectType.VIEW,
+            Place.DYNAMIC_FORM,
+            ObjectId.VIEW,
+            primerViewModel.selectedPaymentMethod.value?.config?.type?.let {
+                PaymentMethodContextParams(it)
+            }
+        )
+    )
+
+    private fun logAnalyticsBackPressed() = viewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.CLICK,
+            ObjectType.BUTTON,
+            Place.DYNAMIC_FORM,
+            ObjectId.BACK,
+            primerViewModel.selectedPaymentMethod.value?.config?.type?.let {
+                PaymentMethodContextParams(it)
+            }
+        )
+    )
 }

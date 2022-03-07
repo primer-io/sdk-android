@@ -15,6 +15,6 @@ internal class LocalFormDataSourceFactory(
             PaymentMethodType.ADYEN_MBWAY -> MbWayLocalFormDataSource()
             PaymentMethodType.ADYEN_BANK_TRANSFER -> SepaLocalFormDataSource(primerTheme)
             PaymentMethodType.XFERS_PAYNOW -> XfersLocalFormDataSource(clientToken)
-            else -> throw IllegalStateException()
+            else -> throw IllegalStateException("Invalid paymentMethodType $paymentMethodType")
         }
 }

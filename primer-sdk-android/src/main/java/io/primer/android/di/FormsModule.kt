@@ -35,6 +35,6 @@ internal val formsModule = {
             FormValidationInteractor(get())
         }
 
-        viewModel { FormsViewModel(get(), get(), get()) }
+        viewModel { FormsViewModel(get(), get(), get(), get()) }
     }
 }

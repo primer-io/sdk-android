@@ -2,8 +2,8 @@ package io.primer.android.presentation.payment.forms
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
@@ -12,6 +12,7 @@ import io.primer.android.domain.payments.forms.FormsInteractor
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.domain.payments.forms.models.FormInputParams
 import io.primer.android.domain.payments.forms.models.FormValidationParam
+import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -20,8 +21,9 @@ import kotlinx.coroutines.launch
 internal class FormsViewModel(
     private val formsInteractor: FormsInteractor,
     private val formValidationInteractor: FormValidationInteractor,
-    private val paymentMethodInteractor: AsyncPaymentMethodInteractor
-) : ViewModel() {
+    private val paymentMethodInteractor: AsyncPaymentMethodInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
+) : BaseViewModel(analyticsInteractor) {
 
     private val inputStates: MutableMap<String, InputState> = mutableMapOf()
 

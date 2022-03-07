@@ -3,11 +3,12 @@ package io.primer.android.threeds.presentation
 import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.BuildConfig
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.ChallengePreference
 import io.primer.android.threeds.data.models.ResponseCode
@@ -23,8 +24,9 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
+    analyticsInteractor: AnalyticsInteractor,
     private val config: PrimerConfig,
-) : ViewModel() {
+) : BaseViewModel(analyticsInteractor) {
 
     private val _threeDsInitEvent = MutableLiveData<Unit>()
     val threeDsInitEvent: LiveData<Unit> = _threeDsInitEvent

@@ -1,5 +1,7 @@
 package io.primer.android.completion
 
+import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -14,26 +16,29 @@ import java.lang.Error
 internal open class DefaultResumeHandler(
     private val clientTokenRepository: ClientTokenRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
+    private val analyticsRepository: AnalyticsRepository,
     private val eventDispatcher: EventDispatcher,
     private var logger: Logger
-) :
-    ResumeHandler {
+) : ResumeHandler {
 
     private var handlerUsed = false
 
     override fun handleError(error: Error) = callIfNotHandled {
+        addAnalyticsEvent("handleError")
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED)
         )
     }
 
     override fun handleSuccess() = callIfNotHandled {
+        addAnalyticsEvent("handleSuccess")
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS)
         )
     }
 
     override fun handleNewClientToken(clientToken: String) = callIfNotHandled {
+        addAnalyticsEvent("handleNewClientToken")
         try {
             clientTokenRepository.setClientToken(clientToken)
             handleClientToken(clientToken)
@@ -75,6 +80,15 @@ internal open class DefaultResumeHandler(
         } else {
             logger.warn(HANDLER_USED_ERROR)
         }
+    }
+
+    private fun addAnalyticsEvent(name: String) {
+        analyticsRepository.addEvent(
+            SdkFunctionParams(
+                name,
+                mapOf("class" to javaClass.simpleName)
+            )
+        )
     }
 
     protected companion object {

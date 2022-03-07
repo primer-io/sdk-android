@@ -2,17 +2,19 @@ package io.primer.android.presentation.payment.async
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
+import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class AsyncPaymentMethodViewModel(
-    private val paymentMethodInteractor: AsyncPaymentMethodInteractor
-) : ViewModel() {
+    private val paymentMethodInteractor: AsyncPaymentMethodInteractor,
+    analyticsInteractor: AnalyticsInteractor
+) : BaseViewModel(analyticsInteractor) {
 
     private val _statusUrlLiveData = MutableLiveData<Unit>()
     val statusUrlLiveData: LiveData<Unit> = _statusUrlLiveData
