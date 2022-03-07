@@ -9,6 +9,7 @@ internal object Serialization {
     private var _json: Json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
+        encodeDefaults = true
         serializersModule = SerializersModule {}
     }
     val json: Json

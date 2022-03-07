@@ -23,8 +23,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     logger: Logger,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
-    validationTokenRepository,
-    clientTokenRepository,
+    validationTokenRepository,clientTokenRepository,
     paymentMethodRepository,
     analyticsRepository,
     baseErrorEventResolver,
