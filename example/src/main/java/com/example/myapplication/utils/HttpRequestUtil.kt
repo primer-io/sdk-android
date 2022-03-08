@@ -9,6 +9,8 @@ import okhttp3.RequestBody
 class HttpRequestUtil {
     companion object {
 
+        private const val API_KEY = ""
+
         fun generateGetRequest(
             uri: String,
             environment: String,
@@ -18,6 +20,7 @@ class HttpRequestUtil {
                 .url(uri)
                 .header("X-Api-Version", if (useOldVersion) "2021-09-27" else "2021-10-19")
                 .header("environment", environment)
+                .header("x-api-key", API_KEY)
                 .get()
                 .build()
         }
@@ -36,6 +39,7 @@ class HttpRequestUtil {
                 .url(uri)
                 .header("X-Api-Version", if (useOldVersion) "2021-09-27" else "2021-10-19")
                 .header("environment", environment)
+                .header("x-api-key", API_KEY)
                 .post(reqBody)
                 .build()
         }
