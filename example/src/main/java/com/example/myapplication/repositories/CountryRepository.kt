@@ -10,6 +10,7 @@ class CountryRepository(
 
     fun getCurrency(): String = datasource.getCountry().let { country ->
         when (country) {
+            "GB" -> "GBP"
             "DE" -> "EUR"
             "SG" -> "SGD"
             "SE" -> "SEK"

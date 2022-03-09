@@ -4,7 +4,7 @@ import io.primer.android.R
 
 const val CARD_PADDING: Int = 8
 
-internal class CardType {
+class CardType {
 
     enum class Type {
         UNKNOWN,
@@ -22,7 +22,7 @@ internal class CardType {
         HIPERCARD
     }
 
-    open class Descriptor(
+    internal open class Descriptor(
         val type: Type,
         val gaps: List<Int>,
         val lengths: List<Int>,
@@ -53,28 +53,28 @@ internal class CardType {
         }
     }
 
-    class VisaDescriptor(lower: String, upper: String? = null) :
+    internal class VisaDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.VISA, CARD_GAPS_4_8_12, CARD_LENS_16_18_19, lower, upper)
 
-    class MastercardDescriptor(lower: String, upper: String? = null) :
+    internal class MastercardDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.MASTERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
-    class AmexDescriptor(lower: String, upper: String? = null) :
+    internal class AmexDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.AMEX, CARD_GAPS_4_10, CARD_LENS_15, lower, upper, cvvLength = CVV_LEN_4)
 
-    class DinersDescriptor(lower: String, upper: String? = null) :
+    internal class DinersDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.DINERS, CARD_GAPS_4_10, CARD_LENS_14_16_19, lower, upper)
 
-    class DiscoverDescriptor(lower: String, upper: String? = null) :
+    internal class DiscoverDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.DISCOVER, CARD_GAPS_4_8_12, CARD_LENS_16_19, lower, upper)
 
-    class JcbDescriptor(lower: String, upper: String? = null) :
+    internal class JcbDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.JCB, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
-    class UnionpayDescriptor(lower: String, upper: String? = null) :
+    internal class UnionpayDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.UNIONPAY, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
-    class MaestroDescriptor(lower: String, upper: String? = null) :
+    internal class MaestroDescriptor(lower: String, upper: String? = null) :
         Descriptor(
             Type.MAESTRO,
             CARD_GAPS_4_8_12,
@@ -83,19 +83,19 @@ internal class CardType {
             upper
         )
 
-    class EloDescriptor(lower: String, upper: String? = null) :
+    internal class EloDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.ELO, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
-    class MirDescriptor(lower: String, upper: String? = null) :
+    internal class MirDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.MIR, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
-    class HiperDescriptor(lower: String, upper: String? = null) :
+    internal class HiperDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.HIPER, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
-    class HiperCardDescriptor(lower: String, upper: String? = null) :
+    internal class HiperCardDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.HIPERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
-    companion object {
+    internal companion object {
 
         private val types = listOf(
             VisaDescriptor("4"),

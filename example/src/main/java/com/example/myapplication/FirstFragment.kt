@@ -56,6 +56,7 @@ class FirstFragment : Fragment() {
                 "SE" -> binding.countryItem.setText("🇸🇪")
                 "SG" -> binding.countryItem.setText("🇸🇬")
                 "NO" -> binding.countryItem.setText("🇳🇴")
+                "FR" -> binding.countryItem.setText("🇫🇷")
             }
         }
     }
@@ -88,6 +89,9 @@ class FirstFragment : Fragment() {
     }
 
     private fun configureNextButton() {
+        binding.componentsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment)
+        }
         binding.nextButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }

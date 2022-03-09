@@ -31,6 +31,7 @@ internal class PayPalOrderBehaviour(
     }
 
     override fun onCancel(uri: Uri?) {
+        tokenizationViewModel?.userCanceled()
         log.warn("User cancelled paypal order")
     }
 }

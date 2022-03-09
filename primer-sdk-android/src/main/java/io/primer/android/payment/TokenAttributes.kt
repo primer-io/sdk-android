@@ -18,7 +18,7 @@ internal abstract class TokenAttributes private constructor(
     abstract fun getDescription(context: Context): String
 
     internal class PaymentCardAttributes(token: PaymentMethodTokenInternal) :
-        TokenAttributes(token, R.drawable.credit_card_icon) {
+        TokenAttributes(token, R.drawable.ic_logo_credit_card) {
 
         override fun getDescription(context: Context): String {
             val network = data?.network ?: context.getString(R.string.card_network_fallback)

@@ -1,5 +1,6 @@
 package io.primer.android.completion
 
+import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
@@ -9,6 +10,7 @@ import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 internal class ResumeHandlerFactory(
     private val clientTokenRepository: ClientTokenRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
+    private val analyticsRepository: AnalyticsRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger
@@ -19,6 +21,7 @@ internal class ResumeHandlerFactory(
             CARD_INSTRUMENT_TYPE -> ThreeDsResumeHandler(
                 clientTokenRepository,
                 paymentMethodRepository,
+                analyticsRepository,
                 threeDsSdkClassValidator,
                 eventDispatcher,
                 logger
@@ -26,12 +29,14 @@ internal class ResumeHandlerFactory(
             ASYNC_PAYMENT_METHOD -> AsyncPaymentResumeHandler(
                 clientTokenRepository,
                 paymentMethodRepository,
+                analyticsRepository,
                 eventDispatcher,
                 logger
             )
             else -> DefaultResumeHandler(
                 clientTokenRepository,
                 paymentMethodRepository,
+                analyticsRepository,
                 eventDispatcher,
                 logger
             )

@@ -1,5 +1,6 @@
 package io.primer.android.completion
 
+import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -11,10 +12,17 @@ import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 internal class ThreeDsResumeHandler(
     clientTokenRepository: ClientTokenRepository,
     paymentMethodRepository: PaymentMethodRepository,
+    analyticsRepository: AnalyticsRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val eventDispatcher: EventDispatcher,
     logger: Logger
-) : DefaultResumeHandler(clientTokenRepository, paymentMethodRepository, eventDispatcher, logger) {
+) : DefaultResumeHandler(
+    clientTokenRepository,
+    paymentMethodRepository,
+    analyticsRepository,
+    eventDispatcher,
+    logger
+) {
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)

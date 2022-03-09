@@ -1,6 +1,7 @@
 package io.primer.android.di
 
 import io.primer.android.BuildConfig
+import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.model.Model
 import io.primer.android.model.Serialization
@@ -19,6 +20,7 @@ private const val CLIENT_TOKEN_HEADER = "Primer-Client-Token"
 
 internal val NetworkModule = {
     module {
+        single<Interceptor> { HttpAnalyticsInterceptor() }
         single<OkHttpClient> {
             OkHttpClient.Builder()
                 .addInterceptor { chain: Interceptor.Chain ->
@@ -38,7 +40,7 @@ internal val NetworkModule = {
                             if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                             else HttpLoggingInterceptor.Level.NONE
                     }
-                )
+                ).addInterceptor(get())
                 .build()
         }
         single { Serialization.json }

@@ -13,7 +13,7 @@ internal class IBANChecksumValidator : Validator {
         }
         return try {
             isValidIBANChecksum(transformedIban)
-        } catch (t: Throwable) {
+        } catch (ignored: Throwable) {
             false
         }
     }

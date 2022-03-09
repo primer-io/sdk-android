@@ -3,6 +3,11 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
+import io.primer.android.analytics.data.datasource.SdkSessionDataSource
+import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
+import io.primer.android.analytics.data.models.FunctionProperties
+import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -23,6 +28,7 @@ import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.klarna.Klarna
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
+import kotlinx.serialization.encodeToString
 import java.util.Locale
 
 @Deprecated("This object has been renamed to Primer.")
@@ -44,6 +50,7 @@ class Primer private constructor() : PrimerInterface {
         override fun onEvent(e: CheckoutEvent) {
             if (e.public) {
                 // for backward compatibility, call separate flow onClientSessionActions
+                addAnalyticsEvent(SdkFunctionParams("onEvent", mapOf("event" to e.type.name)))
                 if (e is CheckoutEvent.OnClientSessionActions) {
                     listener?.onClientSessionActions(e)
                 } else {
@@ -62,20 +69,29 @@ class Primer private constructor() : PrimerInterface {
         config?.let {
             this.config = config
         }
+        addAnalyticsEvent(
+            SdkFunctionParams(
+                "configure",
+                mapOf("settings" to Serialization.json.encodeToString(this.config))
+            )
+        )
     }
 
     override fun cleanup() {
+        addAnalyticsEvent(SdkFunctionParams("cleanup"))
         listener = null
         subscription?.unregister(true)
         subscription = null
     }
 
     override fun showUniversalCheckout(context: Context, clientToken: String) {
+        addAnalyticsEvent(SdkFunctionParams("showUniversalCheckout"))
         config.intent = PrimerIntent(PaymentMethodIntent.CHECKOUT, PrimerPaymentMethod.ANY)
         show(context, clientToken)
     }
 
     override fun showVaultManager(context: Context, clientToken: String) {
+        addAnalyticsEvent(SdkFunctionParams("showVaultManager"))
         config.intent = PrimerIntent(PaymentMethodIntent.VAULT, PrimerPaymentMethod.ANY)
         show(context, clientToken)
     }
@@ -86,6 +102,13 @@ class Primer private constructor() : PrimerInterface {
         paymentMethod: PrimerPaymentMethod,
         intent: PaymentMethodIntent,
     ) {
+        addAnalyticsEvent(
+            SdkFunctionParams(
+                "showPaymentMethod",
+                mapOf("paymentMethod" to paymentMethod.name, "intent" to intent.name)
+            )
+        )
+
         val flow = if (intent == PaymentMethodIntent.VAULT) PaymentMethodIntent.VAULT
         else PaymentMethodIntent.CHECKOUT
         config.intent = PrimerIntent(flow, paymentMethod)
@@ -141,15 +164,18 @@ class Primer private constructor() : PrimerInterface {
     }
 
     override fun dismiss(clearListeners: Boolean) {
+        addAnalyticsEvent(SdkFunctionParams("dismiss"))
         if (clearListeners) listener = null
         EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_CLIENT))
     }
 
     override fun showSuccess(autoDismissDelay: Int, successType: SuccessType) {
+        addAnalyticsEvent(SdkFunctionParams("showSuccess"))
         EventBus.broadcast(CheckoutEvent.ShowSuccess(autoDismissDelay, successType))
     }
 
     override fun showError(autoDismissDelay: Int, errorType: ErrorType) {
+        addAnalyticsEvent(SdkFunctionParams("showError"))
         EventBus.broadcast(CheckoutEvent.ShowError(autoDismissDelay, errorType))
     }
 
@@ -307,6 +333,15 @@ class Primer private constructor() : PrimerInterface {
     private fun setupAndVerifyClientToken(clientToken: String) {
         ClientToken.fromString(clientToken)
         this.config.clientTokenBase64 = clientToken
+    }
+
+    internal fun addAnalyticsEvent(params: SdkFunctionParams) {
+        LocalAnalyticsDataSource.instance.addEvent(
+            AnalyticsSdkFunctionEventRequest(
+                properties = FunctionProperties(params.name, params.params),
+                sdkSessionId = SdkSessionDataSource.getSessionId()
+            )
+        )
     }
 
     companion object {

@@ -31,7 +31,7 @@ class PaymentMethodItem(
             "APAYA" -> {
                 tokenLabel.text =
                     "${token.paymentInstrumentData?.hashedIdentifier}"
-                icon.setImageResource(R.drawable.ic_mobile)
+                icon.setImageResource(R.drawable.ic_logo_apaya)
             }
             "PAYMENT_CARD" -> {
                 tokenLabel.text =

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit
 @Serializable
 internal data class ClientToken(
     val configurationUrl: String? = null,
+    val analyticsUrlV2: String? = null,
     val intent: ClientTokenIntent,
     val accessToken: String,
     val exp: Int,

@@ -16,10 +16,12 @@ data class Configuration(
     val keys: ConfigurationKeys? = null,
     val clientSession: ClientSession? = null,
     @SerialName("env") val environment: Environment,
+    val primerAccountId: String? = null,
 )
 
 @Serializable
 data class ClientSession(
+    val clientSessionId: String? = null,
     val customerId: String? = null,
     val orderId: String? = null,
     val amount: Int? = null,
@@ -42,17 +44,20 @@ data class ClientSession(
         val options: List<PaymentMethodOption> = listOf(),
     ) {
 
-        val surcharges: Map<String, Int> get() {
-            val map = mutableMapOf<String, Int>()
-            options.forEach { option ->
-                if (option.type == "PAYMENT_CARD") {
-                    option.networks?.forEach { network -> map[network.type] = network.surcharge }
-                } else {
-                    map[option.type] = option.surcharge ?: 0
+        val surcharges: Map<String, Int>
+            get() {
+                val map = mutableMapOf<String, Int>()
+                options.forEach { option ->
+                    if (option.type == "PAYMENT_CARD") {
+                        option.networks?.forEach { network ->
+                            map[network.type] = network.surcharge
+                        }
+                    } else {
+                        map[option.type] = option.surcharge ?: 0
+                    }
                 }
+                return map
             }
-            return map
-        }
     }
 
     // todo: may be better to use sealed class/polymorphism
@@ -80,7 +85,15 @@ enum class Environment(val environment: String) {
 
 @Serializable
 data class CheckoutModule(
-    val type: String,
+    val type: CheckoutModuleType = CheckoutModuleType.UNKNOWN,
     val requestUrl: String? = null,
     val options: Map<String, Boolean>? = null,
 )
+
+@Serializable
+enum class CheckoutModuleType {
+
+    BILLING_ADDRESS,
+    CARD_INFORMATION,
+    UNKNOWN
+}

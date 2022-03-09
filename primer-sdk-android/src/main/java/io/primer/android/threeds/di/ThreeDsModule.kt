@@ -47,7 +47,7 @@ internal val threeDsModule = module {
         )
     }
 
-    viewModel { ThreeDsViewModel(get(), get()) }
+    viewModel { ThreeDsViewModel(get(), get(), get()) }
 }
 
 private const val LOGGER_TAG_3DS = "3DS"

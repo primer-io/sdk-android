@@ -7,17 +7,18 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
-import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.atome.AtomePaymentMethodDescriptor
 import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
+import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor
 import io.primer.android.payment.async.giropay.GiropayPaymentMethodDescriptor
 import io.primer.android.payment.async.hoolah.HoolahPaymentMethodDescriptor
 import io.primer.android.payment.async.ideal.AdyenIdealPaymentMethodDescriptor
+import io.primer.android.payment.async.ideal.IdealPaymentMethodDescriptor
 import io.primer.android.payment.async.mbway.AdyenMbWayPaymentMethodDescriptor
 import io.primer.android.payment.async.mobilepay.MobilePayPaymentMethodDescriptor
-import io.primer.android.payment.async.ideal.IdealPaymentMethodDescriptor
+import io.primer.android.payment.async.p24.P24PaymentMethodDescriptor
 import io.primer.android.payment.async.payconiq.PayconiqPaymentMethodDescriptor
 import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.SofortPaymentMethodDescriptor
@@ -53,6 +54,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.MOLLIE_GIROPAY,
             PaymentMethodType.ADYEN_GIROPAY,
             PaymentMethodType.PAY_NL_GIROPAY,
             PaymentMethodType.BUCKAROO_GIROPAY -> GiropayPaymentMethodDescriptor(
@@ -122,6 +124,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.MOLLIE_EPS,
+            PaymentMethodType.PAY_NL_EPS,
             PaymentMethodType.BUCKAROO_EPS -> EpsPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
@@ -133,6 +137,12 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.XFERS_PAYNOW -> XfersPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.PAY_NL_P24,
+            PaymentMethodType.MOLLIE_P24 -> P24PaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

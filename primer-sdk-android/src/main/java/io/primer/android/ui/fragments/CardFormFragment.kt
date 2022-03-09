@@ -17,6 +17,13 @@ import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.SessionState
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.MessageType
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Severity
+import io.primer.android.analytics.domain.models.MessageAnalyticsParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.databinding.FragmentCardFormBinding
 import io.primer.android.di.DIAppComponent
@@ -160,6 +167,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
             setOnClickListener {
+                primerViewModel.addAnalyticsEvent(
+                    UIAnalyticsParams(
+                        AnalyticsAction.CLICK,
+                        ObjectType.BUTTON,
+                        localConfig.toPlace(),
+                        ObjectId.BACK
+                    )
+                )
                 parentFragmentManager.popBackStack()
                 isBeingDismissed = true
             }
@@ -329,6 +344,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         if (!tokenizationViewModel.isValid()) return
         tokenizationViewModel.tokenizationStatus.postValue(TokenizationStatus.LOADING)
         primerViewModel.emitPostalCode {
+            primerViewModel.addAnalyticsEvent(
+                UIAnalyticsParams(
+                    AnalyticsAction.CLICK,
+                    ObjectType.BUTTON,
+                    localConfig.toPlace(),
+                    ObjectId.PAY
+                )
+            )
             tokenizationViewModel.tokenize()
         }
     }
@@ -401,9 +424,14 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun createTextWatcher(name: String): TextWatcher {
         return object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) = Unit
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) = Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 tokenizationViewModel.setTokenizableValue(name, s.toString())
@@ -491,7 +519,16 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     ) {
         if (error == null) input.error = error
         else requireContext()
-            .let { input.error = it.getString(error.errorId, it.getString(error.fieldId)) }
+            .let {
+                input.error = it.getString(error.errorId, it.getString(error.fieldId))
+                primerViewModel.addAnalyticsEvent(
+                    MessageAnalyticsParams(
+                        MessageType.VALIDATION_FAILED,
+                        input.error.toString(),
+                        Severity.WARN
+                    )
+                )
+            }
             .run {
                 if (type == CARD_NUMBER_FIELD_NAME) {
                     val inputFrame = binding.cardFormCardNumber

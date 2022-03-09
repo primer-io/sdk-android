@@ -1,7 +1,7 @@
 package io.primer.android.di
 
 import io.primer.android.data.rpc.banks.datasource.LocalIssuingBankDataSource
-import io.primer.android.data.rpc.banks.datasource.RemoteIssuingBankDataSource
+import io.primer.android.data.rpc.banks.datasource.RemoteIssuingBankFlowDataSource
 import io.primer.android.data.rpc.banks.repository.IssuingBankDataRepository
 import io.primer.android.domain.rpc.banks.BanksFilterInteractor
 import io.primer.android.domain.rpc.banks.BanksInteractor
@@ -17,17 +17,18 @@ internal val rpcModule = {
     module {
         scope(named(BANK_SELECTOR_SCOPE)) {
             scoped { LocalIssuingBankDataSource() }
-            scoped { RemoteIssuingBankDataSource(get()) }
+            scoped { RemoteIssuingBankFlowDataSource(get()) }
             scoped<IssuingBankRepository> { IssuingBankDataRepository(get(), get(), get()) }
             scoped { BanksInteractor(get()) }
             scoped { BanksFilterInteractor(get()) }
         }
 
-        viewModel { BankSelectionViewModel(getScope(BANK_SELECTOR_SCOPE).get()) }
+        viewModel { BankSelectionViewModel(getScope(BANK_SELECTOR_SCOPE).get(), get()) }
         viewModel {
             DotPayBankSelectionViewModel(
                 getScope(BANK_SELECTOR_SCOPE).get(),
-                getScope(BANK_SELECTOR_SCOPE).get()
+                getScope(BANK_SELECTOR_SCOPE).get(),
+                get()
             )
         }
     }

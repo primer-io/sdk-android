@@ -63,6 +63,8 @@ dependencies {
     implementation AndroidDependencies.constraintLayout
 
     implementation AndroidDependencies.fragment
+    implementation AndroidDependencies.startup
+
     implementation AndroidDependencies.Lifecycle.liveData
     implementation AndroidDependencies.Lifecycle.lifecycle
     implementation AndroidDependencies.Lifecycle.viewModel

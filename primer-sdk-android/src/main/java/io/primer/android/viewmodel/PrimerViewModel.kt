@@ -4,15 +4,22 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.Primer
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.SessionState
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.data.configuration.model.CheckoutModuleType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -28,15 +35,18 @@ import io.primer.android.events.EventBus
 import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.MonetaryAmount
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.utils.SurchargeFormatter
 import java.util.Collections
 import java.util.Currency
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -50,12 +60,13 @@ internal class PrimerViewModel(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val vaultedPaymentMethodsInteractor: VaultedPaymentMethodsInteractor,
+    private val analyticsInteractor: AnalyticsInteractor,
     private val exchangeInteractor: VaultedPaymentMethodsExchangeInteractor,
     private val vaultedPaymentMethodsDeleteInteractor: VaultedPaymentMethodsDeleteInteractor,
     private val actionInteractor: ActionInteractor,
     private val config: PrimerConfig,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
-) : ViewModel(), EventBus.EventListener {
+) : BaseViewModel(analyticsInteractor), EventBus.EventListener {
 
     private lateinit var subscription: EventBus.SubscriptionHandle
 
@@ -103,7 +114,10 @@ internal class PrimerViewModel(
     val showPostalCode: LiveData<Boolean> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
         .map { configuration ->
-            val module = configuration.checkoutModules.find { m -> m.type == "BILLING_ADDRESS" }
+            val module =
+                configuration.checkoutModules.find { m ->
+                    m.type == CheckoutModuleType.BILLING_ADDRESS
+                }
             module?.options?.get("all") ?: module?.options?.get("postalCode") ?: false
         }
         .asLiveData()
@@ -111,7 +125,10 @@ internal class PrimerViewModel(
     val showCardholderName: LiveData<Boolean> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
         .map { configuration ->
-            val module = configuration.checkoutModules.find { m -> m.type == "CARD_INFORMATION" }
+            val module =
+                configuration.checkoutModules.find { m ->
+                    m.type == CheckoutModuleType.CARD_INFORMATION
+                }
             module?.options?.get("all") ?: module?.options?.get("cardHolderName") ?: true
         }
         .asLiveData()
@@ -125,15 +142,18 @@ internal class PrimerViewModel(
     fun setPostalCode(data: String) = postalCode.postValue(data)
 
     fun goToVaultedPaymentMethodsView() {
+        logGoToVaultedPaymentMethodsView()
         viewStatus.postValue(ViewStatus.VIEW_VAULTED_PAYMENT_METHODS)
     }
 
     fun goToSelectPaymentMethodsView() {
+        logGoToSelectPaymentMethodsView()
         reselectSavedPaymentMethod()
         viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
     }
 
     fun selectPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
+        logSelectPaymentMethod(paymentMethodDescriptor.config.type)
         _selectedPaymentMethod.value = paymentMethodDescriptor
     }
 
@@ -194,7 +214,7 @@ internal class PrimerViewModel(
         actionInteractor.dispatch(request) { error ->
             // todo: hack to prevent flicker when pushing new view, fix.
             if (error == null && resetState) setState(SessionState.AWAITING_USER)
-            else setState(SessionState.ERROR)
+            else if (error != null) setState(SessionState.ERROR)
             completion(error)
         }
     }
@@ -218,6 +238,10 @@ internal class PrimerViewModel(
             _vaultedPaymentMethods.value =
                 vaultedPaymentMethods.value?.filter { it.token != token }
         }
+    }
+
+    fun initializeAnalytics() = viewModelScope.launch {
+        analyticsInteractor.initialize().collect { }
     }
 
     val paymentMethodButtonGroupFactory: PaymentMethodButtonGroupFactory
@@ -295,6 +319,9 @@ internal class PrimerViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        viewModelScope.launch(NonCancellable) {
+            analyticsInteractor.send().collect { }
+        }
         subscription.unregister()
     }
 
@@ -313,5 +340,39 @@ internal class PrimerViewModel(
                 Primer.instance.dismiss()
             }
         }
+    }
+
+    private fun logGoToVaultedPaymentMethodsView() {
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                config.toPlace(),
+                ObjectId.MANAGE
+            )
+        )
+    }
+
+    private fun logGoToSelectPaymentMethodsView() {
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                Place.PAYMENT_METHODS_LIST,
+                ObjectId.BACK
+            )
+        )
+    }
+
+    private fun logSelectPaymentMethod(paymentMethodType: PaymentMethodType) {
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                config.toPlace(),
+                ObjectId.SELECT,
+                PaymentMethodContextParams(paymentMethodType)
+            )
+        )
     }
 }

@@ -1,0 +1,9 @@
+package io.primer.android.components.domain.core.models
+
+import io.primer.android.model.dto.PrimerPaymentMethodType
+import kotlin.reflect.KClass
+
+data class PrimerHeadlessUniversalCheckoutPaymentMethod(
+    val paymentMethodType: PrimerPaymentMethodType,
+    val requiredInputDataClass: KClass<out PrimerHeadlessUniversalCheckoutInputData>? = null
+)

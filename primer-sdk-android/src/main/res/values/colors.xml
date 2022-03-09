@@ -36,6 +36,7 @@
     <color name="bank_transfer">#0054A6</color>
     <color name="atome">#F0FF5F</color>
     <color name="xfers">#941F7F</color>
+    <color name="p24">#C51B2A</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

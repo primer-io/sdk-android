@@ -7,6 +7,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
@@ -26,12 +27,15 @@ class AsyncPaymentMethodViewModelTest {
     @RelaxedMockK
     internal lateinit var interactor: AsyncPaymentMethodInteractor
 
+    @RelaxedMockK
+    internal lateinit var analyticsInteractor: AnalyticsInteractor
+
     private lateinit var viewModel: AsyncPaymentMethodViewModel
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        viewModel = AsyncPaymentMethodViewModel(interactor)
+        viewModel = AsyncPaymentMethodViewModel(interactor, analyticsInteractor)
     }
 
     @Test

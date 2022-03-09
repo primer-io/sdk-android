@@ -2,79 +2,87 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/germanyItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/ukItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/usItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/swedenItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/singaporeItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/norwayItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/netherlandsItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
     <com.example.myapplication.ui.SettingsItem
         android:id="@+id/polandItem"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="12dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
+    <com.example.myapplication.ui.SettingsItem
+        android:id="@+id/franceItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="12dp" />
 
 </LinearLayout>

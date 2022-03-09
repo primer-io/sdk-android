@@ -42,6 +42,6 @@ internal val asyncPaymentMethodModule = {
             )
         }
 
-        viewModel { AsyncPaymentMethodViewModel(get()) }
+        viewModel { AsyncPaymentMethodViewModel(get(), get()) }
     }
 }

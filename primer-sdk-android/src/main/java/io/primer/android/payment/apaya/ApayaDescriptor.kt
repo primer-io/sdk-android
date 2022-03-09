@@ -50,7 +50,7 @@ internal class ApayaDescriptor constructor(
         val text = binding.payMobilePreviewButton
         val drawable = ContextCompat.getDrawable(
             container.context,
-            R.drawable.ic_mobile
+            R.drawable.ic_logo_apaya
         )
 
         text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
@@ -75,5 +75,5 @@ internal class ApayaDescriptor constructor(
         return binding.root
     }
 
-    override fun getLoadingState() = LoadingState(R.drawable.ic_mobile)
+    override fun getLoadingState() = LoadingState(R.drawable.ic_logo_apaya)
 }

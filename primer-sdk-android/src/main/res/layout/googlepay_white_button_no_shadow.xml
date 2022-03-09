@@ -22,7 +22,7 @@
             android:layout_weight="1"
             android:duplicateParentState="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/googlepay_white_button_content" />
+            android:src="@drawable/ic_logo_googlepay_light" />
     </LinearLayout>
 
     <ImageView

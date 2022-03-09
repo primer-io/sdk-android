@@ -8,7 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.analytics.data.models.TimerId
+import io.primer.android.analytics.data.models.TimerType
+import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
@@ -40,8 +44,10 @@ import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewClientType
+import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
+import io.primer.android.ui.fragments.PaymentMethodStatusFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
@@ -145,7 +151,19 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 )
             }
             is CheckoutEvent.StartAsyncFlow -> {
-                openFragment(QrCodeFragment.newInstance(it.statusUrl), true)
+                when (it.clientTokenIntent) {
+                    ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
+                        sheet.popBackStackToRoot()
+                        openFragment(PaymentMethodStatusFragment.newInstance(it.statusUrl), true)
+                    }
+                    ClientTokenIntent.XFERS_PAYNOW_REDIRECTION -> openFragment(
+                        QrCodeFragment.newInstance(
+                            it.statusUrl
+                        ),
+                        true
+                    )
+                    else -> Unit
+                }
             }
         }
     }
@@ -153,6 +171,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     // region Web-based payment methods
     private val webFlowPaymentDataObserver =
         Observer<BaseWebFlowPaymentData> { paymentData ->
+            EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
             if (config.settings.options.preferWebView) {
                 val title =
                     when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
@@ -215,11 +234,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private val payPalBillingAgreementUrlObserver = Observer { uri: String ->
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
 
     private val payPalOrderObserver = Observer { uri: String ->
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
@@ -262,8 +283,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         primerViewModel.dispatchAction(action, false) { error: Error? ->
             runOnUiThread {
-                if (error == null) presentFragment(descriptor.selectedBehaviour)
-                else emitError(error)
+                if (error == null) {
+                    presentFragment(descriptor.selectedBehaviour)
+                    primerViewModel.setState(SessionState.AWAITING_USER)
+                } else emitError(error)
             }
         }
     }
@@ -289,6 +312,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         this.config = config
 
         DIAppContext.init(applicationContext, config)
+
+        primerViewModel.initializeAnalytics()
+
+        addTimerDurationEvent(TimerType.START)
 
         primerViewModel.fetchConfiguration()
 
@@ -446,6 +473,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private fun onExit(reason: CheckoutExitReason) {
         if (!exited) {
+            addTimerDurationEvent(TimerType.END)
             exited = true
             EventBus.broadcast(
                 CheckoutEvent.Exit(CheckoutExitInfo(reason))
@@ -477,4 +505,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
     }
+
+    private fun addTimerDurationEvent(type: TimerType) = primerViewModel.addAnalyticsEvent(
+        TimerAnalyticsParams(
+            TimerId.CHECKOUT_DURATION,
+            type
+        )
+    )
 }
