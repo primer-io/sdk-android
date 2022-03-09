@@ -84,6 +84,10 @@ class MainViewModel(
     val amountStringified: String get() = String.format("%.2f", _amount.value!!.toDouble() / 100)
     fun setAmount(amount: Int): Unit = _amount.postValue(amount)
 
+    private val _descriptor = MutableLiveData("Purchase: Item-123")
+    val descriptor: LiveData<String> = _descriptor
+    fun setDescriptor(descriptor: String) = _descriptor.postValue(descriptor)
+
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.GB)
     val clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
     val useKlarna: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
@@ -302,7 +306,10 @@ class MainViewModel(
         _transactionId.postValue(null)
 
         val environment = environment.value!!.environment
-        val body = TransactionRequest.create(paymentMethod.token)
+        val body = TransactionRequest.create(
+            paymentMethod.token,
+            descriptor.value.orEmpty()
+        )
 
         paymentsRepository.create(
             body,
