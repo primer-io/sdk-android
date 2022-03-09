@@ -1,5 +1,6 @@
 package io.primer.android.data.payments.forms.datasource
 
+import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
 import io.primer.android.data.payments.forms.models.ButtonType
@@ -8,12 +9,13 @@ import io.primer.android.data.payments.forms.models.FormInputDataResponse
 import io.primer.android.data.payments.forms.models.FormType
 import kotlinx.coroutines.flow.flowOf
 
-internal class BlikLocalFormDataSource : BaseFlowCacheDataSource<FormDataResponse, String> {
+internal class BlikLocalFormDataSource(private val theme: PrimerTheme) :
+    BaseFlowCacheDataSource<FormDataResponse, String> {
 
     override fun get() = flowOf(
         FormDataResponse(
             null,
-            R.drawable.ic_logo_blik_light,
+            if (theme.isDarkMode == true) R.drawable.ic_logo_blik else R.drawable.ic_logo_blik_light,
             ButtonType.CONFIRM,
             R.string.input_description_otp,
             listOf(
