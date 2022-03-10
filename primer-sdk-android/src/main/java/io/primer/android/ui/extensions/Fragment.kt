@@ -11,10 +11,8 @@ internal fun <T : Any> Fragment.autoCleaned(initializer: (() -> T)? = null): Aut
 internal fun Fragment.popBackStackToRoot() = popBackStackToIndex(0)
 
 private fun Fragment.popBackStackToIndex(index: Int) = childFragmentManager.apply {
-    if (backStackEntryCount > index) {
-        popBackStack(
-            getBackStackEntryAt(index).id,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
-    }
+    popBackStack(
+        getBackStackEntryAt(index).id,
+        FragmentManager.POP_BACK_STACK_INCLUSIVE
+    )
 }

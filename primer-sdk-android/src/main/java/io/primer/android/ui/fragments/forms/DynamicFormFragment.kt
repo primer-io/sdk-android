@@ -41,8 +41,10 @@ internal class DynamicFormFragment : BaseFormFragment() {
 
     private val tokenizationStatusObserver = Observer<TokenizationStatus> { status ->
         binding.apply {
-            val viewsEnabled =
-                status == TokenizationStatus.NONE || status == TokenizationStatus.ERROR
+            val viewsEnabled = setOf(
+                TokenizationStatus.NONE,
+                TokenizationStatus.ERROR
+            ).contains(status)
             mainLayout.children.forEach {
                 it.isEnabled = viewsEnabled
             }
@@ -54,8 +56,10 @@ internal class DynamicFormFragment : BaseFormFragment() {
         tokenizationViewModel.tokenizationStatus.asFlow()
             .combineTransform(viewModel.validationLiveData.asFlow()) { status, formValidated ->
                 emit(
-                    formValidated &&
-                        (status == TokenizationStatus.NONE || status == TokenizationStatus.ERROR)
+                    formValidated && setOf(
+                        TokenizationStatus.NONE,
+                        TokenizationStatus.ERROR
+                    ).contains(status)
                 )
             }.asLiveData()
     }
