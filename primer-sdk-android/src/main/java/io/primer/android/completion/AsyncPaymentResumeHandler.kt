@@ -27,6 +27,7 @@ internal class AsyncPaymentResumeHandler(
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
+        eventDispatcher.dispatchEvent(CheckoutEvent.PaymentMethodPresented)
         if (clientTokenRepository.getClientTokenIntent()
             == ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
         ) {
