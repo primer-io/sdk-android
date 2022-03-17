@@ -1,6 +1,7 @@
 package io.primer.android.viewmodel.bank
 
 import androidx.lifecycle.viewModelScope
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.rpc.banks.BanksFilterInteractor
 import io.primer.android.domain.rpc.banks.BanksInteractor
@@ -12,7 +13,8 @@ import kotlinx.coroutines.launch
 internal class DotPayBankSelectionViewModel(
     interactor: BanksInteractor,
     private val banksFilterInteractor: BanksFilterInteractor,
-) : BankSelectionViewModel(interactor), DIAppComponent {
+    private val analyticsInteractor: AnalyticsInteractor
+) : BankSelectionViewModel(interactor, analyticsInteractor), DIAppComponent {
 
     fun onFilterChanged(
         text: String

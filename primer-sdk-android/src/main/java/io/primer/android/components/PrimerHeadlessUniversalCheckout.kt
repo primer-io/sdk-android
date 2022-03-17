@@ -2,12 +2,12 @@ package io.primer.android.components
 
 import android.content.Context
 import android.view.View
+import androidx.annotation.DrawableRes
 import io.primer.android.CheckoutEventListener
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.Primer
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
 import io.primer.android.components.presentation.HeadlessUniversalCheckoutViewModel
-import io.primer.android.components.ui.assets.Brand
 import io.primer.android.components.ui.assets.ImageType
 import io.primer.android.components.ui.assets.PrimerAssetManager
 import io.primer.android.components.ui.navigation.Navigator
@@ -184,12 +184,12 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         @JvmStatic
         val current = instance as PrimerHeadlessUniversalCheckoutInterface
 
+        @DrawableRes
         fun getAsset(
-            context: Context,
-            brand: Brand,
+            paymentMethodType: PrimerPaymentMethodType,
             assetType: ImageType,
         ): Int? {
-            return PrimerAssetManager.getAsset(context, brand, assetType)
+            return PrimerAssetManager.getAsset(paymentMethodType, assetType)
         }
     }
 }

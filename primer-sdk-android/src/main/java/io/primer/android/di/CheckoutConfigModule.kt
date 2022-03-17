@@ -8,8 +8,11 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.infrastructure.metadata.datasource.MetaDataSource
 import io.primer.android.data.token.model.ClientToken
 import io.primer.android.data.token.repository.ClientTokenDataRepository
+import io.primer.android.data.token.validation.ValidationTokenDataSource
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.repository.ConfigurationRepository
+import io.primer.android.domain.token.ValidateTokenRepository
+import io.primer.android.domain.token.ValidateTokenDataRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
@@ -38,6 +41,8 @@ internal val CheckoutConfigModule = { config: PrimerConfig, clientToken: ClientT
             LocalClientTokenDataSource(clientToken)
         }
 
+        single { ValidationTokenDataSource(get()) }
+
         single<ClientTokenRepository> { ClientTokenDataRepository(get()) }
 
         single {
@@ -51,6 +56,8 @@ internal val CheckoutConfigModule = { config: PrimerConfig, clientToken: ClientT
         single<ConfigurationRepository> { ConfigurationDataRepository(get(), get(), get()) }
 
         single<PaymentMethodRepository> { PaymentMethodDataRepository() }
+
+        single<ValidateTokenRepository> { ValidateTokenDataRepository(get(), get(), get()) }
 
         single {
             ConfigurationInteractor(

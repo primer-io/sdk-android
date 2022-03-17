@@ -25,6 +25,7 @@
     <string name="add_apaya">Pay by mobile</string>
     <string name="add_customer_id">Add customer ID</string>
     <string name="customer_id">Customer ID</string>
+    <string name="descriptor">Descriptor</string>
     <string name="country">Country</string>
     <string name="amount">Amount</string>
     <string name="currency">Currency</string>

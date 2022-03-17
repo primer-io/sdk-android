@@ -22,6 +22,8 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.PAY_NL_IDEAL -> R.layout.payment_method_button_ideal
             PaymentMethodType.PAY_NL_PAYCONIQ -> R.layout.payment_method_button_payconiq
             PaymentMethodType.PAY_NL_GIROPAY -> R.layout.payment_method_button_giropay
+            PaymentMethodType.PAY_NL_P24 -> R.layout.payment_method_button_p24
+            PaymentMethodType.PAY_NL_EPS -> R.layout.payment_method_button_eps
             PaymentMethodType.HOOLAH -> R.layout.payment_method_button_hoolah
             PaymentMethodType.ADYEN_GIROPAY -> R.layout.payment_method_button_giropay
             PaymentMethodType.ADYEN_TWINT -> R.layout.payment_method_button_twint
@@ -35,6 +37,9 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.ADYEN_BLIK -> R.layout.payment_method_button_blik
             PaymentMethodType.MOLLIE_BANCONTACT -> R.layout.payment_method_button_bancontact
             PaymentMethodType.MOLLIE_IDEAL -> R.layout.payment_method_button_ideal
+            PaymentMethodType.MOLLIE_P24 -> R.layout.payment_method_button_p24
+            PaymentMethodType.MOLLIE_GIROPAY -> R.layout.payment_method_button_giropay
+            PaymentMethodType.MOLLIE_EPS -> R.layout.payment_method_button_eps
             PaymentMethodType.BUCKAROO_GIROPAY -> R.layout.payment_method_button_giropay
             PaymentMethodType.BUCKAROO_SOFORT -> R.layout.payment_method_button_sofort
             PaymentMethodType.BUCKAROO_IDEAL -> R.layout.payment_method_button_ideal

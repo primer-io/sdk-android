@@ -1,23 +1,19 @@
 package io.primer.android.components.ui.assets
 
-import android.content.Context
+import androidx.annotation.DrawableRes
+import io.primer.android.model.dto.PrimerPaymentMethodType
 
 internal object PrimerAssetManager {
 
+    @DrawableRes
     fun getAsset(
-        context: Context,
-        brand: Brand,
+        paymentMethodType: PrimerPaymentMethodType,
         assetType: ImageType,
     ): Int? {
-        val resources = context.resources
-        val resourceName = when (assetType) {
-            ImageType.ICON -> "ic_logo_${brand.brandName}"
-            ImageType.LOGO -> "ic_logo_${brand.brandName}_square"
+        val resourceId = when (assetType) {
+            ImageType.ICON -> paymentMethodType.brand.iconResId
+            ImageType.LOGO -> paymentMethodType.brand.logoResId
         }
-        val resourceId: Int = resources.getIdentifier(
-            resourceName, "drawable",
-            context.packageName
-        )
         return when (resourceId) {
             0 -> null
             else -> resourceId

@@ -54,6 +54,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.MOLLIE_GIROPAY,
             PaymentMethodType.ADYEN_GIROPAY,
             PaymentMethodType.PAY_NL_GIROPAY,
             PaymentMethodType.BUCKAROO_GIROPAY -> GiropayPaymentMethodDescriptor(
@@ -123,6 +124,8 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.MOLLIE_EPS,
+            PaymentMethodType.PAY_NL_EPS,
             PaymentMethodType.BUCKAROO_EPS -> EpsPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
@@ -138,6 +141,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.PAY_NL_P24,
             PaymentMethodType.MOLLIE_P24 -> P24PaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,

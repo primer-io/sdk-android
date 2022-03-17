@@ -16,10 +16,12 @@ data class Configuration(
     val keys: ConfigurationKeys? = null,
     val clientSession: ClientSession? = null,
     @SerialName("env") val environment: Environment,
+    val primerAccountId: String? = null,
 )
 
 @Serializable
 data class ClientSession(
+    val clientSessionId: String? = null,
     val customerId: String? = null,
     val orderId: String? = null,
     val amount: Int? = null,
@@ -83,7 +85,7 @@ enum class Environment(val environment: String) {
 
 @Serializable
 data class CheckoutModule(
-    val type: CheckoutModuleType,
+    val type: CheckoutModuleType = CheckoutModuleType.UNKNOWN,
     val requestUrl: String? = null,
     val options: Map<String, Boolean>? = null,
 )

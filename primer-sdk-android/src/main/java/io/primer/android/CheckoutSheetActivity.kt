@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.analytics.data.models.TimerId
+import io.primer.android.analytics.data.models.TimerType
+import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
@@ -36,9 +39,9 @@ import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
+import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
-import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
@@ -293,6 +296,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         DIAppContext.init(applicationContext, config)
 
+        primerViewModel.initializeAnalytics()
+
+        addTimerDurationEvent(TimerType.START)
+
         primerViewModel.fetchConfiguration()
 
         sheet = CheckoutSheetFragment.newInstance()
@@ -449,6 +456,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private fun onExit(reason: CheckoutExitReason) {
         if (!exited) {
+            addTimerDurationEvent(TimerType.END)
             exited = true
             EventBus.broadcast(
                 CheckoutEvent.Exit(CheckoutExitInfo(reason))
@@ -480,4 +488,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private fun openSheet() {
         sheet.show(supportFragmentManager, sheet.tag)
     }
+
+    private fun addTimerDurationEvent(type: TimerType) = primerViewModel.addAnalyticsEvent(
+        TimerAnalyticsParams(
+            TimerId.CHECKOUT_DURATION,
+            type
+        )
+    )
 }

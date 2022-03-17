@@ -2,12 +2,19 @@ package io.primer.android.viewmodel.bank
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.analytics.domain.models.BankIssuerContextParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.rpc.banks.BanksInteractor
 import io.primer.android.domain.rpc.banks.models.IssuingBankParams
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
+import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.BankItem
 import io.primer.android.ui.BaseBankItem
 import kotlinx.coroutines.flow.catch
@@ -18,7 +25,8 @@ import kotlinx.coroutines.launch
 
 internal open class BankSelectionViewModel(
     private val interactor: BanksInteractor,
-) : ViewModel(), DIAppComponent {
+    private val analyticsInteractor: AnalyticsInteractor
+) : BaseViewModel(analyticsInteractor), DIAppComponent {
 
     protected val _itemsLiveData = MutableLiveData<List<BaseBankItem>>()
     val itemsLiveData: LiveData<List<BaseBankItem>> = _itemsLiveData
@@ -53,5 +61,17 @@ internal open class BankSelectionViewModel(
             else bankItem.toDisabledBankItem()
         }
         _itemsLiveData.postValue(newItems)
+        logAnalyticsBankSelected(issuerId)
     }
+
+    private fun logAnalyticsBankSelected(issuerId: String) =
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.LIST_ITEM,
+                Place.BANK_SELECTION_LIST,
+                ObjectId.SELECT,
+                BankIssuerContextParams(issuerId),
+            )
+        )
 }

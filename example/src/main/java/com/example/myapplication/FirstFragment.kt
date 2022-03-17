@@ -86,6 +86,11 @@ class FirstFragment : Fragment() {
                 viewModel.setAmount(cleanString.toInt())
             }
         }
+        binding.descriptorTextField.apply {
+            setText(viewModel.descriptor.value)
+            onFocusChangeListener = HideKeyboardFocusChangeListener(R.id.descriptorTextField, activity)
+            addTextChangedListener { viewModel.setDescriptor(it.toString()) }
+        }
     }
 
     private fun configureNextButton() {

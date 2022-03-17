@@ -19,6 +19,8 @@ internal class LocalConfigurationDataSource(private val settings: PrimerSettings
 
     fun getConfiguration() = requireNotNull(configuration)
 
+    fun getConfigurationNullable() = configuration
+
     private fun updateSettings(configuration: Configuration) =
         configuration.clientSession?.apply {
             customer?.let { settings.customer = it }

@@ -1,6 +1,6 @@
 package io.primer.android.data.payments.methods.datasource
 
-import io.primer.android.data.base.datasource.BaseDataSource
+import io.primer.android.data.base.datasource.BaseFlowDataSource
 import io.primer.android.data.payments.methods.models.PaymentMethodTokenInternalResponse
 import io.primer.android.http.PrimerHttpClient
 import io.primer.android.data.configuration.model.Configuration
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 internal class RemoteVaultedPaymentMethodsDataSource(
     private val primerHttpClient: PrimerHttpClient,
-) : BaseDataSource<List<PaymentMethodVaultTokenInternal>, Configuration> {
+) : BaseFlowDataSource<List<PaymentMethodVaultTokenInternal>, Configuration> {
 
     override fun execute(input: Configuration) =
         primerHttpClient.get<PaymentMethodTokenInternalResponse>(

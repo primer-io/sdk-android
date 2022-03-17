@@ -8,6 +8,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.domain.rpc.banks.BanksFilterInteractor
 import io.primer.android.domain.rpc.banks.BanksInteractor
 import io.primer.android.domain.rpc.banks.models.IssuingBank
@@ -31,12 +32,19 @@ class DotpayBankSelectionViewModelTest {
     @RelaxedMockK
     internal lateinit var banksFilterInteractor: BanksFilterInteractor
 
+    @RelaxedMockK
+    internal lateinit var analyticsInteractor: AnalyticsInteractor
+
     private lateinit var viewModel: DotPayBankSelectionViewModel
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        viewModel = DotPayBankSelectionViewModel(interactor, banksFilterInteractor)
+        viewModel = DotPayBankSelectionViewModel(
+            interactor,
+            banksFilterInteractor,
+            analyticsInteractor
+        )
     }
 
     @Test

@@ -12,6 +12,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.PostAuthResponse
@@ -41,6 +42,9 @@ class ThreeDsViewModelTest {
     internal lateinit var threeDsInteractor: ThreeDsInteractor
 
     @RelaxedMockK
+    internal lateinit var analyticsInteractor: AnalyticsInteractor
+
+    @RelaxedMockK
     internal lateinit var checkoutConfig: PrimerConfig
 
     private lateinit var viewModel: ThreeDsViewModel
@@ -48,7 +52,7 @@ class ThreeDsViewModelTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        viewModel = ThreeDsViewModel(threeDsInteractor, checkoutConfig)
+        viewModel = ThreeDsViewModel(threeDsInteractor, analyticsInteractor, checkoutConfig)
     }
 
     @Test

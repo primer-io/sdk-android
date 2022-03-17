@@ -3,6 +3,7 @@ package io.primer.android.domain.action
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.domain.session.repository.ConfigurationRepository
+import io.primer.android.domain.token.ValidateTokenRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.utils.Failure
 import io.primer.android.utils.Success
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class ActionInteractor(
+    private val validationTokenRepository: ValidateTokenRepository,
     private val actionRepository: ActionRepository,
     private val configurationRepository: ConfigurationRepository,
     private val clientTokenRepository: ClientTokenRepository,
@@ -40,20 +42,24 @@ internal class ActionInteractor(
             is Success -> {
                 if (result.value == null) completion(null)
                 else {
-                    clientTokenRepository.setClientToken(result.value)
-                    fetchConfiguration { error -> completion(error) }
+                    CoroutineScope(dispatcher).launch {
+                        validationTokenRepository.validate(result.value).catch { e ->
+                            completion(Error(e))
+                        }.collect {
+                            clientTokenRepository.setClientToken(result.value)
+                            fetchConfiguration { error -> completion(error) }
+                        }
+                    }
                 }
             }
             is Failure -> completion(result.value)
         }
     }
 
-    private fun fetchConfiguration(
+    private suspend fun fetchConfiguration(
         completion: (error: Error?) -> Unit,
-    ) = CoroutineScope(dispatcher).launch {
-        configurationRepository
-            .fetchConfiguration(false)
-            .catch { completion(Error("Failed to fetch configuration")) }
-            .collect { completion(null) }
-    }
+    ) = configurationRepository
+        .fetchConfiguration(false)
+        .catch { completion(Error("Failed to fetch configuration")) }
+        .collect { completion(null) }
 }

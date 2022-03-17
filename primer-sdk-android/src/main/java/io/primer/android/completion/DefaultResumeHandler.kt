@@ -1,42 +1,62 @@
 package io.primer.android.completion
 
+import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.domain.token.ValidateTokenRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
+import io.primer.android.extensions.toResumeErrorEvent
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
-import java.lang.Error
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 internal open class DefaultResumeHandler(
+    private val validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
+    private val analyticsRepository: AnalyticsRepository,
     private val eventDispatcher: EventDispatcher,
-    private var logger: Logger
-) :
-    ResumeHandler {
+    private var logger: Logger,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : ResumeHandler {
 
     private var handlerUsed = false
 
     override fun handleError(error: Error) = callIfNotHandled {
+        addAnalyticsEvent("handleError")
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED)
         )
     }
 
     override fun handleSuccess() = callIfNotHandled {
+        addAnalyticsEvent("handleSuccess")
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS)
         )
     }
 
     override fun handleNewClientToken(clientToken: String) = callIfNotHandled {
+        addAnalyticsEvent("handleNewClientToken")
         try {
-            clientTokenRepository.setClientToken(clientToken)
-            handleClientToken(clientToken)
+            CoroutineScope(dispatcher).launch {
+                validationTokenRepository.validate(clientToken).catch { e ->
+                    eventDispatcher.dispatchEvent(e.toResumeErrorEvent())
+                }.collect {
+                    clientTokenRepository.setClientToken(clientToken)
+                    handleClientToken(clientToken)
+                }
+            }
         } catch (e: IllegalArgumentException) {
             eventDispatcher.dispatchEvent(
                 CheckoutEvent.ResumeError(
@@ -75,6 +95,15 @@ internal open class DefaultResumeHandler(
         } else {
             logger.warn(HANDLER_USED_ERROR)
         }
+    }
+
+    private fun addAnalyticsEvent(name: String) {
+        analyticsRepository.addEvent(
+            SdkFunctionParams(
+                name,
+                mapOf("class" to javaClass.simpleName)
+            )
+        )
     }
 
     protected companion object {

@@ -2,7 +2,14 @@ package io.primer.android.ui.payment.async
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.di.DIAppComponent
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import io.primer.android.ui.base.webview.WebViewActivity
@@ -17,10 +24,16 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        logAnalyticsViewed()
         asyncPaymentMethodViewModel.getStatus(
             intent?.extras?.getString(STATUS_URL_KEY).orEmpty()
         )
         setupObservers()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        logBackPressed()
+        return super.onSupportNavigateUp()
     }
 
     private fun setupObservers() {
@@ -33,6 +46,28 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
             finish()
         }
     }
+
+    private fun logAnalyticsViewed() = asyncPaymentMethodViewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.VIEW,
+            ObjectType.WEB_PAGE,
+            Place.PAYMENT_METHOD_POPUP,
+            context = UrlContextParams(
+                Uri.parse(
+                    intent.extras?.getString(PAYMENT_URL_KEY).orEmpty()
+                ).host.orEmpty()
+            )
+        )
+    )
+
+    private fun logBackPressed() = asyncPaymentMethodViewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.CLICK,
+            ObjectType.BUTTON,
+            Place.PAYMENT_METHOD_POPUP,
+            ObjectId.BACK
+        )
+    )
 
     internal companion object {
 

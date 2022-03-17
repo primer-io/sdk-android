@@ -15,6 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.PaymentMethodContextParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.di.BANK_SELECTOR_SCOPE
 import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.extensions.getCollapsedSheetHeight
@@ -65,6 +71,7 @@ internal abstract class BaseBankSelectionFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        logAnalyticsViewed()
         setupViews()
         setupListeners()
         setupObservers()
@@ -145,6 +152,7 @@ internal abstract class BaseBankSelectionFragment :
 
     private fun setupListeners() {
         baseBinding.paymentMethodBack.setOnClickListener {
+            logAnalyticsBackPressed()
             parentFragmentManager.popBackStack()
         }
         baseBinding.errorLayout.tryAgain.setOnClickListener {
@@ -211,4 +219,28 @@ internal abstract class BaseBankSelectionFragment :
             )
         )
     }
+
+    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.VIEW,
+            ObjectType.VIEW,
+            Place.BANK_SELECTION_LIST,
+            ObjectId.VIEW,
+            primerViewModel.selectedPaymentMethod.value?.config?.type?.let {
+                PaymentMethodContextParams(it)
+            }
+        )
+    )
+
+    private fun logAnalyticsBackPressed() = viewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.CLICK,
+            ObjectType.BUTTON,
+            Place.BANK_SELECTION_LIST,
+            ObjectId.BACK,
+            primerViewModel.selectedPaymentMethod.value?.config?.type?.let {
+                PaymentMethodContextParams(it)
+            }
+        )
+    )
 }

@@ -26,5 +26,5 @@ internal class IdealPaymentMethodDescriptor(
         )
     }
 
-    override fun getLoadingState() = LoadingState(R.drawable.ic_logo_pay_nl_ideal_square)
+    override fun getLoadingState() = LoadingState(R.drawable.ic_logo_ideal_square)
 }

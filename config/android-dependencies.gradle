@@ -7,6 +7,7 @@ ext {
             appCompat       : "androidx.appcompat:appcompat:1.2.0",
             coreKtx         : "androidx.core:core-ktx:1.3.2",
             material        : "com.google.android.material:material:1.3.0",
+            startup         : "androidx.startup:startup-runtime:1.1.0",
             Lifecycle       : [
                     viewModel          : "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}",
                     viewModelSavedState: "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.lifecycle}",

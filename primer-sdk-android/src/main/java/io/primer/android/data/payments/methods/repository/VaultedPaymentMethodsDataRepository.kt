@@ -1,7 +1,7 @@
 package io.primer.android.data.payments.methods.repository
 
-import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
+import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource

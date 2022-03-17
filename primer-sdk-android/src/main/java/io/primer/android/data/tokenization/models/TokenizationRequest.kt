@@ -35,6 +35,7 @@ internal fun JSONObject.toJson(): JsonElement {
 }
 
 @Serializable
+@Suppress("UnusedPrivateMember")
 internal data class TokenizationVaultRequest(
     override val paymentInstrument: JsonElement,
     private val tokenType: String,

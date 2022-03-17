@@ -2,8 +2,8 @@ package io.primer.android.di
 
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.action.repository.ActionDataRepository
-import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
+import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource
 import io.primer.android.data.payments.methods.repository.PaymentMethodsDataRepository
 import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodsDataRepository
@@ -93,8 +93,8 @@ internal val PaymentMethodsModule = {
 
         single<ActionRepository> { ActionDataRepository(get()) }
 
-        single { ActionInteractor(get(), get(), get(), get()) }
+        single { ActionInteractor(get(), get(), get(), get(), get()) }
 
-        viewModel { PrimerViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { PrimerViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     }
 }
