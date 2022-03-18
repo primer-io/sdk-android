@@ -45,6 +45,8 @@
     <string name="enter_email">Vul uw e-mailadres in</string>
     <string name="enter_address">Vul uw adres in</string>
     <string name="first_last_name">Voornaam en achternaam</string>
+    <string name="first_name">Voornaam</string>
+    <string name="last_name">Achternaam</string>
     <string name="bank_selection_title">Uw bank kiezen</string>
     <string name="bank_selection_hint">Banken zoeken</string>
     <string name="bank_selection_error_message">Bank kan niet worden geladen. Controleer uw verbinding en probeer het opnieuw.</string>
@@ -112,4 +114,6 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">Land vinden</string>
+    <string name="title_card_form_billing_address">Billing address</string>
 </resources>

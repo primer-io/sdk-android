@@ -3,7 +3,7 @@ package io.primer.android.components
 import android.content.Context
 import android.view.View
 import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 
@@ -30,10 +30,10 @@ interface PrimerHeadlessUniversalCheckoutInterface {
     )
 
     /**
-     * Lists the [PrimerInputElementType] for a given [PrimerPaymentMethodType]
+     * Lists the [PrimerInputFieldType] for a given [PrimerPaymentMethodType]
      */
     fun listRequiredInputElementTypes(paymentMethodType: PrimerPaymentMethodType):
-        List<PrimerInputElementType>?
+        List<PrimerInputFieldType>?
 
     /**
      * Creates [View] for a given [PrimerPaymentMethodType]

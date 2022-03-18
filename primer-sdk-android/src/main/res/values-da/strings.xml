@@ -45,6 +45,8 @@
     <string name="enter_email">Indtast din e-mail</string>
     <string name="enter_address">Indtast din adresse</string>
     <string name="first_last_name">For- og efternavn</string>
+    <string name="first_name">Fornavn</string>
+    <string name="last_name">Efternavn</string>
     <string name="bank_selection_title">Vælg din bank</string>
     <string name="bank_selection_hint">Søg banker</string>
     <string name="bank_selection_error_message">Loading af bank mislykkedes. Tjek din forbindelse, og prøv igen.</string>
@@ -112,4 +114,6 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">Finde land</string>
+    <string name="title_card_form_billing_address">Billing address</string>
 </resources>

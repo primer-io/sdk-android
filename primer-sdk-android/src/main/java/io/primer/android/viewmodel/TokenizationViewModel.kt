@@ -445,5 +445,12 @@ internal class TokenizationViewModel(
         }
     }
 
+    fun clearInputField(type: PrimerInputFieldType) {
+        paymentMethod?.clearInputField(type)
+    }
+
+    fun hasField(inputType: PrimerInputFieldType): Boolean = paymentMethod
+        ?.hasFieldValue(inputType) ?: false
+
     // endregion
 }

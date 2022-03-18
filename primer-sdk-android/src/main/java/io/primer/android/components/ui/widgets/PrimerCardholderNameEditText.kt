@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.model.dto.PrimerInputFieldType
 
 class PrimerCardholderNameEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
@@ -15,7 +15,7 @@ class PrimerCardholderNameEditText(context: Context, attrs: AttributeSet? = null
         else SpannableStringBuilder(getSanitizedText())
     }
 
-    override fun getType() = PrimerInputElementType.CARDHOLDER_NAME
+    override fun getType() = PrimerInputFieldType.CARDHOLDER_NAME
 
     override fun isValid() = getSanitizedText().isNullOrBlank().not()
 }

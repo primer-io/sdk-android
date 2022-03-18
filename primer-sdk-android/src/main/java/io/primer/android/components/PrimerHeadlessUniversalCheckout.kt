@@ -131,7 +131,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     }
 
     override fun listRequiredInputElementTypes(paymentMethodType: PrimerPaymentMethodType):
-        List<PrimerInputElementType>? {
+        List<PrimerInputFieldType>? {
         if (viewModel == null) componentsListener?.onFailed(
             HUCError.InitializationError(
                 INITIALIZATION_ERROR

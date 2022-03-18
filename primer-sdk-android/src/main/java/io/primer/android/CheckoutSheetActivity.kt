@@ -235,7 +235,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
-            data.optString("customerTokenId")
+            data.valueBy("customerTokenId")
         )
         klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
@@ -297,6 +297,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         else -> Unit
     }
 
+    private val actionNavigateObserver = Observer<SelectedPaymentMethodBehaviour> { behaviour ->
+        behaviour ?: return@Observer
+        presentFragment(behaviour)
+    }
+
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
         if (descriptor == null) return@Observer
 
@@ -352,6 +357,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             selectedPaymentMethodBehaviourObserver
         )
         primerViewModel.checkoutEvent.observe(this, checkoutEventObserver)
+        primerViewModel.navigateActionEvent.observe(this, actionNavigateObserver)
 
         tokenizationViewModel.getDeeplinkUrl()
 

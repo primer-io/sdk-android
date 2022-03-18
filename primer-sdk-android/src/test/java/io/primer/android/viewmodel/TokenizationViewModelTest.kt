@@ -79,18 +79,18 @@ class TokenizationViewModelTest : KoinTest {
     @Test
     fun `resetting the payment method emits the NONE tokenization status`() {
         val mockJson: JSONObject = mockk()
-        every { mockJson.optString(CARD_NAME_FILED_NAME) } returns "name"
-        every { mockJson.optString(CARD_NUMBER_FIELD_NAME) } returns "number"
-        every { mockJson.optString(CARD_EXPIRY_FIELD_NAME) } returns "expiry"
-        every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
-        every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
-        every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
+        every { mockJson.valueBy(PrimerInputFieldType.CARDHOLDER_NAME) } returns "name"
+        every { mockJson.valueBy(PrimerInputFieldType.CARD_NUMBER) } returns "number"
+        every { mockJson.valueBy(PrimerInputFieldType.EXPIRY_DATE) } returns "expiry"
+        every { mockJson.valueBy(PrimerInputFieldType.CVV) } returns "cvv"
+        every { mockJson.valueBy(PrimerInputFieldType.EXPIRY_MONTH) } returns "month"
+        every { mockJson.valueBy(PrimerInputFieldType.EXPIRY_YEAR) } returns "year"
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
-            Card(),
-            mockJson
+            Card()
         )
+        paymentMethodDescriptor.pushValues(mockJson)
         val statusObserver = viewModel.tokenizationStatus.test()
 
         runTest {
@@ -113,18 +113,17 @@ class TokenizationViewModelTest : KoinTest {
     @Test
     fun `tokenization relies on TokenizationInteractor instance`() {
         val mockJson: JSONObject = mockk()
-        every { mockJson.optString(CARD_NAME_FILED_NAME) } returns "name"
-        every { mockJson.optString(CARD_NUMBER_FIELD_NAME) } returns "number"
-        every { mockJson.optString(CARD_EXPIRY_FIELD_NAME) } returns "expiry"
-        every { mockJson.optString(CARD_CVV_FIELD_NAME) } returns "cvv"
-        every { mockJson.optString(CARD_EXPIRY_MONTH_FIELD_NAME) } returns "month"
-        every { mockJson.optString(CARD_EXPIRY_YEAR_FIELD_NAME) } returns "year"
+        every { mockJson.valueBy(PrimerInputFieldType.CARDHOLDER_NAME) } returns "name"
+        every { mockJson.valueBy(PrimerInputFieldType.CARD_NUMBER) } returns "number"
+        every { mockJson.valueBy(PrimerInputFieldType.EXPIRY_DATE) } returns "expiry"
+        every { mockJson.valueBy(PrimerInputFieldType.CVV) } returns "cvv"
+        every { mockJson.valueBy(PrimerInputFieldType.EXPIRY_MONTH) } returns "month"
+        every { mockJson.valueBy(PrimerInputFieldType.EXPIRY_YEAR) } returns "year"
         coEvery { tokenizationInteractor(any()) } returns flowOf("token")
         val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
-            Card(),
-            mockJson
+            Card()
         )
         runTest {
             viewModel.resetPaymentMethod(paymentMethodDescriptor)

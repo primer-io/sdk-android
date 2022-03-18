@@ -45,7 +45,9 @@
     <string name="enter_email">E-postanızı girin</string>
     <string name="enter_address">Adresinizi girin</string>
     <string name="first_last_name">İsim ve soyad</string>
-    <string name="bank_selection_title">Bankanızı seçin</string>
+    <string name="first_name">İsim</string>
+  <string name="last_name">Soyad</string>
+  <string name="bank_selection_title">Bankanızı seçin</string>
     <string name="bank_selection_hint">Banka ara</string>
     <string name="bank_selection_error_message">Banka yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin.</string>
     <string name="bank_selection_try_again">Tekrar deneyin</string>
@@ -112,4 +114,6 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">Bir ülke bul</string>
+    <string name="title_card_form_billing_address">Billing address</string>
 </resources>

@@ -45,6 +45,8 @@
     <string name="enter_email">Gib deine E-Mail ein</string>
     <string name="enter_address">Geben Sie Ihre Adresse ein</string>
     <string name="first_last_name">Vor- und Nachname</string>
+    <string name="first_name">Vorname</string>
+    <string name="last_name">Nachname</string>
     <string name="bank_selection_title">Wähle deine Bank</string>
     <string name="bank_selection_hint">Banken suchen</string>
     <string name="bank_selection_error_message">Bank konnte nicht geladen werden. Überprüfe deine Verbindung und versuche es erneut.</string>
@@ -112,4 +114,6 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">Ein Land finden</string>
+    <string name="title_card_form_billing_address">Billing address</string>
 </resources>

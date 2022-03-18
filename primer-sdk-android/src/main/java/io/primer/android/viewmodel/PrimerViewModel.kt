@@ -8,9 +8,11 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.ObjectId
@@ -50,8 +52,6 @@ import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.utils.SurchargeFormatter
-import java.util.Collections
-import java.util.Currency
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.NonCancellable
@@ -61,6 +61,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
+import java.util.*
 
 @KoinApiExtension
 @ExperimentalCoroutinesApi
@@ -83,6 +84,9 @@ internal class PrimerViewModel(
     private val _selectedPaymentMethodId = MutableLiveData("")
     private val _transactionId = MutableLiveData("")
 
+    private val _selectedCountryCode = MutableLiveData<Country?>()
+    val selectCountryCode: LiveData<Country?> = _selectedCountryCode
+
     private val _keyboardVisible = MutableLiveData(false)
     val keyboardVisible: LiveData<Boolean> = _keyboardVisible
 
@@ -91,6 +95,8 @@ internal class PrimerViewModel(
 
     private val _state = MutableLiveData(SessionState.AWAITING_USER)
     val state: LiveData<SessionState> = _state
+
+    private val userInputs = mutableMapOf<String, String>()
 
     fun setState(s: SessionState) {
         _state.postValue(s)
@@ -122,16 +128,20 @@ internal class PrimerViewModel(
     private val _checkoutEvent = MutableLiveData<CheckoutEvent>()
     val checkoutEvent: LiveData<CheckoutEvent> = _checkoutEvent
 
-    val showPostalCode: LiveData<Boolean> = _state.asFlow()
-        .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
-        .map { configuration ->
-            val module =
-                configuration.checkoutModules.find { m ->
-                    m.type == CheckoutModuleType.BILLING_ADDRESS
-                }
-            module?.options?.get("all") ?: module?.options?.get("postalCode") ?: false
-        }
-        .asLiveData()
+    private val _navigateActionEvent = MutableLiveData<SelectedPaymentMethodBehaviour>()
+    val navigateActionEvent: LiveData<SelectedPaymentMethodBehaviour> = _navigateActionEvent
+
+    val showBillingFields: LiveData<Map<String, Boolean>?> by lazy {
+        configurationInteractor(ConfigurationParams(true))
+            .map { configuration ->
+                val module =
+                    configuration.checkoutModules.find { m ->
+                        m.type == CheckoutModuleType.BILLING_ADDRESS
+                    }
+                module?.options
+            }
+            .asLiveData()
+    }
 
     val showCardholderName: LiveData<Boolean> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
@@ -140,7 +150,8 @@ internal class PrimerViewModel(
                 configuration.checkoutModules.find { m ->
                     m.type == CheckoutModuleType.CARD_INFORMATION
                 }
-            module?.options?.get("all") ?: module?.options?.get("cardHolderName") ?: true
+            module?.options?.via(PrimerInputFieldType.ALL)
+                ?: module?.options?.via(PrimerInputFieldType.CARDHOLDER_NAME) ?: true
         }
         .asLiveData()
 
@@ -148,9 +159,6 @@ internal class PrimerViewModel(
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
         .map { configuration -> configuration.clientSession?.order?.countryCode }
         .asLiveData()
-
-    private val postalCode = MutableLiveData<String?>()
-    fun setPostalCode(data: String) = postalCode.postValue(data)
 
     fun goToVaultedPaymentMethodsView() {
         logGoToVaultedPaymentMethodsView()
@@ -178,6 +186,10 @@ internal class PrimerViewModel(
 
     fun executeBehaviour(behaviour: SelectedPaymentMethodBehaviour) {
         _selectedPaymentMethodBehaviour.value = behaviour
+    }
+
+    fun navigateTo(behaviour: SelectedPaymentMethodBehaviour) {
+        _navigateActionEvent.postValue(behaviour)
     }
 
     fun fetchConfiguration() {
@@ -315,11 +327,14 @@ internal class PrimerViewModel(
     fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value.orEmpty()
 
     fun emitPostalCode(completion: (() -> Unit) = {}) {
-        val postalCodeValue: String = postalCode.value ?: return completion()
-        if (showPostalCode.value != true) return completion()
-
-        val currentCustomer = config.settings.customer
-        val currentBillingAddress = currentCustomer.billingAddress
+        val countryCode: String = userInputs[PrimerInputFieldType.COUNTRY_CODE.field].orEmpty()
+        val firstName: String = userInputs[PrimerInputFieldType.FIRST_NAME.field].orEmpty()
+        val lastName: String = userInputs[PrimerInputFieldType.LAST_NAME.field].orEmpty()
+        val addressLine1: String = userInputs[PrimerInputFieldType.ADDRESS_LINE_1.field].orEmpty()
+        val addressLine2: String = userInputs[PrimerInputFieldType.ADDRESS_LINE_2.field].orEmpty()
+        val postalCode: String = userInputs[PrimerInputFieldType.POSTAL_CODE.field].orEmpty()
+        val city: String = userInputs[PrimerInputFieldType.CITY.field].orEmpty()
+        val state: String = userInputs[PrimerInputFieldType.STATE.field].orEmpty()
 
         val action = ActionUpdateBillingAddressParams(
             currentCustomer.firstName,
@@ -339,6 +354,8 @@ internal class PrimerViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        userInputs.clear()
+        _selectedCountryCode.postValue(null)
         viewModelScope.launch(NonCancellable) {
             analyticsInteractor.send().collect { }
         }
@@ -412,5 +429,17 @@ internal class PrimerViewModel(
                 PaymentMethodContextParams(paymentMethodType)
             )
         )
+    }
+
+    fun setSelectedCountry(country: Country) {
+        _selectedCountryCode.value = country
+    }
+
+    fun clearSelectedCountry() {
+        _selectedCountryCode.postValue(null)
+    }
+
+    fun setUserInputs(name: String, value: String) {
+        userInputs[name] = value
     }
 }

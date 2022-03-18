@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
@@ -24,24 +25,16 @@ import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
+import io.primer.android.utils.removeSpaces
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-
-internal const val CARD_NAME_FILED_NAME = "cardholderName"
-internal const val CARD_NUMBER_FIELD_NAME = "number"
-internal const val CARD_EXPIRY_FIELD_NAME = "date"
-internal const val CARD_CVV_FIELD_NAME = "cvv"
-internal const val CARD_POSTAL_CODE_FIELD_NAME = "postalCode"
-internal const val CARD_EXPIRY_MONTH_FIELD_NAME = "expirationMonth"
-internal const val CARD_EXPIRY_YEAR_FIELD_NAME = "expirationYear"
 
 @KoinApiExtension
 internal class CreditCard(
     config: PaymentMethodRemoteConfig,
     private val options: Card,
-    encodedAsJson: JSONObject = JSONObject(), // FIXME passing in a as dependency so we can test
-) : PaymentMethodDescriptor(config, encodedAsJson), DIAppComponent {
+) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val checkoutConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
@@ -109,17 +102,25 @@ internal class CreditCard(
     override fun toPaymentInstrument(): JSONObject {
         val json = JSONObject()
 
-        json.put(CARD_NAME_FILED_NAME, getStringValue(CARD_NAME_FILED_NAME).trim())
-        json.put(
-            CARD_NUMBER_FIELD_NAME,
-            getStringValue(CARD_NUMBER_FIELD_NAME).replace("\\s".toRegex(), "")
+        json.putFor(
+            PrimerInputFieldType.CARDHOLDER_NAME,
+            values.valueBy(PrimerInputFieldType.CARDHOLDER_NAME).trim()
         )
-        json.put(CARD_CVV_FIELD_NAME, getStringValue(CARD_CVV_FIELD_NAME))
+        json.putFor(
+            PrimerInputFieldType.CARD_NUMBER,
+            values.valueBy(PrimerInputFieldType.CARD_NUMBER).removeSpaces()
+        )
+        json.putFor(
+            PrimerInputFieldType.CVV,
+            values.valueBy(PrimerInputFieldType.CVV)
+        )
 
-        val expiry = ExpiryDateFormatter.fromString(getStringValue(CARD_EXPIRY_FIELD_NAME))
+        val expiry = ExpiryDateFormatter.fromString(
+            values.valueBy(PrimerInputFieldType.EXPIRY_DATE)
+        )
 
-        json.put(CARD_EXPIRY_MONTH_FIELD_NAME, expiry.getMonth())
-        json.put(CARD_EXPIRY_YEAR_FIELD_NAME, expiry.getYear())
+        json.putFor(PrimerInputFieldType.EXPIRY_MONTH, expiry.getMonth())
+        json.putFor(PrimerInputFieldType.EXPIRY_YEAR, expiry.getYear())
 
         return json
     }
@@ -129,11 +130,11 @@ internal class CreditCard(
         val errors = ArrayList<SyncValidationError>()
 
         if (hasCardholderName) {
-            val name = getSanitizedValue(CARD_NAME_FILED_NAME)
+            val name = values.valueBy(PrimerInputFieldType.CARDHOLDER_NAME)
             if (name.isEmpty()) {
                 errors.add(
                     SyncValidationError(
-                        name = CARD_NAME_FILED_NAME,
+                        name = PrimerInputFieldType.CARDHOLDER_NAME.field,
                         errorId = R.string.form_error_required,
                         fieldId = R.string.card_holder_name
                     )
@@ -142,12 +143,14 @@ internal class CreditCard(
         }
 
         // FIXME static call (formatter should be injected)
-        val number = CardNumberFormatter.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
+        val number = CardNumberFormatter.fromString(
+            values.valueBy(PrimerInputFieldType.CARD_NUMBER)
+        )
 
         if (number.isEmpty()) {
             errors.add(
                 SyncValidationError(
-                    name = CARD_NUMBER_FIELD_NAME,
+                    name = PrimerInputFieldType.CARD_NUMBER.field,
                     errorId = R.string.form_error_required,
                     fieldId = R.string.card_number
                 )
@@ -155,19 +158,19 @@ internal class CreditCard(
         } else if (!number.isValid()) {
             errors.add(
                 SyncValidationError(
-                    name = CARD_NUMBER_FIELD_NAME,
+                    name = PrimerInputFieldType.CARD_NUMBER.field,
                     errorId = R.string.form_error_invalid,
                     fieldId = R.string.card_number
                 )
             )
         }
 
-        val cvv = getSanitizedValue(CARD_CVV_FIELD_NAME)
+        val cvv = values.valueBy(PrimerInputFieldType.CVV)
 
         if (cvv.isEmpty()) {
             errors.add(
                 SyncValidationError(
-                    name = CARD_CVV_FIELD_NAME,
+                    name = PrimerInputFieldType.CVV.field,
                     errorId = R.string.form_error_required,
                     fieldId = R.string.card_cvv
                 )
@@ -175,7 +178,7 @@ internal class CreditCard(
         } else if (cvv.length != number.getCvvLength()) {
             errors.add(
                 SyncValidationError(
-                    name = CARD_CVV_FIELD_NAME,
+                    name = PrimerInputFieldType.CVV.field,
                     errorId = R.string.form_error_invalid,
                     fieldId = R.string.card_cvv
                 )
@@ -183,12 +186,14 @@ internal class CreditCard(
         }
 
         // FIXME static call (formatter should be injected)
-        val expiry = ExpiryDateFormatter.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
+        val expiry = ExpiryDateFormatter.fromString(
+            values.valueBy(PrimerInputFieldType.EXPIRY_DATE)
+        )
 
         if (expiry.isEmpty()) {
             errors.add(
                 SyncValidationError(
-                    name = CARD_EXPIRY_FIELD_NAME,
+                    name = PrimerInputFieldType.EXPIRY_DATE.field,
                     errorId = R.string.form_error_required,
                     fieldId = R.string.card_expiry
                 )
@@ -196,7 +201,7 @@ internal class CreditCard(
         } else if (!expiry.isValid()) {
             errors.add(
                 SyncValidationError(
-                    name = CARD_EXPIRY_FIELD_NAME,
+                    name = PrimerInputFieldType.EXPIRY_DATE.field,
                     errorId = R.string.form_error_invalid,
                     fieldId = R.string.card_expiry
                 )
@@ -204,12 +209,12 @@ internal class CreditCard(
         }
 
         if (hasPostalCode) {
-            val postalCode = getSanitizedValue(CARD_POSTAL_CODE_FIELD_NAME)
+            val postalCode = values.valueBy(PrimerInputFieldType.POSTAL_CODE)
 
             if (postalCode.isEmpty()) {
                 errors.add(
                     SyncValidationError(
-                        name = CARD_POSTAL_CODE_FIELD_NAME,
+                        name = PrimerInputFieldType.POSTAL_CODE.field,
                         errorId = R.string.form_error_required,
                         fieldId = R.string.card_zip
                     )
@@ -222,21 +227,21 @@ internal class CreditCard(
 
     override fun getValidAutoFocusableFields(): Set<String> {
         val fields = hashSetOf<String>()
-        val number = CardNumberFormatter.fromString(getSanitizedValue(CARD_NUMBER_FIELD_NAME))
+        val number = CardNumberFormatter.fromString(
+            values.valueBy(PrimerInputFieldType.CARD_NUMBER)
+        )
         if (number.isValid() && number.getMaxLength() == number.getValue().length) {
-            fields.add(CARD_NUMBER_FIELD_NAME)
+            fields.add(PrimerInputFieldType.CARD_NUMBER.field)
         }
 
-        val cvv = getSanitizedValue(CARD_CVV_FIELD_NAME)
-        if (cvv.length == number.getCvvLength()) fields.add(CARD_CVV_FIELD_NAME)
+        val cvv = values.valueBy(PrimerInputFieldType.CVV)
+        if (cvv.length == number.getCvvLength()) fields.add(PrimerInputFieldType.CVV.field)
 
-        val expiry = ExpiryDateFormatter.fromString(getSanitizedValue(CARD_EXPIRY_FIELD_NAME))
-        if (expiry.isValid()) fields.add(CARD_EXPIRY_FIELD_NAME)
+        val expiry = ExpiryDateFormatter.fromString(
+            values.valueBy(PrimerInputFieldType.EXPIRY_DATE)
+        )
+        if (expiry.isValid()) fields.add(PrimerInputFieldType.EXPIRY_DATE.field)
 
         return fields
-    }
-
-    private fun getSanitizedValue(key: String): String {
-        return getStringValue(key).trim()
     }
 }

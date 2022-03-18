@@ -2,17 +2,17 @@ package io.primer.android.payment
 
 import android.view.View
 import android.view.ViewGroup
+import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
-import java.util.Collections
+import java.util.*
 
-internal abstract class PaymentMethodDescriptor(
-    val config: PaymentMethodRemoteConfig,
-    private val values: JSONObject = JSONObject(), // FIXME avoid holding JSONObject here
-) {
+internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteConfig) {
+
+    protected val values: JSONObject by lazy { JSONObject() }
 
     abstract val selectedBehaviour: SelectedPaymentMethodBehaviour
 
@@ -30,13 +30,12 @@ internal abstract class PaymentMethodDescriptor(
 
     open fun getLoadingState(): LoadingState? = null
 
-    // FIXME all this should not be here. a model should not be responsible for parsing itself into json
-    protected fun getStringValue(key: String): String {
-        return values.optString(key)
-    }
-
     fun setTokenizableValue(key: String, value: String) {
         values.put(key, value)
+    }
+
+    fun setTokenizableField(type: PrimerInputFieldType, value: String) {
+        values.put(type.field, value)
     }
 
     fun setTokenizableValue(key: String, value: JSONObject) {
@@ -55,5 +54,21 @@ internal abstract class PaymentMethodDescriptor(
 
     open fun toPaymentInstrument(): JSONObject {
         return values
+    }
+
+    fun pushValues(json: JSONObject) {
+        json.keys().forEach {
+            values.put(it, json[it])
+        }
+    }
+
+    fun hasFieldValue(type: PrimerInputFieldType): Boolean {
+        val data = if (values.has(type.field)) values.get(type.field) else null
+        return if (data is String) data.isNotBlank()
+        else data != null
+    }
+
+    fun clearInputField(type: PrimerInputFieldType) {
+        values.remove(type.field)
     }
 }

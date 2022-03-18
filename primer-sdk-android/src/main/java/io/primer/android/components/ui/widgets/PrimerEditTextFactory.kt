@@ -1,7 +1,7 @@
 package io.primer.android.components.ui.widgets
 
 import android.content.Context
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.model.dto.PrimerInputFieldType
 
 class PrimerEditTextFactory private constructor() {
 
@@ -9,14 +9,25 @@ class PrimerEditTextFactory private constructor() {
 
         fun createFromType(
             context: Context,
-            inputElementType: PrimerInputElementType
+            inputFieldType: PrimerInputFieldType
         ): PrimerEditText {
-            return when (inputElementType) {
-                PrimerInputElementType.CARD_NUMBER -> PrimerCardNumberEditText(context)
-                PrimerInputElementType.EXPIRY_DATE -> PrimerExpiryEditText(context)
-                PrimerInputElementType.CVV -> PrimerCvvEditText(context)
-                PrimerInputElementType.CARDHOLDER_NAME -> PrimerCardholderNameEditText(context)
-                PrimerInputElementType.POSTAL_CODE -> PrimerPostalCodeEditText(context)
+            return when (inputFieldType) {
+                PrimerInputFieldType.CARD_NUMBER -> PrimerCardNumberEditText(context)
+                PrimerInputFieldType.EXPIRY_DATE -> PrimerExpiryEditText(context)
+                PrimerInputFieldType.CVV -> PrimerCvvEditText(context)
+                PrimerInputFieldType.CARDHOLDER_NAME -> PrimerCardholderNameEditText(context)
+                PrimerInputFieldType.FIRST_NAME -> PrimerFirstNameEditText(context)
+                PrimerInputFieldType.LAST_NAME -> PrimerLastNameEditText(context)
+                PrimerInputFieldType.COUNTRY_CODE -> PrimerCountryCodeEditText(context)
+                PrimerInputFieldType.POSTAL_CODE -> PrimerPostalCodeEditText(context)
+                PrimerInputFieldType.STATE -> PrimerStateEditText(context)
+                PrimerInputFieldType.CITY -> PrimerCityEditText(context)
+                PrimerInputFieldType.ADDRESS_LINE_1 -> PrimerAddressLine1EditText(context)
+                PrimerInputFieldType.ADDRESS_LINE_2 -> PrimerAddressLine2EditText(context)
+                PrimerInputFieldType.PHONE_NUMBER -> PrimerPhoneNumberEditText(context)
+                PrimerInputFieldType.ALL -> PrimerOtherEditText(context)
+                PrimerInputFieldType.EXPIRY_MONTH -> PrimerOtherEditText(context)
+                PrimerInputFieldType.EXPIRY_YEAR -> PrimerOtherEditText(context)
             }
         }
     }

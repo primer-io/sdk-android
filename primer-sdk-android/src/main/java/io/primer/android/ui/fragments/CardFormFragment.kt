@@ -1,18 +1,24 @@
 package io.primer.android.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
@@ -44,16 +50,17 @@ import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.fragments.base.BaseFragment
+import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.utils.PaymentUtils
-import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.Collections
-import kotlin.collections.HashMap
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -62,16 +69,14 @@ import kotlin.collections.HashMap
  */
 @ExperimentalCoroutinesApi
 @KoinApiExtension
-internal class CardFormFragment : Fragment(), DIAppComponent {
+internal class CardFormFragment : BaseFragment() {
 
     // view components
-    private var inputLayouts: MutableMap<String, TextInputWidget> by autoCleaned()
+    private var inputLayouts: MutableMap<PrimerInputFieldType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
-    private val primerViewModel: PrimerViewModel by activityViewModels()
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
     private val localConfig: PrimerConfig by inject()
-    private val theme: PrimerTheme by inject()
     private val dirtyMap: MutableMap<String, Boolean> = HashMap()
     private var firstMount: Boolean = true
     private var network: CardType.Descriptor? = null
@@ -98,21 +103,24 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         tokenizationViewModel.resetPaymentMethod(primerViewModel.selectedPaymentMethod.value)
         primerViewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
 
-        primerViewModel.showPostalCode.observe(viewLifecycleOwner) { showZipCode ->
-            if (showZipCode) {
-                inputLayouts[CARD_POSTAL_CODE_FIELD_NAME] = binding.cardFormPostalCode
+        primerViewModel.showBillingFields.observe(viewLifecycleOwner) { billingFields ->
+            billingFields ?: return@observe
+            val hasPostalCode = billingFields.via(PrimerInputFieldType.POSTAL_CODE) == true
+            if (hasPostalCode) {
+                inputLayouts[PrimerInputFieldType.POSTAL_CODE] = binding.cardFormPostalCode
+                checkContainsNumber()
             }
             configureActionDone()
             renderInputFields()
-            inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.isVisible = showZipCode
-            tokenizationViewModel.setCardHasZipCode(showZipCode)
+            inputLayouts[PrimerInputFieldType.POSTAL_CODE]?.isVisible = hasPostalCode
+            tokenizationViewModel.setCardHasZipCode(hasPostalCode)
             tokenizationViewModel.validationErrors.postValue(
                 primerViewModel.selectedPaymentMethod.value?.validate()
             )
         }
 
         primerViewModel.showCardholderName.observe(viewLifecycleOwner) { showCardholderName ->
-            inputLayouts[CARD_NAME_FILED_NAME]?.isVisible = showCardholderName
+            inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]?.isVisible = showCardholderName
             addInputFieldListeners()
             tokenizationViewModel.setCardHasCardholderName(showCardholderName)
             tokenizationViewModel.validationErrors.postValue(
@@ -121,26 +129,38 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
 
         primerViewModel.orderCountry.observe(viewLifecycleOwner) { countryCode ->
-            inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.hint = when (countryCode) {
+            inputLayouts[PrimerInputFieldType.POSTAL_CODE]?.hint = when (countryCode) {
                 CountryCode.US -> requireContext().getString(R.string.card_zip)
                 else -> requireContext().getString(R.string.address_postal_code)
             }
         }
 
+        primerViewModel.selectCountryCode.observe(viewLifecycleOwner) { country ->
+            country ?: return@observe
+            inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setText(country.name)
+        }
+
         renderTitle()
         renderCancelButton()
         renderSubmitButton()
-        focusFirstInput()
+        if (!tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER)) focusFirstInput()
         addInputFieldListeners()
+        adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
+    }
+
+    private fun checkContainsNumber() {
+        if (tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER))
+            takeFocusForPostalCode()
     }
 
     // bind view components
     private fun bindViewComponents() {
         inputLayouts = mutableMapOf(
-            CARD_NAME_FILED_NAME to binding.cardFormCardholderName,
-            CARD_NUMBER_FIELD_NAME to binding.cardFormCardNumber,
-            CARD_EXPIRY_FIELD_NAME to binding.cardFormCardExpiry,
-            CARD_CVV_FIELD_NAME to binding.cardFormCardCvv,
+            PrimerInputFieldType.CARDHOLDER_NAME to binding.cardFormCardholderName,
+            PrimerInputFieldType.CARD_NUMBER to binding.cardFormCardNumber,
+            PrimerInputFieldType.EXPIRY_DATE to binding.cardFormCardExpiry,
+            PrimerInputFieldType.CVV to binding.cardFormCardCvv,
+            PrimerInputFieldType.COUNTRY_CODE to binding.cardFormCountryCode,
         )
     }
 
@@ -180,6 +200,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
                     )
                 )
                 parentFragmentManager.popBackStack()
+                primerViewModel.clearSelectedCountry()
                 isBeingDismissed = true
             }
         }
@@ -209,11 +230,11 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun focusFirstInput() = FieldFocuser.focus(
-        inputLayouts[CARD_NUMBER_FIELD_NAME]?.editText
+        inputLayouts[PrimerInputFieldType.CARD_NUMBER]?.editText
     )
 
     private fun renderCardNumberInput() {
-        val cardNumberInput = inputLayouts[CARD_NUMBER_FIELD_NAME]
+        val cardNumberInput = inputLayouts[PrimerInputFieldType.CARD_NUMBER]
         cardNumberInput?.editText?.addTextChangedListener(TextInputMask.CardNumber())
         cardNumberInput?.editText?.addTextChangedListener(afterTextChanged = ::onCardNumberInput)
         updateCardNumberInputIcon()
@@ -247,7 +268,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         }
 
         primerViewModel.dispatchAction(actionParams) {
-            activity?.runOnUiThread {
+            lifecycleScope.launchWhenStarted {
                 updateSubmitButton()
             }
         }
@@ -272,7 +293,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
 
     private fun updateCardNumberInputIcon() {
         val resource = network?.getResource() ?: R.drawable.ic_generic_card
-        val input = inputLayouts[CARD_NUMBER_FIELD_NAME] ?: return
+        val input = inputLayouts[PrimerInputFieldType.CARD_NUMBER] ?: return
         input.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0)
     }
 
@@ -286,33 +307,53 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         inputFrame.suffixText = surchargeText
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun addInputFieldListeners() {
-        inputLayouts[CARD_EXPIRY_FIELD_NAME]?.editText?.addTextChangedListener(
+        inputLayouts[PrimerInputFieldType.EXPIRY_DATE]?.editText?.addTextChangedListener(
             TextInputMask.ExpiryDate()
         )
-        inputLayouts[CARD_NUMBER_FIELD_NAME]?.editText?.addTextChangedListener(
+        inputLayouts[PrimerInputFieldType.CARD_NUMBER]?.editText?.addTextChangedListener(
             TextInputMask.CardNumber()
         )
         inputLayouts.entries.forEach {
-            it.value.editText?.addTextChangedListener(createTextWatcher(it.key))
-            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key)
+            it.value.editText?.addTextChangedListener(createTextWatcher(it.key.field))
+            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
         }
-        inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]
-            ?.editText?.addTextChangedListener { primerViewModel.setPostalCode(it.toString()) }
+
+        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setRawInputType(InputType.TYPE_NULL)
+        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.showSoftInputOnFocus = false
+        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus && (v is EditText) && v.text.isNullOrBlank()) {
+                activity?.hideKeyboard(v)
+                navigateToCountryChooser()
+            } else {
+                takeFocusForPostalCode()
+            }
+        }
+        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) navigateToCountryChooser()
+            true
+        }
+    }
+
+    private fun navigateToCountryChooser() {
+        primerViewModel.navigateTo(
+            NewFragmentBehaviour({ SelectCountryFragment.newInstance() }, returnToPreviousOnBack = true)
+        )
     }
 
     private fun configureActionDone() {
-        inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]?.editText?.let { postalCodeEditText ->
+        inputLayouts[PrimerInputFieldType.POSTAL_CODE]?.editText?.let { postalCodeEditText ->
             postalCodeEditText.imeOptions = EditorInfo.IME_ACTION_DONE
             postalCodeEditText.setOnEditorActionListener { _, _, _ ->
                 binding.cardFormSubmitButton.performClick()
             }
-            inputLayouts[CARD_NAME_FILED_NAME]?.editText?.let { cardNameEditText ->
+            inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]?.editText?.let { cardNameEditText ->
                 cardNameEditText.imeOptions = EditorInfo.IME_ACTION_NEXT
             }
             return
         }
-        inputLayouts[CARD_NAME_FILED_NAME]?.editText?.let { cardNameEditText ->
+        inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]?.editText?.let { cardNameEditText ->
             cardNameEditText.imeOptions = EditorInfo.IME_ACTION_DONE
             cardNameEditText.setOnEditorActionListener { _, _, _ ->
                 binding.cardFormSubmitButton.performClick()
@@ -439,7 +480,13 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             ) = Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                tokenizationViewModel.setTokenizableValue(name, s.toString())
+                val value = if (name == PrimerInputFieldType.COUNTRY_CODE.field) {
+                    primerViewModel.selectCountryCode.value?.code?.name.orEmpty()
+                } else {
+                    s.toString()
+                }
+                tokenizationViewModel.setTokenizableValue(name, value)
+                primerViewModel.setUserInputs(name, value)
             }
         }
     }
@@ -451,13 +498,13 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
             if (
                 !hasFocus &&
                 !firstMount &&
-                name == CARD_POSTAL_CODE_FIELD_NAME &&
+                name == PrimerInputFieldType.STATE.field &&
                 !isBeingDismissed
             ) {
                 primerViewModel.emitPostalCode()
             }
 
-            if (!hasFocus && firstMount && name == CARD_NUMBER_FIELD_NAME) {
+            if (!hasFocus && firstMount && name == PrimerInputFieldType.CARD_NUMBER.field) {
                 firstMount = false
                 skip = true
             }
@@ -474,24 +521,34 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         val currentFocus = inputLayouts.entries.firstOrNull { it.value.hasFocus() }
         val isValid =
             fields.isNotEmpty() && !firstMount &&
-                fields.firstOrNull { currentFocus?.key == it } != null
+                fields.firstOrNull { currentFocus?.key?.field == it } != null
         if (isValid) {
             when (currentFocus?.key) {
-                CARD_NUMBER_FIELD_NAME -> FieldFocuser.focus(inputLayouts[CARD_EXPIRY_FIELD_NAME])
-                CARD_EXPIRY_FIELD_NAME -> FieldFocuser.focus(inputLayouts[CARD_CVV_FIELD_NAME])
-                CARD_CVV_FIELD_NAME -> {
+                PrimerInputFieldType.CARD_NUMBER -> FieldFocuser
+                    .focus(inputLayouts[PrimerInputFieldType.EXPIRY_DATE])
+                PrimerInputFieldType.EXPIRY_DATE -> FieldFocuser
+                    .focus(inputLayouts[PrimerInputFieldType.CVV])
+                PrimerInputFieldType.CARDHOLDER_NAME -> takeFocusForPostalCode()
+                PrimerInputFieldType.COUNTRY_CODE -> takeFocusForPostalCode()
+                PrimerInputFieldType.CVV -> {
                     when {
-                        primerViewModel.showPostalCode.value == true -> FieldFocuser.focus(
-                            inputLayouts[CARD_POSTAL_CODE_FIELD_NAME]
-                        )
                         primerViewModel.showCardholderName.value == true -> FieldFocuser.focus(
-                            inputLayouts[CARD_NAME_FILED_NAME]
+                            inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]
+                        )
+                        primerViewModel.showBillingFields.value
+                            .via(PrimerInputFieldType.POSTAL_CODE) == true -> FieldFocuser.focus(
+                                inputLayouts[PrimerInputFieldType.POSTAL_CODE]
                         )
                         else -> Unit
                     }
                 }
             }
         }
+    }
+
+    private fun takeFocusForPostalCode() {
+        if (primerViewModel.showBillingFields.value.via(PrimerInputFieldType.POSTAL_CODE) == true)
+            FieldFocuser.focus(inputLayouts[PrimerInputFieldType.POSTAL_CODE])
     }
 
     private fun setValidationErrors() {
@@ -504,13 +561,13 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         val showAll = tokenizationViewModel.submitted.value == true
 
         inputLayouts.entries.forEach {
-            val dirty = getIsDirty(it.key)
+            val dirty = getIsDirty(it.key.field)
             val focused = it.value.isFocused
 
             if (showAll || dirty) {
                 setValidationErrorState(
                     it.value,
-                    if (focused) null else errors.find { err -> err.name == it.key },
+                    if (focused) null else errors.find { err -> err.name == it.key.field },
                     it.key,
                 )
             }
@@ -520,7 +577,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     private fun setValidationErrorState(
         input: TextInputWidget,
         error: SyncValidationError?,
-        type: String,
+        type: PrimerInputFieldType,
     ) {
         if (error == null) input.error = error
         else requireContext()
@@ -535,7 +592,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
                 )
             }
             .run {
-                if (type == CARD_NUMBER_FIELD_NAME) {
+                if (type == PrimerInputFieldType.CARD_NUMBER) {
                     val inputFrame = binding.cardFormCardNumber
                     inputFrame.suffixText = ""
                 }
@@ -545,7 +602,9 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     private fun onKeyboardVisibilityChanged(visible: Boolean) {
         val hasFocus = inputLayouts.entries.any { it.value.isFocused }
         if (hasFocus && !visible) inputLayouts.entries.forEach { it.value.clearFocus() }
-        else if (visible && !hasFocus) focusFirstInput()
+        else if (visible && !hasFocus
+            && !tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER))
+                focusFirstInput()
     }
 
     private fun getIsDirty(name: String): Boolean {
@@ -555,6 +614,11 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     private fun isSubmitButtonEnabled(tokenizationStatus: TokenizationStatus?): Boolean {
         return tokenizationStatus == TokenizationStatus.NONE ||
             tokenizationStatus == TokenizationStatus.ERROR
+    }
+
+    override fun onDestroy() {
+        primerViewModel.clearSelectedCountry()
+        super.onDestroy()
     }
 
     companion object {

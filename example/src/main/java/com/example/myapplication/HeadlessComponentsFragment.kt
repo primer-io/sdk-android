@@ -193,8 +193,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
     }
 
-    private fun createForm(requiredInputElementTypes: List<PrimerInputElementType>) {
-        val inputElements = requiredInputElementTypes.map { type ->
+    private fun createForm(requiredInputFieldTypes: List<PrimerInputFieldType>) {
+        val inputElements = requiredInputFieldTypes.map { type ->
             PrimerEditTextFactory.createFromType(requireContext(), type).apply {
                 setHint(getHint(type))
                 setPrimerInputElementListener(inputElementListener)
@@ -202,6 +202,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
 
         val viewGroup = (binding.parentView as ViewGroup)
+        viewGroup.removeAllViews()
         inputElements.forEach {
             viewGroup.addView(it)
         }
@@ -237,13 +238,22 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         binding.progressLayout.root.isVisible = false
     }
 
-    private fun getHint(inputElementType: PrimerInputElementType): Int {
-        return when (inputElementType) {
-            PrimerInputElementType.CARDHOLDER_NAME -> R.string.card_holder_name
-            PrimerInputElementType.CVV -> R.string.card_cvv
-            PrimerInputElementType.EXPIRY_DATE -> R.string.card_expiry
-            PrimerInputElementType.CARD_NUMBER -> R.string.card_number
-            PrimerInputElementType.POSTAL_CODE -> R.string.card_zip
+    private fun getHint(inputFieldType: PrimerInputFieldType): Int {
+        return when (inputFieldType) {
+            PrimerInputFieldType.CARDHOLDER_NAME -> R.string.card_holder_name
+            PrimerInputFieldType.CVV -> R.string.card_cvv
+            PrimerInputFieldType.EXPIRY_DATE -> R.string.card_expiry
+            PrimerInputFieldType.CARD_NUMBER -> R.string.card_number
+            PrimerInputFieldType.POSTAL_CODE -> R.string.card_zip
+            PrimerInputFieldType.COUNTRY_CODE -> R.string.address_country_code
+            PrimerInputFieldType.CITY -> R.string.address_city
+            PrimerInputFieldType.STATE -> R.string.address_state
+            PrimerInputFieldType.ADDRESS_LINE_1 -> R.string.address_line_1
+            PrimerInputFieldType.ADDRESS_LINE_2 -> R.string.address_line_2
+            PrimerInputFieldType.PHONE_NUMBER -> R.string.input_hint_form_phone_number
+            PrimerInputFieldType.FIRST_NAME -> R.string.first_name
+            PrimerInputFieldType.LAST_NAME -> R.string.last_name
+            else -> R.string.enter_address
         }
     }
 

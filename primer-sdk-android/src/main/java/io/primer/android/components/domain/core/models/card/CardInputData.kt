@@ -1,10 +1,7 @@
 package io.primer.android.components.domain.core.models.card
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
-import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
-import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
-import io.primer.android.payment.card.CARD_NAME_FILED_NAME
-import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
+import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.payment.card.CreditCard
 
 internal data class CardInputData(
@@ -16,14 +13,14 @@ internal data class CardInputData(
 ) : PrimerHeadlessUniversalCheckoutInputData {
 
     internal fun setTokenizableValues(creditCard: CreditCard) = creditCard.apply {
-        setTokenizableValue(CARD_NUMBER_FIELD_NAME, number)
-        setTokenizableValue(CARD_EXPIRY_FIELD_NAME, expiryDate)
-        setTokenizableValue(CARD_CVV_FIELD_NAME, cvv)
+        setTokenizableField(PrimerInputFieldType.CARD_NUMBER, number)
+        setTokenizableField(PrimerInputFieldType.EXPIRY_DATE, expiryDate)
+        setTokenizableField(PrimerInputFieldType.CVV, cvv)
         holderName?.apply {
-            setTokenizableValue(CARD_NAME_FILED_NAME, holderName)
+            setTokenizableField(PrimerInputFieldType.CARDHOLDER_NAME, holderName)
         }
         postalCode?.apply {
-            setTokenizableValue(CARD_NAME_FILED_NAME, postalCode)
+            setTokenizableField(PrimerInputFieldType.POSTAL_CODE, postalCode)
         }
     }
 }

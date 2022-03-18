@@ -45,6 +45,8 @@
     <string name="enter_email">Γράψτε το email σας</string>
     <string name="enter_address">Γράψτε τη διεύθυνσή σας</string>
     <string name="first_last_name">Όνομα και επίθετο</string>
+    <string name="first_name">Όνομα</string>
+    <string name="last_name">Επίθετο</string>
     <string name="bank_selection_title">Επιλέξτε την τράπεζά σας</string>
     <string name="bank_selection_hint">Αναζήτηση τραπεζών</string>
     <string name="bank_selection_error_message">Αποτυχία φόρτωσης τράπεζας. Ελέγξτε τη σύνδεσή σας και δοκιμάστε πάλι.</string>
@@ -112,4 +114,6 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">βρείτε μια χώρα</string>
+    <string name="title_card_form_billing_address">Billing address</string>
 </resources>

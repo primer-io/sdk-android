@@ -45,7 +45,9 @@
     <string name="enter_email">Ange din e-postadress</string>
     <string name="enter_address">Ange din adress</string>
     <string name="first_last_name">För- och efternamn</string>
-    <string name="bank_selection_title">Välj din bank</string>
+    <string name="first_name">Förnamn</string>
+  <string name="last_name">Efternamn</string>
+  <string name="bank_selection_title">Välj din bank</string>
     <string name="bank_selection_hint">Sök bank</string>
     <string name="bank_selection_error_message">Det gick inte att ansluta till din bank. Kontrollera din internetanslutning och försök igen.</string>
     <string name="bank_selection_try_again">Försök igen</string>
@@ -112,4 +114,6 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">Hitta ett land</string>
+    <string name="title_card_form_billing_address">Billing address</string>
 </resources>
