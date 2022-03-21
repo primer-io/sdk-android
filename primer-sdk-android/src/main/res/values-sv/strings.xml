@@ -73,7 +73,8 @@
     <string name="atome">Atome</string>
     <string name="xfers">Paynow</string>
     <string name="interac">Interac</string>
-    <string name="paytrail">paytrail</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="payshop">Payshop</string>
     <string name="choose_payment_method">Välj betalningsmetod</string>
     <string name="saved_payment_methods">SPARAD BETALNINGSMETOD</string>
     <string name="other_ways_of_paying">Andra betalningsmetoder</string>

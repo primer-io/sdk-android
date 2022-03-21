@@ -78,8 +78,9 @@ internal class PaymentMethodsDataRepository(
         PrimerPaymentMethod.ADYEN_ALIPAY -> p.type == PaymentMethodType.ADYEN_ALIPAY
         PrimerPaymentMethod.ADYEN_VIPPS -> p.type == PaymentMethodType.ADYEN_VIPPS
         PrimerPaymentMethod.ADYEN_MOBILEPAY -> p.type == PaymentMethodType.ADYEN_MOBILEPAY
-        PrimerPaymentMethod.ADYEN_PAYTRAIL -> p.type == PaymentMethodType.ADYEN_PAYTRAIL
         PrimerPaymentMethod.ADYEN_INTERAC -> p.type == PaymentMethodType.ADYEN_INTERAC
+        PrimerPaymentMethod.ADYEN_PAYTRAIL -> p.type == PaymentMethodType.ADYEN_PAYTRAIL
+        PrimerPaymentMethod.ADYEN_PAYSHOP -> p.type == PaymentMethodType.ADYEN_PAYSHOP
         PrimerPaymentMethod.MOLLIE_BANCONTACT -> p.type == PaymentMethodType.MOLLIE_BANCONTACT
         PrimerPaymentMethod.MOLLIE_IDEAL -> p.type == PaymentMethodType.MOLLIE_IDEAL
         PrimerPaymentMethod.BUCKAROO_GIROPAY -> p.type == PaymentMethodType.BUCKAROO_GIROPAY

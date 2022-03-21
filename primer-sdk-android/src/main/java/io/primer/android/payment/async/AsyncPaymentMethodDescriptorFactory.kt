@@ -121,16 +121,22 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
-            PaymentMethodType.ADYEN_PAYTRAIL -> AdyenPayTrailPaymentMethodDescriptor(
-                localConfig,
-                paymentMethod as AsyncPaymentMethod,
-                paymentMethodRemoteConfig
-            )
             PaymentMethodType.ADYEN_INTERAC -> AdyenInteracPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.ADYEN_PAYTRAIL -> AdyenPayTrailPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            // Disabled, because on backend side, it is not ready. Wait an updates.
+//            PaymentMethodType.ADYEN_PAYSHOP -> AdyenPayShopPaymentMethodDescriptor(
+//                localConfig,
+//                paymentMethod as AsyncPaymentMethod,
+//                paymentMethodRemoteConfig
+//            )
             PaymentMethodType.ADYEN_BANK_TRANSFER -> AdyenSepaPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
