@@ -102,4 +102,5 @@
   <string name="payment_method_xfers_description">Ekran görüntüsünü bankacılık uygulamanızda yükleyin</string>
   <string name="no_additional_fee">Ek ücret yok</string>
   <string name="additional_fees_may_apply">Ek ücret uygulanabilir</string>
+    <string name="paytrail">paytrail</string>
 </resources>
