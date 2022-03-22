@@ -19,7 +19,8 @@ internal class ThreeDsResumeHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger
 ) : DefaultResumeHandler(
-    validationTokenRepository,clientTokenRepository,
+    validationTokenRepository,
+    clientTokenRepository,
     paymentMethodRepository,
     analyticsRepository,
     eventDispatcher,

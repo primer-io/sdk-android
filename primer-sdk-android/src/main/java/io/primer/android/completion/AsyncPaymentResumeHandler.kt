@@ -17,13 +17,13 @@ internal class AsyncPaymentResumeHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger
 ) : DefaultResumeHandler(
-    validationTokenRepository,clientTokenRepository,
+    validationTokenRepository,
+    clientTokenRepository,
     paymentMethodRepository,
     analyticsRepository,
     eventDispatcher,
     logger
 ) {
-
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
