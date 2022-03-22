@@ -93,7 +93,7 @@ internal val PaymentMethodsModule = {
 
         single<ActionRepository> { ActionDataRepository(get()) }
 
-        single { ActionInteractor(get(), get(), get(), get()) }
+        single { ActionInteractor(get(), get(), get(), get(), get()) }
 
         viewModel { PrimerViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     }

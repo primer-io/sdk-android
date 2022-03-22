@@ -1,6 +1,7 @@
 package io.primer.android.model.dto
 
 import androidx.annotation.Keep
+import io.primer.android.components.ui.assets.Brand
 import io.primer.android.data.token.model.ClientTokenIntent
 import kotlinx.serialization.Serializable
 
@@ -16,44 +17,51 @@ data class PaymentMethodRemoteConfig(
 
 @Keep
 @Serializable
-enum class PaymentMethodType(internal val intent: ClientTokenIntent? = null) {
-    PAYMENT_CARD(ClientTokenIntent.`3DS_AUTHENTICATION`),
-    KLARNA,
-    GOOGLE_PAY,
-    PAYPAL,
-    GOCARDLESS,
-    APAYA,
-    PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION),
-    PAY_NL_PAYCONIQ(ClientTokenIntent.PAY_NL_PAYCONIQ_REDIRECTION),
-    PAY_NL_GIROPAY(ClientTokenIntent.PAY_NL_GIROPAY_REDIRECTION),
+enum class PaymentMethodType(
+    internal val intent: ClientTokenIntent? = null,
+    internal val brand: Brand
+) {
+    PAYMENT_CARD(ClientTokenIntent.`3DS_AUTHENTICATION`, Brand.PAYMENT_CARD),
+    KLARNA(brand = Brand.KLARNA),
+    GOOGLE_PAY(brand = Brand.GOOGLE_PAY),
+    PAYPAL(brand = Brand.PAYPAL),
+    GOCARDLESS(brand = Brand.GOCARDLESS),
+    APAYA(brand = Brand.APAYA),
+    PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION, Brand.IDEAL),
+    PAY_NL_PAYCONIQ(ClientTokenIntent.PAY_NL_PAYCONIQ_REDIRECTION, Brand.PAYQONIC),
+    PAY_NL_GIROPAY(ClientTokenIntent.PAY_NL_GIROPAY_REDIRECTION, Brand.GIROPAY),
+    PAY_NL_P24(ClientTokenIntent.PAY_NL_P24_REDIRECTION, Brand.P24),
+    PAY_NL_EPS(ClientTokenIntent.PAY_NL_EPS_REDIRECTION, Brand.EPS),
     PAY_NL_P24(ClientTokenIntent.PAY_NL_P24_REDIRECTION),
     PAY_NL_EPS(ClientTokenIntent.PAY_NL_EPS_REDIRECTION),
-    HOOLAH(ClientTokenIntent.HOOLAH_REDIRECTION),
-    ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION),
-    ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION),
-    ADYEN_SOFORT(ClientTokenIntent.ADYEN_SOFORT_REDIRECTION),
-    ADYEN_TRUSTLY(ClientTokenIntent.ADYEN_TRUSTLY_REDIRECTION),
-    ADYEN_ALIPAY(ClientTokenIntent.ADYEN_ALIPAY_REDIRECTION),
-    ADYEN_VIPPS(ClientTokenIntent.ADYEN_VIPPS_REDIRECTION),
-    ADYEN_MOBILEPAY(ClientTokenIntent.ADYEN_MOBILEPAY_REDIRECTION),
-    ADYEN_IDEAL(ClientTokenIntent.ADYEN_IDEAL_REDIRECTION),
-    ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION),
-    ADYEN_BLIK(ClientTokenIntent.ADYEN_BLIK_REDIRECTION),
-    ADYEN_MBWAY(ClientTokenIntent.ADYEN_MBWAY_REDIRECTION),
-    ADYEN_BANK_TRANSFER,
-    MOLLIE_BANCONTACT(ClientTokenIntent.MOLLIE_BANCONTACT_REDIRECTION),
-    MOLLIE_IDEAL(ClientTokenIntent.MOLLIE_IDEAL_REDIRECTION),
-    MOLLIE_P24(ClientTokenIntent.MOLLIE_P24_REDIRECTION),
+    HOOLAH(ClientTokenIntent.HOOLAH_REDIRECTION, Brand.HOOLAH),
+    ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION, Brand.GIROPAY),
+    ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION, Brand.TWINT),
+    ADYEN_SOFORT(ClientTokenIntent.ADYEN_SOFORT_REDIRECTION, Brand.SOFORT),
+    ADYEN_TRUSTLY(ClientTokenIntent.ADYEN_TRUSTLY_REDIRECTION, Brand.TRUSTLY),
+    ADYEN_ALIPAY(ClientTokenIntent.ADYEN_ALIPAY_REDIRECTION, Brand.ALIPAY),
+    ADYEN_VIPPS(ClientTokenIntent.ADYEN_VIPPS_REDIRECTION, Brand.VIPPS),
+    ADYEN_MOBILEPAY(ClientTokenIntent.ADYEN_MOBILEPAY_REDIRECTION, Brand.MOBILEPAY),
+    ADYEN_IDEAL(ClientTokenIntent.ADYEN_IDEAL_REDIRECTION, Brand.IDEAL),
+    ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION, Brand.DOTPAY),
+    ADYEN_BLIK(ClientTokenIntent.ADYEN_BLIK_REDIRECTION, Brand.BLIK),
+    ADYEN_MBWAY(ClientTokenIntent.ADYEN_MBWAY_REDIRECTION, Brand.MBWAY),
+    ADYEN_BANK_TRANSFER(brand = Brand.BANK_TRANSFER),
+    MOLLIE_BANCONTACT(ClientTokenIntent.MOLLIE_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
+    MOLLIE_IDEAL(ClientTokenIntent.MOLLIE_IDEAL_REDIRECTION, Brand.IDEAL),
+    MOLLIE_P24(ClientTokenIntent.MOLLIE_P24_REDIRECTION, Brand.P24),
+    MOLLIE_GIROPAY(ClientTokenIntent.MOLLIE_GIROPAY_REDIRECTION, Brand.GIROPAY),
+    MOLLIE_EPS(ClientTokenIntent.MOLLIE_EPS_REDIRECTION, Brand.EPS),
     MOLLIE_GIROPAY(ClientTokenIntent.MOLLIE_GIROPAY_REDIRECTION),
     MOLLIE_EPS(ClientTokenIntent.MOLLIE_EPS_REDIRECTION),
-    BUCKAROO_GIROPAY(ClientTokenIntent.BUCKAROO_GIROPAY_REDIRECTION),
-    BUCKAROO_SOFORT(ClientTokenIntent.BUCKAROO_SOFORT_REDIRECTION),
-    BUCKAROO_IDEAL(ClientTokenIntent.BUCKAROO_IDEAL_REDIRECTION),
-    BUCKAROO_EPS(ClientTokenIntent.BUCKAROO_EPS_REDIRECTION),
-    BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION),
-    ATOME(ClientTokenIntent.ATOME_REDIRECTION),
-    XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION),
-    UNKNOWN;
+    BUCKAROO_GIROPAY(ClientTokenIntent.BUCKAROO_GIROPAY_REDIRECTION, Brand.GIROPAY),
+    BUCKAROO_SOFORT(ClientTokenIntent.BUCKAROO_SOFORT_REDIRECTION, Brand.SOFORT),
+    BUCKAROO_IDEAL(ClientTokenIntent.BUCKAROO_IDEAL_REDIRECTION, Brand.IDEAL),
+    BUCKAROO_EPS(ClientTokenIntent.BUCKAROO_EPS_REDIRECTION, Brand.EPS),
+    BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
+    ATOME(ClientTokenIntent.ATOME_REDIRECTION, Brand.ATOME),
+    XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION, Brand.PAYNOW),
+    UNKNOWN(brand = Brand.UNKNOWN);
 
     companion object {
         fun safeValueOf(type: String?) = values().find { type == it.name }

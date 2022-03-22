@@ -2,7 +2,6 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.BuildConfig
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
-import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
@@ -10,7 +9,9 @@ import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParam
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,9 +27,9 @@ internal sealed class BaseAnalyticsEventRequest {
     abstract val primerAccountId: String?
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
-    val createdAt: Long = System.currentTimeMillis()
-    private val sdkType: String = "Android"
-    private val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
+    @EncodeDefault val createdAt: Long = System.currentTimeMillis()
+    @EncodeDefault protected val sdkType: String = "Android"
+    @EncodeDefault protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest
 }

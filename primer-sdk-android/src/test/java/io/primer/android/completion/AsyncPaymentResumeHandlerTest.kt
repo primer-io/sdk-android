@@ -11,6 +11,7 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.domain.token.ValidateTokenRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
@@ -38,6 +39,9 @@ class AsyncPaymentResumeHandlerTest {
     internal lateinit var analyticsRepository: AnalyticsRepository
 
     @RelaxedMockK
+    internal lateinit var verificationTokenRepository: ValidateTokenRepository
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
@@ -50,6 +54,7 @@ class AsyncPaymentResumeHandlerTest {
         MockKAnnotations.init(this, relaxed = true)
         resumeHandler =
             AsyncPaymentResumeHandler(
+                verificationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
                 analyticsRepository,

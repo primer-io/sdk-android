@@ -9,6 +9,8 @@ import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.Continuation
@@ -172,6 +174,7 @@ class GooglePayFacade constructor(
     }
 
     private fun pay(activity: Activity, request: JSONObject) {
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
         val paymentDataRequest = PaymentDataRequest.fromJson(request.toString())
         AutoResolveHelper.resolveTask(
             paymentsClient.loadPaymentData(paymentDataRequest),

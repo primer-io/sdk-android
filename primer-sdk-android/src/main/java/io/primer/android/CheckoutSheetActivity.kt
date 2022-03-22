@@ -40,9 +40,9 @@ import io.primer.android.payment.google.InitialCheckRequiredBehaviour
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
+import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
-import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.CheckoutSheetFragment

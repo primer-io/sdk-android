@@ -18,5 +18,5 @@
         android:drawablePadding="10dp"
         android:gravity="center"
         android:text="@string/add_bank_account"
-        app:drawableStartCompat="@drawable/ic_bank" />
+        app:drawableStartCompat="@drawable/ic_logo_gocardless" />
 </io.primer.android.ui.components.ButtonDefaultLayout>

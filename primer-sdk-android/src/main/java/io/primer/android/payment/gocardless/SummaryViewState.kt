@@ -41,7 +41,7 @@ class SummaryViewState(
             ),
             InteractiveSummaryItem(
                 name = "bank",
-                iconId = R.drawable.ic_bank,
+                iconId = R.drawable.ic_logo_gocardless,
                 getLabel = getBankDetails,
             )
         ),
