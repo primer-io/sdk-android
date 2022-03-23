@@ -28,24 +28,26 @@ internal class AsyncPaymentResumeHandler(
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
         eventDispatcher.dispatchEvent(CheckoutEvent.PaymentMethodPresented)
-        if (clientTokenRepository.getClientTokenIntent()
-            == ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
-        ) {
-            eventDispatcher.dispatchEvent(
-                CheckoutEvent.StartAsyncFlow(
-                    clientTokenRepository.getQrCode().orEmpty(),
-                    clientTokenRepository.getStatusUrl().orEmpty()
+        when (clientTokenRepository.getClientTokenIntent()) {
+            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION,
+            ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.StartAsyncFlow(
+                        clientTokenRepository.getClientTokenIntent(),
+                        clientTokenRepository.getStatusUrl().orEmpty()
+                    )
                 )
-            )
-        } else {
-            eventDispatcher.dispatchEvent(
-                CheckoutEvent.StartAsyncRedirectFlow(
-                    paymentMethodRepository.getPaymentMethod().paymentInstrumentData
-                        ?.paymentMethodType?.split("_")?.last().orEmpty(),
-                    clientTokenRepository.getRedirectUrl().orEmpty(),
-                    clientTokenRepository.getStatusUrl().orEmpty()
+            }
+            else -> {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.StartAsyncRedirectFlow(
+                        paymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                            ?.paymentMethodType?.split("_")?.last().orEmpty(),
+                        clientTokenRepository.getRedirectUrl().orEmpty(),
+                        clientTokenRepository.getStatusUrl().orEmpty()
+                    )
                 )
-            )
+            }
         }
     }
 }

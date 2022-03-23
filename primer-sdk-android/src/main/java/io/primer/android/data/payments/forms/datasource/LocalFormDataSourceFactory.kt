@@ -11,7 +11,7 @@ internal class LocalFormDataSourceFactory(
 
     fun getLocalFormDataSource(paymentMethodType: PaymentMethodType, clientToken: ClientToken) =
         when (paymentMethodType) {
-            PaymentMethodType.ADYEN_BLIK -> BlikLocalFormDataSource()
+            PaymentMethodType.ADYEN_BLIK -> BlikLocalFormDataSource(primerTheme)
             PaymentMethodType.ADYEN_MBWAY -> MbWayLocalFormDataSource()
             PaymentMethodType.ADYEN_BANK_TRANSFER -> SepaLocalFormDataSource(primerTheme)
             PaymentMethodType.XFERS_PAYNOW -> XfersLocalFormDataSource(clientToken)

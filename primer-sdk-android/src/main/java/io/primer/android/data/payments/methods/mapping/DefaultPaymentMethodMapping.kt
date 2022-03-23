@@ -43,7 +43,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_MOBILEPAY,
             PaymentMethodType.ADYEN_IDEAL,
             PaymentMethodType.ADYEN_DOTPAY,
-//            PaymentMethodType.ADYEN_BLIK,
+            PaymentMethodType.ADYEN_BLIK,
 //            PaymentMethodType.ADYEN_MBWAY,
 //            PaymentMethodType.ADYEN_BANK_TRANSFER,
             PaymentMethodType.MOLLIE_BANCONTACT,

@@ -22,7 +22,6 @@ class HttpRequestUtil {
                 .build()
         }
 
-
         fun generateRequest(
             body: ExampleAppRequestBody,
             uri: String,
