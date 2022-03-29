@@ -12,7 +12,6 @@ import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
-import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.fragments.forms.DynamicFormFragment
 import io.primer.android.ui.payment.LoadingState
 
@@ -36,11 +35,8 @@ internal class AdyenBlikPaymentMethodDescriptor(
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
-    override val behaviours: List<SelectedPaymentMethodBehaviour>
-        get() = listOf(
-            AsyncPaymentMethodBehaviour(this),
-            NewFragmentBehaviour(PaymentMethodLoadingFragment::newInstance)
-        )
+    override val behaviours: List<SelectedPaymentMethodBehaviour> =
+        listOf(AsyncPaymentMethodBehaviour(this))
 
     override fun createButton(container: ViewGroup): View {
         return LayoutInflater.from(container.context).inflate(

@@ -31,9 +31,9 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
     protected abstract val baseFormBinding: BaseFormBinding
 
     protected val primerViewModel: PrimerViewModel by activityViewModels()
-    protected val viewModel: FormsViewModel by viewModel()
+    protected val tokenizationViewModel: TokenizationViewModel by activityViewModels()
 
-    private val tokenizationViewModel: TokenizationViewModel by viewModel()
+    protected val viewModel: FormsViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

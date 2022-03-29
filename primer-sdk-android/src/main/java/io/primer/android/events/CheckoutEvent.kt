@@ -4,6 +4,7 @@ import io.primer.android.completion.ActionResumeHandler
 import io.primer.android.completion.ResumeHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
@@ -77,7 +78,7 @@ sealed class CheckoutEvent(
     ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
 
     internal class StartAsyncFlow(
-        val qrCode: String,
+        val clientTokenIntent: ClientTokenIntent,
         val statusUrl: String,
     ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 

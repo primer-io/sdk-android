@@ -218,14 +218,14 @@ class PaymentMethodMappingTest {
         }
     }
 
-//    @Test
-//    fun `test maps adyen blik transfer correctly`() {
-//        val factory = DefaultPaymentMethodMapping(settings)
-//        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_BLIK)) {
-//            is Failure -> Assert.fail()
-//            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
-//        }
-//    }
+    @Test
+    fun `test maps adyen blik transfer correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_BLIK)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
 //
 //    @Test
 //    fun `test maps adyen mbway transfer correctly`() {

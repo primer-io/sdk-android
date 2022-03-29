@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
+import androidx.lifecycle.Observer
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 
 import io.primer.android.R
@@ -22,7 +26,9 @@ import io.primer.android.ui.components.TextInputWidget
 
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
+import io.primer.android.viewmodel.TokenizationStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.combineTransform
 import org.koin.core.component.KoinApiExtension
 
 @ExperimentalCoroutinesApi
@@ -32,6 +38,31 @@ internal class DynamicFormFragment : BaseFormFragment() {
     private var binding: FragmentDynamicFormBinding by autoCleaned()
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
+
+    private val tokenizationStatusObserver = Observer<TokenizationStatus> { status ->
+        binding.apply {
+            val viewsEnabled = setOf(
+                TokenizationStatus.NONE,
+                TokenizationStatus.ERROR
+            ).contains(status)
+            mainLayout.children.forEach {
+                it.isEnabled = viewsEnabled
+            }
+            formButton.setProgress(status != TokenizationStatus.NONE)
+        }
+    }
+
+    private val formButtonEnabledLiveData by lazy {
+        tokenizationViewModel.tokenizationStatus.asFlow()
+            .combineTransform(viewModel.validationLiveData.asFlow()) { status, formValidated ->
+                emit(
+                    formValidated && setOf(
+                        TokenizationStatus.NONE,
+                        TokenizationStatus.ERROR
+                    ).contains(status)
+                )
+            }.asLiveData()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +81,7 @@ internal class DynamicFormFragment : BaseFormFragment() {
     override fun setupForm(form: Form) {
         super.setupForm(form)
         val parentLayout = binding.mainLayout
+        parentLayout.removeAllViews()
         val inputs = form.inputs?.map { formData ->
             val childView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.payment_method_dynamic_input, parentLayout, false)
@@ -84,14 +116,18 @@ internal class DynamicFormFragment : BaseFormFragment() {
         parentLayout.requestLayout()
 
         FieldFocuser.focus(inputs?.first()?.editText)
+
+        tokenizationViewModel.tokenizationStatus.observe(
+            viewLifecycleOwner,
+            tokenizationStatusObserver
+        )
     }
 
     private fun setupButton() {
         val nextButton = binding.formButton
         nextButton.text = getString(R.string.confirm)
-        nextButton.isEnabled = false
 
-        viewModel.validationLiveData.observe(viewLifecycleOwner) { validated ->
+        formButtonEnabledLiveData.observe(viewLifecycleOwner) { validated ->
             nextButton.isEnabled = validated
         }
 

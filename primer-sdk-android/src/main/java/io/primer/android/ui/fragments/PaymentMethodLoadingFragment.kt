@@ -22,7 +22,7 @@ import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
-internal class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
+internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
 
     private val viewModel: PrimerViewModel by activityViewModels()
 

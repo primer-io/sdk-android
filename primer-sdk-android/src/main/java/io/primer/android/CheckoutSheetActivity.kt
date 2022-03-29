@@ -12,6 +12,7 @@ import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
@@ -43,8 +44,10 @@ import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.ui.base.webview.WebViewClientType
+import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
+import io.primer.android.ui.fragments.PaymentMethodStatusFragment
 import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
@@ -148,7 +151,19 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 )
             }
             is CheckoutEvent.StartAsyncFlow -> {
-                openFragment(QrCodeFragment.newInstance(it.statusUrl), true)
+                when (it.clientTokenIntent) {
+                    ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
+                        sheet.popBackStackToRoot()
+                        openFragment(PaymentMethodStatusFragment.newInstance(it.statusUrl), true)
+                    }
+                    ClientTokenIntent.XFERS_PAYNOW_REDIRECTION -> openFragment(
+                        QrCodeFragment.newInstance(
+                            it.statusUrl
+                        ),
+                        true
+                    )
+                    else -> Unit
+                }
             }
         }
     }
@@ -268,8 +283,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         primerViewModel.dispatchAction(action, false) { error: Error? ->
             runOnUiThread {
-                if (error == null) presentFragment(descriptor.selectedBehaviour)
-                else emitError(error)
+                if (error == null) {
+                    presentFragment(descriptor.selectedBehaviour)
+                    primerViewModel.setState(SessionState.AWAITING_USER)
+                } else emitError(error)
             }
         }
     }

@@ -214,7 +214,7 @@ internal class PrimerViewModel(
         actionInteractor.dispatch(request) { error ->
             // todo: hack to prevent flicker when pushing new view, fix.
             if (error == null && resetState) setState(SessionState.AWAITING_USER)
-            else setState(SessionState.ERROR)
+            else if (error != null) setState(SessionState.ERROR)
             completion(error)
         }
     }
