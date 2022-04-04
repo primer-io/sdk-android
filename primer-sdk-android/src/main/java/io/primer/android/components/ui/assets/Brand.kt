@@ -33,6 +33,7 @@ internal enum class Brand(
     ATOME(R.drawable.ic_logo_atome, R.drawable.ic_logo_atome_square),
     PAYNOW(R.drawable.ic_logo_xfers, R.drawable.ic_logo_xfers_square),
     PAYTRAIL(R.drawable.ic_logo_paytrail_light, R.drawable.ic_logo_paytrail_square),
+    INTERAC(R.drawable.ic_logo_interac, R.drawable.ic_logo_interac_square),
     UNKNOWN(0)
 }
 

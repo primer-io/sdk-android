@@ -15,4 +15,5 @@ enum class CurrencyCode(val symbol: String) {
     DKK("kr"),
     NOK("kr"),
     PLN("zł"),
+    CAD("$"),
 }

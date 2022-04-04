@@ -88,7 +88,7 @@ class MainViewModel(
     val descriptor: LiveData<String> = _descriptor
     fun setDescriptor(descriptor: String) = _descriptor.postValue(descriptor)
 
-    val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.GB)
+    val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.CA)
     val clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
     val useKlarna: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val usePayPal: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
@@ -176,7 +176,7 @@ class MainViewModel(
         customerId.value.orEmpty(),
         UUID.randomUUID().toString(),
         amount.value!!,
-        countryRepository.getCountry(),
+        countryRepository.getCountry().name,
         countryRepository.getCurrency(),
         environment.value?.environment ?: throw Error("no environment set!")
     ) { t -> clientToken.postValue(t) }

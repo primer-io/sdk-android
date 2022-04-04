@@ -47,6 +47,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
 //            PaymentMethodType.ADYEN_MBWAY,
 //            PaymentMethodType.ADYEN_BANK_TRANSFER,
             PaymentMethodType.ADYEN_PAYTRAIL,
+            PaymentMethodType.ADYEN_INTERAC,
             PaymentMethodType.MOLLIE_BANCONTACT,
             PaymentMethodType.MOLLIE_IDEAL,
             PaymentMethodType.MOLLIE_P24,
