@@ -102,4 +102,5 @@
   <string name="payment_method_xfers_description">Ladda upp skärmdumpen i din bankapp.</string>
   <string name="no_additional_fee">Ingen extra avgift</string>
   <string name="additional_fees_may_apply">Ytterligare avgifter kan tillkomma</string>
+    <string name="paytrail">paytrail</string>
 </resources>

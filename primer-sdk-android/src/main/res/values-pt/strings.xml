@@ -102,4 +102,5 @@
   <string name="payment_method_xfers_description">Carregue a captura de ecrã na sua aplicação bancária.</string>
   <string name="no_additional_fee">Sem taxas adicionais</string>
   <string name="additional_fees_may_apply">Podem ser aplicadas taxas adicionais</string>
+    <string name="paytrail">paytrail</string>
 </resources>

@@ -102,4 +102,5 @@
   <string name="payment_method_xfers_description">Wczytaj zrzut ekranu w aplikacji bankowej.</string>
   <string name="no_additional_fee">Żadnych dodatkowych opłat</string>
   <string name="additional_fees_may_apply">Mogą mieć zastosowanie dodatkowe opłaty</string>
+  <string name="paytrail">paytrail</string>
 </resources>

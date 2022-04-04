@@ -102,4 +102,5 @@
   <string name="payment_method_xfers_description">Upload screenshottet i din bank-app.</string>
   <string name="no_additional_fee">Intet yderligere gebyr</string>
   <string name="additional_fees_may_apply">Yderligere gebyrer kan forekomme</string>
+    <string name="paytrail">paytrail</string>
 </resources>

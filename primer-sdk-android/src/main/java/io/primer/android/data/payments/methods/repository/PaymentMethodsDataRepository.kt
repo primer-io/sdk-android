@@ -46,44 +46,7 @@ internal class PaymentMethodsDataRepository(
         val paymentMethods = paymentMethodListFactory.buildWith(configuration.paymentMethods)
         if (config.isStandalonePaymentMethod) {
             paymentMethods.find { p ->
-                val matches: Boolean = when (config.intent.paymentMethod) {
-                    PrimerPaymentMethod.KLARNA -> p is Klarna
-                    PrimerPaymentMethod.GOOGLE_PAY -> p is GooglePay
-                    PrimerPaymentMethod.PAYPAL -> p is PayPal
-                    PrimerPaymentMethod.CARD -> p is Card
-                    PrimerPaymentMethod.GOCARDLESS -> p is GoCardless
-                    PrimerPaymentMethod.APAYA -> p is Apaya
-                    PrimerPaymentMethod.ATOME -> p.type == PaymentMethodType.ATOME
-                    PrimerPaymentMethod.PAY_NL_IDEAL -> p.type == PaymentMethodType.PAY_NL_IDEAL
-                    PrimerPaymentMethod.PAY_NL_PAYCONIQ ->
-                        p.type == PaymentMethodType.PAY_NL_PAYCONIQ
-                    PrimerPaymentMethod.PAY_NL_GIROPAY ->
-                        p.type == PaymentMethodType.PAY_NL_GIROPAY
-                    PrimerPaymentMethod.HOOLAH -> p.type == PaymentMethodType.HOOLAH
-                    PrimerPaymentMethod.ADYEN_GIROPAY -> p.type == PaymentMethodType.ADYEN_GIROPAY
-                    PrimerPaymentMethod.ADYEN_TWINT -> p.type == PaymentMethodType.ADYEN_TWINT
-                    PrimerPaymentMethod.ADYEN_SOFORT -> p.type == PaymentMethodType.ADYEN_SOFORT
-                    PrimerPaymentMethod.ADYEN_TRUSTLY -> p.type == PaymentMethodType.ADYEN_TRUSTLY
-                    PrimerPaymentMethod.ADYEN_ALIPAY -> p.type == PaymentMethodType.ADYEN_ALIPAY
-                    PrimerPaymentMethod.ADYEN_VIPPS -> p.type == PaymentMethodType.ADYEN_VIPPS
-                    PrimerPaymentMethod.ADYEN_MOBILEPAY ->
-                        p.type == PaymentMethodType.ADYEN_MOBILEPAY
-                    PrimerPaymentMethod.MOLLIE_BANCONTACT ->
-                        p.type == PaymentMethodType.MOLLIE_BANCONTACT
-                    PrimerPaymentMethod.MOLLIE_IDEAL -> p.type == PaymentMethodType.MOLLIE_IDEAL
-                    PrimerPaymentMethod.BUCKAROO_GIROPAY ->
-                        p.type == PaymentMethodType.BUCKAROO_GIROPAY
-                    PrimerPaymentMethod.BUCKAROO_SOFORT ->
-                        p.type == PaymentMethodType.BUCKAROO_SOFORT
-                    PrimerPaymentMethod.BUCKAROO_IDEAL ->
-                        p.type == PaymentMethodType.BUCKAROO_IDEAL
-                    PrimerPaymentMethod.BUCKAROO_EPS ->
-                        p.type == PaymentMethodType.BUCKAROO_EPS
-                    PrimerPaymentMethod.BUCKAROO_BANCONTACT ->
-                        p.type == PaymentMethodType.BUCKAROO_BANCONTACT
-                    else -> false
-                }
-                matches
+                isMatchMethods(p)
             }?.let { paymentMethod ->
                 initializeAndRegisterModules(context, paymentMethod, configuration)
             }
@@ -94,6 +57,36 @@ internal class PaymentMethodsDataRepository(
         }
 
         return paymentMethods
+    }
+
+    private fun isMatchMethods(p: PaymentMethod): Boolean = when (config.intent.paymentMethod) {
+        PrimerPaymentMethod.KLARNA -> p is Klarna
+        PrimerPaymentMethod.GOOGLE_PAY -> p is GooglePay
+        PrimerPaymentMethod.PAYPAL -> p is PayPal
+        PrimerPaymentMethod.CARD -> p is Card
+        PrimerPaymentMethod.GOCARDLESS -> p is GoCardless
+        PrimerPaymentMethod.APAYA -> p is Apaya
+        PrimerPaymentMethod.ATOME -> p.type == PaymentMethodType.ATOME
+        PrimerPaymentMethod.PAY_NL_IDEAL -> p.type == PaymentMethodType.PAY_NL_IDEAL
+        PrimerPaymentMethod.PAY_NL_PAYCONIQ -> p.type == PaymentMethodType.PAY_NL_PAYCONIQ
+        PrimerPaymentMethod.PAY_NL_GIROPAY -> p.type == PaymentMethodType.PAY_NL_GIROPAY
+        PrimerPaymentMethod.HOOLAH -> p.type == PaymentMethodType.HOOLAH
+        PrimerPaymentMethod.ADYEN_GIROPAY -> p.type == PaymentMethodType.ADYEN_GIROPAY
+        PrimerPaymentMethod.ADYEN_TWINT -> p.type == PaymentMethodType.ADYEN_TWINT
+        PrimerPaymentMethod.ADYEN_SOFORT -> p.type == PaymentMethodType.ADYEN_SOFORT
+        PrimerPaymentMethod.ADYEN_TRUSTLY -> p.type == PaymentMethodType.ADYEN_TRUSTLY
+        PrimerPaymentMethod.ADYEN_ALIPAY -> p.type == PaymentMethodType.ADYEN_ALIPAY
+        PrimerPaymentMethod.ADYEN_VIPPS -> p.type == PaymentMethodType.ADYEN_VIPPS
+        PrimerPaymentMethod.ADYEN_MOBILEPAY -> p.type == PaymentMethodType.ADYEN_MOBILEPAY
+        PrimerPaymentMethod.ADYEN_PAYTRAIL -> p.type == PaymentMethodType.ADYEN_PAYTRAIL
+        PrimerPaymentMethod.MOLLIE_BANCONTACT -> p.type == PaymentMethodType.MOLLIE_BANCONTACT
+        PrimerPaymentMethod.MOLLIE_IDEAL -> p.type == PaymentMethodType.MOLLIE_IDEAL
+        PrimerPaymentMethod.BUCKAROO_GIROPAY -> p.type == PaymentMethodType.BUCKAROO_GIROPAY
+        PrimerPaymentMethod.BUCKAROO_SOFORT -> p.type == PaymentMethodType.BUCKAROO_SOFORT
+        PrimerPaymentMethod.BUCKAROO_IDEAL -> p.type == PaymentMethodType.BUCKAROO_IDEAL
+        PrimerPaymentMethod.BUCKAROO_EPS -> p.type == PaymentMethodType.BUCKAROO_EPS
+        PrimerPaymentMethod.BUCKAROO_BANCONTACT -> p.type == PaymentMethodType.BUCKAROO_BANCONTACT
+        else -> false
     }
 
     private fun initializeAndRegisterModules(
