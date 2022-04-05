@@ -149,8 +149,10 @@ class Primer private constructor() : PrimerInterface {
             Serialization.addModule(tokenizationSerializationModule)
             val encodedConfig = Serialization.json.encodeToString(PrimerConfig.serializer(), config)
             Intent(context, CheckoutSheetActivity::class.java)
-                .apply { putExtra("config", encodedConfig) }
-                .run { context.startActivity(this) }
+                .apply {
+                    putExtra("config", encodedConfig)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }.run { context.startActivity(this) }
         } catch (e: Exception) {
             Log.e("Primer", e.message.toString())
             val message = """
