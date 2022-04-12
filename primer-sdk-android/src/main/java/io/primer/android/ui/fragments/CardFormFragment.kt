@@ -3,15 +3,12 @@ package io.primer.android.ui.fragments
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -60,7 +57,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.TreeMap
+import java.util.Collections
 
 /**
  * A simple [Fragment] subclass.
@@ -71,8 +69,7 @@ import java.util.*
 @KoinApiExtension
 internal class CardFormFragment : BaseFragment() {
 
-    // view components
-    private var inputLayouts: MutableMap<PrimerInputFieldType, TextInputWidget> by autoCleaned()
+    private var cardInputFields: TreeMap<PrimerInputFieldType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
@@ -104,63 +101,87 @@ internal class CardFormFragment : BaseFragment() {
         primerViewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
 
         primerViewModel.showBillingFields.observe(viewLifecycleOwner) { billingFields ->
-            billingFields ?: return@observe
-            val hasPostalCode = billingFields.via(PrimerInputFieldType.POSTAL_CODE) == true
-            if (hasPostalCode) {
-                inputLayouts[PrimerInputFieldType.POSTAL_CODE] = binding.cardFormPostalCode
-                checkContainsNumber()
-            }
-            configureActionDone()
+            binding.billingAddressForm.onHandleAvailable(billingFields)
+
             renderInputFields()
-            inputLayouts[PrimerInputFieldType.POSTAL_CODE]?.isVisible = hasPostalCode
-            tokenizationViewModel.setCardHasZipCode(hasPostalCode)
-            tokenizationViewModel.validationErrors.postValue(
-                primerViewModel.selectedPaymentMethod.value?.validate()
-            )
+            configureActionDone()
+
+            validateAndShowErrorFields()
         }
 
-        primerViewModel.showCardholderName.observe(viewLifecycleOwner) { showCardholderName ->
-            inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]?.isVisible = showCardholderName
-            addInputFieldListeners()
-            tokenizationViewModel.setCardHasCardholderName(showCardholderName)
-            tokenizationViewModel.validationErrors.postValue(
-                primerViewModel.selectedPaymentMethod.value?.validate()
-            )
+        primerViewModel.showCardInformation.observe(viewLifecycleOwner) { cardInformation ->
+            displayAvailableCardFields(cardInformation)
+
+            renderInputFields()
+            renderCardNumberInput()
+            configureActionDone()
+
+            /**
+             * Handle for holder name into @see [io.primer.android.payment.card.CreditCard] model
+             */
+            tokenizationViewModel.setCardHasFields(cardInformation)
+
+            validateAndShowErrorFields()
         }
 
         primerViewModel.orderCountry.observe(viewLifecycleOwner) { countryCode ->
-            inputLayouts[PrimerInputFieldType.POSTAL_CODE]?.hint = when (countryCode) {
-                CountryCode.US -> requireContext().getString(R.string.card_zip)
-                else -> requireContext().getString(R.string.address_postal_code)
-            }
+            binding.billingAddressForm.onLoadCountry(countryCode)
         }
 
         primerViewModel.selectCountryCode.observe(viewLifecycleOwner) { country ->
             country ?: return@observe
-            inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setText(country.name)
+            binding.billingAddressForm.onSelectCountry(country)
         }
 
         renderTitle()
         renderCancelButton()
         renderSubmitButton()
         if (!tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER)) focusFirstInput()
-        addInputFieldListeners()
+        addInputFieldListeners(cardInputFields)
         adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
     }
 
-    private fun checkContainsNumber() {
-        if (tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER))
-            takeFocusForPostalCode()
+    private fun validateAndShowErrorFields() {
+        val cardErrors = primerViewModel.selectedPaymentMethod.value?.validate()
+        val billingAddressErrors = primerViewModel.validateBillingAddress()
+
+        tokenizationViewModel.validationErrors.postValue(
+            billingAddressErrors.plus(cardErrors.orEmpty())
+        )
+    }
+
+    /**
+     * @see [cardInputFields] contains all fields, but need to filter for only available fields
+     * and handle type @see [PrimerInputFieldType.ALL] when all fields is available
+     * else remove from input fields and hide on layout.
+     */
+    private fun displayAvailableCardFields(cardInfoFields: Map<String, Boolean>?) {
+        if (cardInfoFields == null) return
+        if (cardInfoFields[PrimerInputFieldType.ALL.field] == true) return
+        for ((fieldType, available) in cardInfoFields) {
+            PrimerInputFieldType.fieldOf(fieldType)?.let { type ->
+                if (!available) {
+                    cardInputFields[type]?.isVisible = false
+                    cardInputFields.remove(type)
+                }
+            }
+        }
     }
 
     // bind view components
     private fun bindViewComponents() {
-        inputLayouts = mutableMapOf(
-            PrimerInputFieldType.CARDHOLDER_NAME to binding.cardFormCardholderName,
-            PrimerInputFieldType.CARD_NUMBER to binding.cardFormCardNumber,
-            PrimerInputFieldType.EXPIRY_DATE to binding.cardFormCardExpiry,
-            PrimerInputFieldType.CVV to binding.cardFormCardCvv,
-            PrimerInputFieldType.COUNTRY_CODE to binding.cardFormCountryCode,
+        cardInputFields = TreeMap()
+        cardInputFields.putAll(
+            /**
+             * All inputs from UI with safe a sequence, for handle focus of keyboard
+             * and IME option.
+             */
+            arrayOf(
+                PrimerInputFieldType.CARD_NUMBER to binding.cardFormCardNumber,
+                PrimerInputFieldType.EXPIRY_DATE to binding.cardFormCardExpiry,
+                PrimerInputFieldType.CVV to binding.cardFormCardCvv,
+                PrimerInputFieldType.CARDHOLDER_NAME to binding.cardFormCardholderName,
+            )
         )
     }
 
@@ -183,8 +204,10 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun renderCancelButton() {
         binding.navCancelButton.apply {
-            val textColor =
-                theme.systemText.defaultColor.getColor(requireContext(), theme.isDarkMode)
+            val textColor = theme.systemText.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
             setTextColor(textColor)
 
             val fontSize = theme.systemText.fontsize.getDimension(requireContext())
@@ -213,28 +236,28 @@ internal class CardFormFragment : BaseFragment() {
     */
 
     private fun renderInputFields() {
-        inputLayouts.values.forEach { t ->
+        cardInputFields.values.forEach { inputFieldView ->
             val fontSize = theme.input.text.fontsize.getDimension(requireContext())
-            t.editText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            inputFieldView.editText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
             val color = theme.input.text.defaultColor.getColor(requireContext(), theme.isDarkMode)
-            t.editText?.setTextColor(color)
+            inputFieldView.editText?.setTextColor(color)
+            inputFieldView.setupEditTextTheme()
+            inputFieldView.setupEditTextListeners()
 
             when (theme.inputMode) {
-                PrimerTheme.InputMode.UNDERLINED -> setInputFieldPadding(t)
+                PrimerTheme.InputMode.UNDERLINED -> setInputFieldPadding(inputFieldView)
                 PrimerTheme.InputMode.OUTLINED -> Unit
             }
         }
-        addInputFieldListeners()
-        renderCardNumberInput()
     }
 
     private fun focusFirstInput() = FieldFocuser.focus(
-        inputLayouts[PrimerInputFieldType.CARD_NUMBER]?.editText
+        cardInputFields[PrimerInputFieldType.CARD_NUMBER]?.editText
     )
 
     private fun renderCardNumberInput() {
-        val cardNumberInput = inputLayouts[PrimerInputFieldType.CARD_NUMBER]
+        val cardNumberInput = cardInputFields[PrimerInputFieldType.CARD_NUMBER]
         cardNumberInput?.editText?.addTextChangedListener(TextInputMask.CardNumber())
         cardNumberInput?.editText?.addTextChangedListener(afterTextChanged = ::onCardNumberInput)
         updateCardNumberInputIcon()
@@ -293,7 +316,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun updateCardNumberInputIcon() {
         val resource = network?.getResource() ?: R.drawable.ic_generic_card
-        val input = inputLayouts[PrimerInputFieldType.CARD_NUMBER] ?: return
+        val input = cardInputFields[PrimerInputFieldType.CARD_NUMBER] ?: return
         input.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0)
     }
 
@@ -308,64 +331,51 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun addInputFieldListeners() {
-        inputLayouts[PrimerInputFieldType.EXPIRY_DATE]?.editText?.addTextChangedListener(
+    private fun addInputFieldListeners(fields: Map<PrimerInputFieldType, TextInputWidget>) {
+        fields[PrimerInputFieldType.EXPIRY_DATE]?.editText?.addTextChangedListener(
             TextInputMask.ExpiryDate()
         )
-        inputLayouts[PrimerInputFieldType.CARD_NUMBER]?.editText?.addTextChangedListener(
+        fields[PrimerInputFieldType.CARD_NUMBER]?.editText?.addTextChangedListener(
             TextInputMask.CardNumber()
         )
-        inputLayouts.entries.forEach {
-            it.value.editText?.addTextChangedListener(createTextWatcher(it.key.field))
+        fields.entries.forEach {
+            it.value.editText?.addTextChangedListener(createCardInfoTextWatcher(it.key.field))
             it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
         }
 
-        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setRawInputType(InputType.TYPE_NULL)
-        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.showSoftInputOnFocus = false
-        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus && (v is EditText) && v.text.isNullOrBlank()) {
-                activity?.hideKeyboard(v)
-                navigateToCountryChooser()
-            } else {
-                takeFocusForPostalCode()
-            }
-        }
-        inputLayouts[PrimerInputFieldType.COUNTRY_CODE]?.editText?.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) navigateToCountryChooser()
-            true
+        binding.billingAddressForm.onChooseCountry = { navigateToCountryChooser() }
+        binding.billingAddressForm.onHideKeyboard = { activity?.hideKeyboard() }
+        binding.billingAddressForm.onInputChange = { fieldType, value ->
+            primerViewModel.billingAddressFields.value?.put(fieldType, value)
+            validateAndShowErrorFields()
         }
     }
 
     private fun navigateToCountryChooser() {
         primerViewModel.navigateTo(
-            NewFragmentBehaviour({ SelectCountryFragment.newInstance() }, returnToPreviousOnBack = true)
+            NewFragmentBehaviour(
+                { SelectCountryFragment.newInstance() },
+                returnToPreviousOnBack = true
+            )
         )
     }
 
     private fun configureActionDone() {
-        inputLayouts[PrimerInputFieldType.POSTAL_CODE]?.editText?.let { postalCodeEditText ->
-            postalCodeEditText.imeOptions = EditorInfo.IME_ACTION_DONE
-            postalCodeEditText.setOnEditorActionListener { _, _, _ ->
-                binding.cardFormSubmitButton.performClick()
-            }
-            inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]?.editText?.let { cardNameEditText ->
-                cardNameEditText.imeOptions = EditorInfo.IME_ACTION_NEXT
-            }
-            return
-        }
-        inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]?.editText?.let { cardNameEditText ->
-            cardNameEditText.imeOptions = EditorInfo.IME_ACTION_DONE
-            cardNameEditText.setOnEditorActionListener { _, _, _ ->
-                binding.cardFormSubmitButton.performClick()
+        val fieldsItem = mutableListOf<TextInputWidget>()
+        fieldsItem.addAll(cardInputFields.values.filter { it.isVisible })
+        fieldsItem.addAll(binding.billingAddressForm.fieldMaps())
+        fieldsItem.forEach { it.editText?.imeOptions = EditorInfo.IME_ACTION_NEXT }
+        fieldsItem.lastOrNull()?.let { lastInputField ->
+            lastInputField.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+            lastInputField.editText?.setOnEditorActionListener { _, _, _ ->
+                binding.btnSubmitForm.performClick()
             }
         }
     }
 
-    /*
-    *
-    * submit button
-    * */
-
+    /**
+     * Submit button
+     */
     private fun renderSubmitButton() {
         val uxMode = localConfig.paymentMethodIntent
         val context = requireContext()
@@ -389,7 +399,11 @@ internal class CardFormFragment : BaseFragment() {
     private fun onSubmitButtonPressed() {
         if (!tokenizationViewModel.isValid()) return
         tokenizationViewModel.tokenizationStatus.postValue(TokenizationStatus.LOADING)
-        primerViewModel.emitPostalCode {
+        primerViewModel.emitBillingAddress { error ->
+            if (error != null) {
+                tokenizationViewModel.tokenizationStatus.postValue(TokenizationStatus.ERROR)
+                return@emitBillingAddress
+            }
             primerViewModel.addAnalyticsEvent(
                 UIAnalyticsParams(
                     AnalyticsAction.CLICK,
@@ -400,18 +414,17 @@ internal class CardFormFragment : BaseFragment() {
             )
             tokenizationViewModel.tokenize()
         }
+        activity?.hideKeyboard()
     }
 
     private fun updateSubmitButton() {
         if (localConfig.paymentMethodIntent == PrimerSessionIntent.VAULT) {
-            binding.cardFormSubmitButton.text = getString(R.string.add_card)
+            binding.btnSubmitForm.text = getString(R.string.add_card)
             return
         }
-        // todo: rename, this has no effect
         val amount = localConfig.getMonetaryAmountWithSurcharge()
         val amountString = PayAmountText.generate(requireContext(), amount)
-        val label = getString(R.string.pay_specific_amount)
-        binding.cardFormSubmitButton.text = String.format(label, amountString)
+        binding.btnSubmitForm.text = getString(R.string.pay_specific_amount, amountString)
     }
 
     // other configuration
@@ -432,21 +445,17 @@ internal class CardFormFragment : BaseFragment() {
             }
         }
 
-        tokenizationViewModel
-            .validationErrors
-            .observe(viewLifecycleOwner) {
-                setValidationErrors()
-            }
+        tokenizationViewModel.validationErrors.observe(viewLifecycleOwner) {
+            setValidationErrors()
+        }
 
-        tokenizationViewModel
-            .autoFocusFields
-            .observe(viewLifecycleOwner) {
-                findNextFocusIfNeeded(it)
-            }
+        tokenizationViewModel.autoFocusFields.observe(viewLifecycleOwner) {
+            findNextFocusIfNeeded(it)
+        }
 
-        tokenizationViewModel
-            .submitted
-            .observe(viewLifecycleOwner) { setValidationErrors() }
+        tokenizationViewModel.submitted.observe(viewLifecycleOwner) {
+            setValidationErrors()
+        }
     }
 
     private fun addListenerAndSetState() {
@@ -456,19 +465,21 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun setBusy(isBusy: Boolean) {
         updateSubmitButton()
-        if (isBusy) binding.cardFormSubmitButton.isEnabled = false
+        if (isBusy) binding.btnSubmitForm.isEnabled = false
     }
 
     private fun toggleLoading(on: Boolean) {
-        binding.cardFormSubmitButton.setProgress(on)
+        binding.btnSubmitForm.setProgress(on)
         if (on) binding.cardFormErrorMessage.isInvisible = true
-        inputLayouts.values.forEach {
-            it.isEnabled = on.not()
-            it.alpha = if (on) 0.5f else 1.0f
-        }
+        cardInputFields.values
+            .plus(binding.billingAddressForm.fieldMaps())
+            .forEach {
+                it.isEnabled = on.not()
+                it.alpha = if (on) 0.5f else 1.0f
+            }
     }
 
-    private fun createTextWatcher(name: String): TextWatcher {
+    private fun createCardInfoTextWatcher(name: String): TextWatcher {
         return object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
 
@@ -480,13 +491,7 @@ internal class CardFormFragment : BaseFragment() {
             ) = Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val value = if (name == PrimerInputFieldType.COUNTRY_CODE.field) {
-                    primerViewModel.selectCountryCode.value?.code?.name.orEmpty()
-                } else {
-                    s.toString()
-                }
-                tokenizationViewModel.setTokenizableValue(name, value)
-                primerViewModel.setUserInputs(name, value)
+                tokenizationViewModel.setTokenizableValue(name, s.toString())
             }
         }
     }
@@ -501,7 +506,7 @@ internal class CardFormFragment : BaseFragment() {
                 name == PrimerInputFieldType.STATE.field &&
                 !isBeingDismissed
             ) {
-                primerViewModel.emitPostalCode()
+                primerViewModel.emitBillingAddress()
             }
 
             if (!hasFocus && firstMount && name == PrimerInputFieldType.CARD_NUMBER.field) {
@@ -518,27 +523,25 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun findNextFocusIfNeeded(fields: Set<String>) {
-        val currentFocus = inputLayouts.entries.firstOrNull { it.value.hasFocus() }
+        val currentFocus = cardInputFields.entries.firstOrNull { it.value.hasFocus() }
         val isValid =
             fields.isNotEmpty() && !firstMount &&
                 fields.firstOrNull { currentFocus?.key?.field == it } != null
         if (isValid) {
             when (currentFocus?.key) {
-                PrimerInputFieldType.CARD_NUMBER -> FieldFocuser
-                    .focus(inputLayouts[PrimerInputFieldType.EXPIRY_DATE])
-                PrimerInputFieldType.EXPIRY_DATE -> FieldFocuser
-                    .focus(inputLayouts[PrimerInputFieldType.CVV])
-                PrimerInputFieldType.CARDHOLDER_NAME -> takeFocusForPostalCode()
-                PrimerInputFieldType.COUNTRY_CODE -> takeFocusForPostalCode()
+                PrimerInputFieldType.CARD_NUMBER ->
+                    FieldFocuser.focus(cardInputFields[PrimerInputFieldType.EXPIRY_DATE])
+                PrimerInputFieldType.EXPIRY_DATE ->
+                    FieldFocuser.focus(cardInputFields[PrimerInputFieldType.CVV])
+                PrimerInputFieldType.CARDHOLDER_NAME -> binding.billingAddressForm.focusOnCountry()
                 PrimerInputFieldType.CVV -> {
                     when {
-                        primerViewModel.showCardholderName.value == true -> FieldFocuser.focus(
-                            inputLayouts[PrimerInputFieldType.CARDHOLDER_NAME]
-                        )
+                        primerViewModel.showCardInformation.value
+                            .via(PrimerInputFieldType.CARDHOLDER_NAME) == true ->
+                            takeFocusCardholderName()
                         primerViewModel.showBillingFields.value
-                            .via(PrimerInputFieldType.POSTAL_CODE) == true -> FieldFocuser.focus(
-                                inputLayouts[PrimerInputFieldType.POSTAL_CODE]
-                        )
+                            .via(PrimerInputFieldType.POSTAL_CODE) == true ->
+                            binding.billingAddressForm.focusOnCountry()
                         else -> Unit
                     }
                 }
@@ -546,21 +549,24 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    private fun takeFocusForPostalCode() {
-        if (primerViewModel.showBillingFields.value.via(PrimerInputFieldType.POSTAL_CODE) == true)
-            FieldFocuser.focus(inputLayouts[PrimerInputFieldType.POSTAL_CODE])
+    private fun takeFocusCardholderName() {
+        val cardInformation = primerViewModel.showCardInformation.value
+        if (cardInformation.via(PrimerInputFieldType.CARDHOLDER_NAME) == true
+        ) FieldFocuser.focus(
+            cardInputFields[PrimerInputFieldType.CARDHOLDER_NAME]
+        )
     }
 
     private fun setValidationErrors() {
         val tokenizationStatus = tokenizationViewModel.tokenizationStatus.value
         val errors = tokenizationViewModel.validationErrors.value ?: Collections.emptyList()
 
-        binding.cardFormSubmitButton.isEnabled =
+        binding.btnSubmitForm.isEnabled =
             errors.isEmpty() && isSubmitButtonEnabled(tokenizationStatus)
 
         val showAll = tokenizationViewModel.submitted.value == true
 
-        inputLayouts.entries.forEach {
+        cardInputFields.entries.forEach {
             val dirty = getIsDirty(it.key.field)
             val focused = it.value.isFocused
 
@@ -600,11 +606,11 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun onKeyboardVisibilityChanged(visible: Boolean) {
-        val hasFocus = inputLayouts.entries.any { it.value.isFocused }
-        if (hasFocus && !visible) inputLayouts.entries.forEach { it.value.clearFocus() }
-        else if (visible && !hasFocus
-            && !tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER))
-                focusFirstInput()
+        val hasFocus = cardInputFields.entries.any { it.value.isFocused }
+        if (hasFocus && !visible) cardInputFields.entries.forEach { it.value.clearFocus() }
+        else if (visible && !hasFocus &&
+            !tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER)
+        ) focusFirstInput()
     }
 
     private fun getIsDirty(name: String): Boolean {

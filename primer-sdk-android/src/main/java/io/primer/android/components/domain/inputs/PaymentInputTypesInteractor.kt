@@ -1,9 +1,6 @@
 package io.primer.android.components.domain.inputs
 
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
-import io.primer.android.model.dto.PrimerInputFieldType
-import io.primer.android.model.dto.needAdd
-import io.primer.android.model.dto.via
 import io.primer.android.data.configuration.models.CheckoutModuleType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver

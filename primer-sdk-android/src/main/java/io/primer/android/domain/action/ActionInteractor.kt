@@ -56,4 +56,5 @@ internal class ActionInteractor(
         }
             .onEmpty { emit(Unit) }
             .flowOn(dispatcher)
+    }
 }

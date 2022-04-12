@@ -6,7 +6,7 @@ import android.text.method.TextKeyListener
 import android.util.AttributeSet
 import io.primer.android.model.dto.PrimerInputFieldType
 
-class PrimerOtherEditText(context: Context, attrs: AttributeSet? = null) :
+internal class PrimerOtherEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
     init {

@@ -25,6 +25,7 @@ import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
@@ -128,11 +129,15 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun setCardHasZipCode(value: Boolean) = (paymentMethod as? CreditCard)
-        ?.let { card -> card.hasPostalCode = value }
-
-    fun setCardHasCardholderName(value: Boolean) = (paymentMethod as? CreditCard)
-        ?.let { card -> card.hasCardholderName = value }
+    fun setCardHasFields(fields: Map<String, Boolean>?) {
+        val availableFields = mutableMapOf<PrimerInputFieldType, Boolean>()
+        for ((key, value) in fields.orEmpty()) {
+            PrimerInputFieldType.fieldOf(key)?.let { fieldType ->
+                availableFields[fieldType] = value
+            }
+        }
+        (paymentMethod as? CreditCard)?.availableFields?.putAll(availableFields)
+    }
 
     fun getDeeplinkUrl() = viewModelScope.launch {
         asyncPaymentMethodDeeplinkInteractor(None()).collect {

@@ -48,10 +48,12 @@ import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
+import io.primer.android.payment.billing_address.IBillingAddressValidator
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.utils.SurchargeFormatter
+import io.primer.android.utils.orNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.NonCancellable
@@ -61,7 +63,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.Collections
+import java.util.Currency
 
 @KoinApiExtension
 @ExperimentalCoroutinesApi
@@ -76,6 +79,7 @@ internal class PrimerViewModel(
     private val resumePaymentInteractor: ResumePaymentInteractor,
     private val actionInteractor: ActionInteractor,
     private val config: PrimerConfig,
+    private val billingAddressValidator: IBillingAddressValidator,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : BaseViewModel(analyticsInteractor), EventBus.EventListener {
 
@@ -95,8 +99,6 @@ internal class PrimerViewModel(
 
     private val _state = MutableLiveData(SessionState.AWAITING_USER)
     val state: LiveData<SessionState> = _state
-
-    private val userInputs = mutableMapOf<String, String>()
 
     fun setState(s: SessionState) {
         _state.postValue(s)
@@ -131,6 +133,8 @@ internal class PrimerViewModel(
     private val _navigateActionEvent = MutableLiveData<SelectedPaymentMethodBehaviour>()
     val navigateActionEvent: LiveData<SelectedPaymentMethodBehaviour> = _navigateActionEvent
 
+    val billingAddressFields = MutableLiveData(mutableMapOf<PrimerInputFieldType, String?>())
+
     val showBillingFields: LiveData<Map<String, Boolean>?> by lazy {
         configurationInteractor(ConfigurationParams(true))
             .map { configuration ->
@@ -143,15 +147,14 @@ internal class PrimerViewModel(
             .asLiveData()
     }
 
-    val showCardholderName: LiveData<Boolean> = _state.asFlow()
+    val showCardInformation: LiveData<Map<String, Boolean>?> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
         .map { configuration ->
             val module =
                 configuration.checkoutModules.find { m ->
                     m.type == CheckoutModuleType.CARD_INFORMATION
                 }
-            module?.options?.via(PrimerInputFieldType.ALL)
-                ?: module?.options?.via(PrimerInputFieldType.CARDHOLDER_NAME) ?: true
+            module?.options
         }
         .asLiveData()
 
@@ -326,15 +329,19 @@ internal class PrimerViewModel(
 
     fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value.orEmpty()
 
-    fun emitPostalCode(completion: (() -> Unit) = {}) {
-        val countryCode: String = userInputs[PrimerInputFieldType.COUNTRY_CODE.field].orEmpty()
-        val firstName: String = userInputs[PrimerInputFieldType.FIRST_NAME.field].orEmpty()
-        val lastName: String = userInputs[PrimerInputFieldType.LAST_NAME.field].orEmpty()
-        val addressLine1: String = userInputs[PrimerInputFieldType.ADDRESS_LINE_1.field].orEmpty()
-        val addressLine2: String = userInputs[PrimerInputFieldType.ADDRESS_LINE_2.field].orEmpty()
-        val postalCode: String = userInputs[PrimerInputFieldType.POSTAL_CODE.field].orEmpty()
-        val city: String = userInputs[PrimerInputFieldType.CITY.field].orEmpty()
-        val state: String = userInputs[PrimerInputFieldType.STATE.field].orEmpty()
+    fun emitBillingAddress(completion: ((error: String?) -> Unit) = {}) {
+        val billingAddressFields = this.billingAddressFields.value ?: run {
+            completion(null)
+            return
+        }
+        val countryCode = billingAddressFields[PrimerInputFieldType.COUNTRY_CODE]
+        val firstName = billingAddressFields[PrimerInputFieldType.FIRST_NAME].orNull()
+        val lastName = billingAddressFields[PrimerInputFieldType.LAST_NAME].orNull()
+        val addressLine1 = billingAddressFields[PrimerInputFieldType.ADDRESS_LINE_1].orNull()
+        val addressLine2 = billingAddressFields[PrimerInputFieldType.ADDRESS_LINE_2].orNull()
+        val postalCode = billingAddressFields[PrimerInputFieldType.POSTAL_CODE].orNull()
+        val city = billingAddressFields[PrimerInputFieldType.CITY].orNull()
+        val state = billingAddressFields[PrimerInputFieldType.STATE].orNull()
 
         val action = ActionUpdateBillingAddressParams(
             currentCustomer.firstName,
@@ -347,14 +354,14 @@ internal class PrimerViewModel(
         )
 
         dispatchAction(action) { error ->
-            if (error == null) completion()
-            else setState(SessionState.ERROR)
+            completion(error?.message)
+            if (error != null) setState(SessionState.ERROR)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        userInputs.clear()
+        billingAddressFields.value?.clear()
         _selectedCountryCode.postValue(null)
         viewModelScope.launch(NonCancellable) {
             analyticsInteractor.send().collect { }
@@ -439,7 +446,7 @@ internal class PrimerViewModel(
         _selectedCountryCode.postValue(null)
     }
 
-    fun setUserInputs(name: String, value: String) {
-        userInputs[name] = value
-    }
+    fun validateBillingAddress(): List<SyncValidationError> = billingAddressValidator.validate(
+        billingAddressFields.value.orEmpty(), showBillingFields.value.orEmpty()
+    )
 }

@@ -24,7 +24,15 @@ internal class SelectCountryViewModel(
     fun fetchCountries() {
         viewModelScope.launch(Dispatchers.IO) {
             val countries = countriesRepository.getCountries()
-            _countriesData.postValue(countries.map { CountryItem(it.name, it.code, it.code.emojiFlag()) })
+            _countriesData.postValue(
+                countries.map {
+                    CountryItem(
+                        it.name,
+                        it.code,
+                        it.code.emojiFlag()
+                    )
+                }
+            )
         }
     }
 
@@ -32,7 +40,15 @@ internal class SelectCountryViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val countries = if (query.isBlank()) countriesRepository.getCountries()
             else countriesRepository.findCountryByQuery(query)
-            _countriesData.postValue(countries.map { CountryItem(it.name, it.code, it.code.emojiFlag()) })
+            _countriesData.postValue(
+                countries.map {
+                    CountryItem(
+                        it.name,
+                        it.code,
+                        it.code.emojiFlag()
+                    )
+                }
+            )
         }
     }
 

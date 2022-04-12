@@ -10,5 +10,4 @@ interface CountriesRepository {
     suspend fun getCountryByCode(code: CountryCode): Country
 
     suspend fun findCountryByQuery(query: String): List<Country>
-
 }

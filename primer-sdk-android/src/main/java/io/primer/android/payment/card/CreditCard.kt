@@ -15,7 +15,10 @@ import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.model.SyncValidationError
+import io.primer.android.model.dto.putFor
+import io.primer.android.model.dto.valueBy
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
@@ -39,8 +42,7 @@ internal class CreditCard(
     private val checkoutConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
 
-    var hasPostalCode: Boolean = false
-    var hasCardholderName: Boolean = true
+    var availableFields = mutableMapOf<PrimerInputFieldType, Boolean>()
 
     // FIXME static call + instantiation makes it impossible to properly test
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
@@ -129,7 +131,7 @@ internal class CreditCard(
     override fun validate(): List<SyncValidationError> {
         val errors = ArrayList<SyncValidationError>()
 
-        if (hasCardholderName) {
+        if (availableFields[PrimerInputFieldType.CARDHOLDER_NAME] == true) {
             val name = values.valueBy(PrimerInputFieldType.CARDHOLDER_NAME)
             if (name.isEmpty()) {
                 errors.add(
@@ -185,7 +187,6 @@ internal class CreditCard(
             )
         }
 
-        // FIXME static call (formatter should be injected)
         val expiry = ExpiryDateFormatter.fromString(
             values.valueBy(PrimerInputFieldType.EXPIRY_DATE)
         )
@@ -208,20 +209,6 @@ internal class CreditCard(
             )
         }
 
-        if (hasPostalCode) {
-            val postalCode = values.valueBy(PrimerInputFieldType.POSTAL_CODE)
-
-            if (postalCode.isEmpty()) {
-                errors.add(
-                    SyncValidationError(
-                        name = PrimerInputFieldType.POSTAL_CODE.field,
-                        errorId = R.string.form_error_required,
-                        fieldId = R.string.card_zip
-                    )
-                )
-            }
-        }
-
         return errors
     }
 
@@ -241,6 +228,10 @@ internal class CreditCard(
             values.valueBy(PrimerInputFieldType.EXPIRY_DATE)
         )
         if (expiry.isValid()) fields.add(PrimerInputFieldType.EXPIRY_DATE.field)
+
+        if (availableFields[PrimerInputFieldType.CARDHOLDER_NAME] == true &&
+            values.valueBy(PrimerInputFieldType.CARDHOLDER_NAME).isNotBlank()
+        ) fields.add(PrimerInputFieldType.CARDHOLDER_NAME.field)
 
         return fields
     }

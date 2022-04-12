@@ -7,9 +7,7 @@ import io.primer.android.model.dto.Country
 import io.primer.android.model.dto.CountryCode
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
 import org.json.JSONArray
-import org.json.JSONObject
 import org.json.JSONTokener
 import java.lang.ref.WeakReference
 
@@ -52,7 +50,6 @@ class CountriesDataRepository(private val contextRef: WeakReference<Context>) :
         }
     }
 
-
     override suspend fun getCountries(): List<Country> {
         loadCountries(fromCache = true)
         return countries.toList()
@@ -66,8 +63,8 @@ class CountriesDataRepository(private val contextRef: WeakReference<Context>) :
     override suspend fun findCountryByQuery(query: String): List<Country> {
         loadCountries()
         return countries.filter {
-            it.name.contains(query, ignoreCase = true)
-                || it.code.name.contentEquals(query, ignoreCase = true)
+            it.name.contains(query, ignoreCase = true) ||
+                it.code.name.contentEquals(query, ignoreCase = true)
         }.toList()
     }
 }

@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.ui.CardNumberFormatter
 
-class PrimerCvvEditText(context: Context, attrs: AttributeSet? = null) :
+internal class PrimerCvvEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
     init {

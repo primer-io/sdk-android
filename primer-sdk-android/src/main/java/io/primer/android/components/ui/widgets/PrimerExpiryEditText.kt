@@ -8,7 +8,7 @@ import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.TextInputMask
 
-class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
+internal class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
     init {

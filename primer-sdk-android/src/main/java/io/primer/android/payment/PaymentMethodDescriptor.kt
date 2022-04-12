@@ -2,13 +2,13 @@ package io.primer.android.payment
 
 import android.view.View
 import android.view.ViewGroup
-import io.primer.android.model.dto.PrimerInputFieldType
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PrimerInputFieldType
 import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
-import java.util.*
+import java.util.Collections
 
 internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteConfig) {
 

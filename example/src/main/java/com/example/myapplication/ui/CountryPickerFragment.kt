@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentCountryPickerBinding
 import com.example.myapplication.viewmodels.SettingsViewModel
 
@@ -43,10 +42,6 @@ class CountryPickerFragment : Fragment() {
         }
         settingsViewModel.countries.observe(viewLifecycleOwner) { countries ->
             adapter.setItems(countries)
-        }
-        binding.polandItem.setOnClickListener {
-            settingsViewModel.setCountry("PL")
-            findNavController().navigate(R.id.action_CountryPickerFragment_to_firstFragment)
         }
     }
 
