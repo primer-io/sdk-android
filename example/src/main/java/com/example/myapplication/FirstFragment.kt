@@ -10,14 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentFirstBinding
-import com.example.myapplication.datamodels.AppCountryCode
-import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
-import com.example.myapplication.utils.UnfilteredArrayAdapter
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.SettingsViewModel
-import io.primer.android.model.dto.CountryCode
 
 class FirstFragment : Fragment() {
 
@@ -49,15 +45,7 @@ class FirstFragment : Fragment() {
         }
 
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
-            when (country) {
-                "DE" -> binding.countryItem.setText("🇩🇪")
-                "GB" -> binding.countryItem.setText("🇬🇧")
-                "US" -> binding.countryItem.setText("🇺🇸")
-                "SE" -> binding.countryItem.setText("🇸🇪")
-                "SG" -> binding.countryItem.setText("🇸🇬")
-                "NO" -> binding.countryItem.setText("🇳🇴")
-                "FR" -> binding.countryItem.setText("🇫🇷")
-            }
+            binding.countryItem.setText(country.flag)
         }
     }
 

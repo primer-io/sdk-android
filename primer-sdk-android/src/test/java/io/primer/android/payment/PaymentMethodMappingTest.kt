@@ -246,6 +246,15 @@ class PaymentMethodMappingTest {
 //    }
 
     @Test
+    fun `test maps adyen paytrail transfer correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_PAYTRAIL)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
     fun `test maps mollie bancontact correctly`() {
         val factory = DefaultPaymentMethodMapping(settings)
         when (val result = factory.getPaymentMethodFor(PaymentMethodType.MOLLIE_BANCONTACT)) {

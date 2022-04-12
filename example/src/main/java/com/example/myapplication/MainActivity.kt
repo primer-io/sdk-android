@@ -9,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.datamodels.AppCountryCode
 import com.example.myapplication.datasources.CountryDataSource
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.viewmodels.MainViewModel
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        val countryDataSource = CountryDataSource("DE")
+        val countryDataSource = CountryDataSource(AppCountryCode.CA)
         val countryRepository = CountryRepository(countryDataSource)
 
         mainViewModel = ViewModelProvider(
