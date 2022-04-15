@@ -2,6 +2,8 @@ package com.example.myapplication.repositories
 
 import com.example.myapplication.constants.PrimerRoutes
 import com.example.myapplication.datamodels.PaymentInstrumentsResponse
+import com.example.myapplication.datamodels.type
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
@@ -11,7 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class PaymentInstrumentsRepository {
+class PaymentInstrumentsRepository(private val apiKeyDataSource: ApiKeyDataSource) {
 
     fun fetch(
         customerId: String,
@@ -24,7 +26,7 @@ class PaymentInstrumentsRepository {
             environment,
             true
         )
-        client.cache()?.delete()
+        client.cache?.delete()
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
@@ -37,7 +39,7 @@ class PaymentInstrumentsRepository {
 
                     val tokenResponse = GsonBuilder()
                         .create()
-                        .fromJson(response.body()?.string(), PaymentInstrumentsResponse::class.java)
+                        .fromJson(response.body?.string(), PaymentInstrumentsResponse::class.java)
 
                     callback(tokenResponse.data)
                 }

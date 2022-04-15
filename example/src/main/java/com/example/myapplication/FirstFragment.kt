@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentFirstBinding
+import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.viewmodels.MainViewModel
@@ -40,6 +41,7 @@ class FirstFragment : Fragment() {
         configureCountryTextField()
         configureAmountTextField()
         configurePaymentHandlingViews()
+        configureEnvSetup()
         configureNextButton()
 
         viewModel.canLaunchPrimer.observe(viewLifecycleOwner) { canLaunch ->
@@ -49,6 +51,31 @@ class FirstFragment : Fragment() {
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
             viewModel.countryCode.postValue(country)
             binding.countryItem.setText(country.flag)
+        }
+        viewModel.environment.observe(viewLifecycleOwner) { env ->
+            when (env) {
+                PrimerEnv.Production -> binding.rgEnvGroup.check(R.id.rbProduction)
+                PrimerEnv.Staging -> binding.rgEnvGroup.check(R.id.rbStaging)
+                PrimerEnv.Dev -> binding.rgEnvGroup.check(R.id.rbDev)
+                PrimerEnv.Sandbox -> binding.rgEnvGroup.check(R.id.rbSandbox)
+            }
+        }
+        viewModel.apiKeyLiveData.observe(viewLifecycleOwner) { apiKey ->
+            binding.apiKeyTextField.setText(apiKey)
+        }
+    }
+
+    private fun configureEnvSetup() {
+        binding.rgEnvGroup.setOnCheckedChangeListener { _, itemId ->
+            when (itemId) {
+                R.id.rbProduction -> viewModel.setCurrentEnv(PrimerEnv.Production)
+                R.id.rbStaging -> viewModel.setCurrentEnv(PrimerEnv.Staging)
+                R.id.rbDev -> viewModel.setCurrentEnv(PrimerEnv.Dev)
+                R.id.rbSandbox -> viewModel.setCurrentEnv(PrimerEnv.Sandbox)
+            }
+        }
+        binding.apiKeyTextField.addTextChangedListener {
+            viewModel.setApiKeyForSelectedEnv(it?.toString())
         }
     }
 

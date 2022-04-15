@@ -15,6 +15,7 @@ import com.example.myapplication.datamodels.TransactionResponse
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.datamodels.toTransactionState
 import com.example.myapplication.repositories.ClientSessionRepository
+import com.example.myapplication.repositories.ClientTokenRepository
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.PaymentInstrumentsRepository
 import com.example.myapplication.repositories.PaymentsRepository
@@ -37,7 +38,7 @@ import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.ui.settings.PrimerUIOptions
 import okhttp3.OkHttpClient
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.UUID
 
 @Keep
 class MainViewModel(
@@ -58,7 +59,9 @@ class MainViewModel(
 
     val mode = MutableLiveData(Mode.CHECKOUT)
 
-    private val client: OkHttpClient = OkHttpClient.Builder().build()
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor())
+        .build()
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
 
@@ -85,6 +88,21 @@ class MainViewModel(
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
     val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
+    fun setCurrentEnv(env: PrimerEnv) {
+        environment.postValue(env)
+        this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
+    }
+
+    val apiKeyLiveData = MutableLiveData<String>(apiKeyDataSource
+        .getApiKey(environment.value ?: PrimerEnv.Dev))
+    fun setApiKeyForSelectedEnv(apiKey: String?) {
+        val env = environment.value ?: return
+        if (!apiKey.isNullOrBlank()) {
+            this.apiKeyDataSource.setApiKey(env, apiKey)
+        } else {
+            this.apiKeyDataSource.setApiKey(env, null)
+        }
+    }
 
     private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
     val amount: LiveData<Int> = _amount
