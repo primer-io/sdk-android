@@ -114,10 +114,6 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         FieldFocuser.focus(binding.cardFormFirstName)
     }
 
-    fun focusOnCountry() {
-        FieldFocuser.focus(binding.cardFormCountryCode)
-    }
-
     private fun setInputFieldPadding(view: View) {
         val res = resources
         val topPadding = res
@@ -148,10 +144,11 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         findNextFocus()
     }
 
-    private fun findNextFocus() {
-        fields.firstOrNull { it.second.editText?.text.isNullOrBlank() }?.let { field ->
-            FieldFocuser.focus(field.second)
-        }
+    fun findNextFocus() {
+        fields.firstOrNull {
+            it.second.editText?.text.isNullOrBlank() &&
+                it.second.isVisible
+        }?.let { FieldFocuser.focus(it.second) }
     }
 
     fun onHandleAvailable(billingFields: Map<String, Boolean>?) {

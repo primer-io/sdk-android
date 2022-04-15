@@ -533,7 +533,7 @@ internal class CardFormFragment : BaseFragment() {
                     FieldFocuser.focus(cardInputFields[PrimerInputFieldType.EXPIRY_DATE])
                 PrimerInputFieldType.EXPIRY_DATE ->
                     FieldFocuser.focus(cardInputFields[PrimerInputFieldType.CVV])
-                PrimerInputFieldType.CARDHOLDER_NAME -> binding.billingAddressForm.focusOnCountry()
+                PrimerInputFieldType.CARDHOLDER_NAME -> binding.billingAddressForm.findNextFocus()
                 PrimerInputFieldType.CVV -> {
                     when {
                         primerViewModel.showCardInformation.value
@@ -541,7 +541,7 @@ internal class CardFormFragment : BaseFragment() {
                             takeFocusCardholderName()
                         primerViewModel.showBillingFields.value
                             .via(PrimerInputFieldType.POSTAL_CODE) == true ->
-                            binding.billingAddressForm.focusOnCountry()
+                            binding.billingAddressForm.findNextFocus()
                         else -> Unit
                     }
                 }
