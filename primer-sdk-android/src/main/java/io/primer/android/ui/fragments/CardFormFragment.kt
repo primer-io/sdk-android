@@ -57,8 +57,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.TreeMap
-import java.util.Collections
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -299,19 +298,10 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun setInputFieldPadding(view: View) {
         val res = requireContext().resources
-        val topPadding = res
-            .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_top)
         val horizontalPadding = res
             .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
-        val bottomPadding = res
-            .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_bottom)
 
-        view.setPadding(
-            horizontalPadding,
-            topPadding,
-            horizontalPadding,
-            bottomPadding
-        )
+        view.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
     private fun updateCardNumberInputIcon() {
@@ -343,6 +333,9 @@ internal class CardFormFragment : BaseFragment() {
             it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
         }
 
+        binding.billingAddressForm.fieldsMap().entries.forEach {
+            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
+        }
         binding.billingAddressForm.onChooseCountry = { navigateToCountryChooser() }
         binding.billingAddressForm.onHideKeyboard = { activity?.hideKeyboard() }
         binding.billingAddressForm.onInputChange = { fieldType, value ->
@@ -363,7 +356,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun configureActionDone() {
         val fieldsItem = mutableListOf<TextInputWidget>()
         fieldsItem.addAll(cardInputFields.values.filter { it.isVisible })
-        fieldsItem.addAll(binding.billingAddressForm.fieldMaps())
+        fieldsItem.addAll(binding.billingAddressForm.fields())
         fieldsItem.forEach { it.editText?.imeOptions = EditorInfo.IME_ACTION_NEXT }
         fieldsItem.lastOrNull()?.let { lastInputField ->
             lastInputField.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -472,7 +465,7 @@ internal class CardFormFragment : BaseFragment() {
         binding.btnSubmitForm.setProgress(on)
         if (on) binding.cardFormErrorMessage.isInvisible = true
         cardInputFields.values
-            .plus(binding.billingAddressForm.fieldMaps())
+            .plus(binding.billingAddressForm.fields())
             .forEach {
                 it.isEnabled = on.not()
                 it.alpha = if (on) 0.5f else 1.0f
@@ -539,10 +532,7 @@ internal class CardFormFragment : BaseFragment() {
                         primerViewModel.showCardInformation.value
                             .via(PrimerInputFieldType.CARDHOLDER_NAME) == true ->
                             takeFocusCardholderName()
-                        primerViewModel.showBillingFields.value
-                            .via(PrimerInputFieldType.POSTAL_CODE) == true ->
-                            binding.billingAddressForm.findNextFocus()
-                        else -> Unit
+                        else -> binding.billingAddressForm.findNextFocus()
                     }
                 }
             }
@@ -566,7 +556,7 @@ internal class CardFormFragment : BaseFragment() {
 
         val showAll = tokenizationViewModel.submitted.value == true
 
-        cardInputFields.entries.forEach {
+        cardInputFields.plus(binding.billingAddressForm.fieldsMap()).entries.forEach {
             val dirty = getIsDirty(it.key.field)
             val focused = it.value.isFocused
 

@@ -18,6 +18,7 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.Country
 import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.model.dto.emojiFlag
 import io.primer.android.ui.FieldFocuser
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -38,6 +39,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     )
 
     private val fields = mutableListOf<Pair<PrimerInputFieldType, TextInputWidget>>()
+    private val fieldsMap by lazy { mutableMapOf<PrimerInputFieldType, TextInputWidget>() }
 
     var onChooseCountry: (() -> Unit)? = null
     var onHideKeyboard: (() -> Unit)? = null
@@ -63,10 +65,26 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         setupTheme()
     }
 
-    fun fieldMaps(): List<TextInputWidget> = fields
+    /**
+     * Only available fields
+     */
+    fun fields(): List<TextInputWidget> = fields
         .filter { it.second.isVisible }
         .map { it.second }
         .toList()
+
+    /**
+     * All fields for billing address.
+     */
+    fun fieldsMap(): Map<PrimerInputFieldType, TextInputWidget> {
+        val availableFields = fields
+        fieldsMap.clear()
+        availableFields.forEach { pair ->
+            fieldsMap[pair.first] = pair.second
+        }
+
+        return fieldsMap
+    }
 
     private fun setupTheme() {
         fields.forEach { data ->
@@ -116,19 +134,10 @@ internal class BillingAddressFormView @JvmOverloads constructor(
 
     private fun setInputFieldPadding(view: View) {
         val res = resources
-        val topPadding = res
-            .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_top)
         val horizontalPadding = res
             .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
-        val bottomPadding = res
-            .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_bottom)
 
-        view.setPadding(
-            horizontalPadding,
-            topPadding,
-            horizontalPadding,
-            bottomPadding
-        )
+        view.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
     fun onLoadCountry(countryCode: CountryCode?) {
@@ -139,7 +148,12 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     }
 
     fun onSelectCountry(country: Country) {
-        binding.cardFormCountryCode.editText?.setText(country.name)
+        val countryName = buildString {
+            append(country.code.emojiFlag())
+            append(" ")
+            append(country.name)
+        }
+        binding.cardFormCountryCode.editText?.setText(countryName)
         onInputChange?.invoke(PrimerInputFieldType.COUNTRY_CODE, country.code.name)
         findNextFocus()
     }

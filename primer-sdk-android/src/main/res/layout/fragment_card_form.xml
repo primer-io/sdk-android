@@ -132,7 +132,8 @@
         <io.primer.android.ui.components.BillingAddressFormView
             android:id="@+id/billingAddressForm"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/primer_input_spacing_vert" />
 
         <io.primer.android.ui.components.TextViewDanger
             android:id="@+id/card_form_error_message"
