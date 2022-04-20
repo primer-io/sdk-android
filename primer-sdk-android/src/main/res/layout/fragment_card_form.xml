@@ -8,6 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -42,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/card_number"
-            app:errorEnabled="true"
+            app:errorEnabled="false"
             app:errorIconDrawable="@null"
             app:suffixTextColor="@android:color/black">
 
@@ -75,7 +76,7 @@
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:hint="@string/card_expiry"
-                app:errorEnabled="true"
+                app:errorEnabled="false"
                 app:errorIconDrawable="@null">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -95,7 +96,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:hint="@string/card_cvv"
-                app:errorEnabled="true"
+                app:errorEnabled="false"
                 app:errorIconDrawable="@null">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -117,7 +118,7 @@
             android:layout_marginTop="@dimen/primer_input_spacing_vert"
             android:hint="@string/card_holder_name"
             android:visibility="gone"
-            app:errorEnabled="true"
+            app:errorEnabled="false"
             app:errorIconDrawable="@null"
             tools:visibility="visible">
 

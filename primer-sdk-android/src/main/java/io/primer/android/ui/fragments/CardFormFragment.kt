@@ -334,7 +334,9 @@ internal class CardFormFragment : BaseFragment() {
         }
 
         binding.billingAddressForm.fieldsMap().entries.forEach {
-            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
+            if (it.key != PrimerInputFieldType.COUNTRY_CODE) {
+                it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
+            }
         }
         binding.billingAddressForm.onChooseCountry = { navigateToCountryChooser() }
         binding.billingAddressForm.onHideKeyboard = { activity?.hideKeyboard() }
@@ -493,15 +495,6 @@ internal class CardFormFragment : BaseFragment() {
         return View.OnFocusChangeListener { _, hasFocus ->
             var skip = false
 
-            if (
-                !hasFocus &&
-                !firstMount &&
-                name == PrimerInputFieldType.STATE.field &&
-                !isBeingDismissed
-            ) {
-                primerViewModel.emitBillingAddress()
-            }
-
             if (!hasFocus && firstMount && name == PrimerInputFieldType.CARD_NUMBER.field) {
                 firstMount = false
                 skip = true
@@ -575,6 +568,7 @@ internal class CardFormFragment : BaseFragment() {
         error: SyncValidationError?,
         type: PrimerInputFieldType,
     ) {
+        input.isErrorEnabled = error != null
         if (error == null) input.error = error
         else requireContext()
             .let {

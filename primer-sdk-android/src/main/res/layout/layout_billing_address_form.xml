@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <TextView
@@ -21,7 +22,7 @@
         android:layout_marginTop="@dimen/primer_input_spacing_vert"
         android:layout_weight="1"
         android:hint="@string/address_country_code"
-        app:errorEnabled="true"
+        app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -43,10 +44,11 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/primer_input_spacing_vert"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:hint="@string/first_name"
-            app:errorEnabled="true"
+            app:errorEnabled="false"
             app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -64,9 +66,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
             android:hint="@string/last_name"
-            app:errorEnabled="true"
+            app:errorEnabled="false"
             app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -85,10 +88,11 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/primer_input_spacing_vert"
         android:layout_marginEnd="4dp"
         android:layout_weight="1"
         android:hint="@string/address_line_1"
-        app:errorEnabled="true"
+        app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -105,10 +109,11 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/primer_input_spacing_vert"
         android:layout_marginEnd="4dp"
         android:layout_weight="1"
         android:hint="@string/address_line_2"
-        app:errorEnabled="true"
+        app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -130,11 +135,12 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/primer_input_spacing_vert"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:hint="@string/card_zip"
             android:visibility="gone"
-            app:errorEnabled="true"
+            app:errorEnabled="false"
             app:errorIconDrawable="@null"
             tools:visibility="visible">
 
@@ -154,9 +160,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
             android:hint="@string/address_city"
-            app:errorEnabled="true"
+            app:errorEnabled="false"
             app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -175,10 +182,11 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/primer_input_spacing_vert"
         android:layout_marginEnd="4dp"
         android:layout_weight="1"
         android:hint="@string/address_state"
-        app:errorEnabled="true"
+        app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText

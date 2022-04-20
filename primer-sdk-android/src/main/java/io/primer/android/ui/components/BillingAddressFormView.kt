@@ -155,13 +155,12 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         }
         binding.cardFormCountryCode.editText?.setText(countryName)
         onInputChange?.invoke(PrimerInputFieldType.COUNTRY_CODE, country.code.name)
-        findNextFocus()
     }
 
     fun findNextFocus() {
         fields.firstOrNull {
             it.second.editText?.text.isNullOrBlank() &&
-                it.second.isVisible
+                it.second.isVisible && it.second.editText?.isFocused == false
         }?.let { FieldFocuser.focus(it.second) }
     }
 
