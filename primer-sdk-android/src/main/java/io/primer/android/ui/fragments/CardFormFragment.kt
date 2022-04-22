@@ -49,6 +49,7 @@ import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
+import io.primer.android.ui.utils.setMarginTopForError
 import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.TokenizationStatus
@@ -568,7 +569,9 @@ internal class CardFormFragment : BaseFragment() {
         error: SyncValidationError?,
         type: PrimerInputFieldType,
     ) {
-        input.isErrorEnabled = error != null
+        val isEnableError = error != null
+        input.isErrorEnabled = isEnableError
+        input.setMarginTopForError(isEnableError)
         if (error == null) input.error = error
         else requireContext()
             .let {

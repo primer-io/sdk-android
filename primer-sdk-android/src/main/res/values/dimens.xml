@@ -10,7 +10,8 @@
 
     <!--  Forms  -->
     <dimen name="primer_form_title_margin">28dp</dimen>
-    <dimen name="primer_input_spacing_vert">8dp</dimen>
+    <dimen name="primer_input_spacing_vert">11dp</dimen>
+    <dimen name="primer_input_spacing_error_vert">7dp</dimen>
     <dimen name="primer_input_spacing_horiz">28dp</dimen>
     <dimen name="primer_button_elevation">2dp</dimen>
     <dimen name="primer_button_padding_horiz">16dp</dimen>

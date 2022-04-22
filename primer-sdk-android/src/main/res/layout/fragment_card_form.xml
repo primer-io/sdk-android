@@ -8,7 +8,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -42,6 +41,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:hint="@string/card_number"
             app:errorEnabled="false"
             app:errorIconDrawable="@null"
@@ -57,14 +57,10 @@
                 android:inputType="number" />
         </io.primer.android.ui.components.TextInputWidget>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/primer_input_spacing_vert" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
@@ -115,7 +111,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primer_input_spacing_vert"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:hint="@string/card_holder_name"
             android:visibility="gone"
             app:errorEnabled="false"
@@ -133,8 +129,7 @@
         <io.primer.android.ui.components.BillingAddressFormView
             android:id="@+id/billingAddressForm"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primer_input_spacing_vert" />
+            android:layout_height="wrap_content" />
 
         <io.primer.android.ui.components.TextViewDanger
             android:id="@+id/card_form_error_message"
