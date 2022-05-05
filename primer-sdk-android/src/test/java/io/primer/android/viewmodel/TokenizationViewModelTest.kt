@@ -9,13 +9,13 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
 import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME

@@ -24,11 +24,13 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.databinding.FragmentCardFormBinding
 import io.primer.android.di.DIAppComponent
+import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.model.dto.CountryCode
 import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
@@ -233,15 +235,16 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun emitCardNetworkAction() {
-        val type = "PAYMENT_CARD"
-
-        val action = if (network == null) {
-            ClientSessionActionsRequest.UnsetPaymentMethod()
+        val actionParams = if (network == null || network?.type == CardType.Type.UNKNOWN) {
+            ActionUpdateUnselectPaymentMethodParams
         } else {
-            ClientSessionActionsRequest.SetPaymentMethod(type, networkAsString)
+            ActionUpdateSelectPaymentMethodParams(
+                PaymentMethodType.PAYMENT_CARD,
+                networkAsString
+            )
         }
 
-        primerViewModel.dispatchAction(action) {
+        primerViewModel.dispatchAction(actionParams) {
             activity?.runOnUiThread {
                 updateSubmitButton()
             }

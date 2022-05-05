@@ -2,7 +2,10 @@ package io.primer.android.di
 
 import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.tokenization.repository.TokenizationDataRepository
+import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.tokenization.TokenizationInteractor
+import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
+import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
 import io.primer.android.domain.tokenization.repository.TokenizationRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
@@ -32,7 +35,31 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get(named(RESUME_HANDLER_LOGGER_NAME))
+            )
+        }
+
+        factory {
+            ResumeEventResolver(
+                get(),
+                get(),
+                get()
+            )
+        }
+
+        factory {
+            PreTokenizationEventsResolver(
+                get(),
+                get(),
+            )
+        }
+
+        factory {
+            PostTokenizationEventResolver(
+                get(),
+                get(),
+                get()
             )
         }
 
@@ -47,7 +74,9 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
-                get()
+                get(),
+                get(),
+                get(),
             )
         }
         viewModel { TokenizationViewModel(get(), get(), get(), get(), get(), get()) }

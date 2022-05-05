@@ -6,6 +6,8 @@ import androidx.annotation.DrawableRes
 import io.primer.android.CheckoutEventListener
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.Primer
+import io.primer.android.completion.CheckoutErrorHandler
+import io.primer.android.completion.ResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
 import io.primer.android.components.presentation.HeadlessUniversalCheckoutViewModel
 import io.primer.android.components.ui.assets.ImageType
@@ -16,11 +18,14 @@ import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
+import io.primer.android.domain.CheckoutData
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Serialization
-import io.primer.android.model.dto.APIError
+import io.primer.android.domain.error.models.HUCError
 import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.dto.PaymentMethodToken
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethodType
 import io.primer.android.model.dto.toPrimerPaymentMethod
@@ -32,11 +37,14 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     private val eventBusListener = object : EventBus.EventListener {
         override fun onEvent(e: CheckoutEvent) {
             when (e) {
-                is CheckoutEvent.TokenizationSuccess -> componentsListener?.onTokenizationSuccess(
-                    e.data,
-                    e.resumeHandler
-                )
-                is CheckoutEvent.TokenizationStarted -> componentsListener?.onTokenizationStarted()
+                is CheckoutEvent.TokenizationSuccess -> {
+                    componentsListener?.onTokenizeSuccess(
+                        e.data,
+                        e.resumeHandler
+                    )
+                }
+                is CheckoutEvent.TokenizationStarted ->
+                    componentsListener?.onTokenizationStarted(e.paymentMethodType)
                 is CheckoutEvent.ConfigurationSuccess ->
                     componentsListener?.onClientSessionSetupSuccessfully(e.paymentMethods)
                 is CheckoutEvent.PreparationStarted ->
@@ -46,23 +54,37 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 is CheckoutEvent.Start3DS -> navigator?.openThreeDsScreen()
                 is CheckoutEvent.StartAsyncRedirectFlow -> navigator?.openAsyncWebViewScreen(
                     e.title,
+                    e.paymentMethodType,
                     e.redirectUrl,
                     e.statusUrl
                 )
                 is CheckoutEvent.ResumeSuccess ->
-                    componentsListener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
-                is CheckoutEvent.ApiError -> componentsListener?.onError(e.data)
-                is CheckoutEvent.TokenizationError -> componentsListener?.onError(e.data)
-                is CheckoutEvent.ResumeError -> componentsListener?.onError(e.data)
-                is CheckoutEvent.Exit -> {
-                    if (e.data.reason == CheckoutExitReason.DISMISSED_BY_USER) {
-                        componentsListener?.onError(
-                            APIError.createDefaultWithMessage(
-                                CANCELLATION_MESSAGE
-                            )
-                        )
-                    }
+                    componentsListener?.onResume(e.resumeToken, e.resumeHandler)
+
+                is CheckoutEvent.PaymentCreateStartedHUC -> {
+                    componentsListener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
                 }
+
+                is CheckoutEvent.PaymentContinueHUC -> {
+                    Primer.instance.dismiss()
+                    viewModel?.createPayment(
+                        e.data.token,
+                        e.resumeHandler
+                    )
+                }
+                is CheckoutEvent.PaymentSuccess -> {
+                    componentsListener?.onCheckoutCompleted(e.data)
+                }
+                is CheckoutEvent.CheckoutPaymentError -> {
+                    componentsListener?.onFailed(e.error, e.data)
+                }
+                is CheckoutEvent.CheckoutError -> {
+                    componentsListener?.onFailed(e.error)
+                }
+                is CheckoutEvent.ResumeSuccessInternal -> viewModel?.resumePayment(
+                    e.resumeToken,
+                    e.resumeHandler
+                )
                 else -> Unit
             }
         }
@@ -89,22 +111,31 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     ) {
         listener?.let { setListener(it) }
         initialize(context, clientToken, config)
-        viewModel?.start() ?: run { componentsListener?.onError(APIError(INITIALIZATION_ERROR)) }
+        viewModel?.start()
+            ?: run {
+                componentsListener?.onFailed(
+                    HUCError.InitializationError(
+                        INITIALIZATION_ERROR
+                    )
+                )
+            }
     }
 
     override fun listRequiredInputElementTypes(paymentMethodType: PrimerPaymentMethodType):
         List<PrimerInputElementType>? {
-        if (viewModel == null) componentsListener?.onError(APIError(INITIALIZATION_ERROR))
+        if (viewModel == null) componentsListener?.onFailed(
+            HUCError.InitializationError(
+                INITIALIZATION_ERROR
+            )
+        )
         return viewModel?.listRequiredInputElementTypes(paymentMethodType)
     }
 
     override fun makeView(
         paymentMethodType: PrimerPaymentMethodType
     ): View? {
-        if (paymentMethodViewFactory == null) componentsListener?.onError(
-            APIError(
-                INITIALIZATION_ERROR
-            )
+        if (paymentMethodViewFactory == null) componentsListener?.onFailed(
+            HUCError.InitializationError(INITIALIZATION_ERROR)
         )
         return paymentMethodViewFactory?.getViewForPaymentMethod(paymentMethodType)
     }
@@ -117,7 +148,9 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         val options = config.settings.options.copy(showUI = false)
         val primer = Primer.instance
         primer.configure(
-            config = config.copy(settings = config.settings.copy(options = options)),
+            config = config.copy(settings = config.settings.copy(options = options)).apply {
+                fromHUC = true
+            },
             listener = this
         )
         // we need to register again
@@ -138,16 +171,28 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         subscription = null
     }
 
-    override fun onCheckoutEvent(e: CheckoutEvent) {
-        when (e) {
-            is CheckoutEvent.TokenizationSuccess,
-            is CheckoutEvent.TokenizationError,
-            is CheckoutEvent.Exit -> {
-                Primer.instance.dismiss()
-            }
-            else -> Unit
-        }
+    override fun onTokenizeSuccess(
+        paymentMethodToken: PaymentMethodToken,
+        resumeHandler: ResumeDecisionHandler
+    ) {
+        super.onTokenizeSuccess(paymentMethodToken, resumeHandler)
+        Primer.instance.dismiss(true)
     }
+
+    override fun onFailed(
+        error: PrimerError,
+        checkoutData: CheckoutData?,
+        errorHandler: CheckoutErrorHandler?
+    ) {
+        Primer.instance.dismiss(true)
+    }
+
+    override fun onCheckoutDismissed(reason: CheckoutExitReason) {
+        super.onCheckoutDismissed(reason)
+        Primer.instance.dismiss(true)
+    }
+
+    override fun onCheckoutCompleted(checkoutData: CheckoutData) = Unit
 
     internal fun startTokenization(
         paymentMethodType: PrimerPaymentMethodType,
@@ -157,6 +202,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     private fun initialize(context: Context, clientToken: String, config: PrimerConfig?) {
         val newConfig = config ?: getConfig()
         newConfig.clientTokenBase64 = clientToken
+        newConfig.fromHUC = true
         this.config = newConfig
         setupDI(context, newConfig)
     }
@@ -176,7 +222,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     companion object {
 
         private const val INITIALIZATION_ERROR = "PrimerHeadlessUniversalCheckout is not" +
-            " initialized properly. Please ensure you are calling start method."
+            " initialized properly."
         private const val CANCELLATION_MESSAGE = "Payment method cancelled."
 
         internal val instance by lazy { PrimerHeadlessUniversalCheckout() }

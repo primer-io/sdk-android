@@ -15,6 +15,8 @@ data class PrimerConfig(
 
     internal var intent: PrimerIntent = PrimerIntent()
 
+    internal var fromHUC: Boolean = false
+
     internal val monetaryAmount: MonetaryAmount?
         get() {
             val currency = settings.order.currency

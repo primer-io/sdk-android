@@ -7,9 +7,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
 import io.primer.android.databinding.PaymentMethodButtonPayMobileBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType

@@ -1,5 +1,6 @@
 package io.primer.android.model.dto
 
+import io.primer.android.domain.action.models.Address
 import kotlinx.serialization.Serializable
 
 @Serializable

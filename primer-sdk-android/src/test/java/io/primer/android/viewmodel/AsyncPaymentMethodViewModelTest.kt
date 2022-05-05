@@ -10,6 +10,7 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncStatus
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -44,7 +45,7 @@ class AsyncPaymentMethodViewModelTest {
         val observer = viewModel.statusUrlLiveData.test()
         every { interactor(any()) }.returns(flowOf(asyncStatus))
 
-        viewModel.getStatus("")
+        viewModel.getStatus("", PaymentMethodType.HOOLAH)
 
         every { interactor(any()) }
 
@@ -56,7 +57,7 @@ class AsyncPaymentMethodViewModelTest {
         val observer = viewModel.statusUrlErrorData.test()
         every { interactor(any()) }.returns(flow { throw Exception() })
 
-        viewModel.getStatus("")
+        viewModel.getStatus("", PaymentMethodType.HOOLAH)
 
         every { interactor(any()) }
 

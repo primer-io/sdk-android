@@ -30,8 +30,10 @@ internal object DIAppContext {
                 paypalModule(),
                 NetworkModule(),
                 imageLoaderModule(),
+                PaymentsModule(),
                 analyticsModule(),
-                componentsModule()
+                componentsModule(),
+                errorResolverModule()
             )
         }
     }

@@ -12,9 +12,9 @@ import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
 import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour

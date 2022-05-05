@@ -1,5 +1,6 @@
 package io.primer.android.di
 
+import io.primer.android.data.action.datasource.RemoteActionDataSource
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.action.repository.ActionDataRepository
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
@@ -16,7 +17,8 @@ import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMappi
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.PaymentMethodListFactory
 import io.primer.android.data.payments.methods.mapping.PaymentMethodMapping
-import io.primer.android.domain.action.ActionRepository
+import io.primer.android.domain.action.repository.ActionRepository
+import io.primer.android.domain.action.validator.ActionUpdateFilter
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
@@ -66,6 +68,8 @@ internal val PaymentMethodsModule = {
                 get(),
                 get(),
                 get(),
+                get(),
+                get(),
                 get(named(PRIMER_VIEW_MODEL_HANDLER_LOGGER_NAME))
             )
         }
@@ -89,12 +93,37 @@ internal val PaymentMethodsModule = {
                 get(named(VAULT_HANDLER_LOGGER_NAME)),
             )
         }
-        single { VaultedPaymentMethodsExchangeInteractor(get(), get(), get(), get()) }
+        single { VaultedPaymentMethodsExchangeInteractor(get(), get(), get(), get(), get()) }
 
-        single<ActionRepository> { ActionDataRepository(get()) }
+        single { RemoteActionDataSource(get()) }
 
-        single { ActionInteractor(get(), get(), get(), get(), get()) }
+        single<ActionRepository> { ActionDataRepository(get(), get()) }
 
-        viewModel { PrimerViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+        factory { ActionUpdateFilter(get(), get()) }
+
+        factory {
+            ActionInteractor(
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
+
+        viewModel {
+            PrimerViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
     }
 }

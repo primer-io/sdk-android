@@ -94,6 +94,8 @@ internal open class WebViewActivity : AppCompatActivity() {
         // url that the webview should capture and not load
         const val CAPTURE_URL_KEY = "CAPTURE_URL_KEY"
 
+        const val PAYMENT_METHOD_TYPE_KEY = "PAYMENT_METHOD_TYPE"
+
         const val RESULT_ERROR = 1234
     }
 }

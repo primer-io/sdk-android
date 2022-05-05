@@ -1,13 +1,15 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.exception.InvalidTokenizationDataException
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.flow.Flow
@@ -16,10 +18,11 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import org.koin.core.component.KoinApiExtension
 
-@OptIn(KoinApiExtension::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+@KoinApiExtension
 internal class PaymentTokenizationInteractor(
     private val paymentMethodsRepository: PaymentMethodsRepository,
     private val eventDispatcher: EventDispatcher,
+    private val errorEventResolver: BaseErrorEventResolver,
     private val logger: Logger
 ) : BaseInteractor<PaymentMethodDescriptor, PaymentTokenizationDescriptorParams>() {
 
@@ -35,11 +38,14 @@ internal class PaymentTokenizationInteractor(
                     descriptor is CreditCard && params.inputData is CardInputData -> {
                         params.inputData.setTokenizableValues(descriptor)
                     }
-                    else -> throw IllegalStateException(DESCRIPTOR_INPUT_ERROR)
+                    else -> throw InvalidTokenizationDataException(
+                        params.paymentMethodType,
+                        params.inputData::class
+                    )
                 }
             }.catch {
                 logger.error(CONFIGURATION_ERROR, it)
-                eventDispatcher.dispatchEvent(CheckoutEvent.ApiError(APIError(CONFIGURATION_ERROR)))
+                errorEventResolver.resolve(it, ErrorMapperType.HUC)
             }
     }
 
@@ -50,7 +56,5 @@ internal class PaymentTokenizationInteractor(
                 " and you have received onClientSessionSetupSuccessfully callback before" +
                 " calling this method. Please ensure the" +
                 " requested payment method has been configured in Primer's dashboard."
-
-        const val DESCRIPTOR_INPUT_ERROR = "Invalid input data type"
     }
 }

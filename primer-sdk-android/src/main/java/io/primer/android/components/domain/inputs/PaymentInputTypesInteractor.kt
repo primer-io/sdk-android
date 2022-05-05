@@ -3,15 +3,14 @@ package io.primer.android.components.domain.inputs
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.model.CheckoutModuleType
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventDispatcher
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.model.dto.PaymentMethodType
 
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
-    private val eventDispatcher: EventDispatcher,
+    private val errorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
 ) {
     // MOVE TO FACTORY
@@ -48,7 +47,7 @@ internal class PaymentInputTypesInteractor(
             }
         } catch (e: IllegalArgumentException) {
             logger.error(CONFIGURATION_ERROR, e)
-            eventDispatcher.dispatchEvent(CheckoutEvent.ApiError(APIError(CONFIGURATION_ERROR)))
+            errorEventResolver.resolve(e, ErrorMapperType.HUC)
             return null
         }
     }

@@ -9,14 +9,6 @@ typealias PrimerPaymentMethodType = PaymentMethodType
 
 @Keep
 @Serializable
-data class PaymentMethodRemoteConfig(
-    val id: String? = null, // payment card has null only
-    val type: PaymentMethodType = PaymentMethodType.UNKNOWN,
-    val options: PaymentMethodRemoteConfigOptions? = null,
-)
-
-@Keep
-@Serializable
 enum class PaymentMethodType(
     internal val intent: ClientTokenIntent? = null,
     internal val brand: Brand
@@ -96,14 +88,23 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.BUCKAROO_EPS -> PrimerPaymentMethod.BUCKAROO_EPS
         PaymentMethodType.BUCKAROO_BANCONTACT -> PrimerPaymentMethod.BUCKAROO_BANCONTACT
         PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.CARD
-        else -> throw IllegalStateException("Unknown mapping for $this.")
+        PaymentMethodType.PAY_NL_P24 -> PrimerPaymentMethod.PAY_NL_P24
+        PaymentMethodType.PAY_NL_EPS -> PrimerPaymentMethod.PAY_NL_EPS
+        PaymentMethodType.MOLLIE_P24 -> PrimerPaymentMethod.MOLLIE_P24
+        PaymentMethodType.MOLLIE_GIROPAY -> PrimerPaymentMethod.MOLLIE_GIROPAY
+        PaymentMethodType.MOLLIE_EPS -> PrimerPaymentMethod.MOLLIE_EPS
+        PaymentMethodType.ADYEN_IDEAL -> PrimerPaymentMethod.MOLLIE_EPS
+        PaymentMethodType.ADYEN_DOTPAY ->
+            throw IllegalArgumentException("Unsupported payment method $this")
+        PaymentMethodType.ADYEN_BLIK ->
+            throw IllegalArgumentException("Unsupported payment method $this")
+        PaymentMethodType.ADYEN_MBWAY ->
+            throw IllegalArgumentException("Unsupported payment method $this")
+        PaymentMethodType.ADYEN_BANK_TRANSFER ->
+            throw IllegalArgumentException("Unsupported payment method $this")
+        PaymentMethodType.XFERS_PAYNOW ->
+            throw IllegalArgumentException("Unsupported payment method $this")
+        PaymentMethodType.UNKNOWN ->
+            throw IllegalArgumentException("Unsupported payment method $this")
     }
 }
-
-@Keep
-@Serializable
-data class PaymentMethodRemoteConfigOptions(
-    val merchantId: String? = null,
-    val merchantAccountId: String? = null,
-    val threeDSecureEnabled: Boolean? = null,
-)

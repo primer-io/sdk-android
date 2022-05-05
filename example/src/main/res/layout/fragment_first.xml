@@ -35,20 +35,19 @@
 
             <com.example.myapplication.ui.SettingsItem
                 android:id="@+id/countryItem"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:padding="12dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:gravity="center"
-                android:orientation="horizontal"/>
+                android:orientation="horizontal"
+                android:padding="12dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/amountTextFieldLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:hint="@string/amount"
-                >
+                android:hint="@string/amount">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/amountTextField"
@@ -59,6 +58,32 @@
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/payment_handling" />
+
+            <RadioGroup
+                android:id="@+id/paymentHandling"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:checkedButton="@id/paymentHandlingAuto">
+
+                <RadioButton
+                    android:id="@+id/paymentHandlingAuto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_handling_auto" />
+
+                <RadioButton
+                    android:id="@+id/paymentHandlingManual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_handling_manual" />
+            </RadioGroup>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/descriptorTextFieldLayout"
@@ -80,12 +105,12 @@
 
     <Button
         android:id="@+id/componentsButton"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="12dp"
+        android:layout_weight="1"
         android:text="@string/components"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"
@@ -95,12 +120,12 @@
 
     <Button
         android:id="@+id/nextButton"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="36dp"
+        android:layout_weight="1"
         android:text="@string/next"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"

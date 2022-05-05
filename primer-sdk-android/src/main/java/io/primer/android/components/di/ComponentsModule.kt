@@ -32,11 +32,13 @@ internal val componentsModule = {
             PaymentTokenizationInteractor(
                 get(),
                 get(),
+                get(),
                 get(named(COMPONENTS_HANDLER_LOGGER_NAME))
             )
         }
         single {
             PaymentsTypesInteractor(
+                get(),
                 get(),
                 get(),
                 get(),
@@ -51,6 +53,6 @@ internal val componentsModule = {
                 get(named(COMPONENTS_HANDLER_LOGGER_NAME))
             )
         }
-        factory { HeadlessUniversalCheckoutViewModel(get(), get(), get(), get()) }
+        factory { HeadlessUniversalCheckoutViewModel(get(), get(), get(), get(), get(), get()) }
     }
 }

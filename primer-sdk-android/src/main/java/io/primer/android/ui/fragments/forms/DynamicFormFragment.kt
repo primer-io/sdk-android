@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
+import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
@@ -17,17 +18,16 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.databinding.FragmentDynamicFormBinding
+import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.components.TextInputWidget
-
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
-import io.primer.android.viewmodel.TokenizationStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.viewModel
+import io.primer.android.viewmodel.TokenizationStatus
 import kotlinx.coroutines.flow.combineTransform
 import org.koin.core.component.KoinApiExtension
 
@@ -36,7 +36,6 @@ import org.koin.core.component.KoinApiExtension
 internal class DynamicFormFragment : BaseFormFragment() {
 
     private var binding: FragmentDynamicFormBinding by autoCleaned()
-
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
 
     private val tokenizationStatusObserver = Observer<TokenizationStatus> { status ->

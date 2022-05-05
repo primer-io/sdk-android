@@ -1,13 +1,18 @@
 package io.primer.android.domain.payments.methods
 
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
+import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.exception.MissingPaymentMethodException
+import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.extensions.toCheckoutErrorEvent
 import io.primer.android.logging.Logger
 import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.model.dto.toPrimerPaymentMethod
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
 import io.primer.android.payment.VaultCapability
@@ -15,7 +20,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import org.koin.core.component.KoinApiExtension
@@ -24,16 +31,42 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class PaymentMethodModulesInteractor(
     private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val configurationRepository: ConfigurationRepository,
     private val config: PrimerConfig,
     private val eventDispatcher: EventDispatcher,
+    private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseInteractor<PaymentMethodModulesInteractor.PaymentDescriptorsHolder, None>() {
 
     override fun execute(params: None) =
         paymentMethodsRepository.getPaymentMethodDescriptors()
+            .combine(
+                configurationRepository.fetchConfiguration(true)
+                    .map { it.paymentMethods.map { it.type.name } }
+            ) { descriptors, paymentMethods -> Pair(descriptors, paymentMethods) }
             .onStart { eventDispatcher.dispatchEvent(CheckoutEvent.PreparationStarted) }
-            .mapLatest { descriptors -> descriptors.filter { isValidPaymentDescriptor(it) } }
+            .mapLatest { paymentMethodData ->
+                val descriptors = paymentMethodData.first.filter { isValidPaymentDescriptor(it) }
+                if (config.isStandalonePaymentMethod) {
+                    val availablePaymentMethods = paymentMethodData.second
+                    val paymentMethod = config.intent.paymentMethod
+                    // if the payment method is not present or not present after filtering
+                    if (availablePaymentMethods.contains(paymentMethod.name).not()) {
+                        throw MissingPaymentMethodException(paymentMethod)
+                    } else if (
+                        descriptors.none {
+                            it.config.type.toPrimerPaymentMethod() == paymentMethod
+                        }
+                    ) {
+                        throw UnsupportedPaymentIntentException(
+                            paymentMethod,
+                            config.intent.paymentMethodIntent
+                        )
+                    }
+                }
+                descriptors
+            }
             .mapLatest { descriptors ->
                 val mapping = PaymentMethodDescriptorMapping(descriptors)
                 // we get the descriptor we need for standalone PM
@@ -42,13 +75,13 @@ internal class PaymentMethodModulesInteractor(
                     val descriptor = mapping.getDescriptorFor(paymentMethod)
                     descriptor?.let {
                         PaymentDescriptorsHolder(descriptors, descriptor)
-                    } ?: throw IllegalStateException(STANDALONE_PAYMENT_METHOD_ERROR)
+                    } ?: throw MissingPaymentMethodException(paymentMethod)
                 } else {
                     PaymentDescriptorsHolder(descriptors)
                 }
             }.flowOn(dispatcher)
             .catch {
-                eventDispatcher.dispatchEvent(it.toCheckoutErrorEvent(it.message.orEmpty()))
+                baseErrorEventResolver.resolve(it, ErrorMapperType.PAYMENT_METHODS)
                 logger.error(it.message.orEmpty(), it)
             }
 
@@ -60,13 +93,6 @@ internal class PaymentMethodModulesInteractor(
             config.paymentMethodIntent.isCheckout
         ) ||
         descriptor.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT
-
-    private companion object {
-
-        const val STANDALONE_PAYMENT_METHOD_ERROR =
-            "Failed to initialise due to missing configuration. Please ensure the " +
-                "requested payment method has been configured in Primer's dashboard."
-    }
 
     data class PaymentDescriptorsHolder(
         val descriptors: List<PaymentMethodDescriptor>,

@@ -1,6 +1,7 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -9,7 +10,7 @@ import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.toPrimerPaymentMethod
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,6 +25,7 @@ internal class PaymentsTypesInteractor(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
+    private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -52,7 +54,7 @@ internal class PaymentsTypesInteractor(
         }
         .catch {
             logger.error(CONFIGURATION_ERROR, it)
-            eventDispatcher.dispatchEvent(CheckoutEvent.ApiError(APIError(CONFIGURATION_ERROR)))
+            errorEventResolver.resolve(it, ErrorMapperType.HUC)
         }
         .mapLatest { }
 

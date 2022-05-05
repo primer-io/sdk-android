@@ -25,11 +25,12 @@ internal data class AnalyticsMessageEventRequest(
 internal data class MessageProperties(
     val messageType: MessageType,
     val message: String,
-    val severity: Severity
+    val severity: Severity,
+    val diagnosticsId: String? = null
 ) : BaseAnalyticsProperties()
 
 internal enum class MessageType {
-    VALIDATION_FAILED,
+    VALIDATION_FAILED, ERROR
 }
 
 internal enum class Severity {

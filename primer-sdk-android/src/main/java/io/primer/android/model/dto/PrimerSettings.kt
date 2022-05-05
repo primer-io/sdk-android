@@ -1,21 +1,27 @@
 package io.primer.android.model.dto
 
+import io.primer.android.data.configuration.model.CustomerDataResponse
+import io.primer.android.data.configuration.model.OrderDataResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrimerSettings(
-    @Deprecated(ORDER_DEPRECATION_MESSAGE) var order: Order = Order(),
-    @Deprecated(CUSTOMER_DEPRECATION_MESSAGE) var customer: Customer = Customer(),
     var business: Business = Business(),
     var options: Options = Options(),
 ) {
+
+    internal var order = OrderDataResponse()
+    internal var customer = CustomerDataResponse()
+
     val currency: String
         @Throws
-        get() = order.currency ?: throw Exception(CURRENCY_EXCEPTION)
+        get() = order.currency ?: throw IllegalArgumentException(CURRENCY_EXCEPTION)
 
     val currentAmount: Int
         @Throws
-        get() = order.amount ?: order.totalOrderAmount ?: throw Exception(AMOUNT_EXCEPTION)
+        get() = order.amount ?: order.totalOrderAmount ?: throw IllegalArgumentException(
+            AMOUNT_EXCEPTION
+        )
 
     companion object {
         private const val EXCEPTION_MESSAGE = "required but not found. Please set this value"
@@ -24,7 +30,5 @@ POST /client-session. See documentation here: https://primer.io/docs/api#tag/Cli
 
         const val CURRENCY_EXCEPTION = "Currency $EXCEPTION_MESSAGE $DOCS_REFERENCE"
         const val AMOUNT_EXCEPTION = "Amount $EXCEPTION_MESSAGE $DOCS_REFERENCE"
-        const val ORDER_DEPRECATION_MESSAGE = "Please set order details $DOCS_REFERENCE"
-        const val CUSTOMER_DEPRECATION_MESSAGE = "Please set customer details $DOCS_REFERENCE"
     }
 }

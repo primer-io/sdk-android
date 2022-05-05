@@ -14,7 +14,7 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
  * [PaymentMethodCheckerRegistry], as well as a [PaymentMethodDescriptorFactory] with the
  * [PaymentMethodDescriptorFactoryRegistry].
  */
-interface PaymentMethodModule {
+internal interface PaymentMethodModule {
 
     /**
      * Initializes this payment method module, passing in all the information it may need to do

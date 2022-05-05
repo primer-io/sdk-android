@@ -11,6 +11,7 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.di.DIAppComponent
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType
@@ -26,7 +27,9 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
         super.onCreate(savedInstanceState)
         logAnalyticsViewed()
         asyncPaymentMethodViewModel.getStatus(
-            intent?.extras?.getString(STATUS_URL_KEY).orEmpty()
+            intent?.extras?.getString(STATUS_URL_KEY).orEmpty(),
+            intent?.extras?.getSerializable(PAYMENT_METHOD_TYPE_KEY) as PaymentMethodType
+
         )
         setupObservers()
     }
@@ -80,12 +83,14 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
             captureUrl: String,
             statusUrl: String,
             title: String,
+            paymentMethodType: PaymentMethodType,
             webViewClientType: WebViewClientType,
         ): Intent {
             return Intent(context, AsyncPaymentMethodWebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)
                 putExtra(CAPTURE_URL_KEY, captureUrl)
                 putExtra(STATUS_URL_KEY, statusUrl)
+                putExtra(PAYMENT_METHOD_TYPE_KEY, paymentMethodType)
                 putExtra(TOOLBAR_TITLE_KEY, title)
                 putExtra(WEB_VIEW_CLIENT_TYPE, webViewClientType)
             }

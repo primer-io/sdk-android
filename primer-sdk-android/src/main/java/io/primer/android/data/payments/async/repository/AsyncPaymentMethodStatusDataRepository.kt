@@ -1,6 +1,6 @@
 package io.primer.android.data.payments.async.repository
 
-import io.primer.android.data.exception.AsyncFlowIncompleteException
+import io.primer.android.data.payments.async.exception.AsyncFlowIncompleteException
 import io.primer.android.data.payments.async.datasource.RemoteAsyncPaymentMethodStatusDataSource
 import io.primer.android.data.payments.async.models.AsyncMethodStatus
 import io.primer.android.domain.payments.async.models.AsyncStatus

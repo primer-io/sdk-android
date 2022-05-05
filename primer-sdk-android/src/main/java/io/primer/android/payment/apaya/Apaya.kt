@@ -15,7 +15,10 @@ import kotlinx.serialization.modules.polymorphic
 
 @Keep
 @Serializable
-data class Apaya(val webViewTitle: String = "Pay by mobile", val mobilePhone: String? = null) :
+internal data class Apaya(
+    val webViewTitle: String = "Pay by mobile",
+    val mobilePhone: String? = null
+) :
     PaymentMethod {
 
     override val type = PaymentMethodType.APAYA

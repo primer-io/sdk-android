@@ -1,7 +1,7 @@
 package io.primer.android.payment
 
 import io.primer.android.PaymentMethod
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -15,7 +15,7 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
  *
  * @see
  */
-class PaymentMethodDescriptorFactoryRegistry(
+internal class PaymentMethodDescriptorFactoryRegistry(
     private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
 ) {
 

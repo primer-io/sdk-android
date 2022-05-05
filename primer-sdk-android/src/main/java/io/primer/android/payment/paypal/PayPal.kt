@@ -15,7 +15,7 @@ import kotlinx.serialization.modules.polymorphic
 
 @Keep
 @Serializable
-class PayPal : PaymentMethod {
+internal class PayPal : PaymentMethod {
 
     override val type = PaymentMethodType.PAYPAL
 

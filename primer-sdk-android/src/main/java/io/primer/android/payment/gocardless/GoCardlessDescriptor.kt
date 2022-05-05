@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.PrimerTheme
+import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
 import io.primer.android.databinding.PaymentMethodButtonDirectDebitBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor

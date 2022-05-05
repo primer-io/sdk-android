@@ -45,16 +45,16 @@ internal data class ThreeDsParams(
         config.settings.currency,
         config.settings.order.id,
         config.settings.customer.firstName,
-        config.settings.customer.email,
+        config.settings.customer.emailAddress,
         authenticationRequestParameters.sdkAppID.orEmpty(),
         authenticationRequestParameters.sdkTransactionID.orEmpty(),
         authenticationRequestParameters.deviceData.orEmpty(),
         authenticationRequestParameters.sdkEphemeralPublicKey.orEmpty(),
         authenticationRequestParameters.sdkReferenceNumber.orEmpty(),
-        config.settings.customer.billingAddress?.line1.orEmpty(),
+        config.settings.customer.billingAddress?.addressLine1.orEmpty(),
         config.settings.customer.billingAddress?.city.orEmpty(),
         config.settings.customer.billingAddress?.postalCode.orEmpty(),
-        config.settings.customer.billingAddress?.country.orEmpty(),
+        config.settings.customer.billingAddress?.countryCode?.name.orEmpty(),
     )
 }
 

@@ -10,4 +10,9 @@ enum class PaymentMethodIntent {
         get() = this == VAULT
     internal val isCheckout: Boolean
         get() = this == CHECKOUT
+    internal val oppositeIntent: PaymentMethodIntent
+        get() = when (this) {
+            CHECKOUT -> VAULT
+            VAULT -> CHECKOUT
+        }
 }

@@ -1,8 +1,10 @@
 package io.primer.android.http
 
-import io.primer.android.data.exception.HttpException
+import io.primer.android.http.exception.HttpException
+import io.primer.android.http.exception.JsonDecodingException
+import io.primer.android.http.exception.JsonEncodingException
 import io.primer.android.model.await
-import io.primer.android.model.dto.APIError
+import io.primer.android.data.error.model.APIError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -18,6 +20,8 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import kotlin.coroutines.resume
+
+private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 
 internal class PrimerHttpClient(
     private val okHttpClient: OkHttpClient,
@@ -51,12 +55,7 @@ internal class PrimerHttpClient(
                     Request.Builder()
                         .url(url)
                         .headers(Headers.of(headers))
-                        .post(
-                            RequestBody.create(
-                                MediaType.get("application/json"),
-                                json.encodeToString(request)
-                            )
-                        )
+                        .post(getRequestBody(request))
                         .build()
                 )
             )
@@ -96,8 +95,21 @@ internal class PrimerHttpClient(
             continuation.resume(json)
         }
 
-        return json.decodeFromString(
-            jsonBody.toString(),
-        )
+        return try {
+            json.decodeFromString(jsonBody.toString())
+        } catch (expected: Exception) {
+            throw JsonDecodingException(expected)
+        }
+    }
+
+    private inline fun <reified T> getRequestBody(request: T): RequestBody {
+        return try {
+            RequestBody.create(
+                MediaType.get(CONTENT_TYPE_APPLICATION_JSON),
+                json.encodeToString(request)
+            )
+        } catch (expected: Exception) {
+            throw JsonEncodingException(expected)
+        }
     }
 }

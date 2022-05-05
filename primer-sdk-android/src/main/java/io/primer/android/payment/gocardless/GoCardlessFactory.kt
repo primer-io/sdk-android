@@ -25,12 +25,12 @@ internal class GoCardlessFactory(val settings: PrimerSettings) : PaymentMethodFa
             companyName,
             companyAddress,
             "${settings.customer.firstName.orEmpty()} ${settings.customer.lastName.orEmpty()}",
-            settings.customer.email,
-            settings.customer.billingAddress?.line1,
-            settings.customer.billingAddress?.line2,
+            settings.customer.emailAddress,
+            settings.customer.billingAddress?.addressLine1,
+            settings.customer.billingAddress?.addressLine2,
             settings.customer.billingAddress?.city,
             null,
-            settings.customer.billingAddress?.country,
+            settings.customer.billingAddress?.countryCode?.name,
             settings.customer.billingAddress?.postalCode,
         )
 

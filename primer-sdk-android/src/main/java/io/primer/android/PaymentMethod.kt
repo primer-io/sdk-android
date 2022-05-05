@@ -25,7 +25,7 @@ import kotlinx.serialization.modules.SerializersModule
  * @see [PaymentMethodModule]
  * @see [SerializersModule]
  */
-interface PaymentMethod {
+internal interface PaymentMethod {
 
     val type: PaymentMethodType
 

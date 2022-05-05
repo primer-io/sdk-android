@@ -11,7 +11,6 @@ internal class KlarnaFactory(val settings: PrimerSettings) : PaymentMethodFactor
     override fun build(): Either<PaymentMethod, Exception> {
         val klarna = Klarna(
             settings.order.description,
-            settings.order.items,
             settings.options.klarnaWebViewTitle ?: "Klarna"
         )
 

@@ -8,6 +8,8 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.domain.error.CheckoutErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor.Companion.RETURN_URL
 import io.primer.android.domain.payments.apaya.models.ApayaSession
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
@@ -15,9 +17,6 @@ import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.payments.apaya.repository.ApayaRepository
 import io.primer.android.domain.payments.apaya.validation.ApayaSessionParamsValidator
 import io.primer.android.domain.payments.apaya.validation.ApayaWebResultValidator
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.CheckoutEventType
-import io.primer.android.events.EventDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -44,7 +43,7 @@ internal class ApayaSessionInteractorTest {
     internal lateinit var apayaRepository: ApayaRepository
 
     @RelaxedMockK
-    internal lateinit var eventDispatcher: EventDispatcher
+    internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
@@ -58,7 +57,7 @@ internal class ApayaSessionInteractorTest {
                 apayaSessionParamsValidator,
                 apayaWebResultValidator,
                 apayaRepository,
-                eventDispatcher,
+                errorEventResolver,
                 testCoroutineDispatcher
             )
     }
@@ -75,14 +74,17 @@ internal class ApayaSessionInteractorTest {
 
     @Test
     fun `validateWebResultParams() should dispatch error events when validation failed`() {
+        val exception = mockk<Exception>(relaxed = true)
+        every { exception.message }.returns("Validation failed.")
+
         val webResultParams = mockk<ApayaWebResultParams>(relaxed = true)
         every { apayaWebResultValidator.validate(any()) }.returns(
             flow {
-                throw Exception("Validation failed.")
+                throw exception
             }
         )
 
-        val event = slot<CheckoutEvent>()
+        val event = slot<Exception>()
 
         assertThrows<Exception> {
             runBlockingTest {
@@ -91,20 +93,23 @@ internal class ApayaSessionInteractorTest {
         }
 
         verify { apayaWebResultValidator.validate(any()) }
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.SESSION_CREATE) }
 
-        assert(event.captured.type == CheckoutEventType.TOKENIZE_ERROR)
+        assertEquals(exception.javaClass, event.captured.javaClass)
     }
 
     @Test
     fun `createClientSession() should dispatch error events when ApayaSessionParamsValidator validate() failed`() {
+        val exception = mockk<Exception>(relaxed = true)
+        every { exception.message }.returns("Validation failed.")
+
         val sessionParams = mockk<ApayaSessionParams>(relaxed = true)
         every { apayaSessionParamsValidator.validate(any()) }.returns(
             flow {
-                throw Exception("Validation failed.")
+                throw exception
             }
         )
-        val event = slot<CheckoutEvent>()
+        val event = slot<Exception>()
 
         assertThrows<Exception> {
             runBlockingTest {
@@ -113,21 +118,24 @@ internal class ApayaSessionInteractorTest {
         }
 
         verify { apayaSessionParamsValidator.validate(any()) }
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.SESSION_CREATE) }
 
-        assert(event.captured.type == CheckoutEventType.TOKENIZE_ERROR)
+        assertEquals(exception.javaClass, event.captured.javaClass)
     }
 
     @Test
     fun `createClientSession() should dispatch error events when ApayaRepository createClientSession() failed`() {
+        val exception = mockk<Exception>(relaxed = true)
+        every { exception.message }.returns("Create session failed.")
+
         val sessionParams = mockk<ApayaSessionParams>(relaxed = true)
         every { apayaSessionParamsValidator.validate(any()) }.returns(flowOf(Unit))
         every { apayaRepository.createClientSession(any()) }.returns(
             flow {
-                throw Exception("Create session failed.")
+                throw exception
             }
         )
-        val event = slot<CheckoutEvent>()
+        val event = slot<Throwable>()
 
         assertThrows<Exception> {
             runBlockingTest {
@@ -137,9 +145,9 @@ internal class ApayaSessionInteractorTest {
 
         verify { apayaSessionParamsValidator.validate(any()) }
         verify { apayaRepository.createClientSession(any()) }
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.SESSION_CREATE) }
 
-        assert(event.captured.type == CheckoutEventType.TOKENIZE_ERROR)
+        assertEquals(exception.javaClass, event.captured.javaClass)
     }
 
     @Test

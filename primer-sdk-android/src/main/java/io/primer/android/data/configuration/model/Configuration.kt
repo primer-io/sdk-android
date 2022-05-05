@@ -1,33 +1,49 @@
 package io.primer.android.data.configuration.model
 
-import io.primer.android.model.dto.ConfigurationKeys
-import io.primer.android.model.dto.Customer
-import io.primer.android.model.dto.Order
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import androidx.annotation.Keep
+import io.primer.android.domain.ClientSessionData
+import io.primer.android.domain.action.models.ClientSession
+import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Configuration(
+internal data class Configuration(
     val pciUrl: String,
     val coreUrl: String,
     val paymentMethods: List<PaymentMethodRemoteConfig>,
     val checkoutModules: List<CheckoutModule> = listOf(),
     val keys: ConfigurationKeys? = null,
-    val clientSession: ClientSession? = null,
+    val clientSession: ClientSessionResponse? = null,
     @SerialName("env") val environment: Environment,
     val primerAccountId: String? = null,
 )
 
+@Keep
 @Serializable
-data class ClientSession(
+internal data class PaymentMethodRemoteConfig(
+    val id: String? = null, // payment card has null only
+    val type: PaymentMethodType = PaymentMethodType.UNKNOWN,
+    val options: PaymentMethodRemoteConfigOptions? = null,
+)
+
+@Keep
+@Serializable
+internal data class PaymentMethodRemoteConfigOptions(
+    val merchantId: String? = null,
+    val merchantAccountId: String? = null,
+    val threeDSecureEnabled: Boolean? = null,
+)
+
+@Serializable
+internal data class ClientSessionResponse(
     val clientSessionId: String? = null,
     val customerId: String? = null,
     val orderId: String? = null,
     val amount: Int? = null,
     val currencyCode: String? = null,
-    val customer: Customer? = null,
-    val order: Order? = null,
+    val customer: CustomerDataResponse? = null,
+    val order: OrderDataResponse? = null,
     val paymentMethod: PaymentMethod? = null,
 ) {
 
@@ -73,9 +89,21 @@ data class ClientSession(
         val type: String,
         val surcharge: Int,
     )
+
+    fun toClientSessionData() = ClientSessionData(
+        ClientSession(
+            customer?.customerId ?: customerId,
+            order?.id ?: orderId,
+            order?.currency ?: currencyCode,
+            order?.totalOrderAmount ?: amount,
+            order?.lineItems?.map { it.toLineItem() },
+            order?.toOrder(),
+            customer?.toCustomer(),
+        )
+    )
 }
 
-enum class Environment(val environment: String) {
+internal enum class Environment(val environment: String) {
     LOCAL_DOCKER("local_dev"),
     DEV("dev"),
     SANDBOX("sandbox"),
@@ -84,14 +112,14 @@ enum class Environment(val environment: String) {
 }
 
 @Serializable
-data class CheckoutModule(
+internal data class CheckoutModule(
     val type: CheckoutModuleType = CheckoutModuleType.UNKNOWN,
     val requestUrl: String? = null,
     val options: Map<String, Boolean>? = null,
 )
 
 @Serializable
-enum class CheckoutModuleType {
+internal enum class CheckoutModuleType {
 
     BILLING_ADDRESS,
     CARD_INFORMATION,

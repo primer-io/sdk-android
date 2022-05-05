@@ -12,6 +12,7 @@ import io.primer.android.domain.payments.forms.FormsInteractor
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.domain.payments.forms.models.FormInputParams
 import io.primer.android.domain.payments.forms.models.FormValidationParam
+import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -63,9 +64,9 @@ internal class FormsViewModel(
 
     fun collectData() = inputStates.map { it.key to it.value.input }
 
-    fun getStatus(statusUrl: String) {
+    fun getStatus(statusUrl: String, paymentMethodType: PaymentMethodType) {
         viewModelScope.launch {
-            paymentMethodInteractor(AsyncMethodParams(statusUrl))
+            paymentMethodInteractor(AsyncMethodParams(statusUrl, paymentMethodType))
                 .catch {
                     _statusUrlErrorData.postValue(Unit)
                 }.collect {

@@ -4,6 +4,7 @@ import android.content.Context
 import io.primer.android.R
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.payment.PAYMENT_CARD_TYPE
 
 internal class SurchargeFormatter(
     private val surcharges: Map<String, Int>,
@@ -12,10 +13,8 @@ internal class SurchargeFormatter(
 
     fun getSurchargeForSavedPaymentMethod(token: BasePaymentToken?): Int {
         if (token == null) return 0
-        val isBillingAgreement = token.paymentInstrumentType == "PAYPAL_BILLING_AGREEMENT"
-        val type = if (isBillingAgreement) "PAYPAL" else token.paymentInstrumentType
-
-        return if (type == "PAYMENT_CARD") {
+        val type = token.surchargeType
+        return if (type == PAYMENT_CARD_TYPE) {
             surcharges[token.paymentInstrumentData?.binData?.network] ?: 0
         } else {
             surcharges[type] ?: 0

@@ -1,7 +1,7 @@
 package io.primer.android.model.dto
 
 import io.primer.android.model.PrimerDebugOptions
-import io.primer.android.payment.google.GooglePay
+import io.primer.android.payment.google.GooglePayButtonStyle
 import io.primer.android.utils.LocaleSerializer
 import kotlinx.serialization.Serializable
 import java.util.Locale
@@ -23,6 +23,7 @@ data class Options(
         "MASTERCARD",
         "VISA"
     ),
-    var googlePayButtonStyle: GooglePay.Companion.ButtonStyle =
-        GooglePay.Companion.ButtonStyle.BLACK,
+    var googlePayButtonStyle: GooglePayButtonStyle =
+        GooglePayButtonStyle.BLACK,
+    var paymentHandling: PaymentHandling = PaymentHandling.AUTO
 )

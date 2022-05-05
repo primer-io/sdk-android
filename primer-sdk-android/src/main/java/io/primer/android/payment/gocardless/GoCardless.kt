@@ -15,7 +15,7 @@ import kotlinx.serialization.modules.polymorphic
 
 @Keep
 @Serializable
-data class GoCardless(
+internal data class GoCardless(
     val companyName: String,
     val companyAddress: String,
     val customerName: String? = null,

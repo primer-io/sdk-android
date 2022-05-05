@@ -9,7 +9,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-class GooglePayModule(
+internal class GooglePayModule(
     private val googlePayFacadeFactory: GooglePayFacadeFactory = GooglePayFacadeFactory(),
 ) : PaymentMethodModule {
 

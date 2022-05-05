@@ -173,3 +173,9 @@ data class BillingAddress(
 data class BinData(
     val network: String? = null,
 )
+
+enum class TokenType {
+
+    SINGLE_USE,
+    MULTI_USE
+}
