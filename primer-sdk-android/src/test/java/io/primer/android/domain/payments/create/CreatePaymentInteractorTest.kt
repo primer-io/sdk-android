@@ -18,8 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -39,8 +38,6 @@ internal class CreatePaymentInteractorTest {
     @RelaxedMockK
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
     private lateinit var interactor: CreatePaymentInteractor
 
     @BeforeEach
@@ -51,7 +48,6 @@ internal class CreatePaymentInteractorTest {
                 createPaymentsRepository,
                 paymentResultEventsResolver,
                 errorEventResolver,
-                testCoroutineDispatcher
             )
     }
 
@@ -62,7 +58,7 @@ internal class CreatePaymentInteractorTest {
 
         every { createPaymentsRepository.createPayment(any()) }.returns(flowOf(paymentResult))
 
-        runBlockingTest {
+        runTest {
             val result = interactor(createPaymentParams).first()
             assertEquals(paymentResult.payment.id, result)
         }
@@ -76,8 +72,7 @@ internal class CreatePaymentInteractorTest {
         val paymentResult = mockk<PaymentResult>(relaxed = true)
 
         every { createPaymentsRepository.createPayment(any()) }.returns(flowOf(paymentResult))
-
-        runBlockingTest {
+        runTest {
             interactor(createPaymentParams).first()
         }
 
@@ -98,7 +93,7 @@ internal class CreatePaymentInteractorTest {
         every { createPaymentsRepository.createPayment(any()) }.returns(flow { throw exception })
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor(createPaymentParams).first()
             }
         }

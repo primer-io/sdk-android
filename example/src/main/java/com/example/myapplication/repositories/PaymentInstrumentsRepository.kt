@@ -21,7 +21,8 @@ class PaymentInstrumentsRepository {
     ) {
         val request = HttpRequestUtil.generateGetRequest(
             PrimerRoutes.buildPaymentInstrumentsUrl(customerId),
-            environment
+            environment,
+            true
         )
         client.cache()?.delete()
         client.newCall(request).enqueue(object : Callback {

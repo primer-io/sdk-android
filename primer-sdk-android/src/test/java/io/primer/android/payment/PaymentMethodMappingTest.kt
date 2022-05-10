@@ -16,7 +16,7 @@ import io.primer.android.utils.Success
 import org.junit.Assert
 import org.junit.Test
 
-class PaymentMethodMappingTest {
+internal class PaymentMethodMappingTest {
 
     private val settings: PrimerSettings = PrimerSettings().apply {
         order = OrderDataResponse(

@@ -2,7 +2,8 @@ package io.primer.android.viewmodel
 
 import com.jraska.livedata.test
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -15,6 +16,7 @@ import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -43,11 +45,13 @@ class AsyncPaymentMethodViewModelTest {
     fun `getStatus() should receive finish event getPaymentFlowStatus was success`() {
         val asyncStatus = mockk<AsyncStatus>(relaxed = true)
         val observer = viewModel.statusUrlLiveData.test()
-        every { interactor(any()) }.returns(flowOf(asyncStatus))
+        coEvery { interactor(any()) }.returns(flowOf(asyncStatus))
 
-        viewModel.getStatus("", PaymentMethodType.HOOLAH)
+        runTest {
+            viewModel.getStatus("", PaymentMethodType.HOOLAH)
+        }
 
-        every { interactor(any()) }
+        coVerify { interactor(any()) }
 
         observer.assertValue(Unit)
     }
@@ -55,11 +59,13 @@ class AsyncPaymentMethodViewModelTest {
     @Test
     fun `getStatus() should receive error event getPaymentFlowStatus failed`() {
         val observer = viewModel.statusUrlErrorData.test()
-        every { interactor(any()) }.returns(flow { throw Exception() })
+        coEvery { interactor(any()) }.returns(flow { throw Exception() })
 
-        viewModel.getStatus("", PaymentMethodType.HOOLAH)
+        runTest {
+            viewModel.getStatus("", PaymentMethodType.HOOLAH)
+        }
 
-        every { interactor(any()) }
+        coVerify { interactor(any()) }
 
         observer.assertValue(Unit)
     }

@@ -1,6 +1,8 @@
 package io.primer.android.domain.payments.async
 
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
@@ -21,8 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -45,8 +46,6 @@ class AsyncPaymentMethodInteractorTest {
     @RelaxedMockK
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
     private lateinit var interactor: AsyncPaymentMethodInteractor
 
     @BeforeEach
@@ -58,7 +57,6 @@ class AsyncPaymentMethodInteractorTest {
                 paymentMethodRepository,
                 resumeEventResolver,
                 errorEventResolver,
-                testCoroutineDispatcher
             )
     }
 
@@ -77,12 +75,12 @@ class AsyncPaymentMethodInteractorTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(
             paymentMethodTokenInternal
         )
-        every { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
+        coEvery { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
             flowOf(
                 asyncStatus
             )
         )
-        testCoroutineDispatcher.runBlockingTest {
+        runTest {
             interactor(
                 AsyncMethodParams(
                     "",
@@ -94,7 +92,7 @@ class AsyncPaymentMethodInteractorTest {
         val paymentMethodType = slot<String>()
         val resumeToken = slot<String>()
 
-        verify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
+        coVerify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
         verify { resumeEventResolver.resolve(capture(paymentMethodType), capture(resumeToken)) }
 
         assert(paymentMethodType.captured == PaymentMethodType.HOOLAH.name)
@@ -105,18 +103,18 @@ class AsyncPaymentMethodInteractorTest {
     fun `getPaymentFlowStatus() should dispatch resume error event when getAsyncStatus failed`() {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Validation failed.")
-        every { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
+        coEvery { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
             flow { throw exception }
         )
         assertThrows<Exception> {
-            testCoroutineDispatcher.runBlockingTest {
+            runTest {
                 interactor(AsyncMethodParams("", PaymentMethodType.HOOLAH)).first()
             }
         }
 
         val event = slot<Throwable>()
 
-        verify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
+        coVerify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
         verify { errorEventResolver.resolve(capture(event), ErrorMapperType.DEFAULT) }
 
         assert(event.captured.javaClass == Exception::class.java)

@@ -3,18 +3,19 @@ package io.primer.android.domain.payments.apaya.validation
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.primer.android.InstantExecutorExtension
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.payments.apaya.validation.ApayaWebResultValidator.Companion.INVALID_WEB_VIEW_RESULT
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
-import org.junit.jupiter.api.Assertions
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockKExtension::class)
+@ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ApayaWebResultValidatorTest {
 
@@ -33,67 +34,67 @@ internal class ApayaWebResultValidatorTest {
     fun `validate() should throw IllegalArgumentException with message INVALID_WEB_VIEW_RESULT when mcc is empty`() {
         every { params.mcc }.returns("")
         val exception = assertThrows<IllegalArgumentException> {
-            runBlockingTest {
+            runTest {
                 validator.validate(params).first()
             }
         }
 
-        Assertions.assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
+        assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
     }
 
     @Test
     fun `validate() should throw IllegalArgumentException with message INVALID_WEB_VIEW_RESULT when mnc is empty`() {
         every { params.mnc }.returns("")
         val exception = assertThrows<IllegalArgumentException> {
-            runBlockingTest {
+            runTest {
                 validator.validate(params).first()
             }
         }
 
-        Assertions.assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
+        assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
     }
 
     @Test
     fun `validate() should throw IllegalArgumentException with message INVALID_WEB_VIEW_RESULT when mxNumber is empty`() {
         every { params.mxNumber }.returns("")
         val exception = assertThrows<IllegalArgumentException> {
-            runBlockingTest {
+            runTest {
                 validator.validate(params).first()
             }
         }
 
-        Assertions.assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
+        assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
     }
 
     @Test
     fun `validate() should throw IllegalArgumentException with message INVALID_WEB_VIEW_RESULT when hashedIdentifier is empty`() {
         every { params.hashedIdentifier }.returns("")
         val exception = assertThrows<IllegalArgumentException> {
-            runBlockingTest {
+            runTest {
                 validator.validate(params).first()
             }
         }
 
-        Assertions.assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
+        assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
     }
 
     @Test
     fun `validate() should throw IllegalArgumentException with message INVALID_WEB_VIEW_RESULT when success is invalid`() {
         every { params.success }.returns(INVALID_SUCCESS)
         val exception = assertThrows<IllegalArgumentException> {
-            runBlockingTest {
+            runTest {
                 validator.validate(params).first()
             }
         }
 
-        Assertions.assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
+        assertEquals(INVALID_WEB_VIEW_RESULT, exception.message)
     }
 
     @Test
     fun `validate() should emit Unit when ApayaWebResultParams are validated`() {
-        runBlockingTest {
+        runTest {
             val result = validator.validate(params).first()
-            Assertions.assertEquals(Unit, result)
+            assertEquals(Unit, result)
         }
     }
 

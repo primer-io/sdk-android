@@ -19,7 +19,7 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerIntent
 import io.primer.android.model.dto.TokenType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,9 +56,10 @@ internal class PostTokenizationEventResolverTest {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { config.intent }.returns(PrimerIntent(PaymentMethodIntent.VAULT))
 
-        runBlockingTest {
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
         }
+
         val event = slot<List<CheckoutEvent>>()
 
         verify { eventDispatcher.dispatchEvents(capture(event)) }
@@ -72,9 +73,10 @@ internal class PostTokenizationEventResolverTest {
         every { paymentMethodToken.tokenType }.returns(TokenType.MULTI_USE)
         every { config.intent }.returns(PrimerIntent(PaymentMethodIntent.VAULT))
 
-        runBlockingTest {
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
         }
+
         val event = slot<List<CheckoutEvent>>()
 
         verify { eventDispatcher.dispatchEvents(capture(event)) }
@@ -88,9 +90,10 @@ internal class PostTokenizationEventResolverTest {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { config.settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
 
-        runBlockingTest {
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
         }
+
         val event = slot<List<CheckoutEvent>>()
 
         verify { eventDispatcher.dispatchEvents(capture(event)) }
@@ -104,9 +107,10 @@ internal class PostTokenizationEventResolverTest {
         every { paymentMethodToken.tokenType }.returns(TokenType.MULTI_USE)
         every { config.settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
 
-        runBlockingTest {
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
         }
+
         val event = slot<List<CheckoutEvent>>()
 
         verify { eventDispatcher.dispatchEvents(capture(event)) }
@@ -121,9 +125,10 @@ internal class PostTokenizationEventResolverTest {
         every { config.settings.options.paymentHandling }.returns(PaymentHandling.AUTO)
         every { config.fromHUC }.returns(true)
 
-        runBlockingTest {
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
         }
+
         val event = slot<List<CheckoutEvent>>()
 
         verify { eventDispatcher.dispatchEvents(capture(event)) }
@@ -137,9 +142,10 @@ internal class PostTokenizationEventResolverTest {
         every { config.settings.options.paymentHandling }.returns(PaymentHandling.AUTO)
         every { config.fromHUC }.returns(false)
 
-        runBlockingTest {
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
         }
+
         val event = slot<List<CheckoutEvent>>()
 
         verify { eventDispatcher.dispatchEvents(capture(event)) }

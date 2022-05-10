@@ -3,7 +3,7 @@ package io.primer.android.ui
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class CardNumberFormatterTest {
+internal class CardNumberFormatterTest {
 
     private val cards = listOf(
         "4111 1111 1111 1111",

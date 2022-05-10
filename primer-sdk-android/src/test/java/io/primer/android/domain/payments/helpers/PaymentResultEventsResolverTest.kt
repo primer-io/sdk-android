@@ -14,9 +14,9 @@ import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -46,9 +46,10 @@ internal class PaymentResultEventsResolverTest {
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.PENDING)
 
-        runBlockingTest {
+        runTest {
             paymentResultEventsResolver.resolve(paymentResult, resumeHandler)
         }
+
         val clientToken = slot<String>()
 
         verify { resumeHandler.handleNewClientToken(capture(clientToken)) }
@@ -63,9 +64,10 @@ internal class PaymentResultEventsResolverTest {
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.FAILED)
 
-        runBlockingTest {
+        runTest {
             paymentResultEventsResolver.resolve(paymentResult, resumeHandler)
         }
+
         val event = slot<CheckoutEvent>()
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }
@@ -84,9 +86,10 @@ internal class PaymentResultEventsResolverTest {
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.SUCCESS)
 
-        runBlockingTest {
+        runTest {
             paymentResultEventsResolver.resolve(paymentResult, resumeHandler)
         }
+
         val event = slot<CheckoutEvent>()
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }

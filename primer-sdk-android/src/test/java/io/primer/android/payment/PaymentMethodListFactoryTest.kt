@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class PaymentMethodListFactoryTest {
+internal class PaymentMethodListFactoryTest {
 
     private val configList: List<PaymentMethodRemoteConfig> = listOf(
         PaymentMethodRemoteConfig(type = PaymentMethodType.UNKNOWN),

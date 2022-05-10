@@ -2,11 +2,11 @@ package io.primer.android.viewmodel
 
 import com.jraska.livedata.test
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.domain.rpc.banks.BanksFilterInteractor
@@ -16,6 +16,7 @@ import io.primer.android.ui.BankItem
 import io.primer.android.viewmodel.bank.DotPayBankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -51,15 +52,18 @@ class DotpayBankSelectionViewModelTest {
     fun `onFilterChanged() should receive list of base bank items when filterIssuingBanks was success`() {
         val bank = mockk<IssuingBank>(relaxed = true)
         val observer = viewModel.itemsLiveData.test()
-        every { banksFilterInteractor(any()) }.returns(
+        coEvery { banksFilterInteractor(any()) }.returns(
             flowOf(
                 listOf(bank)
             )
         )
 
-        viewModel.onFilterChanged("")
+        runTest {
+            viewModel.onFilterChanged("")
+        }
 
-        verify { banksFilterInteractor(any()) }
+        coVerify { banksFilterInteractor(any()) }
+
         observer.assertValue(
             listOf(
                 BankItem(

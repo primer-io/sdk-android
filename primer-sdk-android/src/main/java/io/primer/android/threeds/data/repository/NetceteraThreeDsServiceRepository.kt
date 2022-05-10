@@ -131,7 +131,7 @@ internal class NetceteraThreeDsServiceRepository(
                         if (completionEvent.transactionStatus ==
                             ChallengeStatusData.TRANSACTION_STATUS_SUCCESS
                         ) {
-                            offer(
+                            trySend(
                                 ChallengeStatusData(
                                     authResponse.token.token,
                                     completionEvent.transactionStatus

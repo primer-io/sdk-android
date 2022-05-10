@@ -17,7 +17,7 @@ import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerIntent
 import io.primer.android.model.dto.PrimerPaymentMethodType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -50,9 +50,11 @@ internal class PreTokenizationEventsResolverTest {
         val paymentMethodType = mockk<PrimerPaymentMethodType>(relaxed = true)
 
         every { config.intent }.returns(PrimerIntent(PaymentMethodIntent.VAULT))
-        runBlockingTest {
+
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodType)
         }
+
         val event = slot<CheckoutEvent>()
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }
@@ -65,9 +67,11 @@ internal class PreTokenizationEventsResolverTest {
         val paymentMethodType = mockk<PrimerPaymentMethodType>(relaxed = true)
 
         every { config.settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
-        runBlockingTest {
+
+        runTest {
             tokenizationEventsResolver.resolve(paymentMethodType)
         }
+
         val event = slot<CheckoutEvent>()
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }

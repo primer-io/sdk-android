@@ -17,8 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -38,8 +37,6 @@ internal class ResumePaymentInteractorTest {
     @RelaxedMockK
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
     private lateinit var interactor: ResumePaymentInteractor
 
     @BeforeEach
@@ -50,7 +47,6 @@ internal class ResumePaymentInteractorTest {
                 resumePaymentsRepository,
                 paymentResultEventsResolver,
                 errorEventResolver,
-                testCoroutineDispatcher
             )
     }
 
@@ -66,7 +62,7 @@ internal class ResumePaymentInteractorTest {
             )
         }.returns(flowOf(paymentResult))
 
-        runBlockingTest {
+        runTest {
             interactor(resumePaymentParams).first()
         }
 
@@ -92,7 +88,7 @@ internal class ResumePaymentInteractorTest {
         }.returns(flow { throw exception })
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor(resumePaymentParams).first()
             }
         }

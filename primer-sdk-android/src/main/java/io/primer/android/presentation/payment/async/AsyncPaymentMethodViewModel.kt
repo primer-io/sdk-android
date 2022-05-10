@@ -9,7 +9,6 @@ import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class AsyncPaymentMethodViewModel(

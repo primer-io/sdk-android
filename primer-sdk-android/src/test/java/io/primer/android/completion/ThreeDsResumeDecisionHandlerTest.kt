@@ -25,15 +25,19 @@ import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 class ThreeDsResumeDecisionHandlerTest {
+
+    @JvmField
+    @RegisterExtension
+    internal val instantExecutorExtension = InstantExecutorExtension()
 
     @RelaxedMockK
     internal lateinit var clientTokenRepository: ClientTokenRepository
@@ -59,8 +63,6 @@ class ThreeDsResumeDecisionHandlerTest {
     @RelaxedMockK
     internal lateinit var logger: Logger
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
     private lateinit var resumeHandler: ThreeDsResumeDecisionHandler
 
     @BeforeEach
@@ -76,7 +78,7 @@ class ThreeDsResumeDecisionHandlerTest {
                 errorEventResolver,
                 eventDispatcher,
                 logger,
-                testCoroutineDispatcher
+                instantExecutorExtension.dispatcher
             )
     }
 
@@ -92,7 +94,7 @@ class ThreeDsResumeDecisionHandlerTest {
             flowOf(true)
         )
 
-        runBlockingTest {
+        runTest {
             resumeHandler.handleNewClientToken("")
         }
 
@@ -113,7 +115,7 @@ class ThreeDsResumeDecisionHandlerTest {
             flowOf(true)
         )
 
-        runBlockingTest {
+        runTest {
             resumeHandler.handleNewClientToken("")
         }
 
@@ -135,7 +137,7 @@ class ThreeDsResumeDecisionHandlerTest {
             flowOf(true)
         )
 
-        runBlockingTest {
+        runTest {
             resumeHandler.handleNewClientToken("")
         }
 
@@ -155,7 +157,7 @@ class ThreeDsResumeDecisionHandlerTest {
             flowOf(true)
         )
 
-        runBlockingTest {
+        runTest {
             resumeHandler.handleNewClientToken("")
         }
 

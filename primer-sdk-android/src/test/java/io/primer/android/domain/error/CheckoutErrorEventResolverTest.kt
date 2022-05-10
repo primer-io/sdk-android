@@ -15,7 +15,7 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.model.dto.PaymentHandling
 import io.primer.android.model.dto.PrimerSettings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,9 +55,11 @@ internal class CheckoutErrorEventResolverTest {
         val mapperType = mockk<ErrorMapperType>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Something went wrong.")
-        runBlockingTest {
+
+        runTest {
             checkoutErrorEventResolver.resolve(exception, mapperType)
         }
+
         val event = slot<CheckoutEvent>()
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }
@@ -70,11 +72,12 @@ internal class CheckoutErrorEventResolverTest {
         val mapperType = mockk<ErrorMapperType>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Something went wrong.")
-
         every { settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
-        runBlockingTest {
+
+        runTest {
             checkoutErrorEventResolver.resolve(exception, mapperType)
         }
+
         val event = slot<CheckoutEvent>()
 
         verify { eventDispatcher.dispatchEvent(capture(event)) }

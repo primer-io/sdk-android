@@ -17,7 +17,7 @@ internal class FormViewModel : ViewModel() {
     private val values: MutableMap<String, String> = HashMap()
     private val initialValues: MutableMap<String, String> = HashMap()
 
-    val title: MutableLiveData<FormTitleState> = MutableLiveData()
+    val title: MutableLiveData<FormTitleState?> = MutableLiveData()
     val fields: MutableLiveData<List<FormField>> = MutableLiveData(emptyList())
     val submitted: MutableLiveData<Boolean> = MutableLiveData(false)
     val isValid: MutableLiveData<Boolean> = MutableLiveData(true)

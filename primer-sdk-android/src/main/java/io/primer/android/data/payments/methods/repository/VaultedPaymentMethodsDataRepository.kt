@@ -6,8 +6,10 @@ import io.primer.android.data.configuration.datasource.LocalConfigurationDataSou
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 
+@ExperimentalCoroutinesApi
 internal class VaultedPaymentMethodsDataRepository(
     private val remoteVaultedPaymentMethodsDataSource: RemoteVaultedPaymentMethodsDataSource,
     private val vaultedPaymentMethodDeleteDataSource: RemoteVaultedPaymentMethodDeleteDataSource,

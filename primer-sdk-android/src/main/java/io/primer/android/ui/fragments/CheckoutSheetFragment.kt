@@ -20,9 +20,11 @@ import io.primer.android.events.EventBus
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
 
+@ExperimentalCoroutinesApi
 @KoinApiExtension
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),

@@ -27,7 +27,9 @@ import io.primer.android.SessionState
 import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.ui.extensions.autoCleaned
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 

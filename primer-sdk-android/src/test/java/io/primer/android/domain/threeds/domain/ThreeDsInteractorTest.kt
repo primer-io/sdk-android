@@ -43,9 +43,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -88,27 +86,23 @@ internal class ThreeDsInteractorTest {
     @RelaxedMockK
     internal lateinit var logger: DefaultLogger
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
     private lateinit var interactor: ThreeDsInteractor
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor =
-            DefaultThreeDsInteractor(
-                threeDsServiceRepository,
-                threeDsRepository,
-                paymentMethodRepository,
-                clientTokenRepository,
-                threeDsAppUrlRepository,
-                threeDsConfigurationRepository,
-                postTokenizationEventResolver,
-                resumeEventResolver,
-                checkoutErrorEventResolver,
-                logger,
-                testCoroutineDispatcher
-            )
+        interactor = DefaultThreeDsInteractor(
+            threeDsServiceRepository,
+            threeDsRepository,
+            paymentMethodRepository,
+            clientTokenRepository,
+            threeDsAppUrlRepository,
+            threeDsConfigurationRepository,
+            postTokenizationEventResolver,
+            resumeEventResolver,
+            checkoutErrorEventResolver,
+            logger,
+        )
 
         every {
             paymentMethodRepository.getPaymentMethod()
@@ -126,7 +120,8 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
             flowOf(Unit)
         )
-        runBlockingTest {
+
+        runTest {
             interactor.initialize(initParams).first()
         }
 
@@ -147,7 +142,7 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.initialize(initParams).first()
             }
         }
@@ -178,7 +173,7 @@ internal class ThreeDsInteractorTest {
         val event = slot<Throwable>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.initialize(initParams).first()
             }
         }
@@ -214,7 +209,7 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.initialize(initParams).first()
             }
         }
@@ -250,7 +245,7 @@ internal class ThreeDsInteractorTest {
         val event = slot<Throwable>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.initialize(initParams).first()
             }
         }
@@ -277,10 +272,11 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
             flowOf(transactionMock)
         )
-        runBlockingTest {
+        runTest {
             val transaction = interactor.authenticateSdk().first()
             assertEquals(transactionMock, transaction)
         }
+
         coVerify { threeDsServiceRepository.performProviderAuth(any(), any()) }
     }
 
@@ -301,7 +297,7 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.authenticateSdk().first()
             }
         }
@@ -334,7 +330,7 @@ internal class ThreeDsInteractorTest {
         val event = slot<Throwable>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.authenticateSdk().first()
             }
         }
@@ -365,10 +361,8 @@ internal class ThreeDsInteractorTest {
         )
 
         val token = slot<PaymentMethodTokenInternal>()
-
-        runBlockingTest {
-            val response =
-                interactor.beginRemoteAuth(threeDsParams).flowOn(testCoroutineDispatcher).first()
+        runTest {
+            val response = interactor.beginRemoteAuth(threeDsParams).first()
             assertEquals(beginAuthResponse, response)
         }
 
@@ -391,7 +385,8 @@ internal class ThreeDsInteractorTest {
                 beginAuthResponse
             )
         )
-        runBlockingTest {
+
+        runTest {
             val response = interactor.beginRemoteAuth(threeDsParams).first()
             assertEquals(beginAuthResponse, response)
         }
@@ -414,7 +409,7 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.beginRemoteAuth(threeDsParams).first()
             }
         }
@@ -446,7 +441,7 @@ internal class ThreeDsInteractorTest {
         val event = slot<Throwable>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.beginRemoteAuth(threeDsParams).first()
             }
         }
@@ -477,7 +472,7 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.beginRemoteAuth(threeDsParams).first()
             }
         }
@@ -501,15 +496,15 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsServiceRepository.performChallenge(any(), any(), any(), any()) }.returns(
             flowOf(
                 challengeStatusData
-            ).flowOn(testCoroutineDispatcher)
+            )
         )
 
-        runBlockingTest {
+        runTest {
             val statusData =
-                interactor.performChallenge(activity, transaction, authResponse)
-                    .flowOn(testCoroutineDispatcher).first()
+                interactor.performChallenge(activity, transaction, authResponse).first()
             assertEquals(challengeStatusData, statusData)
         }
+
         coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any()) }
     }
 
@@ -536,10 +531,9 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 val statusData =
-                    interactor.performChallenge(activity, transaction, authResponse)
-                        .flowOn(testCoroutineDispatcher).first()
+                    interactor.performChallenge(activity, transaction, authResponse).first()
                 assertEquals(challengeStatusData, statusData)
             }
         }
@@ -575,10 +569,9 @@ internal class ThreeDsInteractorTest {
         val event = slot<Throwable>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 val statusData =
-                    interactor.performChallenge(activity, transaction, authResponse)
-                        .flowOn(testCoroutineDispatcher).first()
+                    interactor.performChallenge(activity, transaction, authResponse).first()
                 assertEquals(challengeStatusData, statusData)
             }
         }
@@ -608,8 +601,8 @@ internal class ThreeDsInteractorTest {
 
         val token = slot<PaymentMethodTokenInternal>()
 
-        runBlockingTest {
-            val response = interactor.continueRemoteAuth("").flowOn(testCoroutineDispatcher).first()
+        runTest {
+            val response = interactor.continueRemoteAuth("").first()
             assertEquals(postAuthResponse, response)
         }
 
@@ -634,8 +627,8 @@ internal class ThreeDsInteractorTest {
 
         val paymentInstrumentType = slot<String>()
 
-        runBlockingTest {
-            val response = interactor.continueRemoteAuth("").flowOn(testCoroutineDispatcher).first()
+        runTest {
+            val response = interactor.continueRemoteAuth("").first()
             assertEquals(postAuthResponse, response)
         }
 
@@ -660,7 +653,7 @@ internal class ThreeDsInteractorTest {
         val token = slot<PaymentMethodTokenInternal>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.continueRemoteAuth("").first()
             }
         }
@@ -691,7 +684,7 @@ internal class ThreeDsInteractorTest {
         val event = slot<Throwable>()
 
         assertThrows<Exception> {
-            runBlockingTest {
+            runTest {
                 interactor.continueRemoteAuth("").first()
             }
         }
@@ -713,7 +706,7 @@ internal class ThreeDsInteractorTest {
     fun `cleanup() should call repository performCleanup()`() {
         every { threeDsServiceRepository.performCleanup() }.returns(Unit)
 
-        runBlockingTest {
+        runTest {
             interactor.cleanup()
         }
 

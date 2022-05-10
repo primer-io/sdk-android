@@ -8,7 +8,7 @@ class MainViewModelFactory(
     private val countryRepository: CountryRepository,
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = MainViewModel(
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = MainViewModel(
         countryRepository,
     ) as T
 }

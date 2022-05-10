@@ -19,8 +19,10 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinApiExtension
 
+@ExperimentalCoroutinesApi
 @KoinApiExtension
 internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
 
