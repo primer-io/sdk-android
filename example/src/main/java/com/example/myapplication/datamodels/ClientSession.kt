@@ -1,8 +1,6 @@
 package com.example.myapplication.datamodels
 
 import androidx.annotation.Keep
-import io.primer.android.model.dto.CountryCode
-import java.util.*
 
 @Keep
 interface ClientSession : ExampleAppRequestBody {
@@ -192,6 +190,7 @@ interface ClientSession : ExampleAppRequestBody {
     data class PaymentMethodOptionGroup(
         val PAYPAL: PaymentMethodOption? = null,
         val PAYMENT_CARD: PaymentCardOption? = null,
+        val PROCESSOR_3DS: PaymentMethodOption? = null,
         val GOOGLE_PAY: PaymentMethodOption? = null,
         val ADYEN_SOFORT: PaymentMethodOption? = null,
         val ADYEN_IDEAL: PaymentMethodOption? = null,
@@ -203,6 +202,7 @@ interface ClientSession : ExampleAppRequestBody {
             val configuredValues: Set<String> = setOf(
                 "PAYPAL",
                 "PAYMENT_CARD",
+                "PROCESSOR_3DS",
                 "GOOGLE_PAY",
                 "ADYEN_SOFORT",
                 "ADYEN_IDEAL",

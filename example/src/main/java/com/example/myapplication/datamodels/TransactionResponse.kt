@@ -42,5 +42,6 @@ data class RequiredActionData(
 enum class RequiredActionName {
 
     `3DS_AUTHENTICATION`,
-    USE_PRIMER_SDK
+    USE_PRIMER_SDK,
+    PROCESSOR_3DS,
 }

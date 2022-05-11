@@ -1,5 +1,6 @@
 package com.example.myapplication.viewmodels
 
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -66,7 +67,7 @@ class MainViewModel(
 
         val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
 
-    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(2000)
+    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
     val amount: LiveData<Int> = _amount
     val amountStringified: String get() = String.format("%.2f", _amount.value!!.toDouble() / 100)
     fun setAmount(amount: Int): Unit = _amount.postValue(amount)
@@ -178,6 +179,8 @@ class MainViewModel(
                 if (result.requiredAction?.name != null) {
                     _transactionId.postValue(result.id)
                     completion?.continueWithNewClientToken(result.requiredAction.clientToken.orEmpty())
+                } else {
+                    Log.w(javaClass.simpleName, "Required actions NAME is NULL")
                 }
             },
         ) { status ->

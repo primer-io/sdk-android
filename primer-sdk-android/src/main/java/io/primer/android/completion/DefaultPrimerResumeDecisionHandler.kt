@@ -68,9 +68,10 @@ internal open class DefaultPrimerResumeDecisionHandler(
     }
 
     private fun checkCorrectFlowLaunched() {
+        val clientTokenIntent = clientTokenRepository.getClientTokenIntent()
         require(
-            getPaymentInstrumentType().intent == clientTokenRepository.getClientTokenIntent() ||
-                getPaymentMethodType().intent == clientTokenRepository.getClientTokenIntent()
+            getPaymentInstrumentType().intents?.contains(clientTokenIntent) == true ||
+                getPaymentMethodType().intents?.contains(clientTokenIntent) == true
         ) { RESUME_INTENT_ERROR }
     }
 

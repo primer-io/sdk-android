@@ -36,7 +36,8 @@ internal data class RequiredActionData(
 internal enum class RequiredActionName {
 
     `3DS_AUTHENTICATION`,
-    USE_PRIMER_SDK
+    USE_PRIMER_SDK,
+    PROCESSOR_3DS
 }
 
 internal fun PaymentResponse.toPaymentResult() = PaymentResult(

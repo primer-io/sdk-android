@@ -14,6 +14,7 @@ import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.payment.processor_3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
@@ -60,8 +61,6 @@ internal sealed class CheckoutEvent(
     ) :
         CheckoutEvent(CheckoutEventType.SHOW_ERROR)
 
-    object Start3DS : CheckoutEvent(CheckoutEventType.START_3DS)
-
     class PaymentCreateStarted(
         val data: PrimerPaymentMethodData,
         val createPaymentHandler: PrimerPaymentCreationDecisionHandler
@@ -107,6 +106,10 @@ internal sealed class CheckoutEvent(
         val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
+
+    internal class Start3DS(
+        val processor3DSData: Processor3DS? = null
+    ) : CheckoutEvent(CheckoutEventType.START_3DS)
 
     class StartAsyncRedirectFlow(
         val title: String,
