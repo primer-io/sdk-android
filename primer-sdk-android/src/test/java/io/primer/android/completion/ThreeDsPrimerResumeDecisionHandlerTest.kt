@@ -33,7 +33,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
-class ThreeDsResumeDecisionHandlerTest {
+class ThreeDsPrimerResumeDecisionHandlerTest {
 
     @JvmField
     @RegisterExtension
@@ -63,13 +63,13 @@ class ThreeDsResumeDecisionHandlerTest {
     @RelaxedMockK
     internal lateinit var logger: Logger
 
-    private lateinit var resumeHandler: ThreeDsResumeDecisionHandler
+    private lateinit var resumeHandler: ThreeDsPrimerResumeDecisionHandler
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
         resumeHandler =
-            ThreeDsResumeDecisionHandler(
+            ThreeDsPrimerResumeDecisionHandler(
                 verificationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
@@ -95,7 +95,7 @@ class ThreeDsResumeDecisionHandlerTest {
         )
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<CheckoutEvent>()
@@ -116,7 +116,7 @@ class ThreeDsResumeDecisionHandlerTest {
         )
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()
@@ -138,7 +138,7 @@ class ThreeDsResumeDecisionHandlerTest {
         )
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()
@@ -158,7 +158,7 @@ class ThreeDsResumeDecisionHandlerTest {
         )
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()

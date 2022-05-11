@@ -13,7 +13,7 @@ import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-internal class AsyncPaymentResumeDecisionHandler(
+internal class AsyncPaymentPrimerResumeDecisionHandler(
     validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
@@ -22,7 +22,7 @@ internal class AsyncPaymentResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : DefaultResumeDecisionHandler(
+) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
     clientTokenRepository,
     paymentMethodRepository,

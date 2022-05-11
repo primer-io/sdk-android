@@ -7,11 +7,11 @@ import io.primer.android.model.dto.PrimerPaymentMethod
 interface PrimerInterface {
 
     /**
-     * Configures the Primer SDK with [PrimerConfig] & [CheckoutEventListener].
+     * Configures the Primer SDK with [PrimerConfig] & [PrimerCheckoutListener].
      */
     fun configure(
         config: PrimerConfig? = null,
-        listener: CheckoutEventListener? = null,
+        listener: PrimerCheckoutListener? = null,
     )
 
     /**

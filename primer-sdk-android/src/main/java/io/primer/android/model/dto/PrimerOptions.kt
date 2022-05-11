@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import java.util.Locale
 
 @Serializable
-data class Options(
+data class PrimerOptions(
     var preferWebView: Boolean = true,
     var klarnaWebViewTitle: String? = null,
     var apayaWebViewTitle: String? = null,
@@ -25,5 +25,5 @@ data class Options(
     ),
     var googlePayButtonStyle: GooglePayButtonStyle =
         GooglePayButtonStyle.BLACK,
-    var paymentHandling: PaymentHandling = PaymentHandling.AUTO
+    var paymentHandling: PrimerPaymentHandling = PrimerPaymentHandling.AUTO
 )

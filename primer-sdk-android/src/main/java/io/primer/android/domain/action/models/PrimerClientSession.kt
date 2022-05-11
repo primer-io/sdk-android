@@ -3,30 +3,30 @@ package io.primer.android.domain.action.models
 import io.primer.android.model.dto.CountryCode
 import kotlinx.serialization.Serializable
 
-data class ClientSession(
+data class PrimerClientSession(
     val customerId: String?,
     val orderId: String?,
     val currencyCode: String?,
     val totalAmount: Int?,
-    val lineItems: List<LineItem>?,
-    val orderDetails: Order?,
-    val customer: Customer?,
+    val lineItems: List<PrimerLineItem>?,
+    val orderDetails: PrimerOrder?,
+    val customer: PrimerCustomer?,
 )
 
-data class Customer(
+data class PrimerCustomer(
     val emailAddress: String?,
     val mobileNumber: String?,
     val firstName: String?,
     val lastName: String?,
-    val billingAddress: Address?,
-    val shippingAddress: Address?,
+    val billingAddress: PrimerAddress?,
+    val shippingAddress: PrimerAddress?,
 )
 
-data class Order(
+data class PrimerOrder(
     val countryCode: CountryCode?,
 )
 
-data class LineItem(
+data class PrimerLineItem(
     val itemId: String?,
     val itemDescription: String?,
     val amount: Int?,
@@ -37,7 +37,7 @@ data class LineItem(
 )
 
 @Serializable
-data class Address(
+data class PrimerAddress(
     val firstName: String? = null,
     val lastName: String? = null,
     val addressLine1: String? = null,

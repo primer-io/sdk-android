@@ -1,6 +1,6 @@
 package io.primer.android.data.configuration.model
 
-import io.primer.android.domain.action.models.Address
+import io.primer.android.domain.action.models.PrimerAddress
 import io.primer.android.model.dto.CountryCode
 import kotlinx.serialization.Serializable
 
@@ -15,7 +15,7 @@ internal data class AddressDataResponse(
     val state: String? = null,
     val countryCode: CountryCode? = null,
 ) {
-    fun toAddress() = Address(
+    fun toAddress() = PrimerAddress(
         firstName,
         lastName,
         addressLine1,

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import java.util.Currency
 
 @Serializable
-class MonetaryAmount private constructor(
+internal class MonetaryAmount private constructor(
     val value: Int,
     val currency: String,
 ) {

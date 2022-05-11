@@ -20,14 +20,14 @@ import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.data.token.model.ClientToken
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PaymentHandling
+import io.primer.android.model.dto.PrimerPaymentHandling
 import io.primer.android.model.dto.PrimerIntent
 import kotlinx.serialization.encodeToString
 
 class Primer private constructor() : PrimerInterface {
 
     internal var paymentMethods: MutableList<PaymentMethod> = mutableListOf()
-    private var listener: CheckoutEventListener? = null
+    private var listener: PrimerCheckoutListener? = null
     private var config: PrimerConfig = PrimerConfig()
     private var subscription: EventBus.SubscriptionHandle? = null
 
@@ -59,7 +59,7 @@ class Primer private constructor() : PrimerInterface {
                     listener?.onBeforeClientSessionUpdated()
                 }
                 is CheckoutEvent.Exit -> {
-                    listener?.onCheckoutDismissed(e.data.reason)
+                    listener?.onDismissed()
                 }
                 is CheckoutEvent.CheckoutPaymentError -> {
                     listener?.onFailed(e.error, e.data, e.errorHandler)
@@ -75,7 +75,7 @@ class Primer private constructor() : PrimerInterface {
     @Throws(IllegalArgumentException::class)
     override fun configure(
         config: PrimerConfig?,
-        listener: CheckoutEventListener?,
+        listener: PrimerCheckoutListener?,
     ) {
         listener?.let { l -> setListener(l) }
         config?.let {
@@ -130,7 +130,7 @@ class Primer private constructor() : PrimerInterface {
     /**
      * Private method to set and subscribe using passed in listener. Clears previous subscriptions.
      */
-    private fun setListener(listener: CheckoutEventListener) {
+    private fun setListener(listener: PrimerCheckoutListener) {
         subscription?.unregister(true)
         this.listener = null
         this.listener = listener
@@ -187,12 +187,12 @@ class Primer private constructor() : PrimerInterface {
 
     private fun emitError(error: PrimerError) {
         when (config.settings.options.paymentHandling) {
-            PaymentHandling.AUTO -> eventDispatcher.dispatchEvent(
+            PrimerPaymentHandling.AUTO -> eventDispatcher.dispatchEvent(
                 CheckoutEvent.CheckoutPaymentError(
                     error
                 )
             )
-            PaymentHandling.MANUAL -> eventDispatcher.dispatchEvent(
+            PrimerPaymentHandling.MANUAL -> eventDispatcher.dispatchEvent(
                 CheckoutEvent.CheckoutError(
                     error
                 )

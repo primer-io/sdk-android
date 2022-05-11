@@ -14,7 +14,7 @@ import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.SettingsViewModel
-import io.primer.android.model.dto.PaymentHandling
+import io.primer.android.model.dto.PrimerPaymentHandling
 
 class FirstFragment : Fragment() {
 
@@ -88,8 +88,8 @@ class FirstFragment : Fragment() {
     private fun configurePaymentHandlingViews() {
         binding.paymentHandling.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.paymentHandlingAuto -> viewModel.setPaymentHandling(PaymentHandling.AUTO)
-                R.id.paymentHandlingManual -> viewModel.setPaymentHandling(PaymentHandling.MANUAL)
+                R.id.paymentHandlingAuto -> viewModel.setPaymentHandling(PrimerPaymentHandling.AUTO)
+                R.id.paymentHandlingManual -> viewModel.setPaymentHandling(PrimerPaymentHandling.MANUAL)
             }
         }
     }

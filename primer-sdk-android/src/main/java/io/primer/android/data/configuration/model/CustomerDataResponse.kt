@@ -1,6 +1,6 @@
 package io.primer.android.data.configuration.model
 
-import io.primer.android.domain.action.models.Customer
+import io.primer.android.domain.action.models.PrimerCustomer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,7 +17,7 @@ internal data class CustomerDataResponse(
     val shippingAddress: AddressDataResponse? = null,
 ) {
 
-    fun toCustomer() = Customer(
+    fun toCustomer() = PrimerCustomer(
         emailAddress,
         mobileNumber,
         firstName,

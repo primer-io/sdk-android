@@ -14,7 +14,7 @@ import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-internal class ThreeDsResumeDecisionHandler(
+internal class ThreeDsPrimerResumeDecisionHandler(
     validationTokenRepository: ValidateTokenRepository,
     clientTokenRepository: ClientTokenRepository,
     paymentMethodRepository: PaymentMethodRepository,
@@ -24,7 +24,7 @@ internal class ThreeDsResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : DefaultResumeDecisionHandler(
+) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
     clientTokenRepository,
     paymentMethodRepository,

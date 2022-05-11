@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
-class AsyncPaymentResumeDecisionHandlerTest {
+class AsyncPaymentPrimerResumeDecisionHandlerTest {
 
     @JvmField
     @RegisterExtension
@@ -59,13 +59,13 @@ class AsyncPaymentResumeDecisionHandlerTest {
     @RelaxedMockK
     internal lateinit var logger: Logger
 
-    private lateinit var resumeHandler: AsyncPaymentResumeDecisionHandler
+    private lateinit var resumeHandler: AsyncPaymentPrimerResumeDecisionHandler
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
         resumeHandler =
-            AsyncPaymentResumeDecisionHandler(
+            AsyncPaymentPrimerResumeDecisionHandler(
                 verificationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
@@ -92,7 +92,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val events = slot<List<CheckoutEvent>>()
@@ -118,7 +118,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val events = slot<List<CheckoutEvent>>()
@@ -138,7 +138,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()
@@ -157,7 +157,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()
@@ -182,7 +182,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()
@@ -207,7 +207,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()
@@ -232,7 +232,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<List<CheckoutEvent>>()
@@ -258,7 +258,7 @@ class AsyncPaymentResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
 
         runTest {
-            resumeHandler.handleNewClientToken("")
+            resumeHandler.continueWithNewClientToken("")
         }
 
         val event = slot<Throwable>()

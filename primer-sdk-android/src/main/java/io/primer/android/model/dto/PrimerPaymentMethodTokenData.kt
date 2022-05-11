@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 
 internal object PaymentMethodTokenAdapter {
 
-    fun internalToExternal(token: PaymentMethodTokenInternal): PaymentMethodToken {
-        return PaymentMethodToken(
+    fun internalToExternal(token: PaymentMethodTokenInternal): PrimerPaymentMethodTokenData {
+        return PrimerPaymentMethodTokenData(
             token = token.token,
             analyticsId = token.analyticsId,
             tokenType = token.tokenType,
@@ -42,10 +42,10 @@ internal object PaymentMethodTokenAdapter {
                 )
             },
             vaultData = token.vaultData?.let {
-                PaymentMethodToken.VaultData(customerId = it.customerId)
+                PrimerPaymentMethodTokenData.VaultData(customerId = it.customerId)
             },
             threeDSecureAuthentication = token.threeDSecureAuthentication?.let {
-                PaymentMethodToken.AuthenticationDetails(
+                PrimerPaymentMethodTokenData.AuthenticationDetails(
                     it.responseCode,
                     it.reasonCode,
                     it.reasonText,
@@ -57,7 +57,7 @@ internal object PaymentMethodTokenAdapter {
         )
     }
 
-    fun externalToInternal(token: PaymentMethodToken): PaymentMethodVaultTokenInternal {
+    fun externalToInternal(token: PrimerPaymentMethodTokenData): PaymentMethodVaultTokenInternal {
         val paymentInstrumentData =
             if (token.paymentInstrumentData == null) null
             else PaymentInstrumentData(
@@ -104,7 +104,7 @@ internal object PaymentMethodTokenAdapter {
     }
 }
 
-data class PaymentMethodToken(
+data class PrimerPaymentMethodTokenData(
     val token: String,
     val analyticsId: String,
     val tokenType: TokenType,

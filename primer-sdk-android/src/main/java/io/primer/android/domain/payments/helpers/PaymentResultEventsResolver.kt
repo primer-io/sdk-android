@@ -1,9 +1,9 @@
 package io.primer.android.domain.payments.helpers
 
-import io.primer.android.completion.CheckoutErrorHandler
-import io.primer.android.completion.ResumeDecisionHandler
+import io.primer.android.completion.PrimerErrorDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.payments.create.models.PaymentStatus
-import io.primer.android.domain.CheckoutData
+import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PaymentError
 import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.events.CheckoutEvent
@@ -11,20 +11,20 @@ import io.primer.android.events.EventDispatcher
 
 internal class PaymentResultEventsResolver(private val eventDispatcher: EventDispatcher) {
 
-    fun resolve(paymentResult: PaymentResult, resumeHandler: ResumeDecisionHandler) {
+    fun resolve(paymentResult: PaymentResult, resumeHandler: PrimerResumeDecisionHandler) {
         when (paymentResult.paymentStatus) {
-            PaymentStatus.PENDING -> resumeHandler.handleNewClientToken(
+            PaymentStatus.PENDING -> resumeHandler.continueWithNewClientToken(
                 paymentResult.clientToken.orEmpty()
             )
             PaymentStatus.FAILED -> {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.CheckoutPaymentError(
                         PaymentError.PaymentFailedError,
-                        CheckoutData(paymentResult.payment),
+                        PrimerCheckoutData(paymentResult.payment),
                         object :
-                            CheckoutErrorHandler {
+                            PrimerErrorDecisionHandler {
                             override fun showErrorMessage(message: String?) {
-                                resumeHandler.handleError(message)
+                                resumeHandler.handleFailure(message)
                             }
                         }
                     )
@@ -33,7 +33,7 @@ internal class PaymentResultEventsResolver(private val eventDispatcher: EventDis
             else -> {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.PaymentSuccess(
-                        CheckoutData(
+                        PrimerCheckoutData(
                             paymentResult.payment
                         )
                     )

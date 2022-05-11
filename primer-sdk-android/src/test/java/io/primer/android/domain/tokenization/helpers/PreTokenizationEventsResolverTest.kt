@@ -12,7 +12,7 @@ import io.primer.android.PaymentMethodIntent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PaymentHandling
+import io.primer.android.model.dto.PrimerPaymentHandling
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerIntent
 import io.primer.android.model.dto.PrimerPaymentMethodType
@@ -66,7 +66,7 @@ internal class PreTokenizationEventsResolverTest {
     fun `resolve() should dispatch TOKENIZE_STARTED type when payment handling is MANUAL`() {
         val paymentMethodType = mockk<PrimerPaymentMethodType>(relaxed = true)
 
-        every { config.settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
+        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodType)

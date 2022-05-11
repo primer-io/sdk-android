@@ -1,6 +1,6 @@
 package io.primer.android.model.dto
 
-enum class CheckoutExitReason {
+internal enum class CheckoutExitReason {
     DISMISSED_BY_CLIENT,
     DISMISSED_BY_USER,
     ERROR,

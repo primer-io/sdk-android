@@ -20,9 +20,9 @@ internal class ResumeHandlerFactory(
     private val logger: Logger
 ) {
 
-    fun getResumeHandler(paymentInstrumentType: String): ResumeDecisionHandler {
+    fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
         return when (paymentInstrumentType) {
-            CARD_INSTRUMENT_TYPE -> ThreeDsResumeDecisionHandler(
+            CARD_INSTRUMENT_TYPE -> ThreeDsPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
@@ -32,7 +32,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger
             )
-            ASYNC_PAYMENT_METHOD -> AsyncPaymentResumeDecisionHandler(
+            ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
@@ -41,7 +41,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger
             )
-            else -> DefaultResumeDecisionHandler(
+            else -> DefaultPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,

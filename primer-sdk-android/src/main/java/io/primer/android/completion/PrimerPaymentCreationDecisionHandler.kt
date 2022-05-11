@@ -1,6 +1,6 @@
 package io.primer.android.completion
 
-interface PaymentCreationDecisionHandler {
+interface PrimerPaymentCreationDecisionHandler {
 
     fun continuePaymentCreation()
 

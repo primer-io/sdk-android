@@ -13,8 +13,8 @@ import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentThirdBinding
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.viewmodels.MainViewModel
-import io.primer.android.completion.PaymentCreationDecisionHandler
-import io.primer.android.completion.ResumeDecisionHandler
+import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.manager.PrimerCardManager
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
@@ -26,10 +26,10 @@ import io.primer.android.ui.CardType
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
-import io.primer.android.domain.CheckoutData
+import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.domain.tokenization.models.PaymentMethodData
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
+import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.model.dto.PrimerPaymentMethodType
 
 class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
@@ -121,34 +121,34 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             }
 
             override fun onTokenizeSuccess(
-                paymentMethodToken: PaymentMethodToken,
-                resumeHandler: ResumeDecisionHandler
+                paymentMethodTokenData: PrimerPaymentMethodTokenData,
+                resumeHandler: PrimerResumeDecisionHandler
             ) {
                 showLoading("Tokenization success. Creating payment.")
-                viewModel.createPayment(paymentMethodToken, resumeHandler)
+                viewModel.createPayment(paymentMethodTokenData, resumeHandler)
             }
 
-            override fun onResume(resumeToken: String, resumeHandler: ResumeDecisionHandler) {
+            override fun onResume(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler) {
                 showLoading("Resume success. Resuming payment.")
                 viewModel.resumePayment(resumeToken, resumeHandler)
             }
 
             override fun onBeforePaymentCreated(
-                data: PaymentMethodData,
-                createPaymentHandler: PaymentCreationDecisionHandler
+                data: PrimerPaymentMethodData,
+                createPaymentHandler: PrimerPaymentCreationDecisionHandler
             ) {
                 super.onBeforePaymentCreated(data, createPaymentHandler)
                 showLoading("On Before Payment Created with ${data.paymentMethodType}")
             }
 
-            override fun onFailed(error: PrimerError, checkoutData: CheckoutData?) {
+            override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
                 hideLoading()
                 AlertDialog.Builder(context)
                     .setMessage("On Failed $error with data $checkoutData")
                     .show()
             }
 
-            override fun onCheckoutCompleted(checkoutData: CheckoutData) {
+            override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
                 hideLoading()
                 AlertDialog.Builder(context).setMessage("On Checkout Completed $checkoutData")
                     .show()

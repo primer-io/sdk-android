@@ -1,7 +1,7 @@
 package io.primer.android.components.presentation
 
 import io.primer.android.PaymentMethodIntent
-import io.primer.android.completion.ResumeDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
 import io.primer.android.components.domain.payments.PaymentTokenizationInteractor
@@ -63,22 +63,23 @@ internal class HeadlessUniversalCheckoutViewModel(
 
     fun createPayment(
         paymentMethodToken: String,
-        resumeHandler: ResumeDecisionHandler
+        resumeHandler: PrimerResumeDecisionHandler
     ) = scope.launch {
         createPaymentInteractor(CreatePaymentParams(paymentMethodToken, resumeHandler)).collect {
             transactionId = it
         }
     }
 
-    fun resumePayment(resumeToken: String, resumeHandler: ResumeDecisionHandler) = scope.launch {
-        resumePaymentInteractor(
-            ResumeParams(
-                transactionId.orEmpty(),
-                resumeToken,
-                resumeHandler
-            )
-        ).collect { }
-    }
+    fun resumePayment(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler) =
+        scope.launch {
+            resumePaymentInteractor(
+                ResumeParams(
+                    transactionId.orEmpty(),
+                    resumeToken,
+                    resumeHandler
+                )
+            ).collect { }
+        }
 
     fun clear() = scope.coroutineContext.job.cancelChildren()
 }

@@ -12,7 +12,7 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PaymentHandling
+import io.primer.android.model.dto.PrimerPaymentHandling
 import io.primer.android.model.dto.PrimerSettings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -72,7 +72,7 @@ internal class CheckoutErrorEventResolverTest {
         val mapperType = mockk<ErrorMapperType>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Something went wrong.")
-        every { settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
+        every { settings.options.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
             checkoutErrorEventResolver.resolve(exception, mapperType)

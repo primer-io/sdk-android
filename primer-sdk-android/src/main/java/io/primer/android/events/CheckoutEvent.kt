@@ -1,16 +1,16 @@
 package io.primer.android.events
 
-import io.primer.android.completion.CheckoutErrorHandler
-import io.primer.android.completion.PaymentCreationDecisionHandler
-import io.primer.android.completion.ResumeDecisionHandler
+import io.primer.android.completion.PrimerErrorDecisionHandler
+import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.domain.CheckoutData
-import io.primer.android.domain.tokenization.models.PaymentMethodData
+import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.domain.action.models.ClientSession
+import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerPaymentMethodType
@@ -22,22 +22,22 @@ internal sealed class CheckoutEvent(
 ) {
 
     class TokenizationSuccess(
-        val data: PaymentMethodToken,
-        val resumeHandler: ResumeDecisionHandler,
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler,
     ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
-    class TokenAddedToVault(val data: PaymentMethodToken) :
+    class TokenAddedToVault(val data: PrimerPaymentMethodTokenData) :
         CheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
 
     class ResumeSuccess(
         val resumeToken: String,
-        val resumeHandler: ResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler,
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
 
     class ResumeSuccessInternal(
         val resumeToken: String,
-        val resumeHandler: ResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler,
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
 
@@ -63,48 +63,48 @@ internal sealed class CheckoutEvent(
     object Start3DS : CheckoutEvent(CheckoutEventType.START_3DS)
 
     class PaymentCreateStarted(
-        val data: PaymentMethodData,
-        val createPaymentHandler: PaymentCreationDecisionHandler
+        val data: PrimerPaymentMethodData,
+        val createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) : CheckoutEvent(CheckoutEventType.PAYMENT_STARTED)
 
     class PaymentCreateStartedHUC(
-        val data: PaymentMethodData,
-        val createPaymentHandler: PaymentCreationDecisionHandler
+        val data: PrimerPaymentMethodData,
+        val createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) : CheckoutEvent(CheckoutEventType.PAYMENT_STARTED)
 
     class PaymentSuccess(
-        val data: CheckoutData,
+        val data: PrimerCheckoutData,
     ) : CheckoutEvent(CheckoutEventType.PAYMENT_SUCCESS)
 
     class CheckoutError(
         val error: PrimerError,
-        val errorHandler: CheckoutErrorHandler? = null
+        val errorHandler: PrimerErrorDecisionHandler? = null
     ) : CheckoutEvent(CheckoutEventType.CHECKOUT_MANUAL_ERROR)
 
     class CheckoutPaymentError(
         val error: PrimerError,
-        val data: CheckoutData? = null,
-        val errorHandler: CheckoutErrorHandler? = null
+        val data: PrimerCheckoutData? = null,
+        val errorHandler: PrimerErrorDecisionHandler? = null
     ) : CheckoutEvent(CheckoutEventType.CHECKOUT_AUTO_ERROR)
 
     class ClientSessionUpdateStarted :
         CheckoutEvent(CheckoutEventType.CLIENT_SESSION_UPDATE_STARTED)
 
-    class ClientSessionUpdateSuccess(val data: ClientSession) :
+    class ClientSessionUpdateSuccess(val data: PrimerClientSession) :
         CheckoutEvent(CheckoutEventType.CLIENT_SESSION_UPDATE_SUCCESS)
 
-    class TokenAddedToVaultInternal(val data: PaymentMethodToken) :
+    class TokenAddedToVaultInternal(val data: PrimerPaymentMethodTokenData) :
         CheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
 
     class PaymentContinue(
-        val data: PaymentMethodToken,
-        val resumeHandler: ResumeDecisionHandler
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE)
 
     class PaymentContinueHUC(
-        val data: PaymentMethodToken,
-        val resumeHandler: ResumeDecisionHandler
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
 

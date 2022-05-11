@@ -93,7 +93,8 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.MOLLIE_P24 -> PrimerPaymentMethod.MOLLIE_P24
         PaymentMethodType.MOLLIE_GIROPAY -> PrimerPaymentMethod.MOLLIE_GIROPAY
         PaymentMethodType.MOLLIE_EPS -> PrimerPaymentMethod.MOLLIE_EPS
-        PaymentMethodType.ADYEN_IDEAL -> PrimerPaymentMethod.MOLLIE_EPS
+        PaymentMethodType.ADYEN_IDEAL ->
+            throw IllegalArgumentException("Unsupported payment method $this")
         PaymentMethodType.ADYEN_DOTPAY ->
             throw IllegalArgumentException("Unsupported payment method $this")
         PaymentMethodType.ADYEN_BLIK ->

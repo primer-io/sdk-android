@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrimerSettings(
-    var business: Business = Business(),
-    var options: Options = Options(),
+    var business: PrimerBusiness = PrimerBusiness(),
+    var options: PrimerOptions = PrimerOptions(),
 ) {
 
     internal var order = OrderDataResponse()

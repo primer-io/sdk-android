@@ -8,7 +8,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.completion.ResumeDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.payments.create.models.PaymentStatus
 import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.events.CheckoutEvent
@@ -42,7 +42,7 @@ internal class PaymentResultEventsResolverTest {
     @Test
     fun `resolve() should call handleNewClientToken when payment status is PENDING`() {
         val paymentResult = mockk<PaymentResult>(relaxed = true)
-        val resumeHandler = mockk<ResumeDecisionHandler>(relaxed = true)
+        val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.PENDING)
 
@@ -52,7 +52,7 @@ internal class PaymentResultEventsResolverTest {
 
         val clientToken = slot<String>()
 
-        verify { resumeHandler.handleNewClientToken(capture(clientToken)) }
+        verify { resumeHandler.continueWithNewClientToken(capture(clientToken)) }
 
         assertEquals(paymentResult.clientToken, clientToken.captured)
     }
@@ -60,7 +60,7 @@ internal class PaymentResultEventsResolverTest {
     @Test
     fun `resolve() should dispatch CHECKOUT_AUTO_ERROR type when payment status is FAILED`() {
         val paymentResult = mockk<PaymentResult>(relaxed = true)
-        val resumeHandler = mockk<ResumeDecisionHandler>(relaxed = true)
+        val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.FAILED)
 
@@ -82,7 +82,7 @@ internal class PaymentResultEventsResolverTest {
     @Test
     fun `resolve() should dispatch PAYMENT_SUCCESS type when payment status is SUCCESS`() {
         val paymentResult = mockk<PaymentResult>(relaxed = true)
-        val resumeHandler = mockk<ResumeDecisionHandler>(relaxed = true)
+        val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.SUCCESS)
 

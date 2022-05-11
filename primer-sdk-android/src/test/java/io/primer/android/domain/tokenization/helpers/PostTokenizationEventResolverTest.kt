@@ -14,7 +14,7 @@ import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PaymentHandling
+import io.primer.android.model.dto.PrimerPaymentHandling
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerIntent
 import io.primer.android.model.dto.TokenType
@@ -88,7 +88,7 @@ internal class PostTokenizationEventResolverTest {
     @Test
     fun `resolve() should dispatch TOKENIZE_SUCCESS type when payment handling is MANUAL and tokenType is SINGLE_USE`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { config.settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
+        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
@@ -105,7 +105,7 @@ internal class PostTokenizationEventResolverTest {
     fun `resolve() should dispatch TOKENIZE_SUCCESS, TOKEN_ADDED_TO_VAULT type when payment handling is MANUAL tokenType is MULTI_USE`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { paymentMethodToken.tokenType }.returns(TokenType.MULTI_USE)
-        every { config.settings.options.paymentHandling }.returns(PaymentHandling.MANUAL)
+        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
@@ -122,7 +122,7 @@ internal class PostTokenizationEventResolverTest {
     @Test
     fun `resolve() should dispatch PAYMENT_CONTINUE_HUC type when payment handling is AUTO and fromHUC`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { config.settings.options.paymentHandling }.returns(PaymentHandling.AUTO)
+        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.AUTO)
         every { config.fromHUC }.returns(true)
 
         runTest {
@@ -139,7 +139,7 @@ internal class PostTokenizationEventResolverTest {
     @Test
     fun `resolve() should dispatch PAYMENT_CONTINUE type when payment handling is AUTO and not fromHUC`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { config.settings.options.paymentHandling }.returns(PaymentHandling.AUTO)
+        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.AUTO)
         every { config.fromHUC }.returns(false)
 
         runTest {

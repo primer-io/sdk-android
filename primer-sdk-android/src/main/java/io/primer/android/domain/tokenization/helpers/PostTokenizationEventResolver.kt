@@ -4,7 +4,7 @@ import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PaymentHandling
+import io.primer.android.model.dto.PrimerPaymentHandling
 import io.primer.android.model.dto.PaymentMethodTokenAdapter
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.TokenType
@@ -19,7 +19,7 @@ internal class PostTokenizationEventResolver(
         val externalToken = PaymentMethodTokenAdapter.internalToExternal(token)
         when {
             config.intent.paymentMethodIntent.isVault ||
-                config.settings.options.paymentHandling == PaymentHandling.MANUAL -> {
+                config.settings.options.paymentHandling == PrimerPaymentHandling.MANUAL -> {
                 val events = mutableListOf<CheckoutEvent>(
                     CheckoutEvent.TokenizationSuccess(
                         externalToken,
@@ -31,7 +31,7 @@ internal class PostTokenizationEventResolver(
                 }
                 eventDispatcher.dispatchEvents(events)
             }
-            config.settings.options.paymentHandling == PaymentHandling.AUTO -> {
+            config.settings.options.paymentHandling == PrimerPaymentHandling.AUTO -> {
                 val events = mutableListOf<CheckoutEvent>()
                 if (config.fromHUC) {
                     events.add(

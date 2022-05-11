@@ -3,7 +3,7 @@ package io.primer.android.model.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class PaymentHandling {
+enum class PrimerPaymentHandling {
     AUTO,
     MANUAL
 }

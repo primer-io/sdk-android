@@ -12,10 +12,10 @@ import com.example.myapplication.repositories.PaymentInstrumentsRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
-import io.primer.android.CheckoutEventListener
+import io.primer.android.PrimerCheckoutListener
 import io.primer.android.Primer
-import io.primer.android.completion.ResumeDecisionHandler
-import io.primer.android.domain.action.models.Address
+import io.primer.android.completion.PrimerResumeDecisionHandler
+import io.primer.android.domain.action.models.PrimerAddress
 import io.primer.android.model.PrimerDebugOptions
 import io.primer.android.model.dto.*
 import io.primer.android.threeds.data.models.ResponseCode
@@ -47,9 +47,9 @@ class MainViewModel(
     private val _threeDsEnabled: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
     val threeDsEnabled: LiveData<Boolean> = _threeDsEnabled
 
-    private val _threeDsResult: MutableLiveData<PaymentMethodToken.AuthenticationDetails?> =
-        MutableLiveData<PaymentMethodToken.AuthenticationDetails?>()
-    val threeDsResult: LiveData<PaymentMethodToken.AuthenticationDetails?> = _threeDsResult
+    private val _threeDsResult: MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> =
+        MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?>()
+    val threeDsResult: LiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> = _threeDsResult
     fun clearThreeDsResult(): Unit =
         _threeDsResult.postValue(null)
 
@@ -80,15 +80,15 @@ class MainViewModel(
     val useStandalonePaymentMethod: MutableLiveData<PrimerPaymentMethod> =
         MutableLiveData<PrimerPaymentMethod>()
 
-    val paymentInstruments: MutableLiveData<List<PaymentMethodToken>> =
-        MutableLiveData<List<PaymentMethodToken>>()
+    val paymentInstruments: MutableLiveData<List<PrimerPaymentMethodTokenData>> =
+        MutableLiveData<List<PrimerPaymentMethodTokenData>>()
 
     private val _transactionState: MutableLiveData<TransactionState> =
         MutableLiveData(TransactionState.IDLE)
     val transactionState: LiveData<TransactionState> = _transactionState
 
-    private val _paymentHandling: MutableLiveData<PaymentHandling> = MutableLiveData()
-    fun setPaymentHandling(paymentHandling: PaymentHandling): Unit = _paymentHandling.postValue(
+    private val _paymentHandling: MutableLiveData<PrimerPaymentHandling> = MutableLiveData()
+    fun setPaymentHandling(paymentHandling: PrimerPaymentHandling): Unit = _paymentHandling.postValue(
         paymentHandling
     )
 
@@ -111,9 +111,9 @@ class MainViewModel(
         get() = PrimerConfig(
             // todo: refactor to reintroduce custom values through client session
             settings = PrimerSettings(
-                business = Business(
+                business = PrimerBusiness(
                     "Primer",
-                    address = Address(
+                    address = PrimerAddress(
                         addressLine1 = "line1",
                         addressLine2 = "line2",
                         postalCode = "3455",
@@ -121,18 +121,18 @@ class MainViewModel(
                         countryCode = CountryCode.GB
                     )
                 ),
-                options = Options(
+                options = PrimerOptions(
                     preferWebView = true,
                     debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
                     is3DSOnVaultingEnabled = threeDsEnabled.value ?: false,
                     redirectScheme = "primer",
-                    paymentHandling = _paymentHandling.value ?: PaymentHandling.AUTO
+                    paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO
                 )
             ),
         )
 
     fun configure(
-        listener: CheckoutEventListener,
+        listener: PrimerCheckoutListener,
     ) {
         Primer.instance.configure(config, listener)
     }
@@ -157,8 +157,8 @@ class MainViewModel(
     }
 
     fun createPayment(
-        paymentMethod: PaymentMethodToken,
-        completion: ResumeDecisionHandler? = null
+        paymentMethod: PrimerPaymentMethodTokenData,
+        completion: PrimerResumeDecisionHandler? = null
     ) {
         _transactionId.postValue(null)
 
@@ -177,14 +177,14 @@ class MainViewModel(
 
                 if (result.requiredAction?.name != null) {
                     _transactionId.postValue(result.id)
-                    completion?.handleNewClientToken(result.requiredAction.clientToken.orEmpty())
+                    completion?.continueWithNewClientToken(result.requiredAction.clientToken.orEmpty())
                 }
             },
         ) { status ->
             val state = status.toTransactionState()
             when (state) {
                 TransactionState.ERROR -> {
-                    completion?.handleError(
+                    completion?.handleFailure(
                         "Manually created payment failed id: ${_transactionId.value.orEmpty()}"
                     )
                 }
@@ -196,7 +196,7 @@ class MainViewModel(
         }
     }
 
-    fun resumePayment(token: String, completion: ResumeDecisionHandler? = null) {
+    fun resumePayment(token: String, completion: PrimerResumeDecisionHandler? = null) {
         val environment = environment.value!!.environment
         val body = ResumePaymentRequest(
             token
@@ -213,12 +213,12 @@ class MainViewModel(
             val state = status.toTransactionState()
             when (state) {
                 TransactionState.ERROR -> {
-                    completion?.handleError(
+                    completion?.handleFailure(
                         "Manually created payment resume failed id: ${_transactionId.value.orEmpty()}"
                     )
                 }
                 TransactionState.PENDING -> {
-                    completion?.handleError(null)
+                    completion?.handleFailure(null)
                 }
                 else -> {
                     completion?.handleSuccess()
@@ -229,7 +229,7 @@ class MainViewModel(
     }
 
     // 3DS
-    internal fun handleTokenData(paymentMethodToken: PaymentMethodToken) {
+    internal fun handleTokenData(paymentMethodToken: PrimerPaymentMethodTokenData) {
         when {
             paymentMethodToken.tokenType == TokenType.SINGLE_USE
                 && (paymentMethodToken.threeDSecureAuthentication?.responseCode == ResponseCode.AUTH_SUCCESS

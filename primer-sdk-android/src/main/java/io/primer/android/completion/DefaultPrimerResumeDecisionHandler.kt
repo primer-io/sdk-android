@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-internal open class DefaultResumeDecisionHandler(
+internal open class DefaultPrimerResumeDecisionHandler(
     private val validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
@@ -29,12 +29,12 @@ internal open class DefaultResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     private var logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : ResumeDecisionHandler {
+) : PrimerResumeDecisionHandler {
 
     private var handlerUsed = false
 
-    override fun handleError(message: String?) = callIfNotHandled {
-        addAnalyticsEvent("handleError")
+    override fun handleFailure(message: String?) = callIfNotHandled {
+        addAnalyticsEvent("handleFailure")
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED, message = message)
         )
@@ -47,7 +47,7 @@ internal open class DefaultResumeDecisionHandler(
         )
     }
 
-    override fun handleNewClientToken(clientToken: String) = callIfNotHandled {
+    override fun continueWithNewClientToken(clientToken: String) = callIfNotHandled {
         addAnalyticsEvent("handleNewClientToken")
         CoroutineScope(dispatcher).launch {
             validationTokenRepository.validate(clientToken).catch { e ->

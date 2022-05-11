@@ -3,11 +3,12 @@ package io.primer.android.components
 import android.content.Context
 import android.view.View
 import androidx.annotation.DrawableRes
-import io.primer.android.CheckoutEventListener
+import io.primer.android.ExperimentalPrimerApi
+import io.primer.android.PrimerCheckoutListener
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.Primer
-import io.primer.android.completion.CheckoutErrorHandler
-import io.primer.android.completion.ResumeDecisionHandler
+import io.primer.android.completion.PrimerErrorDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
 import io.primer.android.components.presentation.HeadlessUniversalCheckoutViewModel
 import io.primer.android.components.ui.assets.ImageType
@@ -18,21 +19,21 @@ import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
-import io.primer.android.domain.CheckoutData
+import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Serialization
 import io.primer.android.domain.error.models.HUCError
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethodType
 import io.primer.android.model.dto.toPrimerPaymentMethod
 import org.koin.core.component.get
 
+@ExperimentalPrimerApi
 class PrimerHeadlessUniversalCheckout private constructor() :
-    PrimerHeadlessUniversalCheckoutInterface, CheckoutEventListener, DIAppComponent {
+    PrimerHeadlessUniversalCheckoutInterface, PrimerCheckoutListener, DIAppComponent {
 
     private val eventBusListener = object : EventBus.EventListener {
         override fun onEvent(e: CheckoutEvent) {
@@ -172,27 +173,26 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     }
 
     override fun onTokenizeSuccess(
-        paymentMethodToken: PaymentMethodToken,
-        resumeHandler: ResumeDecisionHandler
+        paymentMethodToken: PrimerPaymentMethodTokenData,
+        decisionHandler: PrimerResumeDecisionHandler
     ) {
-        super.onTokenizeSuccess(paymentMethodToken, resumeHandler)
+        super.onTokenizeSuccess(paymentMethodToken, decisionHandler)
         Primer.instance.dismiss(true)
     }
 
     override fun onFailed(
         error: PrimerError,
-        checkoutData: CheckoutData?,
-        errorHandler: CheckoutErrorHandler?
+        checkoutData: PrimerCheckoutData?,
+        errorHandler: PrimerErrorDecisionHandler?
     ) {
         Primer.instance.dismiss(true)
     }
 
-    override fun onCheckoutDismissed(reason: CheckoutExitReason) {
-        super.onCheckoutDismissed(reason)
+    override fun onDismissed() {
         Primer.instance.dismiss(true)
     }
 
-    override fun onCheckoutCompleted(checkoutData: CheckoutData) = Unit
+    override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) = Unit
 
     internal fun startTokenization(
         paymentMethodType: PrimerPaymentMethodType,

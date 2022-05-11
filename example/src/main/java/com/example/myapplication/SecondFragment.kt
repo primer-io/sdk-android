@@ -15,17 +15,16 @@ import io.primer.android.Primer
 import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
-import io.primer.android.CheckoutEventListener
+import io.primer.android.PrimerCheckoutListener
 import io.primer.android.PaymentMethodIntent
-import io.primer.android.completion.CheckoutErrorHandler
-import io.primer.android.completion.PaymentCreationDecisionHandler
-import io.primer.android.completion.ResumeDecisionHandler
-import io.primer.android.domain.CheckoutData
-import io.primer.android.domain.action.models.ClientSession
+import io.primer.android.completion.PrimerErrorDecisionHandler
+import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
+import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.domain.tokenization.models.PaymentMethodData
-import io.primer.android.model.dto.*
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
+import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
 
 class SecondFragment : Fragment() {
@@ -141,11 +140,11 @@ class SecondFragment : Fragment() {
 
     private fun initializeCheckout() = viewModel.configure(listener)
 
-    private val listener = object : CheckoutEventListener {
+    private val listener = object : PrimerCheckoutListener {
 
         override fun onBeforePaymentCreated(
-            paymentMethodData: PaymentMethodData,
-            createPaymentHandler: PaymentCreationDecisionHandler
+            paymentMethodData: PrimerPaymentMethodData,
+            createPaymentHandler: PrimerPaymentCreationDecisionHandler
         ) {
             createPaymentHandler.continuePaymentCreation()
             Log.d(TAG, "onBeforePaymentCreated with $paymentMethodData")
@@ -153,15 +152,15 @@ class SecondFragment : Fragment() {
 
         override fun onFailed(
             error: PrimerError,
-            checkoutData: CheckoutData?,
-            errorHandler: CheckoutErrorHandler?
+            checkoutData: PrimerCheckoutData?,
+            errorHandler: PrimerErrorDecisionHandler?
         ) {
             AlertDialog.Builder(context).setMessage("onFailed $error with data $checkoutData")
                 .show()
             errorHandler?.showErrorMessage("Something went wrong!")
         }
 
-        override fun onCheckoutCompleted(checkoutData: CheckoutData) {
+        override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
             AlertDialog.Builder(context).setMessage("onCheckoutCompleted $checkoutData").show()
         }
 
@@ -169,46 +168,46 @@ class SecondFragment : Fragment() {
             Log.d(TAG, "onBeforeClientSessionUpdated")
         }
 
-        override fun onClientSessionUpdated(clientSession: ClientSession) {
+        override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
             super.onClientSessionUpdated(clientSession)
             Log.d(TAG, "onClientSessionUpdated with result $clientSession")
         }
 
-        override fun onFailed(error: PrimerError, errorHandler: CheckoutErrorHandler?) {
+        override fun onFailed(error: PrimerError, errorHandler: PrimerErrorDecisionHandler?) {
             AlertDialog.Builder(context).setMessage("onFailed $error")
                 .show()
             errorHandler?.showErrorMessage("Something went wrong!")
         }
 
         override fun onTokenizeSuccess(
-            paymentMethodToken: PaymentMethodToken,
-            resumeHandler: ResumeDecisionHandler
+            paymentMethodTokenData: PrimerPaymentMethodTokenData,
+            decisionHandler: PrimerResumeDecisionHandler
         ) {
             Log.d(TAG, "onTokenizeSuccess")
-            viewModel.createPayment(paymentMethodToken, resumeHandler)
+            viewModel.createPayment(paymentMethodTokenData, decisionHandler)
         }
 
-        override fun onTokenAddedToVault(paymentMethodToken: PaymentMethodToken) {
-            super.onTokenAddedToVault(paymentMethodToken)
+        override fun onTokenAddedToVault(paymentMethodTokenData: PrimerPaymentMethodTokenData) {
+            super.onTokenAddedToVault(paymentMethodTokenData)
             Log.d(TAG, "onTokenAddedToVault")
         }
 
-        override fun onResume(resumeToken: String, resumeHandler: ResumeDecisionHandler) {
-            Log.d(TAG, "onResumeSuccess")
-            viewModel.resumePayment(resumeToken, resumeHandler)
+        override fun onResume(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
+            Log.d(TAG, "onResume")
+            viewModel.resumePayment(resumeToken, decisionHandler)
         }
 
-        override fun onCheckoutDismissed(reason: CheckoutExitReason) {
-            Log.d(TAG, "onCheckoutDismissed")
+        override fun onDismissed() {
+            Log.d(TAG, "onDismissed")
             viewModel.clientToken.value?.let { _ -> fetchSavedPaymentMethods() }
         }
     }
 
-    private fun onConfirmDialogAction(token: PaymentMethodToken) {
+    private fun onConfirmDialogAction(token: PrimerPaymentMethodTokenData) {
         viewModel.createPayment(token)
     }
 
-    private fun onSelect(token: PaymentMethodToken) {
+    private fun onSelect(token: PrimerPaymentMethodTokenData) {
         AlertDialog.Builder(context)
             .setTitle("Payment confirmation")
             .setMessage("Would you like to pay?")

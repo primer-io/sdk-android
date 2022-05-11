@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.model
 
-import io.primer.android.domain.action.models.LineItem
-import io.primer.android.domain.action.models.Order
+import io.primer.android.domain.action.models.PrimerLineItem
+import io.primer.android.domain.action.models.PrimerOrder
 import io.primer.android.model.dto.CountryCode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -28,7 +28,7 @@ internal data class OrderDataResponse(
         val taxAmount: Int? = null,
         val taxCode: String? = null,
     ) {
-        fun toLineItem() = LineItem(
+        fun toLineItem() = PrimerLineItem(
             itemId,
             description,
             unitAmount,
@@ -45,5 +45,5 @@ internal data class OrderDataResponse(
         val amount: Int,
     )
 
-    fun toOrder() = Order(countryCode)
+    fun toOrder() = PrimerOrder(countryCode)
 }
