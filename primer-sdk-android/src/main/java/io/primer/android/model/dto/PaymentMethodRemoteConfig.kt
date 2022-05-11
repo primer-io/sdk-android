@@ -18,10 +18,16 @@ data class PaymentMethodRemoteConfig(
 @Keep
 @Serializable
 enum class PaymentMethodType(
-    internal val intent: ClientTokenIntent? = null,
+    internal val intents: Array<ClientTokenIntent>? = null,
     internal val brand: Brand
 ) {
-    PAYMENT_CARD(ClientTokenIntent.`3DS_AUTHENTICATION`, Brand.PAYMENT_CARD),
+    PAYMENT_CARD(
+        arrayOf(
+            ClientTokenIntent.`3DS_AUTHENTICATION`,
+            ClientTokenIntent.PROCESSOR_3DS,
+        ),
+        Brand.PAYMENT_CARD
+    ),
     KLARNA(brand = Brand.KLARNA),
     GOOGLE_PAY(brand = Brand.GOOGLE_PAY),
     PAYPAL(brand = Brand.PAYPAL),
@@ -65,6 +71,8 @@ enum class PaymentMethodType(
         fun safeValueOf(type: String?) = values().find { type == it.name }
             ?: UNKNOWN
     }
+
+    constructor(intent: ClientTokenIntent, brand: Brand) : this(arrayOf(intent), brand)
 }
 
 internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {

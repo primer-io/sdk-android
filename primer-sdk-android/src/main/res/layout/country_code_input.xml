@@ -20,6 +20,7 @@
         app:ccpDialog_background="@color/primer_app_background"
         app:ccpDialog_searchEditTextTint="@color/primer_text_color_default"
         app:ccpDialog_textColor="@color/primer_text_color_default"
+        app:ccp_autoDetectLanguage="true"
         app:ccp_showFullName="true"
         app:ccp_showNameCode="false"
         app:ccp_showPhoneCode="false"

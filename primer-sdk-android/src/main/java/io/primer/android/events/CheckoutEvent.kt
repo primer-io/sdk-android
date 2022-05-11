@@ -9,6 +9,7 @@ import io.primer.android.model.dto.APIError
 import io.primer.android.model.dto.CheckoutExitInfo
 import io.primer.android.model.dto.CheckoutExitReason
 import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.payment.processor_3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
@@ -69,7 +70,9 @@ sealed class CheckoutEvent(
     internal class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
         PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
 
-    internal object Start3DS : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
+    internal class Start3DS(
+        val processor3DSData: Processor3DS? = null
+    ) : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
 
     internal class StartAsyncRedirectFlow(
         val title: String,

@@ -3,8 +3,8 @@ package io.primer.android.data.payments.methods.repository
 import android.content.Context
 import io.primer.android.PaymentMethod
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.model.dto.PrimerPaymentMethod

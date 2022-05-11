@@ -43,7 +43,7 @@ internal class TokenizationInteractor(
                 when {
                     perform3ds -> {
                         if (threeDsSdkClassValidator.is3dsSdkIncluded()) {
-                            eventDispatcher.dispatchEvents(listOf(CheckoutEvent.Start3DS))
+                            eventDispatcher.dispatchEvents(listOf(CheckoutEvent.Start3DS()))
                         } else dispatchEvents(
                             it.setClientThreeDsError(THREE_DS_CLASS_NOT_LOADED_ERROR)
                         )

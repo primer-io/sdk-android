@@ -132,7 +132,21 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 onToggleProgressIndicator(it.data)
             }
             is CheckoutEvent.Start3DS -> {
-                startActivity(ThreeDsActivity.getLaunchIntent(this))
+                it.processor3DSData?.let { data ->
+                    startActivityForResult(
+                        AsyncPaymentMethodWebViewActivity.getLaunchIntent(
+                            this,
+                            data.redirectUrl,
+                            "",
+                            data.statusUrl,
+                            data.title,
+                            WebViewClientType.ASYNC
+                        ),
+                        ASYNC_METHOD_REQUEST_CODE
+                    )
+                } ?: run {
+                    startActivity(ThreeDsActivity.getLaunchIntent(this))
+                }
             }
             is CheckoutEvent.StartAsyncRedirectFlow -> {
                 startActivityForResult(

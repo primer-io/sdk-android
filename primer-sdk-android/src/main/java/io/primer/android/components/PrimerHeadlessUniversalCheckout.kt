@@ -43,7 +43,14 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                     componentsListener?.onTokenizationPreparation()
                 is CheckoutEvent.PaymentMethodPresented ->
                     componentsListener?.onPaymentMethodShowed()
-                is CheckoutEvent.Start3DS -> navigator?.openThreeDsScreen()
+                is CheckoutEvent.Start3DS -> {
+                    if (e.processor3DSData == null) navigator?.openThreeDsScreen()
+                    else navigator?.openAsyncWebViewScreen(
+                        e.processor3DSData.title,
+                        e.processor3DSData.redirectUrl,
+                        e.processor3DSData.statusUrl
+                    )
+                }
                 is CheckoutEvent.StartAsyncRedirectFlow -> navigator?.openAsyncWebViewScreen(
                     e.title,
                     e.redirectUrl,
