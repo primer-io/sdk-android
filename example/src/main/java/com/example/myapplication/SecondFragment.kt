@@ -144,9 +144,9 @@ class SecondFragment : Fragment() {
 
         override fun onBeforePaymentCreated(
             paymentMethodData: PrimerPaymentMethodData,
-            createPaymentHandler: PrimerPaymentCreationDecisionHandler
+            decisionHandler: PrimerPaymentCreationDecisionHandler
         ) {
-            createPaymentHandler.continuePaymentCreation()
+            decisionHandler.continuePaymentCreation()
             Log.d(TAG, "onBeforePaymentCreated with $paymentMethodData")
         }
 

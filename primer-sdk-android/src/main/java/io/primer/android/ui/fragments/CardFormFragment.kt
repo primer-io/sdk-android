@@ -48,6 +48,7 @@ import io.primer.android.utils.PaymentUtils
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -59,6 +60,7 @@ import kotlin.collections.HashMap
  * Use the [CardFormFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@ExperimentalCoroutinesApi
 @KoinApiExtension
 internal class CardFormFragment : Fragment(), DIAppComponent {
 

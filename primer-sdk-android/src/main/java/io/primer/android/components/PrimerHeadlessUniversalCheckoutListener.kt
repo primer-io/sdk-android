@@ -10,6 +10,7 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.model.dto.PrimerPaymentMethodType
 
+@JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutListener {
     fun onClientSessionSetupSuccessfully(
         paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>

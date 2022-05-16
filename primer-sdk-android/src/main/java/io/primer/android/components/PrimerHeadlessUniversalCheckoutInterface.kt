@@ -30,7 +30,6 @@ interface PrimerHeadlessUniversalCheckoutInterface {
     /**
      * Lists the [PrimerInputElementType] for a given [PrimerPaymentMethodType]
      */
-    @OptIn()
     fun listRequiredInputElementTypes(paymentMethodType: PrimerPaymentMethodType):
         List<PrimerInputElementType>?
 

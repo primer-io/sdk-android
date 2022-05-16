@@ -6,9 +6,10 @@ import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
-import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.model.dto.PrimerPaymentMethodTokenData
 
+@JvmDefaultWithCompatibility
 interface PrimerCheckoutListener {
 
     fun onTokenizeSuccess(
