@@ -125,4 +125,5 @@
     <!--surcharge-->
     <string name="no_additional_fee">No additional fee</string>
     <string name="additional_fees_may_apply">Additional fees may apply</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
 </resources>

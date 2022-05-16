@@ -1,32 +1,31 @@
 package io.primer.android.ui.fragments
 
-import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.SessionState
+import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodUiType
+import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
+import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.RippleDrawable
-import android.content.res.ColorStateList
-import androidx.core.view.isGone
-import io.primer.android.PaymentMethodIntent
-import io.primer.android.SessionState
-import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
-import io.primer.android.payment.PaymentMethodUiType
-import io.primer.android.ui.extensions.autoCleaned
 
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
@@ -114,7 +113,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     * */
     private fun renderSavedPaymentMethodItem() {
         val context = requireContext()
-        val contentDrawable = generateButtonContent(context)
+        val contentDrawable = generateButtonContent(theme, context)
         val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val pressedStates = ColorStateList.valueOf(splash)
         val rippleDrawable = RippleDrawable(pressedStates, contentDrawable, null)
@@ -199,26 +198,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
             binding.primerSavedPaymentSection.isVisible = false
         }
         binding.primerSelectPaymentMethodSpinner.isGone = !isBusy
-    }
-
-    private val buttonStates = arrayOf(
-        intArrayOf(-android.R.attr.state_selected),
-        intArrayOf(android.R.attr.state_selected),
-    )
-
-    private fun generateButtonContent(context: Context): GradientDrawable {
-        val contentDrawable = GradientDrawable()
-        val border = theme.paymentMethodButton.border
-        val unSelectedColor = border.defaultColor.getColor(context, theme.isDarkMode)
-        val selectedColor = border.selectedColor.getColor(context, theme.isDarkMode)
-        val colors = intArrayOf(unSelectedColor, selectedColor)
-        val borderStates = ColorStateList(buttonStates, colors)
-        val width = border.width.getPixels(context)
-        contentDrawable.setStroke(width, borderStates)
-        val background = theme.paymentMethodButton.defaultColor.getColor(context, theme.isDarkMode)
-        contentDrawable.setColor(background)
-        contentDrawable.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
-        return contentDrawable
     }
 
     private fun renderManageVaultLabel() {

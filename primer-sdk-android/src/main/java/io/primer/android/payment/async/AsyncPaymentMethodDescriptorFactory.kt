@@ -10,6 +10,7 @@ import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
 import io.primer.android.payment.async.atome.AtomePaymentMethodDescriptor
 import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
 import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
+import io.primer.android.payment.async.coinbase.CoinbasePaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor
 import io.primer.android.payment.async.giropay.GiropayPaymentMethodDescriptor
@@ -161,6 +162,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
             )
             PaymentMethodType.PAY_NL_P24,
             PaymentMethodType.MOLLIE_P24 -> P24PaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.COINBASE -> CoinbasePaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

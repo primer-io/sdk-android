@@ -59,7 +59,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.BUCKAROO_EPS,
             PaymentMethodType.BUCKAROO_BANCONTACT,
             PaymentMethodType.ATOME,
-            PaymentMethodType.XFERS_PAYNOW
+            PaymentMethodType.XFERS_PAYNOW,
+            PaymentMethodType.COINBASE
             -> AsyncMethodFactory(
                 type,
                 settings

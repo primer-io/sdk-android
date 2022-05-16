@@ -1,17 +1,15 @@
 package io.primer.android.payment.card
 
-import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import io.primer.android.PaymentMethodIntent
 import io.primer.android.PrimerTheme
 import io.primer.android.R
-import io.primer.android.PaymentMethodIntent
 import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.dto.PaymentMethodRemoteConfig
@@ -22,6 +20,7 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
+import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
@@ -60,18 +59,6 @@ internal class CreditCard(
 
     override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 
-    private fun generateButtonContent(context: Context): GradientDrawable {
-        val content = GradientDrawable()
-        val strokeColor = theme.paymentMethodButton.border.defaultColor
-            .getColor(context, theme.isDarkMode)
-        val width = theme.paymentMethodButton.border.width.getPixels(context)
-        content.setStroke(width, strokeColor)
-        content.cornerRadius = theme.paymentMethodButton.cornerRadius.getDimension(context)
-        content.color = ColorStateList
-            .valueOf(theme.paymentMethodButton.defaultColor.getColor(context, theme.isDarkMode))
-        return content
-    }
-
     override fun createButton(container: ViewGroup): View {
         val binding = PaymentMethodButtonCardBinding.inflate(
             LayoutInflater.from(container.context),
@@ -79,7 +66,7 @@ internal class CreditCard(
             false
         )
 
-        val content = generateButtonContent(container.context)
+        val content = generateButtonContent(theme, container.context)
         val splash = theme.splashColor.getColor(container.context, theme.isDarkMode)
         val rippleColor = ColorStateList.valueOf(splash)
         binding.cardPreviewButton.background = RippleDrawable(rippleColor, content, null)

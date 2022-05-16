@@ -35,6 +35,7 @@ internal enum class Brand(
     INTERAC(R.drawable.ic_logo_interac, R.drawable.ic_logo_interac_square),
     PAYTRAIL(R.drawable.ic_logo_paytrail_light, R.drawable.ic_logo_paytrail_square),
     PAYSHOP(R.drawable.ic_logo_payshop_light, R.drawable.ic_logo_payshop_square),
+    COINBASE(R.drawable.ic_coinbase_logo, R.drawable.ic_coinbase_logo_square),
     UNKNOWN(0)
 }
 
