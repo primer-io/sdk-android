@@ -1,6 +1,6 @@
 package com.example.myapplication.datamodels
 
-import io.primer.android.model.dto.CountryCode
+import io.primer.android.data.configuration.models.CountryCode
 
 enum class AppCountryCode(val currencyCode: CurrencyCode, val flag: String) {
     GB(CurrencyCode.GBP, "🇬🇧"),

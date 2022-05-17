@@ -10,10 +10,10 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension

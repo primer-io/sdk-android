@@ -14,7 +14,7 @@ import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.SettingsViewModel
-import io.primer.android.model.dto.PrimerPaymentHandling
+import io.primer.android.data.settings.PrimerPaymentHandling
 
 class FirstFragment : Fragment() {
 

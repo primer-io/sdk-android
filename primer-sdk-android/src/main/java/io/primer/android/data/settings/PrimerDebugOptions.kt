@@ -1,4 +1,4 @@
-package io.primer.android.model
+package io.primer.android.data.settings
 
 import kotlinx.serialization.Serializable
 

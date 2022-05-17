@@ -1,7 +1,7 @@
 package io.primer.android.ui
 
-import io.primer.android.model.dto.MonetaryAmount
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.model.MonetaryAmount
+import io.primer.android.data.settings.internal.PrimerConfig
 
 internal class AmountLabelContentFactory private constructor() {
 

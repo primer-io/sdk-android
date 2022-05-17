@@ -5,7 +5,7 @@ import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodPar
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.session.repository.ConfigurationRepository
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map

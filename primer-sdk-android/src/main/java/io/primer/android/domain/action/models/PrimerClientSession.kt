@@ -1,7 +1,6 @@
 package io.primer.android.domain.action.models
 
-import io.primer.android.model.dto.CountryCode
-import kotlinx.serialization.Serializable
+import io.primer.android.data.configuration.models.CountryCode
 
 data class PrimerClientSession(
     val customerId: String?,
@@ -36,7 +35,6 @@ data class PrimerLineItem(
     val taxAmount: Int?
 )
 
-@Serializable
 data class PrimerAddress(
     val firstName: String? = null,
     val lastName: String? = null,
@@ -49,9 +47,4 @@ data class PrimerAddress(
 ) {
     val country: String?
         get() = countryCode?.name
-
-    fun toAddressLine(): String {
-        val values = listOf(addressLine1, addressLine2, postalCode, city, country)
-        return values.joinToString(", ")
-    }
 }

@@ -6,8 +6,8 @@ import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.ui.fragments.ErrorType
 
 internal class CheckoutErrorEventResolver(
@@ -19,16 +19,16 @@ internal class CheckoutErrorEventResolver(
 
     override fun dispatch(error: PrimerError) {
         val checkoutErrorHandler = object : PrimerErrorDecisionHandler {
-            override fun showErrorMessage(message: String?) {
+            override fun handleFailure(errorMessage: String?) {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.ShowError(
                         errorType = ErrorType.PAYMENT_FAILED,
-                        message = message
+                        message = errorMessage
                     )
                 )
             }
         }
-        when (settings.options.paymentHandling) {
+        when (settings.paymentHandling) {
             PrimerPaymentHandling.AUTO -> eventDispatcher.dispatchEvent(
                 CheckoutEvent.CheckoutPaymentError(
                     error,

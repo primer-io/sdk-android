@@ -1,6 +1,6 @@
 package io.primer.android.domain.session
 
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.error.ErrorMapperType

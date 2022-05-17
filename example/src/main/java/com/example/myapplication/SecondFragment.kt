@@ -24,7 +24,7 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
-import io.primer.android.model.dto.PrimerPaymentMethodTokenData
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
 
 class SecondFragment : Fragment() {
@@ -155,9 +155,9 @@ class SecondFragment : Fragment() {
             checkoutData: PrimerCheckoutData?,
             errorHandler: PrimerErrorDecisionHandler?
         ) {
-            AlertDialog.Builder(context).setMessage("onFailed $error with data $checkoutData")
+            AlertDialog.Builder(context).setMessage("onFailed ${error.description} with data $checkoutData")
                 .show()
-            errorHandler?.showErrorMessage("Something went wrong!")
+            errorHandler?.handleFailure("Something went wrong!")
         }
 
         override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
@@ -176,7 +176,7 @@ class SecondFragment : Fragment() {
         override fun onFailed(error: PrimerError, errorHandler: PrimerErrorDecisionHandler?) {
             AlertDialog.Builder(context).setMessage("onFailed $error")
                 .show()
-            errorHandler?.showErrorMessage("Something went wrong!")
+            errorHandler?.handleFailure("Something went wrong!")
         }
 
         override fun onTokenizeSuccess(
@@ -187,13 +187,8 @@ class SecondFragment : Fragment() {
             viewModel.createPayment(paymentMethodTokenData, decisionHandler)
         }
 
-        override fun onTokenAddedToVault(paymentMethodTokenData: PrimerPaymentMethodTokenData) {
-            super.onTokenAddedToVault(paymentMethodTokenData)
-            Log.d(TAG, "onTokenAddedToVault")
-        }
-
-        override fun onResume(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
-            Log.d(TAG, "onResume")
+        override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
+            Log.d(TAG, "onResumeSuccess")
             viewModel.resumePayment(resumeToken, decisionHandler)
         }
 

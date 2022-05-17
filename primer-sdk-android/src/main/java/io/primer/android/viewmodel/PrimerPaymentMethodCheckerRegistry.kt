@@ -1,6 +1,6 @@
 package io.primer.android.viewmodel
 
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 
 /**
  * Responsible for holding all the [PaymentMethodCheckerRegistry] for all the payment methods.

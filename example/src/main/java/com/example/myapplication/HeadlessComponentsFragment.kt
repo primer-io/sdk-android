@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentThirdBinding
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.viewmodels.MainViewModel
+import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.manager.PrimerCardManager
@@ -21,17 +22,17 @@ import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.ui.CardType
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
-import io.primer.android.model.dto.PrimerPaymentMethodTokenData
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
+@OptIn(ExperimentalPrimerApi::class)
 class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private val margin by lazy { requireContext().resources.getDimensionPixelOffset(R.dimen.medium_vertical_margin) }
@@ -72,7 +73,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             token?.let {
                 headlessUniversalCheckout.start(
                     requireContext(),
-                    it, viewModel.config
+                    it,
+                    viewModel.settings
                 )
                 showLoading("Starting HUC.")
             }
@@ -128,7 +130,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 viewModel.createPayment(paymentMethodTokenData, resumeHandler)
             }
 
-            override fun onResume(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler) {
+            override fun onResumeSuccess(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler) {
                 showLoading("Resume success. Resuming payment.")
                 viewModel.resumePayment(resumeToken, resumeHandler)
             }
@@ -183,7 +185,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
         paymentMethodTypes.forEach {
             when (it.paymentMethodType) {
-                PaymentMethodType.PAYMENT_CARD -> createForm(
+                PrimerPaymentMethodType.PAYMENT_CARD -> createForm(
                     cardManager.getRequiredInputElementTypes().orEmpty()
                 )
                 else -> addPaymentMethodView(it.paymentMethodType)

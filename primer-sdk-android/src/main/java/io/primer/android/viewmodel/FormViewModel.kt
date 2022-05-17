@@ -2,7 +2,7 @@ package io.primer.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.FormErrorState
 import io.primer.android.ui.FormField

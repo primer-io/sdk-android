@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
@@ -20,12 +21,11 @@ import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.model.APIEndpoint
 import io.primer.android.domain.payments.apaya.models.ApayaPaymentData
-import io.primer.android.model.KlarnaPaymentData
+import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.card.CreditCard
@@ -33,7 +33,6 @@ import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.paypal.PayPalDescriptor
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -107,7 +106,7 @@ internal class TokenizationViewModel(
                 TokenizationParams(
                     paymentMethod ?: return@launch,
                     config.paymentMethodIntent,
-                    config.settings.options.is3DSOnVaultingEnabled
+                    config.settings.paymentMethodOptions.cardPaymentOptions.is3DSOnVaultingEnabled
                 )
             )
                 .onStart { tokenizationStatus.postValue(TokenizationStatus.LOADING) }
@@ -179,7 +178,7 @@ internal class TokenizationViewModel(
 
     private fun generateLocaleJson(): JSONObject = JSONObject().apply {
         val countryCode = config.settings.order.countryCode
-        val locale = config.settings.options.locale.toLanguageTag()
+        val locale = config.settings.locale.toLanguageTag()
         val currencyCode = config.settings.currency
 
         put("countryCode", countryCode)
@@ -409,8 +408,8 @@ internal class TokenizationViewModel(
             apayaSessionInteractor(
                 ApayaSessionParams(
                     merchantAccountId,
-                    config.settings.options.locale,
-                    config.settings.currency.orEmpty(),
+                    config.settings.locale,
+                    config.settings.currency,
                     config.settings.customer.mobileNumber.orEmpty()
                 )
             ).collect { apayaPaymentData.postValue(it) }

@@ -1,6 +1,4 @@
-package io.primer.android.model
-
-import io.primer.android.ui.base.webview.WebViewClientType
+package io.primer.android.ui.base.webview
 
 internal abstract class BaseWebFlowPaymentData(
     open val redirectUrl: String,

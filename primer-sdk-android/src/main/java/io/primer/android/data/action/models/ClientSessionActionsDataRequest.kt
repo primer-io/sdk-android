@@ -1,11 +1,11 @@
 package io.primer.android.data.action.models
 
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
-import io.primer.android.model.dto.BinData
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.threeds.data.models.Address
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

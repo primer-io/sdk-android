@@ -4,16 +4,16 @@ import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.action.models.PrimerClientSession
-import io.primer.android.model.dto.CheckoutExitInfo
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.PrimerPaymentMethodTokenData
+import io.primer.android.model.CheckoutExitInfo
+import io.primer.android.model.CheckoutExitReason
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payment.processor_3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
@@ -26,9 +26,6 @@ internal sealed class CheckoutEvent(
         val data: PrimerPaymentMethodTokenData,
         val resumeHandler: PrimerResumeDecisionHandler,
     ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
-
-    class TokenAddedToVault(val data: PrimerPaymentMethodTokenData) :
-        CheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
 
     class ResumeSuccess(
         val resumeToken: String,
@@ -44,9 +41,6 @@ internal sealed class CheckoutEvent(
 
     class Exit(val data: CheckoutExitInfo) :
         CheckoutEvent(CheckoutEventType.EXIT)
-
-    class ToggleProgressIndicator(val data: Boolean) :
-        CheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
 
     class DismissInternal(val data: CheckoutExitReason) :
         CheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)

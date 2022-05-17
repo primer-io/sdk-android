@@ -1,6 +1,6 @@
 package io.primer.android.payment.processor_3ds
 
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 
 internal data class Processor3DS(
     val redirectUrl: String,

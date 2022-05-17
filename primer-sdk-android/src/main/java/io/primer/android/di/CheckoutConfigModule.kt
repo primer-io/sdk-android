@@ -16,7 +16,7 @@ import io.primer.android.data.token.repository.ValidateTokenDataRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.threeds.data.repository.PaymentMethodDataRepository
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import org.koin.core.qualifier.named
@@ -35,7 +35,7 @@ internal val CheckoutConfigModule = { config: PrimerConfig, clientToken: ClientT
 
         single { config }
         single { config.settings }
-        single { config.theme }
+        single { config.settings.uiOptions.theme }
 
         single {
             LocalClientTokenDataSource(clientToken)

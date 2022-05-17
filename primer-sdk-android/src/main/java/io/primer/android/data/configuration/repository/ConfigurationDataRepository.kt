@@ -2,7 +2,7 @@ package io.primer.android.data.configuration.repository
 
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.datasource.RemoteConfigurationDataSource
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import kotlinx.coroutines.flow.Flow

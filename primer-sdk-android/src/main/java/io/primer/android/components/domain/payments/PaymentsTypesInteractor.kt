@@ -1,6 +1,8 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.configuration.models.toPrimerPaymentMethod
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
@@ -11,8 +13,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.toPrimerPaymentMethod
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -34,7 +35,7 @@ internal class PaymentsTypesInteractor(
     override fun execute(params: None) = configurationInteractor(
         ConfigurationParams(false)
     ).flatMapLatest {
-        paymentMethodModulesInteractor.execute(None())
+        paymentMethodModulesInteractor.execute(PaymentModuleParams(false))
             .mapLatest { it.descriptors.map { it.config.type } }
             .mapLatest {
                 it.map { it.takeIfAvailable() }.filterNotNull()
@@ -63,7 +64,7 @@ internal class PaymentsTypesInteractor(
             try {
                 it.toPrimerPaymentMethod()
                 true
-            } catch (ignored: IllegalStateException) {
+            } catch (ignored: IllegalArgumentException) {
                 false
             }
         }

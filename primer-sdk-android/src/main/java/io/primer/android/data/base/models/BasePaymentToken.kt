@@ -1,7 +1,7 @@
 package io.primer.android.data.base.models
 
-import io.primer.android.model.dto.PaymentInstrumentData
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.tokenization.models.PaymentInstrumentData
 import io.primer.android.payment.KLARNA_CUSTOMER_TOKEN_TYPE
 import io.primer.android.payment.PAYPAL_BILLING_AGREEMENT_TYPE
 import io.primer.android.threeds.data.models.ResponseCode

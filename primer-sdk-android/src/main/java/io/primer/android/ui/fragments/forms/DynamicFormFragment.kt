@@ -18,15 +18,14 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentDynamicFormBinding
 import io.primer.android.domain.payments.forms.models.Form
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.viewmodel.ext.android.viewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import kotlinx.coroutines.flow.combineTransform
 import org.koin.core.component.KoinApiExtension

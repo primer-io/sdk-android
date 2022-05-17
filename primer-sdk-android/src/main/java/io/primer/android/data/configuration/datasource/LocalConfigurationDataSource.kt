@@ -1,9 +1,9 @@
 package io.primer.android.data.configuration.datasource
 
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.data.configuration.exception.MissingConfigurationException
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.settings.PrimerSettings
 import kotlinx.coroutines.flow.flowOf
 
 internal class LocalConfigurationDataSource(private val settings: PrimerSettings) :

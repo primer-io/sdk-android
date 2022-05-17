@@ -1,7 +1,7 @@
 package io.primer.android.model
 
-import io.primer.android.data.configuration.model.OrderDataResponse
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.configuration.models.OrderDataResponse
+import io.primer.android.data.settings.PrimerSettings
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

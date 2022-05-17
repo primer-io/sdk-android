@@ -19,7 +19,8 @@ import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.resume.ResumePaymentInteractor
-import io.primer.android.data.configuration.model.CheckoutModuleType
+import io.primer.android.data.configuration.models.CheckoutModuleType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
@@ -37,12 +38,13 @@ import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.dto.CountryCode
-import io.primer.android.model.dto.MonetaryAmount
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
+import io.primer.android.model.MonetaryAmount
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
@@ -53,7 +55,6 @@ import java.util.Currency
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -182,7 +183,7 @@ internal class PrimerViewModel(
     fun fetchConfiguration() {
         viewModelScope.launch {
             configurationInteractor(ConfigurationParams(false)).flatMapLatest {
-                paymentMethodModulesInteractor(None()).zip(
+                paymentMethodModulesInteractor(PaymentModuleParams(true)).zip(
                     vaultedPaymentMethodsInteractor(None())
                 ) { descriptorsHolder, paymentModelTokens ->
                     _vaultedPaymentMethods.postValue(paymentModelTokens)
@@ -195,9 +196,15 @@ internal class PrimerViewModel(
 
                     _paymentMethods.postValue(descriptorsHolder.descriptors)
                     descriptorsHolder.selectedPaymentMethodDescriptor?.let {
-                        _selectedPaymentMethod.postValue(
-                            descriptorsHolder.selectedPaymentMethodDescriptor
-                        )
+                        val paymentMethod = descriptorsHolder.selectedPaymentMethodDescriptor
+                        _selectedPaymentMethod.postValue(paymentMethod)
+                        paymentMethod.behaviours.firstOrNull()
+                            ?.let {
+                                val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
+                                if (isNotForm) {
+                                    executeBehaviour(it)
+                                }
+                            }
                     } ?: run {
                         viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
                     }
@@ -340,21 +347,12 @@ internal class PrimerViewModel(
 
     override fun onEvent(e: CheckoutEvent) {
         when (e) {
-            is CheckoutEvent.TokenAddedToVault -> {
-                val hasMatch = vaultedPaymentMethods.value
-                    ?.count { it.token == e.data.token } ?: 0 > 0
-                if (hasMatch) {
-                    _vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(
-                        PaymentMethodTokenAdapter.externalToInternal(e.data)
-                    )
-                }
-            }
             is CheckoutEvent.TokenAddedToVaultInternal -> {
                 val hasMatch = vaultedPaymentMethods.value
                     ?.count { it.token == e.data.token } ?: 0 > 0
                 if (hasMatch) {
                     _vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(
-                        PaymentMethodTokenAdapter.externalToInternal(e.data)
+                        e.data.toPaymentMethodVaultToken()
                     )
                 }
             }

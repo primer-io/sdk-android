@@ -15,7 +15,7 @@ import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.R
 import io.primer.android.threeds.data.exception.ThreeDsInitException
-import io.primer.android.data.configuration.model.Environment
+import io.primer.android.data.configuration.models.Environment
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.threeds.data.exception.ThreeDsFailedException
 import io.primer.android.threeds.data.models.BeginAuthResponse

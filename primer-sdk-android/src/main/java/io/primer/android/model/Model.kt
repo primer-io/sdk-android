@@ -4,12 +4,12 @@ import io.primer.android.http.exception.HttpException
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.data.error.model.APIError
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.SessionCreateException
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.ApiVersion
 import io.primer.android.di.SDK_API_VERSION_HEADER
-import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

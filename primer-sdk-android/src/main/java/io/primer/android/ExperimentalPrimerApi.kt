@@ -7,6 +7,7 @@ package io.primer.android
 )
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
-    message = "This is an experimental API. It may be changed or removed in the future."
+    message = "This is a beta API and can be changed in a " +
+        "backwards-incompatible manner with a best-effort migration."
 )
 annotation class ExperimentalPrimerApi

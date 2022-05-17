@@ -1,8 +1,7 @@
-package io.primer.android.data.configuration.model
+package io.primer.android.data.configuration.models
 
 import io.primer.android.domain.action.models.PrimerLineItem
 import io.primer.android.domain.action.models.PrimerOrder
-import io.primer.android.model.dto.CountryCode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -1,6 +1,6 @@
 package io.primer.android.domain.payments.apaya.models
 
-import io.primer.android.model.BaseWebFlowPaymentData
+import io.primer.android.ui.base.webview.BaseWebFlowPaymentData
 import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.ui.base.webview.WebViewClientType
 

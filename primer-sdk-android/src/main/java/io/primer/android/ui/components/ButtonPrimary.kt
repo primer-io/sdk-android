@@ -10,7 +10,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.LayoutButtonPrimaryBinding
 import io.primer.android.di.DIAppComponent

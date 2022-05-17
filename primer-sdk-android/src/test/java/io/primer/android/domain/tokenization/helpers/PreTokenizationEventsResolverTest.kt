@@ -9,13 +9,13 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerIntent
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerIntent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -66,7 +66,7 @@ internal class PreTokenizationEventsResolverTest {
     fun `resolve() should dispatch TOKENIZE_STARTED type when payment handling is MANUAL`() {
         val paymentMethodType = mockk<PrimerPaymentMethodType>(relaxed = true)
 
-        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
+        every { config.settings.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodType)

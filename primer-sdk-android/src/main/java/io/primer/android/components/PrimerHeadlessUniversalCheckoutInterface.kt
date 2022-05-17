@@ -2,10 +2,12 @@ package io.primer.android.components
 
 import android.content.Context
 import android.view.View
+import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.data.settings.PrimerSettings
 
+@ExperimentalPrimerApi
 interface PrimerHeadlessUniversalCheckoutInterface {
     /**
      * Sets the [PrimerHeadlessUniversalCheckoutListener]
@@ -15,7 +17,7 @@ interface PrimerHeadlessUniversalCheckoutInterface {
 
     /**
      * Starts the PrimerHeadlessUniversalCheckout SDK with [Context] & [clientToken] &
-     * [PrimerConfig] & [PrimerHeadlessUniversalCheckoutListener].
+     * [PrimerSettings] & [PrimerHeadlessUniversalCheckoutListener].
      * Calling this function will reset any old state
      * @param clientToken base64 string containing information about this Primer session.
      * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
@@ -23,7 +25,7 @@ interface PrimerHeadlessUniversalCheckoutInterface {
     fun start(
         context: Context,
         clientToken: String,
-        config: PrimerConfig? = null,
+        settings: PrimerSettings? = null,
         listener: PrimerHeadlessUniversalCheckoutListener? = null
     )
 

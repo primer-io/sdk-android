@@ -1,16 +1,16 @@
 package io.primer.android
 
 import android.content.Context
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerPaymentMethod
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
+import io.primer.android.data.settings.PrimerSettings
 
 interface PrimerInterface {
 
     /**
-     * Configures the Primer SDK with [PrimerConfig] & [PrimerCheckoutListener].
+     * Configures the Primer SDK with [PrimerSettings] & [PrimerCheckoutListener].
      */
     fun configure(
-        config: PrimerConfig? = null,
+        settings: PrimerSettings? = null,
         listener: PrimerCheckoutListener? = null,
     )
 

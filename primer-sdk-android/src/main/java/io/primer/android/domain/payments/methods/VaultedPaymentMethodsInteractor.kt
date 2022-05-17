@@ -1,12 +1,12 @@
 package io.primer.android.domain.payments.methods
 
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
-import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

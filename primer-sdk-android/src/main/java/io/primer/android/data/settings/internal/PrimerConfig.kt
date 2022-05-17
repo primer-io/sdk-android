@@ -1,21 +1,19 @@
-package io.primer.android.model.dto
+package io.primer.android.data.settings.internal
 
-import io.primer.android.PrimerTheme
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.analytics.data.models.Place
+import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.model.MonetaryAmount
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PrimerConfig(
-    var theme: PrimerTheme = PrimerTheme.build(),
+internal data class PrimerConfig(
     var settings: PrimerSettings = PrimerSettings(),
 ) {
 
     internal var clientTokenBase64: String? = null
 
     internal var intent: PrimerIntent = PrimerIntent()
-
-    internal var fromHUC: Boolean = false
 
     internal val monetaryAmount: MonetaryAmount?
         get() {

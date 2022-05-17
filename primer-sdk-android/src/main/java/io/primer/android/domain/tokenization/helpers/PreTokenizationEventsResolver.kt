@@ -1,12 +1,12 @@
 package io.primer.android.domain.tokenization.helpers
 
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.ui.fragments.ErrorType
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -20,7 +20,7 @@ internal class PreTokenizationEventsResolver(
         suspendCancellableCoroutine<Unit> { continuation ->
             when {
                 config.intent.paymentMethodIntent.isVault ||
-                    config.settings.options.paymentHandling == PrimerPaymentHandling.MANUAL -> {
+                    config.settings.paymentHandling == PrimerPaymentHandling.MANUAL -> {
                     eventDispatcher.dispatchEvent(
                         CheckoutEvent.TokenizationStarted(
                             paymentMethodType
@@ -28,7 +28,7 @@ internal class PreTokenizationEventsResolver(
                     )
                     continuation.resume(Unit)
                 }
-                config.settings.options.paymentHandling == PrimerPaymentHandling.AUTO -> {
+                config.settings.paymentHandling == PrimerPaymentHandling.AUTO -> {
                     val handler = object : PrimerPaymentCreationDecisionHandler {
                         override fun continuePaymentCreation() {
                             continuation.resume(Unit)
@@ -43,7 +43,7 @@ internal class PreTokenizationEventsResolver(
                             )
                         }
                     }
-                    if (config.fromHUC) {
+                    if (config.settings.fromHUC) {
                         eventDispatcher.dispatchEvent(
                             CheckoutEvent.PaymentCreateStartedHUC(
                                 PrimerPaymentMethodData(paymentMethodType),

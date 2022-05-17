@@ -1,4 +1,4 @@
-package io.primer.android.data.configuration.model
+package io.primer.android.data.configuration.models
 
 import io.primer.android.domain.action.models.PrimerCustomer
 import kotlinx.serialization.Serializable

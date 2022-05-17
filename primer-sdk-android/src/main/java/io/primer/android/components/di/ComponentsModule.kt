@@ -3,6 +3,7 @@ package io.primer.android.components.di
 import io.primer.android.components.data.payments.repository.CheckoutModuleDataRepository
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
+import io.primer.android.components.domain.payments.PaymentInputDataValidateInteractor
 import io.primer.android.components.domain.payments.PaymentTokenizationInteractor
 import io.primer.android.components.domain.payments.PaymentsTypesInteractor
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
@@ -32,7 +33,6 @@ internal val componentsModule = {
             PaymentTokenizationInteractor(
                 get(),
                 get(),
-                get(),
                 get(named(COMPONENTS_HANDLER_LOGGER_NAME))
             )
         }
@@ -53,6 +53,24 @@ internal val componentsModule = {
                 get(named(COMPONENTS_HANDLER_LOGGER_NAME))
             )
         }
-        factory { HeadlessUniversalCheckoutViewModel(get(), get(), get(), get(), get(), get()) }
+        single {
+            PaymentInputDataValidateInteractor(
+                get(),
+                get(),
+                get(),
+            )
+        }
+        factory {
+            HeadlessUniversalCheckoutViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
     }
 }

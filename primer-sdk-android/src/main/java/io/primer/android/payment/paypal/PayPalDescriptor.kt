@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
-import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour

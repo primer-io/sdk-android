@@ -7,7 +7,6 @@ enum class CheckoutEventType {
     RESUME_SUCCESS_INTERNAL,
     EXIT,
     SHOW_ERROR,
-    TOGGLE_LOADING,
     SHOW_SUCCESS,
     DISMISS_INTERNAL,
     START_3DS,

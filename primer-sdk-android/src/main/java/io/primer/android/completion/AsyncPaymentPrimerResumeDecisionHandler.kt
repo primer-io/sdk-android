@@ -1,6 +1,7 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -8,7 +9,6 @@ import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

@@ -3,11 +3,11 @@ package io.primer.android.data.payments.methods.repository
 import android.content.Context
 import io.primer.android.PaymentMethod
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerPaymentMethod
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.PaymentMethodListFactory
 import io.primer.android.payment.apaya.Apaya
@@ -63,7 +63,7 @@ internal class PaymentMethodsDataRepository(
         PrimerPaymentMethod.KLARNA -> p is Klarna
         PrimerPaymentMethod.GOOGLE_PAY -> p is GooglePay
         PrimerPaymentMethod.PAYPAL -> p is PayPal
-        PrimerPaymentMethod.CARD -> p is Card
+        PrimerPaymentMethod.PAYMENT_CARD -> p is Card
         PrimerPaymentMethod.GOCARDLESS -> p is GoCardless
         PrimerPaymentMethod.APAYA -> p is Apaya
         PrimerPaymentMethod.ATOME -> p.type == PaymentMethodType.ATOME

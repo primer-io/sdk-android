@@ -1,4 +1,4 @@
-package io.primer.android.model.dto
+package io.primer.android.data.settings.internal
 
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodIntent
@@ -28,17 +28,17 @@ internal data class PrimerIntent(
 
             if (paymentMethods.isEmpty()) return PrimerIntent(
                 sessionIntent,
-                PrimerPaymentMethod.CARD
+                PrimerPaymentMethod.PAYMENT_CARD
             )
 
             return when (paymentMethods.first()) {
                 is Klarna -> PrimerIntent(sessionIntent, PrimerPaymentMethod.KLARNA)
-                is Card -> PrimerIntent(sessionIntent, PrimerPaymentMethod.CARD)
+                is Card -> PrimerIntent(sessionIntent, PrimerPaymentMethod.PAYMENT_CARD)
                 is PayPal -> PrimerIntent(sessionIntent, PrimerPaymentMethod.PAYPAL)
                 is GooglePay -> PrimerIntent(sessionIntent, PrimerPaymentMethod.GOOGLE_PAY)
                 is GoCardless -> PrimerIntent(sessionIntent, PrimerPaymentMethod.GOCARDLESS)
                 is Apaya -> PrimerIntent(sessionIntent, PrimerPaymentMethod.APAYA)
-                else -> PrimerIntent(sessionIntent, PrimerPaymentMethod.CARD)
+                else -> PrimerIntent(sessionIntent, PrimerPaymentMethod.PAYMENT_CARD)
             }
         }
     }
@@ -48,7 +48,7 @@ internal data class PrimerIntent(
 enum class PrimerPaymentMethod {
 
     ANY,
-    CARD,
+    PAYMENT_CARD,
     KLARNA,
     PAYPAL,
     GOOGLE_PAY,

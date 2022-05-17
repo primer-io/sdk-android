@@ -16,10 +16,17 @@ import com.example.myapplication.utils.CombinedLiveData
 import io.primer.android.PrimerCheckoutListener
 import io.primer.android.Primer
 import io.primer.android.completion.PrimerResumeDecisionHandler
-import io.primer.android.domain.action.models.PrimerAddress
-import io.primer.android.model.PrimerDebugOptions
-import io.primer.android.model.dto.*
+import io.primer.android.data.settings.PrimerCardPaymentOptions
+import io.primer.android.data.settings.PrimerKlarnaOptions
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.PrimerPaymentMethodOptions
+import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.PrimerDebugOptions
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
+import io.primer.android.data.tokenization.models.TokenType
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.ui.settings.PrimerUIOptions
 import okhttp3.OkHttpClient
 import java.util.UUID
 
@@ -50,7 +57,9 @@ class MainViewModel(
 
     private val _threeDsResult: MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> =
         MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?>()
-    val threeDsResult: LiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> = _threeDsResult
+    val threeDsResult: LiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> =
+        _threeDsResult
+
     fun clearThreeDsResult(): Unit =
         _threeDsResult.postValue(null)
 
@@ -65,7 +74,7 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-        val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
 
     private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
     val amount: LiveData<Int> = _amount
@@ -108,34 +117,27 @@ class MainViewModel(
     val isStandalonePaymentMethod: Boolean
         get() = useStandalonePaymentMethod.value != null
 
-    val config: PrimerConfig
-        get() = PrimerConfig(
+    val settings: PrimerSettings
+        get() = PrimerSettings(
             // todo: refactor to reintroduce custom values through client session
-            settings = PrimerSettings(
-                business = PrimerBusiness(
-                    "Primer",
-                    address = PrimerAddress(
-                        addressLine1 = "line1",
-                        addressLine2 = "line2",
-                        postalCode = "3455",
-                        city = "London",
-                        countryCode = CountryCode.GB
-                    )
-                ),
-                options = PrimerOptions(
-                    preferWebView = true,
-                    debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-                    is3DSOnVaultingEnabled = threeDsEnabled.value ?: false,
-                    redirectScheme = "primer",
-                    paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO
-                )
+            paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
+            paymentMethodOptions = PrimerPaymentMethodOptions(
+                redirectScheme = "primer",
+                cardPaymentOptions = PrimerCardPaymentOptions(threeDsEnabled.value ?: false),
+                klarnaOptions = PrimerKlarnaOptions("This is custom description")
             ),
+            uiOptions = PrimerUIOptions(
+                isInitScreenEnabled = true,
+                isSuccessScreenEnabled = true,
+                isErrorScreenEnabled = true
+            ),
+            debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
         )
 
     fun configure(
         listener: PrimerCheckoutListener,
     ) {
-        Primer.instance.configure(config, listener)
+        Primer.instance.configure(settings, listener)
     }
 
     fun fetchClientSession() = clientSessionRepository.fetch(

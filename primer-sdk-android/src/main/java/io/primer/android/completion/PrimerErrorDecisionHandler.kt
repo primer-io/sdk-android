@@ -2,5 +2,5 @@ package io.primer.android.completion
 
 interface PrimerErrorDecisionHandler {
 
-    fun showErrorMessage(errorMessageg: String?)
+    fun handleFailure(errorMessage: String?)
 }

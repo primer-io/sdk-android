@@ -1,8 +1,8 @@
 package io.primer.android.domain.error.models
 
 import io.primer.android.PaymentMethodIntent
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerPaymentMethod
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import java.util.UUID
 
 internal sealed class PaymentMethodError : PrimerError() {

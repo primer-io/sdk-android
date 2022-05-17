@@ -7,7 +7,7 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.model.dto.PrimerPaymentMethodTokenData
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
 @JvmDefaultWithCompatibility
 interface PrimerCheckoutListener {
@@ -17,9 +17,7 @@ interface PrimerCheckoutListener {
         decisionHandler: PrimerResumeDecisionHandler
     ) = Unit
 
-    fun onTokenAddedToVault(paymentMethodTokenData: PrimerPaymentMethodTokenData) = Unit
-
-    fun onResume(
+    fun onResumeSuccess(
         resumeToken: String,
         decisionHandler: PrimerResumeDecisionHandler
     ) = Unit
@@ -41,7 +39,7 @@ interface PrimerCheckoutListener {
         error: PrimerError,
         errorHandler: PrimerErrorDecisionHandler?
     ) {
-        errorHandler?.showErrorMessage(null)
+        errorHandler?.handleFailure(null)
     }
 
     fun onFailed(
@@ -49,7 +47,7 @@ interface PrimerCheckoutListener {
         checkoutData: PrimerCheckoutData?,
         errorHandler: PrimerErrorDecisionHandler?
     ) {
-        errorHandler?.showErrorMessage(null)
+        errorHandler?.handleFailure(null)
     }
 
     fun onDismissed() = Unit

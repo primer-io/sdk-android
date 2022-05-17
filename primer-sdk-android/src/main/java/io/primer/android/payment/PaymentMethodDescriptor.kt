@@ -2,8 +2,8 @@ package io.primer.android.payment
 
 import android.view.View
 import android.view.ViewGroup
-import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject

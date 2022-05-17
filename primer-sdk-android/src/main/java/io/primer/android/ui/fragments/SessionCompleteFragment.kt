@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
@@ -17,7 +17,7 @@ import io.primer.android.databinding.FragmentSessionCompleteBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.CheckoutExitReason
 import io.primer.android.presentation.base.BaseViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import io.primer.android.ui.extensions.autoCleaned

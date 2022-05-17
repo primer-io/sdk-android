@@ -1,10 +1,10 @@
 package io.primer.android.payment
 
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
-import io.primer.android.model.dto.CountryCode
-import io.primer.android.data.configuration.model.OrderDataResponse
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.data.configuration.models.OrderDataResponse
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.card.Card

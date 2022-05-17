@@ -1,6 +1,6 @@
 package io.primer.android.domain.error.models
 
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import java.util.UUID
 
 internal class SessionCreateError(

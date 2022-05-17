@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentQrCodeBinding
 import io.primer.android.domain.payments.forms.models.Form
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.extensions.autoCleaned

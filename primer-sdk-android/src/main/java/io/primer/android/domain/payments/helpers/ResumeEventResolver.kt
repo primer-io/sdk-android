@@ -3,8 +3,8 @@ package io.primer.android.domain.payments.helpers
 import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 
 internal class ResumeEventResolver(
     private val config: PrimerConfig,
@@ -13,7 +13,7 @@ internal class ResumeEventResolver(
 ) {
 
     fun resolve(paymentInstrumentType: String, resumeToken: String? = null) {
-        when (config.settings.options.paymentHandling) {
+        when (config.settings.paymentHandling) {
             PrimerPaymentHandling.AUTO -> {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.ResumeSuccessInternal(

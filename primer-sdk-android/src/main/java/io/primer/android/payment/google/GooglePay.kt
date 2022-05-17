@@ -3,7 +3,7 @@ package io.primer.android.payment.google
 import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic

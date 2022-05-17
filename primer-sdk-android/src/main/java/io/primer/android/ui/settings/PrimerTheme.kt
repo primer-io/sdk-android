@@ -1,7 +1,8 @@
-package io.primer.android
+package io.primer.android.ui.settings
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import io.primer.android.R
 import kotlinx.serialization.Serializable
 
 @Serializable

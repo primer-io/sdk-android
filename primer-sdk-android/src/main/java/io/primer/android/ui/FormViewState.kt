@@ -1,7 +1,7 @@
 package io.primer.android.ui
 
 import io.primer.android.R
-import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.model.SyncValidationError
 
 internal class Validator(private val field: FormField) {
 

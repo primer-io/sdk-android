@@ -1,6 +1,6 @@
 package io.primer.android.utils
 
-import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.model.MonetaryAmount
 import java.text.NumberFormat
 import java.util.Currency
 import kotlin.math.pow

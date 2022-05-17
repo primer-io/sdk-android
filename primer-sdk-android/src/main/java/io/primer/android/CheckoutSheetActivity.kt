@@ -11,6 +11,7 @@ import com.google.android.gms.wallet.PaymentData
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
@@ -18,15 +19,14 @@ import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodPar
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.BaseWebFlowPaymentData
+import io.primer.android.ui.base.webview.BaseWebFlowPaymentData
 import io.primer.android.model.Serialization
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.model.dto.CheckoutExitInfo
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.model.CheckoutExitInfo
+import io.primer.android.model.CheckoutExitReason
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -51,7 +51,6 @@ import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.PaymentMethodStatusFragment
-import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
 import io.primer.android.ui.fragments.SessionCompleteViewType
@@ -80,26 +79,35 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private lateinit var sheet: CheckoutSheetFragment
     private lateinit var config: PrimerConfig
 
-    private val viewStatusObserver = Observer<ViewStatus> {
-        if (config.settings.options.showUI.not()) {
+    private val viewStatusObserver = Observer<ViewStatus> { viewStatus ->
+        if (config.settings.fromHUC) {
             return@Observer
         }
 
-        val fragment = when (it) {
-            ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
-            ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
-            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
-            else -> null
+        val fragment = when (viewStatus) {
+            ViewStatus.INITIALIZING -> {
+                InitializingFragment.newInstance()
+            }
+            ViewStatus.SELECT_PAYMENT_METHOD -> {
+                SelectPaymentMethodFragment.newInstance()
+            }
+            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> {
+                VaultedPaymentMethodsFragment.newInstance()
+            }
         }
 
-        if (fragment != null) {
-            openFragment(
-                fragment,
-                initFinished
-            )
+        when {
+            viewStatus == ViewStatus.INITIALIZING &&
+                config.settings.uiOptions.isInitScreenEnabled.not() -> sheet?.dialog?.hide()
+            else -> sheet?.dialog?.show()
         }
 
-        if (!initFinished && it != ViewStatus.INITIALIZING) {
+        openFragment(
+            fragment,
+            initFinished
+        )
+
+        if (!initFinished && viewStatus != ViewStatus.INITIALIZING) {
             initFinished = true
         }
     }
@@ -110,7 +118,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 onExit(it.data)
             }
             is CheckoutEvent.ShowSuccess -> {
-                if (config.settings.options.showUI) {
+                if (config.settings.uiOptions.isSuccessScreenEnabled) {
                     openFragment(
                         SessionCompleteFragment.newInstance(
                             it.delay,
@@ -122,7 +130,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 }
             }
             is CheckoutEvent.ShowError -> {
-                if (config.settings.options.showUI) {
+                if (config.settings.uiOptions.isErrorScreenEnabled) {
                     openFragment(
                         SessionCompleteFragment.newInstance(
                             it.delay,
@@ -132,9 +140,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
                 }
-            }
-            is CheckoutEvent.ToggleProgressIndicator -> {
-                onToggleProgressIndicator(it.data)
             }
             is CheckoutEvent.Start3DS -> {
                 it.processor3DSData?.let { data ->
@@ -200,28 +205,23 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private val webFlowPaymentDataObserver =
         Observer<BaseWebFlowPaymentData> { paymentData ->
             EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
-            if (config.settings.options.preferWebView) {
-                val title =
-                    when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
-                        is KlarnaDescriptor -> paymentMethod.options.webViewTitle
-                        is ApayaDescriptor -> paymentMethod.options.webViewTitle
-                        else -> throw IllegalStateException("Unknown payment method.")
-                    }
+            val title =
+                when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
+                    is KlarnaDescriptor -> paymentMethod.options.webViewTitle
+                    is ApayaDescriptor -> paymentMethod.options.webViewTitle
+                    else -> throw IllegalStateException("Unknown payment method.")
+                }
 
-                startActivityForResult(
-                    WebViewActivity.getLaunchIntent(
-                        this,
-                        paymentData.redirectUrl,
-                        paymentData.returnUrl,
-                        title.orEmpty(),
-                        paymentData.getWebViewClientType()
-                    ),
-                    paymentData.getRequestCode()
-                )
-            } else {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentData.redirectUrl))
-                startActivity(intent)
-            }
+            startActivityForResult(
+                WebViewActivity.getLaunchIntent(
+                    this,
+                    paymentData.redirectUrl,
+                    paymentData.returnUrl,
+                    title.orEmpty(),
+                    paymentData.getWebViewClientType()
+                ),
+                paymentData.getRequestCode()
+            )
         }
     //endregion
 
@@ -330,7 +330,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             ?.let { json.decodeFromString(PrimerConfig.serializer(), it) }
             ?: return
 
-        if (config.settings.options.showUI.not()) {
+        if (config.settings.fromHUC) {
             ensureClicksGoThrough()
         }
 
@@ -345,7 +345,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         primerViewModel.fetchConfiguration()
 
         sheet = CheckoutSheetFragment.newInstance()
-
         primerViewModel.viewStatus.observe(this, viewStatusObserver)
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
         primerViewModel.selectedPaymentMethodBehaviour.observe(
@@ -407,14 +406,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
                 is CheckoutEvent.ShowError,
-                is CheckoutEvent.ToggleProgressIndicator,
                 -> primerViewModel.setCheckoutEvent(it)
                 else -> {
                 }
             }
         }
 
-        if (!config.settings.options.showUI.not()) {
+        if (config.settings.fromHUC.not()) {
             openSheet()
         }
     }
@@ -434,7 +432,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     override fun onResume() {
         super.onResume()
-        if (!config.settings.options.preferWebView ||
+        // todo
+        if (
             setOf(PaymentMethodType.KLARNA, PaymentMethodType.APAYA)
                 .contains(primerViewModel.selectedPaymentMethod.value?.config?.type)
                 .not()
@@ -530,19 +529,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private fun openFragment(behaviour: NewFragmentBehaviour) {
-        if (config.settings.options.showUI.not()) {
+        if (config.settings.fromHUC) {
             return
         }
 
         behaviour.execute(sheet)
-    }
-
-    private fun onToggleProgressIndicator(visible: Boolean) {
-        if (visible) {
-            openFragment(ProgressIndicatorFragment.newInstance(), true)
-        } else {
-            sheet.childFragmentManager.popBackStack()
-        }
     }
 
     private fun openSheet() {

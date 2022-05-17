@@ -1,6 +1,8 @@
 package io.primer.android.domain.tokenization
 
 import io.primer.android.PaymentMethodIntent
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.tokenization.models.toPaymentMethodToken
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.error.ErrorMapperType
@@ -11,8 +13,6 @@ import io.primer.android.domain.tokenization.repository.TokenizationRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator.Companion.THREE_DS_CLASS_NOT_LOADED_ERROR
@@ -42,7 +42,7 @@ internal class TokenizationInteractor(
         }.flatMapLatest {
             tokenizationRepository.tokenize(params)
                 .onEach {
-                    val token = PaymentMethodTokenAdapter.internalToExternal(it)
+                    val token = it.toPaymentMethodToken()
                     paymentMethodRepository.setPaymentMethod(it)
                     val perform3ds =
                         token.paymentInstrumentType == PaymentMethodType.PAYMENT_CARD.name &&

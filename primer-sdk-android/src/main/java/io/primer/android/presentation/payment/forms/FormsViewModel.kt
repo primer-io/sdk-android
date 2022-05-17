@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
@@ -12,10 +13,8 @@ import io.primer.android.domain.payments.forms.FormsInteractor
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.domain.payments.forms.models.FormInputParams
 import io.primer.android.domain.payments.forms.models.FormValidationParam
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 

@@ -1,9 +1,8 @@
-package io.primer.android.data.configuration.model
+package io.primer.android.data.configuration.models
 
 import androidx.annotation.Keep
 import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.models.PrimerClientSession
-import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

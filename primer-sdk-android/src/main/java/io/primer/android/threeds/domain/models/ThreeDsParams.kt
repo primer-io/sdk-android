@@ -2,7 +2,7 @@ package io.primer.android.threeds.domain.models
 
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import io.primer.android.PaymentMethodIntent
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.threeds.data.models.Address
 import io.primer.android.threeds.data.models.BeginAuthRequest
 import io.primer.android.threeds.data.models.ChallengePreference

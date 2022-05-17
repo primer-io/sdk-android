@@ -1,8 +1,8 @@
 package io.primer.android.data.payments.forms.datasource
 
-import io.primer.android.PrimerTheme
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.model.dto.PaymentMethodType
 import java.lang.IllegalStateException
 
 internal class LocalFormDataSourceFactory(private val primerTheme: PrimerTheme) {

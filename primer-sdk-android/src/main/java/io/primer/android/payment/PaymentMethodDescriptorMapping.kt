@@ -1,7 +1,7 @@
 package io.primer.android.payment
 
-import io.primer.android.model.dto.PrimerPaymentMethod
-import io.primer.android.model.dto.toPrimerPaymentMethod
+import io.primer.android.data.configuration.models.toPrimerPaymentMethod
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.gocardless.GoCardlessDescriptor
@@ -17,7 +17,7 @@ internal class PaymentMethodDescriptorMapping(
     @KoinApiExtension
     fun getDescriptorFor(paymentMethod: PrimerPaymentMethod): PaymentMethodDescriptor? =
         when (paymentMethod) {
-            PrimerPaymentMethod.CARD -> {
+            PrimerPaymentMethod.PAYMENT_CARD -> {
                 descriptors.find { it is CreditCard }
             }
 

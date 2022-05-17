@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
@@ -17,7 +18,6 @@ import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

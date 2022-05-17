@@ -13,8 +13,8 @@ import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -51,7 +51,7 @@ internal class ResumeEventResolverTest {
     @Test
     fun `resolve() should dispatch RESUME_SUCCESS_INTERNAL type when payment handling is AUTO`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.AUTO)
+        every { config.settings.paymentHandling }.returns(PrimerPaymentHandling.AUTO)
 
         runTest {
             resumeEventResolver.resolve(paymentMethodToken.paymentInstrumentType)
@@ -67,7 +67,7 @@ internal class ResumeEventResolverTest {
     @Test
     fun `resolve() should dispatch RESUME_SUCCESS type when payment handling is MANUAL`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { config.settings.options.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
+        every { config.settings.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
             resumeEventResolver.resolve(paymentMethodToken.paymentInstrumentType)

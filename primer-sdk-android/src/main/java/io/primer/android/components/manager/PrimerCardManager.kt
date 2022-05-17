@@ -1,5 +1,6 @@
 package io.primer.android.components.manager
 
+import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.card.CardInputData
 import io.primer.android.components.ui.widgets.PrimerCardNumberEditText
@@ -9,9 +10,9 @@ import io.primer.android.components.ui.widgets.PrimerInputElementCardNumberListe
 import io.primer.android.components.ui.widgets.PrimerTextChangedListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 
+@ExperimentalPrimerApi
 interface PrimerUniversalCheckoutCardManagerInterface {
     fun getRequiredInputElementTypes(): List<PrimerInputElementType>?
     fun setInputElements(elements: List<PrimerInputElement>)
@@ -20,10 +21,12 @@ interface PrimerUniversalCheckoutCardManagerInterface {
     fun setCardManagerListener(listener: PrimerCardManagerListener)
 }
 
+@ExperimentalPrimerApi
 interface PrimerCardManagerListener {
     fun onCardValidationChanged(isCardFormValid: Boolean)
 }
 
+@ExperimentalPrimerApi
 class PrimerCardManager private constructor() :
     PrimerUniversalCheckoutCardManagerInterface,
     PrimerTextChangedListener {
@@ -34,7 +37,7 @@ class PrimerCardManager private constructor() :
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType>? {
         return PrimerHeadlessUniversalCheckout.instance.listRequiredInputElementTypes(
-            PaymentMethodType.PAYMENT_CARD
+            PrimerPaymentMethodType.PAYMENT_CARD
         )
     }
 

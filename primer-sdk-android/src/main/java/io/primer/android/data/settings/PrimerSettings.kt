@@ -1,14 +1,23 @@
-package io.primer.android.model.dto
+package io.primer.android.data.settings
 
-import io.primer.android.data.configuration.model.CustomerDataResponse
-import io.primer.android.data.configuration.model.OrderDataResponse
+import io.primer.android.data.configuration.models.CustomerDataResponse
+import io.primer.android.data.configuration.models.OrderDataResponse
+import io.primer.android.ui.settings.PrimerUIOptions
+import io.primer.android.utils.LocaleSerializer
 import kotlinx.serialization.Serializable
+import java.util.Locale
 
 @Serializable
 data class PrimerSettings(
-    var business: PrimerBusiness = PrimerBusiness(),
-    var options: PrimerOptions = PrimerOptions(),
+    var paymentHandling: PrimerPaymentHandling = PrimerPaymentHandling.AUTO,
+    @Serializable(with = LocaleSerializer::class) var locale: Locale = Locale.getDefault(),
+
+    var paymentMethodOptions: PrimerPaymentMethodOptions = PrimerPaymentMethodOptions(),
+    var uiOptions: PrimerUIOptions = PrimerUIOptions(),
+    var debugOptions: PrimerDebugOptions = PrimerDebugOptions(),
 ) {
+
+    internal var fromHUC: Boolean = false
 
     internal var order = OrderDataResponse()
     internal var customer = CustomerDataResponse()

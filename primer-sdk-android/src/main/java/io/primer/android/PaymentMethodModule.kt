@@ -1,7 +1,7 @@
 package io.primer.android
 
 import android.content.Context
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry

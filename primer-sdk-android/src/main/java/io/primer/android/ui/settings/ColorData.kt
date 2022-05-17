@@ -1,4 +1,4 @@
-package io.primer.android
+package io.primer.android.ui.settings
 
 import android.content.Context
 import android.graphics.Color

@@ -10,8 +10,8 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType

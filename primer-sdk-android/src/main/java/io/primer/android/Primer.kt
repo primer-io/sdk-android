@@ -14,14 +14,15 @@ import io.primer.android.data.tokenization.models.tokenizationSerializationModul
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Serialization
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerPaymentMethod
-import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
+import io.primer.android.model.CheckoutExitReason
 import io.primer.android.data.token.model.ClientToken
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PrimerIntent
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerIntent
+import io.primer.android.data.settings.PrimerSettings
 import kotlinx.serialization.encodeToString
 
 class Primer private constructor() : PrimerInterface {
@@ -40,11 +41,8 @@ class Primer private constructor() : PrimerInterface {
                 is CheckoutEvent.TokenizationSuccess -> {
                     listener?.onTokenizeSuccess(e.data, e.resumeHandler)
                 }
-                is CheckoutEvent.TokenAddedToVault -> {
-                    listener?.onTokenAddedToVault(e.data)
-                }
                 is CheckoutEvent.ResumeSuccess -> {
-                    listener?.onResume(e.resumeToken, e.resumeHandler)
+                    listener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
                 }
                 is CheckoutEvent.PaymentCreateStarted -> {
                     listener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
@@ -74,12 +72,12 @@ class Primer private constructor() : PrimerInterface {
 
     @Throws(IllegalArgumentException::class)
     override fun configure(
-        config: PrimerConfig?,
+        settings: PrimerSettings?,
         listener: PrimerCheckoutListener?,
     ) {
         listener?.let { l -> setListener(l) }
-        config?.let {
-            this.config = config
+        settings?.let {
+            this.config = PrimerConfig(it)
         }
         addAnalyticsEvent(
             SdkFunctionParams(
@@ -146,7 +144,8 @@ class Primer private constructor() : PrimerInterface {
             setupAndVerifyClientToken(clientToken)
 
             val scheme =
-                config.settings.options.redirectScheme ?: context.packageName.let { "$it.primer" }
+                config.settings.paymentMethodOptions.redirectScheme
+                    ?: context.packageName.let { "$it.primer" }
             WebviewInteropRegister.init(scheme)
 
             // TODO: refactor the way we pass in the config.
@@ -186,7 +185,7 @@ class Primer private constructor() : PrimerInterface {
     }
 
     private fun emitError(error: PrimerError) {
-        when (config.settings.options.paymentHandling) {
+        when (config.settings.paymentHandling) {
             PrimerPaymentHandling.AUTO -> eventDispatcher.dispatchEvent(
                 CheckoutEvent.CheckoutPaymentError(
                     error

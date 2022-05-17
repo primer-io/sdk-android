@@ -13,7 +13,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode

@@ -21,7 +21,7 @@ internal class AsyncPaymentMethodBehaviour(private val asyncMethod: AsyncPayment
         asyncMethod.appendTokenizableValue(
             "sessionInfo",
             "locale",
-            asyncMethod.localConfig.settings.options.locale.toLanguageTag()
+            asyncMethod.localConfig.settings.locale.toLanguageTag()
         )
         asyncMethod.appendTokenizableValue("sessionInfo", "platform", "ANDROID")
         asyncMethod.appendTokenizableValue(

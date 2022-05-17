@@ -1,6 +1,6 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import kotlinx.serialization.Serializable
 
 @Serializable

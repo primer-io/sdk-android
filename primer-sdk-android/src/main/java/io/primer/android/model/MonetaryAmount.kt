@@ -1,4 +1,4 @@
-package io.primer.android.model.dto
+package io.primer.android.model
 
 import kotlinx.serialization.Serializable
 import java.util.Currency

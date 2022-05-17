@@ -4,10 +4,10 @@ import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.model.dto.PrimerPaymentHandling
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.TokenType
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.tokenization.models.TokenType
+import io.primer.android.data.tokenization.models.toPaymentMethodToken
 
 internal class PostTokenizationEventResolver(
     private val config: PrimerConfig,
@@ -16,10 +16,10 @@ internal class PostTokenizationEventResolver(
 ) {
 
     fun resolve(token: PaymentMethodTokenInternal) {
-        val externalToken = PaymentMethodTokenAdapter.internalToExternal(token)
+        val externalToken = token.toPaymentMethodToken()
         when {
             config.intent.paymentMethodIntent.isVault ||
-                config.settings.options.paymentHandling == PrimerPaymentHandling.MANUAL -> {
+                config.settings.paymentHandling == PrimerPaymentHandling.MANUAL -> {
                 val events = mutableListOf<CheckoutEvent>(
                     CheckoutEvent.TokenizationSuccess(
                         externalToken,
@@ -27,13 +27,13 @@ internal class PostTokenizationEventResolver(
                     )
                 )
                 if (token.tokenType == TokenType.MULTI_USE) {
-                    events.add(CheckoutEvent.TokenAddedToVault(externalToken))
+                    events.add(CheckoutEvent.TokenAddedToVaultInternal(externalToken))
                 }
                 eventDispatcher.dispatchEvents(events)
             }
-            config.settings.options.paymentHandling == PrimerPaymentHandling.AUTO -> {
+            config.settings.paymentHandling == PrimerPaymentHandling.AUTO -> {
                 val events = mutableListOf<CheckoutEvent>()
-                if (config.fromHUC) {
+                if (config.settings.fromHUC) {
                     events.add(
                         CheckoutEvent.PaymentContinueHUC(
                             externalToken,

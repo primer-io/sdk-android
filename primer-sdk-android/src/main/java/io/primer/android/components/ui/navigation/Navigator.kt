@@ -2,7 +2,7 @@ package io.primer.android.components.ui.navigation
 
 import android.content.Context
 import android.content.Intent
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity

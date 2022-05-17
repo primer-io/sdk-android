@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentPaymentMethodLoadingBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor

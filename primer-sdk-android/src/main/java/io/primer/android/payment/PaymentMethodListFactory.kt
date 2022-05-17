@@ -1,7 +1,7 @@
 package io.primer.android.payment
 
 import io.primer.android.PaymentMethod
-import io.primer.android.data.configuration.model.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.data.payments.methods.mapping.PaymentMethodMapping
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger

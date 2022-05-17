@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PaymentMethodIntent
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.model.MonetaryAmount
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 

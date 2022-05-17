@@ -1,8 +1,9 @@
-package io.primer.android.model.dto
+package io.primer.android.data.configuration.models
 
 import androidx.annotation.Keep
 import io.primer.android.components.ui.assets.Brand
 import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import kotlinx.serialization.Serializable
 
 typealias PrimerPaymentMethodType = PaymentMethodType
@@ -95,7 +96,7 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.BUCKAROO_IDEAL -> PrimerPaymentMethod.BUCKAROO_IDEAL
         PaymentMethodType.BUCKAROO_EPS -> PrimerPaymentMethod.BUCKAROO_EPS
         PaymentMethodType.BUCKAROO_BANCONTACT -> PrimerPaymentMethod.BUCKAROO_BANCONTACT
-        PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.CARD
+        PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.PAYMENT_CARD
         PaymentMethodType.PAY_NL_P24 -> PrimerPaymentMethod.PAY_NL_P24
         PaymentMethodType.PAY_NL_EPS -> PrimerPaymentMethod.PAY_NL_EPS
         PaymentMethodType.MOLLIE_P24 -> PrimerPaymentMethod.MOLLIE_P24

@@ -3,7 +3,7 @@ package io.primer.android.utils
 import android.content.Context
 import io.primer.android.R
 import io.primer.android.data.base.models.BasePaymentToken
-import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.model.MonetaryAmount
 import io.primer.android.payment.PAYMENT_CARD_TYPE
 
 internal class SurchargeFormatter(

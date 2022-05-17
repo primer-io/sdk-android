@@ -1,8 +1,8 @@
 package io.primer.android.domain.payments.methods
 
+import io.primer.android.data.configuration.models.toPrimerPaymentMethod
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
-import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.MissingPaymentMethodException
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
@@ -11,8 +11,8 @@ import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.toPrimerPaymentMethod
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
 import io.primer.android.payment.VaultCapability
@@ -37,15 +37,19 @@ internal class PaymentMethodModulesInteractor(
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<PaymentMethodModulesInteractor.PaymentDescriptorsHolder, None>() {
+) : BaseInteractor<PaymentMethodModulesInteractor.PaymentDescriptorsHolder, PaymentModuleParams>() {
 
-    override fun execute(params: None) =
+    override fun execute(params: PaymentModuleParams) =
         paymentMethodsRepository.getPaymentMethodDescriptors()
             .combine(
                 configurationRepository.fetchConfiguration(true)
                     .map { it.paymentMethods.map { it.type.name } }
             ) { descriptors, paymentMethods -> Pair(descriptors, paymentMethods) }
-            .onStart { eventDispatcher.dispatchEvent(CheckoutEvent.PreparationStarted) }
+            .onStart {
+                if (params.sendStartEvent) {
+                    eventDispatcher.dispatchEvent(CheckoutEvent.PreparationStarted)
+                }
+            }
             .mapLatest { paymentMethodData ->
                 val descriptors = paymentMethodData.first.filter { isValidPaymentDescriptor(it) }
                 if (config.isStandalonePaymentMethod) {
