@@ -60,7 +60,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.BUCKAROO_BANCONTACT,
             PaymentMethodType.ATOME,
             PaymentMethodType.XFERS_PAYNOW,
-            PaymentMethodType.COINBASE
+            PaymentMethodType.COINBASE,
+            PaymentMethodType.TWOC2P
             -> AsyncMethodFactory(
                 type,
                 settings

@@ -50,6 +50,7 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.BUCKAROO_BANCONTACT -> R.layout.payment_method_button_bancontact
             PaymentMethodType.XFERS_PAYNOW -> R.layout.payment_method_button_xfers
             PaymentMethodType.COINBASE -> R.layout.payment_method_button_coinbase
+            PaymentMethodType.TWOC2P -> R.layout.payment_method_button_twoc2p
             else -> null
         }
 
