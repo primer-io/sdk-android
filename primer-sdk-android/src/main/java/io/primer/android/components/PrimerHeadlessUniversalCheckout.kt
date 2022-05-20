@@ -17,7 +17,6 @@ import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
-import io.primer.android.data.configuration.models.toPrimerPaymentMethod
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
@@ -167,7 +166,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         primer.showPaymentMethod(
             context,
             config.clientTokenBase64.orEmpty(),
-            paymentMethod.toPrimerPaymentMethod(),
+            paymentMethod,
             PrimerPaymentMethodIntent.CHECKOUT
         )
     }

@@ -5,6 +5,7 @@ import io.primer.android.domain.error.models.PaymentMethodError
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.exception.MissingPaymentMethodException
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
+import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 
 internal class PaymentMethodsErrorMapper : DefaultErrorMapper() {
 
@@ -18,6 +19,10 @@ internal class PaymentMethodsErrorMapper : DefaultErrorMapper() {
                 PaymentMethodError.UnsupportedIntentPaymentMethodError(
                     throwable.paymentMethodType,
                     throwable.primerIntent
+                )
+            is UnsupportedPaymentMethodException ->
+                PaymentMethodError.UnsupportedPaymentMethodError(
+                    throwable.paymentMethodType,
                 )
             else -> return super.getPrimerError(throwable)
         }

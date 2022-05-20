@@ -9,13 +9,13 @@ import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
 import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Serialization
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import io.primer.android.model.CheckoutExitReason
 import io.primer.android.data.token.model.ClientToken
 import io.primer.android.domain.error.models.PrimerError
@@ -96,20 +96,20 @@ class Primer private constructor() : PrimerInterface {
 
     override fun showUniversalCheckout(context: Context, clientToken: String) {
         addAnalyticsEvent(SdkFunctionParams("showUniversalCheckout"))
-        config.intent = PrimerIntent(PrimerPaymentMethodIntent.CHECKOUT, PrimerPaymentMethod.ANY)
+        config.intent = PrimerIntent(PrimerPaymentMethodIntent.CHECKOUT)
         show(context, clientToken)
     }
 
     override fun showVaultManager(context: Context, clientToken: String) {
         addAnalyticsEvent(SdkFunctionParams("showVaultManager"))
-        config.intent = PrimerIntent(PrimerPaymentMethodIntent.VAULT, PrimerPaymentMethod.ANY)
+        config.intent = PrimerIntent(PrimerPaymentMethodIntent.VAULT)
         show(context, clientToken)
     }
 
     override fun showPaymentMethod(
         context: Context,
         clientToken: String,
-        paymentMethod: PrimerPaymentMethod,
+        paymentMethod: PrimerPaymentMethodType,
         intent: PrimerPaymentMethodIntent,
     ) {
         addAnalyticsEvent(

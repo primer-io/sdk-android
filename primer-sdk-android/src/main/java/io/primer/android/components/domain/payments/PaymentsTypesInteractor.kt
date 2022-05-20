@@ -1,8 +1,7 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
-import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.data.configuration.models.toPrimerPaymentMethod
+import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
@@ -38,7 +37,7 @@ internal class PaymentsTypesInteractor(
         paymentMethodModulesInteractor.execute(PaymentModuleParams(false))
             .mapLatest { it.descriptors.map { it.config.type } }
             .mapLatest {
-                it.map { it.takeIfAvailable() }.filterNotNull()
+                it.filter { it.isAvailableOnHUC() }
             }
     }
         .flowOn(dispatcher)
@@ -58,16 +57,6 @@ internal class PaymentsTypesInteractor(
             errorEventResolver.resolve(it, ErrorMapperType.HUC)
         }
         .mapLatest { }
-
-    private fun PaymentMethodType.takeIfAvailable() =
-        takeIf {
-            try {
-                it.toPrimerPaymentMethod()
-                true
-            } catch (ignored: IllegalArgumentException) {
-                false
-            }
-        }
 
     private companion object {
         const val CONFIGURATION_ERROR =

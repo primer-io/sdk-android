@@ -1,9 +1,9 @@
 package io.primer.android.data.configuration.models
 
 import androidx.annotation.Keep
+import androidx.annotation.RestrictTo
 import io.primer.android.components.ui.assets.Brand
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import kotlinx.serialization.Serializable
 
 typealias PrimerPaymentMethodType = PaymentMethodType
@@ -58,6 +58,8 @@ enum class PaymentMethodType(
     BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
     ATOME(ClientTokenIntent.ATOME_REDIRECTION, Brand.ATOME),
     XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION, Brand.PAYNOW),
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);
 
     companion object {
@@ -68,53 +70,46 @@ enum class PaymentMethodType(
     constructor(intent: ClientTokenIntent, brand: Brand) : this(arrayOf(intent), brand)
 }
 
-internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
+internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
     return when (this) {
-        PaymentMethodType.GOOGLE_PAY -> PrimerPaymentMethod.GOOGLE_PAY
-        PaymentMethodType.APAYA -> PrimerPaymentMethod.APAYA
-        PaymentMethodType.KLARNA -> PrimerPaymentMethod.KLARNA
-        PaymentMethodType.PAYPAL -> PrimerPaymentMethod.PAYPAL
-        PaymentMethodType.GOCARDLESS -> PrimerPaymentMethod.GOCARDLESS
-        PaymentMethodType.ATOME -> PrimerPaymentMethod.ATOME
-        PaymentMethodType.PAY_NL_IDEAL -> PrimerPaymentMethod.PAY_NL_IDEAL
-        PaymentMethodType.PAY_NL_PAYCONIQ -> PrimerPaymentMethod.PAY_NL_PAYCONIQ
-        PaymentMethodType.PAY_NL_GIROPAY -> PrimerPaymentMethod.PAY_NL_GIROPAY
-        PaymentMethodType.HOOLAH -> PrimerPaymentMethod.HOOLAH
-        PaymentMethodType.ADYEN_GIROPAY -> PrimerPaymentMethod.ADYEN_GIROPAY
-        PaymentMethodType.ADYEN_TWINT -> PrimerPaymentMethod.ADYEN_TWINT
-        PaymentMethodType.ADYEN_SOFORT -> PrimerPaymentMethod.ADYEN_SOFORT
-        PaymentMethodType.ADYEN_TRUSTLY -> PrimerPaymentMethod.ADYEN_TRUSTLY
-        PaymentMethodType.ADYEN_ALIPAY -> PrimerPaymentMethod.ADYEN_ALIPAY
-        PaymentMethodType.ADYEN_VIPPS -> PrimerPaymentMethod.ADYEN_VIPPS
-        PaymentMethodType.ADYEN_MOBILEPAY -> PrimerPaymentMethod.ADYEN_MOBILEPAY
-        PaymentMethodType.ADYEN_PAYTRAIL -> PrimerPaymentMethod.ADYEN_PAYTRAIL
-        PaymentMethodType.ADYEN_INTERAC -> PrimerPaymentMethod.ADYEN_INTERAC
-        PaymentMethodType.MOLLIE_BANCONTACT -> PrimerPaymentMethod.MOLLIE_BANCONTACT
-        PaymentMethodType.MOLLIE_IDEAL -> PrimerPaymentMethod.MOLLIE_IDEAL
-        PaymentMethodType.BUCKAROO_GIROPAY -> PrimerPaymentMethod.BUCKAROO_GIROPAY
-        PaymentMethodType.BUCKAROO_SOFORT -> PrimerPaymentMethod.BUCKAROO_SOFORT
-        PaymentMethodType.BUCKAROO_IDEAL -> PrimerPaymentMethod.BUCKAROO_IDEAL
-        PaymentMethodType.BUCKAROO_EPS -> PrimerPaymentMethod.BUCKAROO_EPS
-        PaymentMethodType.BUCKAROO_BANCONTACT -> PrimerPaymentMethod.BUCKAROO_BANCONTACT
-        PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.PAYMENT_CARD
-        PaymentMethodType.PAY_NL_P24 -> PrimerPaymentMethod.PAY_NL_P24
-        PaymentMethodType.PAY_NL_EPS -> PrimerPaymentMethod.PAY_NL_EPS
-        PaymentMethodType.MOLLIE_P24 -> PrimerPaymentMethod.MOLLIE_P24
-        PaymentMethodType.MOLLIE_GIROPAY -> PrimerPaymentMethod.MOLLIE_GIROPAY
-        PaymentMethodType.MOLLIE_EPS -> PrimerPaymentMethod.MOLLIE_EPS
-        PaymentMethodType.ADYEN_IDEAL ->
-            throw IllegalArgumentException("Unsupported payment method $this")
-        PaymentMethodType.ADYEN_DOTPAY ->
-            throw IllegalArgumentException("Unsupported payment method $this")
-        PaymentMethodType.ADYEN_BLIK ->
-            throw IllegalArgumentException("Unsupported payment method $this")
-        PaymentMethodType.ADYEN_MBWAY ->
-            throw IllegalArgumentException("Unsupported payment method $this")
-        PaymentMethodType.ADYEN_BANK_TRANSFER ->
-            throw IllegalArgumentException("Unsupported payment method $this")
-        PaymentMethodType.XFERS_PAYNOW ->
-            throw IllegalArgumentException("Unsupported payment method $this")
-        PaymentMethodType.UNKNOWN ->
-            throw IllegalArgumentException("Unsupported payment method $this")
+        PaymentMethodType.PAYMENT_CARD,
+        PaymentMethodType.KLARNA,
+        PaymentMethodType.GOOGLE_PAY,
+        PaymentMethodType.PAYPAL,
+        PaymentMethodType.GOCARDLESS,
+        PaymentMethodType.APAYA,
+        PaymentMethodType.PAY_NL_P24,
+        PaymentMethodType.PAY_NL_IDEAL,
+        PaymentMethodType.PAY_NL_PAYCONIQ,
+        PaymentMethodType.PAY_NL_GIROPAY,
+        PaymentMethodType.PAY_NL_EPS,
+        PaymentMethodType.HOOLAH,
+        PaymentMethodType.ADYEN_GIROPAY,
+        PaymentMethodType.ADYEN_TWINT,
+        PaymentMethodType.ADYEN_SOFORT,
+        PaymentMethodType.ADYEN_TRUSTLY,
+        PaymentMethodType.ADYEN_ALIPAY,
+        PaymentMethodType.ADYEN_VIPPS,
+        PaymentMethodType.ADYEN_MOBILEPAY,
+        PaymentMethodType.ADYEN_PAYTRAIL,
+        PaymentMethodType.ADYEN_INTERAC,
+        PaymentMethodType.MOLLIE_BANCONTACT,
+        PaymentMethodType.MOLLIE_IDEAL,
+        PaymentMethodType.MOLLIE_P24,
+        PaymentMethodType.MOLLIE_GIROPAY,
+        PaymentMethodType.MOLLIE_EPS,
+        PaymentMethodType.BUCKAROO_GIROPAY,
+        PaymentMethodType.BUCKAROO_SOFORT,
+        PaymentMethodType.BUCKAROO_IDEAL,
+        PaymentMethodType.BUCKAROO_EPS,
+        PaymentMethodType.BUCKAROO_BANCONTACT,
+        PaymentMethodType.ATOME -> true
+        PaymentMethodType.ADYEN_IDEAL,
+        PaymentMethodType.ADYEN_DOTPAY,
+        PaymentMethodType.ADYEN_BLIK,
+        PaymentMethodType.ADYEN_MBWAY,
+        PaymentMethodType.ADYEN_BANK_TRANSFER,
+        PaymentMethodType.XFERS_PAYNOW,
+        PaymentMethodType.UNKNOWN -> false
     }
 }

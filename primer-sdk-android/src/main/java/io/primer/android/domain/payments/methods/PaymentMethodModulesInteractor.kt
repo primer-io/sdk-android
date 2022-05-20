@@ -1,6 +1,6 @@
 package io.primer.android.domain.payments.methods
 
-import io.primer.android.data.configuration.models.toPrimerPaymentMethod
+import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.error.ErrorMapperType
@@ -12,6 +12,7 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
@@ -54,19 +55,21 @@ internal class PaymentMethodModulesInteractor(
                 val descriptors = paymentMethodData.first.filter { isValidPaymentDescriptor(it) }
                 if (config.isStandalonePaymentMethod) {
                     val availablePaymentMethods = paymentMethodData.second
-                    val paymentMethod = config.intent.paymentMethod
+                    val paymentMethod = requireNotNull(config.intent.paymentMethod)
                     // if the payment method is not present or not present after filtering
                     if (availablePaymentMethods.contains(paymentMethod.name).not()) {
                         throw MissingPaymentMethodException(paymentMethod)
                     } else if (
                         descriptors.none {
-                            it.config.type.toPrimerPaymentMethod() == paymentMethod
+                            it.config.type == paymentMethod
                         }
                     ) {
                         throw UnsupportedPaymentIntentException(
                             paymentMethod,
                             config.intent.paymentMethodIntent
                         )
+                    } else if (config.settings.fromHUC && paymentMethod.isAvailableOnHUC().not()) {
+                        throw UnsupportedPaymentMethodException(paymentMethod)
                     }
                 }
                 descriptors
@@ -75,7 +78,7 @@ internal class PaymentMethodModulesInteractor(
                 val mapping = PaymentMethodDescriptorMapping(descriptors)
                 // we get the descriptor we need for standalone PM
                 if (config.isStandalonePaymentMethod) {
-                    val paymentMethod = config.intent.paymentMethod
+                    val paymentMethod = requireNotNull(config.intent.paymentMethod)
                     val descriptor = mapping.getDescriptorFor(paymentMethod)
                     descriptor?.let {
                         PaymentDescriptorsHolder(descriptors, descriptor)

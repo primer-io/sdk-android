@@ -1,5 +1,6 @@
 package io.primer.android.components
 
+import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
@@ -11,6 +12,7 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
 @JvmDefaultWithCompatibility
+@ExperimentalPrimerApi
 interface PrimerHeadlessUniversalCheckoutListener {
     fun onClientSessionSetupSuccessfully(
         paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>

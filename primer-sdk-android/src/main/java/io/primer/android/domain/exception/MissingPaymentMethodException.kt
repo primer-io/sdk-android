@@ -1,6 +1,6 @@
 package io.primer.android.domain.exception
 
-import io.primer.android.data.settings.internal.PrimerPaymentMethod
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 
-internal class MissingPaymentMethodException(val paymentMethodType: PrimerPaymentMethod) :
+internal class MissingPaymentMethodException(val paymentMethodType: PrimerPaymentMethodType) :
     IllegalStateException()
