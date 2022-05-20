@@ -73,6 +73,8 @@
     <string name="atome">Atome</string>
     <string name="xfers">Paynow</string>
     <string name="interac">Interac</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="payshop">Payshop</string>
     <string name="choose_payment_method">Choisir la méthode de paiement</string>
     <string name="saved_payment_methods">MÉTHODE DE PAIEMENT SAUVEGARDÉE</string>
     <string name="other_ways_of_paying">Autres moyens de paiement</string>
@@ -103,5 +105,4 @@
     <string name="payment_method_xfers_description">Téléchargez la capture d\'écran dans votre application bancaire.</string>
     <string name="no_additional_fee">Aucun frais supplémentaire</string>
     <string name="additional_fees_may_apply">Des frais supplémentaires peuvent s\'appliquer</string>
-    <string name="paytrail">paytrail</string>
 </resources>

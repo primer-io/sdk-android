@@ -35,8 +35,9 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.ADYEN_IDEAL -> R.layout.payment_method_button_ideal
             PaymentMethodType.ADYEN_DOTPAY -> R.layout.payment_method_button_dotpay
             PaymentMethodType.ADYEN_BLIK -> R.layout.payment_method_button_blik
-            PaymentMethodType.ADYEN_PAYTRAIL -> R.layout.payment_method_button_paytrail
             PaymentMethodType.ADYEN_INTERAC -> R.layout.payment_method_button_interac
+            PaymentMethodType.ADYEN_PAYTRAIL -> R.layout.payment_method_button_paytrail
+            PaymentMethodType.ADYEN_PAYSHOP -> R.layout.payment_method_button_payshop
             PaymentMethodType.MOLLIE_BANCONTACT -> R.layout.payment_method_button_bancontact
             PaymentMethodType.MOLLIE_IDEAL -> R.layout.payment_method_button_ideal
             PaymentMethodType.MOLLIE_P24 -> R.layout.payment_method_button_p24
