@@ -106,4 +106,5 @@
     <string name="no_additional_fee">Ingen ytterligere avgifter</string>
     <string name="additional_fees_may_apply">Ytterligere avgifter kan påløpe</string>
     <string name="pay_with_crypto">Pay with crypto</string>
+    <string name="twoc_2p_button">Pay in installments</string>
 </resources>

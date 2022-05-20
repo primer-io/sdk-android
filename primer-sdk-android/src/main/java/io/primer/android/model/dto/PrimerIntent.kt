@@ -77,4 +77,5 @@ enum class PrimerPaymentMethod {
     BUCKAROO_EPS,
     BUCKAROO_BANCONTACT,
     COINBASE,
+    TWOC2P,
 }

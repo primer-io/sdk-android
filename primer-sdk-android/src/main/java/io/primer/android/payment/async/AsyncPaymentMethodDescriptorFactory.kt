@@ -27,6 +27,7 @@ import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.SofortPaymentMethodDescriptor
 import io.primer.android.payment.async.trustly.TrustyPaymentMethodDescriptor
 import io.primer.android.payment.async.twint.TwintPaymentMethodDescriptor
+import io.primer.android.payment.async.twoc2p.TwoC2PPaymentMethodDescriptor
 import io.primer.android.payment.async.vipps.VippsPaymentMethodDescriptor
 import io.primer.android.payment.async.xfers.XfersPaymentMethodDescriptor
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -167,6 +168,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.COINBASE -> CoinbasePaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.TWOC2P -> TwoC2PPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
