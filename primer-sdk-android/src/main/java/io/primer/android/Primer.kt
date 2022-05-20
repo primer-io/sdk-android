@@ -96,13 +96,13 @@ class Primer private constructor() : PrimerInterface {
 
     override fun showUniversalCheckout(context: Context, clientToken: String) {
         addAnalyticsEvent(SdkFunctionParams("showUniversalCheckout"))
-        config.intent = PrimerIntent(PaymentMethodIntent.CHECKOUT, PrimerPaymentMethod.ANY)
+        config.intent = PrimerIntent(PrimerPaymentMethodIntent.CHECKOUT, PrimerPaymentMethod.ANY)
         show(context, clientToken)
     }
 
     override fun showVaultManager(context: Context, clientToken: String) {
         addAnalyticsEvent(SdkFunctionParams("showVaultManager"))
-        config.intent = PrimerIntent(PaymentMethodIntent.VAULT, PrimerPaymentMethod.ANY)
+        config.intent = PrimerIntent(PrimerPaymentMethodIntent.VAULT, PrimerPaymentMethod.ANY)
         show(context, clientToken)
     }
 
@@ -110,7 +110,7 @@ class Primer private constructor() : PrimerInterface {
         context: Context,
         clientToken: String,
         paymentMethod: PrimerPaymentMethod,
-        intent: PaymentMethodIntent,
+        intent: PrimerPaymentMethodIntent,
     ) {
         addAnalyticsEvent(
             SdkFunctionParams(
@@ -119,8 +119,8 @@ class Primer private constructor() : PrimerInterface {
             )
         )
 
-        val flow = if (intent == PaymentMethodIntent.VAULT) PaymentMethodIntent.VAULT
-        else PaymentMethodIntent.CHECKOUT
+        val flow = if (intent == PrimerPaymentMethodIntent.VAULT) PrimerPaymentMethodIntent.VAULT
+        else PrimerPaymentMethodIntent.CHECKOUT
         config.intent = PrimerIntent(flow, paymentMethod)
         show(context, clientToken)
     }

@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.MonetaryAmount
 import org.koin.core.component.KoinApiExtension
@@ -20,10 +20,10 @@ internal class SelectPaymentMethodTitle(
 
     private val theme: PrimerTheme by inject()
 
-    private var paymentMethodIntent: PaymentMethodIntent? = null
+    private var paymentMethodIntent: PrimerPaymentMethodIntent? = null
     private var amount: MonetaryAmount? = null
 
-    fun setUxMode(paymentMethodIntent: PaymentMethodIntent) {
+    fun setUxMode(paymentMethodIntent: PrimerPaymentMethodIntent) {
         this.paymentMethodIntent = paymentMethodIntent
         update()
     }
@@ -36,10 +36,11 @@ internal class SelectPaymentMethodTitle(
     private fun update() {
         findViewById<TextView>(R.id.primer_sheet_title).apply {
             text = when (paymentMethodIntent) {
-                PaymentMethodIntent.CHECKOUT -> {
+                PrimerPaymentMethodIntent.CHECKOUT -> {
                     PayAmountText.generate(context, amount)
                 }
-                PaymentMethodIntent.VAULT -> "" // this is for displaying amount, title sits above
+                PrimerPaymentMethodIntent.VAULT ->
+                    "" // this is for displaying amount, title sits above
                 else -> ""
             }
             setTextColor(theme.amountLabelText.defaultColor.getColor(context, theme.isDarkMode))

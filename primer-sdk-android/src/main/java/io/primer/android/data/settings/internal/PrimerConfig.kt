@@ -1,6 +1,6 @@
 package io.primer.android.data.settings.internal
 
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.model.MonetaryAmount
@@ -22,7 +22,7 @@ internal data class PrimerConfig(
             return MonetaryAmount.create(currency, amount)
         }
 
-    internal val paymentMethodIntent: PaymentMethodIntent
+    internal val paymentMethodIntent: PrimerPaymentMethodIntent
         get() = intent.paymentMethodIntent
 
     internal val isStandalonePaymentMethod: Boolean
@@ -35,6 +35,6 @@ internal data class PrimerConfig(
     }
 
     internal fun toPlace() =
-        if (intent.paymentMethodIntent == PaymentMethodIntent.CHECKOUT)
+        if (intent.paymentMethodIntent == PrimerPaymentMethodIntent.CHECKOUT)
             Place.UNIVERSAL_CHECKOUT else Place.VAULT_MANAGER
 }

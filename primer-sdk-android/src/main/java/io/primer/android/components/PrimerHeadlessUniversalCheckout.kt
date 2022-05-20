@@ -5,7 +5,7 @@ import android.view.View
 import androidx.annotation.DrawableRes
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.PrimerCheckoutListener
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.Primer
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
@@ -168,7 +168,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
             context,
             config.clientTokenBase64.orEmpty(),
             paymentMethod.toPrimerPaymentMethod(),
-            PaymentMethodIntent.CHECKOUT
+            PrimerPaymentMethodIntent.CHECKOUT
         )
     }
 

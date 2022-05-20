@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.MessageType
@@ -330,8 +330,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         val context = requireContext()
 
         binding.cardFormSubmitButton.text = when (uxMode) {
-            PaymentMethodIntent.VAULT -> context.getString(R.string.add_card)
-            PaymentMethodIntent.CHECKOUT -> {
+            PrimerPaymentMethodIntent.VAULT -> context.getString(R.string.add_card)
+            PrimerPaymentMethodIntent.CHECKOUT -> {
                 String
                     .format(
                         getString(R.string.pay_specific_amount),
@@ -362,7 +362,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun updateSubmitButton() {
-        if (localConfig.paymentMethodIntent == PaymentMethodIntent.VAULT) {
+        if (localConfig.paymentMethodIntent == PrimerPaymentMethodIntent.VAULT) {
             binding.cardFormSubmitButton.text = getString(R.string.add_card)
             return
         }

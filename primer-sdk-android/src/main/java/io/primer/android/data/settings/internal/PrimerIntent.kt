@@ -1,7 +1,7 @@
 package io.primer.android.data.settings.internal
 
 import io.primer.android.PaymentMethod
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.gocardless.GoCardless
@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class PrimerIntent(
-    val paymentMethodIntent: PaymentMethodIntent = PaymentMethodIntent.CHECKOUT,
+    val paymentMethodIntent: PrimerPaymentMethodIntent = PrimerPaymentMethodIntent.CHECKOUT,
     val paymentMethod: PrimerPaymentMethod = PrimerPaymentMethod.ANY,
 ) {
 
@@ -20,7 +20,7 @@ internal data class PrimerIntent(
 
         fun build(vaulted: Boolean, paymentMethods: List<PaymentMethod>): PrimerIntent {
             val sessionIntent =
-                if (vaulted) PaymentMethodIntent.VAULT else PaymentMethodIntent.CHECKOUT
+                if (vaulted) PrimerPaymentMethodIntent.VAULT else PrimerPaymentMethodIntent.CHECKOUT
 
             if (paymentMethods.size > 1) {
                 return PrimerIntent(sessionIntent, PrimerPaymentMethod.ANY)

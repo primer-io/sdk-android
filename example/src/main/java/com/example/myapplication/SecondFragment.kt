@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.PrimerCheckoutListener
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
@@ -73,7 +73,7 @@ class SecondFragment : Fragment() {
                         context,
                         token,
                         viewModel.useStandalonePaymentMethod.value!!,
-                        PaymentMethodIntent.CHECKOUT
+                        PrimerPaymentMethodIntent.CHECKOUT
                     )
                 }
             }

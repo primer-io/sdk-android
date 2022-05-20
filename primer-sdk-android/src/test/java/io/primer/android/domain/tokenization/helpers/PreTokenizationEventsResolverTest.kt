@@ -8,7 +8,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
@@ -49,7 +49,7 @@ internal class PreTokenizationEventsResolverTest {
     fun `resolve() should dispatch TOKENIZE_STARTED type when payment intent is VAULT`() {
         val paymentMethodType = mockk<PrimerPaymentMethodType>(relaxed = true)
 
-        every { config.intent }.returns(PrimerIntent(PaymentMethodIntent.VAULT))
+        every { config.intent }.returns(PrimerIntent(PrimerPaymentMethodIntent.VAULT))
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodType)

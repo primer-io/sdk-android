@@ -1,6 +1,6 @@
 package io.primer.android.domain.error.models
 
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import java.util.UUID
@@ -20,7 +20,7 @@ internal sealed class PaymentMethodError : PrimerError() {
 
     class UnsupportedIntentPaymentMethodError(
         val paymentMethodType: PrimerPaymentMethod,
-        val intent: PaymentMethodIntent
+        val intent: PrimerPaymentMethodIntent
     ) : PaymentMethodError() {
         override val exposedError = this
     }

@@ -1,7 +1,7 @@
 package io.primer.android.threeds.domain.models
 
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.threeds.data.models.Address
 import io.primer.android.threeds.data.models.BeginAuthRequest
@@ -13,7 +13,7 @@ import io.primer.android.threeds.helpers.ProtocolVersion
 private const val SDK_TIMEOUT_IN_SECONDS = 60
 
 internal data class ThreeDsParams(
-    val paymentMethodIntent: PaymentMethodIntent,
+    val paymentMethodIntent: PrimerPaymentMethodIntent,
     val maxProtocolVersion: ProtocolVersion,
     val challengePreference: ChallengePreference,
     val amount: Int?,
@@ -59,7 +59,7 @@ internal data class ThreeDsParams(
 }
 
 internal fun ThreeDsParams.toBeginAuthRequest() = when (paymentMethodIntent) {
-    PaymentMethodIntent.CHECKOUT -> BeginAuthRequest(
+    PrimerPaymentMethodIntent.CHECKOUT -> BeginAuthRequest(
         maxProtocolVersion.versionNumber,
         challengePreference,
         device = SDKAuthData(
@@ -71,7 +71,7 @@ internal fun ThreeDsParams.toBeginAuthRequest() = when (paymentMethodIntent) {
             sdkReferenceNumber
         ),
     )
-    PaymentMethodIntent.VAULT -> BeginAuthRequest(
+    PrimerPaymentMethodIntent.VAULT -> BeginAuthRequest(
         maxProtocolVersion.versionNumber,
         challengePreference,
         amount,

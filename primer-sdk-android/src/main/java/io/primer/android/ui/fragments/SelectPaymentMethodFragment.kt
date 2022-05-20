@@ -22,7 +22,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.content.res.ColorStateList
 import androidx.core.view.isGone
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerPaymentMethodIntent
 import io.primer.android.SessionState
 import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.payment.PaymentMethodUiType
@@ -236,8 +236,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun setupUiForVaultModeIfNeeded() = when (localConfig.intent.paymentMethodIntent) {
-        PaymentMethodIntent.CHECKOUT -> Unit
-        PaymentMethodIntent.VAULT -> {
+        PrimerPaymentMethodIntent.CHECKOUT -> Unit
+        PrimerPaymentMethodIntent.VAULT -> {
             binding.primerSheetTitle.isVisible = false
             binding.payAllButton.isVisible = false
             binding.choosePaymentMethodLabel.text =
