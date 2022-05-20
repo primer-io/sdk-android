@@ -66,6 +66,7 @@ enum class PaymentMethodType(
     BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
     ATOME(ClientTokenIntent.ATOME_REDIRECTION, Brand.ATOME),
     XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION, Brand.PAYNOW),
+    COINBASE(ClientTokenIntent.COINBASE_REDIRECTION, Brand.COINBASE),
     UNKNOWN(brand = Brand.UNKNOWN);
 
     companion object {
@@ -106,6 +107,7 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.BUCKAROO_EPS -> PrimerPaymentMethod.BUCKAROO_EPS
         PaymentMethodType.BUCKAROO_BANCONTACT -> PrimerPaymentMethod.BUCKAROO_BANCONTACT
         PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.CARD
+        PaymentMethodType.COINBASE -> PrimerPaymentMethod.COINBASE
         else -> throw IllegalStateException("Unknown mapping for $this.")
     }
 }

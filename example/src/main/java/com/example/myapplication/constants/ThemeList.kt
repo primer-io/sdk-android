@@ -1,5 +1,6 @@
 package com.example.myapplication.constants
 
+import android.content.res.Configuration
 import com.example.myapplication.R
 import io.primer.android.BorderThemeData
 import io.primer.android.ButtonThemeData
@@ -9,6 +10,13 @@ import io.primer.android.TextThemeData
 
 class ThemeList {
     companion object {
+        fun themeBySystem(configuration: Configuration?): PrimerTheme {
+            if (configuration == null) return PrimerTheme.build()
+            return when (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_YES -> darkTheme
+                else -> PrimerTheme.build()
+            }
+        }
 
         val darkTheme = PrimerTheme.build(
             isDarkMode = true,

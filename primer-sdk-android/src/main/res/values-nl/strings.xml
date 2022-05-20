@@ -105,4 +105,5 @@
     <string name="payment_method_xfers_description">Upload de schermafbeelding in uw bank-app</string>
     <string name="no_additional_fee">Geen extra kosten</string>
     <string name="additional_fees_may_apply">Er kunnen extra kosten van toepassing zijn</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
 </resources>
