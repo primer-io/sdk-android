@@ -90,6 +90,7 @@ internal class PaymentMethodsDataRepository(
         PrimerPaymentMethod.BUCKAROO_BANCONTACT -> p.type == PaymentMethodType.BUCKAROO_BANCONTACT
         PrimerPaymentMethod.COINBASE -> p.type == PaymentMethodType.COINBASE
         PrimerPaymentMethod.TWOC2P -> p.type == PaymentMethodType.TWOC2P
+        PrimerPaymentMethod.OPENNODE -> p.type == PaymentMethodType.OPENNODE
         else -> false
     }
 

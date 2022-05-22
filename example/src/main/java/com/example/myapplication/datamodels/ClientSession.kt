@@ -20,10 +20,7 @@ interface ClientSession : ExampleAppRequestBody {
         override val currencyCode: String,
         override val order: Order,
         override val customer: Customer,
-        override val paymentMethod: PaymentMethod,
-        val metadata: Map<String, String> = mapOf(
-            "TEST_CASE" to "COINBASE"
-        )
+        override val paymentMethod: PaymentMethod
     ) : ClientSession {
 
         companion object {

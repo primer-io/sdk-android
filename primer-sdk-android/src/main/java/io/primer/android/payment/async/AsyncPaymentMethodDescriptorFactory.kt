@@ -20,6 +20,7 @@ import io.primer.android.payment.async.ideal.IdealPaymentMethodDescriptor
 import io.primer.android.payment.async.interac.AdyenInteracPaymentMethodDescriptor
 import io.primer.android.payment.async.mbway.AdyenMbWayPaymentMethodDescriptor
 import io.primer.android.payment.async.mobilepay.MobilePayPaymentMethodDescriptor
+import io.primer.android.payment.async.opennode.OpenNodePaymentMethodDescriptor
 import io.primer.android.payment.async.p24.P24PaymentMethodDescriptor
 import io.primer.android.payment.async.payconiq.PayconiqPaymentMethodDescriptor
 import io.primer.android.payment.async.paytrail.AdyenPayTrailPaymentMethodDescriptor
@@ -173,6 +174,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.TWOC2P -> TwoC2PPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.OPENNODE -> OpenNodePaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

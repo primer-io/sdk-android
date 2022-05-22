@@ -68,6 +68,7 @@ enum class PaymentMethodType(
     XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION, Brand.PAYNOW),
     COINBASE(ClientTokenIntent.COINBASE_REDIRECTION, Brand.COINBASE),
     TWOC2P(ClientTokenIntent.TWOC2P_REDIRECTION, Brand.TWOC2P),
+    OPENNODE(ClientTokenIntent.OPENNODE_REDIRECTION, Brand.OPENNODE),
     UNKNOWN(brand = Brand.UNKNOWN);
 
     companion object {
@@ -107,6 +108,7 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.BUCKAROO_IDEAL -> PrimerPaymentMethod.BUCKAROO_IDEAL
         PaymentMethodType.BUCKAROO_EPS -> PrimerPaymentMethod.BUCKAROO_EPS
         PaymentMethodType.BUCKAROO_BANCONTACT -> PrimerPaymentMethod.BUCKAROO_BANCONTACT
+        PaymentMethodType.OPENNODE -> PrimerPaymentMethod.OPENNODE
         PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.CARD
         PaymentMethodType.COINBASE -> PrimerPaymentMethod.COINBASE
         PaymentMethodType.TWOC2P -> PrimerPaymentMethod.TWOC2P

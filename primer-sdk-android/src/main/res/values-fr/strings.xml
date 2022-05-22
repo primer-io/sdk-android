@@ -107,4 +107,5 @@
     <string name="additional_fees_may_apply">Des frais supplémentaires peuvent s\'appliquer</string>
     <string name="pay_with_crypto">Pay with crypto</string>
     <string name="twoc_2p_button">Pay in installments</string>
+    <string name="pay_with">Pay with</string>
 </resources>
