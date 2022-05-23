@@ -87,7 +87,8 @@
     <string name="atome">Atome</string>
     <string name="xfers">Paynow</string>
     <string name="interac">Interac</string>
-    <string name="paytrail">paytrail</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="payshop">Payshop</string>
 
     <string name="choose_payment_method">Choose payment method</string>
     <string name="saved_payment_methods">SAVED PAYMENT METHOD</string>
@@ -103,14 +104,9 @@
     <string name="check_icon">check icon</string>
     <string name="payment_method_deletion_message">Are you sure you want to delete this payment method?</string>
     <string name="credit_debit_card">Credit/debit card</string>
-    <string name="payment_method_added_message">
-        Your payment method \n
-        was successfully added!
-    </string>
+    <string name="payment_method_added_message">Your payment method \nwas successfully added!</string>
     <string name="payment_request_completed_successfully">Your payment completed successfully!</string>
-    <string name="payment_method_not_added_message">
-        Your payment method couldn’t be added.
-    </string>
+    <string name="payment_method_not_added_message">Your payment method couldn’t be added.</string>
     <string name="error_default">Error!</string>
     <string name="payment_request_unsuccessful">Your payment was unsuccessful.</string>
 
@@ -129,4 +125,7 @@
     <!--surcharge-->
     <string name="no_additional_fee">No additional fee</string>
     <string name="additional_fees_may_apply">Additional fees may apply</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
+    <string name="twoc_2p_button">Pay in installments</string>
+    <string name="pay_with">Pay with</string>
 </resources>

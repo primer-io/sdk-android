@@ -255,6 +255,15 @@ class PaymentMethodMappingTest {
     }
 
     @Test
+    fun `test maps adyen payshop transfer correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_PAYSHOP)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
     fun `test maps mollie bancontact correctly`() {
         val factory = DefaultPaymentMethodMapping(settings)
         when (val result = factory.getPaymentMethodFor(PaymentMethodType.MOLLIE_BANCONTACT)) {
@@ -339,6 +348,24 @@ class PaymentMethodMappingTest {
     fun `test maps atome correctly`() {
         val factory = DefaultPaymentMethodMapping(settings)
         when (val result = factory.getPaymentMethodFor(PaymentMethodType.ATOME)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps 2c2p correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.TWOC2P)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
+    @Test
+    fun `test maps opennode correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.OPENNODE)) {
             is Failure -> Assert.fail()
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }

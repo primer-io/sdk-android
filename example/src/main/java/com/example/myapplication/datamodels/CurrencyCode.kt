@@ -16,4 +16,5 @@ enum class CurrencyCode(val symbol: String) {
     NOK("kr"),
     PLN("zł"),
     CAD("$"),
+    USD("$"),
 }

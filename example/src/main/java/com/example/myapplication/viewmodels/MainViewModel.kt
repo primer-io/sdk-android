@@ -1,17 +1,27 @@
 package com.example.myapplication.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.repositories.ClientTokenRepository
-import com.example.myapplication.repositories.PaymentsRepository
-import com.example.myapplication.datamodels.*
+import com.example.myapplication.constants.ThemeList
+import com.example.myapplication.datamodels.Action
+import com.example.myapplication.datamodels.AppCountryCode
+import com.example.myapplication.datamodels.ClientSession
+import com.example.myapplication.datamodels.PrimerEnv
+import com.example.myapplication.datamodels.ResumePaymentRequest
+import com.example.myapplication.datamodels.TransactionRequest
+import com.example.myapplication.datamodels.TransactionResponse
+import com.example.myapplication.datamodels.TransactionState
+import com.example.myapplication.datamodels.toTransactionState
 import com.example.myapplication.repositories.ActionRepository
 import com.example.myapplication.repositories.ClientSessionRepository
+import com.example.myapplication.repositories.ClientTokenRepository
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.PaymentInstrumentsRepository
+import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
@@ -21,7 +31,15 @@ import io.primer.android.Primer
 import io.primer.android.completion.ResumeHandler
 import io.primer.android.data.action.models.ClientSessionActionsRequest
 import io.primer.android.model.PrimerDebugOptions
-import io.primer.android.model.dto.*
+import io.primer.android.model.dto.Address
+import io.primer.android.model.dto.Business
+import io.primer.android.model.dto.CountryCode
+import io.primer.android.model.dto.Options
+import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.model.dto.PrimerPaymentMethod
+import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.model.dto.TokenType
 import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.gocardless.GoCardless
@@ -30,10 +48,12 @@ import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.threeds.data.models.ResponseCode
 import okhttp3.OkHttpClient
-import java.util.UUID
+import java.lang.ref.WeakReference
+import java.util.*
 
 @Keep
 class MainViewModel(
+    private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
 ) : ViewModel() {
 
@@ -145,6 +165,7 @@ class MainViewModel(
     val config: PrimerConfig
         get() = PrimerConfig(
             // todo: refactor to reintroduce custom values through client session
+            theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration),
             settings = PrimerSettings(
                 business = Business(
                     "Primer",

@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -16,6 +15,7 @@ import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.MainViewModelFactory
 import com.example.myapplication.viewmodels.SettingsViewModel
 import com.example.myapplication.viewmodels.SettingsViewModelFactory
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,12 +37,12 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        val countryDataSource = CountryDataSource(AppCountryCode.GB)
+        val countryDataSource = CountryDataSource(AppCountryCode.DE)
         val countryRepository = CountryRepository(countryDataSource)
 
         mainViewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(countryRepository),
+            MainViewModelFactory(WeakReference(this), countryRepository),
         ).get(MainViewModel::class.java)
 
         settingsViewModel = ViewModelProvider(

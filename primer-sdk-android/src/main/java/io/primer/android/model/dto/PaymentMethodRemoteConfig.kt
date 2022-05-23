@@ -50,8 +50,9 @@ enum class PaymentMethodType(
     ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION, Brand.DOTPAY),
     ADYEN_BLIK(ClientTokenIntent.ADYEN_BLIK_REDIRECTION, Brand.BLIK),
     ADYEN_MBWAY(ClientTokenIntent.ADYEN_MBWAY_REDIRECTION, Brand.MBWAY),
-    ADYEN_PAYTRAIL(ClientTokenIntent.ADYEN_PAYTRAIL_REDIRECTION, Brand.PAYTRAIL),
     ADYEN_INTERAC(ClientTokenIntent.ADYEN_INTERAC_REDIRECTION, Brand.INTERAC),
+    ADYEN_PAYTRAIL(ClientTokenIntent.ADYEN_PAYTRAIL_REDIRECTION, Brand.PAYTRAIL),
+    ADYEN_PAYSHOP(ClientTokenIntent.ADYEN_PAYSHOP_REDIRECTION, Brand.PAYSHOP),
     ADYEN_BANK_TRANSFER(brand = Brand.BANK_TRANSFER),
     MOLLIE_BANCONTACT(ClientTokenIntent.MOLLIE_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
     MOLLIE_IDEAL(ClientTokenIntent.MOLLIE_IDEAL_REDIRECTION, Brand.IDEAL),
@@ -65,6 +66,9 @@ enum class PaymentMethodType(
     BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
     ATOME(ClientTokenIntent.ATOME_REDIRECTION, Brand.ATOME),
     XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION, Brand.PAYNOW),
+    COINBASE(ClientTokenIntent.COINBASE_REDIRECTION, Brand.COINBASE),
+    TWOC2P(ClientTokenIntent.TWOC2P_REDIRECTION, Brand.TWOC2P),
+    OPENNODE(ClientTokenIntent.OPENNODE_REDIRECTION, Brand.OPENNODE),
     UNKNOWN(brand = Brand.UNKNOWN);
 
     companion object {
@@ -94,8 +98,9 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.ADYEN_ALIPAY -> PrimerPaymentMethod.ADYEN_ALIPAY
         PaymentMethodType.ADYEN_VIPPS -> PrimerPaymentMethod.ADYEN_VIPPS
         PaymentMethodType.ADYEN_MOBILEPAY -> PrimerPaymentMethod.ADYEN_MOBILEPAY
-        PaymentMethodType.ADYEN_PAYTRAIL -> PrimerPaymentMethod.ADYEN_PAYTRAIL
         PaymentMethodType.ADYEN_INTERAC -> PrimerPaymentMethod.ADYEN_INTERAC
+        PaymentMethodType.ADYEN_PAYTRAIL -> PrimerPaymentMethod.ADYEN_PAYTRAIL
+        PaymentMethodType.ADYEN_PAYSHOP -> PrimerPaymentMethod.ADYEN_PAYSHOP
         PaymentMethodType.MOLLIE_BANCONTACT -> PrimerPaymentMethod.MOLLIE_BANCONTACT
         PaymentMethodType.MOLLIE_IDEAL -> PrimerPaymentMethod.MOLLIE_IDEAL
         PaymentMethodType.BUCKAROO_GIROPAY -> PrimerPaymentMethod.BUCKAROO_GIROPAY
@@ -103,7 +108,10 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.BUCKAROO_IDEAL -> PrimerPaymentMethod.BUCKAROO_IDEAL
         PaymentMethodType.BUCKAROO_EPS -> PrimerPaymentMethod.BUCKAROO_EPS
         PaymentMethodType.BUCKAROO_BANCONTACT -> PrimerPaymentMethod.BUCKAROO_BANCONTACT
+        PaymentMethodType.OPENNODE -> PrimerPaymentMethod.OPENNODE
         PaymentMethodType.PAYMENT_CARD -> PrimerPaymentMethod.CARD
+        PaymentMethodType.COINBASE -> PrimerPaymentMethod.COINBASE
+        PaymentMethodType.TWOC2P -> PrimerPaymentMethod.TWOC2P
         else -> throw IllegalStateException("Unknown mapping for $this.")
     }
 }

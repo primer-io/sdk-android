@@ -73,6 +73,8 @@
     <string name="atome">Atome</string>
     <string name="xfers">Paynow</string>
     <string name="interac">Interac</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="payshop">Payshop</string>
     <string name="choose_payment_method">Wybierz metodę płatności</string>
     <string name="saved_payment_methods">ZAPISANA METODA PŁATNOŚCI</string>
     <string name="other_ways_of_paying">Inne sposoby płacenia</string>
@@ -103,5 +105,7 @@
     <string name="payment_method_xfers_description">Wczytaj zrzut ekranu w aplikacji bankowej.</string>
     <string name="no_additional_fee">Żadnych dodatkowych opłat</string>
     <string name="additional_fees_may_apply">Mogą mieć zastosowanie dodatkowe opłaty</string>
-    <string name="paytrail">paytrail</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
+    <string name="twoc_2p_button">Pay in installments</string>
+    <string name="pay_with">Pay with</string>
 </resources>

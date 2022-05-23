@@ -73,6 +73,8 @@
     <string name="atome">Atome</string>
     <string name="xfers">Paynow</string>
     <string name="interac">Interac</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="payshop">Payshop</string>
     <string name="choose_payment_method">Vælg betalingsmetode</string>
     <string name="saved_payment_methods">GEMT BETALINGSMETODE</string>
     <string name="other_ways_of_paying">Andre betalingsmetoder</string>
@@ -103,5 +105,7 @@
     <string name="payment_method_xfers_description">Upload screenshottet i din bank-app.</string>
     <string name="no_additional_fee">Intet yderligere gebyr</string>
     <string name="additional_fees_may_apply">Yderligere gebyrer kan forekomme</string>
-    <string name="paytrail">paytrail</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
+    <string name="twoc_2p_button">Pay in installments</string>
+    <string name="pay_with">Pay with</string>
 </resources>

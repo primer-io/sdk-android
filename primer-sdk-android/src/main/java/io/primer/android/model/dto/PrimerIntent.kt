@@ -66,8 +66,9 @@ enum class PrimerPaymentMethod {
     ADYEN_ALIPAY,
     ADYEN_VIPPS,
     ADYEN_MOBILEPAY,
-    ADYEN_PAYTRAIL,
     ADYEN_INTERAC,
+    ADYEN_PAYTRAIL,
+    ADYEN_PAYSHOP,
     MOLLIE_BANCONTACT,
     MOLLIE_IDEAL,
     BUCKAROO_GIROPAY,
@@ -75,4 +76,7 @@ enum class PrimerPaymentMethod {
     BUCKAROO_IDEAL,
     BUCKAROO_EPS,
     BUCKAROO_BANCONTACT,
+    COINBASE,
+    TWOC2P,
+    OPENNODE,
 }
