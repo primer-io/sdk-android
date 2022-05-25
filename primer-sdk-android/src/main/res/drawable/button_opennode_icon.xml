@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/ic_bitcoin_label"
+        android:gravity="center|start"
+        android:top="4dp" />
+    <item
+        android:drawable="@drawable/ic_opennode_bitcoin_logo"
+        android:gravity="center|end"
+        android:start="58dp"
+        android:top="4dp" />
+
+</layer-list>

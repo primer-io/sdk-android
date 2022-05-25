@@ -73,7 +73,8 @@
     <string name="atome">Atome</string>
     <string name="xfers">Paynow</string>
     <string name="interac">Interac</string>
-    <string name="paytrail">paytrail</string>
+    <string name="paytrail">Paytrail</string>
+    <string name="payshop">Payshop</string>
     <string name="choose_payment_method">Ödeme yöntemini seç</string>
     <string name="saved_payment_methods">KAYITLI ÖDEME YÖNTEMİ</string>
     <string name="other_ways_of_paying">Diğer ödeme yöntemleri</string>
@@ -104,4 +105,7 @@
     <string name="payment_method_xfers_description">Ekran görüntüsünü bankacılık uygulamanızda yükleyin</string>
     <string name="no_additional_fee">Ek ücret yok</string>
     <string name="additional_fees_may_apply">Ek ücret uygulanabilir</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
+    <string name="twoc_2p_button">Pay in installments</string>
+    <string name="pay_with">Pay with</string>
 </resources>

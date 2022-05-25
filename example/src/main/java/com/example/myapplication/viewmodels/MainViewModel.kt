@@ -1,15 +1,23 @@
 package com.example.myapplication.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.repositories.PaymentsRepository
-import com.example.myapplication.datamodels.*
+import com.example.myapplication.constants.ThemeList
+import com.example.myapplication.datamodels.AppCountryCode
+import com.example.myapplication.datamodels.PrimerEnv
+import com.example.myapplication.datamodels.ResumePaymentRequest
+import com.example.myapplication.datamodels.TransactionRequest
+import com.example.myapplication.datamodels.TransactionResponse
+import com.example.myapplication.datamodels.TransactionState
+import com.example.myapplication.datamodels.toTransactionState
 import com.example.myapplication.repositories.ClientSessionRepository
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.PaymentInstrumentsRepository
+import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
@@ -18,20 +26,22 @@ import io.primer.android.Primer
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerCardPaymentOptions
+import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.tokenization.models.TokenType
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.ui.settings.PrimerUIOptions
 import okhttp3.OkHttpClient
-import java.util.UUID
+import java.lang.ref.WeakReference
+import java.util.*
 
 @Keep
 class MainViewModel(
+    private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
 ) : ViewModel() {
 
@@ -129,7 +139,8 @@ class MainViewModel(
             uiOptions = PrimerUIOptions(
                 isInitScreenEnabled = true,
                 isSuccessScreenEnabled = true,
-                isErrorScreenEnabled = true
+                isErrorScreenEnabled = true,
+                theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration),
             ),
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
         )

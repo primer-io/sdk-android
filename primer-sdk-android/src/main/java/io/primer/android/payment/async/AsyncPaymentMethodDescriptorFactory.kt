@@ -10,6 +10,7 @@ import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
 import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.atome.AtomePaymentMethodDescriptor
 import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
+import io.primer.android.payment.async.coinbase.CoinbasePaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor
 import io.primer.android.payment.async.giropay.GiropayPaymentMethodDescriptor
@@ -19,6 +20,7 @@ import io.primer.android.payment.async.ideal.IdealPaymentMethodDescriptor
 import io.primer.android.payment.async.interac.AdyenInteracPaymentMethodDescriptor
 import io.primer.android.payment.async.mbway.AdyenMbWayPaymentMethodDescriptor
 import io.primer.android.payment.async.mobilepay.MobilePayPaymentMethodDescriptor
+import io.primer.android.payment.async.opennode.OpenNodePaymentMethodDescriptor
 import io.primer.android.payment.async.p24.P24PaymentMethodDescriptor
 import io.primer.android.payment.async.payconiq.PayconiqPaymentMethodDescriptor
 import io.primer.android.payment.async.paytrail.AdyenPayTrailPaymentMethodDescriptor
@@ -26,6 +28,7 @@ import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.SofortPaymentMethodDescriptor
 import io.primer.android.payment.async.trustly.TrustyPaymentMethodDescriptor
 import io.primer.android.payment.async.twint.TwintPaymentMethodDescriptor
+import io.primer.android.payment.async.twoc2p.TwoC2PPaymentMethodDescriptor
 import io.primer.android.payment.async.vipps.VippsPaymentMethodDescriptor
 import io.primer.android.payment.async.xfers.XfersPaymentMethodDescriptor
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -121,16 +124,22 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
-            PaymentMethodType.ADYEN_PAYTRAIL -> AdyenPayTrailPaymentMethodDescriptor(
-                localConfig,
-                paymentMethod as AsyncPaymentMethod,
-                paymentMethodRemoteConfig
-            )
             PaymentMethodType.ADYEN_INTERAC -> AdyenInteracPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.ADYEN_PAYTRAIL -> AdyenPayTrailPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            // Disabled, because on backend side, it is not ready. Wait an updates.
+//            PaymentMethodType.ADYEN_PAYSHOP -> AdyenPayShopPaymentMethodDescriptor(
+//                localConfig,
+//                paymentMethod as AsyncPaymentMethod,
+//                paymentMethodRemoteConfig
+//            )
             PaymentMethodType.ADYEN_BANK_TRANSFER -> AdyenSepaPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
@@ -155,6 +164,21 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
             )
             PaymentMethodType.PAY_NL_P24,
             PaymentMethodType.MOLLIE_P24 -> P24PaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.COINBASE -> CoinbasePaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.TWOC2P -> TwoC2PPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.OPENNODE -> OpenNodePaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

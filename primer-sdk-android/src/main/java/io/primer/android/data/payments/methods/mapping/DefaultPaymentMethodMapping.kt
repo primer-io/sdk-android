@@ -27,7 +27,6 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.GOOGLE_PAY -> GooglePayFactory(settings).build()
             PaymentMethodType.PAYPAL -> PayPalFactory().build()
             PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
-            PaymentMethodType.APAYA -> ApayaFactory(settings).build()
             PaymentMethodType.PAY_NL_IDEAL,
             PaymentMethodType.PAY_NL_PAYCONIQ,
             PaymentMethodType.PAY_NL_GIROPAY,
@@ -46,8 +45,9 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_BLIK,
 //            PaymentMethodType.ADYEN_MBWAY,
 //            PaymentMethodType.ADYEN_BANK_TRANSFER,
-            PaymentMethodType.ADYEN_PAYTRAIL,
             PaymentMethodType.ADYEN_INTERAC,
+            PaymentMethodType.ADYEN_PAYTRAIL,
+            PaymentMethodType.ADYEN_PAYSHOP,
             PaymentMethodType.MOLLIE_BANCONTACT,
             PaymentMethodType.MOLLIE_IDEAL,
             PaymentMethodType.MOLLIE_P24,
@@ -59,11 +59,15 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.BUCKAROO_EPS,
             PaymentMethodType.BUCKAROO_BANCONTACT,
             PaymentMethodType.ATOME,
-            PaymentMethodType.XFERS_PAYNOW
+            PaymentMethodType.XFERS_PAYNOW,
+            PaymentMethodType.COINBASE,
+            PaymentMethodType.TWOC2P,
+            PaymentMethodType.OPENNODE
             -> AsyncMethodFactory(
                 type,
                 settings
             ).build()
+            PaymentMethodType.APAYA -> ApayaFactory(settings).build()
             else -> Failure(Exception("Unknown payment method, can't register."))
         }
 }

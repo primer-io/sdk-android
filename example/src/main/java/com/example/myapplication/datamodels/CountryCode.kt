@@ -1,7 +1,5 @@
 package com.example.myapplication.datamodels
 
-import io.primer.android.data.configuration.models.CountryCode
-
 enum class AppCountryCode(val currencyCode: CurrencyCode, val flag: String) {
     GB(CurrencyCode.GBP, "🇬🇧"),
     BE(CurrencyCode.EUR, "🇧🇪"),
@@ -19,7 +17,6 @@ enum class AppCountryCode(val currencyCode: CurrencyCode, val flag: String) {
     NO(CurrencyCode.NOK, "🇳🇴"),
     PL(CurrencyCode.PLN, "🇵🇱"),
     DK(CurrencyCode.DKK, "🇩🇰"),
-    CA(CurrencyCode.CAD, "🇨🇦");
-
-    val mapped: CountryCode get() = CountryCode.valueOf(this.name)
+    CA(CurrencyCode.CAD, "🇨🇦"),
+    US(CurrencyCode.USD, "🇺🇸");
 }

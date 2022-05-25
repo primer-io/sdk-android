@@ -20,7 +20,7 @@ interface ClientSession : ExampleAppRequestBody {
         override val currencyCode: String,
         override val order: Order,
         override val customer: Customer,
-        override val paymentMethod: PaymentMethod,
+        override val paymentMethod: PaymentMethod
     ) : ClientSession {
 
         companion object {

@@ -80,6 +80,7 @@ internal class PaymentMethodsDataRepository(
         PrimerPaymentMethodType.ADYEN_MOBILEPAY -> p.type == PaymentMethodType.ADYEN_MOBILEPAY
         PrimerPaymentMethodType.ADYEN_PAYTRAIL -> p.type == PaymentMethodType.ADYEN_PAYTRAIL
         PrimerPaymentMethodType.ADYEN_INTERAC -> p.type == PaymentMethodType.ADYEN_INTERAC
+        PaymentMethodType.ADYEN_PAYSHOP -> p.type == PaymentMethodType.ADYEN_PAYSHOP
         PrimerPaymentMethodType.MOLLIE_BANCONTACT -> p.type == PaymentMethodType.MOLLIE_BANCONTACT
         PrimerPaymentMethodType.MOLLIE_IDEAL -> p.type == PaymentMethodType.MOLLIE_IDEAL
         PaymentMethodType.MOLLIE_P24 -> p.type == PaymentMethodType.MOLLIE_P24
@@ -99,6 +100,9 @@ internal class PaymentMethodsDataRepository(
         PaymentMethodType.ADYEN_MBWAY -> p.type == PaymentMethodType.ADYEN_MBWAY
         PaymentMethodType.ADYEN_BANK_TRANSFER -> p.type == PaymentMethodType.ADYEN_BANK_TRANSFER
         PaymentMethodType.XFERS_PAYNOW -> p.type == PaymentMethodType.XFERS_PAYNOW
+        PaymentMethodType.COINBASE -> p.type == PaymentMethodType.COINBASE
+        PaymentMethodType.TWOC2P -> p.type == PaymentMethodType.TWOC2P
+        PaymentMethodType.OPENNODE -> p.type == PaymentMethodType.OPENNODE
         PaymentMethodType.UNKNOWN -> false
         null -> false
     }
