@@ -1,6 +1,6 @@
 package io.primer.android.domain.tokenization
 
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.toPaymentMethodToken
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -47,7 +47,7 @@ internal class TokenizationInteractor(
                     val perform3ds =
                         token.paymentInstrumentType == PaymentMethodType.PAYMENT_CARD.name &&
                             params.is3DSOnVaultingEnabled &&
-                            params.paymentMethodIntent == PrimerPaymentMethodIntent.VAULT &&
+                            params.paymentMethodIntent == PrimerSessionIntent.VAULT &&
                             params.paymentMethodDescriptor.config.options?.threeDSecureEnabled ==
                             true
                     when {

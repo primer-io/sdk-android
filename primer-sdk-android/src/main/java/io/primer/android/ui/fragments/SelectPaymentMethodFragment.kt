@@ -25,7 +25,7 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -215,8 +215,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun setupUiForVaultModeIfNeeded() = when (localConfig.intent.paymentMethodIntent) {
-        PrimerPaymentMethodIntent.CHECKOUT -> Unit
-        PrimerPaymentMethodIntent.VAULT -> {
+        PrimerSessionIntent.CHECKOUT -> Unit
+        PrimerSessionIntent.VAULT -> {
             binding.primerSheetTitle.isVisible = false
             binding.payAllButton.isVisible = false
             binding.choosePaymentMethodLabel.text =

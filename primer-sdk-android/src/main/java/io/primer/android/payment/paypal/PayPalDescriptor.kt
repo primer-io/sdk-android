@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.di.DIAppComponent
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -25,7 +25,7 @@ internal class PayPalDescriptor constructor(
     private val localConfig: PrimerConfig by inject()
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (localConfig.paymentMethodIntent == PrimerPaymentMethodIntent.VAULT) {
+        get() = if (localConfig.paymentMethodIntent == PrimerSessionIntent.VAULT) {
             PayPalBillingAgreementBehaviour(this)
         } else {
             PayPalOrderBehaviour(this)

@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models
 
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -17,10 +17,10 @@ internal abstract class TokenizationRequest {
 
 internal fun TokenizationParams.toTokenizationRequest(): TokenizationRequest {
     return when (paymentMethodIntent) {
-        PrimerPaymentMethodIntent.CHECKOUT -> TokenizationCheckoutRequest(
+        PrimerSessionIntent.CHECKOUT -> TokenizationCheckoutRequest(
             paymentMethodDescriptor.toPaymentInstrument().toJson()
         )
-        PrimerPaymentMethodIntent.VAULT -> TokenizationVaultRequest(
+        PrimerSessionIntent.VAULT -> TokenizationVaultRequest(
             paymentMethodDescriptor.toPaymentInstrument()
                 .toJson(),
             TokenType.MULTI_USE.name,

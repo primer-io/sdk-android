@@ -23,7 +23,7 @@ internal class PaymentResultEventsResolver(private val eventDispatcher: EventDis
                         PrimerCheckoutData(paymentResult.payment),
                         object :
                             PrimerErrorDecisionHandler {
-                            override fun handleFailure(errorMessage: String?) {
+                            override fun showErrorMessage(errorMessage: String?) {
                                 resumeHandler.handleFailure(errorMessage)
                             }
                         }

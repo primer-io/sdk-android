@@ -39,7 +39,7 @@ interface PrimerCheckoutListener {
         error: PrimerError,
         errorHandler: PrimerErrorDecisionHandler?
     ) {
-        errorHandler?.handleFailure(null)
+        errorHandler?.showErrorMessage(null)
     }
 
     fun onFailed(
@@ -47,7 +47,7 @@ interface PrimerCheckoutListener {
         checkoutData: PrimerCheckoutData?,
         errorHandler: PrimerErrorDecisionHandler?
     ) {
-        errorHandler?.handleFailure(null)
+        errorHandler?.showErrorMessage(null)
     }
 
     fun onDismissed() = Unit

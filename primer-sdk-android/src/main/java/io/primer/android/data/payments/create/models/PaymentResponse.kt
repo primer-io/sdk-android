@@ -12,7 +12,7 @@ internal data class PaymentResponse(
     val orderId: String,
     val currencyCode: String,
     val amount: Int,
-    val customerId: String,
+    val customerId: String? = null,
     val paymentFailureReason: String? = null,
     val requiredAction: RequiredActionData? = null,
 )

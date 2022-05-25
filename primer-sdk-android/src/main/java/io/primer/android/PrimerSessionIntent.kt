@@ -1,6 +1,6 @@
 package io.primer.android
 
-enum class PrimerPaymentMethodIntent {
+enum class PrimerSessionIntent {
     CHECKOUT,
     VAULT;
 
@@ -10,7 +10,7 @@ enum class PrimerPaymentMethodIntent {
         get() = this == VAULT
     internal val isCheckout: Boolean
         get() = this == CHECKOUT
-    internal val oppositeIntent: PrimerPaymentMethodIntent
+    internal val oppositeIntent: PrimerSessionIntent
         get() = when (this) {
             CHECKOUT -> VAULT
             VAULT -> CHECKOUT

@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.PrimerCheckoutListener
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
@@ -73,7 +73,7 @@ class SecondFragment : Fragment() {
                         context,
                         token,
                         viewModel.useStandalonePaymentMethod.value!!,
-                        PrimerPaymentMethodIntent.CHECKOUT
+                        PrimerSessionIntent.CHECKOUT
                     )
                 }
             }
@@ -157,7 +157,7 @@ class SecondFragment : Fragment() {
         ) {
             AlertDialog.Builder(context).setMessage("onFailed ${error.description} with data $checkoutData")
                 .show()
-            errorHandler?.handleFailure("Something went wrong!")
+            errorHandler?.showErrorMessage("Something went wrong!")
         }
 
         override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
@@ -176,7 +176,7 @@ class SecondFragment : Fragment() {
         override fun onFailed(error: PrimerError, errorHandler: PrimerErrorDecisionHandler?) {
             AlertDialog.Builder(context).setMessage("onFailed $error")
                 .show()
-            errorHandler?.handleFailure("Something went wrong!")
+            errorHandler?.showErrorMessage("Something went wrong!")
         }
 
         override fun onTokenizeSuccess(

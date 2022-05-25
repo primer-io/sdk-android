@@ -50,7 +50,7 @@ interface PrimerInterface {
         context: Context,
         clientToken: String,
         paymentMethod: PrimerPaymentMethodType,
-        intent: PrimerPaymentMethodIntent,
+        intent: PrimerSessionIntent,
     )
 
     /**

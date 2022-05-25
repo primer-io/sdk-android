@@ -19,7 +19,7 @@ internal class CheckoutErrorEventResolver(
 
     override fun dispatch(error: PrimerError) {
         val checkoutErrorHandler = object : PrimerErrorDecisionHandler {
-            override fun handleFailure(errorMessage: String?) {
+            override fun showErrorMessage(errorMessage: String?) {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.ShowError(
                         errorType = ErrorType.PAYMENT_FAILED,

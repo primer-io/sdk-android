@@ -8,7 +8,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.events.CheckoutEvent
@@ -54,7 +54,7 @@ internal class PostTokenizationEventResolverTest {
     @Test
     fun `resolve() should dispatch TOKENIZE_SUCCESS type when payment intent is VAULT and tokenType is SINGLE_USE`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { config.intent }.returns(PrimerIntent(PrimerPaymentMethodIntent.VAULT))
+        every { config.intent }.returns(PrimerIntent(PrimerSessionIntent.VAULT))
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)
@@ -71,7 +71,7 @@ internal class PostTokenizationEventResolverTest {
     fun `resolve() should dispatch TOKENIZE_SUCCESS, TOKEN_ADDED_TO_VAULT type when payment intent is VAULT and tokenType is MULTI_USE`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { paymentMethodToken.tokenType }.returns(TokenType.MULTI_USE)
-        every { config.intent }.returns(PrimerIntent(PrimerPaymentMethodIntent.VAULT))
+        every { config.intent }.returns(PrimerIntent(PrimerSessionIntent.VAULT))
 
         runTest {
             tokenizationEventsResolver.resolve(paymentMethodToken)

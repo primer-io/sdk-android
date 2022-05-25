@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.di.DIAppComponent
@@ -87,8 +87,8 @@ internal class CreditCard(
         )
 
         text.text = when (checkoutConfig.paymentMethodIntent) {
-            PrimerPaymentMethodIntent.CHECKOUT -> container.context.getString(R.string.pay_by_card)
-            PrimerPaymentMethodIntent.VAULT ->
+            PrimerSessionIntent.CHECKOUT -> container.context.getString(R.string.pay_by_card)
+            PrimerSessionIntent.VAULT ->
                 container.context.getString(R.string.credit_debit_card)
         }
 

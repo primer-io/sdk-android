@@ -1,6 +1,6 @@
 package io.primer.android.components.presentation
 
-import io.primer.android.PrimerPaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
@@ -60,7 +60,7 @@ internal class HeadlessUniversalCheckoutViewModel(
                 tokenizationInteractor(
                     TokenizationParams(
                         it,
-                        PrimerPaymentMethodIntent.CHECKOUT,
+                        PrimerSessionIntent.CHECKOUT,
                         false
                     )
                 )
