@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PrimerCardPaymentOptions(
-    var is3DSOnVaultingEnabled: Boolean = false
+    var is3DSOnVaultingEnabled: Boolean = true
 )
