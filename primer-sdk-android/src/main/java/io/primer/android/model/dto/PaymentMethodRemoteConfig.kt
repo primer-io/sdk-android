@@ -29,8 +29,10 @@ enum class PaymentMethodType(
         Brand.PAYMENT_CARD
     ),
     KLARNA(brand = Brand.KLARNA),
+    PRIMER_TEST_KLARNA(brand = Brand.KLARNA),
     GOOGLE_PAY(brand = Brand.GOOGLE_PAY),
     PAYPAL(brand = Brand.PAYPAL),
+    PRIMER_TEST_PAYPAL(brand = Brand.PAYPAL),
     GOCARDLESS(brand = Brand.GOCARDLESS),
     APAYA(brand = Brand.APAYA),
     PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION, Brand.IDEAL),
@@ -42,6 +44,7 @@ enum class PaymentMethodType(
     ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION, Brand.GIROPAY),
     ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION, Brand.TWINT),
     ADYEN_SOFORT(ClientTokenIntent.ADYEN_SOFORT_REDIRECTION, Brand.SOFORT),
+    PRIMER_TEST_SOFORT(brand = Brand.SOFORT),
     ADYEN_TRUSTLY(ClientTokenIntent.ADYEN_TRUSTLY_REDIRECTION, Brand.TRUSTLY),
     ADYEN_ALIPAY(ClientTokenIntent.ADYEN_ALIPAY_REDIRECTION, Brand.ALIPAY),
     ADYEN_VIPPS(ClientTokenIntent.ADYEN_VIPPS_REDIRECTION, Brand.VIPPS),
@@ -84,7 +87,7 @@ internal fun PaymentMethodType.toPrimerPaymentMethod(): PrimerPaymentMethod {
         PaymentMethodType.GOOGLE_PAY -> PrimerPaymentMethod.GOOGLE_PAY
         PaymentMethodType.APAYA -> PrimerPaymentMethod.APAYA
         PaymentMethodType.KLARNA -> PrimerPaymentMethod.KLARNA
-        PaymentMethodType.PAYPAL -> PrimerPaymentMethod.PAYPAL
+        PaymentMethodType.PRIMER_TEST_PAYPAL, PaymentMethodType.PAYPAL -> PrimerPaymentMethod.PAYPAL
         PaymentMethodType.GOCARDLESS -> PrimerPaymentMethod.GOCARDLESS
         PaymentMethodType.ATOME -> PrimerPaymentMethod.ATOME
         PaymentMethodType.PAY_NL_IDEAL -> PrimerPaymentMethod.PAY_NL_IDEAL

@@ -23,9 +23,11 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
     override fun getPaymentMethodFor(type: PaymentMethodType): Either<PaymentMethod, Exception> =
         when (type) {
             PaymentMethodType.PAYMENT_CARD -> CardFactory().build()
-            PaymentMethodType.KLARNA -> KlarnaFactory(settings).build()
+            PaymentMethodType.PRIMER_TEST_KLARNA,
+            PaymentMethodType.KLARNA -> KlarnaFactory(type, settings).build()
             PaymentMethodType.GOOGLE_PAY -> GooglePayFactory(settings).build()
-            PaymentMethodType.PAYPAL -> PayPalFactory().build()
+            PaymentMethodType.PRIMER_TEST_PAYPAL,
+            PaymentMethodType.PAYPAL -> PayPalFactory(type).build()
             PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
             PaymentMethodType.PAY_NL_IDEAL,
             PaymentMethodType.PAY_NL_PAYCONIQ,
@@ -36,6 +38,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.ADYEN_GIROPAY,
             PaymentMethodType.ADYEN_TWINT,
             PaymentMethodType.ADYEN_SOFORT,
+            PaymentMethodType.PRIMER_TEST_SOFORT,
             PaymentMethodType.ADYEN_TRUSTLY,
             PaymentMethodType.ADYEN_ALIPAY,
             PaymentMethodType.ADYEN_VIPPS,

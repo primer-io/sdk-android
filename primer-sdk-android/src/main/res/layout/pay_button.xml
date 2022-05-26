@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/pay_button_height"
     android:animateLayoutChanges="true"
-    android:gravity="center">
+    android:gravity="center"
+    tools:background="@color/primer_pay_button_background">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button"
@@ -18,7 +19,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:enabled="false"
-        tools:text="Pay $99" />
+        tools:text="Pay $99"
+        tools:textColor="@android:color/white" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressIndicator"
@@ -27,13 +29,15 @@
         android:layout_height="wrap_content"
         android:alpha="0"
         android:indeterminate="true"
-        android:visibility="invisible"
         android:indeterminateTint="@android:color/white"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/button"
         app:layout_constraintEnd_toEndOf="@+id/button"
         app:layout_constraintStart_toStartOf="@+id/button"
         app:layout_constraintTop_toTopOf="@+id/button"
-        tools:alpha="1"
+        tools:alpha="0.5"
+        tools:layout_height="40dp"
+        tools:layout_width="40dp"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

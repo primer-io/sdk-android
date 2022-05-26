@@ -128,4 +128,8 @@
     <string name="pay_with_crypto">Pay with crypto</string>
     <string name="twoc_2p_button">Pay in installments</string>
     <string name="pay_with">Pay with</string>
+    <string name="dummy_apm_sandbox_description">This is a mocked flow for sandbox. Choose the result you want to test from the list below.</string>
+    <string name="label_authorized">Authorized</string>
+    <string name="label_declined">Declined</string>
+    <string name="label_failed">Failed</string>
 </resources>

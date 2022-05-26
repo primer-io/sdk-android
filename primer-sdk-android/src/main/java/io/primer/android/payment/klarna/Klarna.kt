@@ -17,12 +17,11 @@ import kotlinx.serialization.modules.polymorphic
 @Keep
 @Serializable
 data class Klarna(
+    override val type: PaymentMethodType = PaymentMethodType.KLARNA,
     val orderDescription: String? = null,
     val orderItems: List<OrderItem> = emptyList(),
     val webViewTitle: String? = "Klarna",
 ) : PaymentMethod {
-
-    override val type = PaymentMethodType.KLARNA
 
     override val canBeVaulted: Boolean = true
 

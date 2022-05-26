@@ -98,7 +98,7 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
 
     private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
     val amount: LiveData<Int> = _amount
