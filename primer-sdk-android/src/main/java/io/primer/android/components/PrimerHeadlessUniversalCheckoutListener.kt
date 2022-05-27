@@ -22,14 +22,14 @@ interface PrimerHeadlessUniversalCheckoutListener {
     fun onTokenizationStarted(paymentMethodType: PrimerPaymentMethodType) = Unit
     fun onPaymentMethodShowed() = Unit
     fun onTokenizeSuccess(
-        paymentMethodToken: PrimerPaymentMethodTokenData,
-        resumeHandler: PrimerResumeDecisionHandler
+        paymentMethodTokenData: PrimerPaymentMethodTokenData,
+        decisionHandler: PrimerResumeDecisionHandler
     ) = Unit
 
-    fun onResumeSuccess(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler) = Unit
+    fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) = Unit
 
     fun onBeforePaymentCreated(
-        data: PrimerPaymentMethodData,
+        paymentMethodData: PrimerPaymentMethodData,
         createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) {
         createPaymentHandler.continuePaymentCreation()

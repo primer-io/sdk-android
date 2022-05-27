@@ -124,23 +124,23 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
             override fun onTokenizeSuccess(
                 paymentMethodTokenData: PrimerPaymentMethodTokenData,
-                resumeHandler: PrimerResumeDecisionHandler
+                decisionHandler: PrimerResumeDecisionHandler
             ) {
                 showLoading("Tokenization success. Creating payment.")
-                viewModel.createPayment(paymentMethodTokenData, resumeHandler)
+                viewModel.createPayment(paymentMethodTokenData, decisionHandler)
             }
 
-            override fun onResumeSuccess(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler) {
+            override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
                 showLoading("Resume success. Resuming payment.")
-                viewModel.resumePayment(resumeToken, resumeHandler)
+                viewModel.resumePayment(resumeToken, decisionHandler)
             }
 
             override fun onBeforePaymentCreated(
-                data: PrimerPaymentMethodData,
+                paymentMethodData: PrimerPaymentMethodData,
                 createPaymentHandler: PrimerPaymentCreationDecisionHandler
             ) {
-                super.onBeforePaymentCreated(data, createPaymentHandler)
-                showLoading("On Before Payment Created with ${data.paymentMethodType}")
+                super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
+                showLoading("On Before Payment Created with ${paymentMethodData.paymentMethodType}")
             }
 
             override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
