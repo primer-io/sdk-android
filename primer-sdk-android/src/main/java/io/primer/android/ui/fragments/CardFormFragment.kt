@@ -15,7 +15,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.SessionState
@@ -372,7 +372,7 @@ internal class CardFormFragment : BaseFragment() {
         val uxMode = localConfig.paymentMethodIntent
         val context = requireContext()
 
-        binding.cardFormSubmitButton.text = when (uxMode) {
+        binding.btnSubmitForm.text = when (uxMode) {
             PrimerSessionIntent.VAULT -> context.getString(R.string.add_card)
             PrimerSessionIntent.CHECKOUT -> {
                 String
@@ -383,7 +383,7 @@ internal class CardFormFragment : BaseFragment() {
             }
         }
 
-        binding.cardFormSubmitButton.setOnClickListener {
+        binding.btnSubmitForm.setOnClickListener {
             onSubmitButtonPressed()
         }
     }

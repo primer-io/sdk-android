@@ -5,11 +5,10 @@ import io.primer.android.domain.helper.CountriesRepository
 import io.primer.android.ui.fragments.country.SelectCountryViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import java.lang.ref.WeakReference
 
 internal val countriesModule = {
     module {
-        single <CountriesRepository> { CountriesDataRepository(WeakReference(get())) }
+        single <CountriesRepository> { CountriesDataRepository(get()) }
         viewModel { SelectCountryViewModel(get(), get()) }
     }
 }

@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.constants.ThemeList
 import com.example.myapplication.datamodels.AppCountryCode
 import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.datamodels.ResumePaymentRequest
@@ -37,6 +38,7 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.ui.settings.PrimerUIOptions
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.ref.WeakReference
 import java.util.UUID
 

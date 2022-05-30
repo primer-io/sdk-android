@@ -1,8 +1,8 @@
 package io.primer.android.domain.action.models
 
 import io.primer.android.data.configuration.models.CountryCode
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class PrimerCountry(
@@ -14,6 +14,7 @@ data class PrimerCountry(
     }
 }
 
+@Serializable
 data class PrimerCountriesCodeInfo(
     val locale: String,
     val countries: Map<String, JsonElement>

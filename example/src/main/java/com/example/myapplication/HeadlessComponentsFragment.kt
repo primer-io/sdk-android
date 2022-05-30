@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -196,7 +197,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private fun createForm(requiredInputFieldTypes: List<PrimerInputElementType>) {
         val inputElements = requiredInputFieldTypes.map { type ->
             PrimerEditTextFactory.createFromType(requireContext(), type).apply {
-                setHint(getHint(type))
+                (this as TextView).setHint(getHint(type))
                 setPrimerInputElementListener(inputElementListener)
             }
         }
@@ -204,7 +205,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         val viewGroup = (binding.parentView as ViewGroup)
         viewGroup.removeAllViews()
         inputElements.forEach {
-            viewGroup.addView(it)
+            viewGroup.addView((it as TextView))
         }
 
         cardManager.setInputElements(inputElements)

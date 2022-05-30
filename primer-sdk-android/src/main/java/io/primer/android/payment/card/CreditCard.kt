@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.putFor
