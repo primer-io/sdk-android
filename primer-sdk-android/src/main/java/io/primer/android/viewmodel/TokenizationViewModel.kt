@@ -25,7 +25,7 @@ import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
@@ -130,9 +130,9 @@ internal class TokenizationViewModel(
     }
 
     fun setCardHasFields(fields: Map<String, Boolean>?) {
-        val availableFields = mutableMapOf<PrimerInputFieldType, Boolean>()
+        val availableFields = mutableMapOf<PrimerInputElementType, Boolean>()
         for ((key, value) in fields.orEmpty()) {
-            PrimerInputFieldType.fieldOf(key)?.let { fieldType ->
+            PrimerInputElementType.fieldOf(key)?.let { fieldType ->
                 availableFields[fieldType] = value
             }
         }
@@ -450,11 +450,11 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun clearInputField(type: PrimerInputFieldType) {
+    fun clearInputField(type: PrimerInputElementType) {
         paymentMethod?.clearInputField(type)
     }
 
-    fun hasField(inputType: PrimerInputFieldType): Boolean = paymentMethod
+    fun hasField(inputType: PrimerInputElementType): Boolean = paymentMethod
         ?.hasFieldValue(inputType) ?: false
 
     // endregion

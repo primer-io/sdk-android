@@ -2,13 +2,13 @@ package io.primer.android.payment
 
 import android.view.View
 import android.view.ViewGroup
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.data.configuration.models.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
-import java.util.Collections
+import java.util.*
 
 internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteConfig) {
 
@@ -34,7 +34,7 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteC
         values.put(key, value)
     }
 
-    fun setTokenizableField(type: PrimerInputFieldType, value: String) {
+    fun setTokenizableField(type: PrimerInputElementType, value: String) {
         values.put(type.field, value)
     }
 
@@ -62,13 +62,13 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteC
         }
     }
 
-    fun hasFieldValue(type: PrimerInputFieldType): Boolean {
+    fun hasFieldValue(type: PrimerInputElementType): Boolean {
         val data = if (values.has(type.field)) values.get(type.field) else null
         return if (data is String) data.isNotBlank()
         else data != null
     }
 
-    fun clearInputField(type: PrimerInputFieldType) {
+    fun clearInputField(type: PrimerInputElementType) {
         values.remove(type.field)
     }
 }

@@ -2,12 +2,12 @@ package io.primer.android.ui.fragments.country
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import io.primer.android.PrimerTheme
+import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.databinding.ItemCountrySelectBinding
-import io.primer.android.model.dto.CountryCode
 import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
+import io.primer.android.ui.settings.PrimerTheme
 
 data class CountryItem(
     val name: String,

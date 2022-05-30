@@ -3,18 +3,18 @@ package io.primer.android.components.manager
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.ui.widgets.PrimerCardNumberEditText
 import io.primer.android.components.ui.widgets.PrimerCvvEditText
 import io.primer.android.components.ui.widgets.PrimerEditText
 import io.primer.android.components.ui.widgets.PrimerInputElementCardNumberListener
 import io.primer.android.components.ui.widgets.PrimerTextChangedListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
-import io.primer.android.model.dto.PrimerInputFieldType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 
 @ExperimentalPrimerApi
 interface PrimerUniversalCheckoutCardManagerInterface {
-    fun getRequiredInputElementTypes(): List<PrimerInputFieldType>?
+    fun getRequiredInputElementTypes(): List<PrimerInputElementType>?
     fun setInputElements(elements: List<PrimerInputElement>)
     fun tokenize()
     fun isCardFormValid(): Boolean
@@ -35,7 +35,7 @@ class PrimerCardManager private constructor() :
     private var cardFormValid: Boolean = false
     private var listener: PrimerCardManagerListener? = null
 
-    override fun getRequiredInputElementTypes(): List<PrimerInputFieldType>? {
+    override fun getRequiredInputElementTypes(): List<PrimerInputElementType>? {
         return PrimerHeadlessUniversalCheckout.instance.listRequiredInputElementTypes(
             PrimerPaymentMethodType.PAYMENT_CARD
         )
@@ -51,11 +51,11 @@ class PrimerCardManager private constructor() :
         PrimerHeadlessUniversalCheckout.instance.startTokenization(
             PrimerPaymentMethodType.PAYMENT_CARD,
             CardInputData(
-                getInputElementValue(PrimerInputFieldType.CARD_NUMBER).toString(),
-                getInputElementValue(PrimerInputFieldType.EXPIRY_DATE).toString(),
-                getInputElementValue(PrimerInputFieldType.CVV).toString(),
-                getInputElementValue(PrimerInputFieldType.CARDHOLDER_NAME),
-                getInputElementValue(PrimerInputFieldType.POSTAL_CODE),
+                getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString(),
+                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString(),
+                getInputElementValue(PrimerInputElementType.CVV).toString(),
+                getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME),
+                getInputElementValue(PrimerInputElementType.POSTAL_CODE),
             )
         )
     }
@@ -78,11 +78,11 @@ class PrimerCardManager private constructor() :
         inputElements.forEach { (it as? PrimerEditText)?.setTextChangedListener(this) }
 
         val cardNumberEditText =
-            inputElements.find { it.getType() == PrimerInputFieldType.CARD_NUMBER }
+            inputElements.find { it.getType() == PrimerInputElementType.CARD_NUMBER }
                 as? PrimerCardNumberEditText
 
         val cvvEditText =
-            inputElements.find { it.getType() == PrimerInputFieldType.CVV }
+            inputElements.find { it.getType() == PrimerInputElementType.CVV }
                 as? PrimerCvvEditText
 
         cardNumberEditText?.setCvvListener(object : PrimerInputElementCardNumberListener {
@@ -92,7 +92,7 @@ class PrimerCardManager private constructor() :
         })
     }
 
-    private fun getInputElementValue(inputFieldType: PrimerInputFieldType): String? {
+    private fun getInputElementValue(inputFieldType: PrimerInputElementType): String? {
         return (
             inputElements.firstOrNull { it.getType() == inputFieldType } as? PrimerEditText
             )?.getSanitizedText()?.toString()

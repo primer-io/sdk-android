@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.TextInputMask
 
@@ -17,7 +17,7 @@ internal class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = nul
         setRawInputType(InputType.TYPE_CLASS_DATETIME or InputType.TYPE_DATETIME_VARIATION_DATE)
     }
 
-    override fun getType() = PrimerInputFieldType.EXPIRY_DATE
+    override fun getType() = PrimerInputElementType.EXPIRY_DATE
 
     override fun isValid() = ExpiryDateFormatter.fromString(super.getSanitizedText().toString())
         .isValid()

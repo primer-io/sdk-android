@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
@@ -14,57 +15,56 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.SessionState
-import io.primer.android.analytics.data.models.ObjectId
-import io.primer.android.analytics.domain.models.PaymentMethodContextParams
-import io.primer.android.domain.action.ActionInteractor
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.base.models.BasePaymentToken
-import io.primer.android.domain.payments.create.CreatePaymentInteractor
-import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.data.configuration.models.CheckoutModuleType
+import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
+import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
+import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.domain.base.None
+import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
+import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.domain.payments.resume.models.ResumeParams
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.data.configuration.models.CountryCode
-import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
 import io.primer.android.model.MonetaryAmount
-import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.domain.payments.methods.models.PaymentModuleParams
+import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
-import io.primer.android.payment.billing_address.IBillingAddressValidator
+import io.primer.android.payment.billing_address.BillingAddressValidator
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.utils.SurchargeFormatter
 import io.primer.android.utils.orNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
-import java.util.Collections
-import java.util.Currency
+import java.util.*
 
 @KoinApiExtension
 @ExperimentalCoroutinesApi
@@ -79,7 +79,7 @@ internal class PrimerViewModel(
     private val resumePaymentInteractor: ResumePaymentInteractor,
     private val actionInteractor: ActionInteractor,
     private val config: PrimerConfig,
-    private val billingAddressValidator: IBillingAddressValidator,
+    private val billingAddressValidator: BillingAddressValidator,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : BaseViewModel(analyticsInteractor), EventBus.EventListener {
 
@@ -88,8 +88,8 @@ internal class PrimerViewModel(
     private val _selectedPaymentMethodId = MutableLiveData("")
     private val _transactionId = MutableLiveData("")
 
-    private val _selectedCountryCode = MutableLiveData<Country?>()
-    val selectCountryCode: LiveData<Country?> = _selectedCountryCode
+    private val _selectedCountryCode = MutableLiveData<PrimerCountry?>()
+    val selectCountryCode: LiveData<PrimerCountry?> = _selectedCountryCode
 
     private val _keyboardVisible = MutableLiveData(false)
     val keyboardVisible: LiveData<Boolean> = _keyboardVisible
@@ -133,7 +133,7 @@ internal class PrimerViewModel(
     private val _navigateActionEvent = MutableLiveData<SelectedPaymentMethodBehaviour>()
     val navigateActionEvent: LiveData<SelectedPaymentMethodBehaviour> = _navigateActionEvent
 
-    val billingAddressFields = MutableLiveData(mutableMapOf<PrimerInputFieldType, String?>())
+    val billingAddressFields = MutableLiveData(mutableMapOf<PrimerInputElementType, String?>())
 
     val showBillingFields: LiveData<Map<String, Boolean>?> by lazy {
         configurationInteractor(ConfigurationParams(true))
@@ -334,23 +334,23 @@ internal class PrimerViewModel(
             completion(null)
             return
         }
-        val countryCode = billingAddressFields[PrimerInputFieldType.COUNTRY_CODE]
-        val firstName = billingAddressFields[PrimerInputFieldType.FIRST_NAME].orNull()
-        val lastName = billingAddressFields[PrimerInputFieldType.LAST_NAME].orNull()
-        val addressLine1 = billingAddressFields[PrimerInputFieldType.ADDRESS_LINE_1].orNull()
-        val addressLine2 = billingAddressFields[PrimerInputFieldType.ADDRESS_LINE_2].orNull()
-        val postalCode = billingAddressFields[PrimerInputFieldType.POSTAL_CODE].orNull()
-        val city = billingAddressFields[PrimerInputFieldType.CITY].orNull()
-        val state = billingAddressFields[PrimerInputFieldType.STATE].orNull()
+        val countryCode = billingAddressFields[PrimerInputElementType.COUNTRY_CODE]
+        val firstName = billingAddressFields[PrimerInputElementType.FIRST_NAME].orNull()
+        val lastName = billingAddressFields[PrimerInputElementType.LAST_NAME].orNull()
+        val addressLine1 = billingAddressFields[PrimerInputElementType.ADDRESS_LINE_1].orNull()
+        val addressLine2 = billingAddressFields[PrimerInputElementType.ADDRESS_LINE_2].orNull()
+        val postalCode = billingAddressFields[PrimerInputElementType.POSTAL_CODE].orNull()
+        val city = billingAddressFields[PrimerInputElementType.CITY].orNull()
+        val state = billingAddressFields[PrimerInputElementType.STATE].orNull()
 
         val action = ActionUpdateBillingAddressParams(
-            currentCustomer.firstName,
-            currentCustomer.lastName,
-            currentBillingAddress?.addressLine1,
-            currentBillingAddress?.addressLine2,
-            currentBillingAddress?.city,
-            postalCodeValue,
-            currentBillingAddress?.countryCode?.name,
+            firstName,
+            lastName,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+            countryCode,
         )
 
         dispatchAction(action) { error ->
@@ -438,7 +438,7 @@ internal class PrimerViewModel(
         )
     }
 
-    fun setSelectedCountry(country: Country) {
+    fun setSelectedCountry(country: PrimerCountry) {
         _selectedCountryCode.value = country
     }
 

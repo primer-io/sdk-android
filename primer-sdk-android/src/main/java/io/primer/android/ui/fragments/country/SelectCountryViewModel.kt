@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.data.configuration.models.emojiFlag
+import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.domain.helper.CountriesRepository
-import io.primer.android.model.dto.Country
-import io.primer.android.model.dto.CountryCode
-import io.primer.android.model.dto.emojiFlag
 import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ internal class SelectCountryViewModel(
         }
     }
 
-    fun getCountryByCode(code: CountryCode, onComplete: (Country) -> Unit) {
+    fun getCountryByCode(code: CountryCode, onComplete: (PrimerCountry) -> Unit) {
         viewModelScope.launch {
             val country = countriesRepository.getCountryByCode(code)
             withContext(Dispatchers.Main) {

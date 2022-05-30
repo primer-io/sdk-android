@@ -2,9 +2,9 @@ package io.primer.android.domain.helper
 
 import android.content.Context
 import io.primer.android.R
-import io.primer.android.model.dto.CountriesCodeInfo
-import io.primer.android.model.dto.Country
-import io.primer.android.model.dto.CountryCode
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.domain.action.models.PrimerCountriesCodeInfo
+import io.primer.android.domain.action.models.PrimerCountry
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.json.JSONArray
@@ -14,7 +14,7 @@ import java.lang.ref.WeakReference
 class CountriesDataRepository(private val contextRef: WeakReference<Context>) :
     CountriesRepository {
 
-    private val countries = mutableListOf<Country>()
+    private val countries = mutableListOf<PrimerCountry>()
 
     private suspend fun loadCountries(fromCache: Boolean = false) {
         if (!fromCache || countries.isEmpty()) {
@@ -23,7 +23,7 @@ class CountriesDataRepository(private val contextRef: WeakReference<Context>) :
                 ?.readBytes()
                 ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
-                val countryCodesData: CountriesCodeInfo = Json.decodeFromString(dataJson)
+                val countryCodesData: PrimerCountriesCodeInfo = Json.decodeFromString(dataJson)
                 countries.clear()
                 try {
                     countries.addAll(
@@ -33,9 +33,9 @@ class CountriesDataRepository(private val contextRef: WeakReference<Context>) :
                             if (valueJson is JSONArray) {
                                 val name = if (valueJson.length() == 0) "N/A"
                                 else valueJson.optString(valueJson.length() - 1, "N/A")
-                                Country(name, enumValueOf(entry.key))
+                                PrimerCountry(name, enumValueOf(entry.key))
                             } else {
-                                Country(valueJson.toString(), enumValueOf(entry.key))
+                                PrimerCountry(valueJson.toString(), enumValueOf(entry.key))
                             }
                         }
                     )
@@ -50,17 +50,17 @@ class CountriesDataRepository(private val contextRef: WeakReference<Context>) :
         }
     }
 
-    override suspend fun getCountries(): List<Country> {
+    override suspend fun getCountries(): List<PrimerCountry> {
         loadCountries(fromCache = true)
         return countries.toList()
     }
 
-    override suspend fun getCountryByCode(code: CountryCode): Country {
+    override suspend fun getCountryByCode(code: CountryCode): PrimerCountry {
         loadCountries(fromCache = true)
-        return countries.find { it.code == code } ?: Country.default
+        return countries.find { it.code == code } ?: PrimerCountry.default
     }
 
-    override suspend fun findCountryByQuery(query: String): List<Country> {
+    override suspend fun findCountryByQuery(query: String): List<PrimerCountry> {
         loadCountries()
         return countries.filter {
             it.name.contains(query, ignoreCase = true) ||

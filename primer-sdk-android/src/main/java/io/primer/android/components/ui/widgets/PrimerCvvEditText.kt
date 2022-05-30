@@ -5,7 +5,7 @@ import android.text.InputFilter
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.CardNumberFormatter
 
 internal class PrimerCvvEditText(context: Context, attrs: AttributeSet? = null) :
@@ -19,7 +19,7 @@ internal class PrimerCvvEditText(context: Context, attrs: AttributeSet? = null) 
 
     private var cardNumber: String? = null
 
-    override fun getType() = PrimerInputFieldType.CVV
+    override fun getType() = PrimerInputElementType.CVV
 
     override fun isValid() = cardNumber.isNullOrBlank().not() && CardNumberFormatter.fromString(
         cardNumber.orEmpty()

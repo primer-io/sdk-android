@@ -4,31 +4,32 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.DrawableRes
 import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.PrimerCheckoutListener
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.Primer
+import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.presentation.HeadlessUniversalCheckoutViewModel
 import io.primer.android.components.ui.assets.ImageType
 import io.primer.android.components.ui.assets.PrimerAssetManager
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.toPrimerPaymentMethod
+import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.error.models.HUCError
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.Serialization
-import io.primer.android.domain.error.models.HUCError
-import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import org.koin.core.component.get
 
 @ExperimentalPrimerApi
@@ -131,7 +132,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     }
 
     override fun listRequiredInputElementTypes(paymentMethodType: PrimerPaymentMethodType):
-        List<PrimerInputFieldType>? {
+        List<PrimerInputElementType>? {
         if (viewModel == null) componentsListener?.onFailed(
             HUCError.InitializationError(
                 INITIALIZATION_ERROR

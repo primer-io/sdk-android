@@ -1,11 +1,14 @@
 package io.primer.android.components.domain.inputs
 
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.domain.inputs.models.needAdd
+import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.data.configuration.models.CheckoutModuleType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.logging.Logger
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.logging.Logger
 
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
@@ -13,7 +16,7 @@ internal class PaymentInputTypesInteractor(
     private val logger: Logger,
 ) {
     // MOVE TO FACTORY
-    fun execute(paymentMethodType: PaymentMethodType): List<PrimerInputFieldType>? {
+    fun execute(paymentMethodType: PaymentMethodType): List<PrimerInputElementType>? {
         try {
             return when (paymentMethodType) {
                 PaymentMethodType.PAYMENT_CARD -> {
@@ -21,32 +24,32 @@ internal class PaymentInputTypesInteractor(
                         checkoutModuleRepository.getCheckoutModuleOptions(
                             CheckoutModuleType.BILLING_ADDRESS
                         ).let { configs ->
-                            val addressFields = mutableListOf<PrimerInputFieldType>()
-                            configs?.needAdd(PrimerInputFieldType.POSTAL_CODE)?.let { field ->
+                            val addressFields = mutableListOf<PrimerInputElementType>()
+                            configs?.needAdd(PrimerInputElementType.POSTAL_CODE)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.COUNTRY_CODE)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.COUNTRY_CODE)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.CITY)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.CITY)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.STATE)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.STATE)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.ADDRESS_LINE_1)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_1)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.ADDRESS_LINE_2)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_2)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.PHONE_NUMBER)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.PHONE_NUMBER)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.FIRST_NAME)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.FIRST_NAME)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputFieldType.LAST_NAME)?.let { field ->
+                            configs?.needAdd(PrimerInputElementType.LAST_NAME)?.let { field ->
                                 addressFields.add(field)
                             }
                             addressFields
@@ -56,15 +59,16 @@ internal class PaymentInputTypesInteractor(
                         checkoutModuleRepository.getCheckoutModuleOptions(
                             CheckoutModuleType.CARD_INFORMATION
                         ).let { configs ->
-                            if (configs?.via(PrimerInputFieldType.ALL)
-                                ?: configs?.via(PrimerInputFieldType.CARDHOLDER_NAME) != false)
-                                PrimerInputFieldType.CARDHOLDER_NAME else null
+                            if ((configs?.via(PrimerInputElementType.ALL)
+                                    ?: configs?.via(PrimerInputElementType.CARDHOLDER_NAME)) != false
+                            )
+                                PrimerInputElementType.CARDHOLDER_NAME else null
                         }
 
                     listOf(
-                        PrimerInputFieldType.CARD_NUMBER,
-                        PrimerInputFieldType.EXPIRY_DATE,
-                        PrimerInputFieldType.CVV
+                        PrimerInputElementType.CARD_NUMBER,
+                        PrimerInputElementType.EXPIRY_DATE,
+                        PrimerInputElementType.CVV
                     )
                         .plus(cardName)
                         .plus(billingAddressesFields)

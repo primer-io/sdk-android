@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.method.QwertyKeyListener
 import android.text.method.TextKeyListener
 import android.util.AttributeSet
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 internal class PrimerCountryCodeEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
@@ -13,7 +13,7 @@ internal class PrimerCountryCodeEditText(context: Context, attrs: AttributeSet? 
         keyListener = QwertyKeyListener.getInstance(true, TextKeyListener.Capitalize.WORDS)
     }
 
-    override fun getType() = PrimerInputFieldType.COUNTRY_CODE
+    override fun getType() = PrimerInputElementType.COUNTRY_CODE
 
     override fun isValid(): Boolean = true
 }

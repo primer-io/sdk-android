@@ -11,15 +11,15 @@ import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.primer.android.PrimerTheme
 import io.primer.android.R
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.data.configuration.models.emojiFlag
 import io.primer.android.databinding.LayoutBillingAddressFormBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.Country
-import io.primer.android.model.dto.CountryCode
-import io.primer.android.model.dto.PrimerInputFieldType
-import io.primer.android.model.dto.emojiFlag
+import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.ui.FieldFocuser
+import io.primer.android.ui.settings.PrimerTheme
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -38,22 +38,22 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         false
     )
 
-    private val fields = mutableListOf<Pair<PrimerInputFieldType, TextInputWidget>>()
-    private val fieldsMap by lazy { mutableMapOf<PrimerInputFieldType, TextInputWidget>() }
+    private val fields = mutableListOf<Pair<PrimerInputElementType, TextInputWidget>>()
+    private val fieldsMap by lazy { mutableMapOf<PrimerInputElementType, TextInputWidget>() }
 
     var onChooseCountry: (() -> Unit)? = null
     var onHideKeyboard: (() -> Unit)? = null
-    var onInputChange: ((PrimerInputFieldType, String?) -> Unit)? = null
+    var onInputChange: ((PrimerInputElementType, String?) -> Unit)? = null
 
     init {
-        fields.add(PrimerInputFieldType.COUNTRY_CODE to binding.cardFormCountryCode)
-        fields.add(PrimerInputFieldType.FIRST_NAME to binding.cardFormFirstName)
-        fields.add(PrimerInputFieldType.LAST_NAME to binding.cardFormLastName)
-        fields.add(PrimerInputFieldType.ADDRESS_LINE_1 to binding.cardFormAddressLine1)
-        fields.add(PrimerInputFieldType.ADDRESS_LINE_2 to binding.cardFormAddressLine2)
-        fields.add(PrimerInputFieldType.POSTAL_CODE to binding.cardFormPostalCode)
-        fields.add(PrimerInputFieldType.CITY to binding.cardFormCity)
-        fields.add(PrimerInputFieldType.STATE to binding.cardFormRegion)
+        fields.add(PrimerInputElementType.COUNTRY_CODE to binding.cardFormCountryCode)
+        fields.add(PrimerInputElementType.FIRST_NAME to binding.cardFormFirstName)
+        fields.add(PrimerInputElementType.LAST_NAME to binding.cardFormLastName)
+        fields.add(PrimerInputElementType.ADDRESS_LINE_1 to binding.cardFormAddressLine1)
+        fields.add(PrimerInputElementType.ADDRESS_LINE_2 to binding.cardFormAddressLine2)
+        fields.add(PrimerInputElementType.POSTAL_CODE to binding.cardFormPostalCode)
+        fields.add(PrimerInputElementType.CITY to binding.cardFormCity)
+        fields.add(PrimerInputElementType.STATE to binding.cardFormRegion)
 
         fields.forEach {
             it.second.setupEditTextListeners()
@@ -76,7 +76,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     /**
      * All fields for billing address.
      */
-    fun fieldsMap(): Map<PrimerInputFieldType, TextInputWidget> {
+    fun fieldsMap(): Map<PrimerInputElementType, TextInputWidget> {
         val availableFields = fields
         fieldsMap.clear()
         availableFields.forEach { pair ->
@@ -147,14 +147,14 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         }
     }
 
-    fun onSelectCountry(country: Country) {
+    fun onSelectCountry(country: PrimerCountry) {
         val countryName = buildString {
             append(country.code.emojiFlag())
             append(" ")
             append(country.name)
         }
         binding.cardFormCountryCode.editText?.setText(countryName)
-        onInputChange?.invoke(PrimerInputFieldType.COUNTRY_CODE, country.code.name)
+        onInputChange?.invoke(PrimerInputElementType.COUNTRY_CODE, country.code.name)
     }
 
     fun findNextFocus() {

@@ -1,7 +1,7 @@
 package io.primer.android.components.domain.core.models.card
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.payment.card.CreditCard
 
 internal data class CardInputData(
@@ -13,14 +13,14 @@ internal data class CardInputData(
 ) : PrimerHeadlessUniversalCheckoutInputData {
 
     internal fun setTokenizableValues(creditCard: CreditCard) = creditCard.apply {
-        setTokenizableField(PrimerInputFieldType.CARD_NUMBER, number)
-        setTokenizableField(PrimerInputFieldType.EXPIRY_DATE, expiryDate)
-        setTokenizableField(PrimerInputFieldType.CVV, cvv)
+        setTokenizableField(PrimerInputElementType.CARD_NUMBER, number)
+        setTokenizableField(PrimerInputElementType.EXPIRY_DATE, expiryDate)
+        setTokenizableField(PrimerInputElementType.CVV, cvv)
         holderName?.apply {
-            setTokenizableField(PrimerInputFieldType.CARDHOLDER_NAME, holderName)
+            setTokenizableField(PrimerInputElementType.CARDHOLDER_NAME, holderName)
         }
         postalCode?.apply {
-            setTokenizableField(PrimerInputFieldType.POSTAL_CODE, postalCode)
+            setTokenizableField(PrimerInputElementType.POSTAL_CODE, postalCode)
         }
     }
 }

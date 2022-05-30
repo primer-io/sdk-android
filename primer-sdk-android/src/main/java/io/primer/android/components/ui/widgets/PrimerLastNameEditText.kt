@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.method.QwertyKeyListener
 import android.text.method.TextKeyListener
 import android.util.AttributeSet
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 internal class PrimerLastNameEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
@@ -13,7 +13,7 @@ internal class PrimerLastNameEditText(context: Context, attrs: AttributeSet? = n
         keyListener = QwertyKeyListener.getInstance(true, TextKeyListener.Capitalize.WORDS)
     }
 
-    override fun getType() = PrimerInputFieldType.LAST_NAME
+    override fun getType() = PrimerInputElementType.LAST_NAME
 
     override fun isValid() = super.getSanitizedText().isNullOrBlank().not()
 }

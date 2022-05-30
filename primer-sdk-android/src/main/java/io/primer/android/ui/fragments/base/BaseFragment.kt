@@ -5,9 +5,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject

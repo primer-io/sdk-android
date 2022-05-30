@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 internal class PrimerPostalCodeEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
@@ -15,7 +15,7 @@ internal class PrimerPostalCodeEditText(context: Context, attrs: AttributeSet? =
         else SpannableStringBuilder(getSanitizedText())
     }
 
-    override fun getType() = PrimerInputFieldType.POSTAL_CODE
+    override fun getType() = PrimerInputElementType.POSTAL_CODE
 
     override fun isValid() = getSanitizedText().isNullOrBlank().not()
 }

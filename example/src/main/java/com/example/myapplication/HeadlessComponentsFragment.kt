@@ -20,12 +20,12 @@ import io.primer.android.components.manager.PrimerCardManager
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
 import io.primer.android.ui.CardType
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
@@ -193,7 +193,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
     }
 
-    private fun createForm(requiredInputFieldTypes: List<PrimerInputFieldType>) {
+    private fun createForm(requiredInputFieldTypes: List<PrimerInputElementType>) {
         val inputElements = requiredInputFieldTypes.map { type ->
             PrimerEditTextFactory.createFromType(requireContext(), type).apply {
                 setHint(getHint(type))
@@ -238,21 +238,21 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         binding.progressLayout.root.isVisible = false
     }
 
-    private fun getHint(inputFieldType: PrimerInputFieldType): Int {
+    private fun getHint(inputFieldType: PrimerInputElementType): Int {
         return when (inputFieldType) {
-            PrimerInputFieldType.CARDHOLDER_NAME -> R.string.card_holder_name
-            PrimerInputFieldType.CVV -> R.string.card_cvv
-            PrimerInputFieldType.EXPIRY_DATE -> R.string.card_expiry
-            PrimerInputFieldType.CARD_NUMBER -> R.string.card_number
-            PrimerInputFieldType.POSTAL_CODE -> R.string.card_zip
-            PrimerInputFieldType.COUNTRY_CODE -> R.string.address_country_code
-            PrimerInputFieldType.CITY -> R.string.address_city
-            PrimerInputFieldType.STATE -> R.string.address_state
-            PrimerInputFieldType.ADDRESS_LINE_1 -> R.string.address_line_1
-            PrimerInputFieldType.ADDRESS_LINE_2 -> R.string.address_line_2
-            PrimerInputFieldType.PHONE_NUMBER -> R.string.input_hint_form_phone_number
-            PrimerInputFieldType.FIRST_NAME -> R.string.first_name
-            PrimerInputFieldType.LAST_NAME -> R.string.last_name
+            PrimerInputElementType.CARDHOLDER_NAME -> R.string.card_holder_name
+            PrimerInputElementType.CVV -> R.string.card_cvv
+            PrimerInputElementType.EXPIRY_DATE -> R.string.card_expiry
+            PrimerInputElementType.CARD_NUMBER -> R.string.card_number
+            PrimerInputElementType.POSTAL_CODE -> R.string.card_zip
+            PrimerInputElementType.COUNTRY_CODE -> R.string.address_country_code
+            PrimerInputElementType.CITY -> R.string.address_city
+            PrimerInputElementType.STATE -> R.string.address_state
+            PrimerInputElementType.ADDRESS_LINE_1 -> R.string.address_line_1
+            PrimerInputElementType.ADDRESS_LINE_2 -> R.string.address_line_2
+            PrimerInputElementType.PHONE_NUMBER -> R.string.input_hint_form_phone_number
+            PrimerInputElementType.FIRST_NAME -> R.string.first_name
+            PrimerInputElementType.LAST_NAME -> R.string.last_name
             else -> R.string.enter_address
         }
     }

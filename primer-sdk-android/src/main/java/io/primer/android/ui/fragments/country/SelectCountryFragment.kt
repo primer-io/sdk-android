@@ -9,8 +9,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.R
+import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.databinding.FragmentSelectCountryBinding
-import io.primer.android.model.dto.CountryCode
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment

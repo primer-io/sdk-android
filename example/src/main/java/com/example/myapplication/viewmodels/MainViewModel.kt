@@ -6,7 +6,6 @@ import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.constants.ThemeList
 import com.example.myapplication.datamodels.AppCountryCode
 import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.datamodels.ResumePaymentRequest
@@ -14,16 +13,16 @@ import com.example.myapplication.datamodels.TransactionRequest
 import com.example.myapplication.datamodels.TransactionResponse
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.datamodels.toTransactionState
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.repositories.ClientSessionRepository
-import com.example.myapplication.repositories.ClientTokenRepository
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.PaymentInstrumentsRepository
 import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
-import io.primer.android.PrimerCheckoutListener
 import io.primer.android.Primer
+import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerCardPaymentOptions
@@ -32,6 +31,7 @@ import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.internal.PrimerPaymentMethod
 import io.primer.android.data.tokenization.models.TokenType
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
@@ -44,12 +44,13 @@ import java.util.UUID
 class MainViewModel(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
+    private val apiKeyDataSource: ApiKeyDataSource
 ) : ViewModel() {
 
-    private val clientSessionRepository = ClientSessionRepository()
     private val paymentInstrumentsRepository = PaymentInstrumentsRepository()
-    private val paymentsRepository = PaymentsRepository()
-    private val resumeRepository = ResumeRepository()
+    private val clientSessionRepository = ClientSessionRepository(apiKeyDataSource)
+    private val paymentsRepository = PaymentsRepository(apiKeyDataSource)
+    private val resumeRepository = ResumeRepository(apiKeyDataSource)
 
     enum class Mode {
         CHECKOUT, VAULT;

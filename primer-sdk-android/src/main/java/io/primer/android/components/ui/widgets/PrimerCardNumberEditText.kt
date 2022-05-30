@@ -5,7 +5,7 @@ import android.text.Editable
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
-import io.primer.android.model.dto.PrimerInputFieldType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.CardType
 import io.primer.android.ui.TextInputMask
@@ -26,7 +26,7 @@ class PrimerCardNumberEditText(context: Context, attrs: AttributeSet? = null) :
         setRawInputType(InputType.TYPE_CLASS_NUMBER)
     }
 
-    override fun getType() = PrimerInputFieldType.CARD_NUMBER
+    override fun getType() = PrimerInputElementType.CARD_NUMBER
 
     override fun isValid() =
         CardNumberFormatter.fromString(super.getSanitizedText().toString()).isValid()

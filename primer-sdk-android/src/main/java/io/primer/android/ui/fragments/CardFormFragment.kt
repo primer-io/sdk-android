@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PaymentMethodIntent
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.SessionState
@@ -27,20 +26,16 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentCardFormBinding
-import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
-import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.model.MonetaryAmount
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.model.SyncValidationError
-import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
-import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
-import io.primer.android.payment.card.CARD_NAME_FILED_NAME
-import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
-import io.primer.android.payment.card.CARD_POSTAL_CODE_FIELD_NAME
+import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.ui.CardType
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.PayAmountText
@@ -49,6 +44,7 @@ import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.ui.utils.setMarginTopForError
 import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.hideKeyboard
@@ -69,7 +65,7 @@ import java.util.*
 @KoinApiExtension
 internal class CardFormFragment : BaseFragment() {
 
-    private var cardInputFields: TreeMap<PrimerInputFieldType, TextInputWidget> by autoCleaned()
+    private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
@@ -136,7 +132,7 @@ internal class CardFormFragment : BaseFragment() {
         renderTitle()
         renderCancelButton()
         renderSubmitButton()
-        if (!tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER)) focusFirstInput()
+        if (!tokenizationViewModel.hasField(PrimerInputElementType.CARD_NUMBER)) focusFirstInput()
         addInputFieldListeners(cardInputFields)
         adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
     }
@@ -152,14 +148,14 @@ internal class CardFormFragment : BaseFragment() {
 
     /**
      * @see [cardInputFields] contains all fields, but need to filter for only available fields
-     * and handle type @see [PrimerInputFieldType.ALL] when all fields is available
+     * and handle type @see [PrimerInputElementType.ALL] when all fields is available
      * else remove from input fields and hide on layout.
      */
     private fun displayAvailableCardFields(cardInfoFields: Map<String, Boolean>?) {
         if (cardInfoFields == null) return
-        if (cardInfoFields[PrimerInputFieldType.ALL.field] == true) return
+        if (cardInfoFields[PrimerInputElementType.ALL.field] == true) return
         for ((fieldType, available) in cardInfoFields) {
-            PrimerInputFieldType.fieldOf(fieldType)?.let { type ->
+            PrimerInputElementType.fieldOf(fieldType)?.let { type ->
                 if (!available) {
                     cardInputFields[type]?.isVisible = false
                     cardInputFields.remove(type)
@@ -177,10 +173,10 @@ internal class CardFormFragment : BaseFragment() {
              * and IME option.
              */
             arrayOf(
-                PrimerInputFieldType.CARD_NUMBER to binding.cardFormCardNumber,
-                PrimerInputFieldType.EXPIRY_DATE to binding.cardFormCardExpiry,
-                PrimerInputFieldType.CVV to binding.cardFormCardCvv,
-                PrimerInputFieldType.CARDHOLDER_NAME to binding.cardFormCardholderName,
+                PrimerInputElementType.CARD_NUMBER to binding.cardFormCardNumber,
+                PrimerInputElementType.EXPIRY_DATE to binding.cardFormCardExpiry,
+                PrimerInputElementType.CVV to binding.cardFormCardCvv,
+                PrimerInputElementType.CARDHOLDER_NAME to binding.cardFormCardholderName,
             )
         )
     }
@@ -253,11 +249,11 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun focusFirstInput() = FieldFocuser.focus(
-        cardInputFields[PrimerInputFieldType.CARD_NUMBER]?.editText
+        cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText
     )
 
     private fun renderCardNumberInput() {
-        val cardNumberInput = cardInputFields[PrimerInputFieldType.CARD_NUMBER]
+        val cardNumberInput = cardInputFields[PrimerInputElementType.CARD_NUMBER]
         cardNumberInput?.editText?.addTextChangedListener(TextInputMask.CardNumber())
         cardNumberInput?.editText?.addTextChangedListener(afterTextChanged = ::onCardNumberInput)
         updateCardNumberInputIcon()
@@ -307,7 +303,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun updateCardNumberInputIcon() {
         val resource = network?.getResource() ?: R.drawable.ic_generic_card
-        val input = cardInputFields[PrimerInputFieldType.CARD_NUMBER] ?: return
+        val input = cardInputFields[PrimerInputElementType.CARD_NUMBER] ?: return
         input.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0)
     }
 
@@ -322,11 +318,11 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun addInputFieldListeners(fields: Map<PrimerInputFieldType, TextInputWidget>) {
-        fields[PrimerInputFieldType.EXPIRY_DATE]?.editText?.addTextChangedListener(
+    private fun addInputFieldListeners(fields: Map<PrimerInputElementType, TextInputWidget>) {
+        fields[PrimerInputElementType.EXPIRY_DATE]?.editText?.addTextChangedListener(
             TextInputMask.ExpiryDate()
         )
-        fields[PrimerInputFieldType.CARD_NUMBER]?.editText?.addTextChangedListener(
+        fields[PrimerInputElementType.CARD_NUMBER]?.editText?.addTextChangedListener(
             TextInputMask.CardNumber()
         )
         fields.entries.forEach {
@@ -335,7 +331,7 @@ internal class CardFormFragment : BaseFragment() {
         }
 
         binding.billingAddressForm.fieldsMap().entries.forEach {
-            if (it.key != PrimerInputFieldType.COUNTRY_CODE) {
+            if (it.key != PrimerInputElementType.COUNTRY_CODE) {
                 it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
             }
         }
@@ -496,7 +492,7 @@ internal class CardFormFragment : BaseFragment() {
         return View.OnFocusChangeListener { _, hasFocus ->
             var skip = false
 
-            if (!hasFocus && firstMount && name == PrimerInputFieldType.CARD_NUMBER.field) {
+            if (!hasFocus && firstMount && name == PrimerInputElementType.CARD_NUMBER.field) {
                 firstMount = false
                 skip = true
             }
@@ -516,15 +512,15 @@ internal class CardFormFragment : BaseFragment() {
                 fields.firstOrNull { currentFocus?.key?.field == it } != null
         if (isValid) {
             when (currentFocus?.key) {
-                PrimerInputFieldType.CARD_NUMBER ->
-                    FieldFocuser.focus(cardInputFields[PrimerInputFieldType.EXPIRY_DATE])
-                PrimerInputFieldType.EXPIRY_DATE ->
-                    FieldFocuser.focus(cardInputFields[PrimerInputFieldType.CVV])
-                PrimerInputFieldType.CARDHOLDER_NAME -> binding.billingAddressForm.findNextFocus()
-                PrimerInputFieldType.CVV -> {
+                PrimerInputElementType.CARD_NUMBER ->
+                    FieldFocuser.focus(cardInputFields[PrimerInputElementType.EXPIRY_DATE])
+                PrimerInputElementType.EXPIRY_DATE ->
+                    FieldFocuser.focus(cardInputFields[PrimerInputElementType.CVV])
+                PrimerInputElementType.CARDHOLDER_NAME -> binding.billingAddressForm.findNextFocus()
+                PrimerInputElementType.CVV -> {
                     when {
                         primerViewModel.showCardInformation.value
-                            .via(PrimerInputFieldType.CARDHOLDER_NAME) == true ->
+                            .via(PrimerInputElementType.CARDHOLDER_NAME) == true ->
                             takeFocusCardholderName()
                         else -> binding.billingAddressForm.findNextFocus()
                     }
@@ -535,9 +531,9 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun takeFocusCardholderName() {
         val cardInformation = primerViewModel.showCardInformation.value
-        if (cardInformation.via(PrimerInputFieldType.CARDHOLDER_NAME) == true
+        if (cardInformation.via(PrimerInputElementType.CARDHOLDER_NAME) == true
         ) FieldFocuser.focus(
-            cardInputFields[PrimerInputFieldType.CARDHOLDER_NAME]
+            cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]
         )
     }
 
@@ -567,7 +563,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun setValidationErrorState(
         input: TextInputWidget,
         error: SyncValidationError?,
-        type: PrimerInputFieldType,
+        type: PrimerInputElementType,
     ) {
         val isEnableError = error != null
         input.isErrorEnabled = isEnableError
@@ -585,7 +581,7 @@ internal class CardFormFragment : BaseFragment() {
                 )
             }
             .run {
-                if (type == PrimerInputFieldType.CARD_NUMBER) {
+                if (type == PrimerInputElementType.CARD_NUMBER) {
                     val inputFrame = binding.cardFormCardNumber
                     inputFrame.suffixText = ""
                 }
@@ -596,7 +592,7 @@ internal class CardFormFragment : BaseFragment() {
         val hasFocus = cardInputFields.entries.any { it.value.isFocused }
         if (hasFocus && !visible) cardInputFields.entries.forEach { it.value.clearFocus() }
         else if (visible && !hasFocus &&
-            !tokenizationViewModel.hasField(PrimerInputFieldType.CARD_NUMBER)
+            !tokenizationViewModel.hasField(PrimerInputElementType.CARD_NUMBER)
         ) focusFirstInput()
     }
 
