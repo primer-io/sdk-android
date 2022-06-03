@@ -330,6 +330,13 @@ internal class PrimerViewModel(
     fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value.orEmpty()
 
     fun emitBillingAddress(completion: ((error: String?) -> Unit) = {}) {
+        val enabledBillingAddressFields = showBillingFields.value
+        if (enabledBillingAddressFields == null
+            || enabledBillingAddressFields.isEmpty()
+            || enabledBillingAddressFields.values.firstOrNull { it } == null) {
+            completion(null)
+            return
+        }
         val billingAddressFields = this.billingAddressFields.value ?: run {
             completion(null)
             return
@@ -351,6 +358,7 @@ internal class PrimerViewModel(
             city,
             postalCode,
             countryCode,
+            state
         )
 
         dispatchAction(action) { error ->

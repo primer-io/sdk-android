@@ -8,4 +8,5 @@ internal data class ActionUpdateBillingAddressParams(
     val city: String? = null,
     val postalCode: String? = null,
     val countryCode: String? = null,
+    val state: String? = null,
 ) : BaseActionUpdateParams

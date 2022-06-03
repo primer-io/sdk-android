@@ -1,5 +1,6 @@
 package io.primer.android.ui.fragments.country
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +38,7 @@ internal class SelectCountryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupTheme()
         setupAdapter()
         setupListeners()
         setupObservers()
@@ -49,6 +51,17 @@ internal class SelectCountryFragment : BaseFragment() {
             FieldFocuser.focus(binding.searchCountry)
             adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
         }
+    }
+
+    private fun setupTheme() {
+        val imageColorStates = ColorStateList.valueOf(
+            theme.titleText.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
+        binding.ivBack.imageTintList = imageColorStates
+        binding.searchCountry.compoundDrawableTintList = imageColorStates
     }
 
     private fun setupAdapter() {

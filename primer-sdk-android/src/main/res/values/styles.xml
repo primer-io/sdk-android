@@ -253,4 +253,23 @@
         <item name="background">@drawable/selector_dummy_radio_button</item>
         <item name="textAllCaps">false</item>
     </style>
+
+    <style name="Primer.FormInput.Outbox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
+    </style>
+
+    <style name="Primer.FormInput.Outbox.Input" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorControlActivated">@color/primer_app_primary</item>
+        <item name="android:paddingVertical" tools:targetApi="o">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Primer.FormInput.SubTitle" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
 </resources>

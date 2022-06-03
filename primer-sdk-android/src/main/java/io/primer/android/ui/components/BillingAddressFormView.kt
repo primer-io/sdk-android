@@ -2,6 +2,7 @@ package io.primer.android.ui.components
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.text.InputType
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -30,7 +31,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle), DIAppComponent {
 
-    private val theme: PrimerTheme by inject()
+    private val theme: PrimerTheme by if (isInEditMode) lazy { PrimerTheme.build() } else inject()
 
     private val binding = LayoutBillingAddressFormBinding.inflate(
         LayoutInflater.from(context),
@@ -69,7 +70,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
      * Only available fields
      */
     fun fields(): List<TextInputWidget> = fields
-        .filter { it.second.isVisible }
+        .filter { it.second.isVisible && isVisible }
         .map { it.second }
         .toList()
 
@@ -77,7 +78,8 @@ internal class BillingAddressFormView @JvmOverloads constructor(
      * All fields for billing address.
      */
     fun fieldsMap(): Map<PrimerInputElementType, TextInputWidget> {
-        val availableFields = fields
+        if (!isVisible) return emptyMap()
+        val availableFields = fields.filter { it.second.isVisible }
         fieldsMap.clear()
         availableFields.forEach { pair ->
             fieldsMap[pair.first] = pair.second
@@ -102,6 +104,10 @@ internal class BillingAddressFormView @JvmOverloads constructor(
                 PrimerTheme.InputMode.OUTLINED -> Unit
             }
         }
+
+        val textColor = theme.subtitleText.defaultColor.getColor(context, theme.isDarkMode)
+        binding.tvTitleBillingAddress.setTextColor(textColor)
+        binding.cardFormCountryCode.setEndIconTintList(ColorStateList.valueOf(textColor))
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -158,6 +164,10 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     }
 
     fun findNextFocus() {
+        if (!isVisible) {
+            onHideKeyboard?.invoke()
+            return
+        }
         fields.firstOrNull {
             it.second.editText?.text.isNullOrBlank() &&
                 it.second.isVisible && it.second.editText?.isFocused == false
@@ -168,6 +178,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         if (billingFields == null) {
             isVisible = false
         } else {
+            isVisible = true
             fields.forEach { data ->
                 data.second.isVisible = billingFields[data.first.field] ?: false
             }

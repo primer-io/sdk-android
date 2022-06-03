@@ -1,6 +1,7 @@
 package io.primer.android.ui.fragments
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -130,6 +131,7 @@ internal class CardFormFragment : BaseFragment() {
         }
 
         renderTitle()
+        renderCardDetailsTitle()
         renderCancelButton()
         renderSubmitButton()
         if (!tokenizationViewModel.hasField(PrimerInputElementType.CARD_NUMBER)) focusFirstInput()
@@ -189,7 +191,16 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun renderTitle() {
         val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        binding.cardFormTitle.setTextColor(textColor)
+        binding.tvTitle.setTextColor(textColor)
+    }
+
+    /**
+    * Card detail title, display with caps
+    */
+    private fun renderCardDetailsTitle() {
+        val textColor = theme.subtitleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
+        binding.tvCardDetailTitle.setTextColor(textColor)
+        binding.billingAddressDivider.setBackgroundColor(textColor)
     }
 
     /*
@@ -199,15 +210,13 @@ internal class CardFormFragment : BaseFragment() {
     */
 
     private fun renderCancelButton() {
-        binding.navCancelButton.apply {
-            val textColor = theme.systemText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode
+        binding.ivBack.apply {
+            imageTintList = ColorStateList.valueOf(
+                theme.titleText.defaultColor.getColor(
+                    requireContext(),
+                    theme.isDarkMode
+                )
             )
-            setTextColor(textColor)
-
-            val fontSize = theme.systemText.fontsize.getDimension(requireContext())
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
             setOnClickListener {
                 primerViewModel.addAnalyticsEvent(
@@ -308,6 +317,8 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun updateCardNumberInputSuffix() {
+        val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
+        binding.cardFormCardNumber.setSuffixTextColor(ColorStateList.valueOf(textColor))
         val inputFrame = binding.cardFormCardNumber
         val surcharge = primerViewModel.findSurchargeAmount("PAYMENT_CARD", networkAsString)
         val currency = localConfig.settings.order.currency
