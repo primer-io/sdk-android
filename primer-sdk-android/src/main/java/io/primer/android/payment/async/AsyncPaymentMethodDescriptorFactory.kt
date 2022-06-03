@@ -1,15 +1,15 @@
 package io.primer.android.payment.async
 
 import io.primer.android.PaymentMethod
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.async.alipay.AlipayPaymentMethodDescriptor
+import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.atome.AtomePaymentMethodDescriptor
 import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescriptor
-import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.coinbase.CoinbasePaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor

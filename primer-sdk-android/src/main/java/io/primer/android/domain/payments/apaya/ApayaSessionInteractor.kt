@@ -1,14 +1,14 @@
 package io.primer.android.domain.payments.apaya
 
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.payments.apaya.repository.ApayaRepository
 import io.primer.android.domain.payments.apaya.validation.ApayaSessionParamsValidator
 import io.primer.android.domain.payments.apaya.validation.ApayaWebResultValidator
-import io.primer.android.events.EventDispatcher
-import io.primer.android.extensions.toTokenizationErrorEvent
-import io.primer.android.model.ApayaPaymentData
+import io.primer.android.domain.payments.apaya.models.ApayaPaymentData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -20,14 +20,14 @@ internal class ApayaSessionInteractor(
     private val apayaSessionParamsValidator: ApayaSessionParamsValidator,
     private val apayaWebResultValidator: ApayaWebResultValidator,
     private val apayaRepository: ApayaRepository,
-    private val eventDispatcher: EventDispatcher,
+    private val baseErrorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseInteractor<ApayaPaymentData, ApayaSessionParams>() {
 
     override fun execute(params: ApayaSessionParams) =
         apayaSessionParamsValidator.validate(params)
             .catch {
-                eventDispatcher.dispatchEvent(it.toTokenizationErrorEvent(it.message))
+                baseErrorEventResolver.resolve(it, ErrorMapperType.SESSION_CREATE)
             }
             .flatMapLatest {
                 apayaRepository.createClientSession(params).map {
@@ -37,10 +37,9 @@ internal class ApayaSessionInteractor(
                         it.token
                     )
                 }.flowOn(dispatcher).catch {
-                    eventDispatcher.dispatchEvent(
-                        it.toTokenizationErrorEvent(
-                            APAYA_FAILED_CREATE_SESSION
-                        )
+                    baseErrorEventResolver.resolve(
+                        it,
+                        ErrorMapperType.SESSION_CREATE
                     )
                 }
             }
@@ -48,13 +47,14 @@ internal class ApayaSessionInteractor(
     fun validateWebResultParams(webResultParams: ApayaWebResultParams) =
         apayaWebResultValidator.validate(webResultParams)
             .catch {
-                eventDispatcher.dispatchEvent(it.toTokenizationErrorEvent(it.message))
+                baseErrorEventResolver.resolve(
+                    it,
+                    ErrorMapperType.SESSION_CREATE
+                )
             }
 
     internal companion object {
 
         const val RETURN_URL = "primer.io"
-        private const val APAYA_FAILED_CREATE_SESSION =
-            "The call to create an Apaya payment session (token & redirectUrl) failed."
     }
 }

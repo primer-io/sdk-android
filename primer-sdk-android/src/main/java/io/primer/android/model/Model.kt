@@ -1,12 +1,12 @@
 package io.primer.android.model
 
-import io.primer.android.data.exception.HttpException
+import io.primer.android.http.exception.HttpException
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.tokenization.models.TokenizationRequest
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
-import io.primer.android.model.dto.APIError
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.error.model.APIError
+import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.payments.exception.SessionCreateException
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.ApiVersion
 import io.primer.android.di.SDK_API_VERSION_HEADER
@@ -116,8 +116,10 @@ internal class Model constructor(
             emit(token)
         }
 
+    // TODO refactor to proper repositories
     suspend fun post(
         pathname: String,
+        paymentMethodType: PaymentMethodType,
         requestBody: JSONObject? = null,
     ): OperationResult<JSONObject> {
 
@@ -135,9 +137,7 @@ internal class Model constructor(
 
             if (!response.isSuccessful) {
                 val error = APIError.create(response)
-                // TODO extract error parsing to collaborator & pass error through OperationResult
-                EventBus.broadcast(CheckoutEvent.ApiError(error))
-                return OperationResult.Error(Throwable())
+                throw HttpException(response.code(), error)
             }
 
             val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
@@ -148,14 +148,18 @@ internal class Model constructor(
 
             OperationResult.Success(jsonBody)
         } catch (error: Throwable) {
-            OperationResult.Error(error)
+            OperationResult.Error(
+                when {
+                    error is HttpException && error.isClientError() ->
+                        SessionCreateException(
+                            paymentMethodType,
+                            error.error.diagnosticsId
+                        )
+                    else -> error
+                }
+            )
         }
     }
-
-    fun getClientSession() =
-        flow {
-            emit(session)
-        }
 
     private fun toJsonRequestBody(requestBody: JSONObject?): RequestBody {
         val mimeType = MediaType.get("application/json")

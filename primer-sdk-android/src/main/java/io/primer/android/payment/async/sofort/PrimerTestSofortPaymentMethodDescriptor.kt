@@ -1,7 +1,7 @@
 package io.primer.android.payment.async.sofort
 
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewMiddleFragmentBehaviour
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod

@@ -5,11 +5,11 @@ import android.widget.TextView
 import com.example.myapplication.R
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
 class PaymentMethodItem(
-    private val token: PaymentMethodToken,
-    private val onSelect: (token: PaymentMethodToken) -> Unit,
+    private val token: PrimerPaymentMethodTokenData,
+    private val onSelect: (token: PrimerPaymentMethodTokenData) -> Unit,
 ) : Item<GroupieViewHolder>() {
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {

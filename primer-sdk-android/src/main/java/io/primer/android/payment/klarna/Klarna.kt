@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
-import io.primer.android.model.OrderItem
-import io.primer.android.data.configuration.model.Configuration
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import kotlinx.serialization.Serializable
@@ -16,10 +15,9 @@ import kotlinx.serialization.modules.polymorphic
 
 @Keep
 @Serializable
-data class Klarna(
+internal data class Klarna(
     override val type: PaymentMethodType = PaymentMethodType.KLARNA,
     val orderDescription: String? = null,
-    val orderItems: List<OrderItem> = emptyList(),
     val webViewTitle: String? = "Klarna",
 ) : PaymentMethod {
 

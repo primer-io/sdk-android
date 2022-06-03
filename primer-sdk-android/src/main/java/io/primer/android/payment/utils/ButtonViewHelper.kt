@@ -3,9 +3,9 @@ package io.primer.android.payment.utils
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 
-object ButtonViewHelper {
+internal object ButtonViewHelper {
 
     private val buttonStates = arrayOf(
         intArrayOf(-android.R.attr.state_selected),

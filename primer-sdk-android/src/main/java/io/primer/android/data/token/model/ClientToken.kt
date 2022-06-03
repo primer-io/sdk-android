@@ -1,6 +1,8 @@
 package io.primer.android.data.token.model
 
 import android.util.Base64
+import io.primer.android.data.token.exception.ExpiredClientTokenException
+import io.primer.android.data.token.exception.InvalidClientTokenException
 import io.primer.android.model.Serialization
 import kotlinx.serialization.Serializable
 import java.util.concurrent.TimeUnit
@@ -25,8 +27,10 @@ internal data class ClientToken(
             return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) >= expInSeconds
         }
 
-        @Throws(IllegalArgumentException::class)
+        @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): ClientToken {
+            if (encoded.isBlank()) throw InvalidClientTokenException()
+
             val tokens = encoded.split(".")
 
             for (elm in tokens) {
@@ -38,13 +42,13 @@ internal data class ClientToken(
 
                     val isExpired = checkIfExpired(token.exp.toLong())
 
-                    if (isExpired) throw IllegalArgumentException("client token has expired.")
+                    if (isExpired) throw ExpiredClientTokenException()
 
                     return token
                 }
             }
 
-            throw IllegalArgumentException("client token is invalid.")
+            throw InvalidClientTokenException()
         }
     }
 }

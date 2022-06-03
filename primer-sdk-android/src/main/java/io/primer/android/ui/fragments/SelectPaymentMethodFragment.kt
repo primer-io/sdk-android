@@ -12,13 +12,12 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.PaymentMethodIntent
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.SessionState
 import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
@@ -26,7 +25,10 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
+import io.primer.android.PrimerSessionIntent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @KoinApiExtension
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
@@ -213,8 +215,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     }
 
     private fun setupUiForVaultModeIfNeeded() = when (localConfig.intent.paymentMethodIntent) {
-        PaymentMethodIntent.CHECKOUT -> Unit
-        PaymentMethodIntent.VAULT -> {
+        PrimerSessionIntent.CHECKOUT -> Unit
+        PrimerSessionIntent.VAULT -> {
             binding.primerSheetTitle.isVisible = false
             binding.payAllButton.isVisible = false
             binding.choosePaymentMethodLabel.text =

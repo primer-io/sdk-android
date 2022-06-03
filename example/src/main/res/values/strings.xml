@@ -49,5 +49,8 @@
 
     <string name="three_ds_success_message">3DS was successful</string>
     <string name="three_ds_error_message">3DS response code %1$s, reason code: %2$s, and reason text: %3$s</string>
+    <string name="payment_handling">Payment Handling</string>
+    <string name="payment_handling_auto">AUTO</string>
+    <string name="payment_handling_manual">MANUAL</string>
 
 </resources>

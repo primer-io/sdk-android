@@ -1,6 +1,6 @@
 package io.primer.android.data.payments.forms.datasource
 
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
 import io.primer.android.data.payments.forms.models.ButtonType

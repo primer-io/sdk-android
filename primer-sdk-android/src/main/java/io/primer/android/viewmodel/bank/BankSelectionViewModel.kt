@@ -42,7 +42,7 @@ internal open class BankSelectionViewModel(
             IssuingBankParams(
                 descriptor.config.id.orEmpty(),
                 descriptor.config.type,
-                descriptor.localConfig.settings.options.locale
+                descriptor.localConfig.settings.locale
             )
         )
             .onStart { _loadingLiveData.postValue(true) }

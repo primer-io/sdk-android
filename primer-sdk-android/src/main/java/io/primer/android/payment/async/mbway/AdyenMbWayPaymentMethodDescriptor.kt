@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -28,7 +28,7 @@ internal class AdyenMbWayPaymentMethodDescriptor(
 
     override fun getLoadingState() =
         LoadingState(
-            when (localConfig.theme.isDarkMode) {
+            when (localConfig.settings.uiOptions.theme.isDarkMode) {
                 true -> R.drawable.ic_logo_mbway_light
                 else -> R.drawable.ic_logo_mbway
             },

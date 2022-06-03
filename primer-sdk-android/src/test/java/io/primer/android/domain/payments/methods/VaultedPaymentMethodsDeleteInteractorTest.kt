@@ -1,7 +1,8 @@
 package io.primer.android.domain.payments.methods
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -11,13 +12,12 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.logging.Logger
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,48 +33,44 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
     @RelaxedMockK
     internal lateinit var logger: Logger
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
-    private lateinit var deleteInteractor: VaultedPaymentMethodsDeleteInteractor
+    private lateinit var interactor: VaultedPaymentMethodsDeleteInteractor
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        deleteInteractor =
-            VaultedPaymentMethodsDeleteInteractor(
-                vaultedPaymentMethodsRepository,
-                logger,
-                testCoroutineDispatcher
-            )
+        interactor = VaultedPaymentMethodsDeleteInteractor(
+            vaultedPaymentMethodsRepository,
+            logger,
+        )
     }
 
     @Test
     fun `execute() should dispatch TokenRemovedFromVault when deleteVaultedPaymentMethod was success`() {
         val params = mockk<VaultDeleteParams>(relaxed = true)
-        every { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
+        coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
             flowOf(Unit)
         )
-        testCoroutineDispatcher.runBlockingTest {
-            deleteInteractor(params).first()
+        runTest {
+            interactor(params).first()
         }
 
-        verify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }
+        coVerify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }
     }
 
     @Test
     fun `execute() should dispatch TokenizeError when exchangeVaultedPaymentToken was failed`() {
         val params = mockk<VaultDeleteParams>(relaxed = true)
-        every { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
+        coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
             flow { throw Exception("Delete failed.") }
         )
         assertThrows<Exception> {
-            testCoroutineDispatcher.runBlockingTest {
-                deleteInteractor(params).first()
+            runTest {
+                interactor(params).first()
             }
         }
         val message = slot<String>()
 
-        verify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }
+        coVerify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }
         verify { logger.error(capture(message)) }
 
         assertEquals("Delete failed.", message.captured)

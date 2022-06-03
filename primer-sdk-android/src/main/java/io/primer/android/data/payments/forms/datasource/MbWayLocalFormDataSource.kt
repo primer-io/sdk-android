@@ -8,8 +8,7 @@ import io.primer.android.data.payments.forms.models.FormInputDataResponse
 import io.primer.android.data.payments.forms.models.FormType
 import kotlinx.coroutines.flow.flowOf
 
-internal class MbWayLocalFormDataSource :
-    BaseFlowCacheDataSource<FormDataResponse, String> {
+internal class MbWayLocalFormDataSource : BaseFlowCacheDataSource<FormDataResponse, String> {
 
     override fun get() = flowOf(
         FormDataResponse(

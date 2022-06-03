@@ -7,15 +7,15 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.PrimerTheme
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentDummyResultSelectorBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.PrimerConfig
 import io.primer.android.payment.OnActionContinueCallback
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.dummy.DummyDecisionType
 import io.primer.android.payment.dummy.DummyResultDescriptorHandler
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel

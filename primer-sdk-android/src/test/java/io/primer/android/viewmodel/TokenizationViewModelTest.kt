@@ -9,14 +9,14 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_MONTH_FIELD_NAME
@@ -25,14 +25,19 @@ import io.primer.android.payment.card.CARD_NAME_FILED_NAME
 import io.primer.android.payment.card.CARD_NUMBER_FIELD_NAME
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.card.CreditCard
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.koin.core.component.KoinApiExtension
 import org.koin.test.KoinTest
 
+@ExperimentalCoroutinesApi
+@KoinApiExtension
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class TokenizationViewModelTest : KoinTest {
 
@@ -88,7 +93,9 @@ class TokenizationViewModelTest : KoinTest {
         )
         val statusObserver = viewModel.tokenizationStatus.test()
 
-        viewModel.resetPaymentMethod(paymentMethodDescriptor)
+        runTest {
+            viewModel.resetPaymentMethod(paymentMethodDescriptor)
+        }
 
         statusObserver.assertValue(TokenizationStatus.NONE)
     }
@@ -96,7 +103,9 @@ class TokenizationViewModelTest : KoinTest {
     @Test
     fun `payment method is invalid after being reset`() {
 
-        viewModel.resetPaymentMethod()
+        runTest {
+            viewModel.resetPaymentMethod()
+        }
 
         assertFalse(viewModel.isValid())
     }
@@ -117,9 +126,11 @@ class TokenizationViewModelTest : KoinTest {
             Card(),
             mockJson
         )
-        viewModel.resetPaymentMethod(paymentMethodDescriptor)
+        runTest {
+            viewModel.resetPaymentMethod(paymentMethodDescriptor)
 
-        viewModel.tokenize()
+            viewModel.tokenize()
+        }
 
         coVerify { tokenizationInteractor(any()) }
     }

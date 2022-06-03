@@ -2,33 +2,30 @@ package io.primer.android
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
 class InstantExecutorExtension(
-    private val dispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher(),
-    private val scope: TestCoroutineScope = TestCoroutineScope(dispatcher)
-) : BeforeEachCallback, AfterEachCallback {
+    private val scheduler: TestCoroutineScheduler = TestCoroutineScheduler(),
+    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler),
+) : BeforeEachCallback, AfterEachCallback, AfterTestExecutionCallback {
+
+    override fun afterTestExecution(context: ExtensionContext?) {
+        scheduler.advanceUntilIdle()
+    }
 
     override fun beforeEach(extensionContext: ExtensionContext) {
-        Dispatchers.setMain(
-            object : CoroutineDispatcher() {
-                override fun dispatch(context: CoroutineContext, block: Runnable) {
-                    dispatcher.dispatch(context, block)
-                }
-            }
-        )
-
+        Dispatchers.setMain(dispatcher)
         ArchTaskExecutor.getInstance().setDelegate(
             object : TaskExecutor() {
                 override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
@@ -39,8 +36,6 @@ class InstantExecutorExtension(
     }
 
     override fun afterEach(context: ExtensionContext?) {
-        dispatcher.cleanupTestCoroutines()
-        scope.cleanupTestCoroutines()
         Dispatchers.resetMain()
         ArchTaskExecutor.getInstance().setDelegate(null)
     }

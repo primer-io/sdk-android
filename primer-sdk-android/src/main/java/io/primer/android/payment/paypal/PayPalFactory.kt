@@ -1,8 +1,9 @@
 package io.primer.android.payment.paypal
 
 import io.primer.android.PaymentMethod
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
-import io.primer.android.model.dto.PaymentMethodType
+
 import io.primer.android.utils.Either
 import io.primer.android.utils.Success
 

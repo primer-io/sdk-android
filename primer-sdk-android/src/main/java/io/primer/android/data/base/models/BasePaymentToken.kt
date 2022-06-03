@@ -1,6 +1,9 @@
 package io.primer.android.data.base.models
 
-import io.primer.android.model.dto.PaymentInstrumentData
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.tokenization.models.PaymentInstrumentData
+import io.primer.android.payment.KLARNA_CUSTOMER_TOKEN_TYPE
+import io.primer.android.payment.PAYPAL_BILLING_AGREEMENT_TYPE
 import io.primer.android.threeds.data.models.ResponseCode
 import kotlinx.serialization.Serializable
 
@@ -32,8 +35,10 @@ internal abstract class BasePaymentToken {
      * */
     val surchargeType: String
         get() {
-            if (paymentInstrumentType == "PAYPAL_BILLING_AGREEMENT") {
-                return "PAYPAL"
+            if (paymentInstrumentType == PAYPAL_BILLING_AGREEMENT_TYPE) {
+                return PaymentMethodType.PAYPAL.name
+            } else if (paymentInstrumentType == KLARNA_CUSTOMER_TOKEN_TYPE) {
+                return PaymentMethodType.KLARNA.name
             }
 
             return paymentInstrumentType

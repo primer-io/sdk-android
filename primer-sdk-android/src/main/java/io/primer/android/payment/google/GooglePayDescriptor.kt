@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -46,17 +46,17 @@ internal class GooglePayDescriptor constructor(
     override fun createButton(container: ViewGroup): View =
         LayoutInflater.from(container.context).inflate(
             when (options.buttonStyle) {
-                GooglePay.Companion.ButtonStyle.BLACK -> R.layout.googlepay_black_button
-                GooglePay.Companion.ButtonStyle.WHITE -> R.layout.googlepay_white_button_no_shadow
+                GooglePayButtonStyle.BLACK -> R.layout.googlepay_black_button
+                GooglePayButtonStyle.WHITE -> R.layout.googlepay_white_button_no_shadow
             },
             container,
             false
         )
 
     override fun getLoadingState() = when (options.buttonStyle) {
-        GooglePay.Companion.ButtonStyle.BLACK ->
+        GooglePayButtonStyle.BLACK ->
             LoadingState(R.drawable.ic_logo_google_pay_black_square)
-        GooglePay.Companion.ButtonStyle.WHITE ->
+        GooglePayButtonStyle.WHITE ->
             LoadingState(R.drawable.ic_logo_google_pay_square)
     }
 }

@@ -8,7 +8,7 @@ class SettingsViewModelFactory(
     private val countryRepository: CountryRepository,
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = SettingsViewModel(
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SettingsViewModel(
         countryRepository,
     ) as T
 }

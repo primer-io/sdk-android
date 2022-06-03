@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.primer.android.R
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.CheckoutExitReason
 import io.primer.android.ui.FormTitleState
 import io.primer.android.ui.fragments.FormActionEvent
 import io.primer.android.ui.fragments.FormActionListener
@@ -171,7 +171,7 @@ class GoCardlessViewFragment : FormFragment() {
                 getCustomerName = { viewModel.getValue(DD_FIELD_NAME_CUSTOMER_NAME) },
                 getCustomerEmail = { viewModel.getValue(DD_FIELD_NAME_CUSTOMER_EMAIL) },
                 getCustomerAddress = { formatCustomerAddress() },
-                companyAddress = options.companyAddress,
+                companyAddress = options.companyAddress.orEmpty(),
                 getBankDetails = { viewModel.getValue(DD_FIELD_NAME_IBAN) },
                 legalText = requireContext().getString(
                     R.string.dd_mandate_legal,

@@ -3,14 +3,19 @@ package io.primer.android.payment.google
 import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
+enum class GooglePayButtonStyle {
+    WHITE,
+    BLACK,
+}
+
 @Keep
 @Serializable
-data class GooglePay(
+internal data class GooglePay(
     val merchantName: String? = null,
     val totalPrice: String,
     val countryCode: String,
@@ -22,15 +27,8 @@ data class GooglePay(
         "MASTERCARD",
         "VISA"
     ),
-    val buttonStyle: ButtonStyle = ButtonStyle.BLACK,
+    val buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
 ) : PaymentMethod {
-
-    companion object {
-        enum class ButtonStyle {
-            WHITE,
-            BLACK,
-        }
-    }
 
     override val type = PaymentMethodType.GOOGLE_PAY
 

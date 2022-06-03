@@ -11,19 +11,22 @@ import com.google.android.gms.wallet.PaymentData
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
-import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
+import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.BaseWebFlowPaymentData
+import io.primer.android.ui.base.webview.BaseWebFlowPaymentData
 import io.primer.android.model.Serialization
-import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.CheckoutExitInfo
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.payments.exception.PaymentMethodCancelledException
+import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.model.CheckoutExitInfo
+import io.primer.android.model.CheckoutExitReason
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -48,7 +51,6 @@ import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.fragments.InitializingFragment
 import io.primer.android.ui.fragments.PaymentMethodStatusFragment
-import io.primer.android.ui.fragments.ProgressIndicatorFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
 import io.primer.android.ui.fragments.SessionCompleteViewType
@@ -61,6 +63,7 @@ import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
 @KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
@@ -71,30 +74,40 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private val primerViewModel: PrimerViewModel by viewModel()
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
+    private val errorEventResolver: BaseErrorEventResolver by inject()
 
     private lateinit var sheet: CheckoutSheetFragment
     private lateinit var config: PrimerConfig
 
-    private val viewStatusObserver = Observer<ViewStatus> {
-        if (config.settings.options.showUI.not()) {
+    private val viewStatusObserver = Observer<ViewStatus> { viewStatus ->
+        if (config.settings.fromHUC) {
             return@Observer
         }
 
-        val fragment = when (it) {
-            ViewStatus.INITIALIZING -> InitializingFragment.newInstance()
-            ViewStatus.SELECT_PAYMENT_METHOD -> SelectPaymentMethodFragment.newInstance()
-            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> VaultedPaymentMethodsFragment.newInstance()
-            else -> null
+        val fragment = when (viewStatus) {
+            ViewStatus.INITIALIZING -> {
+                InitializingFragment.newInstance()
+            }
+            ViewStatus.SELECT_PAYMENT_METHOD -> {
+                SelectPaymentMethodFragment.newInstance()
+            }
+            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> {
+                VaultedPaymentMethodsFragment.newInstance()
+            }
         }
 
-        if (fragment != null) {
-            openFragment(
-                fragment,
-                initFinished
-            )
+        when {
+            viewStatus == ViewStatus.INITIALIZING &&
+                config.settings.uiOptions.isInitScreenEnabled.not() -> sheet?.dialog?.hide()
+            else -> sheet?.dialog?.show()
         }
 
-        if (!initFinished && it != ViewStatus.INITIALIZING) {
+        openFragment(
+            fragment,
+            initFinished
+        )
+
+        if (!initFinished && viewStatus != ViewStatus.INITIALIZING) {
             initFinished = true
         }
     }
@@ -105,7 +118,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 onExit(it.data)
             }
             is CheckoutEvent.ShowSuccess -> {
-                if (config.settings.options.showUI) {
+                if (config.settings.uiOptions.isSuccessScreenEnabled) {
                     openFragment(
                         SessionCompleteFragment.newInstance(
                             it.delay,
@@ -117,19 +130,16 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 }
             }
             is CheckoutEvent.ShowError -> {
-                if (config.settings.options.showUI) {
+                if (config.settings.uiOptions.isErrorScreenEnabled) {
                     openFragment(
                         SessionCompleteFragment.newInstance(
                             it.delay,
-                            SessionCompleteViewType.Error(it.errorType),
+                            SessionCompleteViewType.Error(it.errorType, it.message),
                         )
                     )
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
                 }
-            }
-            is CheckoutEvent.ToggleProgressIndicator -> {
-                onToggleProgressIndicator(it.data)
             }
             is CheckoutEvent.Start3DS -> {
                 it.processor3DSData?.let { data ->
@@ -140,6 +150,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                             "",
                             data.statusUrl,
                             data.title,
+                            PaymentMethodType.PAYMENT_CARD,
                             WebViewClientType.ASYNC
                         ),
                         ASYNC_METHOD_REQUEST_CODE
@@ -156,9 +167,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                         tokenizationViewModel.asyncRedirectUrl.value.orEmpty(),
                         it.statusUrl,
                         (
-                            primerViewModel.selectedPaymentMethod?.value as?
+                            primerViewModel.selectedPaymentMethod.value as?
                                 AsyncPaymentMethodDescriptor
                             )?.title.orEmpty(),
+                        it.paymentMethodType,
                         WebViewClientType.ASYNC
                     ),
                     ASYNC_METHOD_REQUEST_CODE
@@ -168,11 +180,18 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 when (it.clientTokenIntent) {
                     ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
                         sheet.popBackStackToRoot()
-                        openFragment(PaymentMethodStatusFragment.newInstance(it.statusUrl), true)
+                        openFragment(
+                            PaymentMethodStatusFragment.newInstance(
+                                it.statusUrl,
+                                it.paymentMethodType
+                            ),
+                            true
+                        )
                     }
                     ClientTokenIntent.XFERS_PAYNOW_REDIRECTION -> openFragment(
                         QrCodeFragment.newInstance(
-                            it.statusUrl
+                            it.statusUrl,
+                            it.paymentMethodType
                         ),
                         true
                     )
@@ -186,28 +205,23 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private val webFlowPaymentDataObserver =
         Observer<BaseWebFlowPaymentData> { paymentData ->
             EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
-            if (config.settings.options.preferWebView) {
-                val title =
-                    when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
-                        is KlarnaDescriptor -> paymentMethod.options.webViewTitle
-                        is ApayaDescriptor -> paymentMethod.options.webViewTitle
-                        else -> throw IllegalStateException("Unknown payment method.")
-                    }
+            val title =
+                when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
+                    is KlarnaDescriptor -> paymentMethod.options.webViewTitle
+                    is ApayaDescriptor -> paymentMethod.options.webViewTitle
+                    else -> throw IllegalStateException("Unknown payment method.")
+                }
 
-                startActivityForResult(
-                    WebViewActivity.getLaunchIntent(
-                        this,
-                        paymentData.redirectUrl,
-                        paymentData.returnUrl,
-                        title.orEmpty(),
-                        paymentData.getWebViewClientType()
-                    ),
-                    paymentData.getRequestCode()
-                )
-            } else {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paymentData.redirectUrl))
-                startActivity(intent)
-            }
+            startActivityForResult(
+                WebViewActivity.getLaunchIntent(
+                    this,
+                    paymentData.redirectUrl,
+                    paymentData.returnUrl,
+                    title.orEmpty(),
+                    paymentData.getWebViewClientType()
+                ),
+                paymentData.getRequestCode()
+            )
         }
     //endregion
 
@@ -270,9 +284,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     //endregion
 
     private fun emitError(error: Error) {
-        val apiError = APIError(error.message ?: "")
-        val event = CheckoutEvent.ApiError(apiError)
-        EventBus.broadcast(event)
+        errorEventResolver.resolve(error, ErrorMapperType.DEFAULT)
     }
 
     private fun presentFragment(behaviour: SelectedPaymentMethodBehaviour?) = when (behaviour) {
@@ -286,16 +298,15 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
-
         if (descriptor == null) return@Observer
 
-        val type = descriptor.config.type.toString()
+        val type = descriptor.config.type
 
-        val action =
-            if (type == "PAYMENT_CARD") ClientSessionActionsRequest.UnsetPaymentMethod()
-            else ClientSessionActionsRequest.SetPaymentMethod(type)
+        val actionParams =
+            if (type == PaymentMethodType.PAYMENT_CARD) ActionUpdateUnselectPaymentMethodParams
+            else ActionUpdateSelectPaymentMethodParams(type)
 
-        primerViewModel.dispatchAction(action, false) { error: Error? ->
+        primerViewModel.dispatchAction(actionParams, false) { error: Error? ->
             runOnUiThread {
                 if (error == null) {
                     presentFragment(descriptor.selectedBehaviour)
@@ -319,7 +330,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             ?.let { json.decodeFromString(PrimerConfig.serializer(), it) }
             ?: return
 
-        if (config.settings.options.showUI.not()) {
+        if (config.settings.fromHUC) {
             ensureClicksGoThrough()
         }
 
@@ -334,7 +345,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         primerViewModel.fetchConfiguration()
 
         sheet = CheckoutSheetFragment.newInstance()
-
         primerViewModel.viewStatus.observe(this, viewStatusObserver)
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
         primerViewModel.selectedPaymentMethodBehaviour.observe(
@@ -346,21 +356,28 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         tokenizationViewModel.getDeeplinkUrl()
 
         tokenizationViewModel.tokenizationCanceled.observe(this) {
+            errorEventResolver.resolve(
+                PaymentMethodCancelledException(it),
+                ErrorMapperType.DEFAULT
+            )
             onExit(CheckoutExitReason.DISMISSED_BY_USER)
         }
 
-        tokenizationViewModel.error.observe(this) { d ->
-            if (d == null) return@observe
-            val apiError = APIError(d)
-            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
+        tokenizationViewModel.error.observe(this) { error ->
+            errorEventResolver.resolve(
+                error,
+                ErrorMapperType.SESSION_CREATE
+            )
         }
 
         // region KLARNA
         tokenizationViewModel.klarnaPaymentData.observe(this, webFlowPaymentDataObserver)
         tokenizationViewModel.vaultedKlarnaPayment.observe(this, klarnaVaultedObserver)
         tokenizationViewModel.klarnaError.observe(this) {
-            val apiError = APIError("Failed to add Klarna payment method.")
-            EventBus.broadcast(CheckoutEvent.ApiError(apiError))
+            errorEventResolver.resolve(
+                it,
+                ErrorMapperType.SESSION_CREATE
+            )
         }
         // endregion
 
@@ -389,22 +406,20 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
                 is CheckoutEvent.ShowError,
-                is CheckoutEvent.ToggleProgressIndicator,
                 -> primerViewModel.setCheckoutEvent(it)
                 else -> {
                 }
             }
         }
 
-        if (!config.settings.options.showUI.not()) {
+        if (config.settings.fromHUC.not()) {
             openSheet()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        subscription?.unregister()
-        subscription = null
+        clearSubscription()
     }
 
     private fun ensureClicksGoThrough() {
@@ -417,7 +432,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     override fun onResume() {
         super.onResume()
-        if (!config.settings.options.preferWebView ||
+        // todo
+        if (
             setOf(PaymentMethodType.KLARNA, PaymentMethodType.APAYA)
                 .contains(primerViewModel.selectedPaymentMethod.value?.config?.type)
                 .not()
@@ -452,6 +468,14 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 onExit(CheckoutExitReason.ERROR)
             }
             RESULT_CANCELED -> {
+                errorEventResolver.resolve(
+                    PaymentMethodCancelledException(
+                        PaymentMethodType.safeValueOf(
+                            primerViewModel.selectedPaymentMethod.value?.config?.type?.name
+                        )
+                    ),
+                    ErrorMapperType.DEFAULT
+                )
                 onExit(CheckoutExitReason.DISMISSED_BY_USER)
             }
         }
@@ -479,7 +503,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 }
             }
             RESULT_CANCELED -> {
-                // TODO check if this behavior is correct/right
+                errorEventResolver.resolve(
+                    PaymentMethodCancelledException(PaymentMethodType.GOOGLE_PAY),
+                    ErrorMapperType.DEFAULT
+                )
                 onExit(CheckoutExitReason.DISMISSED_BY_USER)
             }
         }
@@ -492,6 +519,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             EventBus.broadcast(
                 CheckoutEvent.Exit(CheckoutExitInfo(reason))
             )
+            clearSubscription()
             finish()
         }
     }
@@ -501,19 +529,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private fun openFragment(behaviour: NewFragmentBehaviour) {
-        if (config.settings.options.showUI.not()) {
+        if (config.settings.fromHUC) {
             return
         }
 
         behaviour.execute(sheet)
-    }
-
-    private fun onToggleProgressIndicator(visible: Boolean) {
-        if (visible) {
-            openFragment(ProgressIndicatorFragment.newInstance(), true)
-        } else {
-            sheet.childFragmentManager.popBackStack()
-        }
     }
 
     private fun openSheet() {
@@ -526,4 +546,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             type
         )
     )
+
+    private fun clearSubscription() {
+        subscription?.unregister()
+        subscription = null
+    }
 }

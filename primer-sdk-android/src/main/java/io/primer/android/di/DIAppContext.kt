@@ -4,7 +4,7 @@ import android.content.Context
 import io.primer.android.analytics.di.analyticsModule
 import io.primer.android.components.di.componentsModule
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
@@ -30,8 +30,10 @@ internal object DIAppContext {
                 paypalModule(),
                 NetworkModule(),
                 imageLoaderModule(),
+                PaymentsModule(),
                 analyticsModule(),
-                componentsModule()
+                componentsModule(),
+                errorResolverModule()
             )
         }
     }

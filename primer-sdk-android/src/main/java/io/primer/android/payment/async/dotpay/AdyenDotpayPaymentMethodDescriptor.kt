@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
 import io.primer.android.databinding.PaymentMethodButtonDotpayBinding
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -42,7 +42,8 @@ internal class AdyenDotpayPaymentMethodDescriptor(
 
         val icon = binding.icon
         icon.setImageResource(
-            if (localConfig.theme.isDarkMode == true) R.drawable.ic_logo_dotpay_dark
+            if (localConfig.settings.uiOptions.theme.isDarkMode == true)
+                R.drawable.ic_logo_dotpay_dark
             else R.drawable.ic_logo_dotpay_light
         )
         return binding.root

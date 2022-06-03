@@ -1,27 +1,28 @@
 package io.primer.android.domain.payments.methods
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.domain.error.CheckoutErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.CheckoutEventType
-import io.primer.android.events.EventDispatcher
+import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
+import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -38,65 +39,66 @@ class VaultedPaymentMethodsExchangeInteractorTest {
     internal lateinit var paymentMethodRepository: PaymentMethodRepository
 
     @RelaxedMockK
-    internal lateinit var resumeHandlerFactory: ResumeHandlerFactory
+    internal lateinit var preTokenizationEventsResolver: PreTokenizationEventsResolver
 
     @RelaxedMockK
-    internal lateinit var eventDispatcher: EventDispatcher
+    internal lateinit var postTokenizationEventResolver: PostTokenizationEventResolver
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
+    @RelaxedMockK
+    internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
-    private lateinit var exchangeInteractor: VaultedPaymentMethodsExchangeInteractor
+    private lateinit var interactor: VaultedPaymentMethodsExchangeInteractor
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        exchangeInteractor =
-            VaultedPaymentMethodsExchangeInteractor(
-                vaultedPaymentMethodsRepository,
-                paymentMethodRepository,
-                resumeHandlerFactory,
-                eventDispatcher,
-                testCoroutineDispatcher
-            )
+        interactor = VaultedPaymentMethodsExchangeInteractor(
+            vaultedPaymentMethodsRepository,
+            paymentMethodRepository,
+            preTokenizationEventsResolver,
+            postTokenizationEventResolver,
+            errorEventResolver,
+        )
     }
 
     @Test
-    fun `execute() should dispatch TokenSelected when exchangeVaultedPaymentToken was success`() {
+    fun `execute() should dispatch token event when exchangeVaultedPaymentToken was success`() {
         val params = mockk<VaultTokenParams>(relaxed = true)
         val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }.returns(
+        coEvery { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }.returns(
             flowOf(
                 paymentMethodTokenInternal
             )
         )
-        testCoroutineDispatcher.runBlockingTest {
-            exchangeInteractor(params).first()
+        runTest {
+            interactor(params).first()
         }
-        val event = slot<CheckoutEvent>()
 
-        verify { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }
+        val token = slot<PaymentMethodTokenInternal>()
+
+        coVerify { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }
         verify { paymentMethodRepository.setPaymentMethod(paymentMethodTokenInternal) }
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { postTokenizationEventResolver.resolve(capture(token)) }
 
-        assert(event.captured.type == CheckoutEventType.TOKEN_SELECTED)
+        assertEquals(paymentMethodTokenInternal, token.captured)
     }
 
     @Test
-    fun `execute() should dispatch TokenizeError when exchangeVaultedPaymentToken was failed`() {
+    fun `execute() should dispatch error event when exchangeVaultedPaymentToken was failed`() {
         val params = mockk<VaultTokenParams>(relaxed = true)
-        every { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }.returns(
-            flow { throw Exception("Exchange failed.") }
+        val exception = mockk<Exception>(relaxed = true)
+        coEvery { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }.returns(
+            flow { throw exception }
         )
         assertThrows<Exception> {
-            testCoroutineDispatcher.runBlockingTest {
-                exchangeInteractor(params).first()
+            runTest {
+                interactor(params).first()
             }
         }
-        val event = slot<CheckoutEvent>()
+        val event = slot<Exception>()
 
-        verify { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
-
-        assert(event.captured.type == CheckoutEventType.TOKENIZE_ERROR)
+        coVerify { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }
+        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.DEFAULT) }
+        assertEquals(exception.javaClass, event.captured.javaClass)
     }
 }

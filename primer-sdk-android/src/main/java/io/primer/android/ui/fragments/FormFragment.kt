@@ -82,7 +82,7 @@ open class FormFragment(
         onMandateCreated(data)
     }
 
-    private val goCardlessMandateErrorObserver: Observer<Unit> = Observer<Unit> {
+    private val goCardlessMandateErrorObserver: Observer<Throwable> = Observer<Throwable> {
         onTokenizeError()
     }
 

@@ -7,33 +7,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentThirdBinding
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.viewmodels.MainViewModel
-import io.primer.android.completion.ResumeHandler
+import io.primer.android.ExperimentalPrimerApi
+import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.manager.PrimerCardManager
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
-import io.primer.android.model.dto.PaymentMethodType
 import io.primer.android.ui.CardType
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
-import io.primer.android.model.PrimerDebugOptions
-import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.Options
-import io.primer.android.model.dto.PaymentMethodToken
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PrimerPaymentMethodType
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
+@OptIn(ExperimentalPrimerApi::class)
 class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private val margin by lazy { requireContext().resources.getDimensionPixelOffset(R.dimen.medium_vertical_margin) }
@@ -75,15 +74,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 headlessUniversalCheckout.start(
                     requireContext(),
                     it,
-                    PrimerConfig(
-                        settings = PrimerSettings(
-                            options = Options(
-                                preferWebView = true,
-                                debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-                                redirectScheme = "primer"
-                            )
-                        ),
-                    )
+                    viewModel.settings
                 )
                 showLoading("Starting HUC.")
             }
@@ -122,30 +113,47 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 Log.d(TAG, "onTokenizationPreparation")
             }
 
-            override fun onTokenizationStarted() {
-                showLoading("Tokenization started")
+            override fun onTokenizationStarted(paymentMethodType: PrimerPaymentMethodType) {
+                super.onTokenizationStarted(paymentMethodType)
+                showLoading("Tokenization started $paymentMethodType")
             }
 
             override fun onPaymentMethodShowed() {
                 Log.d(TAG, "onPaymentMethodShowed")
             }
 
-            override fun onTokenizationSuccess(
-                paymentMethodToken: PaymentMethodToken,
-                resumeHandler: ResumeHandler
+            override fun onTokenizeSuccess(
+                paymentMethodTokenData: PrimerPaymentMethodTokenData,
+                decisionHandler: PrimerResumeDecisionHandler
             ) {
                 showLoading("Tokenization success. Creating payment.")
-                viewModel.createPayment(paymentMethodToken, resumeHandler)
+                viewModel.createPayment(paymentMethodTokenData, decisionHandler)
             }
 
-            override fun onResumeSuccess(resumeToken: String, resumeHandler: ResumeHandler) {
+            override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
                 showLoading("Resume success. Resuming payment.")
-                viewModel.resumePayment(resumeToken, resumeHandler)
+                viewModel.resumePayment(resumeToken, decisionHandler)
             }
 
-            override fun onError(error: APIError) {
+            override fun onBeforePaymentCreated(
+                paymentMethodData: PrimerPaymentMethodData,
+                createPaymentHandler: PrimerPaymentCreationDecisionHandler
+            ) {
+                super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
+                showLoading("On Before Payment Created with ${paymentMethodData.paymentMethodType}")
+            }
+
+            override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
                 hideLoading()
-                Toast.makeText(requireContext(), error.description, Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(context)
+                    .setMessage("On Failed $error with data $checkoutData")
+                    .show()
+            }
+
+            override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
+                hideLoading()
+                AlertDialog.Builder(context).setMessage("On Checkout Completed $checkoutData")
+                    .show()
             }
         })
 
@@ -177,7 +185,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
         paymentMethodTypes.forEach {
             when (it.paymentMethodType) {
-                PaymentMethodType.PAYMENT_CARD -> createForm(
+                PrimerPaymentMethodType.PAYMENT_CARD -> createForm(
                     cardManager.getRequiredInputElementTypes().orEmpty()
                 )
                 else -> addPaymentMethodView(it.paymentMethodType)

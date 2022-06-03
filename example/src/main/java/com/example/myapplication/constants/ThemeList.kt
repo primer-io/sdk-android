@@ -2,11 +2,11 @@ package com.example.myapplication.constants
 
 import android.content.res.Configuration
 import com.example.myapplication.R
-import io.primer.android.BorderThemeData
-import io.primer.android.ButtonThemeData
-import io.primer.android.InputThemeData
-import io.primer.android.PrimerTheme
-import io.primer.android.TextThemeData
+import io.primer.android.ui.settings.BorderThemeData
+import io.primer.android.ui.settings.ButtonThemeData
+import io.primer.android.ui.settings.InputThemeData
+import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.ui.settings.TextThemeData
 
 class ThemeList {
     companion object {

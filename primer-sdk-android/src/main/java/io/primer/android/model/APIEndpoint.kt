@@ -1,6 +1,6 @@
 package io.primer.android.model
 
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 
 internal class APIEndpoint {
 

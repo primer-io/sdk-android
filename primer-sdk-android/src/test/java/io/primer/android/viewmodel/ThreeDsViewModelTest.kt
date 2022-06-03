@@ -13,7 +13,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode
@@ -24,6 +24,7 @@ import io.primer.android.threeds.presentation.ThreeDsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -60,7 +61,9 @@ class ThreeDsViewModelTest {
         val observer = viewModel.threeDsInitEvent.test()
         coEvery { threeDsInteractor.initialize(any()) }.returns(flowOf(Unit))
 
-        viewModel.startThreeDsFlow()
+        runTest {
+            viewModel.startThreeDsFlow()
+        }
 
         coVerify { threeDsInteractor.initialize(any()) }
         observer.assertValue(Unit)
@@ -71,7 +74,9 @@ class ThreeDsViewModelTest {
         val observer = viewModel.threeDsFinishedEvent.test()
         coEvery { threeDsInteractor.initialize(any()) }.returns(flow { throw Exception() })
 
-        viewModel.startThreeDsFlow()
+        runTest {
+            viewModel.startThreeDsFlow()
+        }
 
         coVerify { threeDsInteractor.initialize(any()) }
         observer.assertValue(Unit)
@@ -84,7 +89,9 @@ class ThreeDsViewModelTest {
             threeDsInteractor.authenticateSdk()
         }.returns(flow { throw Exception() })
 
-        viewModel.performAuthorization()
+        runTest {
+            viewModel.performAuthorization()
+        }
 
         coVerify { threeDsInteractor.authenticateSdk() }
 
@@ -108,7 +115,9 @@ class ThreeDsViewModelTest {
             threeDsInteractor.beginRemoteAuth(any())
         }.returns(flow { throw Exception() })
 
-        viewModel.performAuthorization()
+        runTest {
+            viewModel.performAuthorization()
+        }
 
         coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
@@ -135,7 +144,9 @@ class ThreeDsViewModelTest {
             threeDsInteractor.beginRemoteAuth(any())
         }.returns(flowOf(authResponse))
 
-        viewModel.performAuthorization()
+        runTest {
+            viewModel.performAuthorization()
+        }
 
         coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
@@ -163,7 +174,9 @@ class ThreeDsViewModelTest {
             threeDsInteractor.beginRemoteAuth(any())
         }.returns(flowOf(authResponse))
 
-        viewModel.performAuthorization()
+        runTest {
+            viewModel.performAuthorization()
+        }
 
         coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
@@ -188,7 +201,9 @@ class ThreeDsViewModelTest {
             )
         }.returns(flowOf(challengeStatusData))
 
-        viewModel.performChallenge(activity, transaction, response)
+        runTest {
+            viewModel.performChallenge(activity, transaction, response)
+        }
 
         coVerify {
             threeDsInteractor.performChallenge(
@@ -216,7 +231,10 @@ class ThreeDsViewModelTest {
             )
         }.returns(flow { throw Exception() })
 
-        viewModel.performChallenge(activity, transaction, response)
+        runTest {
+            viewModel.performChallenge(activity, transaction, response)
+        }
+
         observer.assertValue(Unit)
     }
 
@@ -229,7 +247,9 @@ class ThreeDsViewModelTest {
             threeDsInteractor.continueRemoteAuth(any())
         }.returns(flowOf(response))
 
-        viewModel.continueRemoteAuth("")
+        runTest {
+            viewModel.continueRemoteAuth("")
+        }
 
         coVerify { threeDsInteractor.continueRemoteAuth(any()) }
 
@@ -243,7 +263,9 @@ class ThreeDsViewModelTest {
             threeDsInteractor.continueRemoteAuth(any())
         }.returns(flow { throw Exception() })
 
-        viewModel.continueRemoteAuth("")
+        runTest {
+            viewModel.continueRemoteAuth("")
+        }
 
         coVerify { threeDsInteractor.continueRemoteAuth(any()) }
 

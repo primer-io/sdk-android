@@ -1,27 +1,32 @@
 package io.primer.android.data.action.repository
 
-import io.primer.android.completion.DefaultActionResumeHandler
-import io.primer.android.data.action.models.ClientSessionActionsRequest
-import io.primer.android.domain.action.ActionRepository
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventDispatcher
-import io.primer.android.utils.Either
-import io.primer.android.utils.Failure
-import io.primer.android.utils.Success
+import io.primer.android.data.action.datasource.RemoteActionDataSource
+import io.primer.android.data.action.models.ClientSessionActionsDataRequest
+import io.primer.android.data.action.models.toActionData
+import io.primer.android.data.base.models.BaseRemoteRequest
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.domain.action.models.BaseActionUpdateParams
+import io.primer.android.domain.action.repository.ActionRepository
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.mapLatest
 
 internal class ActionDataRepository(
-    private val eventDispatcher: EventDispatcher
+    private val localConfigurationDataSource: LocalConfigurationDataSource,
+    private val remoteActionDataSource: RemoteActionDataSource,
 ) : ActionRepository {
 
-    override fun dispatch(
-        request: ClientSessionActionsRequest,
-        completion: (Either<String?, Error>) -> Unit
-    ) {
-        val resumeHandler = DefaultActionResumeHandler { clientToken, error ->
-            if (error == null) completion(Success(clientToken))
-            else completion(Failure(error))
-        }
-        val event = CheckoutEvent.OnClientSessionActions(request, resumeHandler)
-        eventDispatcher.dispatchEvent(event)
-    }
+    override fun updateClientActions(params: BaseActionUpdateParams) =
+        localConfigurationDataSource.get()
+            .flatMapLatest {
+                remoteActionDataSource.execute(
+                    BaseRemoteRequest(
+                        it,
+                        ClientSessionActionsDataRequest(listOf(params.toActionData()))
+                    )
+                )
+            }.flatMapLatest { configuration ->
+                flowOf(localConfigurationDataSource.update(configuration))
+                    .mapLatest { requireNotNull(configuration.clientSession).toClientSessionData() }
+            }
 }

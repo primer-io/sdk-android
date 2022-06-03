@@ -1,17 +1,18 @@
 package io.primer.android.threeds.data.repository
 
-import io.primer.android.model.Model
-import io.primer.android.data.configuration.model.Environment
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.data.configuration.models.Environment
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.flow.map
 
-internal class ThreeDsConfigurationDataRepository(private val model: Model) :
-    ThreeDsConfigurationRepository {
+internal class ThreeDsConfigurationDataRepository(
+    private val localConfigurationDataSource: LocalConfigurationDataSource
+) : ThreeDsConfigurationRepository {
 
     override fun getConfiguration() =
-        model.getClientSession()
+        localConfigurationDataSource.get()
             .map {
                 ThreeDsKeysParams(
                     it.environment,
@@ -20,7 +21,7 @@ internal class ThreeDsConfigurationDataRepository(private val model: Model) :
                 )
             }
 
-    override fun getProtocolVersion() = model.getClientSession()
+    override fun getProtocolVersion() = localConfigurationDataSource.get()
         .map {
             when (it.environment) {
                 Environment.PRODUCTION -> ProtocolVersion.V_210

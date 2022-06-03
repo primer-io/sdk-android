@@ -1,6 +1,6 @@
 package io.primer.android.threeds.data.datasource
 
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.di.ApiVersion
 import io.primer.android.di.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient

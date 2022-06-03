@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
@@ -17,7 +17,7 @@ import io.primer.android.databinding.FragmentSessionCompleteBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.dto.CheckoutExitReason
+import io.primer.android.model.CheckoutExitReason
 import io.primer.android.presentation.base.BaseViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import io.primer.android.ui.extensions.autoCleaned
@@ -27,6 +27,7 @@ import org.koin.core.component.inject
 private const val SESSION_COMPLETE_DISMISS_DELAY_KEY = "SUCCESS_FRAGMENT_DISMISS_DELAY"
 private const val SESSION_COMPLETE_DISMISS_DELAY_DEFAULT = 3000L
 private const val SESSION_COMPLETE_MESSAGE_KEY = "SESSION_COMPLETE_MESSAGE"
+private const val SESSION_COMPLETE_CUSTOM_MESSAGE_KEY = "SESSION_COMPLETE_CUSTOM_MESSAGE"
 private const val SESSION_COMPLETE_IS_ERROR_KEY = "IS_ERROR"
 
 enum class SuccessType {
@@ -39,13 +40,14 @@ enum class ErrorType {
 
 sealed class SessionCompleteViewType {
     class Success(val successType: SuccessType) : SessionCompleteViewType()
-    class Error(val errorType: ErrorType) : SessionCompleteViewType()
+    class Error(val errorType: ErrorType, val message: String?) : SessionCompleteViewType()
 }
 
 @KoinApiExtension
 class SessionCompleteFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()
+
     private val viewModel: BaseViewModel by viewModel()
     private var binding: FragmentSessionCompleteBinding by autoCleaned()
 
@@ -72,7 +74,9 @@ class SessionCompleteFragment : Fragment(), DIAppComponent {
             )
         )
 
-        binding.sessionCompleteMessage.text = arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
+        binding.sessionCompleteMessage.text = arguments?.getString(
+            SESSION_COMPLETE_CUSTOM_MESSAGE_KEY
+        ) ?: arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
             getString(it)
         }
 
@@ -120,6 +124,7 @@ class SessionCompleteFragment : Fragment(), DIAppComponent {
                                 SESSION_COMPLETE_MESSAGE_KEY,
                                 getErrorMessage(viewType.errorType),
                             )
+                            putString(SESSION_COMPLETE_CUSTOM_MESSAGE_KEY, viewType.message)
                         }
                         is SessionCompleteViewType.Success -> {
                             putBoolean(SESSION_COMPLETE_IS_ERROR_KEY, false)

@@ -7,10 +7,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.PayButtonBinding
-import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.model.MonetaryAmount
 import io.primer.android.ui.PayAmountText
 
 private const val FADE_IN_DURATION_MS = 900L

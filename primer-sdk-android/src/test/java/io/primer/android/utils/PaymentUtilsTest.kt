@@ -1,6 +1,6 @@
 package io.primer.android.utils
 
-import io.primer.android.model.dto.MonetaryAmount
+import io.primer.android.model.MonetaryAmount
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.text.DecimalFormatSymbols

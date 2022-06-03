@@ -13,8 +13,6 @@ class PrimerRoutes {
 
         const val payments: String = "$root/payments"
 
-        const val actions: String = "$root/client-session/actions"
-
         fun buildResumePaymentsUrl(id: String) = "$root/payments/${id}/resume"
 
         fun buildPaymentInstrumentsUrl(customerId: String) = "$root/payment-instruments?customer_id=${customerId}"
