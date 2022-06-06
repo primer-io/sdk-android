@@ -8,7 +8,7 @@ import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
-import java.util.*
+import java.util.Collections
 
 internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteConfig) {
 

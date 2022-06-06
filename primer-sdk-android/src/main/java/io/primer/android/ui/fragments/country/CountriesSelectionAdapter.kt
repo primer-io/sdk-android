@@ -8,6 +8,7 @@ import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
 import io.primer.android.ui.settings.PrimerTheme
+import java.util.*
 
 data class CountryItem(
     val name: String,
@@ -24,7 +25,7 @@ internal class CountryItemViewHolder(
 ) : BaseViewHolder<CountryItem>(binding.root) {
 
     override fun bind(item: CountryItem) {
-        binding.tvName.text = String.format("%s %s", item.flag, item.name)
+        binding.tvName.text = String.format(Locale.getDefault(), "%s %s", item.flag, item.name)
         binding.tvName.setTextColor(
             theme.titleText.defaultColor.getColor(
                 binding.root.context,

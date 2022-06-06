@@ -59,10 +59,13 @@ internal class PaymentInputTypesInteractor(
                         checkoutModuleRepository.getCheckoutModuleOptions(
                             CheckoutModuleType.CARD_INFORMATION
                         ).let { configs ->
-                            if ((configs?.via(PrimerInputElementType.ALL)
-                                    ?: configs?.via(PrimerInputElementType.CARDHOLDER_NAME)) != false
-                            )
-                                PrimerInputElementType.CARDHOLDER_NAME else null
+                            val containsCardholders =
+                                configs?.via(PrimerInputElementType.ALL) ?: configs?.via(
+                                    PrimerInputElementType.CARDHOLDER_NAME
+                                )
+                            if (
+                                containsCardholders != false
+                            ) PrimerInputElementType.CARDHOLDER_NAME else null
                         }
 
                     listOf(

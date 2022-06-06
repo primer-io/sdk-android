@@ -49,7 +49,7 @@ import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
-import io.primer.android.payment.billing_address.BillingAddressValidator
+import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
@@ -64,7 +64,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
-import java.util.*
+import java.util.Collections
+import java.util.Currency
 
 @KoinApiExtension
 @ExperimentalCoroutinesApi
@@ -331,9 +332,10 @@ internal class PrimerViewModel(
 
     fun emitBillingAddress(completion: ((error: String?) -> Unit) = {}) {
         val enabledBillingAddressFields = showBillingFields.value
-        if (enabledBillingAddressFields == null
-            || enabledBillingAddressFields.isEmpty()
-            || enabledBillingAddressFields.values.firstOrNull { it } == null) {
+        if (enabledBillingAddressFields == null ||
+            enabledBillingAddressFields.isEmpty() ||
+            enabledBillingAddressFields.values.firstOrNull { it } == null
+        ) {
             completion(null)
             return
         }

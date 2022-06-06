@@ -1,4 +1,4 @@
-package io.primer.android.payment.billing_address
+package io.primer.android.payment.billing
 
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.model.SyncValidationError

@@ -46,7 +46,7 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.ui.utils.setMarginTopForError
+import io.primer.android.ui.utils.setMarginBottomForError
 import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.TokenizationStatus
@@ -55,7 +55,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import java.util.*
+import java.util.Collections
+import java.util.TreeMap
 
 /**
  * A simple [Fragment] subclass.
@@ -195,8 +196,8 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     /**
-    * Card detail title, display with caps
-    */
+     * Card detail title, display with caps
+     */
     private fun renderCardDetailsTitle() {
         val textColor = theme.subtitleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         binding.tvCardDetailTitle.setTextColor(textColor)
@@ -578,7 +579,7 @@ internal class CardFormFragment : BaseFragment() {
     ) {
         val isEnableError = error != null
         input.isErrorEnabled = isEnableError
-        input.setMarginTopForError(isEnableError)
+        if (!isLastInSection(input)) input.setMarginBottomForError(isEnableError)
         if (error == null) input.error = error
         else requireContext()
             .let {
@@ -597,6 +598,18 @@ internal class CardFormFragment : BaseFragment() {
                     inputFrame.suffixText = ""
                 }
             }
+    }
+
+    /**
+     * Need to check input is last for set correct bottom margin for handle space when error
+     * will be displayed. So, for error less margin, without bigger.
+     */
+    private fun isLastInSection(input: TextInputWidget): Boolean {
+        val cardHolderInputView = cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]
+        val isCvvField = cardInputFields[PrimerInputElementType.CVV] == input
+        val isExpiryDateField = cardInputFields[PrimerInputElementType.EXPIRY_DATE] == input
+        return ((isCvvField || isExpiryDateField) && cardHolderInputView?.isVisible == false) ||
+            (cardHolderInputView == input && cardHolderInputView.isVisible)
     }
 
     private fun onKeyboardVisibilityChanged(visible: Boolean) {

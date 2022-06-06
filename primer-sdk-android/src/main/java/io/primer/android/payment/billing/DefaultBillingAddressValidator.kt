@@ -1,4 +1,4 @@
-package io.primer.android.payment.billing_address
+package io.primer.android.payment.billing
 
 import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
@@ -77,20 +77,6 @@ internal class DefaultBillingAddressValidator : BillingAddressValidator {
                         name = PrimerInputElementType.ADDRESS_LINE_1.field,
                         errorId = R.string.form_error_required,
                         fieldId = R.string.address_line_1
-                    )
-                )
-            }
-        }
-
-        if (availableFields[PrimerInputElementType.ADDRESS_LINE_2.field] == true) {
-            val fieldValue = billingAddressFields.valueBy(PrimerInputElementType.ADDRESS_LINE_2)
-
-            if (fieldValue.isBlank()) {
-                errors.add(
-                    SyncValidationError(
-                        name = PrimerInputElementType.ADDRESS_LINE_2.field,
-                        errorId = R.string.form_error_required,
-                        fieldId = R.string.address_line_2
                     )
                 )
             }
