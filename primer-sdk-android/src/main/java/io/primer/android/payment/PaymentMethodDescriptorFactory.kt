@@ -11,7 +11,6 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
  * (from each [PaymentMethod]) should be registered with a [PaymentMethodDescriptorFactoryRegistry].
  * @see [PaymentMethodDescriptor]
  * @see [PaymentMethodDescriptorFactoryRegistry]
- * @see [PrimerPaymentMethodDescriptorResolver]
  */
 internal interface PaymentMethodDescriptorFactory {
 
