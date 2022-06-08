@@ -74,7 +74,12 @@ class FirstFragment : Fragment() {
             addTextChangedListener(MoneyTextWatcher(binding.amountTextField))
             doAfterTextChanged {
                 val cleanString = it.toString().replace("[.\\s]".toRegex(), "")
-                viewModel.setAmount(cleanString.toInt())
+                try {
+                    viewModel.setAmount(cleanString.toInt())
+                } catch (e: NumberFormatException) {
+                    viewModel.setAmount(0)
+                    error = INVALID_AMOUNT_MESSAGE
+                }
             }
         }
         binding.descriptorTextField.apply {
@@ -106,5 +111,9 @@ class FirstFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val INVALID_AMOUNT_MESSAGE = "Invalid amount."
     }
 }
