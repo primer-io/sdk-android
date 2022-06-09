@@ -13,9 +13,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
-import io.primer.android.PaymentMethodIntent
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.MessageType
@@ -24,13 +24,15 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentCardFormBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.model.dto.CountryCode
-import io.primer.android.model.dto.MonetaryAmount
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.model.MonetaryAmount
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.card.CARD_CVV_FIELD_NAME
 import io.primer.android.payment.card.CARD_EXPIRY_FIELD_NAME
 import io.primer.android.payment.card.CARD_NAME_FILED_NAME
@@ -46,6 +48,7 @@ import io.primer.android.utils.PaymentUtils
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
@@ -57,6 +60,7 @@ import kotlin.collections.HashMap
  * Use the [CardFormFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@ExperimentalCoroutinesApi
 @KoinApiExtension
 internal class CardFormFragment : Fragment(), DIAppComponent {
 
@@ -233,15 +237,16 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun emitCardNetworkAction() {
-        val type = "PAYMENT_CARD"
-
-        val action = if (network == null) {
-            ClientSessionActionsRequest.UnsetPaymentMethod()
+        val actionParams = if (network == null || network?.type == CardType.Type.UNKNOWN) {
+            ActionUpdateUnselectPaymentMethodParams
         } else {
-            ClientSessionActionsRequest.SetPaymentMethod(type, networkAsString)
+            ActionUpdateSelectPaymentMethodParams(
+                PaymentMethodType.PAYMENT_CARD,
+                networkAsString
+            )
         }
 
-        primerViewModel.dispatchAction(action) {
+        primerViewModel.dispatchAction(actionParams) {
             activity?.runOnUiThread {
                 updateSubmitButton()
             }
@@ -325,8 +330,8 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
         val context = requireContext()
 
         binding.cardFormSubmitButton.text = when (uxMode) {
-            PaymentMethodIntent.VAULT -> context.getString(R.string.add_card)
-            PaymentMethodIntent.CHECKOUT -> {
+            PrimerSessionIntent.VAULT -> context.getString(R.string.add_card)
+            PrimerSessionIntent.CHECKOUT -> {
                 String
                     .format(
                         getString(R.string.pay_specific_amount),
@@ -357,7 +362,7 @@ internal class CardFormFragment : Fragment(), DIAppComponent {
     }
 
     private fun updateSubmitButton() {
-        if (localConfig.paymentMethodIntent == PaymentMethodIntent.VAULT) {
+        if (localConfig.paymentMethodIntent == PrimerSessionIntent.VAULT) {
             binding.cardFormSubmitButton.text = getString(R.string.add_card)
             return
         }

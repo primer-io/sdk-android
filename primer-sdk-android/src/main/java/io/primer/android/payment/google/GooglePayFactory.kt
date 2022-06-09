@@ -1,7 +1,7 @@
 package io.primer.android.payment.google
 
 import io.primer.android.PaymentMethod
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
 import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
@@ -29,12 +29,12 @@ internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFac
         }
 
         val googlePay = GooglePay(
-            settings.business.name,
+            settings.paymentMethodOptions.googlePayOptions.merchantName,
             PaymentUtils.minorToAmount(settings.currentAmount, currency).toString(),
             settings.order.countryCode.toString(),
             currency.currencyCode,
-            settings.options.googlePayAllowedCardNetworks,
-            settings.options.googlePayButtonStyle,
+            settings.paymentMethodOptions.googlePayOptions.allowedCardNetworks,
+            settings.paymentMethodOptions.googlePayOptions.buttonStyle,
         )
 
         return Success(googlePay)

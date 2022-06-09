@@ -1,101 +1,134 @@
 package io.primer.android.events
 
-import io.primer.android.completion.ActionResumeHandler
-import io.primer.android.completion.ResumeHandler
+import io.primer.android.completion.PrimerErrorDecisionHandler
+import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.data.action.models.ClientSessionActionsRequest
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.CheckoutExitInfo
-import io.primer.android.model.dto.CheckoutExitReason
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.domain.action.models.PrimerClientSession
+import io.primer.android.model.CheckoutExitInfo
+import io.primer.android.model.CheckoutExitReason
+import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payment.processor_3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
-sealed class CheckoutEvent(
+internal sealed class CheckoutEvent(
     val type: CheckoutEventType,
-    val public: Boolean,
 ) {
 
-    abstract class PublicCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, true)
-    abstract class PrivateCheckoutEvent(type: CheckoutEventType) : CheckoutEvent(type, false)
-
     class TokenizationSuccess(
-        val data: PaymentMethodToken,
-        val resumeHandler: ResumeHandler,
-    ) :
-        PublicCheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
-
-    class TokenizationError(val data: APIError) :
-        PublicCheckoutEvent(CheckoutEventType.TOKENIZE_ERROR)
-
-    class TokenAddedToVault(val data: PaymentMethodToken) :
-        PublicCheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler,
+    ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
     class ResumeSuccess(
         val resumeToken: String,
-        val resumeHandler: ResumeHandler,
+        val resumeHandler: PrimerResumeDecisionHandler,
     ) :
-        PublicCheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
+        CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
 
-    class ResumeError(val data: APIError) :
-        PublicCheckoutEvent(CheckoutEventType.RESUME_ERR0R)
+    class ResumeSuccessInternal(
+        val resumeToken: String,
+        val resumeHandler: PrimerResumeDecisionHandler,
+    ) :
+        CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
 
     class Exit(val data: CheckoutExitInfo) :
-        PublicCheckoutEvent(CheckoutEventType.EXIT)
+        CheckoutEvent(CheckoutEventType.EXIT)
 
-    class ApiError(val data: APIError) : PublicCheckoutEvent(CheckoutEventType.API_ERROR)
+    class DismissInternal(val data: CheckoutExitReason) :
+        CheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
 
-    class TokenSelected(
-        val data: PaymentMethodToken,
-        val resumeHandler: ResumeHandler,
+    class ShowSuccess(val delay: Int = 3000, val successType: SuccessType) :
+        CheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
+
+    class ShowError(
+        val delay: Int = 3000,
+        val errorType: ErrorType,
+        val message: String? = null
     ) :
-        PublicCheckoutEvent(CheckoutEventType.TOKEN_SELECTED)
+        CheckoutEvent(CheckoutEventType.SHOW_ERROR)
 
-    class OnClientSessionActions(
-        val data: ClientSessionActionsRequest,
-        val resumeHandler: ActionResumeHandler,
-    ) : PublicCheckoutEvent(CheckoutEventType.ON_CLIENT_SESSION_ACTIONS)
+    class PaymentCreateStarted(
+        val data: PrimerPaymentMethodData,
+        val createPaymentHandler: PrimerPaymentCreationDecisionHandler
+    ) : CheckoutEvent(CheckoutEventType.PAYMENT_STARTED)
 
-    internal class ToggleProgressIndicator(val data: Boolean) :
-        PrivateCheckoutEvent(CheckoutEventType.TOGGLE_LOADING)
+    class PaymentCreateStartedHUC(
+        val data: PrimerPaymentMethodData,
+        val createPaymentHandler: PrimerPaymentCreationDecisionHandler
+    ) : CheckoutEvent(CheckoutEventType.PAYMENT_STARTED)
 
-    internal class DismissInternal(val data: CheckoutExitReason) :
-        PrivateCheckoutEvent(CheckoutEventType.DISMISS_INTERNAL)
+    class PaymentSuccess(
+        val data: PrimerCheckoutData,
+    ) : CheckoutEvent(CheckoutEventType.PAYMENT_SUCCESS)
 
-    internal class ShowSuccess(val delay: Int = 3000, val successType: SuccessType) :
-        PrivateCheckoutEvent(CheckoutEventType.SHOW_SUCCESS)
+    class CheckoutError(
+        val error: PrimerError,
+        val errorHandler: PrimerErrorDecisionHandler? = null
+    ) : CheckoutEvent(CheckoutEventType.CHECKOUT_MANUAL_ERROR)
 
-    internal class ShowError(val delay: Int = 3000, val errorType: ErrorType) :
-        PrivateCheckoutEvent(CheckoutEventType.SHOW_ERROR)
+    class CheckoutPaymentError(
+        val error: PrimerError,
+        val data: PrimerCheckoutData? = null,
+        val errorHandler: PrimerErrorDecisionHandler? = null
+    ) : CheckoutEvent(CheckoutEventType.CHECKOUT_AUTO_ERROR)
+
+    class ClientSessionUpdateStarted :
+        CheckoutEvent(CheckoutEventType.CLIENT_SESSION_UPDATE_STARTED)
+
+    class ClientSessionUpdateSuccess(val data: PrimerClientSession) :
+        CheckoutEvent(CheckoutEventType.CLIENT_SESSION_UPDATE_SUCCESS)
+
+    class TokenAddedToVaultInternal(val data: PrimerPaymentMethodTokenData) :
+        CheckoutEvent(CheckoutEventType.TOKEN_ADDED_TO_VAULT)
+
+    class PaymentContinue(
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler
+    ) :
+        CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE)
+
+    class PaymentContinueHUC(
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler
+    ) :
+        CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
 
     internal class Start3DS(
         val processor3DSData: Processor3DS? = null
-    ) : PrivateCheckoutEvent(CheckoutEventType.START_3DS)
+    ) : CheckoutEvent(CheckoutEventType.START_3DS)
 
-    internal class StartAsyncRedirectFlow(
+    class StartAsyncRedirectFlow(
         val title: String,
+        val paymentMethodType: PaymentMethodType,
         val redirectUrl: String,
         val statusUrl: String,
-    ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
+    ) : CheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
 
     internal class StartAsyncFlow(
         val clientTokenIntent: ClientTokenIntent,
         val statusUrl: String,
-    ) : PrivateCheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
+        val paymentMethodType: PaymentMethodType,
+    ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 
     // components helpers
-    internal class ConfigurationSuccess(
+    class ConfigurationSuccess(
         val paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>
-    ) : PrivateCheckoutEvent(CheckoutEventType.CONFIGURATION_SUCCESS)
+    ) : CheckoutEvent(CheckoutEventType.CONFIGURATION_SUCCESS)
 
-    internal object TokenizationStarted :
-        PrivateCheckoutEvent(CheckoutEventType.TOKENIZE_STARTED)
+    class TokenizationStarted(val paymentMethodType: PrimerPaymentMethodType) :
+        CheckoutEvent(CheckoutEventType.TOKENIZE_STARTED)
 
-    internal object PreparationStarted :
-        PrivateCheckoutEvent(CheckoutEventType.PREPARATION_STARTED)
+    object PreparationStarted :
+        CheckoutEvent(CheckoutEventType.PREPARATION_STARTED)
 
-    internal object PaymentMethodPresented :
-        PrivateCheckoutEvent(CheckoutEventType.PAYMENT_METHOD_PRESENTED)
+    object PaymentMethodPresented :
+        CheckoutEvent(CheckoutEventType.PAYMENT_METHOD_PRESENTED)
 }

@@ -168,7 +168,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             screenData,
             deviceId
         ),
-        MessageProperties(messageType, message, severity),
+        MessageProperties(messageType, message, severity, diagnosticsId),
         appIdentifier,
         sdkSessionId,
         checkoutSessionId,

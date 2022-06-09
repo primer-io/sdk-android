@@ -15,6 +15,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.MyApplication.NoActionBar"
             android:windowSoftInputMode="adjustResize">
@@ -26,6 +27,7 @@
 
         <activity
             android:name="io.primer.android.WebBrowserInteropActivity"
+            android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

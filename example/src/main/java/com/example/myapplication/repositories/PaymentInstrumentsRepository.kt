@@ -4,7 +4,7 @@ import com.example.myapplication.constants.PrimerRoutes
 import com.example.myapplication.datamodels.PaymentInstrumentsResponse
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
-import io.primer.android.model.dto.PaymentMethodToken
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -17,11 +17,12 @@ class PaymentInstrumentsRepository {
         customerId: String,
         environment: String,
         client: OkHttpClient,
-        callback: (tokens: List<PaymentMethodToken>) -> Unit,
+        callback: (tokens: List<PrimerPaymentMethodTokenData>) -> Unit,
     ) {
         val request = HttpRequestUtil.generateGetRequest(
             PrimerRoutes.buildPaymentInstrumentsUrl(customerId),
-            environment
+            environment,
+            true
         )
         client.cache()?.delete()
         client.newCall(request).enqueue(object : Callback {

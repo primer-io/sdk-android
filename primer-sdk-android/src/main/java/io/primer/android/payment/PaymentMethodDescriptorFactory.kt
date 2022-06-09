@@ -1,8 +1,8 @@
 package io.primer.android.payment
 
 import io.primer.android.PaymentMethod
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 /**
@@ -11,9 +11,8 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
  * (from each [PaymentMethod]) should be registered with a [PaymentMethodDescriptorFactoryRegistry].
  * @see [PaymentMethodDescriptor]
  * @see [PaymentMethodDescriptorFactoryRegistry]
- * @see [PrimerPaymentMethodDescriptorResolver]
  */
-interface PaymentMethodDescriptorFactory {
+internal interface PaymentMethodDescriptorFactory {
 
     fun create(
         localConfig: PrimerConfig,

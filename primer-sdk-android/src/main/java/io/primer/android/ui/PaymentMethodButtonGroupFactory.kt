@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.LinearLayout
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.components.PaymentMethodButtonGroupBox
 import io.primer.android.utils.SurchargeFormatter

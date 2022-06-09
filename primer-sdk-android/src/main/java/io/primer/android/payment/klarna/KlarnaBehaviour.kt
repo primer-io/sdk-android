@@ -1,6 +1,7 @@
 package io.primer.android.payment.klarna
 
 import android.net.Uri
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -44,6 +45,6 @@ internal class RecurringKlarnaBehaviour constructor(
     }
 
     override fun onCancel(uri: Uri?) {
-        tokenizationViewModel?.userCanceled()
+        tokenizationViewModel?.userCanceled(PaymentMethodType.KLARNA)
     }
 }

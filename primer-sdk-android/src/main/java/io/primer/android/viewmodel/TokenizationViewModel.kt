@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
@@ -19,12 +20,12 @@ import io.primer.android.domain.payments.paypal.models.PaypalOrderInfoParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.model.APIEndpoint
-import io.primer.android.model.ApayaPaymentData
-import io.primer.android.model.KlarnaPaymentData
+import io.primer.android.domain.payments.apaya.models.ApayaPaymentData
+import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.model.dto.PrimerConfig
-import io.primer.android.model.dto.SyncValidationError
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.card.CreditCard
@@ -32,7 +33,6 @@ import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.paypal.PayPalDescriptor
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -53,7 +53,9 @@ internal class TokenizationViewModel(
     private var paymentMethod: PaymentMethodDescriptor? = null
 
     val submitted = MutableLiveData(false)
-    val error = MutableLiveData<String?>()
+    val error = MutableLiveData<Throwable>()
+    val tokenizationResult = MutableLiveData<String>()
+
     val tokenizationStatus = MutableLiveData(TokenizationStatus.NONE)
     val tokenizationError = MutableLiveData<Unit>()
     val tokenizationData = MutableLiveData<PaymentMethodTokenInternal>()
@@ -63,10 +65,10 @@ internal class TokenizationViewModel(
     val autoFocusFields: MutableLiveData<Set<String>> = MutableLiveData(
         Collections.emptySet()
     )
-    private val _tokenizationCanceled = MutableLiveData<Unit>()
-    val tokenizationCanceled: LiveData<Unit> = _tokenizationCanceled
+    private val _tokenizationCanceled = MutableLiveData<PaymentMethodType>()
+    val tokenizationCanceled: LiveData<PaymentMethodType> = _tokenizationCanceled
 
-    val klarnaError = MutableLiveData<Unit>()
+    val klarnaError = MutableLiveData<Throwable>()
     val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
     val vaultedKlarnaPayment = MutableLiveData<JSONObject>()
 
@@ -75,7 +77,7 @@ internal class TokenizationViewModel(
     val payPalOrder = MutableLiveData<String>() // emits URI
 
     val goCardlessMandate = MutableLiveData<JSONObject>()
-    val goCardlessMandateError = MutableLiveData<Unit>()
+    val goCardlessMandateError = MutableLiveData<Throwable>()
 
     val apayaPaymentData = MutableLiveData<ApayaPaymentData>()
     val apayaValidationData = MutableLiveData<Unit>()
@@ -104,7 +106,7 @@ internal class TokenizationViewModel(
                 TokenizationParams(
                     paymentMethod ?: return@launch,
                     config.paymentMethodIntent,
-                    config.settings.options.is3DSOnVaultingEnabled
+                    config.settings.paymentMethodOptions.cardPaymentOptions.is3DSOnVaultingEnabled
                 )
             )
                 .onStart { tokenizationStatus.postValue(TokenizationStatus.LOADING) }
@@ -112,6 +114,7 @@ internal class TokenizationViewModel(
                     tokenizationStatus.postValue(TokenizationStatus.ERROR)
                 }
                 .collect {
+                    tokenizationResult.postValue(it)
                     tokenizationStatus.postValue(TokenizationStatus.SUCCESS)
                 }
         }
@@ -137,8 +140,8 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun userCanceled() {
-        _tokenizationCanceled.postValue(Unit)
+    fun userCanceled(paymentMethodType: PaymentMethodType) {
+        _tokenizationCanceled.postValue(paymentMethodType)
     }
 
     fun handleWebFlowRequestResult(
@@ -175,7 +178,7 @@ internal class TokenizationViewModel(
 
     private fun generateLocaleJson(): JSONObject = JSONObject().apply {
         val countryCode = config.settings.order.countryCode
-        val locale = config.settings.options.locale.toLanguageTag()
+        val locale = config.settings.locale.toLanguageTag()
         val currencyCode = config.settings.currency
 
         put("countryCode", countryCode)
@@ -197,7 +200,13 @@ internal class TokenizationViewModel(
                 klarna.options.orderDescription?.let { put("description", it) }
             }
 
-            when (val result = model.post(APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION, body)) {
+            when (
+                val result = model.post(
+                    APIEndpoint.CREATE_KLARNA_PAYMENT_SESSION,
+                    PaymentMethodType.KLARNA,
+                    body
+                )
+            ) {
                 is OperationResult.Success -> {
                     val hppRedirectUrl = result.data.getString("hppRedirectUrl")
                     val sessionId = result.data.getString("sessionId")
@@ -210,7 +219,7 @@ internal class TokenizationViewModel(
                     )
                 }
                 is OperationResult.Error -> {
-                    klarnaError.postValue(Unit)
+                    klarnaError.postValue(result.error)
                 }
             }
         }
@@ -224,7 +233,7 @@ internal class TokenizationViewModel(
         if (redirectUrl == null || klarna == null ||
             klarna.config.id == null || klarnaAuthToken == null
         ) {
-            return klarnaError.postValue(Unit)
+            return klarnaError.postValue(Error())
         }
 
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
@@ -233,7 +242,7 @@ internal class TokenizationViewModel(
     fun handleRecurringKlarnaRequestResult(klarna: KlarnaDescriptor?, klarnaAuthToken: String) {
 
         if (klarna == null || klarna.config.id == null) {
-            return klarnaError.postValue(Unit)
+            return klarnaError.postValue(Error())
         }
 
         vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
@@ -253,14 +262,19 @@ internal class TokenizationViewModel(
         klarna.options.orderDescription?.let { body.put("description", it) }
 
         viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.VAULT_KLARNA_PAYMENT, body)) {
+            when (
+                val result = model.post(
+                    APIEndpoint.VAULT_KLARNA_PAYMENT, PaymentMethodType.KLARNA,
+                    body
+                )
+            ) {
                 is OperationResult.Success -> {
                     val data = result.data
                     data.put("klarnaAuthorizationToken", token)
                     vaultedKlarnaPayment.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    klarnaError.postValue(Unit)
+                    klarnaError.postValue(result.error)
                 }
             }
         }
@@ -275,14 +289,19 @@ internal class TokenizationViewModel(
         body.put("cancelUrl", cancelUrl)
 
         viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT, body)) {
+            when (
+                val result = model.post(
+                    APIEndpoint.CREATE_PAYPAL_BILLING_AGREEMENT,
+                    PaymentMethodType.PAYPAL,
+                    body
+                )
+            ) {
                 is OperationResult.Success -> {
                     val approvalUrl = result.data.getString("approvalUrl")
                     payPalBillingAgreementUrl.postValue(approvalUrl)
                 }
                 is OperationResult.Error -> {
-                    val description = "Failed to load PayPal."
-                    error.postValue(description)
+                    error.postValue(result.error)
                 }
             }
         }
@@ -294,14 +313,19 @@ internal class TokenizationViewModel(
         body.put("tokenId", token)
 
         viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.CONFIRM_PAYPAL_BILLING_AGREEMENT, body)) {
+            when (
+                val result = model.post(
+                    APIEndpoint.CONFIRM_PAYPAL_BILLING_AGREEMENT,
+                    PaymentMethodType.PAYPAL,
+                    body
+                )
+            ) {
                 is OperationResult.Success -> {
                     val data = result.data
                     confirmPayPalBillingAgreement.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    val description = "Failed to connect PayPal account."
-                    error.postValue(description)
+                    error.postValue(result.error)
                 }
             }
         }
@@ -316,14 +340,19 @@ internal class TokenizationViewModel(
         body.put("cancelUrl", cancelUrl)
 
         viewModelScope.launch {
-            when (val result = model.post(APIEndpoint.CREATE_PAYPAL_ORDER, body)) {
+            when (
+                val result = model.post(
+                    APIEndpoint.CREATE_PAYPAL_ORDER,
+                    PaymentMethodType.PAYPAL,
+                    body
+                )
+            ) {
                 is OperationResult.Success -> {
                     val uri = result.data.getString("approvalUrl")
                     payPalOrder.postValue(uri)
                 }
                 is OperationResult.Error -> {
-                    val description = "Failed to load PayPal."
-                    error.postValue(description)
+                    error.postValue(result.error)
                 }
             }
         }
@@ -354,14 +383,19 @@ internal class TokenizationViewModel(
         body.put("userDetails", customerDetails)
 
         viewModelScope.launch {
-
-            when (val result = model.post(APIEndpoint.CREATE_GOCARDLESS_MANDATE, body)) {
+            when (
+                val result = model.post(
+                    APIEndpoint.CREATE_GOCARDLESS_MANDATE,
+                    PaymentMethodType.GOCARDLESS,
+                    body
+                )
+            ) {
                 is OperationResult.Success -> {
                     val data = result.data
                     goCardlessMandate.postValue(data)
                 }
                 is OperationResult.Error -> {
-                    goCardlessMandateError.postValue(Unit)
+                    goCardlessMandateError.postValue(result.error)
                 }
             }
         }
@@ -374,9 +408,9 @@ internal class TokenizationViewModel(
             apayaSessionInteractor(
                 ApayaSessionParams(
                     merchantAccountId,
-                    config.settings.options.locale,
-                    config.settings.currency.orEmpty(),
-                    config.settings.customer.mobilePhone.orEmpty()
+                    config.settings.locale,
+                    config.settings.currency,
+                    config.settings.customer.mobileNumber.orEmpty()
                 )
             ).collect { apayaPaymentData.postValue(it) }
         }

@@ -14,6 +14,7 @@ import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.SettingsViewModel
+import io.primer.android.data.settings.PrimerPaymentHandling
 
 class FirstFragment : Fragment() {
 
@@ -38,6 +39,7 @@ class FirstFragment : Fragment() {
         configureCustomerIdTextField()
         configureCountryTextField()
         configureAmountTextField()
+        configurePaymentHandlingViews()
         configureNextButton()
 
         viewModel.canLaunchPrimer.observe(viewLifecycleOwner) { canLaunch ->
@@ -45,6 +47,7 @@ class FirstFragment : Fragment() {
         }
 
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
+            viewModel.countryCode.postValue(country)
             binding.countryItem.setText(country.flag)
         }
     }
@@ -71,13 +74,28 @@ class FirstFragment : Fragment() {
             addTextChangedListener(MoneyTextWatcher(binding.amountTextField))
             doAfterTextChanged {
                 val cleanString = it.toString().replace("[.\\s]".toRegex(), "")
-                viewModel.setAmount(cleanString.toInt())
+                try {
+                    viewModel.setAmount(cleanString.toInt())
+                } catch (e: NumberFormatException) {
+                    viewModel.setAmount(0)
+                    error = INVALID_AMOUNT_MESSAGE
+                }
             }
         }
         binding.descriptorTextField.apply {
             setText(viewModel.descriptor.value)
-            onFocusChangeListener = HideKeyboardFocusChangeListener(R.id.descriptorTextField, activity)
+            onFocusChangeListener =
+                HideKeyboardFocusChangeListener(R.id.descriptorTextField, activity)
             addTextChangedListener { viewModel.setDescriptor(it.toString()) }
+        }
+    }
+
+    private fun configurePaymentHandlingViews() {
+        binding.paymentHandling.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.paymentHandlingAuto -> viewModel.setPaymentHandling(PrimerPaymentHandling.AUTO)
+                R.id.paymentHandlingManual -> viewModel.setPaymentHandling(PrimerPaymentHandling.MANUAL)
+            }
         }
     }
 
@@ -93,5 +111,9 @@ class FirstFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val INVALID_AMOUNT_MESSAGE = "Invalid amount."
     }
 }

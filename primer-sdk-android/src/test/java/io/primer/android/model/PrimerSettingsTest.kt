@@ -1,7 +1,7 @@
 package io.primer.android.model
 
-import io.primer.android.model.dto.Order
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.configuration.models.OrderDataResponse
+import io.primer.android.data.settings.PrimerSettings
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -16,17 +16,17 @@ class PrimerSettingsTest {
 
     @Test
     fun `currentAmount is totalOrderAmount if order merchantAmount not present`() {
-        val settings = PrimerSettings(
-            order = Order(totalOrderAmount = 200)
-        )
+        val settings = PrimerSettings().apply {
+            order = OrderDataResponse(totalOrderAmount = 200)
+        }
         assert(settings.currentAmount == 200)
     }
 
     @Test
     fun `currentAmount is amount if order amount values not present`() {
-        val settings = PrimerSettings(
-            order = Order(amount = 150)
-        )
+        val settings = PrimerSettings().apply {
+            order = OrderDataResponse(amount = 150)
+        }
         assert(settings.currentAmount == 150)
     }
 }

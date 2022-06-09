@@ -1,6 +1,8 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.data.configuration.models.isAvailableOnHUC
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -9,9 +11,8 @@ import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.model.dto.APIError
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.toPrimerPaymentMethod
+import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -24,6 +25,7 @@ internal class PaymentsTypesInteractor(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
+    private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -32,10 +34,10 @@ internal class PaymentsTypesInteractor(
     override fun execute(params: None) = configurationInteractor(
         ConfigurationParams(false)
     ).flatMapLatest {
-        paymentMethodModulesInteractor.execute(None())
+        paymentMethodModulesInteractor.execute(PaymentModuleParams(false))
             .mapLatest { it.descriptors.map { it.config.type } }
             .mapLatest {
-                it.map { it.takeIfAvailable() }.filterNotNull()
+                it.filter { it.isAvailableOnHUC() }
             }
     }
         .flowOn(dispatcher)
@@ -52,24 +54,14 @@ internal class PaymentsTypesInteractor(
         }
         .catch {
             logger.error(CONFIGURATION_ERROR, it)
-            eventDispatcher.dispatchEvent(CheckoutEvent.ApiError(APIError(CONFIGURATION_ERROR)))
+            errorEventResolver.resolve(it, ErrorMapperType.HUC)
         }
         .mapLatest { }
-
-    private fun PaymentMethodType.takeIfAvailable() =
-        takeIf {
-            try {
-                it.toPrimerPaymentMethod()
-                true
-            } catch (ignored: IllegalStateException) {
-                false
-            }
-        }
 
     private companion object {
         const val CONFIGURATION_ERROR =
             "Failed to initialise due to a configuration missing. Please ensure" +
-                "that you have called PrimerHeadlessUniversalCheckout start method" +
+                " that you have called PrimerHeadlessUniversalCheckout start method" +
                 " and you have received onClientSessionSetupSuccessfully callback before" +
                 " calling this method."
     }

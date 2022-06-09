@@ -2,17 +2,15 @@ package io.primer.android.threeds.domain.interactor
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
-import io.primer.android.completion.ResumeHandlerFactory
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.token.repository.ClientTokenRepository
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventDispatcher
+import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.extensions.doOnError
-import io.primer.android.extensions.toResumeErrorEvent
 import io.primer.android.logging.DefaultLogger
-import io.primer.android.model.dto.PaymentMethodTokenAdapter
-import io.primer.android.model.dto.TokenType
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.data.models.PostAuthResponse
@@ -65,8 +63,9 @@ internal class DefaultThreeDsInteractor(
     private val clientTokenRepository: ClientTokenRepository,
     private val threeDsAppUrlRepository: ThreeDsAppUrlRepository,
     private val threeDsConfigurationRepository: ThreeDsConfigurationRepository,
-    private val resumeHandlerFactory: ResumeHandlerFactory,
-    private val eventDispatcher: EventDispatcher,
+    private val postTokenizationEventResolver: PostTokenizationEventResolver,
+    private val resumeEventResolver: ResumeEventResolver,
+    private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: DefaultLogger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ThreeDsInteractor {
@@ -144,44 +143,24 @@ internal class DefaultThreeDsInteractor(
 
     private fun handleAuthEvent(token: PaymentMethodTokenInternal, resumeToken: String? = null) {
         when (clientTokenRepository.getClientTokenIntent()) {
-            ClientTokenIntent.`3DS_AUTHENTICATION` -> {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.ResumeSuccess(
-                        resumeToken.orEmpty(),
-                        resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType)
-                    )
-                )
-            }
-            else -> dispatchTokenEvents(token)
+            ClientTokenIntent.`3DS_AUTHENTICATION` -> resumeEventResolver.resolve(
+                token.paymentInstrumentType,
+                resumeToken
+            )
+            else -> postTokenizationEventResolver.resolve(token)
         }
     }
 
     private fun handleErrorEvent(throwable: Throwable) {
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.`3DS_AUTHENTICATION` -> {
-                eventDispatcher.dispatchEvent(
-                    throwable.toResumeErrorEvent(throwable.message.orEmpty())
-                )
+                baseErrorEventResolver.resolve(throwable, ErrorMapperType.PAYMENT_RESUME)
             }
-            else -> dispatchTokenEvents(
+            else -> postTokenizationEventResolver.resolve(
                 paymentMethodRepository.getPaymentMethod()
                     .setClientThreeDsError(throwable.message.orEmpty())
             )
         }
-    }
-
-    private fun dispatchTokenEvents(token: PaymentMethodTokenInternal) {
-        val externalToken = PaymentMethodTokenAdapter.internalToExternal(token)
-        val events = mutableListOf<CheckoutEvent>(
-            CheckoutEvent.TokenizationSuccess(
-                externalToken,
-                resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType)
-            )
-        )
-        if (token.tokenType == TokenType.MULTI_USE) {
-            events.add(CheckoutEvent.TokenAddedToVault(externalToken))
-        }
-        eventDispatcher.dispatchEvents(events)
     }
 
     companion object {

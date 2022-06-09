@@ -20,24 +20,206 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepattributes *Annotation*, InnerClasses
--dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+-dontusemixedcaseclassnames
+-repackageclasses 'io.primer.android.internal'
+-allowaccessmodification
+-renamesourcefileattribute SourceFile
+-keepattributes Signature,Exceptions,*Annotation*,
+                InnerClasses,PermittedSubclasses,EnclosingMethod,
+                Deprecated,SourceFile,LineNumberTable
+
+
+-keep public class io.primer.android.**settings.** {
+    public *;
+}
+
+-keep enum io.primer.android.PrimerSessionIntent {
+    public *;
+}
+
+-keep class io.primer.android.Primer {
+    public protected static <methods>;
+    *** Companion;
+}
+
+-keep class io.primer.android.Primer$Companion {
+    *;
+}
+
+-keep public interface io.primer.android.PrimerInterface {
+    public *;
+}
+
+-keep public interface io.primer.android.PrimerCheckoutListener {
+    public *;
+}
+-keep class io.primer.android.domain.action.models.* {
+    public *;
+}
+
+-keep interface io.primer.android.completion.* {
+    public *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerPaymentMethodData {
+    public *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData {
+    *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData$* {
+    *;
+}
+
+-keep class io.primer.android.data.tokenization.models.PaymentInstrumentData {
+    *;
+}
+
+-keep,includedescriptorclasses class io.primer.android.data.tokenization.models.PaymentInstrumentData$$serializer { *; }
+
+-keep class io.primer.android.data.tokenization.models.ExternalPayerInfo {
+    *;
+}
+
+-keep class io.primer.android.data.tokenization.models.SessionData {
+    *;
+}
+
+-keep class io.primer.android.data.tokenization.models.BillingAddress {
+    *;
+}
+
+-keep  enum io.primer.android.threeds.data.models.ResponseCode
+
+-keep class io.primer.android.data.tokenization.models.BinData {
+    *;
+}
+
+-keep enum io.primer.android.data.tokenization.models.TokenType {
+    *;
+}
+
+-keep class io.primer.android.domain.PrimerCheckoutData {
+    *;
+}
+
+-keep class io.primer.android.domain.payments.create.model.Payment {
+    *;
+}
+
+-keep enum io.primer.android.data.configuration.models.CountryCode {
+    *;
+}
+
+-keep,includedescriptorclasses class io.primer.android.data.configuration.models.CountryCode$$serializer { *; }
+
+-keep,includedescriptorclasses class io.primer.android.data.configuration.models.PaymentMethodType$$serializer { *; }
+
+-keep enum io.primer.android.data.configuration.models.PaymentMethodType {
+    public *;
+}
+
+-keep class io.primer.android.data.configuration.models.PrimerPaymentMethodTypeKt {
+    public *;
+}
+
+-keep class io.primer.android.domain.error.models.PrimerError {
+    public *;
+}
+
+# card manager
+-keep class io.primer.android.components.domain.core.models.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.PrimerCardManager {
+    public *;
+}
+
+-keep interface io.primer.android.components.manager.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.PrimerCardManager$Companion {
+    *;
+}
+
+-keep interface io.primer.android.components.ui.widgets.** {
+    *;
+}
+
+-keep class io.primer.android.components.ui.widgets.** {
+    *;
+}
+
+-keep class io.primer.android.components.ui.views.* {
+    *;
+}
+
+-keep class io.primer.android.ui.CardType {
+    *;
+}
+
+-keep enum io.primer.android.ui.CardType$Type {
+    *;
+}
+
+# Headless checkout
+-keep class io.primer.android.components.PrimerHeadlessUniversalCheckout {
+    public *;
+}
+
+-keep class io.primer.android.components.PrimerHeadlessUniversalCheckout$Companion {
+    *;
+}
+
+-keep interface io.primer.android.components.PrimerHeadlessUniversalCheckoutInterface {
+    public *;
+}
+
+-keep interface io.primer.android.components.PrimerHeadlessUniversalCheckoutListener {
+    public *;
+}
+
+-keepclassmembers,allowoptimization enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# for annotations
+-keep @interface kotlinx.serialization.Serializable
+-keep @interface io.primer.android.ExperimentalPrimerApi
+
+-keepattributes RuntimeVisibleAnnotations,AnnotationDefault
 
 -keepclassmembers class kotlinx.serialization.json.** {
     *** Companion;
 }
+
 -keepclasseswithmembers class kotlinx.serialization.json.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
--keep,includedescriptorclasses class io.primer.android.**$$serializer { *; }
--keepclassmembers class io.primer.android.** {
+-keepclassmembers @kotlinx.serialization.Serializable class io.primer.android.** {
+    # lookup for plugin generated serializable classes
     *** Companion;
-}
--keepclasseswithmembers class io.primer.android.** {
+    # lookup for serializable objects
+    *** INSTANCE;
     kotlinx.serialization.KSerializer serializer(...);
 }
-
--keep public enum io.primer.android.**{
-    *;
+# lookup for plugin generated serializable classes
+-if @kotlinx.serialization.Serializable class io.primer.android.**
+-keepclassmembers class io.primer.android.<1>$Companion {
+    kotlinx.serialization.KSerializer serializer(...);
 }

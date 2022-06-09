@@ -1,10 +1,10 @@
 package io.primer.android.data.payments.forms.repository
 
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.forms.datasource.LocalFormDataSourceFactory
 import io.primer.android.data.payments.forms.models.toForm
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.domain.payments.forms.repository.FormsRepository
-import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.coroutines.flow.mapLatest
 
 internal class FormsDataRepository(

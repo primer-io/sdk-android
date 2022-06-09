@@ -1,9 +1,9 @@
 package io.primer.android.data.rpc.banks.models
 
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.rpc.RpcFunction
 import io.primer.android.domain.rpc.banks.models.IssuingBank
 import io.primer.android.domain.rpc.banks.models.IssuingBankParams
-import io.primer.android.model.dto.PaymentMethodType
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,6 +1,6 @@
 package io.primer.android.data.base.models
 
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
 
 internal data class BaseRemoteRequest<T>(val configuration: Configuration, val data: T)
 

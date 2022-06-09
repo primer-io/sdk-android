@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentQrCodeBinding
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
@@ -44,7 +45,10 @@ internal class QrCodeFragment : BaseFormFragment() {
                 primerViewModel.executeBehaviour(it)
             }
         }
-        viewModel.getStatus(requireArguments().getString(STATUS_URL_KEY).orEmpty())
+        viewModel.getStatus(
+            requireArguments().getString(STATUS_URL_KEY).orEmpty(),
+            requireArguments().getSerializable(PAYMENT_METHOD_TYPE_KEY) as PaymentMethodType
+        )
     }
 
     override fun setupForm(form: Form) {
@@ -83,8 +87,16 @@ internal class QrCodeFragment : BaseFormFragment() {
     companion object {
 
         private const val STATUS_URL_KEY = "STATUS_URL"
-        fun newInstance(statusUrl: String) = QrCodeFragment().apply {
-            arguments = bundleOf(STATUS_URL_KEY to statusUrl)
+        private const val PAYMENT_METHOD_TYPE_KEY = "PAYMENT_METHOD_TYPE"
+
+        fun newInstance(
+            statusUrl: String,
+            paymentMethodType: PaymentMethodType
+        ) = QrCodeFragment().apply {
+            arguments = bundleOf(
+                STATUS_URL_KEY to statusUrl,
+                PAYMENT_METHOD_TYPE_KEY to paymentMethodType
+            )
         }
     }
 }

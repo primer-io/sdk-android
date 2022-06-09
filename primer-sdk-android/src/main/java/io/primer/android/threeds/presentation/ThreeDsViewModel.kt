@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.BuildConfig
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.ChallengePreference
@@ -17,7 +17,6 @@ import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsParams
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 
@@ -45,9 +44,9 @@ internal class ThreeDsViewModel(
         viewModelScope.launch {
             threeDsInteractor.initialize(
                 ThreeDsInitParams(
-                    config.settings.options.debugOptions?.is3DSSanityCheckEnabled
+                    config.settings.debugOptions.is3DSSanityCheckEnabled
                         ?: BuildConfig.DEBUG.not(),
-                    config.settings.options.locale
+                    config.settings.locale
                 )
             ).catch {
                 _threeDsFinishedEvent.postValue(Unit)

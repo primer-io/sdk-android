@@ -1,13 +1,13 @@
 package io.primer.android.viewmodel
 
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 
 /**
  * Responsible for holding all the [PaymentMethodCheckerRegistry] for all the payment methods.
  * Each payment method should register its own [PaymentMethodChecker] with this class so its
  * availability can be evaluated when necessary. See [PaymentMethodChecker].
  */
-interface PaymentMethodCheckerRegistry {
+internal interface PaymentMethodCheckerRegistry {
 
     val checkers: Map<PaymentMethodType, PaymentMethodChecker>
 

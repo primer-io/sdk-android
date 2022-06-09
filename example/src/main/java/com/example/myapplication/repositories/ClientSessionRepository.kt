@@ -2,10 +2,8 @@ package com.example.myapplication.repositories
 
 import com.example.myapplication.constants.PrimerRoutes
 import com.example.myapplication.datamodels.ClientSession
-import com.example.myapplication.datamodels.ClientTokenResponse
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
-import io.primer.android.model.dto.CountryCode
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient

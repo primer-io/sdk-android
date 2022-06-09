@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
-import io.primer.android.PrimerTheme
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.PaymentMethodItemVaultBinding
 

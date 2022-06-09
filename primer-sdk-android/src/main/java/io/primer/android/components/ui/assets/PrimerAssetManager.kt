@@ -1,7 +1,7 @@
 package io.primer.android.components.ui.assets
 
 import androidx.annotation.DrawableRes
-import io.primer.android.model.dto.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 
 internal object PrimerAssetManager {
 

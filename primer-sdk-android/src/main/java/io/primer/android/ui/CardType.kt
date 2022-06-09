@@ -11,7 +11,7 @@ class CardType {
         VISA,
         MASTERCARD,
         AMEX,
-        DINERS,
+        DINERS_CLUB,
         DISCOVER,
         JCB,
         UNIONPAY,
@@ -63,7 +63,7 @@ class CardType {
         Descriptor(Type.AMEX, CARD_GAPS_4_10, CARD_LENS_15, lower, upper, cvvLength = CVV_LEN_4)
 
     internal class DinersDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.DINERS, CARD_GAPS_4_10, CARD_LENS_14_16_19, lower, upper)
+        Descriptor(Type.DINERS_CLUB, CARD_GAPS_4_10, CARD_LENS_14_16_19, lower, upper)
 
     internal class DiscoverDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.DISCOVER, CARD_GAPS_4_8_12, CARD_LENS_16_19, lower, upper)

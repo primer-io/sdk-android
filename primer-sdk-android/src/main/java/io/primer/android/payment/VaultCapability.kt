@@ -1,6 +1,6 @@
 package io.primer.android.payment
 
-enum class VaultCapability {
+internal enum class VaultCapability {
     /**
      * A payment method which can only be used for one-off payments
      */

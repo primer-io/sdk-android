@@ -1,11 +1,11 @@
 package io.primer.android.domain.session
 
-import io.primer.android.data.configuration.model.Configuration
+import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.domain.session.repository.ConfigurationRepository
-import io.primer.android.events.EventDispatcher
-import io.primer.android.extensions.toCheckoutErrorEvent
 import io.primer.android.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flowOn
 
 internal class ConfigurationInteractor(
     private val configurationRepository: ConfigurationRepository,
-    private val eventDispatcher: EventDispatcher,
+    private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseInteractor<Configuration, ConfigurationParams>() {
@@ -23,7 +23,7 @@ internal class ConfigurationInteractor(
         configurationRepository.fetchConfiguration(params.fromCache)
             .flowOn(dispatcher)
             .catch {
-                eventDispatcher.dispatchEvent(it.toCheckoutErrorEvent(CONFIGURATION_ERROR))
+                baseErrorEventResolver.resolve(it, ErrorMapperType.DEFAULT)
                 logger.error(CONFIGURATION_ERROR, it)
             }
 

@@ -1,8 +1,8 @@
 package io.primer.android.threeds.domain.models
 
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
-import io.primer.android.PaymentMethodIntent
-import io.primer.android.model.dto.PrimerConfig
+import io.primer.android.PrimerSessionIntent
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.threeds.data.models.Address
 import io.primer.android.threeds.data.models.BeginAuthRequest
 import io.primer.android.threeds.data.models.ChallengePreference
@@ -13,7 +13,7 @@ import io.primer.android.threeds.helpers.ProtocolVersion
 private const val SDK_TIMEOUT_IN_SECONDS = 60
 
 internal data class ThreeDsParams(
-    val paymentMethodIntent: PaymentMethodIntent,
+    val paymentMethodIntent: PrimerSessionIntent,
     val maxProtocolVersion: ProtocolVersion,
     val challengePreference: ChallengePreference,
     val amount: Int?,
@@ -45,21 +45,21 @@ internal data class ThreeDsParams(
         config.settings.currency,
         config.settings.order.id,
         config.settings.customer.firstName,
-        config.settings.customer.email,
+        config.settings.customer.emailAddress,
         authenticationRequestParameters.sdkAppID.orEmpty(),
         authenticationRequestParameters.sdkTransactionID.orEmpty(),
         authenticationRequestParameters.deviceData.orEmpty(),
         authenticationRequestParameters.sdkEphemeralPublicKey.orEmpty(),
         authenticationRequestParameters.sdkReferenceNumber.orEmpty(),
-        config.settings.customer.billingAddress?.line1.orEmpty(),
+        config.settings.customer.billingAddress?.addressLine1.orEmpty(),
         config.settings.customer.billingAddress?.city.orEmpty(),
         config.settings.customer.billingAddress?.postalCode.orEmpty(),
-        config.settings.customer.billingAddress?.country.orEmpty(),
+        config.settings.customer.billingAddress?.countryCode?.name.orEmpty(),
     )
 }
 
 internal fun ThreeDsParams.toBeginAuthRequest() = when (paymentMethodIntent) {
-    PaymentMethodIntent.CHECKOUT -> BeginAuthRequest(
+    PrimerSessionIntent.CHECKOUT -> BeginAuthRequest(
         maxProtocolVersion.versionNumber,
         challengePreference,
         device = SDKAuthData(
@@ -71,7 +71,7 @@ internal fun ThreeDsParams.toBeginAuthRequest() = when (paymentMethodIntent) {
             sdkReferenceNumber
         ),
     )
-    PaymentMethodIntent.VAULT -> BeginAuthRequest(
+    PrimerSessionIntent.VAULT -> BeginAuthRequest(
         maxProtocolVersion.versionNumber,
         challengePreference,
         amount,

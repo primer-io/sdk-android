@@ -14,15 +14,16 @@ import com.netcetera.threeds.sdk.api.transaction.challenge.events.RuntimeErrorEv
 import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.R
-import io.primer.android.data.exception.ThreeDsInitException
-import io.primer.android.data.configuration.model.Environment
+import io.primer.android.threeds.data.exception.ThreeDsInitException
+import io.primer.android.data.configuration.models.Environment
+import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
+import io.primer.android.threeds.data.exception.ThreeDsFailedException
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.helpers.ProtocolVersion
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -47,8 +48,12 @@ internal class NetceteraThreeDsServiceRepository(
         flow {
             coroutineContext.ensureActive()
 
-            requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
-            requireNotNull(threeDsKeysParams.licenceKey) { LICENCE_CONFIG_ERROR }
+            try {
+                requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
+                requireNotNull(threeDsKeysParams.licenceKey) { LICENCE_CONFIG_ERROR }
+            } catch (e: IllegalArgumentException) {
+                throw ThreeDsConfigurationException(e.message)
+            }
 
             val configurationBuilder = ConfigurationBuilder()
                 .license(threeDsKeysParams.licenceKey)
@@ -126,30 +131,40 @@ internal class NetceteraThreeDsServiceRepository(
                         if (completionEvent.transactionStatus ==
                             ChallengeStatusData.TRANSACTION_STATUS_SUCCESS
                         ) {
-                            offer(
+                            trySend(
                                 ChallengeStatusData(
                                     authResponse.token.token,
                                     completionEvent.transactionStatus
                                 )
                             )
-                        } else cancel(CancellationException("3DS challenge failed."))
+                        } else cancel(ThreeDsFailedException(message = "3DS challenge failed."))
                         close()
                     }
 
                     override fun cancelled() {
-                        cancel(CancellationException("3DS cancelled."))
+                        cancel(ThreeDsFailedException(message = "3DS cancelled."))
                     }
 
                     override fun timedout() {
-                        cancel(CancellationException("3DS timed out."))
+                        cancel(ThreeDsFailedException(message = "3DS timed out."))
                     }
 
                     override fun protocolError(errorEvent: ProtocolErrorEvent) {
-                        cancel(CancellationException(errorEvent.errorMessage.errorDetails))
+                        cancel(
+                            ThreeDsFailedException(
+                                errorEvent.errorMessage.errorCode,
+                                errorEvent.errorMessage.errorDetails
+                            )
+                        )
                     }
 
                     override fun runtimeError(errorEvent: RuntimeErrorEvent) {
-                        cancel(CancellationException(errorEvent.errorMessage))
+                        cancel(
+                            ThreeDsFailedException(
+                                errorEvent.errorCode,
+                                errorEvent.errorMessage
+                            )
+                        )
                     }
                 },
                 CHALLENGE_TIMEOUT_IN_SECONDS
@@ -178,7 +193,7 @@ internal class NetceteraThreeDsServiceRepository(
         const val TEST_SCHEME_ID = "A999999999"
 
         const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
-        const val KEYS_CONFIG_ERROR = "3DS Config params missing"
-        const val LICENCE_CONFIG_ERROR = "3DS Config licence is missing"
+        const val KEYS_CONFIG_ERROR = "3DS Config params missing."
+        const val LICENCE_CONFIG_ERROR = "3DS Config licence is missing."
     }
 }

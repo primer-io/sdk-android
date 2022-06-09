@@ -1,23 +1,17 @@
 package io.primer.android.payment.gocardless
 
 import android.content.Context
-import androidx.annotation.Keep
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
-import io.primer.android.data.configuration.model.Configuration
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 
-@Keep
-@Serializable
-data class GoCardless(
-    val companyName: String,
-    val companyAddress: String,
+internal data class GoCardless(
+    val companyName: String? = null,
+    val companyAddress: String? = null,
     val customerName: String? = null,
     val customerEmail: String? = null,
     val customerAddressLine1: String? = null,
@@ -52,13 +46,5 @@ data class GoCardless(
                 GoCardlessPaymentMethodDescriptorFactory()
             )
         }
-    }
-    override val serializersModule: SerializersModule
-        get() = goCardlessSerializationModule
-}
-
-private val goCardlessSerializationModule: SerializersModule = SerializersModule {
-    polymorphic(PaymentMethod::class) {
-        subclass(GoCardless::class, GoCardless.serializer())
     }
 }

@@ -2,7 +2,7 @@ package io.primer.android.components.data.payments.repository
 
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
-import io.primer.android.data.configuration.model.CheckoutModuleType
+import io.primer.android.data.configuration.models.CheckoutModuleType
 
 internal class CheckoutModuleDataRepository(
     private val localConfigurationDataSource: LocalConfigurationDataSource

@@ -11,8 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
-import io.primer.android.PrimerTheme
 import io.primer.android.di.DIAppComponent
+import io.primer.android.ui.settings.PrimerTheme
 import org.koin.core.component.inject
 
 class PaymentMethodButtonGroupBox @JvmOverloads constructor(

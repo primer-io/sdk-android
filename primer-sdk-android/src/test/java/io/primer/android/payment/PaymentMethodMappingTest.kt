@@ -1,10 +1,10 @@
 package io.primer.android.payment
 
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
-import io.primer.android.model.dto.CountryCode
-import io.primer.android.model.dto.Order
-import io.primer.android.model.dto.PaymentMethodType
-import io.primer.android.model.dto.PrimerSettings
+import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.data.configuration.models.OrderDataResponse
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.card.Card
@@ -16,15 +16,15 @@ import io.primer.android.utils.Success
 import org.junit.Assert
 import org.junit.Test
 
-class PaymentMethodMappingTest {
+internal class PaymentMethodMappingTest {
 
-    private val settings: PrimerSettings = PrimerSettings(
-        order = Order(
+    private val settings: PrimerSettings = PrimerSettings().apply {
+        order = OrderDataResponse(
             amount = 50,
             currency = "USD",
             countryCode = CountryCode.US,
         )
-    )
+    }
 
     @Test
     fun `test maps failure correctly`() {

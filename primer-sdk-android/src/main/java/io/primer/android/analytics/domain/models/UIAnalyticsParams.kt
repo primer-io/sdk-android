@@ -4,7 +4,7 @@ import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
-import io.primer.android.model.dto.PaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 
 internal data class UIAnalyticsParams(
     val action: AnalyticsAction,

@@ -1,7 +1,8 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.domain.token.ValidateTokenRepository
+import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
@@ -14,34 +15,38 @@ internal class ResumeHandlerFactory(
     private val paymentMethodRepository: PaymentMethodRepository,
     private val analyticsRepository: AnalyticsRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
+    private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger
 ) {
 
-    fun getResumeHandler(paymentInstrumentType: String): ResumeHandler {
+    fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
         return when (paymentInstrumentType) {
-            CARD_INSTRUMENT_TYPE -> ThreeDsResumeHandler(
+            CARD_INSTRUMENT_TYPE -> ThreeDsPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
                 analyticsRepository,
                 threeDsSdkClassValidator,
+                errorEventResolver,
                 eventDispatcher,
                 logger
             )
-            ASYNC_PAYMENT_METHOD -> AsyncPaymentResumeHandler(
+            ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
                 analyticsRepository,
+                errorEventResolver,
                 eventDispatcher,
                 logger
             )
-            else -> DefaultResumeHandler(
+            else -> DefaultPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
                 analyticsRepository,
+                errorEventResolver,
                 eventDispatcher,
                 logger
             )

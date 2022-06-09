@@ -2,11 +2,11 @@ package io.primer.android.viewmodel
 
 import com.jraska.livedata.test
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.domain.rpc.banks.BanksInteractor
@@ -17,6 +17,7 @@ import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -47,15 +48,18 @@ class BankSelectionViewModelTest {
         val asyncPaymentMethodDescriptor = mockk<AsyncPaymentMethodDescriptor>(relaxed = true)
 
         val observer = viewModel.itemsLiveData.test()
-        every { interactor(any()) }.returns(
+        coEvery { interactor(any()) }.returns(
             flowOf(
                 listOf(bank)
             )
         )
 
-        viewModel.loadData(asyncPaymentMethodDescriptor)
+        runTest {
+            viewModel.loadData(asyncPaymentMethodDescriptor)
+        }
 
-        verify { interactor(any()) }
+        coVerify { interactor(any()) }
+
         observer.assertValue(
             listOf(
                 BankItem(
@@ -72,13 +76,16 @@ class BankSelectionViewModelTest {
         val asyncPaymentMethodDescriptor = mockk<AsyncPaymentMethodDescriptor>(relaxed = true)
 
         val observer = viewModel.errorLiveData.test()
-        every { interactor(any()) }.returns(
+        coEvery { interactor(any()) }.returns(
             flow { throw Exception() }
         )
 
-        viewModel.loadData(asyncPaymentMethodDescriptor)
+        runTest {
+            viewModel.loadData(asyncPaymentMethodDescriptor)
+        }
 
-        verify { interactor(any()) }
+        coVerify { interactor(any()) }
+
         observer.assertValue(Unit)
     }
 
@@ -87,13 +94,14 @@ class BankSelectionViewModelTest {
         val asyncPaymentMethodDescriptor = mockk<AsyncPaymentMethodDescriptor>(relaxed = true)
 
         val observer = viewModel.loadingLiveData.test()
-        every { interactor(any()) }.returns(
+        coEvery { interactor(any()) }.returns(
             flow { throw Exception() }
         )
+        runTest {
+            viewModel.loadData(asyncPaymentMethodDescriptor)
+        }
 
-        viewModel.loadData(asyncPaymentMethodDescriptor)
-
-        verify { interactor(any()) }
+        coVerify { interactor(any()) }
         observer.assertValue(false)
     }
 }
