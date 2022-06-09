@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Suppress("UnusedPrivateMember")
 internal sealed class BaseAnalyticsEventRequest {
-    abstract val deviceData: DeviceData?
+    abstract val device: DeviceData?
     abstract val properties: BaseAnalyticsProperties
     abstract val appIdentifier: String?
     abstract val sdkSessionId: String

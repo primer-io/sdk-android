@@ -1,10 +1,11 @@
 package io.primer.android.analytics.data.models
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class AnalyticsSdkFunctionEventRequest(
-    override val deviceData: DeviceData? = null,
+    override val device: DeviceData? = null,
     override val properties: FunctionProperties,
     override val appIdentifier: String? = null,
     override val sdkSessionId: String,
@@ -13,6 +14,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
     override val orderId: String? = null,
     override val primerAccountId: String? = null,
     override val analyticsUrl: String? = null,
+    @EncodeDefault
     override val eventType: AnalyticsEventType = AnalyticsEventType.SDK_FUNCTION_EVENT,
 ) : BaseAnalyticsEventRequest() {
 
