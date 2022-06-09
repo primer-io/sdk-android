@@ -1,5 +1,8 @@
 package io.primer.android.payment.dummy
 
-enum class DummyDecisionType {
+import kotlinx.serialization.Serializable
+
+@Serializable
+internal enum class DummyDecisionType {
     SUCCESS, DECLINE, FAIL
 }

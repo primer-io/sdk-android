@@ -7,6 +7,12 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectId
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.DummyApmDecisionParams
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentDummyResultSelectorBinding
 import io.primer.android.di.DIAppComponent
@@ -19,7 +25,9 @@ import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -31,6 +39,7 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
     private val theme: PrimerTheme by inject()
     private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
     private val primerViewModel: PrimerViewModel by activityViewModels()
+    private val viewModel: DummyResultSelectorViewModel by viewModel()
 
     private var binding: FragmentDummyResultSelectorBinding by autoCleaned()
 
@@ -133,7 +142,14 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
             tokenizationViewModel.resetPaymentMethod(descriptor)
             tokenizationViewModel.tokenize()
         }
-        binding.ivDummyResultBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        binding.ivDummyResultBack.setOnClickListener {
+            logAnalyticsBackPressed()
+            goOnSelectedPaymentMethod()
+        }
+    }
+
+    private fun goOnSelectedPaymentMethod() {
+        primerViewModel.viewStatus.value = ViewStatus.SELECT_PAYMENT_METHOD
     }
 
     private fun findSelectedItemTag(): DummyDecisionType {
@@ -152,4 +168,14 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
     override fun onProvideActionContinue(onAction: () -> SelectedPaymentMethodBehaviour?) {
         this.onActionContinue = onAction
     }
+
+    private fun logAnalyticsBackPressed() = viewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.CLICK,
+            ObjectType.BUTTON,
+            Place.DUMMY_APM_RESULT,
+            ObjectId.BACK,
+            DummyApmDecisionParams(findSelectedItemTag())
+        )
+    )
 }

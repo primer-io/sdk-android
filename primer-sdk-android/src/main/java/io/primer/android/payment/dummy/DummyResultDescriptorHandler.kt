@@ -1,6 +1,6 @@
 package io.primer.android.payment.dummy
 
-interface DummyResultDescriptorHandler {
+internal interface DummyResultDescriptorHandler {
 
     fun setDecision(decision: DummyDecisionType)
 }
