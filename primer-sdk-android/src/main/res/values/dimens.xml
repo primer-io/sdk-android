@@ -75,4 +75,7 @@
     <dimen name="primer_search_input_fontsize">@dimen/primer_text_size_sm</dimen>
     <dimen name="primer_input_border_width">1dp</dimen>
 
+    <!-- Dummy APM actions -->
+    <dimen name="primer_decision_radio_button_height">48dp</dimen>
+
 </resources>

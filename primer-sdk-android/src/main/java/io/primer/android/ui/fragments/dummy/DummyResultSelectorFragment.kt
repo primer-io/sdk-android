@@ -92,7 +92,7 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
 
     private fun setupTheme() {
         binding.tvDummyInfo.setTextColor(
-            theme.titleText.defaultColor.getColor(
+            theme.subtitleText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode
             )
@@ -160,11 +160,6 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
         )
     }
 
-    companion object {
-
-        fun newInstance() = DummyResultSelectorFragment()
-    }
-
     override fun onProvideActionContinue(onAction: () -> SelectedPaymentMethodBehaviour?) {
         this.onActionContinue = onAction
     }
@@ -173,9 +168,14 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
         UIAnalyticsParams(
             AnalyticsAction.CLICK,
             ObjectType.BUTTON,
-            Place.DUMMY_APM_RESULT,
+            Place.PRIMER_TEST_PAYMENT_METHOD_DECISION_SCREEN,
             ObjectId.BACK,
             DummyApmDecisionParams(findSelectedItemTag())
         )
     )
+
+    companion object {
+
+        fun newInstance() = DummyResultSelectorFragment()
+    }
 }
