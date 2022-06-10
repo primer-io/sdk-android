@@ -22,7 +22,7 @@ internal val NetworkModule = {
     module {
         single<Interceptor> { HttpAnalyticsInterceptor() }
         single<OkHttpClient> {
-            OkHttpClient.Builder()
+            val builder = OkHttpClient.Builder()
                 .addInterceptor { chain: Interceptor.Chain ->
                     chain.request().newBuilder()
                         .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
@@ -34,13 +34,15 @@ internal val NetworkModule = {
                         )
                         .build()
                         .let { chain.proceed(it) }
-                }.addInterceptor(
+                }
+            if (BuildConfig.DEBUG) {
+                builder.addInterceptor(
                     HttpLoggingInterceptor().apply {
-                        level =
-                            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-                            else HttpLoggingInterceptor.Level.NONE
+                        level = HttpLoggingInterceptor.Level.BODY
                     }
-                ).addInterceptor(get())
+                )
+            }
+            builder.addInterceptor(get())
                 .build()
         }
         single { Serialization.json }

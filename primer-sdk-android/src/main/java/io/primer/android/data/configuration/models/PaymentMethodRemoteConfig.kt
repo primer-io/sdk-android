@@ -1,14 +1,10 @@
 package io.primer.android.data.configuration.models
 
-import androidx.annotation.Keep
 import androidx.annotation.RestrictTo
 import io.primer.android.components.ui.assets.Brand
 import io.primer.android.data.token.model.ClientTokenIntent
 import kotlinx.serialization.Serializable
 
-typealias PrimerPaymentMethodType = PaymentMethodType
-
-@Keep
 @Serializable
 enum class PaymentMethodType(
     internal val intents: Array<ClientTokenIntent>? = null,

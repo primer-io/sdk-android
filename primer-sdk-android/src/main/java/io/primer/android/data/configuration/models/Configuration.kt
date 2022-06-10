@@ -1,6 +1,5 @@
 package io.primer.android.data.configuration.models
 
-import androidx.annotation.Keep
 import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.models.PrimerClientSession
 import kotlinx.serialization.SerialName
@@ -18,7 +17,6 @@ internal data class Configuration(
     val primerAccountId: String? = null,
 )
 
-@Keep
 @Serializable
 internal data class PaymentMethodRemoteConfig(
     val id: String? = null, // payment card has null only
@@ -26,7 +24,6 @@ internal data class PaymentMethodRemoteConfig(
     val options: PaymentMethodRemoteConfigOptions? = null,
 )
 
-@Keep
 @Serializable
 internal data class PaymentMethodRemoteConfigOptions(
     val merchantId: String? = null,
