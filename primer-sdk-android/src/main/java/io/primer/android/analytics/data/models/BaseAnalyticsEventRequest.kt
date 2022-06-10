@@ -28,7 +28,7 @@ internal sealed class BaseAnalyticsEventRequest {
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
     @EncodeDefault val createdAt: Long = System.currentTimeMillis()
-    @EncodeDefault protected val sdkType: String = "Android"
+    @EncodeDefault protected val sdkType: String = "ANDROID_NATIVE"
     @EncodeDefault protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest
