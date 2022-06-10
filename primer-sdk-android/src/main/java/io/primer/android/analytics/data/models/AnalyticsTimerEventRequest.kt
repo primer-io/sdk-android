@@ -1,10 +1,11 @@
 package io.primer.android.analytics.data.models
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class AnalyticsTimerEventRequest(
-    override val deviceData: DeviceData,
+    override val device: DeviceData,
     override val properties: TimerProperties,
     override val appIdentifier: String,
     override val sdkSessionId: String,
@@ -13,6 +14,7 @@ internal data class AnalyticsTimerEventRequest(
     override val orderId: String?,
     override val primerAccountId: String?,
     override val analyticsUrl: String?,
+    @EncodeDefault
     override val eventType: AnalyticsEventType = AnalyticsEventType.TIMER_EVENT,
 ) : BaseAnalyticsEventRequest() {
 
