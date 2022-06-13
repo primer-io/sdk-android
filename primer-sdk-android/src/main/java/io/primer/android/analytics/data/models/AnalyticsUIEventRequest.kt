@@ -2,11 +2,12 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.dummy.DummyDecisionType
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class AnalyticsUIEventRequest(
-    override val deviceData: DeviceData,
+    override val device: DeviceData,
     override val properties: UIProperties,
     override val appIdentifier: String,
     override val sdkSessionId: String,
@@ -15,6 +16,7 @@ internal data class AnalyticsUIEventRequest(
     override val orderId: String?,
     override val primerAccountId: String?,
     override val analyticsUrl: String?,
+    @EncodeDefault
     override val eventType: AnalyticsEventType = AnalyticsEventType.UI_EVENT,
 ) : BaseAnalyticsEventRequest() {
 

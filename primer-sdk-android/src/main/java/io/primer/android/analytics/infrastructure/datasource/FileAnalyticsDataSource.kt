@@ -21,7 +21,14 @@ internal class FileAnalyticsDataSource(
                 .bufferedReader().use {
                     it.lineSequence().joinToString()
                 }
-        if (bufferedReader.isNotBlank()) emit(json.decodeFromString(bufferedReader))
+        if (bufferedReader.isNotBlank()) {
+            try {
+                emit(json.decodeFromString(bufferedReader))
+            } catch (ignored: Exception) {
+                // if there is a problem while decoding file, then we do a hard reset!
+                update(listOf())
+            }
+        }
     }
 
     override fun update(input: List<BaseAnalyticsEventRequest>) = synchronized(this) {
