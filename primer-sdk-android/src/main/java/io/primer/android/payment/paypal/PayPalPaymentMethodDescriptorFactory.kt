@@ -2,6 +2,7 @@ package io.primer.android.payment.paypal
 
 import io.primer.android.PaymentMethod
 import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
@@ -14,9 +15,10 @@ internal class PayPalPaymentMethodDescriptorFactory : PaymentMethodDescriptorFac
         paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
         paymentMethod: PaymentMethod,
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
-    ): PaymentMethodDescriptor =
-        PayPalDescriptor(
-            paymentMethodRemoteConfig,
-            paymentMethod as PayPal
+    ): PaymentMethodDescriptor = when (paymentMethodRemoteConfig.type) {
+        PaymentMethodType.PRIMER_TEST_PAYPAL -> PrimerTestPayPalDescriptor(
+            paymentMethodRemoteConfig
         )
+        else -> PayPalDescriptor(paymentMethodRemoteConfig)
+    }
 }

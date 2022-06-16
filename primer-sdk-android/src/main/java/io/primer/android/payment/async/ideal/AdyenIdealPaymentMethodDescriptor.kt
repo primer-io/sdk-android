@@ -13,7 +13,11 @@ import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.fragments.bank.IdealBankSelectionFragment
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.core.component.KoinApiExtension
 
+@KoinApiExtension
+@ExperimentalCoroutinesApi
 internal class AdyenIdealPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,

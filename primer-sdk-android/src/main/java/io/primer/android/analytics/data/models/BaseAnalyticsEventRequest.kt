@@ -4,6 +4,7 @@ import io.primer.android.BuildConfig
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.DummyApmDecisionParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
@@ -208,6 +209,9 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
     )
     is UrlContextParams -> AnalyticsContext(
         url = url
+    )
+    is DummyApmDecisionParams -> AnalyticsContext(
+        decision = decision
     )
     else -> throw IllegalStateException("Unsupported event params")
 }

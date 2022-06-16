@@ -14,7 +14,7 @@ class ThemeList {
             if (configuration == null) return PrimerTheme.build()
             return when (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_YES -> darkTheme
-                else -> PrimerTheme.build()
+                else -> PrimerTheme.build(isDarkMode = false)
             }
         }
 

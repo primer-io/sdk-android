@@ -5,11 +5,22 @@ import io.primer.android.R
 
 internal enum class Brand(
     @DrawableRes internal val iconResId: Int,
-    @DrawableRes internal val logoResId: Int = 0
+    @DrawableRes internal val logoResId: Int = 0,
+    @DrawableRes internal val iconLightResId: Int = iconResId,
+    @DrawableRes internal val iconDarkResId: Int = iconResId
 ) {
-    PAYPAL(R.drawable.ic_logo_paypal, R.drawable.ic_logo_paypal_square),
+    PAYPAL(
+        R.drawable.ic_logo_paypal,
+        R.drawable.ic_logo_paypal_square,
+        R.drawable.ic_paypal_original,
+        R.drawable.ic_paypal_original
+    ),
     GOOGLE_PAY(R.drawable.ic_logo_googlepay, R.drawable.ic_logo_google_pay_square),
-    KLARNA(R.drawable.ic_logo_klarna, R.drawable.ic_logo_klarna_square),
+    KLARNA(
+        R.drawable.ic_logo_klarna,
+        R.drawable.ic_logo_klarna_square,
+        iconDarkResId = R.drawable.ic_logo_klarna_dark
+    ),
     APAYA(R.drawable.ic_logo_apaya, R.drawable.ic_logo_apaya),
     PAYMENT_CARD(R.drawable.ic_logo_credit_card),
     GOCARDLESS(R.drawable.ic_logo_gocardless),
@@ -20,7 +31,11 @@ internal enum class Brand(
     EPS(R.drawable.ic_logo_eps, R.drawable.ic_logo_eps_square),
     HOOLAH(R.drawable.ic_logo_hoolah, R.drawable.ic_logo_hoolah_square),
     TWINT(R.drawable.ic_logo_twint, R.drawable.ic_logo_twint_square),
-    SOFORT(R.drawable.ic_logo_sofort, R.drawable.ic_logo_sofort_square),
+    SOFORT(
+        R.drawable.ic_logo_sofort,
+        R.drawable.ic_logo_sofort_square,
+        R.drawable.ic_logo_sofort_light
+    ),
     TRUSTLY(R.drawable.ic_logo_trusly, R.drawable.ic_logo_trustly_square),
     ALIPAY(R.drawable.ic_logo_alipay, R.drawable.ic_logo_alipay_square),
     VIPPS(R.drawable.ic_logo_vipps, R.drawable.ic_logo_vipps_square),

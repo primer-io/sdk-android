@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -8,7 +9,8 @@
         android:id="@+id/choose_bank_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/payment_method_back"
@@ -24,7 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:contentDescription="@string/go_back_description" />
+            android:contentDescription="@string/go_back_description"
+            tools:layout_height="50dp" />
 
         <TextView
             android:id="@+id/choose_bank_title"
@@ -61,7 +64,8 @@
             android:layout_height="0.5dp"
             android:layout_alignBottom="@id/choose_bank_recycler_view"
             android:background="@drawable/divider_bank_selection"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <Space
             android:id="@+id/spacer"

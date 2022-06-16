@@ -10,7 +10,7 @@ import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.payment.LoadingState
 
-internal class SofortPaymentMethodDescriptor(
+internal open class SofortPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
     config: PaymentMethodRemoteConfig,

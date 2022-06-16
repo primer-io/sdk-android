@@ -5,17 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinApiExtension
 
 @KoinApiExtension
-internal class KlarnaDescriptor constructor(
-    val localConfig: PrimerConfig,
+@ExperimentalCoroutinesApi
+internal open class KlarnaDescriptor constructor(
     val options: Klarna,
     config: PaymentMethodRemoteConfig,
 ) : PaymentMethodDescriptor(config) {

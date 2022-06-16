@@ -1,6 +1,7 @@
 package io.primer.android.analytics.data.models
 
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.payment.dummy.DummyDecisionType
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
@@ -38,7 +39,8 @@ internal data class AnalyticsContext(
     val paymentMethodType: PaymentMethodType? = null,
     val issuerId: String? = null,
     val paymentMethodId: String? = null,
-    val url: String? = null
+    val url: String? = null,
+    val decision: DummyDecisionType? = null
 ) : BaseAnalyticsProperties()
 
 @Serializable
@@ -85,6 +87,7 @@ internal enum class Place {
     PAYMENT_METHOD_POPUP,
     SUCCESS_SCREEN,
     ERROR_SCREEN,
+    PRIMER_TEST_PAYMENT_METHOD_DECISION_SCREEN,
     WEBVIEW,
     `3DS_VIEW`,
     DIRECT_CHECKOUT

@@ -103,6 +103,9 @@ internal class PaymentMethodsDataRepository(
         PaymentMethodType.COINBASE -> p.type == PaymentMethodType.COINBASE
         PaymentMethodType.TWOC2P -> p.type == PaymentMethodType.TWOC2P
         PaymentMethodType.OPENNODE -> p.type == PaymentMethodType.OPENNODE
+        PaymentMethodType.PRIMER_TEST_KLARNA -> p.type == PaymentMethodType.PRIMER_TEST_KLARNA
+        PaymentMethodType.PRIMER_TEST_PAYPAL -> p.type == PaymentMethodType.PRIMER_TEST_PAYPAL
+        PaymentMethodType.PRIMER_TEST_SOFORT -> p.type == PaymentMethodType.PRIMER_TEST_SOFORT
         PaymentMethodType.UNKNOWN -> false
         null -> false
     }

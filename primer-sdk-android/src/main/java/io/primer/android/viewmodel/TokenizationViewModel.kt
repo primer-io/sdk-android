@@ -444,5 +444,6 @@ internal class TokenizationViewModel(
                 }
         }
     }
+
     // endregion
 }

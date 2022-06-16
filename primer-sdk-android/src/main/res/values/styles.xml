@@ -239,4 +239,18 @@
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
+
+    <style name="Primer.RadioButton" parent="Primer.Button.Text">
+        <item name="android:button">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/primer_default_text</item>
+        <item name="android:minHeight">@dimen/primer_decision_radio_button_height</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:paddingHorizontal" tools:targetApi="o">12dp</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:background">@drawable/selector_dummy_radio_button</item>
+        <item name="background">@drawable/selector_dummy_radio_button</item>
+        <item name="textAllCaps">false</item>
+    </style>
 </resources>

@@ -28,6 +28,7 @@ internal object DIAppContext {
                 tokenizationModule(),
                 rpcModule(),
                 paypalModule(),
+                dummyApmModule(),
                 NetworkModule(),
                 imageLoaderModule(),
                 PaymentsModule(),

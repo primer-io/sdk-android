@@ -23,6 +23,8 @@ internal abstract class PaymentMethodDescriptor(
 
     abstract val vaultCapability: VaultCapability
 
+    internal val brand = config.type.brand
+
     // FIXME this should not be here. a model should not be responsible creating views
     abstract fun createButton(container: ViewGroup): View
 
