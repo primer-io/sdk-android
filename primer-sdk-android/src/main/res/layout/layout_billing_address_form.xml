@@ -121,7 +121,9 @@
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
             android:maxLines="1"
-            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            tools:text="Address line 1"
+            tools:textColor="@android:color/black" />
 
     </io.primer.android.ui.components.TextInputWidget>
 
@@ -144,7 +146,9 @@
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
             android:maxLines="1"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+            tools:text="Address line 2"
+            tools:textColor="@android:color/black" />
 
     </io.primer.android.ui.components.TextInputWidget>
 
@@ -175,7 +179,9 @@
                 android:inputType="textPostalAddress"
                 android:maxLength="11"
                 android:maxLines="1"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                tools:text="Postal Code"
+                tools:textColor="@android:color/black" />
 
         </io.primer.android.ui.components.TextInputWidget>
 
@@ -198,7 +204,9 @@
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
                 android:maxLines="1"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                tools:text="City"
+                tools:textColor="@android:color/black" />
 
         </io.primer.android.ui.components.TextInputWidget>
 
@@ -223,7 +231,9 @@
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
             android:maxLines="1"
-            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            tools:text="State"
+            tools:textColor="@android:color/black" />
 
     </io.primer.android.ui.components.TextInputWidget>
 
