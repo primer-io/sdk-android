@@ -1,11 +1,13 @@
 package io.primer.android.ui.fragments.country
 
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -61,7 +63,18 @@ internal class SelectCountryFragment : BaseFragment() {
             )
         )
         binding.ivBack.imageTintList = imageColorStates
-        binding.searchCountry.compoundDrawableTintList = imageColorStates
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding.searchCountry.compoundDrawableTintList = imageColorStates
+        } else {
+            binding.searchCountry.compoundDrawables.forEach { drawable ->
+                drawable?.let {
+                    DrawableCompat.setTintList(
+                        it.mutate(),
+                        imageColorStates
+                    )
+                }
+            }
+        }
     }
 
     private fun setupAdapter() {

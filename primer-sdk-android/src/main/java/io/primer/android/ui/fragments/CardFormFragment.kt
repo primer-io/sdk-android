@@ -65,6 +65,7 @@ import java.util.TreeMap
  */
 @ExperimentalCoroutinesApi
 @KoinApiExtension
+@Suppress("TooManyFunctions")
 internal class CardFormFragment : BaseFragment() {
 
     private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
@@ -479,7 +480,7 @@ internal class CardFormFragment : BaseFragment() {
             .plus(binding.billingAddressForm.fields())
             .forEach {
                 it.isEnabled = on.not()
-                it.alpha = if (on) 0.5f else 1.0f
+                it.alpha = if (on) ALPHA_HALF else ALPHA_VISIBLE
             }
     }
 
@@ -635,6 +636,9 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     companion object {
+
+        private const val ALPHA_HALF = 0.5f
+        private const val ALPHA_VISIBLE = 1f
 
         @JvmStatic
         fun newInstance(): CardFormFragment {

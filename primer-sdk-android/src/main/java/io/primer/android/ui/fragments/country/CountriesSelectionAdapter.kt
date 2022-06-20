@@ -8,9 +8,9 @@ import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
 import io.primer.android.ui.settings.PrimerTheme
-import java.util.*
+import java.util.Locale
 
-data class CountryItem(
+internal data class CountryItem(
     val name: String,
     val code: CountryCode,
     val flag: String
