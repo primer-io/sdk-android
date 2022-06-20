@@ -4,6 +4,7 @@ import io.primer.android.BuildConfig
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.DummyApmDecisionParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
@@ -17,7 +18,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Suppress("UnusedPrivateMember")
 internal sealed class BaseAnalyticsEventRequest {
-    abstract val deviceData: DeviceData?
+    abstract val device: DeviceData?
     abstract val properties: BaseAnalyticsProperties
     abstract val appIdentifier: String?
     abstract val sdkSessionId: String
@@ -28,7 +29,7 @@ internal sealed class BaseAnalyticsEventRequest {
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
     @EncodeDefault val createdAt: Long = System.currentTimeMillis()
-    @EncodeDefault protected val sdkType: String = "Android"
+    @EncodeDefault protected val sdkType: String = "ANDROID_NATIVE"
     @EncodeDefault protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest
@@ -208,6 +209,9 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
     )
     is UrlContextParams -> AnalyticsContext(
         url = url
+    )
+    is DummyApmDecisionParams -> AnalyticsContext(
+        decision = decision
     )
     else -> throw IllegalStateException("Unsupported event params")
 }

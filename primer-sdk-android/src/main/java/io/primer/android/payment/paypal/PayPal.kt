@@ -8,9 +8,8 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-internal class PayPal : PaymentMethod {
-
-    override val type = PaymentMethodType.PAYPAL
+internal class PayPal(override val type: PaymentMethodType = PaymentMethodType.PAYPAL) :
+    PaymentMethod {
 
     override val canBeVaulted: Boolean = true
 
