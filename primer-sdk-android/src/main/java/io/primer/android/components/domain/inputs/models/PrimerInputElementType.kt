@@ -1,6 +1,5 @@
 package io.primer.android.components.domain.inputs.models
 
-import io.primer.android.domain.helper.valueBy
 import io.primer.android.utils.sanitized
 import org.json.JSONObject
 
@@ -45,5 +44,7 @@ internal fun Map<String, Boolean>?.needAdd(
 internal fun <T : Any> JSONObject.putFor(type: PrimerInputElementType, value: T) {
     this.put(type.field, value)
 }
+
+internal fun JSONObject.valueBy(key: String): String = this.optString(key)
 
 internal fun JSONObject.valueBy(type: PrimerInputElementType) = this.valueBy(type.field).sanitized()

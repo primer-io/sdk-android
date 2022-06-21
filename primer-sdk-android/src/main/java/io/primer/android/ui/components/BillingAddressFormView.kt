@@ -21,6 +21,7 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.utils.hideKeyboard
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -43,7 +44,6 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     private val fieldsMap by lazy { mutableMapOf<PrimerInputElementType, TextInputWidget>() }
 
     var onChooseCountry: (() -> Unit)? = null
-    var onHideKeyboard: (() -> Unit)? = null
     var onInputChange: ((PrimerInputElementType, String?) -> Unit)? = null
 
     init {
@@ -116,7 +116,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         binding.cardFormCountryCode.editText?.showSoftInputOnFocus = false
         binding.cardFormCountryCode.editText?.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus && (v is EditText) && v.text.isNullOrBlank()) {
-                onHideKeyboard?.invoke()
+                hideKeyboard()
                 onChooseCountry?.invoke()
             } else {
                 focusOnFirstName()
@@ -165,7 +165,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
 
     fun findNextFocus() {
         if (!isVisible) {
-            onHideKeyboard?.invoke()
+            hideKeyboard()
             return
         }
         fields.firstOrNull {

@@ -20,11 +20,11 @@ internal abstract class BaseFragment : Fragment(), DIAppComponent {
     protected val theme: PrimerTheme by inject()
 
     protected fun adjustBottomSheetState(state: Int) {
-        val behaviour = fetchBottomSheetBehavior()
+        val behaviour = getBottomSheetBehavior()
         behaviour?.state = state
     }
 
-    private fun fetchBottomSheetBehavior(): BottomSheetBehavior<*>? {
+    private fun getBottomSheetBehavior(): BottomSheetBehavior<*>? {
         if (parentFragment !is CheckoutSheetFragment) return null
         val parent = (parentFragment as CheckoutSheetFragment).view?.parent as View
         return (parent.layoutParams as CoordinatorLayout.LayoutParams)

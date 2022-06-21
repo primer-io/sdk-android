@@ -194,8 +194,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
     }
 
-    private fun createForm(requiredInputFieldTypes: List<PrimerInputElementType>) {
-        val inputElements = requiredInputFieldTypes.map { type ->
+    private fun createForm(requiredInputElementTypes: List<PrimerInputElementType>) {
+        val inputElements = requiredInputElementTypes.map { type ->
             PrimerEditTextFactory.createFromType(requireContext(), type).apply {
                 (this as TextView).setHint(getHint(type))
                 setPrimerInputElementListener(inputElementListener)
@@ -239,8 +239,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         binding.progressLayout.root.isVisible = false
     }
 
-    private fun getHint(inputFieldType: PrimerInputElementType): Int {
-        return when (inputFieldType) {
+    private fun getHint(inputElementType: PrimerInputElementType): Int {
+        return when (inputElementType) {
             PrimerInputElementType.CARDHOLDER_NAME -> R.string.card_holder_name
             PrimerInputElementType.CVV -> R.string.card_cvv
             PrimerInputElementType.EXPIRY_DATE -> R.string.card_expiry

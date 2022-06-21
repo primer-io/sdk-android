@@ -349,7 +349,6 @@ internal class CardFormFragment : BaseFragment() {
             }
         }
         binding.billingAddressForm.onChooseCountry = { navigateToCountryChooser() }
-        binding.billingAddressForm.onHideKeyboard = { activity?.hideKeyboard() }
         binding.billingAddressForm.onInputChange = { fieldType, value ->
             primerViewModel.billingAddressFields.value?.put(fieldType, value)
             validateAndShowErrorFields()
@@ -419,7 +418,7 @@ internal class CardFormFragment : BaseFragment() {
             )
             tokenizationViewModel.tokenize()
         }
-        activity?.hideKeyboard()
+        view?.hideKeyboard()
     }
 
     private fun updateSubmitButton() {
@@ -602,8 +601,8 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     /**
-     * Need to check input is last for set correct bottom margin for handle space when error
-     * will be displayed. So, for error less margin, without bigger.
+     * Method for handle fields when need to setup margin for correct space between fields
+     * in error state. Error state, field with description of error.
      */
     private fun isLastInSection(input: TextInputWidget): Boolean {
         val cardHolderInputView = cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]

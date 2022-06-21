@@ -12,9 +12,9 @@ class PrimerEditTextFactory private constructor() {
         @OptIn(ExperimentalPrimerApi::class)
         fun createFromType(
             context: Context,
-            inputFieldType: PrimerInputElementType
+            inputElementType: PrimerInputElementType
         ): PrimerInputElement {
-            return when (inputFieldType) {
+            return when (inputElementType) {
                 PrimerInputElementType.CARD_NUMBER -> PrimerCardNumberEditText(context)
                 PrimerInputElementType.EXPIRY_DATE -> PrimerExpiryEditText(context)
                 PrimerInputElementType.CVV -> PrimerCvvEditText(context)

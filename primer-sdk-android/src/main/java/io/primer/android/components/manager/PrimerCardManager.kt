@@ -92,9 +92,9 @@ class PrimerCardManager private constructor() :
         })
     }
 
-    private fun getInputElementValue(inputFieldType: PrimerInputElementType): String? {
+    private fun getInputElementValue(inputElementType: PrimerInputElementType): String? {
         return (
-            inputElements.firstOrNull { it.getType() == inputFieldType } as? PrimerEditText
+            inputElements.firstOrNull { it.getType() == inputElementType } as? PrimerEditText
             )?.getSanitizedText()?.toString()
     }
 
