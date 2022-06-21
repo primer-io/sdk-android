@@ -11,6 +11,7 @@ import com.google.android.gms.wallet.PaymentData
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
+import io.primer.android.components.domain.inputs.models.valueBy
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -21,7 +22,6 @@ import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodPar
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.domain.helper.valueBy
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.CheckoutExitInfo

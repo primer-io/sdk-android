@@ -245,15 +245,15 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             PrimerInputElementType.CVV -> R.string.card_cvv
             PrimerInputElementType.EXPIRY_DATE -> R.string.card_expiry
             PrimerInputElementType.CARD_NUMBER -> R.string.card_number
-            PrimerInputElementType.POSTAL_CODE -> R.string.card_zip
-            PrimerInputElementType.COUNTRY_CODE -> R.string.address_country_code
-            PrimerInputElementType.CITY -> R.string.address_city
-            PrimerInputElementType.STATE -> R.string.address_state
-            PrimerInputElementType.ADDRESS_LINE_1 -> R.string.address_line_1
-            PrimerInputElementType.ADDRESS_LINE_2 -> R.string.address_line_2
+            PrimerInputElementType.POSTAL_CODE -> R.string.postalCodeLabel
+            PrimerInputElementType.COUNTRY_CODE -> R.string.countryLabel
+            PrimerInputElementType.CITY -> R.string.cityLabel
+            PrimerInputElementType.STATE -> R.string.stateLabel
+            PrimerInputElementType.ADDRESS_LINE_1 -> R.string.addressLine1
+            PrimerInputElementType.ADDRESS_LINE_2 -> R.string.addressLine2
             PrimerInputElementType.PHONE_NUMBER -> R.string.input_hint_form_phone_number
-            PrimerInputElementType.FIRST_NAME -> R.string.first_name
-            PrimerInputElementType.LAST_NAME -> R.string.last_name
+            PrimerInputElementType.FIRST_NAME -> R.string.firstNameLabel
+            PrimerInputElementType.LAST_NAME -> R.string.lastNameLabel
             else -> R.string.enter_address
         }
     }

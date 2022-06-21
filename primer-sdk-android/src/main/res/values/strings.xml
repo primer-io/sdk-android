@@ -34,12 +34,12 @@
     <string name="confirm_dd_mandate">Confirm mandate</string>
     <string name="name">Name</string>
     <string name="email">Email</string>
-    <string name="address_line_1">Address line 1</string>
-    <string name="address_line_2">Address line 2 (optional)</string>
-    <string name="address_city">City</string>
-    <string name="address_state">State</string>
-    <string name="address_country_code">Country</string>
-    <string name="address_postal_code">Postal code</string>
+    <string name="addressLine1">Address line 1</string>
+    <string name="addressLine2">Address line 2 (optional)</string>
+    <string name="cityLabel">City</string>
+    <string name="stateLabel">State / Region / County</string>
+    <string name="countryLabel">Country</string>
+    <string name="postalCodeLabel">Postal code</string>
     <string name="dd_mandate_error">Please check that all of your information is correct</string>
     <string name="dd_cancel_message">Do you want to cancel adding a bank account?</string>
     <string name="data_will_be_lost">Your data will be erased</string>
@@ -48,8 +48,8 @@
     <string name="enter_email">Enter your email</string>
     <string name="enter_address">Enter your address</string>
     <string name="first_last_name">First and last name</string>
-    <string name="first_name">First name</string>
-    <string name="last_name">Last name</string>
+    <string name="firstNameLabel">First name</string>
+    <string name="lastNameLabel">Last name</string>
 
     <string name="bank_selection_title">Choose your bank</string>
     <string name="bank_selection_hint">Search banks</string>

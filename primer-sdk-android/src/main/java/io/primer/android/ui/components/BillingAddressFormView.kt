@@ -149,7 +149,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     fun onLoadCountry(countryCode: CountryCode?) {
         binding.cardFormPostalCode.hint = when (countryCode) {
             CountryCode.US -> resources.getString(R.string.card_zip)
-            else -> resources.getString(R.string.address_postal_code)
+            else -> resources.getString(R.string.postalCodeLabel)
         }
     }
 

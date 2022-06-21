@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/primer_input_spacing_vert"
         android:layout_weight="1"
-        android:hint="@string/address_country_code"
+        android:hint="@string/countryLabel"
         app:endIconDrawable="@drawable/ic_input_drop_down"
         app:endIconMode="dropdown_menu"
         app:endIconTint="@android:color/black"
@@ -39,7 +39,7 @@
             android:inputType="textCapWords"
             android:maxLines="1"
             tools:ignore="TouchTargetSizeCheck,TextContrastCheck"
-            tools:text="Hello"
+            tools:text="@string/countryLabel"
             tools:textColor="@android:color/black" />
 
     </io.primer.android.ui.components.TextInputWidget>
@@ -57,7 +57,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
-            android:hint="@string/first_name"
+            android:hint="@string/firstNameLabel"
             app:errorEnabled="false"
             app:errorIconDrawable="@null"
             app:hintTextAppearance="@style/TextAppearance.AppCompat.Caption">
@@ -83,7 +83,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
-            android:hint="@string/last_name"
+            android:hint="@string/lastNameLabel"
             app:errorEnabled="false"
             app:errorIconDrawable="@null">
 
@@ -110,7 +110,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="@dimen/primer_input_spacing_vert"
         android:layout_weight="1"
-        android:hint="@string/address_line_1"
+        android:hint="@string/addressLine1"
         app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
@@ -135,7 +135,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="@dimen/primer_input_spacing_vert"
         android:layout_weight="1"
-        android:hint="@string/address_line_2"
+        android:hint="@string/addressLine2"
         app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
@@ -165,7 +165,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
-            android:hint="@string/card_zip"
+            android:hint="@string/postalCodeLabel"
             android:visibility="gone"
             app:errorEnabled="false"
             app:errorIconDrawable="@null"
@@ -193,7 +193,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
-            android:hint="@string/address_city"
+            android:hint="@string/cityLabel"
             app:errorEnabled="false"
             app:errorIconDrawable="@null">
 
@@ -220,7 +220,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="@dimen/primer_input_spacing_vert"
         android:layout_weight="1"
-        android:hint="@string/address_state"
+        android:hint="@string/stateLabel"
         app:errorEnabled="false"
         app:errorIconDrawable="@null">
 
@@ -232,7 +232,7 @@
             android:inputType="textCapSentences"
             android:maxLines="1"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
-            tools:text="State"
+            tools:text="@string/stateLabel"
             tools:textColor="@android:color/black" />
 
     </io.primer.android.ui.components.TextInputWidget>
