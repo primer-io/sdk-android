@@ -43,6 +43,13 @@
     <string name="dd_mandate_error">Please check that all of your information is correct</string>
     <string name="dd_cancel_message">Do you want to cancel adding a bank account?</string>
     <string name="data_will_be_lost">Your data will be erased</string>
+    <string name="postalCodeErrorRequired">Postal code is required</string>
+    <string name="countryCodeErrorRequired">Country is required</string>
+    <string name="cityErrorRequired">City is required</string>
+    <string name="stateErrorRequired">State, Region or County is required</string>
+    <string name="addressLine1ErrorRequired">Address line 1 is required</string>
+    <string name="firstNameErrorRequired">First Name is required</string>
+    <string name="lastNameErrorRequired">Last Name is required</string>
 
     <string name="enter_name">Enter your name</string>
     <string name="enter_email">Enter your email</string>

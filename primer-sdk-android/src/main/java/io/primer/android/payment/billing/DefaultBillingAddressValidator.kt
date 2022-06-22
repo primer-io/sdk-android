@@ -81,13 +81,13 @@ private fun MutableList<SyncValidationError>.checkPutError(
 
 @Suppress("ComplexMethod")
 private fun errorIdBy(inputType: PrimerInputElementType): Int = when (inputType) {
-    PrimerInputElementType.POSTAL_CODE,
-    PrimerInputElementType.COUNTRY_CODE,
-    PrimerInputElementType.CITY,
-    PrimerInputElementType.STATE,
-    PrimerInputElementType.ADDRESS_LINE_1,
-    PrimerInputElementType.FIRST_NAME,
-    PrimerInputElementType.LAST_NAME -> R.string.form_error_required
+    PrimerInputElementType.POSTAL_CODE -> R.string.postalCodeErrorRequired
+    PrimerInputElementType.COUNTRY_CODE -> R.string.countryCodeErrorRequired
+    PrimerInputElementType.CITY -> R.string.cityErrorRequired
+    PrimerInputElementType.STATE -> R.string.stateErrorRequired
+    PrimerInputElementType.ADDRESS_LINE_1 -> R.string.addressLine1ErrorRequired
+    PrimerInputElementType.FIRST_NAME -> R.string.firstNameErrorRequired
+    PrimerInputElementType.LAST_NAME -> R.string.lastNameErrorRequired
     else -> R.string.error_default
 }
 

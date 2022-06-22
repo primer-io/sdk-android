@@ -123,10 +123,6 @@ internal class CardFormFragment : BaseFragment() {
             validateAndShowErrorFields()
         }
 
-        primerViewModel.orderCountry.observe(viewLifecycleOwner) { countryCode ->
-            binding.billingAddressForm.onLoadCountry(countryCode)
-        }
-
         primerViewModel.selectCountryCode.observe(viewLifecycleOwner) { country ->
             country ?: return@observe
             binding.billingAddressForm.onSelectCountry(country)
@@ -582,8 +578,10 @@ internal class CardFormFragment : BaseFragment() {
         if (!isLastInSection(input)) input.setMarginBottomForError(isEnableError)
         if (error == null) input.error = error
         else requireContext()
-            .let {
-                input.error = it.getString(error.errorId, it.getString(error.fieldId))
+            .let { context ->
+                input.error = error.errorFormatId?.let {
+                    context.getString(error.errorFormatId, context.getString(error.fieldId))
+                } ?: error.errorId?.let { context.getString(it) }
                 primerViewModel.addAnalyticsEvent(
                     MessageAnalyticsParams(
                         MessageType.VALIDATION_FAILED,

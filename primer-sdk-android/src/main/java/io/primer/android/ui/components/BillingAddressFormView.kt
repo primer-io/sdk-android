@@ -14,7 +14,6 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.data.configuration.models.emojiFlag
 import io.primer.android.databinding.LayoutBillingAddressFormBinding
 import io.primer.android.di.DIAppComponent
@@ -78,7 +77,6 @@ internal class BillingAddressFormView @JvmOverloads constructor(
      * All fields for billing address.
      */
     fun fieldsMap(): Map<PrimerInputElementType, TextInputWidget> {
-        if (!isVisible) return emptyMap()
         val availableFields = fields.filter { it.second.isVisible }
         fieldsMap.clear()
         availableFields.forEach { pair ->
@@ -146,13 +144,6 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         view.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
-    fun onLoadCountry(countryCode: CountryCode?) {
-        binding.cardFormPostalCode.hint = when (countryCode) {
-            CountryCode.US -> resources.getString(R.string.card_zip)
-            else -> resources.getString(R.string.postalCodeLabel)
-        }
-    }
-
     fun onSelectCountry(country: PrimerCountry) {
         val countryName = buildString {
             append(country.code.emojiFlag())
@@ -176,6 +167,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
 
     fun onHandleAvailable(billingFields: Map<String, Boolean>?) {
         if (billingFields == null) {
+            fields().forEach { it.onFocusChangeListener = null }
             isVisible = false
         } else {
             isVisible = true

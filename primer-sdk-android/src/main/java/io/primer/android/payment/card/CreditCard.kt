@@ -136,7 +136,7 @@ internal class CreditCard(
                 errors.add(
                     SyncValidationError(
                         name = PrimerInputElementType.CARDHOLDER_NAME.field,
-                        errorId = R.string.form_error_required,
+                        errorFormatId = R.string.form_error_required,
                         fieldId = R.string.card_holder_name
                     )
                 )
@@ -152,7 +152,7 @@ internal class CreditCard(
             errors.add(
                 SyncValidationError(
                     name = PrimerInputElementType.CARD_NUMBER.field,
-                    errorId = R.string.form_error_required,
+                    errorFormatId = R.string.form_error_required,
                     fieldId = R.string.card_number
                 )
             )
@@ -160,7 +160,7 @@ internal class CreditCard(
             errors.add(
                 SyncValidationError(
                     name = PrimerInputElementType.CARD_NUMBER.field,
-                    errorId = R.string.form_error_invalid,
+                    errorFormatId = R.string.form_error_invalid,
                     fieldId = R.string.card_number
                 )
             )
@@ -172,7 +172,7 @@ internal class CreditCard(
             errors.add(
                 SyncValidationError(
                     name = PrimerInputElementType.CVV.field,
-                    errorId = R.string.form_error_required,
+                    errorFormatId = R.string.form_error_required,
                     fieldId = R.string.card_cvv
                 )
             )
@@ -180,7 +180,7 @@ internal class CreditCard(
             errors.add(
                 SyncValidationError(
                     name = PrimerInputElementType.CVV.field,
-                    errorId = R.string.form_error_invalid,
+                    errorFormatId = R.string.form_error_invalid,
                     fieldId = R.string.card_cvv
                 )
             )
@@ -194,7 +194,7 @@ internal class CreditCard(
             errors.add(
                 SyncValidationError(
                     name = PrimerInputElementType.EXPIRY_DATE.field,
-                    errorId = R.string.form_error_required,
+                    errorFormatId = R.string.form_error_required,
                     fieldId = R.string.card_expiry
                 )
             )
@@ -202,7 +202,7 @@ internal class CreditCard(
             errors.add(
                 SyncValidationError(
                     name = PrimerInputElementType.EXPIRY_DATE.field,
-                    errorId = R.string.form_error_invalid,
+                    errorFormatId = R.string.form_error_invalid,
                     fieldId = R.string.card_expiry
                 )
             )
