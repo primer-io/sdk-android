@@ -118,11 +118,11 @@
     <string name="title_card_form_billing_address">Billing address</string>
     <string name="pay_with_card">Pay with card</string>
     <string name="card_details">Card details</string>
-    <string name="postalCodeErrorRequired">Postal code is required</string>
-    <string name="countryCodeErrorRequired">Country is required</string>
-    <string name="cityErrorRequired">City is required</string>
-    <string name="stateErrorRequired">State, Region or County is required</string>
-    <string name="addressLine1ErrorRequired">Address line 1 is required</string>
-    <string name="firstNameErrorRequired">First Name is required</string>
-    <string name="lastNameErrorRequired">Last Name is required</string>
+    <string name="postalCodeErrorRequired">Postcode is vereist</string>
+    <string name="countryCodeErrorRequired">Land is verplicht</string>
+    <string name="cityErrorRequired">Stad is vereist</string>
+    <string name="stateErrorRequired">Staat, regio of land is verplicht</string>
+    <string name="addressLine1ErrorRequired">Adresregel 1 is vereist</string>
+    <string name="firstNameErrorRequired">Voornaam is verplicht</string>
+    <string name="lastNameErrorRequired">Achternaam is verplicht</string>
 </resources>
