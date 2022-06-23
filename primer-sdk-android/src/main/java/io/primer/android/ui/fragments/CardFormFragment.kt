@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
-import io.primer.android.PrimerSessionIntent
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.MessageType
