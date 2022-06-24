@@ -121,10 +121,10 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun setTokenizableValue(key: String, value: String) {
+    fun setTokenizableValue(key: String, value: String, withValidation: Boolean = true) {
         paymentMethod?.let { pm ->
             pm.setTokenizableValue(key, value)
-            validationErrors.value = pm.validate()
+            if (withValidation) validationErrors.value = pm.validate()
             autoFocusFields.value = pm.getValidAutoFocusableFields()
         }
     }

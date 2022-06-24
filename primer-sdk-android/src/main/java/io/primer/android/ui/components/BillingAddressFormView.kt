@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
@@ -114,14 +115,13 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         binding.cardFormCountryCode.editText?.showSoftInputOnFocus = false
         binding.cardFormCountryCode.editText?.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus && (v is EditText) && v.text.isNullOrBlank()) {
-                hideKeyboard()
-                onChooseCountry?.invoke()
+                focusOnCountryChooser()
             } else {
                 focusOnFirstName()
             }
         }
         binding.cardFormCountryCode.editText?.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) onChooseCountry?.invoke()
+            if (event.action == MotionEvent.ACTION_UP) focusOnCountryChooser()
             true
         }
 
@@ -130,6 +130,12 @@ internal class BillingAddressFormView @JvmOverloads constructor(
                 onInputChange?.invoke(data.first, value?.toString())
             }
         }
+    }
+
+    private fun focusOnCountryChooser() {
+        hideKeyboard()
+        FieldFocuser.focus(binding.cardFormCountryCode)
+        onChooseCountry?.invoke()
     }
 
     private fun focusOnFirstName() {
@@ -162,7 +168,17 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         fields.firstOrNull {
             it.second.editText?.text.isNullOrBlank() &&
                 it.second.isVisible && it.second.editText?.isFocused == false
-        }?.let { FieldFocuser.focus(it.second) }
+        }?.let { pairTypeView ->
+            if (pairTypeView.first == PrimerInputElementType.COUNTRY_CODE) {
+                hideKeyboard()
+                pairTypeView.second.isSelected = true
+                handler.postDelayed(400L) {
+                    onChooseCountry?.invoke()
+                }
+            } else {
+                FieldFocuser.focus(pairTypeView.second)
+            }
+        }
     }
 
     fun onHandleAvailable(billingFields: Map<String, Boolean>?) {

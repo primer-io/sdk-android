@@ -166,10 +166,8 @@
             android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:layout_weight="1"
             android:hint="@string/postalCodeLabel"
-            android:visibility="gone"
             app:errorEnabled="false"
-            app:errorIconDrawable="@null"
-            tools:visibility="visible">
+            app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/card_form_postal_code_input"

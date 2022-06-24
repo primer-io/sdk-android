@@ -93,7 +93,7 @@ private fun errorIdBy(inputType: PrimerInputElementType): Int = when (inputType)
 
 @Suppress("ComplexMethod")
 private fun fieldIdBy(inputType: PrimerInputElementType): Int = when (inputType) {
-    PrimerInputElementType.POSTAL_CODE -> R.string.card_zip
+    PrimerInputElementType.POSTAL_CODE -> R.string.postalCodeLabel
     PrimerInputElementType.COUNTRY_CODE -> R.string.countryLabel
     PrimerInputElementType.CITY -> R.string.cityLabel
     PrimerInputElementType.STATE -> R.string.stateLabel

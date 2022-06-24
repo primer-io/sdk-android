@@ -339,9 +339,7 @@ internal class CardFormFragment : BaseFragment() {
         }
 
         binding.billingAddressForm.fieldsMap().entries.forEach {
-            if (it.key != PrimerInputElementType.COUNTRY_CODE) {
-                it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
-            }
+            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
         }
         binding.billingAddressForm.onChooseCountry = { navigateToCountryChooser() }
         binding.billingAddressForm.onInputChange = { fieldType, value ->
@@ -490,7 +488,12 @@ internal class CardFormFragment : BaseFragment() {
             ) = Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                tokenizationViewModel.setTokenizableValue(name, s.toString())
+                tokenizationViewModel.setTokenizableValue(
+                    name,
+                    s.toString(),
+                    withValidation = false
+                )
+                validateAndShowErrorFields()
             }
         }
     }
@@ -508,7 +511,7 @@ internal class CardFormFragment : BaseFragment() {
                 dirtyMap[name] = true
             }
 
-            setValidationErrors()
+            validateAndShowErrorFields()
         }
     }
 
