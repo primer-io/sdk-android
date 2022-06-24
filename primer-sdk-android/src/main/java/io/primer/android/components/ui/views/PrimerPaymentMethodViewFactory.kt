@@ -55,6 +55,7 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.COINBASE -> R.layout.payment_method_button_coinbase
             PaymentMethodType.TWOC2P -> R.layout.payment_method_button_twoc2p
             PaymentMethodType.OPENNODE -> R.layout.payment_method_button_opennode
+            PaymentMethodType.RAPYD_GCASH -> R.layout.payment_method_button_gcash
             else -> null
         }
 

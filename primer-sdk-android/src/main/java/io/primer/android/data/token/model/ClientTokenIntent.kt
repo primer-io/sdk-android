@@ -40,4 +40,5 @@ internal enum class ClientTokenIntent {
     COINBASE_REDIRECTION,
     TWOC2P_REDIRECTION,
     OPENNODE_REDIRECTION,
+    RAPYD_GCASH_REDIRECTION,
 }
