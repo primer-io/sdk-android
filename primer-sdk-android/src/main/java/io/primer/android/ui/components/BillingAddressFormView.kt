@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
-import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
@@ -45,6 +44,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
 
     var onChooseCountry: (() -> Unit)? = null
     var onInputChange: ((PrimerInputElementType, String?) -> Unit)? = null
+    var onCountryFocus: ((PrimerInputElementType, Boolean) -> Unit)? = null
 
     init {
         fields.add(PrimerInputElementType.COUNTRY_CODE to binding.cardFormCountryCode)
@@ -114,10 +114,9 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         binding.cardFormCountryCode.editText?.setRawInputType(InputType.TYPE_NULL)
         binding.cardFormCountryCode.editText?.showSoftInputOnFocus = false
         binding.cardFormCountryCode.editText?.setOnFocusChangeListener { v, hasFocus ->
+            onCountryFocus?.invoke(PrimerInputElementType.COUNTRY_CODE, hasFocus)
             if (hasFocus && (v is EditText) && v.text.isNullOrBlank()) {
                 focusOnCountryChooser()
-            } else {
-                focusOnFirstName()
             }
         }
         binding.cardFormCountryCode.editText?.setOnTouchListener { _, event ->
@@ -136,10 +135,6 @@ internal class BillingAddressFormView @JvmOverloads constructor(
         hideKeyboard()
         FieldFocuser.focus(binding.cardFormCountryCode)
         onChooseCountry?.invoke()
-    }
-
-    private fun focusOnFirstName() {
-        FieldFocuser.focus(binding.cardFormFirstName)
     }
 
     private fun setInputFieldPadding(view: View) {
@@ -169,14 +164,10 @@ internal class BillingAddressFormView @JvmOverloads constructor(
             it.second.editText?.text.isNullOrBlank() &&
                 it.second.isVisible && it.second.editText?.isFocused == false
         }?.let { pairTypeView ->
-            if (pairTypeView.first == PrimerInputElementType.COUNTRY_CODE) {
-                hideKeyboard()
-                pairTypeView.second.isSelected = true
-                handler.postDelayed(400L) {
-                    onChooseCountry?.invoke()
-                }
-            } else {
+            if (pairTypeView.first != PrimerInputElementType.COUNTRY_CODE) {
                 FieldFocuser.focus(pairTypeView.second)
+            } else {
+                hideKeyboard()
             }
         }
     }

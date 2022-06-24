@@ -115,7 +115,7 @@
     <string name="label_declined">Recusado</string>
     <string name="label_failed">Falhado</string>
     <string name="country_search_hint">Encontrar um país</string>
-    <string name="title_card_form_billing_address">Billing address</string>
+    <string name="billingAddressLabel">Morada de faturação</string>
     <string name="pay_with_card">Pay with card</string>
     <string name="card_details">Card details</string>
     <string name="postalCodeErrorRequired">É necessário o código postal</string>

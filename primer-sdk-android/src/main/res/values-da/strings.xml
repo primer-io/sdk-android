@@ -115,7 +115,7 @@
     <string name="label_declined">Afvist</string>
     <string name="label_failed">Mislykkedes</string>
     <string name="country_search_hint">Finde land</string>
-    <string name="title_card_form_billing_address">Billing address</string>
+    <string name="billingAddressLabel">Faktureringsadresse</string>
     <string name="pay_with_card">Pay with card</string>
     <string name="card_details">Card details</string>
     <string name="postalCodeErrorRequired">Postnummer er nødvendigt</string>

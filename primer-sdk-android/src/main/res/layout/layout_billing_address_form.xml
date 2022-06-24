@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/primer_input_spacing_vert"
-        android:text="@string/title_card_form_billing_address"
+        android:text="@string/billingAddressLabel"
         tools:textColor="@android:color/black" />
 
     <io.primer.android.ui.components.TextInputWidget

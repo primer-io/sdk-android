@@ -115,7 +115,7 @@
     <string name="label_declined">Απορρίφθηκε</string>
     <string name="label_failed">Απέτυχε</string>
     <string name="country_search_hint">βρείτε μια χώρα</string>
-    <string name="title_card_form_billing_address">Billing address</string>
+    <string name="billingAddressLabel">Διεύθυνση χρέωσης</string>
     <string name="pay_with_card">Pay with card</string>
     <string name="card_details">Card details</string>
     <string name="postalCodeErrorRequired">Απαιτείται ταχυδρομικός κώδικας</string>

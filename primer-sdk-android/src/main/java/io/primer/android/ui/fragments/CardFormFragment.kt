@@ -339,7 +339,12 @@ internal class CardFormFragment : BaseFragment() {
         }
 
         binding.billingAddressForm.fieldsMap().entries.forEach {
-            it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
+            if (it.key != PrimerInputElementType.COUNTRY_CODE) {
+                it.value.editText?.onFocusChangeListener = createFocusChangeListener(it.key.field)
+            }
+        }
+        binding.billingAddressForm.onCountryFocus = { fieldName, hasFocus ->
+            handleInputFocuseByName(fieldName.field, hasFocus)
         }
         binding.billingAddressForm.onChooseCountry = { navigateToCountryChooser() }
         binding.billingAddressForm.onInputChange = { fieldType, value ->
@@ -500,19 +505,23 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun createFocusChangeListener(name: String): View.OnFocusChangeListener {
         return View.OnFocusChangeListener { _, hasFocus ->
-            var skip = false
-
-            if (!hasFocus && firstMount && name == PrimerInputElementType.CARD_NUMBER.field) {
-                firstMount = false
-                skip = true
-            }
-
-            if (!skip && !hasFocus) {
-                dirtyMap[name] = true
-            }
-
-            validateAndShowErrorFields()
+            handleInputFocuseByName(name, hasFocus)
         }
+    }
+
+    private fun handleInputFocuseByName(name: String, hasFocus: Boolean) {
+        var skip = false
+
+        if (!hasFocus && firstMount && name == PrimerInputElementType.CARD_NUMBER.field) {
+            firstMount = false
+            skip = true
+        }
+
+        if (!skip && !hasFocus) {
+            dirtyMap[name] = true
+        }
+
+        validateAndShowErrorFields()
     }
 
     private fun findNextFocusIfNeeded(fields: Set<String>) {
