@@ -65,7 +65,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.XFERS_PAYNOW,
             PaymentMethodType.COINBASE,
             PaymentMethodType.TWOC2P,
-            PaymentMethodType.OPENNODE
+            PaymentMethodType.OPENNODE,
+            PaymentMethodType.RAPYD_POLI,
             -> AsyncMethodFactory(
                 type,
                 settings

@@ -106,6 +106,7 @@ internal class PaymentMethodsDataRepository(
         PaymentMethodType.PRIMER_TEST_KLARNA -> p.type == PaymentMethodType.PRIMER_TEST_KLARNA
         PaymentMethodType.PRIMER_TEST_PAYPAL -> p.type == PaymentMethodType.PRIMER_TEST_PAYPAL
         PaymentMethodType.PRIMER_TEST_SOFORT -> p.type == PaymentMethodType.PRIMER_TEST_SOFORT
+        PaymentMethodType.RAPYD_POLI -> p.type == PaymentMethodType.RAPYD_POLI
         PaymentMethodType.UNKNOWN -> false
         null -> false
     }
