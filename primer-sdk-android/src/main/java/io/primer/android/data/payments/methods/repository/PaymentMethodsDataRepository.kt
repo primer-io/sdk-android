@@ -46,7 +46,7 @@ internal class PaymentMethodsDataRepository(
         val paymentMethods = paymentMethodListFactory.buildWith(configuration.paymentMethods)
         if (config.isStandalonePaymentMethod) {
             paymentMethods.find { p ->
-                isMatchMethods(p)
+                matchesPaymentMethod(p)
             }?.let { paymentMethod ->
                 initializeAndRegisterModules(context, paymentMethod, configuration)
             }
@@ -59,7 +59,7 @@ internal class PaymentMethodsDataRepository(
         return paymentMethods
     }
 
-    private fun isMatchMethods(p: PaymentMethod): Boolean = when (config.intent.paymentMethod) {
+    private fun matchesPaymentMethod(p: PaymentMethod) = when (config.intent.paymentMethod) {
         PrimerPaymentMethodType.KLARNA -> p is Klarna
         PrimerPaymentMethodType.GOOGLE_PAY -> p is GooglePay
         PrimerPaymentMethodType.PAYPAL -> p is PayPal

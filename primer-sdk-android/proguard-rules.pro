@@ -119,6 +119,11 @@
 
 -keep enum io.primer.android.data.configuration.models.PaymentMethodType {
     public *;
+    *** Companion;
+}
+
+-keep class io.primer.android.data.configuration.models.PaymentMethodType$Companion {
+    *;
 }
 
 -keep class io.primer.android.data.configuration.models.PrimerPaymentMethodTypeKt {
@@ -155,6 +160,10 @@
 }
 
 -keep class io.primer.android.components.ui.views.* {
+    *;
+}
+
+-keep enum io.primer.android.components.ui.assets.ImageType {
     *;
 }
 

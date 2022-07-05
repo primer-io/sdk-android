@@ -12,6 +12,7 @@ import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
@@ -204,7 +205,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     // region Web-based payment methods
     private val webFlowPaymentDataObserver =
         Observer<BaseWebFlowPaymentData> { paymentData ->
-            EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
+            EventBus.broadcast(
+                CheckoutEvent.PaymentMethodPresented(
+                    PrimerPaymentMethodType.safeValueOf(
+                        primerViewModel.selectedPaymentMethod.value?.config?.type?.name
+                    )
+                )
+            )
             val title =
                 when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
                     is KlarnaDescriptor -> paymentMethod.options.webViewTitle
@@ -262,13 +269,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private val payPalBillingAgreementUrlObserver = Observer { uri: String ->
-        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented(PrimerPaymentMethodType.PAYPAL))
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
 
     private val payPalOrderObserver = Observer { uri: String ->
-        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented)
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented(PrimerPaymentMethodType.PAYPAL))
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
