@@ -1,4 +1,4 @@
-package io.primer.android.payment.processor_3ds
+package io.primer.android.payment.processor3ds
 
 import io.primer.android.data.configuration.models.PaymentMethodType
 

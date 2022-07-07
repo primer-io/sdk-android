@@ -30,7 +30,11 @@ internal class PaymentInputDataValidateInteractor(
                 )
 
             emit(Unit)
-        }.onStart { eventDispatcher.dispatchEvent(CheckoutEvent.PreparationStarted) }
+        }.onStart {
+            eventDispatcher.dispatchEvent(
+                CheckoutEvent.PreparationStarted(params.paymentMethodType)
+            )
+        }
             .doOnError {
                 errorEventResolver.resolve(it, ErrorMapperType.HUC)
             }

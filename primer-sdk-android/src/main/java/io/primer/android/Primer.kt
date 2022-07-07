@@ -27,7 +27,6 @@ import kotlinx.serialization.encodeToString
 
 class Primer private constructor() : PrimerInterface {
 
-    internal var paymentMethods: MutableList<PaymentMethod> = mutableListOf()
     private var listener: PrimerCheckoutListener? = null
     private var config: PrimerConfig = PrimerConfig()
     private var subscription: EventBus.SubscriptionHandle? = null
@@ -119,9 +118,7 @@ class Primer private constructor() : PrimerInterface {
             )
         )
 
-        val flow = if (intent == PrimerSessionIntent.VAULT) PrimerSessionIntent.VAULT
-        else PrimerSessionIntent.CHECKOUT
-        config.intent = PrimerIntent(flow, paymentMethod)
+        config.intent = PrimerIntent(intent, paymentMethod)
         show(context, clientToken)
     }
 
@@ -145,7 +142,7 @@ class Primer private constructor() : PrimerInterface {
 
             val scheme =
                 config.settings.paymentMethodOptions.redirectScheme
-                    ?: context.packageName.let { "$it.primer" }
+                    ?: context.packageName.lowercase().let { "$it.primer" }
             WebviewInteropRegister.init(scheme)
 
             // TODO: refactor the way we pass in the config.
@@ -158,9 +155,9 @@ class Primer private constructor() : PrimerInterface {
                     putExtra("config", encodedConfig)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }.run { context.startActivity(this) }
-        } catch (e: Exception) {
-            Log.e("Primer", e.message.toString())
-            emitError(DefaultErrorMapper().getPrimerError(e))
+        } catch (expected: Exception) {
+            Log.e("Primer", expected.message.toString())
+            emitError(DefaultErrorMapper().getPrimerError(expected))
         }
     }
 

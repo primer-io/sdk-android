@@ -10,7 +10,7 @@ import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.payment.processor_3ds.Processor3DS
+import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.CoroutineDispatcher

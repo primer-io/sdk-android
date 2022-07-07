@@ -79,7 +79,6 @@ internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
         PaymentMethodType.KLARNA,
         PaymentMethodType.GOOGLE_PAY,
         PaymentMethodType.PAYPAL,
-        PaymentMethodType.GOCARDLESS,
         PaymentMethodType.APAYA,
         PaymentMethodType.PAY_NL_P24,
         PaymentMethodType.PAY_NL_IDEAL,
@@ -110,16 +109,17 @@ internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
         PaymentMethodType.COINBASE,
         PaymentMethodType.TWOC2P,
         PaymentMethodType.OPENNODE,
-        PaymentMethodType.ATOME,
-        PaymentMethodType.PRIMER_TEST_KLARNA,
-        PaymentMethodType.PRIMER_TEST_PAYPAL,
-        PaymentMethodType.PRIMER_TEST_SOFORT -> true
+        PaymentMethodType.ATOME -> true
         PaymentMethodType.ADYEN_IDEAL,
         PaymentMethodType.ADYEN_DOTPAY,
         PaymentMethodType.ADYEN_BLIK,
         PaymentMethodType.ADYEN_MBWAY,
         PaymentMethodType.ADYEN_BANK_TRANSFER,
         PaymentMethodType.XFERS_PAYNOW,
+        PaymentMethodType.GOCARDLESS,
+        PaymentMethodType.PRIMER_TEST_KLARNA,
+        PaymentMethodType.PRIMER_TEST_PAYPAL,
+        PaymentMethodType.PRIMER_TEST_SOFORT,
         PaymentMethodType.UNKNOWN -> false
     }
 }

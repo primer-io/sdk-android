@@ -14,13 +14,13 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 @JvmDefaultWithCompatibility
 @ExperimentalPrimerApi
 interface PrimerHeadlessUniversalCheckoutListener {
-    fun onClientSessionSetupSuccessfully(
+    fun onAvailablePaymentMethodsLoaded(
         paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>
-    ) = Unit
+    )
 
-    fun onTokenizationPreparation() = Unit
+    fun onPreparationStarted(paymentMethodType: PrimerPaymentMethodType) = Unit
     fun onTokenizationStarted(paymentMethodType: PrimerPaymentMethodType) = Unit
-    fun onPaymentMethodShowed() = Unit
+    fun onPaymentMethodShowed(paymentMethodType: PrimerPaymentMethodType) = Unit
     fun onTokenizeSuccess(
         paymentMethodTokenData: PrimerPaymentMethodTokenData,
         decisionHandler: PrimerResumeDecisionHandler

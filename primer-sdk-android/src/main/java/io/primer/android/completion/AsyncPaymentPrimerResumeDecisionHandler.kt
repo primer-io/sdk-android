@@ -35,33 +35,33 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
+        val paymentMethodType = PaymentMethodType.safeValueOf(
+            paymentMethodRepository.getPaymentMethod()
+                .paymentInstrumentData?.paymentMethodType
+        )
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.XFERS_PAYNOW_REDIRECTION,
             ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
                 eventDispatcher.dispatchEvents(
                     listOf(
-                        CheckoutEvent.PaymentMethodPresented,
+                        CheckoutEvent.PaymentMethodPresented(
+                            paymentMethodType
+                        ),
                         CheckoutEvent.StartAsyncFlow(
                             clientTokenRepository.getClientTokenIntent(),
                             clientTokenRepository.getStatusUrl().orEmpty(),
-                            PaymentMethodType.safeValueOf(
-                                paymentMethodRepository.getPaymentMethod()
-                                    .paymentInstrumentData?.paymentMethodType
-                            )
+                            paymentMethodType
                         )
                     )
                 )
             }
             else -> eventDispatcher.dispatchEvents(
                 listOf(
-                    CheckoutEvent.PaymentMethodPresented,
+                    CheckoutEvent.PaymentMethodPresented(paymentMethodType),
                     CheckoutEvent.StartAsyncRedirectFlow(
                         paymentMethodRepository.getPaymentMethod().paymentInstrumentData
                             ?.paymentMethodType?.split("_")?.last().orEmpty(),
-                        PaymentMethodType.safeValueOf(
-                            paymentMethodRepository.getPaymentMethod()
-                                .paymentInstrumentData?.paymentMethodType
-                        ),
+                        paymentMethodType,
                         clientTokenRepository.getRedirectUrl().orEmpty(),
                         clientTokenRepository.getStatusUrl().orEmpty(),
                     )

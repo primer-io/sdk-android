@@ -36,7 +36,7 @@ internal class IBANChecksumValidator : Validator {
         var validationString = validationStringBuilder.toString()
         // keep getting module 97 until we get 2 digits
         while (validationString.length > CONTROL_NUMBER_LENGTH) {
-            val part = validationString.take(6)
+            val part = validationString.take(CONTROL_PART_PREFIX_LENGTH)
             validationString =
                 getModulo97(part).toString() + validationString.substring(part.length)
         }
@@ -49,6 +49,7 @@ internal class IBANChecksumValidator : Validator {
         const val CONTROL_NUMBER_START = 2
         const val CONTROL_NUMBER_END = 4
         const val CONTROL_NUMBER_LENGTH = 2
+        const val CONTROL_PART_PREFIX_LENGTH = 6
         const val IBAN_MODULO = 97
         const val IBAN_REMAINDER = 98
         const val IBAN_MIN_LENGTH = 5

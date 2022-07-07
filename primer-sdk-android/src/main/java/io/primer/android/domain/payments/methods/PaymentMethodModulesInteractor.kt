@@ -1,5 +1,6 @@
 package io.primer.android.domain.payments.methods
 
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
@@ -48,7 +49,11 @@ internal class PaymentMethodModulesInteractor(
             ) { descriptors, paymentMethods -> Pair(descriptors, paymentMethods) }
             .onStart {
                 if (params.sendStartEvent) {
-                    eventDispatcher.dispatchEvent(CheckoutEvent.PreparationStarted)
+                    eventDispatcher.dispatchEvent(
+                        CheckoutEvent.PreparationStarted(
+                            config.intent.paymentMethod ?: PaymentMethodType.UNKNOWN
+                        )
+                    )
                 }
             }
             .mapLatest { paymentMethodData ->

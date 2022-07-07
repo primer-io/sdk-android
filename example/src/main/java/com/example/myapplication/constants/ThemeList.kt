@@ -56,7 +56,7 @@ class ThemeList {
                     width = R.dimen.border_width
                 ),
             ),
-            systembutton = TextThemeData(
+            systemButton = TextThemeData(
                 defaultColor = R.color.apple_dark_6
             )
         )
@@ -96,7 +96,7 @@ class ThemeList {
                     selectedColor = R.color.tropical_3,
                 ),
             ),
-            systembutton = TextThemeData(
+            systemButton = TextThemeData(
                 defaultColor = R.color.tropical_4
             )
         )
