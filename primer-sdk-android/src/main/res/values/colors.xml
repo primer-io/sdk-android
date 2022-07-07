@@ -41,6 +41,7 @@
     <color name="paytrail">#E50C96</color>
     <color name="payshop">#EE3424</color>
     <color name="gcash">#297BFA</color>
+    <color name="grabpay">#01B14E</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

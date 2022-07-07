@@ -195,6 +195,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig
             )
+            PaymentMethodType.RAPYD_GRABPAY -> RapydGrabpayPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
             else -> throw IllegalStateException(
                 "Unknown payment type ${paymentMethodRemoteConfig.type}"
             )

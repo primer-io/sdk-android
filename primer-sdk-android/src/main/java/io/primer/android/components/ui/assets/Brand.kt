@@ -58,6 +58,11 @@ internal enum class Brand(
         R.drawable.ic_logo_gcash_square,
         iconDarkResId = R.drawable.ic_logo_gcash_dark
     ),
+    GRABPAY(
+        R.drawable.ic_logo_grab_pay_light,
+        R.drawable.ic_opennode_logo_square,
+        iconDarkResId = R.drawable.ic_logo_grab_pay_dark
+    ),
     UNKNOWN(0)
 }
 

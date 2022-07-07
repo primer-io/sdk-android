@@ -107,6 +107,7 @@ internal class PaymentMethodsDataRepository(
         PaymentMethodType.PRIMER_TEST_PAYPAL -> p.type == PaymentMethodType.PRIMER_TEST_PAYPAL
         PaymentMethodType.PRIMER_TEST_SOFORT -> p.type == PaymentMethodType.PRIMER_TEST_SOFORT
         PaymentMethodType.RAPYD_GCASH -> p.type == PaymentMethodType.RAPYD_GCASH
+        PaymentMethodType.RAPYD_GRABPAY -> p.type == PaymentMethodType.RAPYD_GRABPAY
         PaymentMethodType.UNKNOWN -> false
         null -> false
     }

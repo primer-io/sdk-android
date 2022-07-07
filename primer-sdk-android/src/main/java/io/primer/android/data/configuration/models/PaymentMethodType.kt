@@ -62,6 +62,7 @@ enum class PaymentMethodType(
     TWOC2P(ClientTokenIntent.TWOC2P_REDIRECTION, Brand.TWOC2P),
     OPENNODE(ClientTokenIntent.OPENNODE_REDIRECTION, Brand.OPENNODE),
     RAPYD_GCASH(ClientTokenIntent.RAPYD_GCASH_REDIRECTION, Brand.GCASH),
+    RAPYD_GRABPAY(ClientTokenIntent.RAPYD_GRABPAY_REDIRECTION, Brand.GRABPAY),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);
@@ -112,9 +113,7 @@ internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
         PaymentMethodType.OPENNODE,
         PaymentMethodType.ATOME,
         PaymentMethodType.RAPYD_GCASH,
-        PaymentMethodType.PRIMER_TEST_KLARNA,
-        PaymentMethodType.PRIMER_TEST_PAYPAL,
-        PaymentMethodType.PRIMER_TEST_SOFORT -> true
+        PaymentMethodType.RAPYD_GRABPAY, -> true
         PaymentMethodType.ADYEN_IDEAL,
         PaymentMethodType.ADYEN_DOTPAY,
         PaymentMethodType.ADYEN_BLIK,
