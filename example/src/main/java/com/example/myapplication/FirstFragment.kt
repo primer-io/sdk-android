@@ -88,6 +88,12 @@ class FirstFragment : Fragment() {
                 HideKeyboardFocusChangeListener(R.id.descriptorTextField, activity)
             addTextChangedListener { viewModel.setDescriptor(it.toString()) }
         }
+        binding.metadataTextField.apply {
+            setText(viewModel.metadata.value)
+            onFocusChangeListener =
+                HideKeyboardFocusChangeListener(R.id.metadataTextField, activity)
+            addTextChangedListener { viewModel.setMetadata(it.toString()) }
+        }
     }
 
     private fun configurePaymentHandlingViews() {

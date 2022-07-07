@@ -61,7 +61,6 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.ADYEN_MBWAY -> null
             PaymentMethodType.ADYEN_BANK_TRANSFER -> null
             PaymentMethodType.UNKNOWN -> null
-            else -> null
         }
 
         return layoutId?.let { LayoutInflater.from(context).inflate(it, null) }?.apply {

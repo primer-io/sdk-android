@@ -95,6 +95,10 @@ class MainViewModel(
     val descriptor: LiveData<String> = _descriptor
     fun setDescriptor(descriptor: String) = _descriptor.postValue(descriptor)
 
+    private val _metadata = MutableLiveData("")
+    val metadata: LiveData<String> = _metadata
+    fun setMetadata(metadata: String) = _metadata.postValue(metadata)
+
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
     val clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
     val useStandalonePaymentMethod: MutableLiveData<PrimerPaymentMethodType> =
@@ -158,7 +162,8 @@ class MainViewModel(
         amount.value!!,
         countryRepository.getCountry().name,
         countryRepository.getCurrency(),
-        environment.value?.environment ?: throw Error("no environment set!")
+        environment.value?.environment ?: throw Error("no environment set!"),
+        metadata.value
     ) { t -> clientToken.postValue(t) }
 
     fun fetchPaymentInstruments() {
