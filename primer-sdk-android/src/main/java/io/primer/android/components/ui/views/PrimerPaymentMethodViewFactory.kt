@@ -55,9 +55,11 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.COINBASE -> R.layout.payment_method_button_coinbase
             PaymentMethodType.TWOC2P -> R.layout.payment_method_button_twoc2p
             PaymentMethodType.OPENNODE -> R.layout.payment_method_button_opennode
+            PaymentMethodType.RAPYD_GCASH -> R.layout.payment_method_button_gcash
             PaymentMethodType.ADYEN_MBWAY -> null
             PaymentMethodType.ADYEN_BANK_TRANSFER -> null
             PaymentMethodType.UNKNOWN -> null
+            else -> null
         }
 
         return layoutId?.let { LayoutInflater.from(context).inflate(it, null) }?.apply {

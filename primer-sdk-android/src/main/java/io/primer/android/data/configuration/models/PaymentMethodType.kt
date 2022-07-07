@@ -61,6 +61,7 @@ enum class PaymentMethodType(
     COINBASE(ClientTokenIntent.COINBASE_REDIRECTION, Brand.COINBASE),
     TWOC2P(ClientTokenIntent.TWOC2P_REDIRECTION, Brand.TWOC2P),
     OPENNODE(ClientTokenIntent.OPENNODE_REDIRECTION, Brand.OPENNODE),
+    RAPYD_GCASH(ClientTokenIntent.RAPYD_GCASH_REDIRECTION, Brand.GCASH),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);
@@ -109,7 +110,11 @@ internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
         PaymentMethodType.COINBASE,
         PaymentMethodType.TWOC2P,
         PaymentMethodType.OPENNODE,
-        PaymentMethodType.ATOME -> true
+        PaymentMethodType.ATOME,
+        PaymentMethodType.RAPYD_GCASH,
+        PaymentMethodType.PRIMER_TEST_KLARNA,
+        PaymentMethodType.PRIMER_TEST_PAYPAL,
+        PaymentMethodType.PRIMER_TEST_SOFORT -> true
         PaymentMethodType.ADYEN_IDEAL,
         PaymentMethodType.ADYEN_DOTPAY,
         PaymentMethodType.ADYEN_BLIK,
