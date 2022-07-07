@@ -17,4 +17,5 @@ enum class CurrencyCode(val symbol: String) {
     PLN("zł"),
     CAD("$"),
     USD("$"),
+    PHP("₱"),
 }

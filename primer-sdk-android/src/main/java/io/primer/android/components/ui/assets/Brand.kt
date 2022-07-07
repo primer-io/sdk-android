@@ -63,6 +63,7 @@ internal enum class Brand(
         R.drawable.ic_opennode_logo_square,
         iconDarkResId = R.drawable.ic_logo_grab_pay_dark
     ),
+    POLI(R.drawable.ic_logo_poli_light, iconDarkResId = R.drawable.ic_logo_poli_dark),
     UNKNOWN(0)
 }
 
