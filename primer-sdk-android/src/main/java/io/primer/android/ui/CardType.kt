@@ -40,7 +40,7 @@ class CardType {
         }
 
         fun matches(bin: String): Boolean {
-            return bin.padEnd(8, '0') in min..max
+            return bin.padEnd(CARD_NUM_GAP_8, '0') in min..max
         }
 
         fun getResource(): Int = when (type) {
@@ -235,11 +235,6 @@ private val CARD_LENS_16_19 = listOf(
 private val CARD_LENS_14_16_19 = listOf(
     CARD_NUM_LEN_14,
     CARD_NUM_LEN_16,
-    CARD_NUM_LEN_19
-)
-private val CARD_LENS_14_18_19 = listOf(
-    CARD_NUM_LEN_14,
-    CARD_NUM_LEN_18,
     CARD_NUM_LEN_19
 )
 private val CARD_LENS_16_18_19 = listOf(

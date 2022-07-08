@@ -51,7 +51,7 @@ class DynamicColor private constructor(
             return if (hex.matches(HEX_PATTERN)) {
                 Color.parseColor(hex)
             } else {
-                throw Exception("color input ($hex) is not a hex value")
+                throw IllegalArgumentException("color input ($hex) is not a hex value")
             }
         }
 

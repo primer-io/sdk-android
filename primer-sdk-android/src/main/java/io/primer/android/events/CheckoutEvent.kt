@@ -14,7 +14,7 @@ import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import io.primer.android.payment.processor_3ds.Processor3DS
+import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
@@ -126,9 +126,9 @@ internal sealed class CheckoutEvent(
     class TokenizationStarted(val paymentMethodType: PrimerPaymentMethodType) :
         CheckoutEvent(CheckoutEventType.TOKENIZE_STARTED)
 
-    object PreparationStarted :
+    class PreparationStarted(val paymentMethodType: PrimerPaymentMethodType) :
         CheckoutEvent(CheckoutEventType.PREPARATION_STARTED)
 
-    object PaymentMethodPresented :
+    class PaymentMethodPresented(val paymentMethodType: PrimerPaymentMethodType) :
         CheckoutEvent(CheckoutEventType.PAYMENT_METHOD_PRESENTED)
 }

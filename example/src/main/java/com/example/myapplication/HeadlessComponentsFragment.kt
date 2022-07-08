@@ -72,12 +72,12 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
             token?.let {
+                showLoading("Starting HUC.")
                 headlessUniversalCheckout.start(
                     requireContext(),
                     it,
                     viewModel.settings
                 )
-                showLoading("Starting HUC.")
             }
         }
 
@@ -103,36 +103,35 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         })
 
         headlessUniversalCheckout.setListener(object : PrimerHeadlessUniversalCheckoutListener {
-            override fun onClientSessionSetupSuccessfully(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
+            override fun onAvailablePaymentMethodsLoaded(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
                 Log.d(TAG, paymentMethods.toString())
                 setupPaymentMethod(paymentMethods)
                 hideLoading()
             }
 
-            override fun onTokenizationPreparation() {
-                showLoading("Tokenization preparation started")
-                Log.d(TAG, "onTokenizationPreparation")
+            override fun onPreparationStarted(paymentMethodType: PrimerPaymentMethodType) {
+                showLoading("Preparation started $paymentMethodType")
+                Log.d(TAG, "onPreparationStarted")
             }
 
             override fun onTokenizationStarted(paymentMethodType: PrimerPaymentMethodType) {
-                super.onTokenizationStarted(paymentMethodType)
                 showLoading("Tokenization started $paymentMethodType")
             }
 
-            override fun onPaymentMethodShowed() {
-                Log.d(TAG, "onPaymentMethodShowed")
+            override fun onPaymentMethodShowed(paymentMethodType: PrimerPaymentMethodType) {
+                Log.d(TAG, "onPaymentMethodShowed $paymentMethodType")
             }
 
             override fun onTokenizeSuccess(
                 paymentMethodTokenData: PrimerPaymentMethodTokenData,
                 decisionHandler: PrimerResumeDecisionHandler
             ) {
-                showLoading("Tokenization success. Creating payment.")
+                showLoading("Tokenization success $paymentMethodTokenData. Creating payment.")
                 viewModel.createPayment(paymentMethodTokenData, decisionHandler)
             }
 
             override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
-                showLoading("Resume success. Resuming payment.")
+                showLoading("Resume success $resumeToken. Resuming payment.")
                 viewModel.resumePayment(resumeToken, decisionHandler)
             }
 
@@ -142,6 +141,13 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             ) {
                 super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
                 showLoading("On Before Payment Created with ${paymentMethodData.paymentMethodType}")
+            }
+
+            override fun onFailed(error: PrimerError) {
+                hideLoading()
+                AlertDialog.Builder(context)
+                    .setMessage("On Failed $error")
+                    .show()
             }
 
             override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {

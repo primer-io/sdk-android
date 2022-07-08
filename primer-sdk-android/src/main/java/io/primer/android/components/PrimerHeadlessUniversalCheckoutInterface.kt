@@ -43,9 +43,9 @@ interface PrimerHeadlessUniversalCheckoutInterface {
     /**
      * Initialise and show specific payment method flows with PrimerHeadlessUniversalCheckout.
      *
-     * @param paymentMethod the payment method flow to be shown.
+     * @param paymentMethodType the payment method flow to be shown.
      */
-    fun showPaymentMethod(context: Context, paymentMethod: PrimerPaymentMethodType)
+    fun showPaymentMethod(context: Context, paymentMethodType: PrimerPaymentMethodType)
 
     /**
      * This method should be called when disposing the listener in order to free
