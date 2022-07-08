@@ -12,6 +12,7 @@ import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.components.domain.inputs.models.valueBy
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig

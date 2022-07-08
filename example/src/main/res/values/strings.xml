@@ -58,4 +58,11 @@
     <string name="env_sandbox">Sandbox</string>
     <string name="api_key">Put here API KEY</string>
 
+    <string-array name="app_environments">
+        <item>@string/env_sandbox</item>
+        <item>@string/env_dev</item>
+        <item>@string/env_staging</item>
+        <item>@string/env_production</item>
+    </string-array>
+
 </resources>
