@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,12 +21,12 @@ import io.primer.android.components.manager.PrimerCardManager
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
 import io.primer.android.ui.CardType
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
@@ -202,14 +203,15 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private fun createForm(requiredInputElementTypes: List<PrimerInputElementType>) {
         val inputElements = requiredInputElementTypes.map { type ->
             PrimerEditTextFactory.createFromType(requireContext(), type).apply {
-                setHint(getHint(type))
+                (this as TextView).setHint(getHint(type))
                 setPrimerInputElementListener(inputElementListener)
             }
         }
 
         val viewGroup = (binding.parentView as ViewGroup)
+        viewGroup.removeAllViews()
         inputElements.forEach {
-            viewGroup.addView(it)
+            viewGroup.addView((it as TextView))
         }
 
         cardManager.setInputElements(inputElements)
@@ -249,7 +251,16 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             PrimerInputElementType.CVV -> R.string.card_cvv
             PrimerInputElementType.EXPIRY_DATE -> R.string.card_expiry
             PrimerInputElementType.CARD_NUMBER -> R.string.card_number
-            PrimerInputElementType.POSTAL_CODE -> R.string.card_zip
+            PrimerInputElementType.POSTAL_CODE -> R.string.postalCodeLabel
+            PrimerInputElementType.COUNTRY_CODE -> R.string.countryLabel
+            PrimerInputElementType.CITY -> R.string.cityLabel
+            PrimerInputElementType.STATE -> R.string.stateLabel
+            PrimerInputElementType.ADDRESS_LINE_1 -> R.string.addressLine1
+            PrimerInputElementType.ADDRESS_LINE_2 -> R.string.addressLine2
+            PrimerInputElementType.PHONE_NUMBER -> R.string.input_hint_form_phone_number
+            PrimerInputElementType.FIRST_NAME -> R.string.firstNameLabel
+            PrimerInputElementType.LAST_NAME -> R.string.lastNameLabel
+            else -> R.string.enter_address
         }
     }
 

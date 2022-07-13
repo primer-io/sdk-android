@@ -25,7 +25,11 @@ class CountriesAdapter : RecyclerView.Adapter<CountriesAdapter.ViewHolder>() {
         private val binding = CellCountryItemBinding.bind(view)
 
         fun bind(item: CountryItem, onItemClick: ((AppCountryCode) -> Unit)?) {
-            binding.countryItem.setText(item.countryCode.flag)
+            binding.countryItem.setText(buildString {
+                append(item.countryCode.flag)
+                append(' ')
+                append(item.countryCode.name)
+            })
             binding.root.setOnClickListener { onItemClick?.invoke(item.countryCode) }
         }
     }

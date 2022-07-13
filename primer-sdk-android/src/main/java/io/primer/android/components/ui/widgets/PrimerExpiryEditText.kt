@@ -4,11 +4,11 @@ import android.content.Context
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.TextInputMask
 
-class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
+internal class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
     init {

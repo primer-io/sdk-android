@@ -5,6 +5,8 @@ import com.example.myapplication.datamodels.ResumePaymentRequest
 import com.example.myapplication.datamodels.TransactionRequest
 import com.example.myapplication.datamodels.TransactionResponse
 import com.example.myapplication.datamodels.TransactionStatus
+import com.example.myapplication.datamodels.type
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
 import okhttp3.Call
@@ -13,7 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class ResumeRepository {
+class ResumeRepository(private val apiKeyDataSource: ApiKeyDataSource) {
 
     fun create(
         id: String,
@@ -27,7 +29,8 @@ class ResumeRepository {
             body,
             PrimerRoutes.buildResumePaymentsUrl(id),
             environment,
-            true
+            true,
+            apiKey = apiKeyDataSource.getApiKey(environment.type())
         )
         client.newCall(request).enqueue(object : Callback {
 
@@ -42,7 +45,7 @@ class ResumeRepository {
                         val transactionResponse = GsonBuilder()
                             .setLenient()
                             .create()
-                            .fromJson(response.body()?.string(), TransactionResponse::class.java)
+                            .fromJson(response.body?.string(), TransactionResponse::class.java)
                         callback(transactionResponse)
                         stateCallback(transactionResponse.status)
                     } else {

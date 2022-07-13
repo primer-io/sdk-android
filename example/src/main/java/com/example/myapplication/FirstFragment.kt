@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentFirstBinding
+import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
 import com.example.myapplication.viewmodels.MainViewModel
@@ -40,7 +43,9 @@ class FirstFragment : Fragment() {
         configureCountryTextField()
         configureAmountTextField()
         configurePaymentHandlingViews()
+        configureEnvSetup()
         configureNextButton()
+        configureEnvDropDown()
 
         viewModel.canLaunchPrimer.observe(viewLifecycleOwner) { canLaunch ->
             binding.nextButton.isEnabled = canLaunch
@@ -49,6 +54,46 @@ class FirstFragment : Fragment() {
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
             viewModel.countryCode.postValue(country)
             binding.countryItem.setText(country.flag)
+        }
+        viewModel.environment.observe(viewLifecycleOwner) { env ->
+            when (env) {
+                PrimerEnv.Sandbox -> binding.dropDownEnvironment.setSelection(ENV_SANDBOX_ID)
+                PrimerEnv.Dev -> binding.dropDownEnvironment.setSelection(ENV_DEV_ID)
+                PrimerEnv.Staging -> binding.dropDownEnvironment.setSelection(ENV_STAGING_ID)
+                PrimerEnv.Production -> binding.dropDownEnvironment.setSelection(ENV_PROD_ID)
+            }
+        }
+        viewModel.apiKeyLiveData.observe(viewLifecycleOwner) { apiKey ->
+            binding.apiKeyTextField.setText(apiKey)
+        }
+    }
+
+    private fun configureEnvDropDown() {
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.app_environments,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.dropDownEnvironment.adapter = adapter
+        }
+        binding.dropDownEnvironment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    ENV_SANDBOX_ID -> viewModel.setCurrentEnv(PrimerEnv.Sandbox)
+                    ENV_DEV_ID -> viewModel.setCurrentEnv(PrimerEnv.Dev)
+                    ENV_STAGING_ID -> viewModel.setCurrentEnv(PrimerEnv.Staging)
+                    ENV_PROD_ID -> viewModel.setCurrentEnv(PrimerEnv.Production)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+    }
+
+    private fun configureEnvSetup() {
+        binding.apiKeyTextField.addTextChangedListener {
+            viewModel.setApiKeyForSelectedEnv(it?.toString())
         }
     }
 
@@ -121,5 +166,10 @@ class FirstFragment : Fragment() {
 
     private companion object {
         const val INVALID_AMOUNT_MESSAGE = "Invalid amount."
+
+        private const val ENV_SANDBOX_ID = 0
+        private const val ENV_DEV_ID = 1
+        private const val ENV_STAGING_ID = 2
+        private const val ENV_PROD_ID = 3
     }
 }

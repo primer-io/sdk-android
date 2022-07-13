@@ -4,16 +4,12 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.RelativeLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
@@ -22,16 +18,14 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.di.BANK_SELECTOR_SCOPE
-import io.primer.android.di.DIAppComponent
-import io.primer.android.ui.extensions.getCollapsedSheetHeight
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.BankSelectionAdapter
 import io.primer.android.ui.BankSelectionAdapterListener
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.fragments.CheckoutSheetFragment
+import io.primer.android.ui.extensions.getCollapsedSheetHeight
 import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.utils.ImageLoader
-import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,14 +37,11 @@ import org.koin.core.qualifier.named
 @ExperimentalCoroutinesApi
 @KoinApiExtension
 internal abstract class BaseBankSelectionFragment :
-    Fragment(),
-    BankSelectionAdapterListener,
-    DIAppComponent {
+    BaseFragment(),
+    BankSelectionAdapterListener {
 
     protected val tokenizationViewModel by viewModel<TokenizationViewModel>()
-    protected val primerViewModel by activityViewModels<PrimerViewModel>()
 
-    protected val theme: PrimerTheme by inject()
     private val imageLoader: ImageLoader by inject()
 
     private var adapter: BankSelectionAdapter by autoCleaned {
@@ -168,13 +159,6 @@ internal abstract class BaseBankSelectionFragment :
                     }
             }
         })
-    }
-
-    protected fun adjustBottomSheetState(state: Int) {
-        val parent = (parentFragment as CheckoutSheetFragment).view?.parent as View
-        val behaviour =
-            (parent.layoutParams as CoordinatorLayout.LayoutParams).behavior as BottomSheetBehavior
-        behaviour.state = state
     }
 
     private fun loadData() {

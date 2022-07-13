@@ -53,7 +53,5 @@ internal class ActionInteractor(
                     CheckoutEvent.ClientSessionUpdateSuccess(it.clientSession)
                 )
             }.map { }
-        }
-            .onEmpty { emit(Unit) }
-            .flowOn(dispatcher)
+        }.onEmpty { emit(Unit) }.flowOn(dispatcher)
 }

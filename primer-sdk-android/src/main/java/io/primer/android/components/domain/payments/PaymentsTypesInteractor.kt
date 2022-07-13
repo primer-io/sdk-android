@@ -5,14 +5,14 @@ import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseInteractor
 import io.primer.android.domain.base.None
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -39,8 +39,7 @@ internal class PaymentsTypesInteractor(
             .mapLatest {
                 it.filter { it.isAvailableOnHUC() }
             }
-    }
-        .flowOn(dispatcher)
+    }.flowOn(dispatcher)
         .onEach { paymentMethodType ->
             eventDispatcher.dispatchEvent(
                 CheckoutEvent.ConfigurationSuccess(

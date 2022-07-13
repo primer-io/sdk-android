@@ -1,12 +1,14 @@
 package io.primer.android.components.domain.inputs
 
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.domain.inputs.models.needAdd
+import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.models.CheckoutModuleType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.logging.Logger
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.logging.Logger
 
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
@@ -18,20 +20,52 @@ internal class PaymentInputTypesInteractor(
         try {
             return when (paymentMethodType) {
                 PaymentMethodType.PAYMENT_CARD -> {
-                    val postalCode =
+                    val billingAddressesFields =
                         checkoutModuleRepository.getCheckoutModuleOptions(
                             CheckoutModuleType.BILLING_ADDRESS
-                        ).let {
-                            if (it?.get("all") ?: it?.get("postalCode") == true)
-                                PrimerInputElementType.POSTAL_CODE else null
+                        ).let { configs ->
+                            val addressFields = mutableListOf<PrimerInputElementType>()
+                            configs?.needAdd(PrimerInputElementType.POSTAL_CODE)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.COUNTRY_CODE)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.CITY)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.STATE)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_1)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_2)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.PHONE_NUMBER)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.FIRST_NAME)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            configs?.needAdd(PrimerInputElementType.LAST_NAME)?.let { field ->
+                                addressFields.add(field)
+                            }
+                            addressFields
                         }
 
                     val cardName =
                         checkoutModuleRepository.getCheckoutModuleOptions(
                             CheckoutModuleType.CARD_INFORMATION
-                        ).let {
-                            if (it?.get("all") ?: it?.get("cardHolderName") != false)
-                                PrimerInputElementType.CARDHOLDER_NAME else null
+                        ).let { configs ->
+                            val containsCardholders =
+                                configs?.via(PrimerInputElementType.ALL) ?: configs?.via(
+                                    PrimerInputElementType.CARDHOLDER_NAME
+                                )
+                            if (
+                                containsCardholders != false
+                            ) PrimerInputElementType.CARDHOLDER_NAME else null
                         }
 
                     listOf(
@@ -39,8 +73,8 @@ internal class PaymentInputTypesInteractor(
                         PrimerInputElementType.EXPIRY_DATE,
                         PrimerInputElementType.CVV
                     )
-                        .plus(postalCode)
                         .plus(cardName)
+                        .plus(billingAddressesFields)
                         .filterNotNull()
                 }
                 else -> emptyList()

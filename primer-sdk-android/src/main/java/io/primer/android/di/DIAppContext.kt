@@ -22,6 +22,7 @@ internal object DIAppContext {
                     ClientToken.fromString(config.clientTokenBase64.orEmpty())
                 ),
                 PaymentMethodsModule(),
+                countriesModule(),
                 formsModule(),
                 apayaModule(),
                 asyncPaymentMethodModule(),
