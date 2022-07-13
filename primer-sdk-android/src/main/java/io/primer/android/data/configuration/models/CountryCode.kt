@@ -20,6 +20,7 @@ enum class CountryCode {
     AU,
     AT,
     AZ,
+    AS,
     BS,
     BH,
     BD,
@@ -86,6 +87,7 @@ enum class CountryCode {
     GM,
     GE,
     DE,
+    DO,
     GH,
     GI,
     GR,
@@ -111,6 +113,8 @@ enum class CountryCode {
     IM,
     IL,
     IT,
+    IS,
+    IN,
     JM,
     JP,
     JE,
@@ -247,7 +251,17 @@ enum class CountryCode {
     VI,
     WF,
     EH,
+    XK,
     YE,
     ZM,
     ZW,
+}
+
+private const val FLAG_OFFSET = 0x1F1E6
+private const val FLAG_ASCII_OFFSET = 0x41
+
+fun CountryCode.emojiFlag(): String {
+    val firstChar = Character.codePointAt(this.name, 0) - FLAG_ASCII_OFFSET + FLAG_OFFSET
+    val secondChar = Character.codePointAt(this.name, 1) - FLAG_ASCII_OFFSET + FLAG_OFFSET
+    return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
 }

@@ -25,6 +25,7 @@ import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
@@ -120,19 +121,23 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun setTokenizableValue(key: String, value: String) {
+    fun setTokenizableValue(key: String, value: String, withValidation: Boolean = true) {
         paymentMethod?.let { pm ->
             pm.setTokenizableValue(key, value)
-            validationErrors.value = pm.validate()
+            if (withValidation) validationErrors.value = pm.validate()
             autoFocusFields.value = pm.getValidAutoFocusableFields()
         }
     }
 
-    fun setCardHasZipCode(value: Boolean) = (paymentMethod as? CreditCard)
-        ?.let { card -> card.hasPostalCode = value }
-
-    fun setCardHasCardholderName(value: Boolean) = (paymentMethod as? CreditCard)
-        ?.let { card -> card.hasCardholderName = value }
+    fun setCardHasFields(fields: Map<String, Boolean>?) {
+        val availableFields = mutableMapOf<PrimerInputElementType, Boolean>()
+        for ((key, value) in fields.orEmpty()) {
+            PrimerInputElementType.fieldOf(key)?.let { fieldType ->
+                availableFields[fieldType] = value
+            }
+        }
+        (paymentMethod as? CreditCard)?.availableFields?.putAll(availableFields)
+    }
 
     fun getDeeplinkUrl() = viewModelScope.launch {
         asyncPaymentMethodDeeplinkInteractor(None()).collect {
@@ -444,6 +449,13 @@ internal class TokenizationViewModel(
                 }
         }
     }
+
+    fun clearInputField(type: PrimerInputElementType) {
+        paymentMethod?.clearInputField(type)
+    }
+
+    fun hasField(inputType: PrimerInputElementType): Boolean = paymentMethod
+        ?.hasFieldValue(inputType) ?: false
 
     // endregion
 }

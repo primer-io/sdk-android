@@ -168,10 +168,12 @@ internal class FormFieldsFragment : FormChildFragment() {
 
                         inputLayout.boxStrokeErrorColor = ColorStateList.valueOf(Color.RED)
 
-                        inputField.error = if (value == null) null else requireContext().getString(
-                            value.errorId,
-                            requireContext().getString(value.fieldId)
-                        )
+                        inputField.error = if (value == null) null else value.errorFormatId?.let {
+                            requireContext().getString(
+                                value.errorFormatId,
+                                requireContext().getString(value.fieldId)
+                            )
+                        } ?: value.errorId?.let { requireContext().getString(it) }
                     }
                 }
             }

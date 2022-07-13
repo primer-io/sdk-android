@@ -24,7 +24,7 @@ class PaymentInstrumentsRepository {
             environment,
             true
         )
-        client.cache()?.delete()
+        client.cache?.delete()
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
@@ -37,7 +37,7 @@ class PaymentInstrumentsRepository {
 
                     val tokenResponse = GsonBuilder()
                         .create()
-                        .fromJson(response.body()?.string(), PaymentInstrumentsResponse::class.java)
+                        .fromJson(response.body?.string(), PaymentInstrumentsResponse::class.java)
 
                     callback(tokenResponse.data)
                 }

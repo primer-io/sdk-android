@@ -14,6 +14,7 @@ import com.example.myapplication.datamodels.TransactionRequest
 import com.example.myapplication.datamodels.TransactionResponse
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.datamodels.toTransactionState
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.repositories.ClientSessionRepository
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.PaymentInstrumentsRepository
@@ -21,8 +22,8 @@ import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.repositories.ResumeRepository
 import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
-import io.primer.android.PrimerCheckoutListener
 import io.primer.android.Primer
+import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerCardPaymentOptions
@@ -36,19 +37,21 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.ui.settings.PrimerUIOptions
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.UUID
 
 @Keep
 class MainViewModel(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
+    private val apiKeyDataSource: ApiKeyDataSource
 ) : ViewModel() {
 
-    private val clientSessionRepository = ClientSessionRepository()
     private val paymentInstrumentsRepository = PaymentInstrumentsRepository()
-    private val paymentsRepository = PaymentsRepository()
-    private val resumeRepository = ResumeRepository()
+    private val clientSessionRepository = ClientSessionRepository(apiKeyDataSource)
+    private val paymentsRepository = PaymentsRepository(apiKeyDataSource)
+    private val resumeRepository = ResumeRepository(apiKeyDataSource)
 
     enum class Mode {
         CHECKOUT, VAULT;
@@ -58,7 +61,9 @@ class MainViewModel(
 
     val mode = MutableLiveData(Mode.CHECKOUT)
 
-    private val client: OkHttpClient = OkHttpClient.Builder().build()
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor())
+        .build()
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
 
@@ -84,7 +89,22 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
+    fun setCurrentEnv(env: PrimerEnv) {
+        environment.postValue(env)
+        this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
+    }
+
+    val apiKeyLiveData = MutableLiveData<String>(apiKeyDataSource
+        .getApiKey(environment.value ?: PrimerEnv.Dev))
+    fun setApiKeyForSelectedEnv(apiKey: String?) {
+        val env = environment.value ?: return
+        if (!apiKey.isNullOrBlank()) {
+            this.apiKeyDataSource.setApiKey(env, apiKey)
+        } else {
+            this.apiKeyDataSource.setApiKey(env, null)
+        }
+    }
 
     private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
     val amount: LiveData<Int> = _amount

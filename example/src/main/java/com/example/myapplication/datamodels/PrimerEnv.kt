@@ -7,3 +7,5 @@ enum class PrimerEnv(val environment: String) {
     Staging("staging"),
     Dev("dev"),
 }
+
+fun String.type(): PrimerEnv = PrimerEnv.values().first { it.environment == this }

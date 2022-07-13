@@ -52,5 +52,17 @@
     <string name="payment_handling">Payment Handling</string>
     <string name="payment_handling_auto">AUTO</string>
     <string name="payment_handling_manual">MANUAL</string>
+    <string name="env_production">Production</string>
+    <string name="env_staging">Staging</string>
+    <string name="env_dev">Dev</string>
+    <string name="env_sandbox">Sandbox</string>
+    <string name="api_key">Put here API KEY</string>
+
+    <string-array name="app_environments">
+        <item>@string/env_sandbox</item>
+        <item>@string/env_dev</item>
+        <item>@string/env_staging</item>
+        <item>@string/env_production</item>
+    </string-array>
 
 </resources>

@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputLayout
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.di.DIAppComponent
+import io.primer.android.ui.settings.PrimerTheme
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
@@ -20,7 +20,7 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
 
     internal var onValueChanged: (CharSequence?) -> Unit = {}
 
-    private val theme: PrimerTheme by inject()
+    private val theme: PrimerTheme by if (isInEditMode) lazy { PrimerTheme.build() } else inject()
 
     init {
         val colors = intArrayOf(

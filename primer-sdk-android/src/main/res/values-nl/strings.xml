@@ -32,12 +32,12 @@
     <string name="confirm_dd_mandate">Machtiging bevestigen</string>
     <string name="name">Naam</string>
     <string name="email">E-mail</string>
-    <string name="address_line_1">Adres regel 1</string>
-    <string name="address_line_2">Adres regel 2 (optioneel)</string>
-    <string name="address_city">Stad</string>
-    <string name="address_state">Staat</string>
-    <string name="address_country_code">Land</string>
-    <string name="address_postal_code">Postcode</string>
+    <string name="addressLine1">Adres regel 1</string>
+    <string name="addressLine2">Adres regel 2 (optioneel)</string>
+    <string name="cityLabel">Stad</string>
+    <string name="stateLabel">Staat</string>
+    <string name="countryLabel">Land</string>
+    <string name="postalCodeLabel">Postcode</string>
     <string name="dd_mandate_error">Controleer of al uw informatie correct is</string>
     <string name="dd_cancel_message">Wilt u het toevoegen van een bankrekening annuleren?</string>
     <string name="data_will_be_lost">Uw gegevens worden gewist</string>
@@ -45,6 +45,8 @@
     <string name="enter_email">Vul uw e-mailadres in</string>
     <string name="enter_address">Vul uw adres in</string>
     <string name="first_last_name">Voornaam en achternaam</string>
+    <string name="firstNameLabel">Voornaam</string>
+    <string name="lastNameLabel">Achternaam</string>
     <string name="bank_selection_title">Uw bank kiezen</string>
     <string name="bank_selection_hint">Banken zoeken</string>
     <string name="bank_selection_error_message">Bank kan niet worden geladen. Controleer uw verbinding en probeer het opnieuw.</string>
@@ -112,4 +114,15 @@
     <string name="label_authorized">Authorized</string>
     <string name="label_declined">Declined</string>
     <string name="label_failed">Failed</string>
+    <string name="country_search_hint">Land vinden</string>
+    <string name="billingAddressLabel">Factuuradres</string>
+    <string name="pay_with_card">Pay with card</string>
+    <string name="card_details">Card details</string>
+    <string name="postalCodeErrorRequired">Postcode is vereist</string>
+    <string name="countryCodeErrorRequired">Land is verplicht</string>
+    <string name="cityErrorRequired">Stad is vereist</string>
+    <string name="stateErrorRequired">Staat, regio of land is verplicht</string>
+    <string name="addressLine1ErrorRequired">Adresregel 1 is vereist</string>
+    <string name="firstNameErrorRequired">Voornaam is verplicht</string>
+    <string name="lastNameErrorRequired">Achternaam is verplicht</string>
 </resources>

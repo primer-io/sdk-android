@@ -117,4 +117,7 @@
     <color name="primer_dummy_apm_checked_border">#007AFF</color>
     <color name="primer_dummy_apm_light_unchecked_border">#E5E5EA</color>
 
+    <!-- curom folors for search text inputs in country selection screen -->
+    <color name="primer_country_selection_divider">#DBDBDB</color>
+
 </resources>

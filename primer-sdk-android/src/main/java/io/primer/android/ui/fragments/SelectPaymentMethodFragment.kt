@@ -30,6 +30,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @KoinApiExtension
+@Suppress("TooManyFunctions")
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
     companion object {

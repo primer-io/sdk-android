@@ -9,7 +9,9 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.datamodels.AppCountryCode
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.datasources.CountryDataSource
+import com.example.myapplication.repositories.AppApiKeyRepository
 import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.MainViewModelFactory
@@ -24,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var settingsViewModel: SettingsViewModel
 
+    private val apiKeyDataSource = AppApiKeyRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,12 +41,12 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        val countryDataSource = CountryDataSource(AppCountryCode.DE)
+        val countryDataSource = CountryDataSource(AppCountryCode.GB)
         val countryRepository = CountryRepository(countryDataSource)
 
         mainViewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(WeakReference(this), countryRepository),
+            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource),
         ).get(MainViewModel::class.java)
 
         settingsViewModel = ViewModelProvider(

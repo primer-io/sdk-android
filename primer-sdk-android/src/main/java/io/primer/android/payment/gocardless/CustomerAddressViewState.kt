@@ -15,32 +15,32 @@ class CustomerAddressViewState(buttonLabelId: Int, showProgress: Boolean) :
         fields = listOf(
             FormField(
                 name = DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_1,
-                labelId = R.string.address_line_1,
+                labelId = R.string.addressLine1,
                 required = true,
                 autoFocus = true,
                 inputType = FormField.Type.POSTAL_ADDRESS,
             ),
             FormField(
                 name = DD_FIELD_NAME_CUSTOMER_ADDRESS_LINE_2,
-                labelId = R.string.address_line_2,
+                labelId = R.string.addressLine2,
                 required = false,
                 inputType = FormField.Type.POSTAL_ADDRESS,
             ),
             FormField(
                 name = DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE,
-                labelId = R.string.address_postal_code,
+                labelId = R.string.postalCodeLabel,
                 required = true,
                 inputType = FormField.Type.TEXT,
             ),
             FormField(
                 name = DD_FIELD_NAME_CUSTOMER_ADDRESS_CITY,
-                labelId = R.string.address_city,
+                labelId = R.string.cityLabel,
                 required = true,
                 inputType = FormField.Type.TEXT,
             ),
             FormField(
                 name = DD_FIELD_NAME_CUSTOMER_ADDRESS_COUNTRY_CODE,
-                labelId = R.string.address_country_code,
+                labelId = R.string.countryLabel,
                 required = true,
                 inputType = FormField.Type.COUNTRY_CODE,
                 minLength = 2,

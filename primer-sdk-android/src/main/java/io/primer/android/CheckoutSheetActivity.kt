@@ -11,23 +11,23 @@ import com.google.android.gms.wallet.PaymentData
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
+import io.primer.android.components.domain.inputs.models.valueBy
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.data.payments.exception.PaymentMethodCancelledException
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
-import io.primer.android.ui.base.webview.BaseWebFlowPaymentData
-import io.primer.android.model.Serialization
-import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
-import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.model.Serialization
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -45,6 +45,7 @@ import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor.Companion.KLARNA_REQUEST_CODE
 import io.primer.android.payment.paypal.PayPalDescriptor
 import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.ui.base.webview.BaseWebFlowPaymentData
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import io.primer.android.ui.base.webview.WebViewClientType
@@ -242,7 +243,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
         klarna.setTokenizableValue(
             "klarnaCustomerToken",
-            data.optString("customerTokenId")
+            data.valueBy("customerTokenId")
         )
         klarna.setTokenizableValue("sessionData", data.getJSONObject("sessionData"))
 
@@ -304,6 +305,11 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         else -> Unit
     }
 
+    private val actionNavigateObserver = Observer<SelectedPaymentMethodBehaviour> { behaviour ->
+        behaviour ?: return@Observer
+        presentFragment(behaviour)
+    }
+
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
         if (descriptor == null) return@Observer
 
@@ -359,6 +365,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             selectedPaymentMethodBehaviourObserver
         )
         primerViewModel.checkoutEvent.observe(this, checkoutEventObserver)
+        primerViewModel.navigateActionEvent.observe(this, actionNavigateObserver)
 
         tokenizationViewModel.getDeeplinkUrl()
 
