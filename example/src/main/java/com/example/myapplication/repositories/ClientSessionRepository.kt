@@ -22,9 +22,17 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
         countryCode: String,
         currency: String,
         environment: String,
+        metadata: String?,
         callback: (token: String?) -> Unit,
     ) {
-        val body = ClientSession.Request.build(customerId, orderId, amount, countryCode, currency)
+        val body = ClientSession.Request.build(
+            customerId,
+            orderId,
+            amount,
+            countryCode,
+            currency,
+            metadata
+        )
         val request = HttpRequestUtil.generateRequest(
             body,
             PrimerRoutes.clientSession,

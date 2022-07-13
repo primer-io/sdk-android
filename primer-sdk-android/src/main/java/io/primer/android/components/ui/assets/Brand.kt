@@ -53,6 +53,17 @@ internal enum class Brand(
     COINBASE(R.drawable.ic_coinbase_logo, R.drawable.ic_coinbase_logo_square),
     TWOC2P(R.drawable.ic_2c2p_logo, R.drawable.ic_2c2p_logo_square),
     OPENNODE(R.drawable.ic_opennode_logo, R.drawable.ic_opennode_logo_square),
+    GCASH(
+        R.drawable.ic_logo_gcash,
+        R.drawable.ic_logo_gcash_square,
+        iconDarkResId = R.drawable.ic_logo_gcash_dark
+    ),
+    GRABPAY(
+        R.drawable.ic_logo_grab_pay_light,
+        R.drawable.ic_opennode_logo_square,
+        iconDarkResId = R.drawable.ic_logo_grab_pay_dark
+    ),
+    POLI(R.drawable.ic_logo_poli_light, iconDarkResId = R.drawable.ic_logo_poli_dark),
     UNKNOWN(0)
 }
 

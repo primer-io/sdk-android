@@ -11,6 +11,7 @@ interface ClientSession : ExampleAppRequestBody {
     val order: Order
     val customer: Customer
     val paymentMethod: PaymentMethod
+    val metadata: Map<String, String>?
 
     @Keep
     data class Request(
@@ -20,7 +21,8 @@ interface ClientSession : ExampleAppRequestBody {
         override val currencyCode: String,
         override val order: Order,
         override val customer: Customer,
-        override val paymentMethod: PaymentMethod
+        override val paymentMethod: PaymentMethod,
+        override val metadata: Map<String, String>? = null
     ) : ClientSession {
 
         companion object {
@@ -31,11 +33,25 @@ interface ClientSession : ExampleAppRequestBody {
                 amount: Int,
                 countryCode: String,
                 currency: String,
+                metadata: String?,
             ): Request {
+                var metadataMap: MutableMap<String, String>? = null
+                if (!metadata.isNullOrEmpty() && metadata.contains(":")) {
+                    val values = metadata.split(":")
+                    if (values.size % 2 == 0) {
+                        metadataMap = mutableMapOf()
+                        values.forEachIndexed { index, data ->
+                            if (index == 0 || index % 2 == 0) {
+                                metadataMap[data] = values[index + 1]
+                            }
+                        }
+                    }
+                }
                 return Request(
                     customerId = customerId,
                     orderId = "android-test-$orderId",
                     currencyCode = currency,
+                    metadata = metadataMap,
                     order = Order(
                         countryCode = countryCode,
                         lineItems = listOf(
@@ -140,6 +156,7 @@ interface ClientSession : ExampleAppRequestBody {
         override val order: Order,
         override val customer: Customer,
         override val paymentMethod: PaymentMethod,
+        override val metadata: Map<String, String>? = null
     ) : ClientSession
 
     @Keep
