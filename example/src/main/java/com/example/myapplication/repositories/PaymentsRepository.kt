@@ -4,6 +4,8 @@ import com.example.myapplication.constants.PrimerRoutes
 import com.example.myapplication.datamodels.TransactionRequest
 import com.example.myapplication.datamodels.TransactionResponse
 import com.example.myapplication.datamodels.TransactionStatus
+import com.example.myapplication.datamodels.type
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
 import okhttp3.Call
@@ -12,7 +14,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class PaymentsRepository {
+class PaymentsRepository(private val apiKeyDataSource: ApiKeyDataSource) {
 
     fun create(
         body: TransactionRequest,
@@ -22,7 +24,13 @@ class PaymentsRepository {
         stateCallback: (TransactionStatus) -> Unit,
     ) {
         val request =
-            HttpRequestUtil.generateRequest(body, PrimerRoutes.payments, environment, true)
+            HttpRequestUtil.generateRequest(
+                body,
+                PrimerRoutes.payments,
+                environment,
+                true,
+                apiKey = apiKeyDataSource.getApiKey(environment.type())
+            )
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(
@@ -35,7 +43,7 @@ class PaymentsRepository {
                 response.use {
                     if (response.isSuccessful) {
 
-                        val res = response.body()?.string()
+                        val res = response.body?.string()
 
                         val transactionResponse = GsonBuilder()
                             .setLenient()

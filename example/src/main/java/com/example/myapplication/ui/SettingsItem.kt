@@ -7,7 +7,6 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
-import io.primer.android.R
 
 class SettingsItem @JvmOverloads constructor(
     context: Context,
@@ -22,7 +21,7 @@ class SettingsItem @JvmOverloads constructor(
 
         // background
         val background = GradientDrawable()
-        val colors = intArrayOf(Color.DKGRAY, Color.GRAY)
+        val colors = intArrayOf(Color.LTGRAY, Color.GRAY)
         val states = arrayOf(
             intArrayOf(-android.R.attr.state_selected),
             intArrayOf(android.R.attr.state_selected),

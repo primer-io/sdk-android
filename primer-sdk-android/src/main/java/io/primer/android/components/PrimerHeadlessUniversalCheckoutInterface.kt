@@ -3,7 +3,7 @@ package io.primer.android.components
 import android.content.Context
 import android.view.View
 import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 

@@ -22,6 +22,8 @@ import io.primer.android.domain.action.validator.ActionUpdateFilter
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
+import io.primer.android.payment.billing.DefaultBillingAddressValidator
+import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerViewModel
@@ -51,6 +53,7 @@ internal val PaymentMethodsModule = {
         single { PaymentMethodDescriptorFactoryRegistry(get()) }
         single { PaymentMethodListFactory(get()) }
         single<PaymentMethodMapping> { DefaultPaymentMethodMapping(get()) }
+        single<BillingAddressValidator> { DefaultBillingAddressValidator() }
 
         single<PaymentMethodsRepository> {
             PaymentMethodsDataRepository(
@@ -113,6 +116,7 @@ internal val PaymentMethodsModule = {
 
         viewModel {
             PrimerViewModel(
+                get(),
                 get(),
                 get(),
                 get(),

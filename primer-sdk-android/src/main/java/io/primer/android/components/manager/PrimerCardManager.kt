@@ -3,13 +3,13 @@ package io.primer.android.components.manager
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.ui.widgets.PrimerCardNumberEditText
 import io.primer.android.components.ui.widgets.PrimerCvvEditText
 import io.primer.android.components.ui.widgets.PrimerEditText
 import io.primer.android.components.ui.widgets.PrimerInputElementCardNumberListener
 import io.primer.android.components.ui.widgets.PrimerTextChangedListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
 import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 
 @ExperimentalPrimerApi

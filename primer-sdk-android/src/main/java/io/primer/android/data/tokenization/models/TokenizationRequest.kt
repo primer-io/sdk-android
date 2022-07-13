@@ -21,8 +21,7 @@ internal fun TokenizationParams.toTokenizationRequest(): TokenizationRequest {
             paymentMethodDescriptor.toPaymentInstrument().toJson()
         )
         PrimerSessionIntent.VAULT -> TokenizationVaultRequest(
-            paymentMethodDescriptor.toPaymentInstrument()
-                .toJson(),
+            paymentMethodDescriptor.toPaymentInstrument().toJson(),
             TokenType.MULTI_USE.name,
             paymentMethodIntent.toString()
         )

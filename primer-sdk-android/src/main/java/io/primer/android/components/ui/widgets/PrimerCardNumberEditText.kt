@@ -5,7 +5,7 @@ import android.text.Editable
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
-import io.primer.android.components.ui.widgets.elements.PrimerInputElementType
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.CardType
 import io.primer.android.ui.TextInputMask

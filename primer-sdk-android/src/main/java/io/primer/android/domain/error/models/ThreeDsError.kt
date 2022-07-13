@@ -12,6 +12,7 @@ internal sealed class ThreeDsError : PrimerError() {
 
     class ThreeDsChallengeFailedError(
         internal val reason: String?,
+        internal val message: String?
     ) : ThreeDsError() {
         override val exposedError: PrimerError
             get() = this
@@ -36,7 +37,7 @@ internal sealed class ThreeDsError : PrimerError() {
             is ThreeDsInitError -> "Cannot perform 3DS due to security reasons. $message"
             is ThreeDsConfigurationError ->
                 "Cannot perform 3DS due to invalid configuration. $message"
-            is ThreeDsChallengeFailedError -> reason ?: "3DS Challenge failed."
+            is ThreeDsChallengeFailedError -> "3DS Challenge failed due to $reason. $message"
             is ThreeDsLibraryError -> "Cannot perform 3DS due to missing library on classpath."
             is ThreeDsUnknownError -> "An unknown error occurred while trying to perform 3DS."
         }

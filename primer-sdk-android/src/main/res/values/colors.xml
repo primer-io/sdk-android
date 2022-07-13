@@ -40,6 +40,9 @@
     <color name="iterac">#FEB92B</color>
     <color name="paytrail">#E50C96</color>
     <color name="payshop">#EE3424</color>
+    <color name="gcash">#297BFA</color>
+    <color name="grabpay">#01B14E</color>
+    <color name="poli">#2F4398</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->
@@ -116,5 +119,8 @@
     <color name="primer_dummy_apm_text_color_description">#75757B</color>
     <color name="primer_dummy_apm_checked_border">#007AFF</color>
     <color name="primer_dummy_apm_light_unchecked_border">#E5E5EA</color>
+
+    <!-- curom folors for search text inputs in country selection screen -->
+    <color name="primer_country_selection_divider">#DBDBDB</color>
 
 </resources>

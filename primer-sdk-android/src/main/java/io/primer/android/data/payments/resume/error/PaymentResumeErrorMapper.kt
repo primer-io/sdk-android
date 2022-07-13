@@ -21,6 +21,7 @@ internal class PaymentResumeErrorMapper : DefaultErrorMapper() {
             is ThreeDsInitException -> ThreeDsError.ThreeDsInitError(throwable.message.orEmpty())
             is ThreeDsFailedException -> ThreeDsError.ThreeDsChallengeFailedError(
                 throwable.errorCode,
+                throwable.message
             )
             is HttpException ->
                 when (throwable.isClientError()) {

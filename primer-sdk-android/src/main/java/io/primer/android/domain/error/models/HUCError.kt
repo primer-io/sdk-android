@@ -48,7 +48,7 @@ internal sealed class HUCError : PrimerError() {
                 "Please ensure you are calling 'start' method before calling this method."
             is MissingConfigurationError ->
                 "Please ensure that you have an active internet connection." +
-                    " Contact Primer and provide them diagnostics id $diagnosticsId"
+                    " Contact Primer and provide us with diagnostics id $diagnosticsId"
             is InvalidTokenizationInputDataError ->
                 "Make sure you provide data of type $inputData " +
                     "for payment method $paymentMethodType."

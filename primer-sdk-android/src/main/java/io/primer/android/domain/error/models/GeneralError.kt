@@ -7,9 +7,7 @@ internal sealed class GeneralError : PrimerError() {
     object MissingConfigurationError : GeneralError()
 
     class UnknownError(
-        override val diagnosticsId: String,
-        override val description: String =
-            "Contact Primer and provide them diagnostics id $diagnosticsId",
+        override val description: String,
         override val recoverySuggestion: String? = null
     ) : GeneralError()
 
@@ -32,9 +30,9 @@ internal sealed class GeneralError : PrimerError() {
 
     override val recoverySuggestion: String?
         get() = when (this) {
-            is UnknownError -> "Contact Primer and provide them diagnostics id $diagnosticsId"
+            is UnknownError -> "Contact Primer and provide us with diagnostics id $diagnosticsId"
             is MissingConfigurationError ->
                 "Check if you have an active internet connection." +
-                    " Contact Primer and provide them diagnostics id $diagnosticsId"
+                    " Contact Primer and provide us with diagnostics id $diagnosticsId"
         }
 }

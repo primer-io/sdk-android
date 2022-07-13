@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="@dimen/loading_height"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/small_padding"
+                android:padding="15dp"
+                android:src="@drawable/icon_go_back" />
+
+            <io.primer.android.ui.components.SearchViewWidget
+                android:id="@+id/searchCountry"
+                style="@style/Primer.Text.Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/medium_large_padding"
+                android:background="@android:color/transparent"
+                android:drawableEnd="@drawable/ic_search"
+                android:hint="@string/country_search_hint"
+                android:paddingHorizontal="@dimen/medium_padding"
+                android:paddingVertical="@dimen/medium_padding" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/chooseCountryDivider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="@dimen/large_vertical_margin"
+            android:background="@drawable/divider_country_selection" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCountries"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/choose_bank_divider_top"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </LinearLayout>
+
+</LinearLayout>

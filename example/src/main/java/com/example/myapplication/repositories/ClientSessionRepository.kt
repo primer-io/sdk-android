@@ -2,6 +2,8 @@ package com.example.myapplication.repositories
 
 import com.example.myapplication.constants.PrimerRoutes
 import com.example.myapplication.datamodels.ClientSession
+import com.example.myapplication.datamodels.type
+import com.example.myapplication.datasources.ApiKeyDataSource
 import com.example.myapplication.utils.HttpRequestUtil
 import com.google.gson.GsonBuilder
 import okhttp3.Call
@@ -10,7 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class ClientSessionRepository {
+class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
 
     fun fetch(
         client: OkHttpClient,
@@ -20,11 +22,24 @@ class ClientSessionRepository {
         countryCode: String,
         currency: String,
         environment: String,
+        metadata: String?,
         callback: (token: String?) -> Unit,
     ) {
-        val body = ClientSession.Request.build(customerId, orderId, amount, countryCode, currency)
-        val request = HttpRequestUtil.generateRequest(body, PrimerRoutes.clientSession, environment)
-        client.cache()?.delete()
+        val body = ClientSession.Request.build(
+            customerId,
+            orderId,
+            amount,
+            countryCode,
+            currency,
+            metadata
+        )
+        val request = HttpRequestUtil.generateRequest(
+            body,
+            PrimerRoutes.clientSession,
+            environment,
+            apiKey = apiKeyDataSource.getApiKey(environment.type())
+        )
+        client.cache?.delete()
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
@@ -37,7 +52,7 @@ class ClientSessionRepository {
 
                     val tokenResponse = GsonBuilder()
                         .create()
-                        .fromJson(response.body()?.string(), ClientSession.Response::class.java)
+                        .fromJson(response.body?.string(), ClientSession.Response::class.java)
 
                     callback(tokenResponse.clientToken)
                 }
