@@ -192,6 +192,10 @@
     public *;
 }
 
+-keep enum  io.primer.android.components.domain.inputs.models.PrimerInputElementType {
+    *;
+}
+
 -keepclassmembers,allowoptimization enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
