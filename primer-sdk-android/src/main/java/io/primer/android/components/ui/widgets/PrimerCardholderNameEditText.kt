@@ -6,7 +6,7 @@ import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
-internal class PrimerCardholderNameEditText(context: Context, attrs: AttributeSet? = null) :
+class PrimerCardholderNameEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
     override fun getText(): Editable? {
