@@ -28,30 +28,30 @@ internal class PaymentInputTypesInteractor(
                             configs?.needAdd(PrimerInputElementType.POSTAL_CODE)?.let { field ->
                                 addressFields.add(field)
                             }
-                            configs?.needAdd(PrimerInputElementType.COUNTRY_CODE)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.CITY)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.STATE)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_1)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_2)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.PHONE_NUMBER)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.FIRST_NAME)?.let { field ->
-                                addressFields.add(field)
-                            }
-                            configs?.needAdd(PrimerInputElementType.LAST_NAME)?.let { field ->
-                                addressFields.add(field)
-                            }
+//                            configs?.needAdd(PrimerInputElementType.COUNTRY_CODE)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.CITY)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.STATE)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_1)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.ADDRESS_LINE_2)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.PHONE_NUMBER)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.FIRST_NAME)?.let { field ->
+//                                addressFields.add(field)
+//                            }
+//                            configs?.needAdd(PrimerInputElementType.LAST_NAME)?.let { field ->
+//                                addressFields.add(field)
+//                            }
                             addressFields
                         }
 
