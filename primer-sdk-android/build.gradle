@@ -78,7 +78,6 @@ dependencies {
     implementation AndroidDependencies.Lifecycle.viewModelSavedState
 
     implementation 'com.google.android.gms:play-services-wallet:19.1.0'
-    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3'
     implementation 'com.hbb20:ccp:2.6.0'
 
     compileOnly Dependencies.ThreeDs.primer3ds
