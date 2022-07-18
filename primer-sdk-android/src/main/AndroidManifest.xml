@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -41,7 +42,19 @@
             android:name=".WebBrowserInteropActivity"
             android:exported="true"
             android:label=""
-            android:theme="@android:style/Theme.NoDisplay" />
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.NoDisplay">
+
+            <intent-filter>
+                <data android:scheme="${applicationId}.primer" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
 
         <activity
             android:name=".ui.base.webview.WebViewActivity"
