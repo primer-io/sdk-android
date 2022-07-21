@@ -65,6 +65,7 @@ enum class PaymentMethodType(
     RAPYD_GRABPAY(ClientTokenIntent.RAPYD_GRABPAY_REDIRECTION, Brand.GRABPAY),
     RAPYD_POLI(ClientTokenIntent.RAPYD_POLI_REDIRECTION, Brand.POLI),
     RAPYD_FAST(ClientTokenIntent.RAPYD_FAST_REDIRECTION, Brand.FAST),
+    RAPYD_PROMPTPAY(ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION, Brand.PROMPTPAY),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);
@@ -128,6 +129,7 @@ internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
         PaymentMethodType.PRIMER_TEST_PAYPAL,
         PaymentMethodType.PRIMER_TEST_SOFORT,
         PaymentMethodType.RAPYD_FAST,
+        PaymentMethodType.RAPYD_PROMPTPAY,
         PaymentMethodType.UNKNOWN -> false
     }
 }

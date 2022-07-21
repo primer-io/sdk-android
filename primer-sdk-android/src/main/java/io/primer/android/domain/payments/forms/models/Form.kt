@@ -12,6 +12,7 @@ internal data class Form(
     val qrCode: String? = null,
     val accountNumber: String? = null,
     val expiration: String? = null,
+    val qrCodeUrl: String? = null,
 )
 
 internal data class FormInput(

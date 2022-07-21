@@ -18,7 +18,8 @@ internal data class ClientToken(
     val redirectUrl: String? = null,
     val qrCode: String? = null,
     val accountNumber: String? = null,
-    val expiration: String? = null
+    val expiration: String? = null,
+    val qrCodeUrl: String? = null
 ) {
 
     companion object {

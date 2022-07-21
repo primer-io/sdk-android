@@ -4,6 +4,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import io.primer.android.databinding.FragmentDynamicFormBinding
 import io.primer.android.databinding.FragmentFastBankTransferBinding
+import io.primer.android.databinding.FragmentPromptPayBinding
 import io.primer.android.databinding.FragmentQrCodeBinding
 
 internal class BaseFormBinding(
@@ -23,4 +24,8 @@ internal fun FragmentQrCodeBinding.toBaseFormBinding() = BaseFormBinding(
 
 internal fun FragmentFastBankTransferBinding.toBaseFormBinding() = BaseFormBinding(
     ivBack, ivPaymentMethodIcon, tvTitleComplete, tvTransferDescription
+)
+
+internal fun FragmentPromptPayBinding.toBaseFormBinding() = BaseFormBinding(
+    ivBack, ivPaymentMethodIcon, tvTitleComplete, tvDescription
 )

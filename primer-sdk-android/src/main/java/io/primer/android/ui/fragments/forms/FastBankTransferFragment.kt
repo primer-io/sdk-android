@@ -18,7 +18,8 @@ import io.primer.android.ui.extensions.copyTextToClipboard
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
@@ -122,7 +123,7 @@ internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
 
     companion object {
 
-        private const val DELAY_COPY_ICON = 2000L
+        private const val DELAY_COPY_ICON = 3000L
 
         private const val STATUS_URL_KEY = "STATUS_URL"
         private const val PAYMENT_METHOD_TYPE_KEY = "PAYMENT_METHOD_TYPE"

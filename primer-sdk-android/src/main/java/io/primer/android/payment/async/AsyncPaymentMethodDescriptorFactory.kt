@@ -27,6 +27,7 @@ import io.primer.android.payment.async.p24.P24PaymentMethodDescriptor
 import io.primer.android.payment.async.payconiq.PayconiqPaymentMethodDescriptor
 import io.primer.android.payment.async.paytrail.AdyenPayTrailPaymentMethodDescriptor
 import io.primer.android.payment.async.poli.RapydPoliPaymentMethodDescriptor
+import io.primer.android.payment.async.promptpay.RapydPromptPayPaymentMethodDescriptor
 import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.PrimerTestSofortPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.SofortPaymentMethodDescriptor
@@ -208,6 +209,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.RAPYD_FAST -> RapydFastPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.RAPYD_PROMPTPAY -> RapydPromptPayPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

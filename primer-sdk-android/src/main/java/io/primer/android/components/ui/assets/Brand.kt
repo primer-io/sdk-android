@@ -65,6 +65,10 @@ internal enum class Brand(
     ),
     POLI(R.drawable.ic_logo_poli_light, iconDarkResId = R.drawable.ic_logo_poli_dark),
     FAST(R.drawable.ic_logo_fast_light, iconDarkResId = R.drawable.ic_logo_fast_dark),
+    PROMPTPAY(
+        R.drawable.ic_logo_promptpay_dark,
+        iconLightResId = R.drawable.ic_logo_promptpay_light
+    ),
     UNKNOWN(0)
 }
 

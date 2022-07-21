@@ -15,6 +15,8 @@ internal class LocalFormDataSourceFactory(private val primerTheme: PrimerTheme) 
             PaymentMethodType.XFERS_PAYNOW -> XfersLocalFormDataSource(clientToken)
             PaymentMethodType.RAPYD_FAST ->
                 FastBankTransferLocalFormDataSource(primerTheme, clientToken)
+            PaymentMethodType.RAPYD_PROMPTPAY ->
+                PromptPayLocalFormDataSource(primerTheme, clientToken)
             else -> throw IllegalStateException("Invalid paymentMethodType $paymentMethodType")
         }
 }
