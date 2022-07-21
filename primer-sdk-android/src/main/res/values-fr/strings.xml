@@ -125,4 +125,7 @@
     <string name="addressLine1ErrorRequired">La ligne 1 du champ \'adresse\' est obligatoire</string>
     <string name="firstNameErrorRequired">Le prénom est obligatoire</string>
     <string name="lastNameErrorRequired">Le nom de famille est obligatoire</string>
+    <string name="completeYourPayment">Complete your payment</string>
+    <string name="dueAt">Due at</string>
+    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
 </resources>

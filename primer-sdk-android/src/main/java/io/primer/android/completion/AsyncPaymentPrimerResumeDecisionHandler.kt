@@ -41,6 +41,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
         )
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.XFERS_PAYNOW_REDIRECTION,
+            ClientTokenIntent.RAPYD_FAST_REDIRECTION,
             ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
                 eventDispatcher.dispatchEvents(
                     listOf(

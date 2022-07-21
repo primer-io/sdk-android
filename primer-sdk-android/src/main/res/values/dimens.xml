@@ -31,8 +31,10 @@
     <dimen name="small_padding">4dp</dimen>
     <dimen name="medium_padding">8dp</dimen>
     <dimen name="medium_large_padding">10dp</dimen>
+    <dimen name="large_padding">16dp</dimen>
 
     <dimen name="medium_vertical_margin">4dp</dimen>
+    <dimen name="x_medium_vertical_margin">12dp</dimen>
     <dimen name="large_vertical_margin">16dp</dimen>
     <dimen name="xl_vertical_margin">24dp</dimen>
     <dimen name="xxl_vertical_margin">28dp</dimen>

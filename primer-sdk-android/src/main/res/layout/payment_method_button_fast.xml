@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.primer.android.ui.components.ButtonDefaultLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sofort_preview_button"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/primer_payment_method_preview_button_height"
+    android:background="@drawable/button_light"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingTop="2sp">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/sofort"
+        android:src="@drawable/ic_logo_fast_light" />
+
+</io.primer.android.ui.components.ButtonDefaultLayout>

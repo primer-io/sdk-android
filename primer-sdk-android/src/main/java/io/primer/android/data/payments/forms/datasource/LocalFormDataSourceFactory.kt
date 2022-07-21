@@ -13,6 +13,8 @@ internal class LocalFormDataSourceFactory(private val primerTheme: PrimerTheme) 
             PaymentMethodType.ADYEN_MBWAY -> MbWayLocalFormDataSource()
             PaymentMethodType.ADYEN_BANK_TRANSFER -> SepaLocalFormDataSource(primerTheme)
             PaymentMethodType.XFERS_PAYNOW -> XfersLocalFormDataSource(clientToken)
+            PaymentMethodType.RAPYD_FAST ->
+                FastBankTransferLocalFormDataSource(primerTheme, clientToken)
             else -> throw IllegalStateException("Invalid paymentMethodType $paymentMethodType")
         }
 }

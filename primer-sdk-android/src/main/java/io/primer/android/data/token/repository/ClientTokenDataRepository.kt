@@ -19,4 +19,8 @@ internal class ClientTokenDataRepository(
     override fun getClientTokenIntent() = clientTokenDataSource.get().intent
 
     override fun getQrCode() = clientTokenDataSource.get().qrCode
+
+    override fun getAccountNumber() = clientTokenDataSource.get().accountNumber
+
+    override fun getExpiration() = clientTokenDataSource.get().expiration
 }

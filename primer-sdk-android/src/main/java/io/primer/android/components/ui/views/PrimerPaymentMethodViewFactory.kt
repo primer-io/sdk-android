@@ -58,6 +58,7 @@ internal class PrimerPaymentMethodViewFactory(val context: Context) {
             PaymentMethodType.RAPYD_GCASH -> R.layout.payment_method_button_gcash
             PaymentMethodType.RAPYD_GRABPAY -> R.layout.payment_method_button_grabpay
             PaymentMethodType.RAPYD_POLI -> R.layout.payment_method_button_poli
+            PaymentMethodType.RAPYD_FAST -> R.layout.payment_method_button_fast
             PaymentMethodType.ADYEN_MBWAY -> null
             PaymentMethodType.ADYEN_BANK_TRANSFER -> null
             PaymentMethodType.UNKNOWN -> null

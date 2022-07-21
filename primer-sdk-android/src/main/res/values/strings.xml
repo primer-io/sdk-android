@@ -145,4 +145,7 @@
     <string name="billingAddressLabel">Billing address</string>
     <string name="pay_with_card">Pay with card</string>
     <string name="card_details">Card details</string>
+    <string name="completeYourPayment">Complete your payment</string>
+    <string name="dueAt">Due at</string>
+    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
 </resources>

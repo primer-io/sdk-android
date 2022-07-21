@@ -109,6 +109,7 @@ internal class PaymentMethodsDataRepository(
         PaymentMethodType.RAPYD_GCASH -> p.type == PaymentMethodType.RAPYD_GCASH
         PaymentMethodType.RAPYD_GRABPAY -> p.type == PaymentMethodType.RAPYD_GRABPAY
         PaymentMethodType.RAPYD_POLI -> p.type == PaymentMethodType.RAPYD_POLI
+        PaymentMethodType.RAPYD_FAST -> p.type == PaymentMethodType.RAPYD_FAST
         PaymentMethodType.UNKNOWN -> false
         null -> false
     }

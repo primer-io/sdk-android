@@ -125,4 +125,7 @@
     <string name="addressLine1ErrorRequired">Adressrad 1 är obligatorisk</string>
     <string name="firstNameErrorRequired">Förnamn krävs</string>
     <string name="lastNameErrorRequired">Efternamn krävs</string>
+    <string name="completeYourPayment">Complete your payment</string>
+    <string name="dueAt">Due at</string>
+    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
 </resources>

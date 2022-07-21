@@ -397,4 +397,13 @@ internal class PaymentMethodMappingTest {
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
     }
+
+    @Test
+    fun `test maps rapyd fast correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (val result = factory.getPaymentMethodFor(PaymentMethodType.RAPYD_FAST)) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
 }

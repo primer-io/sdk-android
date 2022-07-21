@@ -1,5 +1,8 @@
 package io.primer.android.ui.extensions
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import io.primer.android.ui.utils.AutoClearedValue
@@ -15,4 +18,12 @@ private fun Fragment.popBackStackToIndex(index: Int) = childFragmentManager.appl
         getBackStackEntryAt(index).id,
         FragmentManager.POP_BACK_STACK_INCLUSIVE
     )
+}
+
+internal fun Fragment.copyTextToClipboard(text: String): Boolean {
+    val clipboardManager = (requireActivity().getSystemService<ClipboardManager>())
+    clipboardManager?.apply {
+        setPrimaryClip(ClipData.newPlainText("Primer SDK", text))
+    }
+    return clipboardManager != null
 }
