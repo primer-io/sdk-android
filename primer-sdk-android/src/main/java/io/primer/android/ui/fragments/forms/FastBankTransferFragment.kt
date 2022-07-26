@@ -17,8 +17,7 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.copyTextToClipboard
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.text.DateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -28,10 +27,7 @@ internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
 
-    private val dueDateFormat = SimpleDateFormat(
-        "HH:mm 'on' dd MMMM yyyy",
-        Locale.getDefault()
-    )
+    private val dueDateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
 
     override fun onCreateView(
         inflater: LayoutInflater,
