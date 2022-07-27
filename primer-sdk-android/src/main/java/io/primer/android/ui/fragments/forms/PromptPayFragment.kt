@@ -1,6 +1,5 @@
 package io.primer.android.ui.fragments.forms
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,9 +66,6 @@ internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
                     placeholder,
                     binding.ivQrImage
                 )
-            }
-            binding.ivQrImage.setOnClickListener {
-                startActivity(Intent.parseUri(qrCodeUrl, Intent.URI_ALLOW_UNSAFE))
             }
         }
     }

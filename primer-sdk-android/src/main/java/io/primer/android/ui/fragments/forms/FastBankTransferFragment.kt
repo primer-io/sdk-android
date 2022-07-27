@@ -79,7 +79,7 @@ internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
                     null,
                     null,
                     ContextCompat.getDrawable(
-                        requireContext(),
+                        context,
                         R.drawable.ic_copy_clipboard
                     ),
                     null
