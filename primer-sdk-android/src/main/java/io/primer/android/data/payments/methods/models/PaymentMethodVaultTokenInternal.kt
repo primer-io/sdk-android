@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class PaymentMethodVaultTokenInternal(
     private val id: String,
+    override val paymentMethodType: String? = null,
     override val paymentInstrumentType: String,
     override val paymentInstrumentData: PaymentInstrumentData? = null,
     override val vaultData: VaultData? = null,
@@ -57,6 +58,7 @@ internal fun PrimerPaymentMethodTokenData.toPaymentMethodVaultToken():
 
     return PaymentMethodVaultTokenInternal(
         id = token,
+        paymentMethodType = paymentInstrumentType,
         paymentInstrumentType = paymentInstrumentType,
         paymentInstrumentData = paymentInstrumentData,
         vaultData = vaultData,

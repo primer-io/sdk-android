@@ -119,6 +119,11 @@ interface ClientSession : ExampleAppRequestBody {
                                     amount = 140,
                                 )
                             ),
+                            KLARNA = PaymentMethodOption(
+                                surcharge = SurchargeOption(
+                                    amount = 140,
+                                )
+                            ),
                             PAYMENT_CARD = PaymentCardOption(
                                 networks = NetworkOptionGroup(
                                     VISA = NetworkOption(
@@ -213,7 +218,8 @@ interface ClientSession : ExampleAppRequestBody {
         val ADYEN_IDEAL: PaymentMethodOption? = null,
         val ADYEN_GIROPAY: PaymentMethodOption? = null,
         val ADYEN_TRUSTLY: PaymentMethodOption? = null,
-    ) {
+        val KLARNA: PaymentMethodOption? = null,
+        ) {
 
         companion object {
             val configuredValues: Set<String> = setOf(

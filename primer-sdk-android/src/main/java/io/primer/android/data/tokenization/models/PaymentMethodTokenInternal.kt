@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 internal data class PaymentMethodTokenInternal(
     override val token: String,
     override val paymentInstrumentType: String,
+    override val paymentMethodType: String? = paymentInstrumentType,
     override val paymentInstrumentData: PaymentInstrumentData? = null,
     override val vaultData: VaultData? = null,
     override val threeDSecureAuthentication: AuthenticationDetails? = null,

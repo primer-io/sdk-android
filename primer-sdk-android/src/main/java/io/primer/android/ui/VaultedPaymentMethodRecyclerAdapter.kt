@@ -8,16 +8,16 @@ import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.PaymentMethodItemVaultBinding
+import io.primer.android.ui.settings.PrimerTheme
 
 internal enum class PaymentItemStatus {
     UNSELECTED, SELECTED, EDITING
 }
 
 internal enum class AlternativePaymentMethodType {
-    PayPal, Klarna, DirectDebit, Generic
+    PayPal, Klarna, DirectDebit, Apaya, Generic
 }
 
 internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -67,6 +67,8 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     iconView.setImageResource(R.drawable.ic_klarna_card)
                 AlternativePaymentMethodType.DirectDebit ->
                     iconView.setImageResource(R.drawable.ic_directdebit_card)
+                AlternativePaymentMethodType.Apaya ->
+                    iconView.setImageResource(R.drawable.ic_logo_apaya)
                 AlternativePaymentMethodType.Generic ->
                     iconView.setImageResource(R.drawable.ic_generic_card)
             }
