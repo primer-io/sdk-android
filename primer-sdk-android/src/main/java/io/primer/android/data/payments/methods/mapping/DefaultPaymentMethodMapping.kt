@@ -69,6 +69,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
             PaymentMethodType.RAPYD_GCASH,
             PaymentMethodType.RAPYD_GRABPAY,
             PaymentMethodType.RAPYD_POLI,
+            PaymentMethodType.RAPYD_FAST,
+            PaymentMethodType.RAPYD_PROMPTPAY,
             -> AsyncMethodFactory(
                 type,
                 settings

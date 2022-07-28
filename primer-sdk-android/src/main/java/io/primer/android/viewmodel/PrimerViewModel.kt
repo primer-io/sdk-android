@@ -255,11 +255,10 @@ internal class PrimerViewModel(
     fun reselectSavedPaymentMethod() {
         val list = vaultedPaymentMethods.value ?: return
         val token = list.find { p -> p.token == getSelectedPaymentMethodId() } ?: return
-        val type = token.surchargeType
         val network = token.paymentInstrumentData?.binData?.network
         dispatchAction(
             ActionUpdateSelectPaymentMethodParams(
-                PaymentMethodType.safeValueOf(type),
+                PaymentMethodType.safeValueOf(token.paymentMethodType),
                 network
             )
         )

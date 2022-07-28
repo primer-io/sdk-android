@@ -43,6 +43,7 @@
     <color name="gcash">#297BFA</color>
     <color name="grabpay">#01B14E</color>
     <color name="poli">#2F4398</color>
+    <color name="promptpay">#023C68</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

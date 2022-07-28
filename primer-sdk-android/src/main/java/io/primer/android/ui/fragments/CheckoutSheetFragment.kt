@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -18,7 +20,6 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.CheckoutExitReason
-import io.primer.android.ui.KeyboardVisibilityEvent
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
@@ -28,7 +29,6 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),
-    KeyboardVisibilityEvent.OnChangedListener,
     DIAppComponent {
 
     companion object {
@@ -39,10 +39,6 @@ internal class CheckoutSheetFragment :
 
     private val theme: PrimerTheme by inject()
     private val viewModel: PrimerViewModel by activityViewModels()
-
-    override fun onKeyboardVisibilityChanged(visible: Boolean) {
-        viewModel.setKeyboardVisibility(visible)
-    }
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
@@ -59,12 +55,11 @@ internal class CheckoutSheetFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val window = requireDialog().window ?: return
-        KeyboardVisibilityEvent.subscribe(
-            window.decorView,
-            viewLifecycleOwner,
-            this
-        )
+        ViewCompat.setOnApplyWindowInsetsListener(view.rootView) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            viewModel.setKeyboardVisibility(imeVisible)
+            insets
+        }
     }
 
     override fun onStart() {

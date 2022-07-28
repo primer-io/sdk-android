@@ -12,21 +12,22 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.SessionState
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.di.DIAppComponent
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
-import io.primer.android.PrimerSessionIntent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @KoinApiExtension
@@ -268,24 +269,24 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         primerViewModel.setSelectedPaymentMethodId(paymentMethod.token)
         binding.savedPaymentMethod.apply {
-            when (paymentMethod.paymentInstrumentType) {
-                "KLARNA_CUSTOMER_TOKEN" -> {
+            when (paymentMethod.paymentMethodType) {
+                PaymentMethodType.KLARNA.name -> {
                     val title =
                         paymentMethod.paymentInstrumentData?.sessionData?.billingAddress?.email
                     renderAlternativeSavedPaymentMethodView(title)
                     paymentMethodIcon.setImageResource(R.drawable.ic_klarna_card)
                 }
-                "PAYPAL_BILLING_AGREEMENT" -> {
+                PaymentMethodType.PAYPAL.name -> {
                     val title =
                         paymentMethod.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
                     renderAlternativeSavedPaymentMethodView(title)
                     paymentMethodIcon.setImageResource(R.drawable.ic_paypal_card)
                 }
-                "GOCARDLESS_MANDATE" -> {
+                PaymentMethodType.GOCARDLESS.name -> {
                     renderAlternativeSavedPaymentMethodView("Direct Debit")
                     paymentMethodIcon.setImageResource(R.drawable.ic_directdebit_card)
                 }
-                "PAYMENT_CARD" -> {
+                PaymentMethodType.PAYMENT_CARD.name -> {
                     val data = paymentMethod.paymentInstrumentData
                     titleLabel.text = data?.cardholderName
                     val last4: Int = data?.last4Digits ?: throw Error("card data is invalid!")
@@ -296,6 +297,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                     expiryLabel.text =
                         getString(R.string.expiry_date, expirationMonth, expirationYear)
                     setCardIcon(data.network)
+                }
+                PaymentMethodType.APAYA.name -> {
+                    renderAlternativeSavedPaymentMethodView(
+                        paymentMethod.paymentInstrumentData?.hashedIdentifier
+                    )
+                    paymentMethodIcon.setImageResource(R.drawable.ic_logo_apaya)
                 }
                 else -> {
                     paymentMethodIcon.setImageResource(R.drawable.ic_generic_card)

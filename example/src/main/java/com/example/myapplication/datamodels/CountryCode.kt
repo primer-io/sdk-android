@@ -19,5 +19,6 @@ enum class AppCountryCode(val currencyCode: CurrencyCode, val flag: String) {
     DK(CurrencyCode.DKK, "🇩🇰"),
     CA(CurrencyCode.CAD, "🇨🇦"),
     US(CurrencyCode.USD, "🇺🇸"),
-    PH(CurrencyCode.PHP, "🇵🇭");
+    PH(CurrencyCode.PHP, "🇵🇭"),
+    TH(CurrencyCode.THB, "🇹🇭");
 }

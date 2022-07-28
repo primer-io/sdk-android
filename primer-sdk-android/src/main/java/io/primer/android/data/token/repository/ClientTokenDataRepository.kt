@@ -17,6 +17,4 @@ internal class ClientTokenDataRepository(
     override fun getStatusUrl() = clientTokenDataSource.get().statusUrl
 
     override fun getClientTokenIntent() = clientTokenDataSource.get().intent
-
-    override fun getQrCode() = clientTokenDataSource.get().qrCode
 }

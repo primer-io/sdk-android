@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:paddingBottom="@dimen/large_vertical_margin"
+    tools:context=".ui.fragments.forms.FastBankTransferFragment">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/go_back_description"
+        android:paddingTop="@dimen/large_vertical_margin"
+        android:paddingEnd="@dimen/large_vertical_margin"
+        android:paddingBottom="@dimen/large_vertical_margin"
+        android:src="@drawable/icon_go_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_payment_method_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="58dp"
+        android:layout_marginEnd="58dp"
+        android:contentDescription="@string/payment_method_icon"
+        android:maxHeight="58dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_back"
+        tools:src="@drawable/ic_logo_fast_light" />
+
+    <TextView
+        android:id="@+id/tv_title_complete"
+        style="@style/Primer.Text.Large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xxl_vertical_margin"
+        android:text="@string/completeYourPayment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_payment_method_icon" />
+
+    <ImageView
+        android:id="@+id/iv_calendar_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xl_vertical_margin"
+        android:src="@drawable/ic_calendar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title_complete" />
+
+    <TextView
+        android:id="@+id/tv_label_due_date"
+        style="@style/Primer.Text.Small.Muted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="@string/dueAt"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_calendar_icon"
+        app:layout_constraintStart_toEndOf="@+id/iv_calendar_icon"
+        app:layout_constraintTop_toTopOf="@+id/iv_calendar_icon" />
+
+    <TextView
+        android:id="@+id/tv_value_due_date"
+        style="@style/Primer.Text.Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_calendar_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_label_due_date"
+        app:layout_constraintTop_toTopOf="@+id/iv_calendar_icon"
+        tools:text="10:45 on 21 May 2024" />
+
+    <LinearLayout
+        android:id="@+id/ll_code_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xl_vertical_margin"
+        android:background="@drawable/background_fast_bank_transfer_code_description"
+        android:orientation="vertical"
+        android:padding="@dimen/large_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_calendar_icon"
+        tools:minHeight="100dp">
+
+        <TextView
+            android:id="@+id/tv_transfer_description"
+            style="@style/Primer.Text.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pleaseTransferFunds" />
+
+        <TextView
+            android:id="@+id/tv_account_code"
+            style="@style/Primer.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/x_medium_vertical_margin"
+            android:background="@drawable/background_fast_bank_transfer_code_input"
+            android:drawableEnd="@drawable/ic_copy_clipboard"
+            android:gravity="center_vertical"
+            android:padding="@dimen/large_padding"
+            tools:text="4810853272974489" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

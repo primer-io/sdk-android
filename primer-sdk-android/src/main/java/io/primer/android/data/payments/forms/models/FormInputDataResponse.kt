@@ -10,7 +10,10 @@ internal data class FormDataResponse(
     val buttonType: ButtonType,
     val description: Int? = null,
     val inputs: List<FormInputDataResponse>? = null,
-    val qrCode: String? = null
+    val qrCode: String? = null,
+    val accountNumber: String? = null,
+    val expiration: String? = null,
+    val qrCodeUrl: String? = null,
 )
 
 internal data class FormInputDataResponse(
@@ -51,7 +54,10 @@ internal fun FormDataResponse.toForm() = Form(
     buttonType,
     description,
     inputs?.map { it.toFormInput() },
-    qrCode
+    qrCode,
+    accountNumber,
+    expiration,
+    qrCodeUrl
 )
 
 private fun FormInputDataResponse.toFormInput() = FormInput(

@@ -57,6 +57,8 @@ import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
 import io.primer.android.ui.fragments.SessionCompleteViewType
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
+import io.primer.android.ui.fragments.forms.FastBankTransferFragment
+import io.primer.android.ui.fragments.forms.PromptPayFragment
 import io.primer.android.ui.fragments.forms.QrCodeFragment
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
@@ -192,6 +194,20 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     }
                     ClientTokenIntent.XFERS_PAYNOW_REDIRECTION -> openFragment(
                         QrCodeFragment.newInstance(
+                            it.statusUrl,
+                            it.paymentMethodType
+                        ),
+                        true
+                    )
+                    ClientTokenIntent.RAPYD_FAST_REDIRECTION -> openFragment(
+                        FastBankTransferFragment.newInstance(
+                            it.statusUrl,
+                            it.paymentMethodType
+                        ),
+                        true
+                    )
+                    ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION -> openFragment(
+                        PromptPayFragment.newInstance(
                             it.statusUrl,
                             it.paymentMethodType
                         ),

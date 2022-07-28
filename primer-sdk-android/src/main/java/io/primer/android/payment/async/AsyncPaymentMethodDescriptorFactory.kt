@@ -13,6 +13,7 @@ import io.primer.android.payment.async.bancontact.BancontactPaymentMethodDescrip
 import io.primer.android.payment.async.coinbase.CoinbasePaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.eps.EpsPaymentMethodDescriptor
+import io.primer.android.payment.async.fastbanktransfer.RapydFastPaymentMethodDescriptor
 import io.primer.android.payment.async.gcash.RapydGcashPaymentMethodDescriptor
 import io.primer.android.payment.async.giropay.GiropayPaymentMethodDescriptor
 import io.primer.android.payment.async.hoolah.HoolahPaymentMethodDescriptor
@@ -26,6 +27,7 @@ import io.primer.android.payment.async.p24.P24PaymentMethodDescriptor
 import io.primer.android.payment.async.payconiq.PayconiqPaymentMethodDescriptor
 import io.primer.android.payment.async.paytrail.AdyenPayTrailPaymentMethodDescriptor
 import io.primer.android.payment.async.poli.RapydPoliPaymentMethodDescriptor
+import io.primer.android.payment.async.promptpay.RapydPromptPayPaymentMethodDescriptor
 import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.PrimerTestSofortPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.SofortPaymentMethodDescriptor
@@ -202,6 +204,16 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 paymentMethodRemoteConfig
             )
             PaymentMethodType.RAPYD_POLI -> RapydPoliPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.RAPYD_FAST -> RapydFastPaymentMethodDescriptor(
+                localConfig,
+                paymentMethod as AsyncPaymentMethod,
+                paymentMethodRemoteConfig
+            )
+            PaymentMethodType.RAPYD_PROMPTPAY -> RapydPromptPayPaymentMethodDescriptor(
                 localConfig,
                 paymentMethod as AsyncPaymentMethod,
                 paymentMethodRemoteConfig

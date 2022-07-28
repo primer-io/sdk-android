@@ -9,7 +9,10 @@ internal data class Form(
     val buttonType: ButtonType,
     val description: Int? = null,
     val inputs: List<FormInput>? = null,
-    val qrCode: String? = null
+    val qrCode: String? = null,
+    val accountNumber: String? = null,
+    val expiration: String? = null,
+    val qrCodeUrl: String? = null,
 )
 
 internal data class FormInput(

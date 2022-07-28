@@ -77,6 +77,7 @@
     <string name="interac">Interac</string>
     <string name="paytrail">Paytrail</string>
     <string name="payshop">Payshop</string>
+    <string name="promptpay">PromptPay</string>
     <string name="choose_payment_method">Επιλογή τρόπου πληρωμής</string>
     <string name="saved_payment_methods">ΑΠΟΘΗΚΕΥΤΗΚΕ ΤΡΟΠΟΣ ΠΛΗΡΩΜΗΣ</string>
     <string name="other_ways_of_paying">Άλλοι τρόποι πληρωμής</string>
@@ -125,4 +126,10 @@
     <string name="addressLine1ErrorRequired">Απαιτείται η γραμμή διεύθυνσης 1</string>
     <string name="firstNameErrorRequired">Απαιτείται όνομα</string>
     <string name="lastNameErrorRequired">Απαιτείται επίθετο</string>
+    <string name="completeYourPayment">Complete your payment</string>
+    <string name="dueAt">Due at</string>
+    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
+    <string name="fast_bank_transfer">FAST Bank Transfer</string>
+    <string name="scanToPay">Scan to pay or take a screenshot</string>
+    <string name="uploadScreenshot">Upload the screenshot in your banking app</string>
 </resources>

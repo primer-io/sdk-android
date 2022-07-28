@@ -20,6 +20,7 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentVaultedPaymentMethodsBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.AlternativePaymentMethodData
@@ -83,8 +84,8 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
         paymentMethods: List<BasePaymentToken>,
     ): List<PaymentMethodItemData> =
         paymentMethods.map {
-            when (it.paymentInstrumentType) {
-                "KLARNA_CUSTOMER_TOKEN" -> {
+            when (it.paymentMethodType) {
+                PaymentMethodType.KLARNA.name -> {
                     val email = it.paymentInstrumentData?.sessionData?.billingAddress?.email
                     AlternativePaymentMethodData(
                         email ?: "Klarna Payment Method",
@@ -92,7 +93,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                         AlternativePaymentMethodType.Klarna,
                     )
                 }
-                "PAYPAL_BILLING_AGREEMENT" -> {
+                PaymentMethodType.PAYPAL.name -> {
                     val title = it.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
                     AlternativePaymentMethodData(
                         title,
@@ -100,20 +101,27 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                         AlternativePaymentMethodType.PayPal,
                     )
                 }
-                "GOCARDLESS_MANDATE" -> {
+                PaymentMethodType.GOCARDLESS.name -> {
                     AlternativePaymentMethodData(
                         "Direct Debit Mandate",
                         it.token,
                         AlternativePaymentMethodType.DirectDebit,
                     )
                 }
-                "PAYMENT_CARD" -> {
+                PaymentMethodType.PAYMENT_CARD.name -> {
                     val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
                     val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
                     val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
                     val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
                     val network = it.paymentInstrumentData?.network ?: "unknown"
                     CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
+                }
+                PaymentMethodType.APAYA.name -> {
+                    AlternativePaymentMethodData(
+                        it.paymentInstrumentData?.hashedIdentifier ?: "unknown",
+                        it.token,
+                        AlternativePaymentMethodType.Apaya,
+                    )
                 }
                 else -> {
                     AlternativePaymentMethodData(
