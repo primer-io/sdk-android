@@ -1,7 +1,7 @@
 package io.primer.android.domain.payments.resume
 
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.helpers.PaymentResultEventsResolver
 import io.primer.android.domain.payments.resume.models.ResumeParams
@@ -20,7 +20,7 @@ internal class ResumePaymentInteractor(
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
-    BaseInteractor<Unit, ResumeParams>() {
+    BaseFlowInteractor<Unit, ResumeParams>() {
     override fun execute(params: ResumeParams): Flow<Unit> {
         return resumePaymentsRepository.resumePayment(params.id, params.token)
             .onEach {

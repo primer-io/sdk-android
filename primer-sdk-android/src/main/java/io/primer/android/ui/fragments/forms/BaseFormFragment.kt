@@ -44,7 +44,7 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
             setupForm(form)
         }
         viewModel.getForms(
-            primerViewModel.selectedPaymentMethod.value?.config?.type?.name.orEmpty()
+            primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
         )
     }
 

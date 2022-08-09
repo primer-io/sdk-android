@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentPromptPayBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.payments.forms.models.Form
@@ -46,7 +45,7 @@ internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
         }
         viewModel.getStatus(
             requireArguments().getString(STATUS_URL_KEY).orEmpty(),
-            requireArguments().getSerializable(PAYMENT_METHOD_TYPE_KEY) as PaymentMethodType
+            requireArguments().getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
         )
     }
 
@@ -83,7 +82,7 @@ internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
 
         fun newInstance(
             statusUrl: String,
-            paymentMethodType: PaymentMethodType
+            paymentMethodType: String
         ) = PromptPayFragment().apply {
             arguments = bundleOf(
                 STATUS_URL_KEY to statusUrl,

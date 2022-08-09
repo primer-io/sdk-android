@@ -48,7 +48,7 @@ class AsyncPaymentMethodViewModelTest {
         coEvery { interactor(any()) }.returns(flowOf(asyncStatus))
 
         runTest {
-            viewModel.getStatus("", PaymentMethodType.HOOLAH)
+            viewModel.getStatus("", PaymentMethodType.HOOLAH.name)
         }
 
         coVerify { interactor(any()) }
@@ -62,7 +62,7 @@ class AsyncPaymentMethodViewModelTest {
         coEvery { interactor(any()) }.returns(flow { throw Exception() })
 
         runTest {
-            viewModel.getStatus("", PaymentMethodType.HOOLAH)
+            viewModel.getStatus("", PaymentMethodType.HOOLAH.name)
         }
 
         coVerify { interactor(any()) }

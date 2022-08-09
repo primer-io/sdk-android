@@ -18,5 +18,6 @@ enum class CurrencyCode(val symbol: String) {
     CAD("$"),
     USD("$"),
     PHP("₱"),
+    IDR("Rp"),
     THB("฿"),
 }

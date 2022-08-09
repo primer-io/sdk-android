@@ -1,30 +1,28 @@
 package io.primer.android.domain.error.models
 
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import java.util.UUID
 
 internal sealed class PaymentMethodError : PrimerError() {
 
-    class MisConfiguredPaymentMethodError(val primerPaymentMethod: PrimerPaymentMethodType) :
+    class MisConfiguredPaymentMethodError(val primerPaymentMethod: String) :
         PaymentMethodError() {
         override val exposedError = this
     }
 
     class PaymentMethodCancelledError(
-        val paymentMethodType: PaymentMethodType,
+        val paymentMethodType: String,
     ) : PaymentMethodError() {
         override val exposedError = this
     }
 
-    class UnsupportedPaymentMethodError(val primerPaymentMethod: PrimerPaymentMethodType) :
+    class UnsupportedPaymentMethodError(val primerPaymentMethod: String) :
         PaymentMethodError() {
         override val exposedError = this
     }
 
     class UnsupportedIntentPaymentMethodError(
-        val paymentMethodType: PrimerPaymentMethodType,
+        val paymentMethodType: String,
         val intent: PrimerSessionIntent
     ) : PaymentMethodError() {
         override val exposedError = this

@@ -11,7 +11,7 @@ import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.valueBy
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
@@ -19,7 +19,6 @@ import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.model.Model
-import io.primer.android.payment.card.Card
 import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -81,10 +80,10 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.valueBy(PrimerInputElementType.CVV) } returns "cvv"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_MONTH) } returns "month"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_YEAR) } returns "year"
-        val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
+        val paymentMethodConfig =
+            PaymentMethodConfigDataResponse("id", type = PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
-            Card()
         )
         paymentMethodDescriptor.pushValues(mockJson)
         val statusObserver = viewModel.tokenizationStatus.test()
@@ -116,10 +115,10 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_MONTH) } returns "month"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_YEAR) } returns "year"
         coEvery { tokenizationInteractor(any()) } returns flowOf("token")
-        val paymentMethodConfig = PaymentMethodRemoteConfig("id", PaymentMethodType.PAYMENT_CARD)
+        val paymentMethodConfig =
+            PaymentMethodConfigDataResponse("id", type = PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
-            Card()
         )
         runTest {
             viewModel.resetPaymentMethod(paymentMethodDescriptor)

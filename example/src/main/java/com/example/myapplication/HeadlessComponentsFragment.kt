@@ -27,7 +27,6 @@ import io.primer.android.components.ui.widgets.PrimerEditTextFactory
 import io.primer.android.ui.CardType
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
@@ -109,16 +108,16 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 hideLoading()
             }
 
-            override fun onPreparationStarted(paymentMethodType: PrimerPaymentMethodType) {
+            override fun onPreparationStarted(paymentMethodType: String) {
                 showLoading("Preparation started $paymentMethodType")
                 Log.d(TAG, "onPreparationStarted")
             }
 
-            override fun onTokenizationStarted(paymentMethodType: PrimerPaymentMethodType) {
+            override fun onTokenizationStarted(paymentMethodType: String) {
                 showLoading("Tokenization started $paymentMethodType")
             }
 
-            override fun onPaymentMethodShowed(paymentMethodType: PrimerPaymentMethodType) {
+            override fun onPaymentMethodShowed(paymentMethodType: String) {
                 Log.d(TAG, "onPaymentMethodShowed $paymentMethodType")
             }
 
@@ -130,7 +129,10 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 viewModel.createPayment(paymentMethodTokenData, decisionHandler)
             }
 
-            override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
+            override fun onResumeSuccess(
+                resumeToken: String,
+                decisionHandler: PrimerResumeDecisionHandler
+            ) {
                 showLoading("Resume success $resumeToken. Resuming payment.")
                 viewModel.resumePayment(resumeToken, decisionHandler)
             }
@@ -192,7 +194,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
         paymentMethodTypes.forEach {
             when (it.paymentMethodType) {
-                PrimerPaymentMethodType.PAYMENT_CARD -> createForm(
+                "PAYMENT_CARD" -> createForm(
                     cardManager.getRequiredInputElementTypes().orEmpty()
                 )
                 else -> addPaymentMethodView(it.paymentMethodType)
@@ -217,12 +219,15 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         cardManager.setInputElements(inputElements)
     }
 
-    private fun addPaymentMethodView(paymentMethodType: PrimerPaymentMethodType) {
+    private fun addPaymentMethodView(paymentMethodType: String) {
         val pmViewGroup = (binding.pmView as ViewGroup)
 
-        headlessUniversalCheckout.makeView(paymentMethodType)?.apply {
-            layoutParams = layoutParams.apply {
-                val layoutParams = this as LinearLayout.LayoutParams
+        headlessUniversalCheckout.makeView(paymentMethodType, pmViewGroup)?.apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            ).apply {
+                val layoutParams = this
                 layoutParams.topMargin = margin
                 layoutParams.bottomMargin = margin
             }

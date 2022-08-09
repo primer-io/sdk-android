@@ -1,6 +1,5 @@
 package io.primer.android.data.action.models
 
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
@@ -42,7 +41,7 @@ internal data class ClientSessionActionsDataRequest(
 
     @Serializable
     data class SetPaymentMethodRequestDataParams(
-        val paymentMethodType: PaymentMethodType,
+        val paymentMethodType: String,
         val binData: BinData? = null
     )
 

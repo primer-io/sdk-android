@@ -1,6 +1,7 @@
 package io.primer.android.data.payments.methods.mapping
 
 import io.primer.android.PaymentMethod
+import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payment.apaya.ApayaFactory
@@ -15,67 +16,57 @@ import io.primer.android.utils.Failure
 
 internal interface PaymentMethodMapping {
 
-    fun getPaymentMethodFor(type: PaymentMethodType): Either<PaymentMethod, Exception>
+    fun getPaymentMethodFor(
+        implementationType: PaymentMethodImplementationType,
+        type: String
+    ): Either<PaymentMethod, Exception>
 }
 
 internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : PaymentMethodMapping {
 
-    override fun getPaymentMethodFor(type: PaymentMethodType): Either<PaymentMethod, Exception> =
-        when (type) {
-            PaymentMethodType.PAYMENT_CARD -> CardFactory().build()
-            PaymentMethodType.PRIMER_TEST_KLARNA,
-            PaymentMethodType.KLARNA -> KlarnaFactory(type, settings).build()
-            PaymentMethodType.GOOGLE_PAY -> GooglePayFactory(settings).build()
-            PaymentMethodType.PRIMER_TEST_PAYPAL,
-            PaymentMethodType.PAYPAL -> PayPalFactory(type).build()
-            PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
-            PaymentMethodType.PAY_NL_IDEAL,
-            PaymentMethodType.PAY_NL_PAYCONIQ,
-            PaymentMethodType.PAY_NL_GIROPAY,
-            PaymentMethodType.PAY_NL_P24,
-            PaymentMethodType.PAY_NL_EPS,
-            PaymentMethodType.HOOLAH,
-            PaymentMethodType.ADYEN_GIROPAY,
-            PaymentMethodType.ADYEN_TWINT,
-            PaymentMethodType.ADYEN_SOFORT,
-            PaymentMethodType.PRIMER_TEST_SOFORT,
-            PaymentMethodType.ADYEN_TRUSTLY,
-            PaymentMethodType.ADYEN_ALIPAY,
-            PaymentMethodType.ADYEN_VIPPS,
-            PaymentMethodType.ADYEN_MOBILEPAY,
-            PaymentMethodType.ADYEN_IDEAL,
-            PaymentMethodType.ADYEN_DOTPAY,
-            PaymentMethodType.ADYEN_BLIK,
-//            PaymentMethodType.ADYEN_MBWAY,
-//            PaymentMethodType.ADYEN_BANK_TRANSFER,
-            PaymentMethodType.ADYEN_INTERAC,
-            PaymentMethodType.ADYEN_PAYTRAIL,
-            PaymentMethodType.ADYEN_PAYSHOP,
-            PaymentMethodType.MOLLIE_BANCONTACT,
-            PaymentMethodType.MOLLIE_IDEAL,
-            PaymentMethodType.MOLLIE_P24,
-            PaymentMethodType.MOLLIE_GIROPAY,
-            PaymentMethodType.MOLLIE_EPS,
-            PaymentMethodType.BUCKAROO_GIROPAY,
-            PaymentMethodType.BUCKAROO_SOFORT,
-            PaymentMethodType.BUCKAROO_IDEAL,
-            PaymentMethodType.BUCKAROO_EPS,
-            PaymentMethodType.BUCKAROO_BANCONTACT,
-            PaymentMethodType.ATOME,
-            PaymentMethodType.XFERS_PAYNOW,
-            PaymentMethodType.COINBASE,
-            PaymentMethodType.TWOC2P,
-            PaymentMethodType.OPENNODE,
-            PaymentMethodType.RAPYD_GCASH,
-            PaymentMethodType.RAPYD_GRABPAY,
-            PaymentMethodType.RAPYD_POLI,
-            PaymentMethodType.RAPYD_FAST,
-            PaymentMethodType.RAPYD_PROMPTPAY,
-            -> AsyncMethodFactory(
-                type,
-                settings
-            ).build()
-            PaymentMethodType.APAYA -> ApayaFactory(settings).build()
-            else -> Failure(Exception("Unknown payment method, can't register."))
+    override fun getPaymentMethodFor(
+        implementationType: PaymentMethodImplementationType,
+        type: String
+    ): Either<PaymentMethod, Exception> =
+        when (implementationType) {
+            PaymentMethodImplementationType.NATIVE_SDK -> {
+                when (PaymentMethodType.safeValueOf(type)) {
+                    PaymentMethodType.PAYMENT_CARD -> CardFactory().build()
+                    PaymentMethodType.PRIMER_TEST_KLARNA,
+                    PaymentMethodType.KLARNA -> KlarnaFactory(type, settings).build()
+                    PaymentMethodType.GOOGLE_PAY -> GooglePayFactory(settings).build()
+                    PaymentMethodType.PRIMER_TEST_PAYPAL,
+                    PaymentMethodType.PAYPAL -> PayPalFactory(type).build()
+                    PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
+                    PaymentMethodType.APAYA -> ApayaFactory(settings).build()
+                    PaymentMethodType.PRIMER_TEST_SOFORT,
+                    PaymentMethodType.ADYEN_IDEAL,
+                    PaymentMethodType.ADYEN_DOTPAY,
+                    PaymentMethodType.ADYEN_BLIK,
+                    PaymentMethodType.XFERS_PAYNOW,
+                    PaymentMethodType.RAPYD_FAST,
+                    PaymentMethodType.RAPYD_PROMPTPAY -> AsyncMethodFactory(
+                        type,
+                        settings
+                    ).build()
+                    PaymentMethodType.ADYEN_MBWAY,
+                    PaymentMethodType.ADYEN_BANK_TRANSFER,
+                    PaymentMethodType.UNKNOWN -> Failure(
+                        Exception("Unknown payment method, can't register.")
+                    )
+                    else -> Failure(Exception("Unknown payment method, can't register."))
+                }
+            }
+            PaymentMethodImplementationType.WEB_REDIRECT ->
+                AsyncMethodFactory(
+                    type,
+                    settings
+                ).build()
+            PaymentMethodImplementationType.UNKNOWN -> Failure(
+                Exception(
+                    "Unknown payment method implementation $implementationType," +
+                        " can't register."
+                )
+            )
         }
 }

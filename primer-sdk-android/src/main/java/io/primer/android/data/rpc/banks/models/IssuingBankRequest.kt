@@ -17,15 +17,15 @@ internal fun IssuingBankParams.toIssuingBankRequest() = IssuingBankRequest(
     paymentMethodConfigId,
     RpcFunction.FETCH_BANK_ISSUERS.name,
     IssuingBankDataParameters(
-        paymentMethod.toIssuingBankParam().orEmpty(),
+        toIssuingBankParam(paymentMethod).orEmpty(),
         locale.toLanguageTag(),
     )
 )
 
 internal fun IssuingBankResponse.toIssuingBank() = IssuingBank(id, name, disabled, iconUrl)
 
-private fun PaymentMethodType.toIssuingBankParam() = when (this) {
-    PaymentMethodType.ADYEN_IDEAL -> "ideal"
-    PaymentMethodType.ADYEN_DOTPAY -> "dotpay"
+private fun toIssuingBankParam(paymentMethodType: String) = when (paymentMethodType) {
+    PaymentMethodType.ADYEN_IDEAL.name -> "ideal"
+    PaymentMethodType.ADYEN_DOTPAY.name -> "dotpay"
     else -> null
 }

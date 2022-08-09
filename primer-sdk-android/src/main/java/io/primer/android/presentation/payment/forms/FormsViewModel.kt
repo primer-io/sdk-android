@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
@@ -63,7 +62,7 @@ internal class FormsViewModel(
 
     fun collectData() = inputStates.map { it.key to it.value.input }
 
-    fun getStatus(statusUrl: String, paymentMethodType: PaymentMethodType) {
+    fun getStatus(statusUrl: String, paymentMethodType: String) {
         viewModelScope.launch {
             paymentMethodInteractor(AsyncMethodParams(statusUrl, paymentMethodType))
                 .catch {

@@ -8,7 +8,7 @@ import io.primer.android.data.configuration.datasource.LocalConfigurationDataSou
 import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.repository.ActionRepository
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 
 internal class ActionDataRepository(
@@ -26,7 +26,11 @@ internal class ActionDataRepository(
                     )
                 )
             }.flatMapLatest { configuration ->
-                flowOf(localConfigurationDataSource.update(configuration))
-                    .mapLatest { requireNotNull(configuration.clientSession).toClientSessionData() }
+                localConfigurationDataSource.get().map { localConfiguration ->
+                    localConfigurationDataSource.update(
+                        localConfiguration
+                            .copy(clientSession = configuration.clientSession)
+                    )
+                }.mapLatest { requireNotNull(configuration.clientSession).toClientSessionData() }
             }
 }

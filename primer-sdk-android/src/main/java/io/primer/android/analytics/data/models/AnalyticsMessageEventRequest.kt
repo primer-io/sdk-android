@@ -32,7 +32,7 @@ internal data class MessageProperties(
 ) : BaseAnalyticsProperties()
 
 internal enum class MessageType {
-    VALIDATION_FAILED, ERROR
+    VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED
 }
 
 internal enum class Severity {

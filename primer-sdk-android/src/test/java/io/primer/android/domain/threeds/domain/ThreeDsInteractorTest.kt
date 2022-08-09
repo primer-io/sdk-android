@@ -167,7 +167,7 @@ internal class ThreeDsInteractorTest {
             }
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         val event = slot<Throwable>()
@@ -239,7 +239,7 @@ internal class ThreeDsInteractorTest {
             }
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         val event = slot<Throwable>()
@@ -324,7 +324,7 @@ internal class ThreeDsInteractorTest {
             }
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         val event = slot<Throwable>()
@@ -435,7 +435,7 @@ internal class ThreeDsInteractorTest {
         )
 
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         val event = slot<Throwable>()
@@ -555,7 +555,7 @@ internal class ThreeDsInteractorTest {
         every { exception.message }.returns("Failed to perform 3DS challenge.")
 
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         coEvery {
@@ -622,7 +622,7 @@ internal class ThreeDsInteractorTest {
         )
 
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         val paymentInstrumentType = slot<String>()
@@ -678,7 +678,7 @@ internal class ThreeDsInteractorTest {
         )
 
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.`3DS_AUTHENTICATION`
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
         val event = slot<Throwable>()

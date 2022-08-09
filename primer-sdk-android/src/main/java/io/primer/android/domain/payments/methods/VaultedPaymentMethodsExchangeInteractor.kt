@@ -1,9 +1,8 @@
 package io.primer.android.domain.payments.methods
 
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
@@ -28,15 +27,13 @@ internal class VaultedPaymentMethodsExchangeInteractor(
     private val postTokenizationEventResolver: PostTokenizationEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<PaymentMethodTokenInternal, VaultTokenParams>() {
+) : BaseFlowInteractor<PaymentMethodTokenInternal, VaultTokenParams>() {
 
     override fun execute(params: VaultTokenParams): Flow<PaymentMethodTokenInternal> {
         return flow {
             emit(
                 preTokenizationEventsResolver.resolve(
-                    PaymentMethodType.safeValueOf(
-                        params.token.paymentInstrumentData?.paymentMethodType
-                    )
+                    params.token.paymentInstrumentData?.paymentMethodType.orEmpty()
                 )
             )
         }.flatMapLatest {

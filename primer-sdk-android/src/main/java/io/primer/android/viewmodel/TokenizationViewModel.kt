@@ -66,8 +66,8 @@ internal class TokenizationViewModel(
     val autoFocusFields: MutableLiveData<Set<String>> = MutableLiveData(
         Collections.emptySet()
     )
-    private val _tokenizationCanceled = MutableLiveData<PaymentMethodType>()
-    val tokenizationCanceled: LiveData<PaymentMethodType> = _tokenizationCanceled
+    private val _tokenizationCanceled = MutableLiveData<String>()
+    val tokenizationCanceled: LiveData<String> = _tokenizationCanceled
 
     val klarnaError = MutableLiveData<Throwable>()
     val klarnaPaymentData = MutableLiveData<KlarnaPaymentData>()
@@ -145,7 +145,7 @@ internal class TokenizationViewModel(
         }
     }
 
-    fun userCanceled(paymentMethodType: PaymentMethodType) {
+    fun userCanceled(paymentMethodType: String) {
         _tokenizationCanceled.postValue(paymentMethodType)
     }
 

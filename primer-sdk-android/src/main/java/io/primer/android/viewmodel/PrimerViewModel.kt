@@ -18,8 +18,6 @@ import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.configuration.models.CheckoutModuleType
-import io.primer.android.data.configuration.models.CountryCode
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -31,6 +29,7 @@ import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
+import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
@@ -50,6 +49,9 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.billing.BillingAddressValidator
+import io.primer.android.payment.config.BaseDisplayMetadata
+import io.primer.android.payment.config.toImageDisplayMetadata
+import io.primer.android.payment.config.toTextDisplayMetadata
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
@@ -64,14 +66,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
-import java.util.Collections
 import java.util.Currency
+import java.util.Collections
 
 @KoinApiExtension
 @ExperimentalCoroutinesApi
 internal class PrimerViewModel(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
+    private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val vaultedPaymentMethodsInteractor: VaultedPaymentMethodsInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val exchangeInteractor: VaultedPaymentMethodsExchangeInteractor,
@@ -120,6 +123,11 @@ internal class PrimerViewModel(
     private val _paymentMethods = MutableLiveData<List<PaymentMethodDescriptor>>(emptyList())
     val paymentMethods: LiveData<List<PaymentMethodDescriptor>> = _paymentMethods
 
+    private val _paymentMethodsDisplayMetadata =
+        MutableLiveData<List<BaseDisplayMetadata>>(emptyList())
+    val paymentMethodsDisplayMetadata: LiveData<List<BaseDisplayMetadata>> =
+        _paymentMethodsDisplayMetadata
+
     private val _selectedPaymentMethod = MutableLiveData<PaymentMethodDescriptor?>(null)
     val selectedPaymentMethod: LiveData<PaymentMethodDescriptor?> = _selectedPaymentMethod
 
@@ -157,11 +165,6 @@ internal class PrimerViewModel(
                 }
             module?.options
         }
-        .asLiveData()
-
-    val orderCountry: LiveData<CountryCode?> = _state.asFlow()
-        .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
-        .map { configuration -> configuration.clientSession?.order?.countryCode }
         .asLiveData()
 
     fun goToVaultedPaymentMethodsView() {
@@ -258,11 +261,20 @@ internal class PrimerViewModel(
         val network = token.paymentInstrumentData?.binData?.network
         dispatchAction(
             ActionUpdateSelectPaymentMethodParams(
-                PaymentMethodType.safeValueOf(token.paymentMethodType),
+                token.paymentMethodType ?: return,
                 network
             )
         )
     }
+
+    fun getPaymentMethodsDisplayMetadata() = paymentMethodsImplementationInteractor.execute(None())
+        .map {
+            val isDarkMode = config.settings.uiOptions.theme.isDarkMode == true
+            when (it.buttonMetadata?.text.isNullOrBlank()) {
+                true -> it.toImageDisplayMetadata(isDarkMode)
+                false -> it.toTextDisplayMetadata(isDarkMode)
+            }
+        }
 
     fun exchangePaymentMethodToken(token: PaymentMethodVaultTokenInternal) = viewModelScope.launch {
         exchangeInteractor(VaultTokenParams(token)).collect { }
@@ -435,7 +447,7 @@ internal class PrimerViewModel(
         )
     }
 
-    private fun logSelectPaymentMethod(paymentMethodType: PaymentMethodType) {
+    private fun logSelectPaymentMethod(paymentMethodType: String) {
         addAnalyticsEvent(
             UIAnalyticsParams(
                 AnalyticsAction.CLICK,

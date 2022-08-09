@@ -1,20 +1,10 @@
 package io.primer.android.payment.card
 
-import android.content.res.ColorStateList
-import android.graphics.drawable.RippleDrawable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
-import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.putFor
 import io.primer.android.components.domain.inputs.models.valueBy
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
-import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
@@ -22,24 +12,17 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
-import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.removeSpaces
 import org.json.JSONObject
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.inject
 
 @KoinApiExtension
 internal class CreditCard(
-    config: PaymentMethodRemoteConfig,
-    private val options: Card,
+    config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
-
-    private val checkoutConfig: PrimerConfig by inject()
-    private val theme: PrimerTheme by inject()
 
     var availableFields = mutableMapOf<PrimerInputElementType, Boolean>()
 
@@ -52,52 +35,6 @@ internal class CreditCard(
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
-
-    override fun createButton(container: ViewGroup): View {
-        val binding = PaymentMethodButtonCardBinding.inflate(
-            LayoutInflater.from(container.context),
-            container,
-            false
-        )
-
-        val content = generateButtonContent(theme, container.context)
-        val splash = theme.splashColor.getColor(container.context, theme.isDarkMode)
-        val rippleColor = ColorStateList.valueOf(splash)
-        binding.cardPreviewButton.background = RippleDrawable(rippleColor, content, null)
-
-        val text = binding.cardPreviewButtonText
-        val drawable = ContextCompat.getDrawable(
-            container.context,
-            R.drawable.ic_logo_credit_card
-        )
-
-        text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-
-        text.setTextColor(
-            theme.paymentMethodButton.text.defaultColor.getColor(
-                container.context,
-                theme.isDarkMode
-            )
-        )
-
-        text.text = when (checkoutConfig.paymentMethodIntent) {
-            PrimerSessionIntent.CHECKOUT -> container.context.getString(R.string.pay_by_card)
-            PrimerSessionIntent.VAULT ->
-                container.context.getString(R.string.credit_debit_card)
-        }
-
-        val icon = text.compoundDrawables
-
-        DrawableCompat.setTint(
-            DrawableCompat.wrap(icon[0]),
-            theme.paymentMethodButton.text.defaultColor.getColor(
-                container.context,
-                theme.isDarkMode
-            )
-        )
-
-        return binding.root
-    }
 
     // FIXME a model should not be responsible for parsing itself into json
     override fun toPaymentInstrument(): JSONObject {

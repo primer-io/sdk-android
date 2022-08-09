@@ -4,7 +4,7 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.tokenization.models.toPaymentMethodToken
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
@@ -34,7 +34,7 @@ internal class TokenizationInteractor(
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseInteractor<String, TokenizationParams>() {
+) : BaseFlowInteractor<String, TokenizationParams>() {
 
     override fun execute(params: TokenizationParams): Flow<String> {
         return flow {

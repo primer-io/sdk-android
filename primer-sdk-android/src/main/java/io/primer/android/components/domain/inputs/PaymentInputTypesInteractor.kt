@@ -16,10 +16,10 @@ internal class PaymentInputTypesInteractor(
     private val logger: Logger,
 ) {
     // MOVE TO FACTORY
-    fun execute(paymentMethodType: PaymentMethodType): List<PrimerInputElementType>? {
+    fun execute(paymentMethodType: String): List<PrimerInputElementType>? {
         try {
             return when (paymentMethodType) {
-                PaymentMethodType.PAYMENT_CARD -> {
+                PaymentMethodType.PAYMENT_CARD.name -> {
                     val billingAddressesFields =
                         checkoutModuleRepository.getCheckoutModuleOptions(
                             CheckoutModuleType.BILLING_ADDRESS

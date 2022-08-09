@@ -1,6 +1,6 @@
 package io.primer.android.payment.paypal
 
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.NewMiddleFragmentBehaviour
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -13,7 +13,7 @@ import org.koin.core.component.KoinApiExtension
 @KoinApiExtension
 @ExperimentalCoroutinesApi
 internal class PrimerTestPayPalDescriptor constructor(
-    config: PaymentMethodRemoteConfig
+    config: PaymentMethodConfigDataResponse
 ) : PayPalDescriptor(config), DIAppComponent, DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
@@ -31,7 +31,7 @@ internal class PrimerTestPayPalDescriptor constructor(
         )
 
         setTokenizableValue("type", "OFF_SESSION_PAYMENT")
-        setTokenizableValue("paymentMethodType", config.type.name)
+        setTokenizableValue("paymentMethodType", config.type)
         setTokenizableValue("paymentMethodConfigId", config.id!!)
         appendTokenizableValue("sessionInfo", "platform", "ANDROID")
     }

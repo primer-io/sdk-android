@@ -18,7 +18,6 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentDynamicFormBinding
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
@@ -143,7 +142,7 @@ internal class DynamicFormFragment : BaseFormFragment() {
         }
     }
 
-    private fun logAnalyticsSubmit(paymentMethodType: PaymentMethodType) =
+    private fun logAnalyticsSubmit(paymentMethodType: String) =
         viewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 AnalyticsAction.CLICK,

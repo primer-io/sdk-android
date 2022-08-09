@@ -1,7 +1,7 @@
 package io.primer.android
 
 import android.content.Context
-import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
@@ -22,7 +22,7 @@ internal interface PaymentMethodModule {
      */
     fun initialize(
         applicationContext: Context,
-        configuration: Configuration,
+        configuration: ConfigurationData,
     )
 
     /**
@@ -33,7 +33,6 @@ internal interface PaymentMethodModule {
      * @see [PaymentMethod]
      * @see [PaymentMethodDescriptor]
      * @see [PaymentMethodCheckerRegistry]
-     * @see [PrimerPaymentMethodDescriptorResolver]
      */
     fun registerPaymentMethodCheckers(
         paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,

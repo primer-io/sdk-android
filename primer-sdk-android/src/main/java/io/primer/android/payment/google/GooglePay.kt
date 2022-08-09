@@ -24,7 +24,7 @@ internal data class GooglePay(
     val buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
 ) : PaymentMethod {
 
-    override val type = PaymentMethodType.GOOGLE_PAY
+    override val type = PaymentMethodType.GOOGLE_PAY.name
 
     override val canBeVaulted: Boolean = false
 

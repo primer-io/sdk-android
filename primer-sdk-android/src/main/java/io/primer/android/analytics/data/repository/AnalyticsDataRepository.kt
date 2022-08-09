@@ -3,6 +3,7 @@ package io.primer.android.analytics.data.repository
 import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.SdkSessionDataSource
+import io.primer.android.analytics.data.datasource.TimerDataSource
 import io.primer.android.analytics.data.helper.AnalyticsDataSender
 import io.primer.android.analytics.data.interceptors.NetworkCallDataSource
 import io.primer.android.analytics.data.models.toAnalyticsEvent
@@ -40,7 +41,8 @@ internal class AnalyticsDataRepository(
     private val metaDataSource: MetaDataSource,
     private val networkTypeDataSource: NetworkTypeDataSource,
     private val uncaughtHandlerDataSource: UncaughtHandlerDataSource,
-    private val networkCallDataSource: NetworkCallDataSource
+    private val networkCallDataSource: NetworkCallDataSource,
+    private val timerDataSource: TimerDataSource
 ) : AnalyticsRepository {
 
     private val checkoutSessionId by lazy { UUID.randomUUID().toString() }
@@ -50,6 +52,7 @@ internal class AnalyticsDataRepository(
         networkCallDataSource.execute(Unit),
         uncaughtHandlerDataSource.execute(Unit),
         networkTypeDataSource.execute(Unit),
+        timerDataSource.execute(Unit)
     ).flattenMerge()
         .flatMapLatest {
             val configuration =

@@ -5,7 +5,7 @@ import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.repository.ActionRepository
 import io.primer.android.domain.action.validator.ActionUpdateFilter
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -27,7 +27,7 @@ internal class ActionInteractor(
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<Unit, BaseActionUpdateParams>() {
+) : BaseFlowInteractor<Unit, BaseActionUpdateParams>() {
 
     val surcharges: Map<String, Int>
         get() = localConfigurationDataSource

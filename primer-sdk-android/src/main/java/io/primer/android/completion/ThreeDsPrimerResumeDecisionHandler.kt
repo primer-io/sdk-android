@@ -41,7 +41,9 @@ internal class ThreeDsPrimerResumeDecisionHandler(
         super.handleClientToken(clientToken)
         if (threeDsSdkClassValidator.is3dsSdkIncluded()) {
             var processor3DSData: Processor3DS? = null
-            if (clientTokenRepository.getClientTokenIntent() == ClientTokenIntent.PROCESSOR_3DS) {
+            if (
+                clientTokenRepository.getClientTokenIntent() == ClientTokenIntent.PROCESSOR_3DS.name
+            ) {
                 processor3DSData = Processor3DS(
                     clientTokenRepository.getRedirectUrl().orEmpty(),
                     clientTokenRepository.getStatusUrl().orEmpty()

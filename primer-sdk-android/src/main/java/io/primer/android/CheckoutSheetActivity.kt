@@ -13,7 +13,6 @@ import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.components.domain.inputs.models.valueBy
 import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
@@ -154,7 +153,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                             "",
                             data.statusUrl,
                             data.title,
-                            PaymentMethodType.PAYMENT_CARD,
+                            PaymentMethodType.PAYMENT_CARD.name,
                             WebViewClientType.ASYNC
                         ),
                         ASYNC_METHOD_REQUEST_CODE
@@ -182,7 +181,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             }
             is CheckoutEvent.StartAsyncFlow -> {
                 when (it.clientTokenIntent) {
-                    ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
+                    ClientTokenIntent.ADYEN_BLIK_REDIRECTION.name -> {
                         sheet.popBackStackToRoot()
                         openFragment(
                             PaymentMethodStatusFragment.newInstance(
@@ -192,21 +191,21 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                             true
                         )
                     }
-                    ClientTokenIntent.XFERS_PAYNOW_REDIRECTION -> openFragment(
+                    ClientTokenIntent.XFERS_PAYNOW_REDIRECTION.name -> openFragment(
                         QrCodeFragment.newInstance(
                             it.statusUrl,
                             it.paymentMethodType
                         ),
                         true
                     )
-                    ClientTokenIntent.RAPYD_FAST_REDIRECTION -> openFragment(
+                    ClientTokenIntent.RAPYD_FAST_REDIRECTION.name -> openFragment(
                         FastBankTransferFragment.newInstance(
                             it.statusUrl,
                             it.paymentMethodType
                         ),
                         true
                     )
-                    ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION -> openFragment(
+                    ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION.name -> openFragment(
                         PromptPayFragment.newInstance(
                             it.statusUrl,
                             it.paymentMethodType
@@ -224,9 +223,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         Observer<BaseWebFlowPaymentData> { paymentData ->
             EventBus.broadcast(
                 CheckoutEvent.PaymentMethodPresented(
-                    PrimerPaymentMethodType.safeValueOf(
-                        primerViewModel.selectedPaymentMethod.value?.config?.type?.name
-                    )
+                    primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
                 )
             )
             val title =
@@ -286,13 +283,13 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     }
 
     private val payPalBillingAgreementUrlObserver = Observer { uri: String ->
-        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented(PrimerPaymentMethodType.PAYPAL))
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented(PaymentMethodType.PAYPAL.name))
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
 
     private val payPalOrderObserver = Observer { uri: String ->
-        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented(PrimerPaymentMethodType.PAYPAL))
+        EventBus.broadcast(CheckoutEvent.PaymentMethodPresented(PaymentMethodType.PAYPAL.name))
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         startActivity(intent)
     }
@@ -332,7 +329,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         val type = descriptor.config.type
 
         val actionParams =
-            if (type == PaymentMethodType.PAYMENT_CARD) ActionUpdateUnselectPaymentMethodParams
+            if (type == PaymentMethodType.PAYMENT_CARD.name) ActionUpdateUnselectPaymentMethodParams
             else ActionUpdateSelectPaymentMethodParams(type)
 
         primerViewModel.dispatchAction(actionParams, false) { error: Error? ->
@@ -464,7 +461,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         super.onResume()
         // todo
         if (
-            setOf(PaymentMethodType.KLARNA, PaymentMethodType.APAYA)
+            setOf(PaymentMethodType.KLARNA.name, PaymentMethodType.APAYA.name)
                 .contains(primerViewModel.selectedPaymentMethod.value?.config?.type)
                 .not()
         ) {
@@ -500,9 +497,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             RESULT_CANCELED -> {
                 errorEventResolver.resolve(
                     PaymentMethodCancelledException(
-                        PaymentMethodType.safeValueOf(
-                            primerViewModel.selectedPaymentMethod.value?.config?.type?.name
-                        )
+                        primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
                     ),
                     ErrorMapperType.DEFAULT
                 )
@@ -534,7 +529,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             }
             RESULT_CANCELED -> {
                 errorEventResolver.resolve(
-                    PaymentMethodCancelledException(PaymentMethodType.GOOGLE_PAY),
+                    PaymentMethodCancelledException(PaymentMethodType.GOOGLE_PAY.name),
                     ErrorMapperType.DEFAULT
                 )
                 onExit(CheckoutExitReason.DISMISSED_BY_USER)

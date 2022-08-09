@@ -1,6 +1,6 @@
 package io.primer.android.payment.klarna
 
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.payment.NewMiddleFragmentBehaviour
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.dummy.DummyDecisionType
@@ -13,7 +13,7 @@ import org.koin.core.component.KoinApiExtension
 @ExperimentalCoroutinesApi
 internal class PrimerTestKlarnaDescriptor constructor(
     options: Klarna,
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : KlarnaDescriptor(options, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
@@ -31,7 +31,7 @@ internal class PrimerTestKlarnaDescriptor constructor(
         )
 
         setTokenizableValue("type", "OFF_SESSION_PAYMENT")
-        setTokenizableValue("paymentMethodType", config.type.name)
+        setTokenizableValue("paymentMethodType", config.type)
         setTokenizableValue("paymentMethodConfigId", config.id!!)
         appendTokenizableValue("sessionInfo", "platform", "ANDROID")
     }

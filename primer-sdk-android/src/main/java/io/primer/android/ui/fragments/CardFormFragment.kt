@@ -239,7 +239,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun renderInputFields() {
         cardInputFields.values.forEach { inputFieldView ->
-            val fontSize = theme.input.text.fontsize.getDimension(requireContext())
+            val fontSize = theme.input.text.fontSize.getDimension(requireContext())
             inputFieldView.editText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
             val color = theme.input.text.defaultColor.getColor(requireContext(), theme.isDarkMode)
@@ -287,7 +287,7 @@ internal class CardFormFragment : BaseFragment() {
             ActionUpdateUnselectPaymentMethodParams
         } else {
             ActionUpdateSelectPaymentMethodParams(
-                PaymentMethodType.PAYMENT_CARD,
+                PaymentMethodType.PAYMENT_CARD.name,
                 networkAsString
             )
         }

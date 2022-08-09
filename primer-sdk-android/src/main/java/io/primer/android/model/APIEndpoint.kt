@@ -1,6 +1,6 @@
 package io.primer.android.model
 
-import io.primer.android.data.configuration.models.Configuration
+import io.primer.android.data.configuration.models.ConfigurationData
 
 internal class APIEndpoint {
 
@@ -20,7 +20,7 @@ internal class APIEndpoint {
         const val CREATE_GOCARDLESS_MANDATE = "/gocardless/mandates"
 
         fun get(
-            session: Configuration,
+            session: ConfigurationData,
             target: Target,
             pathname: String,
             params: Map<String, String>? = null,

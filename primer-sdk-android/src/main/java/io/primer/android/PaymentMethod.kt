@@ -1,6 +1,5 @@
 package io.primer.android
 
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodChecker
@@ -19,7 +18,7 @@ import kotlinx.serialization.modules.SerializersModule
  */
 internal interface PaymentMethod {
 
-    val type: PaymentMethodType
+    val type: String
 
     val canBeVaulted: Boolean
 

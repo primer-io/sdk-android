@@ -3,7 +3,6 @@ package io.primer.android.ui.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinApiExtension
@@ -17,7 +16,7 @@ internal class PaymentMethodStatusFragment : PaymentMethodLoadingFragment() {
         super.onViewCreated(view, savedInstanceState)
         asyncPaymentMethodViewModel.getStatus(
             requireArguments().getString(STATUS_URL_KEY).orEmpty(),
-            requireArguments().getSerializable(PAYMENT_METHOD_TYPE_KEY) as PaymentMethodType
+            requireArguments().getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
         )
     }
 
@@ -27,7 +26,7 @@ internal class PaymentMethodStatusFragment : PaymentMethodLoadingFragment() {
 
         fun newInstance(
             statusUrl: String,
-            paymentMethodType: PaymentMethodType
+            paymentMethodType: String
         ): PaymentMethodStatusFragment {
             return PaymentMethodStatusFragment().apply {
                 arguments = bundleOf(

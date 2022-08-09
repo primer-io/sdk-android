@@ -9,7 +9,6 @@ import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
 import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.events.CheckoutEvent
@@ -108,13 +107,13 @@ class Primer private constructor() : PrimerInterface {
     override fun showPaymentMethod(
         context: Context,
         clientToken: String,
-        paymentMethod: PrimerPaymentMethodType,
+        paymentMethod: String,
         intent: PrimerSessionIntent,
     ) {
         addAnalyticsEvent(
             SdkFunctionParams(
                 "showPaymentMethod",
-                mapOf("paymentMethod" to paymentMethod.name, "intent" to intent.name)
+                mapOf("paymentMethod" to paymentMethod, "intent" to intent.name)
             )
         )
 

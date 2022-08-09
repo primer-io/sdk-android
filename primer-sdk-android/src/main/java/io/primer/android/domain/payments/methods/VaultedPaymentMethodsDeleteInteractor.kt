@@ -1,6 +1,6 @@
 package io.primer.android.domain.payments.methods
 
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.logging.Logger
@@ -16,7 +16,7 @@ internal class VaultedPaymentMethodsDeleteInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<String, VaultDeleteParams>() {
+) : BaseFlowInteractor<String, VaultDeleteParams>() {
 
     override fun execute(params: VaultDeleteParams) =
         vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(

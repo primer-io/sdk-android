@@ -1,7 +1,6 @@
 package io.primer.android.payment.paypal
 
 import android.net.Uri
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
@@ -33,7 +32,7 @@ internal class PayPalBillingAgreementBehaviour constructor(
     }
 
     override fun onCancel(uri: Uri?) {
-        tokenizationViewModel?.userCanceled(PaymentMethodType.PAYPAL)
+        tokenizationViewModel?.userCanceled(paypal.config.type)
         log.warn("User cancelled paypal billing agreement")
     }
 }

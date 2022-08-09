@@ -4,11 +4,8 @@ import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
-import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
@@ -107,15 +104,15 @@ internal sealed class CheckoutEvent(
 
     class StartAsyncRedirectFlow(
         val title: String,
-        val paymentMethodType: PaymentMethodType,
+        val paymentMethodType: String,
         val redirectUrl: String,
         val statusUrl: String,
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
 
     internal class StartAsyncFlow(
-        val clientTokenIntent: ClientTokenIntent,
+        val clientTokenIntent: String,
         val statusUrl: String,
-        val paymentMethodType: PaymentMethodType,
+        val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 
     // components helpers
@@ -123,12 +120,12 @@ internal sealed class CheckoutEvent(
         val paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>
     ) : CheckoutEvent(CheckoutEventType.CONFIGURATION_SUCCESS)
 
-    class TokenizationStarted(val paymentMethodType: PrimerPaymentMethodType) :
+    class TokenizationStarted(val paymentMethodType: String) :
         CheckoutEvent(CheckoutEventType.TOKENIZE_STARTED)
 
-    class PreparationStarted(val paymentMethodType: PrimerPaymentMethodType) :
+    class PreparationStarted(val paymentMethodType: String) :
         CheckoutEvent(CheckoutEventType.PREPARATION_STARTED)
 
-    class PaymentMethodPresented(val paymentMethodType: PrimerPaymentMethodType) :
+    class PaymentMethodPresented(val paymentMethodType: String) :
         CheckoutEvent(CheckoutEventType.PAYMENT_METHOD_PRESENTED)
 }

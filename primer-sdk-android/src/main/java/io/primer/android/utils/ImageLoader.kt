@@ -10,12 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -25,16 +21,19 @@ import java.util.WeakHashMap
 internal class ImageLoader constructor(private val okHttpClient: OkHttpClient) {
 
     private val jobs = WeakHashMap<ImageView, Job>()
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope =
+        CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    fun loadImage(url: String, placeholder: Drawable, target: ImageView) {
+    fun loadImage(url: String, target: ImageView) = loadImage(url, null, target)
+
+    fun loadImage(url: String, placeholder: Drawable?, target: ImageView) {
         target.setImageDrawable(placeholder)
         jobs[target] = scope.launch {
-            loadImage(url)
-                .catch { clear(target) }
-                .collect {
-                    target.setImageBitmap(it)
-                }
+            try {
+                target.setImageBitmap(loadImage(url))
+            } catch (_: Exception) {
+                clear(target)
+            }
         }
     }
 
@@ -45,7 +44,7 @@ internal class ImageLoader constructor(private val okHttpClient: OkHttpClient) {
         scope.cancel()
     }
 
-    private fun loadImage(url: String): Flow<Bitmap> = flow {
+    private suspend fun loadImage(url: String) = withContext<Bitmap>(Dispatchers.IO) {
         val request = Request.Builder()
             .url(url)
             .get()
@@ -56,6 +55,8 @@ internal class ImageLoader constructor(private val okHttpClient: OkHttpClient) {
             .await()
 
         val bufferedInputStream = BufferedInputStream(response.body()?.byteStream())
-        emit(BitmapFactory.decodeStream(bufferedInputStream))
-    }.flowOn(Dispatchers.IO)
+        bufferedInputStream.use {
+            BitmapFactory.decodeStream(bufferedInputStream)
+        }
+    }
 }

@@ -143,7 +143,7 @@ internal class DefaultThreeDsInteractor(
 
     private fun handleAuthEvent(token: PaymentMethodTokenInternal, resumeToken: String? = null) {
         when (clientTokenRepository.getClientTokenIntent()) {
-            ClientTokenIntent.`3DS_AUTHENTICATION` -> resumeEventResolver.resolve(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name -> resumeEventResolver.resolve(
                 token.paymentInstrumentType,
                 resumeToken
             )
@@ -153,7 +153,7 @@ internal class DefaultThreeDsInteractor(
 
     private fun handleErrorEvent(throwable: Throwable) {
         when (clientTokenRepository.getClientTokenIntent()) {
-            ClientTokenIntent.`3DS_AUTHENTICATION` -> {
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name -> {
                 baseErrorEventResolver.resolve(throwable, ErrorMapperType.PAYMENT_RESUME)
             }
             else -> postTokenizationEventResolver.resolve(

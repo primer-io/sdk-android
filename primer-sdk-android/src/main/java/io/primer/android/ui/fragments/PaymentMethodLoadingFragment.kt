@@ -13,20 +13,26 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.components.ui.assets.ImageColor
+import io.primer.android.components.ui.assets.PrimerAssetManager
+import io.primer.android.components.ui.views.PaymentMethodViewCreator
 import io.primer.android.databinding.FragmentPaymentMethodLoadingBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.extensions.scaleImage
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
 @KoinApiExtension
 internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
 
     private val viewModel: PrimerViewModel by activityViewModels()
+    private val theme: PrimerTheme by inject()
 
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
@@ -34,7 +40,24 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
         descriptor?.getLoadingState()?.let {
             logAnalytics(descriptor.config.type)
             binding.apply {
-                selectedPaymentLogo.setImageResource(it.imageResIs)
+                if (it.imageResIs > 0) {
+                    selectedPaymentLogo.setImageResource(it.imageResIs)
+                } else {
+                    selectedPaymentLogo.setImageDrawable(
+                        PrimerAssetManager.getAsset(
+                            requireContext(),
+                            descriptor.config.type,
+                            when (theme.isDarkMode == true) {
+                                true -> ImageColor.DARK
+                                false -> ImageColor.LIGHT
+                            }
+                        )?.scaleImage(
+                            requireContext(),
+                            requireContext().resources.displayMetrics.density /
+                                PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_SCALE
+                        )
+                    )
+                }
                 it.textResId?.let {
                     selectedPaymentLoadingText.isVisible = true
                     progressBar.isVisible = false
@@ -62,7 +85,7 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
         viewModel.selectedPaymentMethod.observe(viewLifecycleOwner, selectedPaymentMethodObserver)
     }
 
-    private fun logAnalytics(type: PaymentMethodType) =
+    private fun logAnalytics(type: String) =
         viewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 AnalyticsAction.VIEW,

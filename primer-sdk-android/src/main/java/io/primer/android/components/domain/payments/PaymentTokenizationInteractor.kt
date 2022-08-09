@@ -4,7 +4,7 @@ import io.primer.android.components.domain.core.models.card.CardInputData
 import io.primer.android.components.domain.exception.InvalidTokenizationDataException
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.logging.Logger
 import io.primer.android.domain.error.ErrorMapperType
@@ -20,7 +20,7 @@ internal class PaymentTokenizationInteractor(
     private val paymentMethodsRepository: PaymentMethodsRepository,
     private val errorEventResolver: BaseErrorEventResolver,
     private val logger: Logger
-) : BaseInteractor<PaymentMethodDescriptor, PaymentTokenizationDescriptorParams>() {
+) : BaseFlowInteractor<PaymentMethodDescriptor, PaymentTokenizationDescriptorParams>() {
 
     override fun execute(params: PaymentTokenizationDescriptorParams):
         Flow<PaymentMethodDescriptor> {

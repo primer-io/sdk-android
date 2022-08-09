@@ -221,7 +221,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
         )
         setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
-            theme.systemText.fontsize.getDimension(requireContext()),
+            theme.systemText.fontSize.getDimension(requireContext()),
         )
     }
 

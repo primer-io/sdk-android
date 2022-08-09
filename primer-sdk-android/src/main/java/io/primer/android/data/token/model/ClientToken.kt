@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 internal data class ClientToken(
     val configurationUrl: String? = null,
     val analyticsUrlV2: String? = null,
-    val intent: ClientTokenIntent,
+    val intent: String,
     val accessToken: String,
     val exp: Int,
     val statusUrl: String? = null,

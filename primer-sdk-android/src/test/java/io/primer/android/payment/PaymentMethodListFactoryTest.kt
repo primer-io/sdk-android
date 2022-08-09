@@ -2,7 +2,7 @@ package io.primer.android.payment
 
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.mocks.MockPaymentMethodMapping
@@ -13,8 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 internal class PaymentMethodListFactoryTest {
 
-    private val configList: List<PaymentMethodRemoteConfig> = listOf(
-        PaymentMethodRemoteConfig(type = PaymentMethodType.UNKNOWN),
+    private val configList: List<PaymentMethodConfigDataResponse> = listOf(
+        PaymentMethodConfigDataResponse(type = PaymentMethodType.UNKNOWN.name),
     )
 
     @Test

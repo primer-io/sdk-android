@@ -1,10 +1,7 @@
 package io.primer.android.payment.klarna
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -17,7 +14,7 @@ import org.koin.core.component.KoinApiExtension
 @ExperimentalCoroutinesApi
 internal open class KlarnaDescriptor constructor(
     val options: Klarna,
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config) {
 
     companion object {
@@ -32,13 +29,6 @@ internal open class KlarnaDescriptor constructor(
         get() = PaymentMethodUiType.SIMPLE_BUTTON
 
     override val vaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
-
-    override fun createButton(container: ViewGroup): View =
-        LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_klarna,
-            container,
-            false
-        )
 
     override fun getLoadingState() = LoadingState(R.drawable.ic_logo_klarna_square)
 }

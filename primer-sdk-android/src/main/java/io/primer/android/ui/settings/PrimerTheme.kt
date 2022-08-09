@@ -82,7 +82,7 @@ data class PrimerTheme internal constructor(
                     default = titleText?.defaultColor ?: defaultText?.defaultColor
                         ?: R.color.primer_title
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = titleText?.fontsize ?: R.dimen.primer_title_fontsize,
                 ),
             )
@@ -92,7 +92,7 @@ data class PrimerTheme internal constructor(
                     default = amountLabelText?.defaultColor ?: defaultText?.defaultColor
                         ?: R.color.primer_amount
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = amountLabelText?.fontsize ?: R.dimen.primer_amount_label_fontsize,
                 ),
             )
@@ -101,7 +101,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = subtitleText?.defaultColor ?: R.color.primer_subtitle
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = subtitleText?.fontsize ?: R.dimen.primer_subtitle_fontsize,
                 ),
             )
@@ -130,7 +130,7 @@ data class PrimerTheme internal constructor(
                     default = paymentMethodButton?.text?.defaultColor
                         ?: R.color.primer_payment_method_button_text
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = paymentMethodButton?.text?.fontsize
                         ?: R.dimen.primer_payment_method_button_fontsize,
                 ),
@@ -179,7 +179,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = mainButton?.text?.defaultColor ?: R.color.primer_main_button_text
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = mainButton?.text?.fontsize ?: R.dimen.primer_subtitle_fontsize,
                 ),
             )
@@ -208,7 +208,7 @@ data class PrimerTheme internal constructor(
                     default = systemButton?.defaultColor ?: primaryColor
                         ?: R.color.primer_system_text
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = systemButton?.fontsize ?: R.dimen.primer_subtitle_fontsize,
                 ),
             )
@@ -217,7 +217,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = defaultText?.defaultColor ?: R.color.primer_default_text
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = defaultText?.fontsize ?: R.dimen.primer_default_fontsize,
                 ),
             )
@@ -226,7 +226,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = errorText?.defaultColor ?: R.color.primer_error
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = errorText?.fontsize ?: R.dimen.primer_text_size_sm,
                 ),
             )
@@ -254,7 +254,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = input?.text?.defaultColor ?: R.color.primer_input_text
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = input?.text?.fontsize ?: R.dimen.primer_input_fontsize,
                 ),
             )
@@ -263,7 +263,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = input?.hintText?.defaultColor ?: R.color.primer_subtitle
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = input?.hintText?.fontsize ?: R.dimen.primer_input_fontsize,
                 ),
             )
@@ -286,7 +286,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = searchInput?.text?.defaultColor ?: R.color.primer_search_input_text
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = searchInput?.text?.fontsize ?: R.dimen.primer_search_input_fontsize,
                 ),
             )
@@ -295,7 +295,7 @@ data class PrimerTheme internal constructor(
                 defaultColor = ResourceColor.valueOf(
                     default = searchInput?.hintText?.defaultColor ?: R.color.primer_subtitle
                 ),
-                fontsize = ResourceDimension.valueOf(
+                fontSize = ResourceDimension.valueOf(
                     default = searchInput?.hintText?.fontsize
                         ?: R.dimen.primer_search_input_fontsize,
                 ),
@@ -391,7 +391,7 @@ internal data class ButtonTheme constructor(
 @Serializable
 internal data class TextTheme(
     val defaultColor: ColorData,
-    val fontsize: DimensionData,
+    val fontSize: DimensionData,
 )
 
 @Serializable
