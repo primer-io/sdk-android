@@ -6,9 +6,11 @@
 
     <ImageView
         android:id="@+id/selected_payment_logo"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/large_vertical_margin"
+        android:minWidth="44dp"
+        android:minHeight="44dp"
         app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -17,8 +19,8 @@
         android:id="@+id/selected_payment_loading_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginHorizontal="@dimen/xxl_vertical_margin"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline" />

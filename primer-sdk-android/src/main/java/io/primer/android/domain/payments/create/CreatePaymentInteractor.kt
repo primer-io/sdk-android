@@ -1,7 +1,7 @@
 package io.primer.android.domain.payments.create
 
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.helpers.PaymentResultEventsResolver
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
@@ -19,7 +19,7 @@ internal class CreatePaymentInteractor(
     private val paymentResultEventsResolver: PaymentResultEventsResolver,
     private val errorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseInteractor<String, CreatePaymentParams>() {
+) : BaseFlowInteractor<String, CreatePaymentParams>() {
 
     override fun execute(params: CreatePaymentParams): Flow<String> {
         return createPaymentsRepository.createPayment(params.token)

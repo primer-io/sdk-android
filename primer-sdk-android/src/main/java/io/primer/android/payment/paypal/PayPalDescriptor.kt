@@ -1,11 +1,8 @@
 package io.primer.android.payment.paypal
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.di.DIAppComponent
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
@@ -20,7 +17,7 @@ import org.koin.core.component.inject
 @KoinApiExtension
 @ExperimentalCoroutinesApi
 internal open class PayPalDescriptor constructor(
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
     private val localConfig: PrimerConfig by inject()
@@ -37,13 +34,6 @@ internal open class PayPalDescriptor constructor(
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.SINGLE_USE_AND_VAULT
-
-    override fun createButton(container: ViewGroup): View =
-        LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_paypal,
-            container,
-            false
-        )
 
     override fun getLoadingState() = LoadingState(R.drawable.ic_logo_paypal_square)
 }

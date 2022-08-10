@@ -1,16 +1,15 @@
 package io.primer.android.payment
 
-import android.view.View
-import android.view.ViewGroup
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
 import java.util.Collections
 
-internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteConfig) {
+internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigDataResponse) {
 
     protected val values: JSONObject by lazy { JSONObject() }
 
@@ -23,10 +22,7 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodRemoteC
 
     abstract val vaultCapability: VaultCapability
 
-    internal val brand = config.type.brand
-
-    // FIXME this should not be here. a model should not be responsible creating views
-    abstract fun createButton(container: ViewGroup): View
+    internal val brand = PaymentMethodType.safeValueOf(config.type).brand
 
     open fun getLoadingState(): LoadingState? = null
 

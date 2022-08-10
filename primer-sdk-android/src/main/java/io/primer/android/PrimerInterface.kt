@@ -1,7 +1,6 @@
 package io.primer.android
 
 import android.content.Context
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 
 interface PrimerInterface {
@@ -49,7 +48,7 @@ interface PrimerInterface {
     fun showPaymentMethod(
         context: Context,
         clientToken: String,
-        paymentMethod: PrimerPaymentMethodType,
+        paymentMethod: String,
         intent: PrimerSessionIntent,
     )
 

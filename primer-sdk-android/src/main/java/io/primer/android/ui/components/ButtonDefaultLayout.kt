@@ -24,7 +24,7 @@ class ButtonDefaultLayout(
     }
 
     private fun render() {
-        val content = generateButtonContent(theme, context)
+        val content = generateButtonContent(context, theme)
         val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val rippleColor = ColorStateList.valueOf(splash)
         background = RippleDrawable(rippleColor, content, null)

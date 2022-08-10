@@ -1,7 +1,7 @@
 package io.primer.android.payment.klarna
 
 import io.primer.android.PaymentMethod
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
@@ -12,11 +12,11 @@ internal class KlarnaPaymentMethodDescriptorFactory : PaymentMethodDescriptorFac
 
     override fun create(
         localConfig: PrimerConfig,
-        paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
+        paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor = when (paymentMethodRemoteConfig.type) {
-        PaymentMethodType.PRIMER_TEST_KLARNA -> PrimerTestKlarnaDescriptor(
+        PaymentMethodType.PRIMER_TEST_KLARNA.name -> PrimerTestKlarnaDescriptor(
             paymentMethod as Klarna,
             paymentMethodRemoteConfig
         )

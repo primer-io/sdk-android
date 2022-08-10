@@ -84,7 +84,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
             flowOf(true)
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION
+            ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION.name
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
             PaymentMethodType.PAY_NL_IDEAL.name
@@ -110,7 +110,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
             flowOf(true)
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.HOOLAH_REDIRECTION
+            ClientTokenIntent.HOOLAH_REDIRECTION.name
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
             PaymentMethodType.HOOLAH.name
@@ -174,7 +174,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
             flowOf(true)
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION
+            ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION.name
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
             PaymentMethodType.HOOLAH.name
@@ -199,7 +199,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
             flowOf(true)
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.HOOLAH_REDIRECTION
+            ClientTokenIntent.HOOLAH_REDIRECTION.name
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
             PaymentMethodType.PAY_NL_IDEAL.name
@@ -224,7 +224,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
             flowOf(true)
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
+            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION.name
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
             PaymentMethodType.XFERS_PAYNOW.name
@@ -250,7 +250,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
             flowOf(true)
         )
         every { clientTokenRepository.getClientTokenIntent() }.returns(
-            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION
+            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION.name
         )
         every { paymentMethodToken.paymentInstrumentData?.paymentMethodType }.returns(
             PaymentMethodType.PAY_NL_IDEAL.name

@@ -10,7 +10,7 @@ import io.primer.android.components.ui.widgets.PrimerEditText
 import io.primer.android.components.ui.widgets.PrimerInputElementCardNumberListener
 import io.primer.android.components.ui.widgets.PrimerTextChangedListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 
 @ExperimentalPrimerApi
 interface PrimerUniversalCheckoutCardManagerInterface {
@@ -37,7 +37,7 @@ class PrimerCardManager private constructor() :
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType>? {
         return PrimerHeadlessUniversalCheckout.instance.listRequiredInputElementTypes(
-            PrimerPaymentMethodType.PAYMENT_CARD
+            PaymentMethodType.PAYMENT_CARD.name
         )
     }
 
@@ -49,7 +49,7 @@ class PrimerCardManager private constructor() :
 
     override fun tokenize() {
         PrimerHeadlessUniversalCheckout.instance.startTokenization(
-            PrimerPaymentMethodType.PAYMENT_CARD,
+            PaymentMethodType.PAYMENT_CARD.name,
             CardInputData(
                 getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString(),
                 getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString(),

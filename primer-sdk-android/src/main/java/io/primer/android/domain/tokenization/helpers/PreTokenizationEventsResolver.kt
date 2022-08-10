@@ -1,7 +1,6 @@
 package io.primer.android.domain.tokenization.helpers
 
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -16,7 +15,7 @@ internal class PreTokenizationEventsResolver(
     private val eventDispatcher: EventDispatcher,
 ) {
 
-    suspend fun resolve(paymentMethodType: PrimerPaymentMethodType) {
+    suspend fun resolve(paymentMethodType: String) {
         suspendCancellableCoroutine<Unit> { continuation ->
             when {
                 config.intent.paymentMethodIntent.isVault ||

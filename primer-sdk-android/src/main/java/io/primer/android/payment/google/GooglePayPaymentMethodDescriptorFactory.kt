@@ -1,7 +1,7 @@
 package io.primer.android.payment.google
 
 import io.primer.android.PaymentMethod
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
@@ -12,7 +12,7 @@ internal class GooglePayPaymentMethodDescriptorFactory(
 
     override fun create(
         localConfig: PrimerConfig,
-        paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
+        paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): GooglePayDescriptor =

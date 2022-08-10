@@ -1,9 +1,9 @@
 package io.primer.android.domain.session
 
-import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.session.models.Configuration
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.logging.Logger
@@ -17,7 +17,7 @@ internal class ConfigurationInteractor(
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<Configuration, ConfigurationParams>() {
+) : BaseFlowInteractor<Configuration, ConfigurationParams>() {
 
     override fun execute(params: ConfigurationParams) =
         configurationRepository.fetchConfiguration(params.fromCache)

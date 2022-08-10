@@ -1,6 +1,6 @@
 package io.primer.android.payment.async.sofort
 
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewMiddleFragmentBehaviour
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -12,7 +12,7 @@ import io.primer.android.ui.fragments.dummy.DummyResultSelectorFragment
 internal class PrimerTestSofortPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : SofortPaymentMethodDescriptor(localConfig, options, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
@@ -30,7 +30,7 @@ internal class PrimerTestSofortPaymentMethodDescriptor(
         )
 
         setTokenizableValue("type", "OFF_SESSION_PAYMENT")
-        setTokenizableValue("paymentMethodType", config.type.name)
+        setTokenizableValue("paymentMethodType", config.type)
         setTokenizableValue("paymentMethodConfigId", config.id!!)
         appendTokenizableValue("sessionInfo", "platform", "ANDROID")
     }

@@ -2,7 +2,7 @@ package io.primer.android.analytics.domain
 
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ internal class AnalyticsInteractor(
     private val analyticsRepository: AnalyticsRepository,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseInteractor<Boolean, BaseAnalyticsParams>() {
+) : BaseFlowInteractor<Boolean, BaseAnalyticsParams>() {
 
     fun initialize() = analyticsRepository.initialize().flowOn(dispatcher)
 

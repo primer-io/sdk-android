@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.postDelayed
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentFastBankTransferBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.payments.forms.models.Form
@@ -49,7 +48,7 @@ internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
         }
         viewModel.getStatus(
             requireArguments().getString(STATUS_URL_KEY).orEmpty(),
-            requireArguments().getSerializable(PAYMENT_METHOD_TYPE_KEY) as PaymentMethodType
+            requireArguments().getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
         )
         setupListeners()
     }
@@ -126,7 +125,7 @@ internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
 
         fun newInstance(
             statusUrl: String,
-            paymentMethodType: PaymentMethodType
+            paymentMethodType: String
         ) = FastBankTransferFragment().apply {
             arguments = bundleOf(
                 STATUS_URL_KEY to statusUrl,

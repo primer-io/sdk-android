@@ -2,13 +2,14 @@ package io.primer.android.data.configuration.models
 
 import androidx.annotation.RestrictTo
 import io.primer.android.components.ui.assets.Brand
+import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.data.token.model.ClientTokenIntent
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class PaymentMethodType(
+internal enum class PaymentMethodType(
     internal val intents: Array<ClientTokenIntent>? = null,
-    internal val brand: Brand
+    internal val brand: Brand,
 ) {
     PAYMENT_CARD(
         arrayOf(
@@ -30,9 +31,9 @@ enum class PaymentMethodType(
     PAY_NL_P24(ClientTokenIntent.PAY_NL_P24_REDIRECTION, Brand.P24),
     PAY_NL_EPS(ClientTokenIntent.PAY_NL_EPS_REDIRECTION, Brand.EPS),
     HOOLAH(ClientTokenIntent.HOOLAH_REDIRECTION, Brand.HOOLAH),
-    ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION, Brand.GIROPAY),
     ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION, Brand.TWINT),
     ADYEN_SOFORT(ClientTokenIntent.ADYEN_SOFORT_REDIRECTION, Brand.SOFORT),
+    ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION, Brand.GIROPAY),
     PRIMER_TEST_SOFORT(brand = Brand.SOFORT),
     ADYEN_TRUSTLY(ClientTokenIntent.ADYEN_TRUSTLY_REDIRECTION, Brand.TRUSTLY),
     ADYEN_ALIPAY(ClientTokenIntent.ADYEN_ALIPAY_REDIRECTION, Brand.ALIPAY),
@@ -78,58 +79,38 @@ enum class PaymentMethodType(
     constructor(intent: ClientTokenIntent, brand: Brand) : this(arrayOf(intent), brand)
 }
 
-internal fun PaymentMethodType.isAvailableOnHUC(): Boolean {
-    return when (this) {
-        PaymentMethodType.PAYMENT_CARD,
-        PaymentMethodType.KLARNA,
-        PaymentMethodType.GOOGLE_PAY,
-        PaymentMethodType.PAYPAL,
-        PaymentMethodType.APAYA,
-        PaymentMethodType.PAY_NL_P24,
-        PaymentMethodType.PAY_NL_IDEAL,
-        PaymentMethodType.PAY_NL_PAYCONIQ,
-        PaymentMethodType.PAY_NL_GIROPAY,
-        PaymentMethodType.PAY_NL_EPS,
-        PaymentMethodType.HOOLAH,
-        PaymentMethodType.ADYEN_GIROPAY,
-        PaymentMethodType.ADYEN_TWINT,
-        PaymentMethodType.ADYEN_SOFORT,
-        PaymentMethodType.ADYEN_TRUSTLY,
-        PaymentMethodType.ADYEN_ALIPAY,
-        PaymentMethodType.ADYEN_VIPPS,
-        PaymentMethodType.ADYEN_MOBILEPAY,
-        PaymentMethodType.ADYEN_PAYTRAIL,
-        PaymentMethodType.ADYEN_INTERAC,
-        PaymentMethodType.ADYEN_PAYSHOP,
-        PaymentMethodType.MOLLIE_BANCONTACT,
-        PaymentMethodType.MOLLIE_IDEAL,
-        PaymentMethodType.MOLLIE_P24,
-        PaymentMethodType.MOLLIE_GIROPAY,
-        PaymentMethodType.MOLLIE_EPS,
-        PaymentMethodType.BUCKAROO_GIROPAY,
-        PaymentMethodType.BUCKAROO_SOFORT,
-        PaymentMethodType.BUCKAROO_IDEAL,
-        PaymentMethodType.BUCKAROO_EPS,
-        PaymentMethodType.BUCKAROO_BANCONTACT,
-        PaymentMethodType.COINBASE,
-        PaymentMethodType.TWOC2P,
-        PaymentMethodType.OPENNODE,
-        PaymentMethodType.ATOME,
-        PaymentMethodType.RAPYD_POLI,
-        PaymentMethodType.RAPYD_GCASH,
-        PaymentMethodType.RAPYD_GRABPAY, -> true
-        PaymentMethodType.ADYEN_IDEAL,
-        PaymentMethodType.ADYEN_DOTPAY,
-        PaymentMethodType.ADYEN_BLIK,
-        PaymentMethodType.ADYEN_MBWAY,
-        PaymentMethodType.ADYEN_BANK_TRANSFER,
-        PaymentMethodType.XFERS_PAYNOW,
-        PaymentMethodType.GOCARDLESS,
-        PaymentMethodType.PRIMER_TEST_KLARNA,
-        PaymentMethodType.PRIMER_TEST_PAYPAL,
-        PaymentMethodType.PRIMER_TEST_SOFORT,
-        PaymentMethodType.RAPYD_FAST,
-        PaymentMethodType.RAPYD_PROMPTPAY,
-        PaymentMethodType.UNKNOWN -> false
+internal fun PaymentMethodConfigDataResponse.isAvailableOnHUC(): Boolean {
+    return when (this.implementationType) {
+        PaymentMethodImplementationType.NATIVE_SDK -> {
+            when (PaymentMethodType.safeValueOf(this.type)) {
+                PaymentMethodType.PAYMENT_CARD,
+                PaymentMethodType.KLARNA,
+                PaymentMethodType.GOOGLE_PAY,
+                PaymentMethodType.PAYPAL,
+                PaymentMethodType.APAYA -> true
+                PaymentMethodType.ADYEN_IDEAL,
+                PaymentMethodType.ADYEN_DOTPAY,
+                PaymentMethodType.ADYEN_BLIK,
+                PaymentMethodType.ADYEN_MBWAY,
+                PaymentMethodType.ADYEN_BANK_TRANSFER,
+                PaymentMethodType.XFERS_PAYNOW,
+                PaymentMethodType.GOCARDLESS,
+                PaymentMethodType.PRIMER_TEST_KLARNA,
+                PaymentMethodType.PRIMER_TEST_PAYPAL,
+                PaymentMethodType.PRIMER_TEST_SOFORT,
+                PaymentMethodType.RAPYD_FAST,
+                PaymentMethodType.RAPYD_PROMPTPAY,
+                PaymentMethodType.UNKNOWN -> false
+                else -> false
+            }
+        }
+        PaymentMethodImplementationType.WEB_REDIRECT -> true
+        PaymentMethodImplementationType.UNKNOWN -> false
     }
+}
+
+internal fun Brand.getImageAsset(imageColor: ImageColor) = when (imageColor) {
+    ImageColor.COLORED -> iconResId
+    ImageColor.DARK -> iconDarkResId
+    ImageColor.LIGHT -> iconLightResId
 }

@@ -114,6 +114,22 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+    is TimerProperties -> AnalyticsTimerEventRequest(
+        DeviceData(
+            batteryLevel,
+            batteryStatus,
+            screenData,
+            deviceId
+        ),
+        this,
+        appIdentifier,
+        sdkSessionId,
+        checkoutSessionId,
+        clientSessionId,
+        orderId,
+        primerAccountId,
+        analyticsUrl
+    )
     else -> throw IllegalStateException("Unsupported property params")
 }
 

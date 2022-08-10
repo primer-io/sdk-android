@@ -3,7 +3,7 @@ package io.primer.android.components.domain.payments
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
 import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -29,13 +29,13 @@ internal class PaymentsTypesInteractor(
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<Unit, None>() {
+) : BaseFlowInteractor<Unit, None>() {
 
     override fun execute(params: None) = configurationInteractor(
         ConfigurationParams(false)
     ).flatMapLatest {
         paymentMethodModulesInteractor.execute(PaymentModuleParams(false))
-            .mapLatest { it.descriptors.map { it.config.type } }
+            .mapLatest { it.descriptors.map { it.config } }
             .mapLatest {
                 it.filter { it.isAvailableOnHUC() }
             }
@@ -45,7 +45,7 @@ internal class PaymentsTypesInteractor(
                 CheckoutEvent.ConfigurationSuccess(
                     paymentMethodType.map {
                         paymentMethodMapper.getPrimerHeadlessUniversalCheckoutPaymentMethod(
-                            it
+                            it.type
                         )
                     }
                 )

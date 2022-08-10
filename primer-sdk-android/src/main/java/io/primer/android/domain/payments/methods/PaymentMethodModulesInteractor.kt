@@ -1,20 +1,19 @@
 package io.primer.android.domain.payments.methods
 
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.configuration.models.isAvailableOnHUC
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.MissingPaymentMethodException
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
+import io.primer.android.domain.exception.UnsupportedPaymentMethodException
+import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
-import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.domain.exception.UnsupportedPaymentMethodException
-import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
 import io.primer.android.payment.VaultCapability
@@ -39,19 +38,21 @@ internal class PaymentMethodModulesInteractor(
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<PaymentMethodModulesInteractor.PaymentDescriptorsHolder, PaymentModuleParams>() {
+) : BaseFlowInteractor<
+    PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
+    PaymentModuleParams>() {
 
     override fun execute(params: PaymentModuleParams) =
         paymentMethodsRepository.getPaymentMethodDescriptors()
             .combine(
                 configurationRepository.fetchConfiguration(true)
-                    .map { it.paymentMethods.map { it.type.name } }
+                    .map { it.paymentMethods }
             ) { descriptors, paymentMethods -> Pair(descriptors, paymentMethods) }
             .onStart {
                 if (params.sendStartEvent) {
                     eventDispatcher.dispatchEvent(
                         CheckoutEvent.PreparationStarted(
-                            config.intent.paymentMethod ?: PaymentMethodType.UNKNOWN
+                            config.intent.paymentMethod.orEmpty()
                         )
                     )
                 }
@@ -62,7 +63,7 @@ internal class PaymentMethodModulesInteractor(
                     val availablePaymentMethods = paymentMethodData.second
                     val paymentMethod = requireNotNull(config.intent.paymentMethod)
                     // if the payment method is not present or not present after filtering
-                    if (availablePaymentMethods.contains(paymentMethod.name).not()) {
+                    if (availablePaymentMethods.map { it.type }.contains(paymentMethod).not()) {
                         throw MissingPaymentMethodException(paymentMethod)
                     } else if (
                         descriptors.none {
@@ -73,7 +74,10 @@ internal class PaymentMethodModulesInteractor(
                             paymentMethod,
                             config.intent.paymentMethodIntent
                         )
-                    } else if (config.settings.fromHUC && paymentMethod.isAvailableOnHUC().not()) {
+                    } else if (config.settings.fromHUC &&
+                        descriptors.first { it.config.type == paymentMethod }.config
+                            .isAvailableOnHUC().not()
+                    ) {
                         throw UnsupportedPaymentMethodException(paymentMethod)
                     }
                 }

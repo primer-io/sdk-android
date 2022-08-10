@@ -4,7 +4,6 @@ import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.dummy.DummyDecisionType
 
 internal data class UIAnalyticsParams(
@@ -17,7 +16,7 @@ internal data class UIAnalyticsParams(
 
 internal abstract class BaseContextParams
 
-internal data class PaymentMethodContextParams(val paymentMethodType: PaymentMethodType) :
+internal data class PaymentMethodContextParams(val paymentMethodType: String) :
     BaseContextParams()
 
 internal data class BankIssuerContextParams(val issuerId: String) : BaseContextParams()

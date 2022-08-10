@@ -69,7 +69,7 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     }
 
     internal fun setupEditTextTheme() {
-        val fontSize = theme.input.text.fontsize.getDimension(context)
+        val fontSize = theme.input.text.fontSize.getDimension(context)
         editText?.apply {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
             setTextColor(

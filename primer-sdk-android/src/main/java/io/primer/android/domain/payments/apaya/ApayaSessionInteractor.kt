@@ -1,7 +1,7 @@
 package io.primer.android.domain.payments.apaya
 
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
@@ -22,7 +22,7 @@ internal class ApayaSessionInteractor(
     private val apayaRepository: ApayaRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<ApayaPaymentData, ApayaSessionParams>() {
+) : BaseFlowInteractor<ApayaPaymentData, ApayaSessionParams>() {
 
     override fun execute(params: ApayaSessionParams) =
         apayaSessionParamsValidator.validate(params)

@@ -10,7 +10,6 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DIAppComponent
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import io.primer.android.ui.base.webview.WebViewActivity
@@ -28,7 +27,7 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
         logAnalyticsViewed()
         asyncPaymentMethodViewModel.getStatus(
             intent?.extras?.getString(STATUS_URL_KEY).orEmpty(),
-            intent?.extras?.getSerializable(PAYMENT_METHOD_TYPE_KEY) as PaymentMethodType
+            intent?.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
 
         )
         setupObservers()
@@ -83,7 +82,7 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
             captureUrl: String,
             statusUrl: String,
             title: String,
-            paymentMethodType: PaymentMethodType,
+            paymentMethodType: String,
             webViewClientType: WebViewClientType,
         ): Intent {
             return Intent(context, AsyncPaymentMethodWebViewActivity::class.java).apply {

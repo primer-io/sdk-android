@@ -1,10 +1,6 @@
 package io.primer.android.payment.async.ideal
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
@@ -21,7 +17,7 @@ import org.koin.core.component.KoinApiExtension
 internal class AdyenIdealPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
 
     override val title = "IDEAL"
@@ -33,12 +29,4 @@ internal class AdyenIdealPaymentMethodDescriptor(
         listOf(AsyncPaymentMethodBehaviour(this))
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
-
-    override fun createButton(container: ViewGroup): View {
-        return LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_ideal,
-            container,
-            false
-        )
-    }
 }

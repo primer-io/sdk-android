@@ -24,7 +24,7 @@
     <dimen name="primer_text_size_xs">10sp</dimen>
 
     <!--  Payment methods  -->
-    <dimen name="primer_payment_method_preview_button_height">48sp</dimen>
+    <dimen name="primer_payment_method_preview_button_height">48dp</dimen>
 
     <!--  Universal Checkout view  -->
     <dimen name="extra_small_padding">2dp</dimen>
@@ -54,7 +54,7 @@
 
     <!-- PRIMER THEME -->
     <dimen name="primer_default_border_width">1dp</dimen>
-    <dimen name="primer_default_corner_radius">6dp</dimen>
+    <dimen name="primer_default_corner_radius">4dp</dimen>
     <dimen name="primer_bottom_sheet_corner_radius">0dp</dimen>
 
     <!-- text -->

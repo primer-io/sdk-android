@@ -18,32 +18,7 @@
     <color name="primer_button_primary_disabled">#1F000000</color>
     <color name="primer_secondary">@android:color/black</color>
 
-    <color name="paypal_gold">#FFFFC439</color>
-    <color name="paypal_blue">#009CDE</color>
-    <color name="klarna">#FFB3C7</color>
-    <color name="hoolah">#D63727</color>
-    <color name="pay_nl_ideal">#CC0670</color>
-    <color name="giropay">#000268</color>
-    <color name="twint">#000000</color>
-    <color name="sofort">#EF809F</color>
-    <color name="trustly">#0EE06E</color>
-    <color name="alipay">#1677FF</color>
-    <color name="vipps">#FF5B24</color>
-    <color name="mobilepay">#5A78FF</color>
-    <color name="blik">#040404</color>
-    <color name="bancontact">#000268</color>
-    <color name="payconiq">#FF4785</color>
     <color name="bank_transfer">#0054A6</color>
-    <color name="atome">#F0FF5F</color>
-    <color name="xfers">#941F7F</color>
-    <color name="p24">#C51B2A</color>
-    <color name="iterac">#FEB92B</color>
-    <color name="paytrail">#E50C96</color>
-    <color name="payshop">#EE3424</color>
-    <color name="gcash">#297BFA</color>
-    <color name="grabpay">#01B14E</color>
-    <color name="poli">#2F4398</color>
-    <color name="promptpay">#023C68</color>
 
     <!--  PRIMER THEME  -->
     <!--  override these values for custom theming  -->

@@ -90,7 +90,7 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     private fun setupTheme() {
         fields.forEach { data ->
             val inputFieldView = data.second
-            val fontSize = theme.input.text.fontsize.getDimension(context)
+            val fontSize = theme.input.text.fontSize.getDimension(context)
             inputFieldView.editText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
             val color = theme.input.text.defaultColor.getColor(context, theme.isDarkMode)

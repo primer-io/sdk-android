@@ -2,7 +2,7 @@ package io.primer.android.domain.payments.methods
 
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
@@ -17,7 +17,7 @@ internal class VaultedPaymentMethodsInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<List<PaymentMethodVaultTokenInternal>, None>() {
+) : BaseFlowInteractor<List<PaymentMethodVaultTokenInternal>, None>() {
 
     override fun execute(params: None) = vaultedPaymentMethodsRepository.getVaultedPaymentMethods()
         .flowOn(dispatcher)

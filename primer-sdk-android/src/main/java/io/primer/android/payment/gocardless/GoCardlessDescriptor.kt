@@ -1,11 +1,7 @@
 package io.primer.android.payment.gocardless
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
-import io.primer.android.databinding.PaymentMethodButtonDirectDebitBinding
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.di.DIAppComponent
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
@@ -18,7 +14,7 @@ import org.koin.core.component.inject
 
 @KoinApiExtension
 internal class GoCardlessDescriptor(
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
     val options: GoCardless,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
@@ -36,21 +32,4 @@ internal class GoCardlessDescriptor(
 
     override val vaultCapability: VaultCapability
         get() = VaultCapability.VAULT_ONLY
-
-    override fun createButton(container: ViewGroup): View {
-        val binding = PaymentMethodButtonDirectDebitBinding.inflate(
-            LayoutInflater.from(container.context),
-            container,
-            false
-        )
-        val text = binding.directDebitButtonText
-        text.setTextColor(
-            theme.paymentMethodButton.text.defaultColor.getColor(
-                container.context,
-                theme.isDarkMode
-            )
-        )
-
-        return binding.root
-    }
 }

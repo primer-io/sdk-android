@@ -24,8 +24,11 @@ internal data class AnalyticsTimerEventRequest(
 }
 
 @Serializable
-internal data class TimerProperties(val id: TimerId, val timerType: TimerType) :
-    BaseAnalyticsProperties()
+internal data class TimerProperties(
+    val id: TimerId,
+    val timerType: TimerType,
+    val analyticsContext: AnalyticsContext? = null
+) : BaseAnalyticsProperties()
 
 internal enum class TimerType {
     START,
@@ -34,4 +37,6 @@ internal enum class TimerType {
 
 internal enum class TimerId {
     CHECKOUT_DURATION,
+    PM_ALL_IMAGES_LOADING_DURATION,
+    PM_IMAGE_LOADING_DURATION
 }

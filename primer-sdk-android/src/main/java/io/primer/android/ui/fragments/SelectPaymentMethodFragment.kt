@@ -15,12 +15,14 @@ import androidx.fragment.app.activityViewModels
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.SessionState
+import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
+import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.settings.PrimerTheme
@@ -43,8 +45,10 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
     private val localConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
+    private val methodViewFactory: PrimerPaymentMethodViewFactory by inject()
 
     private val primerViewModel: PrimerViewModel by activityViewModels()
+
     private var binding: FragmentSelectPaymentMethodBinding by autoCleaned()
 
     override fun onCreateView(
@@ -81,7 +85,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         val context = requireContext()
         val textColor = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
         binding.choosePaymentMethodLabel.setTextColor(textColor)
-        val fontSize = theme.titleText.fontsize.getDimension(context)
+        val fontSize = theme.titleText.fontSize.getDimension(context)
         binding.choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
     }
 
@@ -104,7 +108,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private fun renderSubtitles() {
         val context = requireContext()
         val color = theme.subtitleText.defaultColor.getColor(context, theme.isDarkMode)
-        val fontSize = theme.subtitleText.fontsize.getDimension(context)
+        val fontSize = theme.subtitleText.fontSize.getDimension(context)
         binding.savedPaymentMethodLabel.setTextColor(color)
         binding.otherWaysToPayLabel.setTextColor(color)
         binding.savedPaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
@@ -117,7 +121,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     * */
     private fun renderSavedPaymentMethodItem() {
         val context = requireContext()
-        val contentDrawable = generateButtonContent(theme, context)
+        val contentDrawable = generateButtonContent(context, theme)
         val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val pressedStates = ColorStateList.valueOf(splash)
         val rippleDrawable = RippleDrawable(pressedStates, contentDrawable, null)
@@ -177,11 +181,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         // add listener for populating payment method buttons list
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
-            addPaymentMethodsToList(paymentMethods)
+            addPaymentMethodsToList(
+                paymentMethods,
+                primerViewModel.getPaymentMethodsDisplayMetadata()
+            )
         }
 
         // add listener for displaying selected saved payment method
-        primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
+        primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) {
             if (primerViewModel.shouldDisplaySavedPaymentMethod) renderSelectedPaymentMethod()
             else binding.primerSavedPaymentSection.isVisible = false
         }
@@ -212,7 +219,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 theme.isDarkMode
             )
         )
-        val fontSize = theme.systemText.fontsize.getDimension(requireContext())
+        val fontSize = theme.systemText.fontSize.getDimension(requireContext())
         binding.seeAllLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
     }
 
@@ -226,24 +233,33 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         }
     }
 
-    private fun addPaymentMethodsToList(paymentMethods: List<PaymentMethodDescriptor>) {
+    private fun addPaymentMethodsToList(
+        paymentMethods: List<PaymentMethodDescriptor>,
+        paymentMethodsDisplayMetadata: List<BaseDisplayMetadata>
+    ) {
         val factory = primerViewModel.paymentMethodButtonGroupFactory
 
-        val boxes = factory.build(requireContext(), paymentMethods, onClick = { paymentMethod ->
-            // ensure other buttons can't be clicked
-            disableButtons()
+        val boxes = factory.build(
+            requireContext(),
+            methodViewFactory,
+            paymentMethodsDisplayMetadata,
+            paymentMethods,
+            onClick = { paymentMethod ->
+                // ensure other buttons can't be clicked
+                disableButtons()
 
-            // select payment method
-            primerViewModel.selectPaymentMethod(paymentMethod)
+                // select payment method
+                primerViewModel.selectPaymentMethod(paymentMethod)
 
-            // handle non-form cases
-            paymentMethod.behaviours.firstOrNull()?.let {
-                val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
-                if (isNotForm) {
-                    primerViewModel.executeBehaviour(it)
+                // handle non-form cases
+                paymentMethod.behaviours.firstOrNull()?.let {
+                    val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
+                    if (isNotForm) {
+                        primerViewModel.executeBehaviour(it)
+                    }
                 }
             }
-        })
+        )
 
         boxes.forEachIndexed { i, box ->
             if (primerViewModel.surchargeDisabled) {

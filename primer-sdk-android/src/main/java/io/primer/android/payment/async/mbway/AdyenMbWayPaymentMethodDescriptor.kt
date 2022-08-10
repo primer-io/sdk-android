@@ -1,10 +1,7 @@
 package io.primer.android.payment.async.mbway
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
@@ -19,7 +16,7 @@ import io.primer.android.ui.payment.LoadingState
 internal class AdyenMbWayPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
 
     override val title = "MB WAY"
@@ -45,12 +42,4 @@ internal class AdyenMbWayPaymentMethodDescriptor(
             AsyncPaymentMethodBehaviour(this),
             NewFragmentBehaviour(PaymentMethodLoadingFragment::newInstance)
         )
-
-    override fun createButton(container: ViewGroup): View {
-        return LayoutInflater.from(container.context).inflate(
-            R.layout.payment_method_button_mbway,
-            container,
-            false
-        )
-    }
 }

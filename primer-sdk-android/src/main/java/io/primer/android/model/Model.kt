@@ -2,9 +2,9 @@ package io.primer.android.model
 
 import io.primer.android.http.exception.HttpException
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.data.error.model.APIError
-import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.SessionCreateException
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
@@ -33,10 +33,10 @@ import kotlin.coroutines.resumeWithException
 
 // TODO move this somewhere else
 internal suspend inline fun Call.await(): Response =
-    suspendCancellableCoroutine<Response> { continuation ->
+    suspendCancellableCoroutine { continuation ->
         val callback = object : Callback, CompletionHandler {
             override fun onFailure(call: Call, e: IOException) {
-                if (!call.isCanceled()) {
+                if (!call.isCanceled) {
                     continuation.resumeWithException(e)
                 }
             }
@@ -66,7 +66,7 @@ internal class Model constructor(
 ) {
 
     // FIXME avoid this null-assertion
-    private val session: Configuration
+    private val session: ConfigurationData
         get() = localConfigurationDataSource.getConfiguration()
 
     fun tokenize(

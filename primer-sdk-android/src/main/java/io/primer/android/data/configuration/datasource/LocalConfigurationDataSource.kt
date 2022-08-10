@@ -1,15 +1,15 @@
 package io.primer.android.data.configuration.datasource
 
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
-import io.primer.android.data.configuration.models.Configuration
 import io.primer.android.data.configuration.exception.MissingConfigurationException
+import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.data.settings.PrimerSettings
 import kotlinx.coroutines.flow.flowOf
 
 internal class LocalConfigurationDataSource(private val settings: PrimerSettings) :
-    BaseFlowCacheDataSource<Configuration, Configuration> {
+    BaseFlowCacheDataSource<ConfigurationData, ConfigurationData> {
 
-    private var configuration: Configuration? = null
+    private var configuration: ConfigurationData? = null
 
     @Throws(MissingConfigurationException::class)
     override fun get() = try {
@@ -18,7 +18,7 @@ internal class LocalConfigurationDataSource(private val settings: PrimerSettings
         throw MissingConfigurationException(e)
     }
 
-    override fun update(input: Configuration) {
+    override fun update(input: ConfigurationData) {
         this.configuration = input
         updateSettings(input)
     }
@@ -27,7 +27,7 @@ internal class LocalConfigurationDataSource(private val settings: PrimerSettings
 
     fun getConfigurationNullable() = configuration
 
-    private fun updateSettings(configuration: Configuration) =
+    private fun updateSettings(configuration: ConfigurationData) =
         configuration.clientSession?.apply {
             customer?.let { settings.customer = it }
             order?.let { settings.order = it }

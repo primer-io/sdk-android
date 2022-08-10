@@ -84,7 +84,7 @@ class AsyncPaymentMethodInteractorTest {
             interactor(
                 AsyncMethodParams(
                     "",
-                    PaymentMethodType.safeValueOf(paymentMethodTokenInternal.paymentInstrumentType)
+                    paymentMethodTokenInternal.paymentInstrumentType
                 )
             ).first()
         }
@@ -108,7 +108,7 @@ class AsyncPaymentMethodInteractorTest {
         )
         assertThrows<Exception> {
             runTest {
-                interactor(AsyncMethodParams("", PaymentMethodType.HOOLAH)).first()
+                interactor(AsyncMethodParams("", PaymentMethodType.HOOLAH.name)).first()
             }
         }
 

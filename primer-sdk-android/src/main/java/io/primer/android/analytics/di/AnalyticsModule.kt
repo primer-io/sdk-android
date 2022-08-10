@@ -1,10 +1,10 @@
 package io.primer.android.analytics.di
 
-import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.RemoteAnalyticsDataSource
+import io.primer.android.analytics.data.datasource.TimerDataSource
 import io.primer.android.analytics.data.helper.AnalyticsDataSender
-import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
+import io.primer.android.analytics.data.helper.TimerEventProvider
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.analytics.data.repository.AnalyticsDataRepository
 import io.primer.android.analytics.domain.AnalyticsInteractor
@@ -12,9 +12,11 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.analytics.infrastructure.datasource.BatteryLevelDataSource
 import io.primer.android.analytics.infrastructure.datasource.BatteryStatusDataSource
 import io.primer.android.analytics.infrastructure.datasource.DeviceIdDataSource
+import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSource
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
+import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import io.primer.android.presentation.base.BaseViewModel
@@ -39,6 +41,8 @@ internal val analyticsModule = {
         single { FileAnalyticsDataSource(get(), get()) }
         single { AnalyticsFileProvider(get()) }
         single { RemoteAnalyticsDataSource(get()) }
+        single { TimerEventProvider() }
+        single { TimerDataSource(get()) }
         single<AnalyticsRepository> {
             AnalyticsDataRepository(
                 get(),
@@ -53,7 +57,8 @@ internal val analyticsModule = {
                 get(),
                 get(),
                 get(),
-                get<Interceptor>() as HttpAnalyticsInterceptor
+                get<Interceptor>() as HttpAnalyticsInterceptor,
+                get()
             )
         }
         single { AnalyticsInteractor(get(), get(named(ANALYTICS_LOGGER_NAME))) }

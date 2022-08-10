@@ -15,7 +15,7 @@ internal class AsyncPaymentMethodBehaviour(private val asyncMethod: AsyncPayment
     override fun execute(tokenizationViewModel: TokenizationViewModel) {
         tokenizationViewModel.resetPaymentMethod(asyncMethod)
         asyncMethod.setTokenizableValue("type", "OFF_SESSION_PAYMENT")
-        asyncMethod.setTokenizableValue("paymentMethodType", asyncMethod.config.type.name)
+        asyncMethod.setTokenizableValue("paymentMethodType", asyncMethod.config.type)
         asyncMethod.setTokenizableValue("paymentMethodConfigId", asyncMethod.config.id!!)
         // ...
         asyncMethod.appendTokenizableValue(

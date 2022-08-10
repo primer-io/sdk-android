@@ -4,7 +4,7 @@ import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCh
 import io.primer.android.components.domain.exception.InvalidTokenizationDataException
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -16,7 +16,7 @@ internal class PaymentInputDataValidateInteractor(
     private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher
-) : BaseInteractor<Unit, PaymentTokenizationDescriptorParams>() {
+) : BaseFlowInteractor<Unit, PaymentTokenizationDescriptorParams>() {
 
     override fun execute(params: PaymentTokenizationDescriptorParams) =
         flow {

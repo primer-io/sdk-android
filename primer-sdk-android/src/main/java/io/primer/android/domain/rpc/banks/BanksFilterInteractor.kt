@@ -1,6 +1,6 @@
 package io.primer.android.domain.rpc.banks
 
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.rpc.banks.models.IssuingBank
 import io.primer.android.domain.rpc.banks.models.IssuingBankFilterParams
 import io.primer.android.domain.rpc.banks.repository.IssuingBankRepository
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.mapLatest
 internal class BanksFilterInteractor(
     private val issuingBankRepository: IssuingBankRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<List<IssuingBank>, IssuingBankFilterParams>() {
+) : BaseFlowInteractor<List<IssuingBank>, IssuingBankFilterParams>() {
 
     override fun execute(params: IssuingBankFilterParams) =
         issuingBankRepository.getCachedIssuingBanks()

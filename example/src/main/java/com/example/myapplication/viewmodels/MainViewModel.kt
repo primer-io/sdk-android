@@ -25,7 +25,6 @@ import com.example.myapplication.utils.CombinedLiveData
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
 import io.primer.android.data.settings.PrimerCardPaymentOptions
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
@@ -89,7 +88,7 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
     fun setCurrentEnv(env: PrimerEnv) {
         environment.postValue(env)
         this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
@@ -121,8 +120,7 @@ class MainViewModel(
 
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
     val clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
-    val useStandalonePaymentMethod: MutableLiveData<PrimerPaymentMethodType> =
-        MutableLiveData<PrimerPaymentMethodType>()
+    val useStandalonePaymentMethod: MutableLiveData<String> = MutableLiveData()
 
     val paymentInstruments: MutableLiveData<List<PrimerPaymentMethodTokenData>> =
         MutableLiveData<List<PrimerPaymentMethodTokenData>>()
@@ -147,7 +145,7 @@ class MainViewModel(
 
     val vaultDisabled: Boolean
         get() = isStandalonePaymentMethod
-            && useStandalonePaymentMethod.value == PrimerPaymentMethodType.GOOGLE_PAY
+            && useStandalonePaymentMethod.value == "GOOGLE_PAY"
     val isStandalonePaymentMethod: Boolean
         get() = useStandalonePaymentMethod.value != null
 

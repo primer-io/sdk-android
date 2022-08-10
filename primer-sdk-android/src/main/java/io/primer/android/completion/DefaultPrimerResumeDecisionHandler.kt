@@ -5,8 +5,8 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
+import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
@@ -69,8 +69,10 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private fun checkCorrectFlowLaunched() {
         val clientTokenIntent = clientTokenRepository.getClientTokenIntent()
         require(
-            getPaymentInstrumentType().intents?.contains(clientTokenIntent) == true ||
-                getPaymentMethodType().intents?.contains(clientTokenIntent) == true
+            getPaymentInstrumentType().intents?.map { it.name }
+                ?.contains(clientTokenIntent) == true ||
+                "${getPaymentMethodTypeString()}$CLIENT_TOKEN_INTENT_SUFFIX" == clientTokenIntent ||
+                getPaymentMethodType().intents?.map { it.name }?.contains(clientTokenIntent) == true
         ) { RESUME_INTENT_ERROR }
     }
 
@@ -79,9 +81,11 @@ internal open class DefaultPrimerResumeDecisionHandler(
     )
 
     private fun getPaymentMethodType() = PaymentMethodType.safeValueOf(
-        paymentMethodRepository.getPaymentMethod()
-            .paymentInstrumentData?.paymentMethodType
+        paymentMethodRepository.getPaymentMethod().paymentInstrumentData?.paymentMethodType
     )
+
+    private fun getPaymentMethodTypeString() =
+        paymentMethodRepository.getPaymentMethod().paymentInstrumentData?.paymentMethodType
 
     private fun callIfNotHandled(function: () -> Unit) = synchronized(this) {
         if (handlerUsed.not()) {
@@ -105,5 +109,6 @@ internal open class DefaultPrimerResumeDecisionHandler(
 
         const val HANDLER_USED_ERROR = "ResumeHandler can be used only once."
         const val RESUME_INTENT_ERROR = "Unexpected client token intent"
+        const val CLIENT_TOKEN_INTENT_SUFFIX = "_REDIRECTION"
     }
 }

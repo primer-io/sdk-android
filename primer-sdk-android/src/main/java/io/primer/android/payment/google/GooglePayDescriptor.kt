@@ -1,10 +1,7 @@
 package io.primer.android.payment.google
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
@@ -18,7 +15,7 @@ internal class GooglePayDescriptor constructor(
     val options: GooglePay,
     val googlePayFacade: GooglePayFacade,
     paymentMethodChecker: PaymentMethodChecker,
-    config: PaymentMethodRemoteConfig,
+    config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config) {
 
     companion object {
@@ -42,16 +39,6 @@ internal class GooglePayDescriptor constructor(
     val merchantId: String?
         get() = config.options?.merchantId
 //            ?.replace("\"", "") // FIXME issue with kotlin serialization here
-
-    override fun createButton(container: ViewGroup): View =
-        LayoutInflater.from(container.context).inflate(
-            when (options.buttonStyle) {
-                GooglePayButtonStyle.BLACK -> R.layout.googlepay_black_button
-                GooglePayButtonStyle.WHITE -> R.layout.googlepay_white_button_no_shadow
-            },
-            container,
-            false
-        )
 
     override fun getLoadingState() = when (options.buttonStyle) {
         GooglePayButtonStyle.BLACK ->

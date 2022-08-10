@@ -1,14 +1,14 @@
 package io.primer.android.viewmodel
 
 import io.primer.android.PaymentMethod
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 
 internal interface PaymentMethodDescriptorResolver {
 
-    suspend fun resolve(remotePaymentMethods: List<PaymentMethodRemoteConfig>):
+    suspend fun resolve(remotePaymentMethods: List<PaymentMethodConfigDataResponse>):
         List<PaymentMethodDescriptor> = emptyList()
 }
 
@@ -19,7 +19,7 @@ internal class PrimerPaymentMethodDescriptorResolver(
     private val availabilityCheckers: PaymentMethodCheckerRegistry,
 ) : PaymentMethodDescriptorResolver {
 
-    override suspend fun resolve(remotePaymentMethods: List<PaymentMethodRemoteConfig>):
+    override suspend fun resolve(remotePaymentMethods: List<PaymentMethodConfigDataResponse>):
         List<PaymentMethodDescriptor> {
         val list = ArrayList<PaymentMethodDescriptor>()
         remotePaymentMethods.forEach { paymentMethodRemoteConfig ->

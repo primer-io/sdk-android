@@ -1,6 +1,5 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.dummy.DummyDecisionType
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
@@ -36,7 +35,7 @@ internal data class UIProperties(
 
 @Serializable
 internal data class AnalyticsContext(
-    val paymentMethodType: PaymentMethodType? = null,
+    val paymentMethodType: String? = null,
     val issuerId: String? = null,
     val paymentMethodId: String? = null,
     val url: String? = null,

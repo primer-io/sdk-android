@@ -1,13 +1,8 @@
 package io.primer.android.domain.base
 
-import kotlinx.coroutines.flow.Flow
-
-internal interface Params
-internal class None : Params
-
 internal abstract class BaseInteractor<out T, in P : Params> where T : Any {
 
-    abstract fun execute(params: P): Flow<T>
+    abstract fun execute(params: P): T
 
     operator fun invoke(
         params: P,

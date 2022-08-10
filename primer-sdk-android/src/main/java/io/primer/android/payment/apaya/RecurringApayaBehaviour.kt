@@ -1,7 +1,6 @@
 package io.primer.android.payment.apaya
 
 import android.net.Uri
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import org.koin.core.component.KoinApiExtension
 
@@ -27,6 +26,6 @@ internal data class RecurringApayaBehaviour constructor(
     }
 
     override fun onCancel(uri: Uri?) {
-        tokenizationViewModel?.userCanceled(PaymentMethodType.APAYA)
+        tokenizationViewModel?.userCanceled(apaya.config.type)
     }
 }

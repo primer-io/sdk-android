@@ -1,7 +1,6 @@
 package io.primer.android.domain.error.models
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
-import io.primer.android.data.configuration.models.PaymentMethodType
 import java.util.UUID
 import kotlin.reflect.KClass
 
@@ -14,7 +13,7 @@ internal sealed class HUCError : PrimerError() {
     object MissingConfigurationError : HUCError()
 
     class InvalidTokenizationInputDataError(
-        val paymentMethodType: PaymentMethodType,
+        val paymentMethodType: String,
         val inputData: KClass<out PrimerHeadlessUniversalCheckoutInputData>
     ) : HUCError()
 

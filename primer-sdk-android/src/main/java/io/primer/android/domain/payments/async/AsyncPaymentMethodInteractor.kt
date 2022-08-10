@@ -3,7 +3,7 @@ package io.primer.android.domain.payments.async
 import io.primer.android.data.payments.async.exception.AsyncFlowIncompleteException
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.base.BaseInteractor
+import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
@@ -25,7 +25,7 @@ internal class AsyncPaymentMethodInteractor(
     private val resumeEventResolver: ResumeEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseInteractor<AsyncStatus, AsyncMethodParams>() {
+) : BaseFlowInteractor<AsyncStatus, AsyncMethodParams>() {
 
     override fun execute(params: AsyncMethodParams) = paymentMethodStatusRepository.getAsyncStatus(
         params.url,

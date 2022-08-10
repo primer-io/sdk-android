@@ -3,19 +3,19 @@ package io.primer.android.components.domain.core.mapper
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.card.CardInputData
 import io.primer.android.components.domain.core.models.otp.OtpInputData
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 
 internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
 
     fun getPrimerHeadlessUniversalCheckoutPaymentMethod(
-        paymentMethodType: PrimerPaymentMethodType
+        paymentMethodType: String
     ): PrimerHeadlessUniversalCheckoutPaymentMethod {
         return when (paymentMethodType) {
-            PrimerPaymentMethodType.ADYEN_BLIK -> PrimerHeadlessUniversalCheckoutPaymentMethod(
+            PaymentMethodType.ADYEN_BLIK.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
                 paymentMethodType,
                 OtpInputData::class
             )
-            PrimerPaymentMethodType.PAYMENT_CARD -> PrimerHeadlessUniversalCheckoutPaymentMethod(
+            PaymentMethodType.PAYMENT_CARD.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
                 paymentMethodType,
                 CardInputData::class
             )

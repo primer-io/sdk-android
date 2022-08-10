@@ -126,10 +126,6 @@
     *;
 }
 
--keep class io.primer.android.data.configuration.models.PrimerPaymentMethodTypeKt {
-    public *;
-}
-
 -keep class io.primer.android.domain.error.models.PrimerError {
     public *;
 }
@@ -164,6 +160,10 @@
 }
 
 -keep enum io.primer.android.components.ui.assets.ImageType {
+    *;
+}
+
+-keep enum io.primer.android.components.ui.assets.ImageColor {
     *;
 }
 

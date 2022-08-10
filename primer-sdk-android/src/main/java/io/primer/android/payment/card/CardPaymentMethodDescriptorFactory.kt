@@ -1,7 +1,7 @@
 package io.primer.android.payment.card
 
 import io.primer.android.PaymentMethod
-import io.primer.android.data.configuration.models.PaymentMethodRemoteConfig
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
@@ -11,12 +11,11 @@ internal class CardPaymentMethodDescriptorFactory : PaymentMethodDescriptorFacto
 
     override fun create(
         localConfig: PrimerConfig,
-        paymentMethodRemoteConfig: PaymentMethodRemoteConfig,
+        paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
         paymentMethodCheckers: PaymentMethodCheckerRegistry,
     ): PaymentMethodDescriptor =
         CreditCard(
             config = paymentMethodRemoteConfig,
-            options = paymentMethod as Card
         )
 }

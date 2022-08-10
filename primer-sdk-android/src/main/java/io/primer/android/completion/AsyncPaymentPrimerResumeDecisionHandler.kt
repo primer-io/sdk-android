@@ -1,7 +1,6 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -35,15 +34,15 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
-        val paymentMethodType = PaymentMethodType.safeValueOf(
+        val paymentMethodType =
             paymentMethodRepository.getPaymentMethod()
-                .paymentInstrumentData?.paymentMethodType
-        )
+                .paymentInstrumentData?.paymentMethodType.orEmpty()
+
         when (clientTokenRepository.getClientTokenIntent()) {
-            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION,
-            ClientTokenIntent.RAPYD_FAST_REDIRECTION,
-            ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION,
-            ClientTokenIntent.ADYEN_BLIK_REDIRECTION -> {
+            ClientTokenIntent.XFERS_PAYNOW_REDIRECTION.name,
+            ClientTokenIntent.RAPYD_FAST_REDIRECTION.name,
+            ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION.name,
+            ClientTokenIntent.ADYEN_BLIK_REDIRECTION.name -> {
                 eventDispatcher.dispatchEvents(
                     listOf(
                         CheckoutEvent.PaymentMethodPresented(

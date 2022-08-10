@@ -1,6 +1,6 @@
 package io.primer.android.payment
 
-import io.primer.android.data.configuration.models.PrimerPaymentMethodType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.apaya.ApayaDescriptor
 import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.gocardless.GoCardlessDescriptor
@@ -14,29 +14,29 @@ internal class PaymentMethodDescriptorMapping(
 ) {
 
     @KoinApiExtension
-    fun getDescriptorFor(paymentMethod: PrimerPaymentMethodType): PaymentMethodDescriptor? =
+    fun getDescriptorFor(paymentMethod: String): PaymentMethodDescriptor? =
         when (paymentMethod) {
-            PrimerPaymentMethodType.PAYMENT_CARD -> {
+            PaymentMethodType.PAYMENT_CARD.name -> {
                 descriptors.find { it is CreditCard }
             }
 
-            PrimerPaymentMethodType.KLARNA -> {
+            PaymentMethodType.KLARNA.name -> {
                 descriptors.find { it is KlarnaDescriptor }
             }
 
-            PrimerPaymentMethodType.PAYPAL -> {
+            PaymentMethodType.PAYPAL.name -> {
                 descriptors.find { it is PayPalDescriptor }
             }
 
-            PrimerPaymentMethodType.GOOGLE_PAY -> {
+            PaymentMethodType.GOOGLE_PAY.name -> {
                 descriptors.find { it is GooglePayDescriptor }
             }
 
-            PrimerPaymentMethodType.GOCARDLESS -> {
+            PaymentMethodType.GOCARDLESS.name -> {
                 descriptors.find { it is GoCardlessDescriptor }
             }
 
-            PrimerPaymentMethodType.APAYA -> {
+            PaymentMethodType.APAYA.name -> {
                 descriptors.find { it is ApayaDescriptor }
             }
 
