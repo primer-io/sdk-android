@@ -155,7 +155,6 @@ internal class BillingAddressFormView @JvmOverloads constructor(
 
     fun findNextFocus() {
         if (!isVisible) {
-            hideKeyboard()
             return
         }
         fields.firstOrNull {

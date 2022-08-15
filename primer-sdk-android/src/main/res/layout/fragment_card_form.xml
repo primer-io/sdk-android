@@ -137,10 +137,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/primer_input_spacing_vert"
             android:hint="@string/card_holder_name"
-            android:visibility="gone"
             app:errorEnabled="false"
-            app:errorIconDrawable="@null"
-            tools:visibility="visible">
+            app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/card_form_cardholder_name_input"

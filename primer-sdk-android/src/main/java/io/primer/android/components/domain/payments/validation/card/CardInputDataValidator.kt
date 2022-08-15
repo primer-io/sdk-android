@@ -19,9 +19,9 @@ internal class CardInputDataValidator(
             val shouldValidateCardHolderName = checkoutModuleRepository.getCheckoutModuleOptions(
                 CheckoutModuleType.CARD_INFORMATION
             ).let { options ->
-                options.via(PrimerInputElementType.ALL) ?: options.via(
-                    PrimerInputElementType.CARDHOLDER_NAME
-                ) != false
+                val isEnabledCardHolderName = options.via(PrimerInputElementType.ALL)
+                    ?: options.via(PrimerInputElementType.CARDHOLDER_NAME)
+                isEnabledCardHolderName == null || isEnabledCardHolderName
             }
 
             val validators = mutableListOf(

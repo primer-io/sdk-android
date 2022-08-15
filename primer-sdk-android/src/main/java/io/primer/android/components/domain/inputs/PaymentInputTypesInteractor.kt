@@ -62,9 +62,8 @@ internal class PaymentInputTypesInteractor(
                                 configs?.via(PrimerInputElementType.ALL) ?: configs?.via(
                                     PrimerInputElementType.CARDHOLDER_NAME
                                 )
-                            if (
-                                containsCardholders == null || containsCardholders != false
-                            ) PrimerInputElementType.CARDHOLDER_NAME else null
+                            if (containsCardholders == null || containsCardholders)
+                                PrimerInputElementType.CARDHOLDER_NAME else null
                         }
 
                     listOf(
