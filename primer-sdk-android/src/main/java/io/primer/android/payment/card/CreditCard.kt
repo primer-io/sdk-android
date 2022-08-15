@@ -39,7 +39,7 @@ internal class CreditCard(
         val json = JSONObject()
 
         json.putFor(
-            PrimerInputElementType.CARDHOLDER_NAME,
+            PrimerInputElementType.FORM_CARDHOLDER_NAME,
             values.valueBy(PrimerInputElementType.CARDHOLDER_NAME).trim()
         )
         json.putFor(
