@@ -64,7 +64,7 @@ internal class PaymentInputTypesInteractor(
                                     PrimerInputElementType.CARDHOLDER_NAME
                                 )
                             if (
-                                containsCardholders != false
+                                containsCardholders == null || containsCardholders != false
                             ) PrimerInputElementType.CARDHOLDER_NAME else null
                         }
 
