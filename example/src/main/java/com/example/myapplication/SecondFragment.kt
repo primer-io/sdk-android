@@ -222,6 +222,7 @@ class SecondFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.clientToken.postValue(null)
         _binding = null
     }
 

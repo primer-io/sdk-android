@@ -8,7 +8,7 @@ import io.primer.android.domain.rpc.banks.BanksInteractor
 import io.primer.android.domain.rpc.banks.repository.IssuingBankRepository
 import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import io.primer.android.viewmodel.bank.DotPayBankSelectionViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 

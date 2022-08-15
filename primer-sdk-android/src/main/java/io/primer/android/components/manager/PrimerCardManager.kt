@@ -2,7 +2,7 @@ package io.primer.android.components.manager
 
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
-import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.ui.widgets.PrimerCardNumberEditText
 import io.primer.android.components.ui.widgets.PrimerCvvEditText
@@ -36,7 +36,7 @@ class PrimerCardManager private constructor() :
     private var listener: PrimerCardManagerListener? = null
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType>? {
-        return PrimerHeadlessUniversalCheckout.instance.listRequiredInputElementTypes(
+        return PrimerHeadlessUniversalCheckout.instance.getRequiredInputElementTypes(
             PaymentMethodType.PAYMENT_CARD.name
         )
     }
@@ -50,12 +50,14 @@ class PrimerCardManager private constructor() :
     override fun tokenize() {
         PrimerHeadlessUniversalCheckout.instance.startTokenization(
             PaymentMethodType.PAYMENT_CARD.name,
-            CardInputData(
+            PrimerRawCardData(
                 getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString(),
-                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString(),
+                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
+                    .getOrElse(0) { "" },
+                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
+                    .getOrElse(1) { "" },
                 getInputElementValue(PrimerInputElementType.CVV).toString(),
                 getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME),
-                getInputElementValue(PrimerInputElementType.POSTAL_CODE),
             )
         )
     }

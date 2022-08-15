@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.databinding.FragmentIdealBankSelectionBinding
 import io.primer.android.di.DIAppComponent
-import org.koin.android.viewmodel.ext.android.viewModel
 
 import io.primer.android.ui.BankSelectionAdapterListener
 import io.primer.android.ui.extensions.autoCleaned
@@ -15,10 +14,9 @@ import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.ui.fragments.bank.binding.toBaseBankSelectionBinding
 import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class IdealBankSelectionFragment :
     BaseBankSelectionFragment(),
     BankSelectionAdapterListener,

@@ -10,10 +10,8 @@ import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal class ApayaDescriptor constructor(
     val localConfig: PrimerConfig,
     val options: Apaya,

@@ -21,10 +21,8 @@ import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.hideKeyboard
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@OptIn(KoinApiExtension::class)
 internal class BillingAddressFormView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

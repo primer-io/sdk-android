@@ -17,7 +17,6 @@ import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.di.DIAppComponent
-import io.primer.android.di.DIAppContext
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -64,11 +63,9 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     private var subscription: EventBus.SubscriptionHandle? = null
@@ -361,8 +358,6 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         }
 
         this.config = config
-
-        DIAppContext.init(applicationContext, config)
 
         primerViewModel.initializeAnalytics()
 

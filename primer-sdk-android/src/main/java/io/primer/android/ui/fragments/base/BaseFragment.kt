@@ -9,10 +9,8 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal abstract class BaseFragment : Fragment(), DIAppComponent {
 
     protected val primerViewModel by activityViewModels<PrimerViewModel>()

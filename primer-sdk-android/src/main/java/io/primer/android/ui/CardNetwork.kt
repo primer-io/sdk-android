@@ -4,7 +4,7 @@ import io.primer.android.R
 
 const val CARD_PADDING: Int = 8
 
-class CardType {
+class CardNetwork {
 
     enum class Type {
         UNKNOWN,

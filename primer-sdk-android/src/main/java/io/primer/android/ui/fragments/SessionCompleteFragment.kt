@@ -19,9 +19,8 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.CheckoutExitReason
 import io.primer.android.presentation.base.BaseViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import io.primer.android.ui.extensions.autoCleaned
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 
 private const val SESSION_COMPLETE_DISMISS_DELAY_KEY = "SUCCESS_FRAGMENT_DISMISS_DELAY"
@@ -43,7 +42,6 @@ sealed class SessionCompleteViewType {
     class Error(val errorType: ErrorType, val message: String?) : SessionCompleteViewType()
 }
 
-@KoinApiExtension
 class SessionCompleteFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()

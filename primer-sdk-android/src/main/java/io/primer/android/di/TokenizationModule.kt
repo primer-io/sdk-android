@@ -11,7 +11,7 @@ import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import io.primer.android.viewmodel.TokenizationViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 

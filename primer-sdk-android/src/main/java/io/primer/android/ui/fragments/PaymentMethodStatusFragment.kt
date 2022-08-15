@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@KoinApiExtension
 internal class PaymentMethodStatusFragment : PaymentMethodLoadingFragment() {
 
     private val asyncPaymentMethodViewModel: AsyncPaymentMethodViewModel by viewModel()

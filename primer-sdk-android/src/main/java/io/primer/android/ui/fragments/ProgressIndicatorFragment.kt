@@ -9,10 +9,8 @@ import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.databinding.FragmentProgressBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.extensions.autoCleaned
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 class ProgressIndicatorFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()

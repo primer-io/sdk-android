@@ -1,7 +1,6 @@
 package io.primer.android.components.domain.inputs
 
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.domain.inputs.models.needAdd
 import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.data.configuration.models.CheckoutModuleType
@@ -25,9 +24,9 @@ internal class PaymentInputTypesInteractor(
                             CheckoutModuleType.BILLING_ADDRESS
                         ).let { configs ->
                             val addressFields = mutableListOf<PrimerInputElementType>()
-                            configs?.needAdd(PrimerInputElementType.POSTAL_CODE)?.let { field ->
-                                addressFields.add(field)
-                            }
+//                            configs?.needAdd(PrimerInputElementType.POSTAL_CODE)?.let { field ->
+//                                addressFields.add(field)
+//                            }
 //                            configs?.needAdd(PrimerInputElementType.COUNTRY_CODE)?.let { field ->
 //                                addressFields.add(field)
 //                            }

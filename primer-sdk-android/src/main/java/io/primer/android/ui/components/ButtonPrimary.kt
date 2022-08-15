@@ -14,10 +14,8 @@ import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.LayoutButtonPrimaryBinding
 import io.primer.android.di.DIAppComponent
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal class ButtonPrimary(
     ctx: Context,
     attrs: AttributeSet,

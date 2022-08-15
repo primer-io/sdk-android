@@ -3,10 +3,14 @@ package io.primer.android.components.di
 import io.primer.android.components.data.payments.repository.CheckoutModuleDataRepository
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
-import io.primer.android.components.domain.payments.PaymentInputDataValidateInteractor
+import io.primer.android.components.domain.payments.PaymentInputDataChangedInteractor
+import io.primer.android.components.domain.payments.PaymentInputDataTypeValidateInteractor
 import io.primer.android.components.domain.payments.PaymentTokenizationInteractor
 import io.primer.android.components.domain.payments.PaymentsTypesInteractor
+import io.primer.android.components.domain.payments.metadata.PaymentRawDataMetadataRetrieverFactory
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
+import io.primer.android.components.domain.payments.validation.PaymentInputDataValidatorFactory
+import io.primer.android.components.presentation.DefaultRawDataDelegate
 import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckoutDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
@@ -33,6 +37,7 @@ internal val componentsModule = {
             PaymentTokenizationInteractor(
                 get(),
                 get(),
+                get(),
                 get(named(COMPONENTS_HANDLER_LOGGER_NAME))
             )
         }
@@ -54,7 +59,7 @@ internal val componentsModule = {
             )
         }
         single {
-            PaymentInputDataValidateInteractor(
+            PaymentInputDataTypeValidateInteractor(
                 get(),
                 get(),
                 get(),
@@ -71,6 +76,31 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get()
+            )
+        }
+
+        factory {
+            PaymentInputDataValidatorFactory(
+                get(),
+            )
+        }
+
+        factory {
+            PaymentRawDataMetadataRetrieverFactory()
+        }
+
+        factory {
+            PaymentInputDataChangedInteractor(
+                get(),
+                get(),
+                get(),
+            )
+        }
+
+        factory {
+            DefaultRawDataDelegate(
+                get(),
+                get(),
             )
         }
     }

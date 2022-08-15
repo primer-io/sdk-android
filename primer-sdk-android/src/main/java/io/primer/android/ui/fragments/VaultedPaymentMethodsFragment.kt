@@ -32,7 +32,6 @@ import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 const val DEFAULT_LAST_FOUR: Int = 1234
@@ -40,7 +39,6 @@ const val DEFAULT_MONTH: Int = 1
 const val DEFAULT_YEAR: Int = 2021
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()

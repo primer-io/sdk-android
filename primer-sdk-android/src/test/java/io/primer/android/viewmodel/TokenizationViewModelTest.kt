@@ -28,11 +28,9 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.koin.core.component.KoinApiExtension
 import org.koin.test.KoinTest
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class TokenizationViewModelTest : KoinTest {
 

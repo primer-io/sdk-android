@@ -7,7 +7,6 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
-        classpath "io.insert-koin:koin-gradle-plugin:$koinVersion"
     }
 }
 
@@ -16,7 +15,6 @@ plugins {
     id 'kotlin-android'
 }
 
-apply plugin: 'koin'
 apply plugin: 'kotlinx-serialization'
 
 apply from: "$rootDir/config/android-common.gradle"
@@ -55,9 +53,7 @@ dependencies {
     implementation Dependencies.Kotlin.Serialization.core
     implementation Dependencies.Kotlin.Serialization.json
 
-    implementation "io.insert-koin:koin-core:$koinVersion"
-    implementation "io.insert-koin:koin-androidx-scope:$koinVersion"
-    implementation "io.insert-koin:koin-android-viewmodel:$koinVersion"
+    implementation "io.insert-koin:koin-android:$koinVersion"
 
     implementation Dependencies.Networking.okhttp
     implementation Dependencies.Networking.okhttpLoggingInterceptor

@@ -18,7 +18,6 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import org.json.JSONObject
-import org.koin.core.component.KoinApiExtension
 
 internal const val DD_FIELD_NAME_IBAN = "iban"
 internal const val DD_FIELD_NAME_CUSTOMER_EMAIL = "customerEmail"
@@ -32,7 +31,6 @@ internal const val DD_FIELD_NAME_CUSTOMER_ADDRESS_POSTAL_CODE = "customerAddress
 
 // FR1420041010050500013M02606
 
-@KoinApiExtension
 class GoCardlessViewFragment : FormFragment() {
 
     private lateinit var viewModel: FormViewModel

@@ -12,13 +12,11 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.di.DIAppComponent
 import io.primer.android.presentation.base.BaseViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import io.primer.android.databinding.FragmentInitializingBinding
 import io.primer.android.ui.extensions.autoCleaned
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal class InitializingFragment : Fragment(), DIAppComponent {
 
     private val theme: PrimerTheme by inject()

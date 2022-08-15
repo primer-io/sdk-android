@@ -29,13 +29,11 @@ import io.primer.android.utils.ImageLoader
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal abstract class BaseBankSelectionFragment :
     BaseFragment(),
     BankSelectionAdapterListener {

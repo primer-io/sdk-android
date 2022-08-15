@@ -9,10 +9,8 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.di.DIAppComponent
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(ctx, attrs),
     DIAppComponent {

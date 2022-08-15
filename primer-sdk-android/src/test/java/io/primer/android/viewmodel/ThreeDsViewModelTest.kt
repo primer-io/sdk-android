@@ -29,13 +29,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.koin.core.component.KoinApiExtension
 import org.mockito.Mockito.mock
 import kotlin.Exception
 import org.mockito.Mockito.`when`
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class ThreeDsViewModelTest {
 

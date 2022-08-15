@@ -7,7 +7,7 @@ import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.CardNumberFormatter
-import io.primer.android.ui.CardType
+import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.TextInputMask
 
 internal interface PrimerInputElementCardNumberListener {
@@ -17,7 +17,7 @@ internal interface PrimerInputElementCardNumberListener {
 class PrimerCardNumberEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
-    private var cardType: CardType.Type = CardType.Type.UNKNOWN
+    private var cardNetwork: CardNetwork.Type = CardNetwork.Type.UNKNOWN
     private var typeListener: PrimerInputElementCardNumberListener? = null
 
     init {
@@ -43,8 +43,8 @@ class PrimerCardNumberEditText(context: Context, attrs: AttributeSet? = null) :
 
     private fun invokeCardTypeListener() {
         val cardType = getCardType(super.getSanitizedText().toString())
-        if (this.cardType != cardType) {
-            this.cardType = cardType
+        if (this.cardNetwork != cardType) {
+            this.cardNetwork = cardType
             listener?.inputElementDidDetectCardType(cardType)
         }
     }

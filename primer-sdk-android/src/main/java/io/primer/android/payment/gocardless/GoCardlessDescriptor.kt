@@ -9,10 +9,8 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal class GoCardlessDescriptor(
     config: PaymentMethodConfigDataResponse,
     val options: GoCardless,

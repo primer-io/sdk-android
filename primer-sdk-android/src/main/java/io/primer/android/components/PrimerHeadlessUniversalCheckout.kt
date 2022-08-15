@@ -10,7 +10,7 @@ import io.primer.android.PrimerCheckoutListener
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
-import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
+import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckoutDelegate
 import io.primer.android.components.ui.assets.ImageType
@@ -140,12 +140,12 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         }
     }
 
-    override fun listRequiredInputElementTypes(paymentMethodType: String):
+    override fun getRequiredInputElementTypes(paymentMethodType: String):
         List<PrimerInputElementType>? {
         if (headlessUniversalCheckout == null) {
             emitError(HUCError.InitializationError(INITIALIZATION_ERROR))
         }
-        return headlessUniversalCheckout?.listRequiredInputElementTypes(paymentMethodType)
+        return headlessUniversalCheckout?.getRequiredInputElementTypes(paymentMethodType)
     }
 
     override fun makeView(
@@ -224,12 +224,35 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
     internal fun startTokenization(
         paymentMethodType: String,
-        inputData: PrimerHeadlessUniversalCheckoutInputData
-    ) = headlessUniversalCheckout?.dispatchAction(paymentMethodType, inputData) { error ->
+        inputData: PrimerRawData
+    ) = headlessUniversalCheckout?.dispatchAction(paymentMethodType, inputData, true) { error ->
         if (error == null) headlessUniversalCheckout?.startTokenization(
             paymentMethodType,
             inputData
         )
+    }
+
+    internal fun dispatchAction(
+        paymentMethodType: String,
+        rawData: PrimerRawData
+    ) {
+        headlessUniversalCheckout?.dispatchAction(paymentMethodType, rawData, false)
+    }
+
+    internal fun emitError(error: PrimerError) {
+        when (getConfig().settings.paymentHandling) {
+            PrimerPaymentHandling.AUTO -> componentsListener?.onFailed(
+                CheckoutEvent.CheckoutPaymentError(
+                    error
+                ).error,
+                null
+            )
+            PrimerPaymentHandling.MANUAL -> componentsListener?.onFailed(
+                CheckoutEvent.CheckoutError(
+                    error
+                ).error
+            )
+        }
     }
 
     private fun initialize(context: Context, clientToken: String, settings: PrimerSettings?) {
@@ -254,22 +277,6 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     }
 
     private fun verifyClientToken(clientToken: String) = ClientToken.fromString(clientToken)
-
-    private fun emitError(error: PrimerError) {
-        when (getConfig().settings.paymentHandling) {
-            PrimerPaymentHandling.AUTO -> componentsListener?.onFailed(
-                CheckoutEvent.CheckoutPaymentError(
-                    error
-                ).error,
-                null
-            )
-            PrimerPaymentHandling.MANUAL -> componentsListener?.onFailed(
-                CheckoutEvent.CheckoutError(
-                    error
-                ).error
-            )
-        }
-    }
 
     companion object {
 

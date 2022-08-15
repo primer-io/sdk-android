@@ -17,10 +17,8 @@ import io.primer.android.databinding.FragmentSelectCountryBinding
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@KoinApiExtension
 internal class SelectCountryFragment : BaseFragment() {
 
     private var binding: FragmentSelectCountryBinding by autoCleaned()

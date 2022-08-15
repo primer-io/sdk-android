@@ -5,12 +5,10 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.di.DIAppComponent
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 import android.graphics.drawable.GradientDrawable
 import android.widget.FrameLayout
 
-@KoinApiExtension
 class PrimerThemedFrameLayout(
     context: Context,
     attrs: AttributeSet? = null,

@@ -6,7 +6,6 @@ import io.primer.android.utils.PaymentUtils
 import io.primer.android.viewmodel.PaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.TokenizationViewModel
-import org.koin.core.component.KoinApiExtension
 
 internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBehaviour() {
 
@@ -15,7 +14,6 @@ internal abstract class InitialCheckRequiredBehaviour : SelectedPaymentMethodBeh
     abstract fun execute(activity: Activity, tokenizationViewModel: TokenizationViewModel)
 }
 
-@KoinApiExtension
 internal class GooglePayBehaviour constructor(
     private val paymentMethodDescriptor: GooglePayDescriptor,
     private val googlePayPaymentMethodChecker: PaymentMethodChecker,

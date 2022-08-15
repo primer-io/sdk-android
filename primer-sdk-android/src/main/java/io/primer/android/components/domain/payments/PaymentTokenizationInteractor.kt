@@ -1,6 +1,7 @@
 package io.primer.android.components.domain.payments
 
-import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.exception.InvalidTokenizationDataException
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -13,10 +14,9 @@ import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class PaymentTokenizationInteractor(
+    private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
     private val paymentMethodsRepository: PaymentMethodsRepository,
     private val errorEventResolver: BaseErrorEventResolver,
     private val logger: Logger
@@ -27,13 +27,17 @@ internal class PaymentTokenizationInteractor(
         return paymentMethodsRepository.getPaymentMethodDescriptors()
             .mapLatest {
                 val descriptor = it.first { it.config.type == params.paymentMethodType }
+                val requiredInputDataClass = paymentMethodMapper
+                    .getPrimerHeadlessUniversalCheckoutPaymentMethod(params.paymentMethodType)
+                    .requiredInputDataClass?.java
                 when {
-                    descriptor is CreditCard && params.inputData is CardInputData -> {
+                    descriptor is CreditCard && params.inputData is PrimerRawCardData -> {
                         params.inputData.setTokenizableValues(descriptor)
                     }
                     else -> throw InvalidTokenizationDataException(
                         params.paymentMethodType,
-                        params.inputData::class
+                        params.inputData::class,
+                        requiredInputDataClass?.kotlin
                     )
                 }
             }.catch {

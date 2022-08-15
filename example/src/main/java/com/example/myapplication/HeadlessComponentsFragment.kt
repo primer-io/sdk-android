@@ -24,10 +24,11 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
-import io.primer.android.ui.CardType
+import io.primer.android.ui.CardNetwork
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
 import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
@@ -49,7 +50,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             /* TODO */
         }
 
-        override fun inputElementDidDetectCardType(type: CardType.Type) {
+        override fun inputElementDidDetectCardType(network: CardNetwork.Type) {
             /* TODO */
         }
     }
@@ -164,6 +165,17 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 AlertDialog.Builder(context).setMessage("On Checkout Completed $checkoutData")
                     .show()
             }
+
+            override fun onBeforeClientSessionUpdated() {
+                super.onBeforeClientSessionUpdated()
+                Log.d(TAG, "onBeforeClientSessionUpdated")
+
+            }
+
+            override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
+                super.onClientSessionUpdated(clientSession)
+                Log.d(TAG, "onClientSessionUpdated")
+            }
         })
 
         binding.nextButton.setOnClickListener {
@@ -180,8 +192,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         Log.d(TAG, "inputElementValueIsValid ${inputElement.getType()} $isValid")
     }
 
-    override fun inputElementDidDetectCardType(type: CardType.Type) {
-        Log.d(TAG, "inputElementDidDetectCardType $type")
+    override fun inputElementDidDetectCardType(network: CardNetwork.Type) {
+        Log.d(TAG, "inputElementDidDetectCardType $network")
     }
 
     override fun onDestroyView() {

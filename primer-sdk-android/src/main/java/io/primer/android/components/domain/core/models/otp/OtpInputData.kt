@@ -1,5 +1,5 @@
 package io.primer.android.components.domain.core.models.otp
 
-import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
+import io.primer.android.components.domain.core.models.PrimerRawData
 
-data class OtpInputData(val otpCode: String) : PrimerHeadlessUniversalCheckoutInputData
+internal data class OtpInputData(val otpCode: String) : PrimerRawData
