@@ -4,9 +4,7 @@ import android.net.Uri
 import io.primer.android.payment.WebBrowserIntentBehaviour
 import io.primer.android.payment.WebViewBehaviour
 import io.primer.android.viewmodel.TokenizationViewModel
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class KlarnaBehaviour constructor(
     private val klarna: KlarnaDescriptor,
     packageName: String,
@@ -23,7 +21,6 @@ internal class KlarnaBehaviour constructor(
     }
 }
 
-@KoinApiExtension
 internal class RecurringKlarnaBehaviour constructor(
     private val klarna: KlarnaDescriptor,
 ) : WebBrowserIntentBehaviour() {

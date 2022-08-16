@@ -9,7 +9,8 @@
     <string name="loading">Loading...</string>
     <string name="tokenize">Tokenize</string>
 
-    <string name="components">Components</string>
+    <string name="huc_ui">HUC (UI)</string>
+    <string name="huc_raw">HUC (RAW)</string>
 
     <string name="previous">Previous</string>
     <string name="test_deprecated_checkout">Test Deprecated Checkout</string>

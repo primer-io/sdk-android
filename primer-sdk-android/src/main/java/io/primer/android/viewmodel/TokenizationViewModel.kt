@@ -38,10 +38,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import org.koin.core.component.KoinApiExtension
 import java.util.Collections
 
-@KoinApiExtension
 internal class TokenizationViewModel(
     private val model: Model,
     private val config: PrimerConfig,

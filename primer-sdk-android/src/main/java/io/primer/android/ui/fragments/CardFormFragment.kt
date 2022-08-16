@@ -36,7 +36,7 @@ import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodP
 import io.primer.android.model.MonetaryAmount
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.ui.CardType
+import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
@@ -51,8 +51,7 @@ import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 import java.util.Collections
 import java.util.TreeMap
@@ -63,7 +62,6 @@ import java.util.TreeMap
  * create an instance of this fragment.
  */
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 @Suppress("TooManyFunctions")
 internal class CardFormFragment : BaseFragment() {
 
@@ -74,7 +72,7 @@ internal class CardFormFragment : BaseFragment() {
     private val localConfig: PrimerConfig by inject()
     private val dirtyMap: MutableMap<String, Boolean> = HashMap()
     private var firstMount: Boolean = true
-    private var network: CardType.Descriptor? = null
+    private var network: CardNetwork.Descriptor? = null
     private val networkAsString: String get() = network?.type.toString()
     private var isBeingDismissed: Boolean = false
 
@@ -266,7 +264,7 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun onCardNumberInput(content: Editable?) {
-        val newNetwork = CardType.lookup(content.toString())
+        val newNetwork = CardNetwork.lookup(content.toString())
         val isSameNetwork = network?.type?.equals(newNetwork.type) ?: false
         if (isSameNetwork) {
             return
@@ -283,7 +281,7 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun emitCardNetworkAction() {
-        val actionParams = if (network == null || network?.type == CardType.Type.UNKNOWN) {
+        val actionParams = if (network == null || network?.type == CardNetwork.Type.UNKNOWN) {
             ActionUpdateUnselectPaymentMethodParams
         } else {
             ActionUpdateSelectPaymentMethodParams(

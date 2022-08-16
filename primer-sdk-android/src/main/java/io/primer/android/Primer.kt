@@ -22,6 +22,7 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerIntent
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.di.DIAppContext
 import kotlinx.serialization.encodeToString
 
 class Primer private constructor() : PrimerInterface {
@@ -149,6 +150,8 @@ class Primer private constructor() : PrimerInterface {
             Serialization.addModule(actionSerializationModule)
 
             val encodedConfig = Serialization.json.encodeToString(PrimerConfig.serializer(), config)
+
+            DIAppContext.init(context.applicationContext, config)
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {
                     putExtra("config", encodedConfig)

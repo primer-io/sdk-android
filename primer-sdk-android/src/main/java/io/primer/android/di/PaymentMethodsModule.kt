@@ -27,7 +27,7 @@ import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
 import io.primer.android.viewmodel.PrimerViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 

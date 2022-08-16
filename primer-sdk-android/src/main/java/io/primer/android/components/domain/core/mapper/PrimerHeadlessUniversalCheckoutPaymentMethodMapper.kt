@@ -1,7 +1,7 @@
 package io.primer.android.components.domain.core.mapper
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.OtpInputData
 import io.primer.android.data.configuration.models.PaymentMethodType
 
@@ -17,7 +17,7 @@ internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
             )
             PaymentMethodType.PAYMENT_CARD.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
                 paymentMethodType,
-                CardInputData::class
+                PrimerRawCardData::class
             )
             else -> PrimerHeadlessUniversalCheckoutPaymentMethod(paymentMethodType)
         }

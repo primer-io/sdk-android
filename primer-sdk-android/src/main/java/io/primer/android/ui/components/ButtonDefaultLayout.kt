@@ -8,10 +8,8 @@ import android.widget.LinearLayout
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 class ButtonDefaultLayout(
     ctx: Context,
     attrs: AttributeSet? = null,

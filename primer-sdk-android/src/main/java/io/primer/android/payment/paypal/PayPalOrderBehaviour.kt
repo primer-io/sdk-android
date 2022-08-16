@@ -3,9 +3,7 @@ package io.primer.android.payment.paypal
 import android.net.Uri
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.payment.WebBrowserIntentBehaviour
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class PayPalOrderBehaviour(
     private val paypal: PayPalDescriptor,
 ) : WebBrowserIntentBehaviour() {

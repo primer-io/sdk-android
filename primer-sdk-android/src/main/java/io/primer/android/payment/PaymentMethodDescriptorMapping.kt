@@ -7,13 +7,11 @@ import io.primer.android.payment.gocardless.GoCardlessDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.paypal.PayPalDescriptor
-import org.koin.core.component.KoinApiExtension
 
 internal class PaymentMethodDescriptorMapping(
     private val descriptors: List<PaymentMethodDescriptor>
 ) {
 
-    @KoinApiExtension
     fun getDescriptorFor(paymentMethod: String): PaymentMethodDescriptor? =
         when (paymentMethod) {
             PaymentMethodType.PAYMENT_CARD.name -> {

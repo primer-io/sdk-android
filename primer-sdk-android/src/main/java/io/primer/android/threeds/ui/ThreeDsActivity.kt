@@ -15,10 +15,8 @@ import io.primer.android.threeds.di.threeDsModule
 import io.primer.android.threeds.domain.models.ChallengeStatusData.Companion.TRANSACTION_STATUS_FAILURE
 import io.primer.android.threeds.domain.models.ChallengeStatusData.Companion.TRANSACTION_STATUS_SUCCESS
 import io.primer.android.threeds.presentation.ThreeDsViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@KoinApiExtension
 internal class ThreeDsActivity : BaseCheckoutActivity() {
 
     private val viewModel: ThreeDsViewModel by viewModel()

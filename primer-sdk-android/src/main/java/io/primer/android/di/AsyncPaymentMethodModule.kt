@@ -8,7 +8,7 @@ import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeep
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 internal val asyncPaymentMethodModule = {

@@ -9,10 +9,8 @@ import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.MonetaryAmount
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 internal class SelectPaymentMethodTitle(
     context: Context,
     attrs: AttributeSet? = null,

@@ -7,7 +7,7 @@ import io.primer.android.domain.payments.forms.FormsInteractor
 import io.primer.android.domain.payments.forms.repository.FormsRepository
 import io.primer.android.domain.payments.forms.validation.ValidatorFactory
 import io.primer.android.presentation.payment.forms.FormsViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 internal val formsModule = {

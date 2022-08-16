@@ -28,11 +28,9 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 @Suppress("TooManyFunctions")
 internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 

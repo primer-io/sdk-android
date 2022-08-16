@@ -17,9 +17,7 @@ import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.fragments.CardFormFragment
 import io.primer.android.utils.removeSpaces
 import org.json.JSONObject
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class CreditCard(
     config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
@@ -41,7 +39,7 @@ internal class CreditCard(
         val json = JSONObject()
 
         json.putFor(
-            PrimerInputElementType.CARDHOLDER_NAME,
+            PrimerInputElementType.FORM_CARDHOLDER_NAME,
             values.valueBy(PrimerInputElementType.CARDHOLDER_NAME).trim()
         )
         json.putFor(

@@ -151,8 +151,11 @@ class FirstFragment : Fragment() {
     }
 
     private fun configureNextButton() {
-        binding.componentsButton.setOnClickListener {
+        binding.hucUiButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment)
+        }
+        binding.hucRawButton.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_HeadlessRawFragment)
         }
         binding.nextButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)

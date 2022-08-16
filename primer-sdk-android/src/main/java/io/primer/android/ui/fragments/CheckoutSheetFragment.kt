@@ -23,10 +23,8 @@ import io.primer.android.model.CheckoutExitReason
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
-import org.koin.core.component.KoinApiExtension
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),
     DIAppComponent {

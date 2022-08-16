@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import io.primer.android.databinding.FragmentFormControlsBinding
 import io.primer.android.ui.ButtonState
 import io.primer.android.ui.extensions.autoCleaned
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class FormControlsFragment : FormChildFragment() {
 
     private var binding: FragmentFormControlsBinding by autoCleaned()

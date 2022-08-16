@@ -3,9 +3,7 @@ package io.primer.android.payment
 import android.net.Uri
 import io.primer.android.WebviewInteropRegister
 import io.primer.android.viewmodel.TokenizationViewModel
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal abstract class WebBrowserIntentBehaviour : SelectedPaymentMethodBehaviour() {
 
     // FIXME how can we avoid holding the viewmodel here?

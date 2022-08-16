@@ -154,14 +154,29 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/componentsButton"
+        android:id="@+id/hucRawButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="12dp"
         android:layout_weight="1"
-        android:text="@string/components"
+        android:text="@string/huc_raw"
+        app:backgroundTint="@color/primer"
+        app:cornerRadius="8sp"
+        app:layout_constraintBottom_toTopOf="@id/hucUiButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/hucUiButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="12dp"
+        android:layout_weight="1"
+        android:text="@string/huc_ui"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"
         app:layout_constraintBottom_toTopOf="@id/nextButton"

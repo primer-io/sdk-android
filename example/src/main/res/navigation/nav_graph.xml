@@ -27,13 +27,15 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
+
         <action
-            android:id="@+id/action_FirstFragment_to_DeprecatedFeatureFragment"
-            app:destination="@id/DeprecatedFeatureFragment"
+            android:id="@+id/action_FirstFragment_to_HeadlessRawFragment"
+            app:destination="@id/HeadlessRawFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
         <action
             android:id="@+id/action_FirstFragment_to_countryPickerFragment"
             app:destination="@id/CountryPickerFragment" />
@@ -43,20 +45,19 @@
         android:id="@+id/SecondFragment"
         android:name="com.example.myapplication.SecondFragment"
         android:label="Wallet"
-        tools:layout="@layout/fragment_second"></fragment>
+        tools:layout="@layout/fragment_second" />
 
     <fragment
         android:id="@+id/ThirdFragment"
         android:name="com.example.myapplication.HeadlessComponentsFragment"
         android:label="HUC"
-        tools:layout="@layout/fragment_third"/>
-
+        tools:layout="@layout/fragment_third" />
 
     <fragment
-        android:id="@+id/DeprecatedFeatureFragment"
-        android:name="com.example.myapplication.DeprecatedFeatureFragment"
-        android:label="Deprecated Checkout"
-        tools:layout="@layout/fragment_deprecated_feature"/>
+        android:id="@+id/HeadlessRawFragment"
+        android:name="com.example.myapplication.HeadlessRawFragment"
+        android:label="HUC"
+        tools:layout="@layout/fragment_third" />
 
     <fragment
         android:id="@+id/CountryPickerFragment"

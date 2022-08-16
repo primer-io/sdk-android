@@ -61,7 +61,7 @@ internal class ExpiryDateFormatter(
     fun getYear(date: Calendar? = null): String {
         val now = date ?: getDate()
         val prefix = now.get(Calendar.YEAR).toString().substring(0, 2)
-        return "${prefix}$year"
+        return if (year.length == 4) year else "${prefix}$year"
     }
 
     companion object {
@@ -89,7 +89,7 @@ internal class ExpiryDateFormatter(
             return exp
         }
 
-        private fun getDate(month: Int? = null, year: Int? = null): Calendar {
+        fun getDate(month: Int? = null, year: Int? = null): Calendar {
             return Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, 0)
                 set(Calendar.MINUTE, 0)
@@ -164,7 +164,6 @@ internal class ExpiryDateFormatter(
             val sanitized = year.trim()
             return when {
                 sanitized.isEmpty() -> sanitized
-                sanitized.length > 2 -> sanitized.substring(0, 2)
                 else -> sanitized
             }
         }

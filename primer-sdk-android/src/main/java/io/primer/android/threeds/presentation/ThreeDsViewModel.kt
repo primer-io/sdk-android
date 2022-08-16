@@ -18,9 +18,7 @@ import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsParams
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
     analyticsInteractor: AnalyticsInteractor,

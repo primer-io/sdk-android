@@ -130,7 +130,8 @@
     public *;
 }
 
-# card manager
+ #------------------------------------HUC UI------------------------------------------------------#
+
 -keep class io.primer.android.components.domain.core.models.** {
     public *;
 }
@@ -167,15 +168,14 @@
     *;
 }
 
--keep class io.primer.android.ui.CardType {
+-keep class io.primer.android.ui.CardNetwork {
     *;
 }
 
--keep enum io.primer.android.ui.CardType$Type {
+-keep enum io.primer.android.ui.CardNetwork$Type {
     *;
 }
-
-# Headless checkout
+ #------------------------------------HUC main---------------------------------------------------#
 -keep class io.primer.android.components.PrimerHeadlessUniversalCheckout {
     public *;
 }
@@ -192,6 +192,14 @@
     public *;
 }
 
+ #------------------------------------HUC raw---------------------------------------------------#
+-keep class io.primer.android.components.manager.raw.* {
+    public *;
+}
+
+-keep class io.primer.android.components.domain.error.PrimerInputValidationError {
+    *;
+}
 -keep enum  io.primer.android.components.domain.inputs.models.PrimerInputElementType {
     *;
 }
@@ -214,6 +222,7 @@
 -keep @interface kotlinx.serialization.Serializable
 -keep @interface io.primer.android.ExperimentalPrimerApi
 
+#----------------------------------Serialization--------------------------------------------------#
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault
 
 -keepclassmembers class kotlinx.serialization.json.** {

@@ -30,9 +30,9 @@ interface PrimerHeadlessUniversalCheckoutInterface {
     )
 
     /**
-     * Lists the [PrimerInputElementType] for a given paymentMethodType
+     * Gets the [PrimerInputElementType] for a given paymentMethodType
      */
-    fun listRequiredInputElementTypes(paymentMethodType: String):
+    fun getRequiredInputElementTypes(paymentMethodType: String):
         List<PrimerInputElementType>?
 
     /**

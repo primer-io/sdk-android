@@ -27,12 +27,10 @@ import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallback, DIAppComponent {
 
     private val localConfig: PrimerConfig by inject()

@@ -2,13 +2,14 @@ package io.primer.android.components.presentation
 
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.PrimerResumeDecisionHandler
-import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutInputData
-import io.primer.android.components.domain.core.models.card.CardInputData
+import io.primer.android.components.domain.core.models.PrimerRawData
+import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.domain.payments.PaymentInputDataValidateInteractor
+import io.primer.android.components.domain.payments.PaymentInputDataTypeValidateInteractor
 import io.primer.android.components.domain.payments.PaymentTokenizationInteractor
 import io.primer.android.components.domain.payments.PaymentsTypesInteractor
+import io.primer.android.components.domain.payments.models.PaymentRawDataParams
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
@@ -24,7 +25,7 @@ import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.config.toImageDisplayMetadata
 import io.primer.android.payment.config.toTextDisplayMetadata
-import io.primer.android.ui.CardType
+import io.primer.android.ui.CardNetwork
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -38,11 +39,11 @@ internal interface HeadlessUniversalCheckoutDelegate {
 
     fun getPaymentMethodsDisplayMetadata(isDarkMode: Boolean): List<BaseDisplayMetadata>
 
-    fun listRequiredInputElementTypes(paymentMethodType: String): List<PrimerInputElementType>?
+    fun getRequiredInputElementTypes(paymentMethodType: String): List<PrimerInputElementType>?
 
     fun startTokenization(
         type: String,
-        inputData: PrimerHeadlessUniversalCheckoutInputData
+        rawData: PrimerRawData
     )
 
     fun createPayment(
@@ -54,7 +55,8 @@ internal interface HeadlessUniversalCheckoutDelegate {
 
     fun dispatchAction(
         type: String,
-        inputData: PrimerHeadlessUniversalCheckoutInputData,
+        rawData: PrimerRawData,
+        submit: Boolean,
         completion: ((Error?) -> Unit) = {},
     )
 
@@ -65,7 +67,7 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val tokenizationInteractor: TokenizationInteractor,
     private val paymentsTypesInteractor: PaymentsTypesInteractor,
     private val paymentTokenizationInteractor: PaymentTokenizationInteractor,
-    private val paymentInputDataValidateInteractor: PaymentInputDataValidateInteractor,
+    private val paymentInputDataTypeValidateInteractor: PaymentInputDataTypeValidateInteractor,
     private val paymentInputTypesInteractor: PaymentInputTypesInteractor,
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val createPaymentInteractor: CreatePaymentInteractor,
@@ -89,12 +91,12 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
             }
         }
 
-    override fun listRequiredInputElementTypes(paymentMethodType: String) =
+    override fun getRequiredInputElementTypes(paymentMethodType: String) =
         paymentInputTypesInteractor.execute(paymentMethodType)
 
     override fun startTokenization(
         type: String,
-        inputData: PrimerHeadlessUniversalCheckoutInputData
+        inputData: PrimerRawData
     ) {
         scope.launch {
             paymentTokenizationInteractor.execute(
@@ -141,13 +143,20 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
 
     override fun dispatchAction(
         type: String,
-        inputData: PrimerHeadlessUniversalCheckoutInputData,
+        rawData: PrimerRawData,
+        submit: Boolean,
         completion: ((Error?) -> Unit),
     ) {
         scope.launch {
-            paymentInputDataValidateInteractor(PaymentTokenizationDescriptorParams(type, inputData))
+            paymentInputDataTypeValidateInteractor(
+                PaymentRawDataParams(
+                    type,
+                    rawData,
+                    submit
+                )
+            )
                 .flatMapLatest {
-                    actionInteractor(getActionUpdateParams(type, inputData))
+                    actionInteractor(getActionUpdateParams(type, rawData))
                 }.catch {
                     completion(Error(it))
                 }
@@ -161,12 +170,12 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
 
     private fun getActionUpdateParams(
         type: String,
-        inputData: PrimerHeadlessUniversalCheckoutInputData
+        rawData: PrimerRawData
     ) =
-        when (inputData) {
-            is CardInputData -> {
-                val cardType = CardType.lookup(inputData.number).type
-                if (cardType == CardType.Type.UNKNOWN) {
+        when (rawData) {
+            is PrimerRawCardData -> {
+                val cardType = CardNetwork.lookup(rawData.cardNumber).type
+                if (cardType == CardNetwork.Type.UNKNOWN) {
                     ActionUpdateUnselectPaymentMethodParams
                 } else {
                     ActionUpdateSelectPaymentMethodParams(

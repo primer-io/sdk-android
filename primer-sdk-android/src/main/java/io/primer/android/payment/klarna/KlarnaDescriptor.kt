@@ -8,9 +8,7 @@ import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 @ExperimentalCoroutinesApi
 internal open class KlarnaDescriptor constructor(
     val options: Klarna,

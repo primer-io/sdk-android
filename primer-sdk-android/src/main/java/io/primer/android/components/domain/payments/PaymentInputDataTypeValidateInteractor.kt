@@ -2,7 +2,7 @@ package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
 import io.primer.android.components.domain.exception.InvalidTokenizationDataException
-import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
+import io.primer.android.components.domain.payments.models.PaymentRawDataParams
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
@@ -12,13 +12,13 @@ import io.primer.android.extensions.doOnError
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 
-internal class PaymentInputDataValidateInteractor(
+internal class PaymentInputDataTypeValidateInteractor(
     private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher
-) : BaseFlowInteractor<Unit, PaymentTokenizationDescriptorParams>() {
+) : BaseFlowInteractor<Unit, PaymentRawDataParams>() {
 
-    override fun execute(params: PaymentTokenizationDescriptorParams) =
+    override fun execute(params: PaymentRawDataParams) =
         flow {
             val requiredInputDataClass = paymentMethodMapper
                 .getPrimerHeadlessUniversalCheckoutPaymentMethod(params.paymentMethodType)
@@ -26,14 +26,17 @@ internal class PaymentInputDataValidateInteractor(
             if (requiredInputDataClass != params.inputData::class.java)
                 throw InvalidTokenizationDataException(
                     params.paymentMethodType,
-                    params.inputData::class
+                    params.inputData::class,
+                    requiredInputDataClass?.kotlin
                 )
 
             emit(Unit)
         }.onStart {
-            eventDispatcher.dispatchEvent(
-                CheckoutEvent.PreparationStarted(params.paymentMethodType)
-            )
+            if (params.isSubmit) {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.PreparationStarted(params.paymentMethodType)
+                )
+            }
         }
             .doOnError {
                 errorEventResolver.resolve(it, ErrorMapperType.HUC)

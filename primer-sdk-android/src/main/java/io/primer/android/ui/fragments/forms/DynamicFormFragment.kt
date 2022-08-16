@@ -27,10 +27,8 @@ import io.primer.android.ui.extensions.autoCleaned
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import io.primer.android.viewmodel.TokenizationStatus
 import kotlinx.coroutines.flow.combineTransform
-import org.koin.core.component.KoinApiExtension
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class DynamicFormFragment : BaseFormFragment() {
 
     private var binding: FragmentDynamicFormBinding by autoCleaned()

@@ -8,9 +8,7 @@ import io.primer.android.payment.dummy.DummyDecisionType
 import io.primer.android.payment.dummy.DummyResultDescriptorHandler
 import io.primer.android.ui.fragments.dummy.DummyResultSelectorFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 @ExperimentalCoroutinesApi
 internal class PrimerTestPayPalDescriptor constructor(
     config: PaymentMethodConfigDataResponse

@@ -11,10 +11,8 @@ import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.inject
 
-@KoinApiExtension
 @ExperimentalCoroutinesApi
 internal open class PayPalDescriptor constructor(
     config: PaymentMethodConfigDataResponse,

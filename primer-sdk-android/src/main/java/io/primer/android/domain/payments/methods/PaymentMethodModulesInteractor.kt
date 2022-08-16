@@ -26,10 +26,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
-import org.koin.core.component.KoinApiExtension
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class PaymentMethodModulesInteractor(
     private val paymentMethodsRepository: PaymentMethodsRepository,
     private val configurationRepository: ConfigurationRepository,

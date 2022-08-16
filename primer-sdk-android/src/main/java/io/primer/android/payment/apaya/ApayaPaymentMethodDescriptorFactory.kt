@@ -6,9 +6,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
-import org.koin.core.component.KoinApiExtension
 
-@KoinApiExtension
 internal class ApayaPaymentMethodDescriptorFactory : PaymentMethodDescriptorFactory {
 
     override fun create(

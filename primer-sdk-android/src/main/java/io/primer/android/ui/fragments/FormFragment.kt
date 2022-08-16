@@ -16,7 +16,6 @@ import io.primer.android.viewmodel.FormViewModel
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.json.JSONObject
-import org.koin.android.viewmodel.ext.android.viewModel
 
 enum class FormActionType {
     SUBMIT_PRESS,

@@ -14,7 +14,7 @@ import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
 import io.primer.android.threeds.presentation.ThreeDsViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 internal val threeDsModule = module {

@@ -12,6 +12,7 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
@@ -40,18 +41,25 @@ internal class ActionInteractor(
     val surchargeDataEmptyOrZero: Boolean
         get() = surcharges.all { item -> item.value == 0 } || surcharges.isEmpty()
 
-    override fun execute(params: BaseActionUpdateParams) =
-        actionUpdateFilter.filter(params).filterNot { it }.flatMapLatest {
-            actionRepository.updateClientActions(
-                params
-            ).onStart {
-                eventDispatcher.dispatchEvent(CheckoutEvent.ClientSessionUpdateStarted())
-            }.doOnError {
-                errorEventResolver.resolve(it, ErrorMapperType.ACTION_UPDATE)
-            }.onEach {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.ClientSessionUpdateSuccess(it.clientSession)
-                )
-            }.map { }
-        }.onEmpty { emit(Unit) }.flowOn(dispatcher)
+    private var lastParams: BaseActionUpdateParams? = null
+
+    override fun execute(params: BaseActionUpdateParams): Flow<Unit> {
+        return actionUpdateFilter.filter(params).filterNot { it }.filterNot { lastParams == params }
+            .flatMapLatest {
+                lastParams = params
+                actionRepository.updateClientActions(
+                    params
+                ).onStart {
+                    eventDispatcher.dispatchEvent(CheckoutEvent.ClientSessionUpdateStarted())
+                }.doOnError {
+                    errorEventResolver.resolve(it, ErrorMapperType.ACTION_UPDATE)
+                }.onEach {
+                    eventDispatcher.dispatchEvent(
+                        CheckoutEvent.ClientSessionUpdateSuccess(it.clientSession)
+                    )
+                }.map { }
+            }
+            .onEmpty { emit(Unit) }
+            .flowOn(dispatcher)
+    }
 }

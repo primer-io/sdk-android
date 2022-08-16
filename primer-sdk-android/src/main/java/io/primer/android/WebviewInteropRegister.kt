@@ -3,12 +3,10 @@ package io.primer.android
 import android.net.Uri
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.payment.WebBrowserIntentBehaviour
-import org.koin.core.component.KoinApiExtension
 import java.util.UUID
 
 internal class WebviewInteropRegister {
 
-    @KoinApiExtension
     data class Callback(
         val id: String,
         val cancelUrl: String,
@@ -17,7 +15,6 @@ internal class WebviewInteropRegister {
         var result: Uri? = null,
     )
 
-    @KoinApiExtension
     companion object {
 
         private val log = DefaultLogger("WebviewInteropActivity")

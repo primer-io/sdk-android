@@ -12,7 +12,8 @@ internal class HUCErrorMapper : DefaultErrorMapper() {
         return when (throwable) {
             is InvalidTokenizationDataException -> HUCError.InvalidTokenizationInputDataError(
                 throwable.paymentMethodType,
-                throwable.inputData
+                throwable.inputData,
+                throwable.requiredInputData
             )
             is MissingConfigurationException -> HUCError.MissingConfigurationError
             else -> super.getPrimerError(throwable)

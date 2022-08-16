@@ -3,7 +3,7 @@ buildscript {
         projectJvmTarget = JavaVersion.VERSION_1_8
         kotlinVersion = '1.6.21'
 
-        koinVersion = '2.2.3'
+        koinVersion = '3.2.0'
 
         projectDependencies = [
                 androidGradlePlugin: 'com.android.tools.build:gradle:7.1.2',

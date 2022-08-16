@@ -16,10 +16,8 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.KoinApiExtension
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class QrCodeFragment : BaseFormFragment() {
 
     private var binding: FragmentQrCodeBinding by autoCleaned()

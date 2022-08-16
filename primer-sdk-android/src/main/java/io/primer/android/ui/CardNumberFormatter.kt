@@ -7,7 +7,7 @@ internal class CardNumberFormatter private constructor(
     private val autoInsert: Boolean,
 ) {
 
-    private val meta = CardType.lookup(value)
+    private val meta = CardNetwork.lookup(value)
 
     override fun toString(): String {
         val max = meta.lengths.maxOrNull() ?: META_DEFAULT_LENGTH
@@ -49,7 +49,7 @@ internal class CardNumberFormatter private constructor(
 
     fun getCvvLength(): Int = meta.cvvLength
 
-    fun getCardType(): CardType.Type = meta.type
+    fun getCardType(): CardNetwork.Type = meta.type
 
     @Suppress("MagicNumber")
     private fun isLuhnValid(): Boolean {
@@ -73,8 +73,13 @@ internal class CardNumberFormatter private constructor(
 
         const val META_DEFAULT_LENGTH = 16
 
-        fun fromString(str: String, autoInsert: Boolean = false): CardNumberFormatter {
-            return CardNumberFormatter(str.replace(INVALID_CHARACTER, ""), autoInsert)
+        fun fromString(
+            str: String,
+            autoInsert: Boolean = false,
+            replaceInvalid: Boolean = true
+        ): CardNumberFormatter {
+            val input = if (replaceInvalid) str.replace(INVALID_CHARACTER, "") else str
+            return CardNumberFormatter(input, autoInsert)
         }
     }
 }

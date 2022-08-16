@@ -13,11 +13,9 @@ import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.ui.fragments.bank.binding.toBaseBankSelectionBinding
 import io.primer.android.viewmodel.bank.DotPayBankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
 
     private var binding: FragmentDotpayBankSelectionBinding by autoCleaned()

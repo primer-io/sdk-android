@@ -19,12 +19,10 @@ import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.component.KoinApiExtension
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
-@KoinApiExtension
 internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
 
     protected val theme: PrimerTheme by inject()

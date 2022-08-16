@@ -65,11 +65,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinApiExtension
-import java.util.Currency
 import java.util.Collections
+import java.util.Currency
 
-@KoinApiExtension
 @ExperimentalCoroutinesApi
 internal class PrimerViewModel(
     private val configurationInteractor: ConfigurationInteractor,
