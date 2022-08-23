@@ -1,8 +1,8 @@
 package io.primer.android.payment.google
 
 import io.primer.android.PaymentMethod
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
 import io.primer.android.utils.PaymentUtils
@@ -12,7 +12,14 @@ import java.util.Currency
 internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
-        if (settings.currentAmount == 0) {
+        val amount: Int
+        try {
+            amount = settings.currentAmount
+        } catch (e: IllegalArgumentException) {
+            return Failure(Exception(e.message))
+        }
+
+        if (amount == 0) {
             return Failure(Exception("Amount is zero"))
         }
 

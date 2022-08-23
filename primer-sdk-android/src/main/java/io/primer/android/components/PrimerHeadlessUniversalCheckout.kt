@@ -232,13 +232,6 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         )
     }
 
-    internal fun dispatchAction(
-        paymentMethodType: String,
-        rawData: PrimerRawData
-    ) {
-        headlessUniversalCheckout?.dispatchAction(paymentMethodType, rawData, false)
-    }
-
     internal fun emitError(error: PrimerError) {
         when (getConfig().settings.paymentHandling) {
             PrimerPaymentHandling.AUTO -> componentsListener?.onFailed(

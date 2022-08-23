@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 @Serializable
-data class PrimerCountry(
-    val name: String,
-    val code: CountryCode
-) {
+internal data class PrimerCountry(
+    override val name: String,
+    override val code: CountryCode
+) : PrimerBaseCountryData() {
     companion object {
         val default: PrimerCountry = PrimerCountry("United Kingdom", CountryCode.BG)
     }

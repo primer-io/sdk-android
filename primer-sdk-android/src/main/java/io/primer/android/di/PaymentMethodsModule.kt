@@ -127,6 +127,7 @@ internal val PaymentMethodsModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get()
             )
         }

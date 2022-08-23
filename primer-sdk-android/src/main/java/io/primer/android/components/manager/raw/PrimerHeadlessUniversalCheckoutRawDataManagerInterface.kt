@@ -9,7 +9,8 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 interface PrimerHeadlessUniversalCheckoutRawDataManagerInterface {
 
     /**
-     * Configures the PrimerHeadlessUniversalCheckoutRawDataManager with [PrimerHeadlessUniversalCheckoutRawDataManagerListener].
+     * Configures the PrimerHeadlessUniversalCheckoutRawDataManager
+     * with [PrimerHeadlessUniversalCheckoutRawDataManagerListener].
      */
     fun setManagerListener(listener: PrimerHeadlessUniversalCheckoutRawDataManagerListener)
 

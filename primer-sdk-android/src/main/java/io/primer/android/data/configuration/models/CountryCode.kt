@@ -16,6 +16,7 @@ enum class CountryCode {
     AG,
     AR,
     AM,
+    AN,
     AW,
     AU,
     AT,
@@ -254,7 +255,16 @@ enum class CountryCode {
     XK,
     YE,
     ZM,
-    ZW,
+    ZW;
+
+    companion object {
+        fun safeValueOf(country: String?) = values().find {
+            country.equals(
+                it.name,
+                ignoreCase = true
+            )
+        } ?: GB
+    }
 }
 
 private const val FLAG_OFFSET = 0x1F1E6

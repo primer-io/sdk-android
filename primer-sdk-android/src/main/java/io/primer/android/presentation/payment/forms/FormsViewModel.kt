@@ -50,12 +50,13 @@ internal class FormsViewModel(
     fun onInputChanged(
         id: String,
         formType: FormType,
-        input: CharSequence?,
+        inputForValidation: CharSequence?,
+        data: CharSequence?,
         regex: Regex?
     ) = viewModelScope.launch {
-        formValidationInteractor.execute(FormValidationParam(input, formType, regex))
+        formValidationInteractor.execute(FormValidationParam(inputForValidation, formType, regex))
             .collect { validated ->
-                inputStates[id] = InputState(input, validated)
+                inputStates[id] = InputState(data, validated)
                 _validationLiveData.postValue(inputStates.values.all { it.validated })
             }
     }

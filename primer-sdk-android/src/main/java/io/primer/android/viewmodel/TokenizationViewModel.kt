@@ -7,12 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.PaymentData
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
+import io.primer.android.domain.payments.apaya.models.ApayaPaymentData
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
 import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
@@ -20,12 +23,8 @@ import io.primer.android.domain.payments.paypal.models.PaypalOrderInfoParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.model.APIEndpoint
-import io.primer.android.domain.payments.apaya.models.ApayaPaymentData
-import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.model.Model
 import io.primer.android.model.OperationResult
-import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.apaya.ApayaDescriptor
@@ -33,6 +32,7 @@ import io.primer.android.payment.card.CreditCard
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.klarna.KlarnaDescriptor
 import io.primer.android.payment.paypal.PayPalDescriptor
+import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -138,9 +138,7 @@ internal class TokenizationViewModel(
     }
 
     fun getDeeplinkUrl() = viewModelScope.launch {
-        asyncPaymentMethodDeeplinkInteractor(None()).collect {
-            _asyncRedirectUrl.postValue(it)
-        }
+        _asyncRedirectUrl.postValue(asyncPaymentMethodDeeplinkInteractor(None()))
     }
 
     fun userCanceled(paymentMethodType: String) {

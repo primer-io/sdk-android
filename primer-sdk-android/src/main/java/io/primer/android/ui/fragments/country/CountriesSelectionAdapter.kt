@@ -8,12 +8,10 @@ import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
 import io.primer.android.ui.settings.PrimerTheme
-import java.util.Locale
 
-internal data class CountryItem(
-    val name: String,
+internal data class CountryCodeItem(
     val code: CountryCode,
-    val flag: String
+    val displayLabel: String
 ) : BaseAdapterItem {
     override fun getType(): Int = 0
 }
@@ -22,10 +20,10 @@ internal class CountryItemViewHolder(
     private val binding: ItemCountrySelectBinding,
     private val theme: PrimerTheme,
     private val onItemSelect: (CountryCode) -> Unit
-) : BaseViewHolder<CountryItem>(binding.root) {
+) : BaseViewHolder<CountryCodeItem>(binding.root) {
 
-    override fun bind(item: CountryItem) {
-        binding.tvName.text = String.format(Locale.getDefault(), "%s %s", item.flag, item.name)
+    override fun bind(item: CountryCodeItem) {
+        binding.tvName.text = item.displayLabel
         binding.tvName.setTextColor(
             theme.titleText.defaultColor.getColor(
                 binding.root.context,
@@ -39,9 +37,12 @@ internal class CountryItemViewHolder(
 internal class CountriesSelectionAdapter(
     private val onItemSelect: (CountryCode) -> Unit,
     private val theme: PrimerTheme
-) : BaseRecyclerViewAdapter<CountryItem>({ c1, c2 -> c1.code == c2.code }) {
+) : BaseRecyclerViewAdapter<CountryCodeItem>({ c1, c2 -> c1.code == c2.code }) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<CountryItem> {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): BaseViewHolder<CountryCodeItem> {
         val binding = ItemCountrySelectBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
         return CountryItemViewHolder(binding, theme, onItemSelect)

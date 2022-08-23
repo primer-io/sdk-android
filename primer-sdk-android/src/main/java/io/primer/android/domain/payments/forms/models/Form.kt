@@ -13,6 +13,7 @@ internal data class Form(
     val accountNumber: String? = null,
     val expiration: String? = null,
     val qrCodeUrl: String? = null,
+    val inputPrefix: FormInputPrefix? = null,
 )
 
 internal data class FormInput(
@@ -22,5 +23,8 @@ internal data class FormInput(
     val hint: Int,
     val inputCharacters: String?,
     val maxInputLength: Int?,
-    val regex: Regex?
+    val regex: Regex?,
+    val inputPrefix: FormInputPrefix?
 )
+
+internal interface FormInputPrefix

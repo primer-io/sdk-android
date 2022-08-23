@@ -28,9 +28,11 @@ import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.components.domain.core.models.card.PrimerRawCardData
+import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
+import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
+import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
@@ -210,7 +212,10 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         }
     }
 
-    private fun createForm(requiredInputElementTypes: List<PrimerInputElementType>) {
+    private fun createForm(
+        paymentMethodType: String,
+        requiredInputElementTypes: List<PrimerInputElementType>
+    ) {
         val inputElements = requiredInputElementTypes.map { type ->
             TextInputLayout(requireContext()).apply {
                 tag = type
@@ -218,7 +223,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 addView(TextInputEditText(context).apply {
                     id = View.generateViewId()
                     doAfterTextChanged {
-                        rawDataManager.setRawData(getCardData())
+                        rawDataManager.setRawData(getRawData(paymentMethodType))
                     }
                     layoutParams = LinearLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -255,30 +260,39 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         }
     }
 
-    private fun getCardData(): PrimerRawCardData {
-        return PrimerRawCardData(
-            binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.CARD_NUMBER
-            ).editText?.text.toString(),
-            binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.EXPIRY_DATE
-            ).editText?.text.toString().substringBefore("/"),
-            binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.EXPIRY_DATE
-            ).editText?.text.toString().substringAfter("/"),
-            binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.CVV
-            ).editText?.text.toString(),
-            binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.CARDHOLDER_NAME
-            ).editText?.text.toString(),
-        )
+    private fun getRawData(paymentMethodType: String): PrimerRawData {
+        when (paymentMethodType) {
+            "PAYMENT_CARD" -> return PrimerRawCardData(
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.CARD_NUMBER
+                ).editText?.text.toString(),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.EXPIRY_DATE
+                ).editText?.text.toString().substringBefore("/"),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.EXPIRY_DATE
+                ).editText?.text.toString().substringAfter("/"),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.CVV
+                ).editText?.text.toString(),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.CARDHOLDER_NAME
+                ).editText?.text.toString(),
+            )
+            "XENDIT_OVO" -> return PrimerRawPhoneNumberData(
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.PHONE_NUMBER
+                ).editText?.text.toString()
+            )
+            else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
+        }
     }
 
     private fun setupManager(paymentMethodType: String) {
-        rawDataManager = PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(paymentMethodType)
+        rawDataManager =
+            PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(paymentMethodType)
         rawDataManager.setManagerListener(this)
-        createForm(rawDataManager.getRequiredInputElementTypes())
+        createForm(paymentMethodType, rawDataManager.getRequiredInputElementTypes())
     }
 
     companion object {

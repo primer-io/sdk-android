@@ -51,8 +51,8 @@ internal class NetceteraThreeDsServiceRepository(
             try {
                 requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
                 requireNotNull(threeDsKeysParams.licenceKey) { LICENCE_CONFIG_ERROR }
-            } catch (e: IllegalArgumentException) {
-                throw ThreeDsConfigurationException(e.message)
+            } catch (expected: IllegalArgumentException) {
+                throw ThreeDsConfigurationException(expected.message)
             }
 
             val configurationBuilder = ConfigurationBuilder()

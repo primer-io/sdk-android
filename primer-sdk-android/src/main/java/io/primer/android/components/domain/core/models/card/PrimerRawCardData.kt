@@ -20,7 +20,7 @@ data class PrimerRawCardData(
         )
         setTokenizableField(PrimerInputElementType.CVV, cvv)
         cardHolderName?.apply {
-            setTokenizableField(PrimerInputElementType.FORM_CARDHOLDER_NAME, cardHolderName)
+            setTokenizableField(PrimerInputElementType.CARDHOLDER_NAME, cardHolderName)
         }
     }
 }

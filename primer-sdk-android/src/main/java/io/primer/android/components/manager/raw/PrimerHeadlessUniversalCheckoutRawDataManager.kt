@@ -19,7 +19,10 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
 ) : PrimerHeadlessUniversalCheckoutRawDataManagerInterface, DIAppComponent {
 
     init {
-        if (paymentMethodType != PaymentMethodType.PAYMENT_CARD.name) {
+        if (
+            listOf(PaymentMethodType.PAYMENT_CARD, PaymentMethodType.XENDIT_OVO).map { it.name }
+                .contains(paymentMethodType).not()
+        ) {
             throw UnsupportedPaymentMethodException(paymentMethodType)
         }
     }
@@ -31,6 +34,10 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
                     listener?.onValidationChanged(e.errors.isEmpty(), e.errors)
                 is CheckoutEvent.HucMetadataChanged ->
                     listener?.onMetadataChanged(e.metadata)
+                is CheckoutEvent.StartAsyncFlow -> delegate.startAsyncFlow(
+                    e.statusUrl,
+                    e.paymentMethodType
+                )
                 else -> Unit
             }
         }
@@ -62,14 +69,12 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
 
     override fun setRawData(rawData: PrimerRawData) {
         this.rawData = rawData
-        PrimerHeadlessUniversalCheckout.instance.dispatchAction(paymentMethodType, rawData)
+        delegate.dispatchAction(paymentMethodType, rawData, false)
         delegate.onInputDataChanged(paymentMethodType, rawData)
     }
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType> {
-        return PrimerHeadlessUniversalCheckout.instance.getRequiredInputElementTypes(
-            paymentMethodType
-        ).orEmpty()
+        return delegate.getRequiredInputElementTypes(paymentMethodType).orEmpty()
     }
 
     override fun cleanup() {

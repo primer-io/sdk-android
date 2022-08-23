@@ -3,6 +3,7 @@ package io.primer.android.payment.paypal
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.NewMiddleFragmentBehaviour
+import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.dummy.DummyDecisionType
 import io.primer.android.payment.dummy.DummyResultDescriptorHandler
@@ -20,6 +21,9 @@ internal class PrimerTestPayPalDescriptor constructor(
             onActionContinue = { super.selectedBehaviour },
             returnToPreviousOnBack = true
         )
+
+    override val sdkCapabilities: List<SDKCapability>
+        get() = listOf(SDKCapability.DROP_IN)
 
     override fun setDecision(decision: DummyDecisionType) {
         appendTokenizableValue(

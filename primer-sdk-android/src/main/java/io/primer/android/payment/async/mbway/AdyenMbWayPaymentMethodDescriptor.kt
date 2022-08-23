@@ -5,6 +5,7 @@ import io.primer.android.data.configuration.models.PaymentMethodConfigDataRespon
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
+import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
@@ -26,16 +27,20 @@ internal class AdyenMbWayPaymentMethodDescriptor(
     override fun getLoadingState() =
         LoadingState(
             when (localConfig.settings.uiOptions.theme.isDarkMode) {
-                true -> R.drawable.ic_logo_mbway_light
-                else -> R.drawable.ic_logo_mbway
+                true -> R.drawable.ic_logo_mbway_dark
+                else -> R.drawable.ic_logo_mbway_light
             },
-            R.string.payment_method_mb_way_loading_placeholder
+            R.string.completeYourPaymentInTheApp,
+            title
         )
 
     override val selectedBehaviour =
         NewFragmentBehaviour(
             DynamicFormFragment::newInstance, returnToPreviousOnBack = true
         )
+
+    override val sdkCapabilities: List<SDKCapability>
+        get() = listOf(SDKCapability.DROP_IN)
 
     override val behaviours: List<SelectedPaymentMethodBehaviour>
         get() = listOf(

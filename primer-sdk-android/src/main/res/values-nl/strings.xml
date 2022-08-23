@@ -83,7 +83,7 @@
     <string name="input_title_phone_number">Vul uw telefoonnummer in</string>
     <string name="input_hint_form_phone_number">Telefoonnummer</string>
     <string name="payment_method_blik_loading_placeholder">Voltooi uw betaling in de Blik-app</string>
-    <string name="payment_method_mb_way_loading_placeholder">Voltooi uw betaling in de Mb Way-app</string>
+    <string name="completeYourPaymentInTheApp">Voltooi uw betaling in de %s-app</string>
     <string name="input_title_bank_details">Verstrek uw bankgegevens</string>
     <string name="payment_method_xfers_title">Scan of sla op om te betalen</string>
     <string name="payment_method_xfers_description">Upload de schermafbeelding in uw bank-app</string>
@@ -113,4 +113,10 @@
     <string name="fast_bank_transfer">FAST Bank Transfer</string>
     <string name="scanToPay">Scan to pay or take a screenshot</string>
     <string name="uploadScreenshot">Upload the screenshot in your banking app</string>
+    <string name="phone_code_search_hint">Find code</string>
+    <string name="search_result">Search results</string>
+    <string name="search_placeholder">Search</string>
+    <string name="country_select">Select country</string>
+    <string name="no_results">No results</string>
+    <string name="no_results_for_query">Sorry, no results\nfound that match “%s”</string>
 </resources>

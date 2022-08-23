@@ -3,6 +3,7 @@ package io.primer.android.data.payments.forms.models
 import android.text.InputType
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.domain.payments.forms.models.FormInput
+import io.primer.android.domain.payments.forms.models.FormInputPrefix
 
 internal data class FormDataResponse(
     val title: Int? = null,
@@ -14,6 +15,7 @@ internal data class FormDataResponse(
     val accountNumber: String? = null,
     val expiration: String? = null,
     val qrCodeUrl: String? = null,
+    val inputPrefix: FormInputPrefix? = null,
 )
 
 internal data class FormInputDataResponse(
@@ -25,6 +27,7 @@ internal data class FormInputDataResponse(
     val inputCharacters: String? = null,
     val maxInputLength: Int? = null,
     val validation: String? = null,
+    val inputPrefix: FormInputPrefix? = null
 )
 
 internal enum class FormType {
@@ -38,6 +41,7 @@ internal enum class FormType {
 internal enum class ButtonType {
 
     CONFIRM,
+    PAY,
     NEXT,
 }
 
@@ -57,7 +61,8 @@ internal fun FormDataResponse.toForm() = Form(
     qrCode,
     accountNumber,
     expiration,
-    qrCodeUrl
+    qrCodeUrl,
+    inputPrefix
 )
 
 private fun FormInputDataResponse.toFormInput() = FormInput(
@@ -67,5 +72,6 @@ private fun FormInputDataResponse.toFormInput() = FormInput(
     hint,
     inputCharacters,
     maxInputLength,
-    validation?.let { Regex(it, RegexOption.IGNORE_CASE) }
+    validation?.let { Regex(it, RegexOption.IGNORE_CASE) },
+    inputPrefix
 )

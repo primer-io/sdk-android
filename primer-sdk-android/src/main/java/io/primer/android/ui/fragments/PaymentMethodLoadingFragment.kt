@@ -35,11 +35,11 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
-        descriptor?.getLoadingState()?.let {
+        descriptor?.getLoadingState()?.let { loadingState ->
             logAnalytics(descriptor.config.type)
             binding.apply {
-                if (it.imageResIs > 0) {
-                    selectedPaymentLogo.setImageResource(it.imageResIs)
+                if (loadingState.imageResIs > 0) {
+                    selectedPaymentLogo.setImageResource(loadingState.imageResIs)
                 } else {
                     selectedPaymentLogo.setImageDrawable(
                         PrimerAssetManager.getAsset(
@@ -56,10 +56,11 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
                         )
                     )
                 }
-                it.textResId?.let {
+                loadingState.textResId?.let {
                     selectedPaymentLoadingText.isVisible = true
                     progressBar.isVisible = false
-                    selectedPaymentLoadingText.text = getString(it)
+                    selectedPaymentLoadingText.text = loadingState.args
+                        ?.let { args -> getString(it, args) } ?: getString(it)
                 } ?: run {
                     selectedPaymentLoadingText.isVisible = false
                     progressBar.isVisible = true

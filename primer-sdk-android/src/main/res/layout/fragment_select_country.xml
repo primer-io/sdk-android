@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minHeight="@dimen/loading_height"
@@ -21,29 +22,77 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/small_padding"
                 android:padding="15dp"
                 android:src="@drawable/icon_go_back" />
 
-            <io.primer.android.ui.components.SearchViewWidget
-                android:id="@+id/searchCountry"
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/Primer.Text.Title.Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/country_select" />
+        </LinearLayout>
+
+        <io.primer.android.ui.components.SearchViewWidgetV2
+            android:id="@+id/searchCountry"
+            style="@style/Primer.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/medium_vertical_margin"
+            android:layout_marginTop="@dimen/medium_large_padding"
+            android:background="@android:color/transparent"
+            android:drawablePadding="@dimen/medium_vertical_margin2"
+            android:hint="@string/search_placeholder"
+            android:paddingHorizontal="@dimen/medium_padding"
+            android:paddingVertical="@dimen/medium_padding" />
+
+        <LinearLayout
+            android:id="@+id/llEmptyResultContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="51dp"
+            android:paddingBottom="48dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/ivIconEmptySearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/search_result"
+                android:src="@drawable/ic_search_black" />
+
+            <TextView
+                android:id="@+id/tvNoResultLabel"
                 style="@style/Primer.Text.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/medium_large_padding"
-                android:background="@android:color/transparent"
-                android:drawableEnd="@drawable/ic_search"
-                android:hint="@string/country_search_hint"
-                android:paddingHorizontal="@dimen/medium_padding"
-                android:paddingVertical="@dimen/medium_padding" />
+                android:layout_marginTop="@dimen/medium_vertical_margin2"
+                android:layout_marginBottom="@dimen/x_medium_vertical_margin"
+                android:gravity="center"
+                android:text="@string/no_results" />
+
+            <TextView
+                android:id="@+id/tvEmptyResultForQuery"
+                style="@style/Primer.Text.Small.Muted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                tools:text="@string/no_results_for_query" />
+
         </LinearLayout>
 
-        <View
-            android:id="@+id/chooseCountryDivider"
+        <TextView
+            android:id="@+id/tvSearchResultLabel"
+            style="@style/Primer.Text.Small"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="@dimen/large_vertical_margin"
-            android:background="@drawable/divider_country_selection" />
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/medium_vertical_margin2"
+            android:text="@string/search_result" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCountries"

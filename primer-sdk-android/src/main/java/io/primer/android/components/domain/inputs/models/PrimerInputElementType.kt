@@ -33,15 +33,6 @@ internal fun Map<String, Boolean>?.via(type: PrimerInputElementType): Boolean? {
     return this?.get(type.field)
 }
 
-internal fun Map<String, Boolean>?.needAdd(
-    type: PrimerInputElementType,
-    handleAll: Boolean = true
-): PrimerInputElementType? {
-    return if ((this?.via(PrimerInputElementType.ALL) == true && handleAll) ||
-        this?.via(type) == true
-    ) type else null
-}
-
 internal fun <T : Any> JSONObject.putFor(type: PrimerInputElementType, value: T) {
     this.put(type.field, value)
 }

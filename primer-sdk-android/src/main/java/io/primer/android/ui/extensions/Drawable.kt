@@ -13,9 +13,13 @@ import androidx.core.graphics.drawable.DrawableCompat
 import io.primer.android.utils.dPtoPx
 import kotlin.math.roundToInt
 
+const val NO_COLOR = -1
+
 internal fun Drawable.updateTint(@ColorInt color: Int): Drawable {
-    DrawableCompat.setTint(this, color)
-    DrawableCompat.setTintMode(this, PorterDuff.Mode.SRC_IN)
+    if (color >= 0) {
+        DrawableCompat.setTint(this, color)
+        DrawableCompat.setTintMode(this, PorterDuff.Mode.SRC_IN)
+    }
     return this
 }
 

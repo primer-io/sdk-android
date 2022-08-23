@@ -3,6 +3,7 @@ package io.primer.android.payment.async.sofort
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewMiddleFragmentBehaviour
+import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.dummy.DummyDecisionType
@@ -34,4 +35,7 @@ internal class PrimerTestSofortPaymentMethodDescriptor(
         setTokenizableValue("paymentMethodConfigId", config.id!!)
         appendTokenizableValue("sessionInfo", "platform", "ANDROID")
     }
+
+    override val sdkCapabilities: List<SDKCapability>
+        get() = listOf(SDKCapability.DROP_IN)
 }

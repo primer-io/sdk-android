@@ -3,8 +3,8 @@ package io.primer.android.di
 import android.content.Context
 import io.primer.android.analytics.di.analyticsModule
 import io.primer.android.components.di.componentsModule
-import io.primer.android.data.token.model.ClientToken
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.token.model.ClientToken
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication

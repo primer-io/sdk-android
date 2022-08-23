@@ -1,6 +1,5 @@
 package io.primer.android.domain.payments.methods
 
-import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
@@ -16,6 +15,7 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
+import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.VaultCapability
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +56,7 @@ internal class PaymentMethodModulesInteractor(
                 }
             }
             .mapLatest { paymentMethodData ->
-                val descriptors = paymentMethodData.first.filter { isValidPaymentDescriptor(it) }
+                val descriptors = paymentMethodData.first
                 if (config.isStandalonePaymentMethod) {
                     val availablePaymentMethods = paymentMethodData.second
                     val paymentMethod = requireNotNull(config.intent.paymentMethod)
@@ -64,7 +64,7 @@ internal class PaymentMethodModulesInteractor(
                     if (availablePaymentMethods.map { it.type }.contains(paymentMethod).not()) {
                         throw MissingPaymentMethodException(paymentMethod)
                     } else if (
-                        descriptors.none {
+                        descriptors.filter { isValidPaymentDescriptor(it) }.none {
                             it.config.type == paymentMethod
                         }
                     ) {
@@ -72,14 +72,21 @@ internal class PaymentMethodModulesInteractor(
                             paymentMethod,
                             config.intent.paymentMethodIntent
                         )
-                    } else if (config.settings.fromHUC &&
-                        descriptors.first { it.config.type == paymentMethod }.config
-                            .isAvailableOnHUC().not()
+                    } else if (
+                        descriptors.filter { isSdkFlowSupportedPaymentDescriptor(it) }.none {
+                            it.config.type == paymentMethod
+                        }
                     ) {
-                        throw UnsupportedPaymentMethodException(paymentMethod)
+                        throw UnsupportedPaymentMethodException(
+                            paymentMethod,
+                        )
                     }
                 }
-                descriptors
+                descriptors.filter {
+                    isValidPaymentDescriptor(it) && isSdkFlowSupportedPaymentDescriptor(
+                        it
+                    )
+                }
             }
             .mapLatest { descriptors ->
                 val mapping = PaymentMethodDescriptorMapping(descriptors)
@@ -107,6 +114,13 @@ internal class PaymentMethodModulesInteractor(
             config.paymentMethodIntent.isCheckout
         ) ||
         descriptor.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT
+
+    private fun isSdkFlowSupportedPaymentDescriptor(descriptor: PaymentMethodDescriptor) =
+        if (config.settings.fromHUC) {
+            descriptor.sdkCapabilities.contains(SDKCapability.HEADLESS)
+        } else {
+            descriptor.sdkCapabilities.contains(SDKCapability.DROP_IN)
+        }
 
     data class PaymentDescriptorsHolder(
         val descriptors: List<PaymentMethodDescriptor>,

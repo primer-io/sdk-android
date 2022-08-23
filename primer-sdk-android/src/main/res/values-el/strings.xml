@@ -83,7 +83,7 @@
     <string name="input_title_phone_number">Πληκτρολογήστε τον αριθμό τηλεφώνου σας</string>
     <string name="input_hint_form_phone_number">Αριθμός τηλεφώνου</string>
     <string name="payment_method_blik_loading_placeholder">Ολοκληρώστε την πληρωμή σας στην εφαρμογή Blik</string>
-    <string name="payment_method_mb_way_loading_placeholder">Ολοκληρώστε την πληρωμή σας στην εφαρμογή Mb Way</string>
+    <string name="completeYourPaymentInTheApp">Ολοκληρώστε την πληρωμή σας στην εφαρμογή %s</string>
     <string name="input_title_bank_details">Δώστε τραπεζικά στοιχεία</string>
     <string name="payment_method_xfers_title">Σαρώστε ή αποθηκεύστε για να πληρώσετε</string>
     <string name="payment_method_xfers_description">Ανεβάστε το στιγμιότυπο οθόνης στην τραπεζική σας εφαρμογή.</string>
@@ -113,4 +113,10 @@
     <string name="fast_bank_transfer">FAST Bank Transfer</string>
     <string name="scanToPay">Scan to pay or take a screenshot</string>
     <string name="uploadScreenshot">Upload the screenshot in your banking app</string>
+    <string name="phone_code_search_hint">Find code</string>
+    <string name="search_result">Search results</string>
+    <string name="search_placeholder">Search</string>
+    <string name="country_select">Select country</string>
+    <string name="no_results">No results</string>
+    <string name="no_results_for_query">Sorry, no results\nfound that match “%s”</string>
 </resources>

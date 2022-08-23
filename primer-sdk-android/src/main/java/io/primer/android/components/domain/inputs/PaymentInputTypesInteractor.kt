@@ -75,6 +75,7 @@ internal class PaymentInputTypesInteractor(
                         .plus(billingAddressesFields)
                         .filterNotNull()
                 }
+                PaymentMethodType.XENDIT_OVO.name -> listOf(PrimerInputElementType.PHONE_NUMBER)
                 else -> emptyList()
             }
         } catch (e: IllegalArgumentException) {

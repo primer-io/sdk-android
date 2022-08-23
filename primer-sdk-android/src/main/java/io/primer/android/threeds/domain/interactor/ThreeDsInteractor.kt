@@ -15,14 +15,13 @@ import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode
-import io.primer.android.threeds.domain.respository.ThreeDsRepository
+import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
-import io.primer.android.threeds.domain.models.ThreeDsParams
-import io.primer.android.threeds.domain.models.toBeginAuthRequest
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
+import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +39,7 @@ internal interface ThreeDsInteractor {
     fun authenticateSdk(): Flow<Transaction>
 
     fun beginRemoteAuth(
-        threeDsParams: ThreeDsParams,
+        threeDsParams: BaseThreeDsParams,
     ): Flow<BeginAuthResponse>
 
     fun performChallenge(
@@ -100,11 +99,11 @@ internal class DefaultThreeDsInteractor(
             }
 
     override fun beginRemoteAuth(
-        threeDsParams: ThreeDsParams,
+        threeDsParams: BaseThreeDsParams,
     ) =
         threeDsRepository.begin3DSAuth(
             paymentMethodRepository.getPaymentMethod().token,
-            threeDsParams.toBeginAuthRequest()
+            threeDsParams
         ).flowOn(dispatcher).onEach {
             // we mark flow ended and send results if there is no challenge
             if (it.authentication.responseCode != ResponseCode.CHALLENGE) {

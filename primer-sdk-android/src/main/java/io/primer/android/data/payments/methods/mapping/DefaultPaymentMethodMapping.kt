@@ -36,7 +36,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                     PaymentMethodType.KLARNA -> KlarnaFactory(type, settings).build()
                     PaymentMethodType.GOOGLE_PAY -> GooglePayFactory(settings).build()
                     PaymentMethodType.PRIMER_TEST_PAYPAL,
-                    PaymentMethodType.PAYPAL -> PayPalFactory(type).build()
+                    PaymentMethodType.PAYPAL -> PayPalFactory(settings, type).build()
                     PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
                     PaymentMethodType.APAYA -> ApayaFactory(settings).build()
                     PaymentMethodType.PRIMER_TEST_SOFORT,
@@ -44,12 +44,13 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                     PaymentMethodType.ADYEN_DOTPAY,
                     PaymentMethodType.ADYEN_BLIK,
                     PaymentMethodType.XFERS_PAYNOW,
+                    PaymentMethodType.ADYEN_MBWAY,
                     PaymentMethodType.RAPYD_FAST,
-                    PaymentMethodType.RAPYD_PROMPTPAY -> AsyncMethodFactory(
+                    PaymentMethodType.RAPYD_PROMPTPAY,
+                    PaymentMethodType.XENDIT_OVO -> AsyncMethodFactory(
                         type,
                         settings
                     ).build()
-                    PaymentMethodType.ADYEN_MBWAY,
                     PaymentMethodType.ADYEN_BANK_TRANSFER,
                     PaymentMethodType.UNKNOWN -> Failure(
                         Exception("Unknown payment method, can't register.")

@@ -2,7 +2,8 @@ package io.primer.android.threeds.data.repository
 
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
-import io.primer.android.threeds.data.models.BeginAuthRequest
+import io.primer.android.threeds.data.models.toBeginAuthRequest
+import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import kotlinx.coroutines.flow.flatMapLatest
 
@@ -13,12 +14,12 @@ internal class ThreeDsDataRepository(
 
     override fun begin3DSAuth(
         token: String,
-        request: BeginAuthRequest,
+        threeDsParams: BaseThreeDsParams,
     ) = configurationDataSource.get().flatMapLatest { configuration ->
         dataSource.get3dsAuthToken(
             configuration,
             token,
-            request
+            threeDsParams.toBeginAuthRequest()
         )
     }
 

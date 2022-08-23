@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.data.configuration.models.CountryCode
-import io.primer.android.data.configuration.models.emojiFlag
 import io.primer.android.domain.action.models.PrimerCountry
+import io.primer.android.domain.action.models.PrimerPhoneCode
 import io.primer.android.domain.helper.CountriesRepository
+import io.primer.android.domain.helper.mapCountryToCountryItem
+import io.primer.android.domain.helper.mapPhoneCodesToCountryItem
 import io.primer.android.presentation.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,37 +20,35 @@ internal class SelectCountryViewModel(
     analyticsInteractor: AnalyticsInteractor
 ) : BaseViewModel(analyticsInteractor) {
 
-    private val _countriesData = MutableLiveData<List<CountryItem>>()
-    val countriesData: LiveData<List<CountryItem>> = _countriesData
+    private val _countriesData = MutableLiveData<List<CountryCodeItem>>()
+    val countriesData: LiveData<List<CountryCodeItem>> = _countriesData
 
-    fun fetchCountries() {
+    fun fetchCountriesData(type: CountryDataType) {
         viewModelScope.launch(Dispatchers.IO) {
-            val countries = countriesRepository.getCountries()
-            _countriesData.postValue(
-                countries.map {
-                    CountryItem(
-                        it.name,
-                        it.code,
-                        it.code.emojiFlag()
-                    )
-                }
-            )
+            val countriesData = when (type) {
+                CountryDataType.NAME -> countriesRepository.getCountries()
+                    .mapCountryToCountryItem()
+                CountryDataType.DIAL_CODE -> countriesRepository.getPhoneCodes()
+                    .mapPhoneCodesToCountryItem()
+            }
+
+            _countriesData.postValue(countriesData)
         }
     }
 
-    fun onFilterChanged(query: String) {
+    fun onFilterChanged(type: CountryDataType, query: String) {
+        if (query.isBlank()) {
+            fetchCountriesData(type)
+            return
+        }
         viewModelScope.launch(Dispatchers.IO) {
-            val countries = if (query.isBlank()) countriesRepository.getCountries()
-            else countriesRepository.findCountryByQuery(query)
-            _countriesData.postValue(
-                countries.map {
-                    CountryItem(
-                        it.name,
-                        it.code,
-                        it.code.emojiFlag()
-                    )
-                }
-            )
+            val countries = when (type) {
+                CountryDataType.NAME -> countriesRepository.findCountryByQuery(query)
+                    .mapCountryToCountryItem()
+                CountryDataType.DIAL_CODE -> countriesRepository.findPhoneCodeByQuery(query)
+                    .mapPhoneCodesToCountryItem()
+            }
+            _countriesData.postValue(countries)
         }
     }
 
@@ -57,6 +57,15 @@ internal class SelectCountryViewModel(
             val country = countriesRepository.getCountryByCode(code)
             withContext(Dispatchers.Main) {
                 onComplete(country)
+            }
+        }
+    }
+
+    fun getPhoneCodeByCountryCode(code: CountryCode, onComplete: (PrimerPhoneCode) -> Unit) {
+        viewModelScope.launch {
+            val phoneCode = countriesRepository.getPhoneCodeByCountryCode(code)
+            withContext(Dispatchers.Main) {
+                onComplete(phoneCode)
             }
         }
     }

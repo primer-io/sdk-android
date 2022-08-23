@@ -59,7 +59,6 @@ internal enum class PaymentMethodType(
     BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION, Brand.BANCONTACT),
     ATOME(ClientTokenIntent.ATOME_REDIRECTION, Brand.ATOME),
     XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION, Brand.PAYNOW),
-    COINBASE(ClientTokenIntent.COINBASE_REDIRECTION, Brand.COINBASE),
     TWOC2P(ClientTokenIntent.TWOC2P_REDIRECTION, Brand.TWOC2P),
     OPENNODE(ClientTokenIntent.OPENNODE_REDIRECTION, Brand.OPENNODE),
     RAPYD_GCASH(ClientTokenIntent.RAPYD_GCASH_REDIRECTION, Brand.GCASH),
@@ -67,6 +66,7 @@ internal enum class PaymentMethodType(
     RAPYD_POLI(ClientTokenIntent.RAPYD_POLI_REDIRECTION, Brand.POLI),
     RAPYD_FAST(ClientTokenIntent.RAPYD_FAST_REDIRECTION, Brand.FAST),
     RAPYD_PROMPTPAY(ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION, Brand.PROMPTPAY),
+    XENDIT_OVO(ClientTokenIntent.XENDIT_OVO_REDIRECTION, Brand.UNKNOWN),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);
@@ -77,36 +77,6 @@ internal enum class PaymentMethodType(
     }
 
     constructor(intent: ClientTokenIntent, brand: Brand) : this(arrayOf(intent), brand)
-}
-
-internal fun PaymentMethodConfigDataResponse.isAvailableOnHUC(): Boolean {
-    return when (this.implementationType) {
-        PaymentMethodImplementationType.NATIVE_SDK -> {
-            when (PaymentMethodType.safeValueOf(this.type)) {
-                PaymentMethodType.PAYMENT_CARD,
-                PaymentMethodType.KLARNA,
-                PaymentMethodType.GOOGLE_PAY,
-                PaymentMethodType.PAYPAL,
-                PaymentMethodType.APAYA -> true
-                PaymentMethodType.ADYEN_IDEAL,
-                PaymentMethodType.ADYEN_DOTPAY,
-                PaymentMethodType.ADYEN_BLIK,
-                PaymentMethodType.ADYEN_MBWAY,
-                PaymentMethodType.ADYEN_BANK_TRANSFER,
-                PaymentMethodType.XFERS_PAYNOW,
-                PaymentMethodType.GOCARDLESS,
-                PaymentMethodType.PRIMER_TEST_KLARNA,
-                PaymentMethodType.PRIMER_TEST_PAYPAL,
-                PaymentMethodType.PRIMER_TEST_SOFORT,
-                PaymentMethodType.RAPYD_FAST,
-                PaymentMethodType.RAPYD_PROMPTPAY,
-                PaymentMethodType.UNKNOWN -> false
-                else -> false
-            }
-        }
-        PaymentMethodImplementationType.WEB_REDIRECT -> true
-        PaymentMethodImplementationType.UNKNOWN -> false
-    }
 }
 
 internal fun Brand.getImageAsset(imageColor: ImageColor) = when (imageColor) {

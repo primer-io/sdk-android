@@ -66,7 +66,7 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
         }
     }
 
-    internal fun setupEditTextTheme() {
+    internal fun setupEditTextTheme(withTextPrefix: Boolean = false) {
         val fontSize = theme.input.text.fontSize.getDimension(context)
         editText?.apply {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
@@ -76,6 +76,17 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                     theme.isDarkMode
                 )
             )
+        }
+        if (withTextPrefix) {
+            prefixTextView.apply {
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+                setTextColor(
+                    theme.input.text.defaultColor.getColor(
+                        context,
+                        theme.isDarkMode
+                    )
+                )
+            }
         }
     }
 

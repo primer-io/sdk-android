@@ -1,7 +1,8 @@
-package io.primer.android.components.domain.payments.metadata
+package io.primer.android.components.domain.payments.metadata.card
 
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
+import io.primer.android.components.domain.payments.metadata.PaymentRawDataMetadataRetriever
 import io.primer.android.ui.CardNumberFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

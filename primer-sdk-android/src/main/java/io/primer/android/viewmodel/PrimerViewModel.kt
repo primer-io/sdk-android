@@ -18,6 +18,7 @@ import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.configuration.models.CheckoutModuleType
+import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -26,7 +27,9 @@ import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.models.PrimerCountry
+import io.primer.android.domain.action.models.PrimerPhoneCode
 import io.primer.android.domain.base.None
+import io.primer.android.domain.helper.CountriesRepository
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
@@ -57,6 +60,7 @@ import io.primer.android.ui.AmountLabelContentFactory
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.utils.SurchargeFormatter
 import io.primer.android.utils.orNull
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.catch
@@ -82,6 +86,7 @@ internal class PrimerViewModel(
     private val actionInteractor: ActionInteractor,
     private val config: PrimerConfig,
     private val billingAddressValidator: BillingAddressValidator,
+    private val countriesRepository: CountriesRepository,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
 ) : BaseViewModel(analyticsInteractor), EventBus.EventListener {
 
@@ -92,6 +97,9 @@ internal class PrimerViewModel(
 
     private val _selectedCountryCode = MutableLiveData<PrimerCountry?>()
     val selectCountryCode: LiveData<PrimerCountry?> = _selectedCountryCode
+
+    private val _selectedPhoneCode = MutableLiveData<PrimerPhoneCode?>()
+    val selectPhoneCode: LiveData<PrimerPhoneCode?> = _selectedPhoneCode
 
     private val _keyboardVisible = MutableLiveData(false)
     val keyboardVisible: LiveData<Boolean> = _keyboardVisible
@@ -465,7 +473,23 @@ internal class PrimerViewModel(
         _selectedCountryCode.postValue(null)
     }
 
+    fun setSelectedPhoneCode(phoneCode: PrimerPhoneCode) {
+        _selectedPhoneCode.postValue(phoneCode)
+    }
+
+    fun clearSelectedPhoneCode() {
+        _selectedPhoneCode.postValue(null)
+    }
+
     fun validateBillingAddress(): List<SyncValidationError> = billingAddressValidator.validate(
         billingAddressFields.value.orEmpty(), showBillingFields.value.orEmpty()
     )
+
+    fun setSelectCurrentPhoneCountry() {
+        if (selectPhoneCode.value != null) return
+        val countryCode = CountryCode.safeValueOf(config.settings.locale.country)
+        viewModelScope.launch(Dispatchers.IO) {
+            setSelectedPhoneCode(countriesRepository.getPhoneCodeByCountryCode(countryCode))
+        }
+    }
 }

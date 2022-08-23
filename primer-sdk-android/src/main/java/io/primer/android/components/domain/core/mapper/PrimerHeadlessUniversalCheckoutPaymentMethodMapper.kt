@@ -2,7 +2,8 @@ package io.primer.android.components.domain.core.mapper
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
-import io.primer.android.components.domain.core.models.otp.OtpInputData
+import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
+import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
 import io.primer.android.data.configuration.models.PaymentMethodType
 
 internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
@@ -13,11 +14,15 @@ internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
         return when (paymentMethodType) {
             PaymentMethodType.ADYEN_BLIK.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
                 paymentMethodType,
-                OtpInputData::class
+                PrimerOtpCodeRawData::class
             )
             PaymentMethodType.PAYMENT_CARD.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
                 paymentMethodType,
                 PrimerRawCardData::class
+            )
+            PaymentMethodType.XENDIT_OVO.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
+                paymentMethodType,
+                PrimerRawPhoneNumberData::class
             )
             else -> PrimerHeadlessUniversalCheckoutPaymentMethod(paymentMethodType)
         }

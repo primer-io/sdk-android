@@ -80,7 +80,10 @@ internal enum class Brand(
     ),
     DOTPAY(R.drawable.ic_logo_dotpay_dark, iconLightResId = R.drawable.ic_logo_dotpay_light),
     BLIK(R.drawable.ic_logo_blik, R.drawable.ic_logo_blik_square, R.drawable.ic_logo_blik_light),
-    MBWAY(R.drawable.ic_logo_mbway, R.drawable.ic_logo_mbway),
+    MBWAY(
+        R.drawable.ic_logo_mbway_light,
+        iconDarkResId = R.drawable.ic_logo_mbway_dark
+    ),
     BANK_TRANSFER(R.drawable.ic_logo_sepa, R.drawable.ic_logo_sepa_square),
     BANCONTACT(
         R.drawable.ic_logo_bancontact,

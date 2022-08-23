@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.primer.android.ui.components.TextInputWidget xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
     android:layout_marginTop="0dp"
-    android:layout_marginBottom="@dimen/large_vertical_margin"
-    android:layout_marginStart="4dp">
+    android:layout_marginBottom="@dimen/large_vertical_margin">
 
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/primer_input_spacing_vert"
+        tools:ignore="SpeakableTextPresentCheck" />
 </io.primer.android.ui.components.TextInputWidget>

@@ -142,7 +142,7 @@ class Primer private constructor() : PrimerInterface {
 
             val scheme =
                 config.settings.paymentMethodOptions.redirectScheme
-                    ?: context.packageName.lowercase().let { "$it.primer" }
+                    ?: context.packageName.let { "$it.primer" }
             WebviewInteropRegister.init(scheme)
 
             // TODO: refactor the way we pass in the config.

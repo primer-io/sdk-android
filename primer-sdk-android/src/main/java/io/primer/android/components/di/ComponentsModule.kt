@@ -38,6 +38,7 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get(named(COMPONENTS_HANDLER_LOGGER_NAME))
             )
         }
@@ -75,7 +76,7 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
-                get()
+                get(),
             )
         }
 
@@ -101,6 +102,11 @@ internal val componentsModule = {
             DefaultRawDataDelegate(
                 get(),
                 get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
             )
         }
     }

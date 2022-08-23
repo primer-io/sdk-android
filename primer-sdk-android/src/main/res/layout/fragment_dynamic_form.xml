@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xxl_vertical_margin"
         android:orientation="vertical"
+        android:layout_marginBottom="@dimen/xxl_vertical_margin"
         app:layout_constraintBottom_toTopOf="@id/form_description"
         app:layout_constraintTop_toBottomOf="@id/form_title" />
 
@@ -47,7 +48,7 @@
         app:layout_constraintBottom_toTopOf="@id/form_button"
         app:layout_constraintTop_toBottomOf="@id/main_layout" />
 
-    <io.primer.android.ui.components.ButtonPrimary
+    <io.primer.android.ui.components.PayButton
         android:id="@+id/form_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

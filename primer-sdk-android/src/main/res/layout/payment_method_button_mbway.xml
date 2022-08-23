@@ -14,5 +14,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/mbway"
-        android:src="@drawable/ic_logo_mbway" />
+        android:src="@drawable/ic_logo_mbway_light" />
+
 </io.primer.android.ui.components.ButtonDefaultLayout>

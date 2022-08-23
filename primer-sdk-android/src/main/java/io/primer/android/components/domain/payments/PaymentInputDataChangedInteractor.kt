@@ -42,7 +42,7 @@ internal class PaymentInputDataChangedInteractor(
     }
 
     override fun execute(params: PaymentTokenizationDescriptorParams) =
-        validatorsFactory.getPaymentInputDataValidator(params.inputData)
+        validatorsFactory.getPaymentInputDataValidator(params.paymentMethodType, params.inputData)
             .validate(params.inputData).combine(
                 paymentRawDataMetadataRetrieverFactory.getMetadataRetriever(params.inputData)
                     .retrieveMetadata(params.inputData)

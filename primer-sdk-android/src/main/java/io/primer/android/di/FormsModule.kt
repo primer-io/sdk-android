@@ -13,7 +13,7 @@ import org.koin.dsl.module
 internal val formsModule = {
     module {
         single {
-            LocalFormDataSourceFactory(get())
+            LocalFormDataSourceFactory(get(), get())
         }
         single<FormsRepository> {
             FormsDataRepository(

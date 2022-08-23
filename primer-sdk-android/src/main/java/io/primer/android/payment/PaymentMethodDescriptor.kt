@@ -22,6 +22,8 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
 
     abstract val vaultCapability: VaultCapability
 
+    open val sdkCapabilities = listOf(SDKCapability.HEADLESS, SDKCapability.DROP_IN)
+
     internal val brand = PaymentMethodType.safeValueOf(config.type).brand
 
     open fun getLoadingState(): LoadingState? = null

@@ -337,16 +337,21 @@ internal class PaymentMethodMappingTest {
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
     }
-//
-//    @Test
-//    fun `test maps adyen mbway transfer correctly`() {
-//        val factory = DefaultPaymentMethodMapping(settings)
-//        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_MBWAY)) {
-//            is Failure -> Assert.fail()
-//            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
-//        }
-//    }
-//
+
+    @Test
+    fun `test maps adyen mbway transfer correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (
+            val result = factory.getPaymentMethodFor(
+                PaymentMethodImplementationType.NATIVE_SDK,
+                PaymentMethodType.ADYEN_MBWAY.name
+            )
+        ) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
+
 //    @Test
 //    fun `test maps adyen bank transfer correctly`() {
 //        val factory = DefaultPaymentMethodMapping(settings)

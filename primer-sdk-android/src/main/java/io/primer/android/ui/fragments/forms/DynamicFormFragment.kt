@@ -1,16 +1,15 @@
 package io.primer.android.ui.fragments.forms
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
-import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
-import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
-
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
@@ -18,18 +17,29 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.data.configuration.models.emojiFlag
+import io.primer.android.data.payments.forms.models.ButtonType
+import io.primer.android.data.payments.forms.models.FormType
+import io.primer.android.data.payments.forms.models.helper.DialCodeCountryPrefix
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentDynamicFormBinding
 import io.primer.android.domain.payments.forms.models.Form
+import io.primer.android.domain.payments.forms.models.FormInput
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
+import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import io.primer.android.viewmodel.TokenizationStatus
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combineTransform
+import org.koin.android.ext.android.inject
 
 @ExperimentalCoroutinesApi
 internal class DynamicFormFragment : BaseFormFragment() {
+
+    private val localConfig: PrimerConfig by inject()
 
     private var binding: FragmentDynamicFormBinding by autoCleaned()
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
@@ -43,7 +53,11 @@ internal class DynamicFormFragment : BaseFormFragment() {
             mainLayout.children.forEach {
                 it.isEnabled = viewsEnabled
             }
-            formButton.setProgress(status != TokenizationStatus.NONE)
+            if (status != TokenizationStatus.NONE) {
+                formButton.showProgress()
+            } else {
+                formButton.amount = localConfig.monetaryAmount
+            }
         }
     }
 
@@ -82,13 +96,15 @@ internal class DynamicFormFragment : BaseFormFragment() {
                 .inflate(R.layout.payment_method_dynamic_input, parentLayout, false)
                 as TextInputWidget
 
+            handleFormInputPrefix(childView, formData)
+
             childView.apply {
                 id = View.generateViewId()
                 hint = getString(formData.hint)
 
                 editText?.inputType = formData.inputType
 
-                setupEditTextTheme()
+                setupEditTextTheme(withTextPrefix = formData.formType == FormType.PHONE)
                 setupEditTextInputFilters(
                     formData.inputCharacters,
                     formData.maxInputLength
@@ -99,6 +115,7 @@ internal class DynamicFormFragment : BaseFormFragment() {
                         formData.id,
                         formData.formType,
                         it,
+                        TextUtils.concat(prefixText, it),
                         formData.regex
                     )
                 }
@@ -109,12 +126,39 @@ internal class DynamicFormFragment : BaseFormFragment() {
             parentLayout.addView(it)
         }
         parentLayout.requestLayout()
+        if (form.buttonType == ButtonType.PAY) {
+            binding.formButton.amount = localConfig.monetaryAmount
+        } else {
+            binding.formButton.text = resources.getText(R.string.confirm)
+        }
 
         FieldFocuser.focus(inputs?.first()?.editText)
 
         tokenizationViewModel.tokenizationStatus.observe(
             viewLifecycleOwner,
             tokenizationStatusObserver
+        )
+    }
+
+    private fun handleFormInputPrefix(childView: TextInputWidget, formData: FormInput) {
+        when (val prefixData = formData.inputPrefix) {
+            is DialCodeCountryPrefix -> {
+                childView.prefixText = String.format(
+                    "%s %s",
+                    prefixData.phoneCode.code.emojiFlag(),
+                    prefixData.phoneCode.dialCode
+                )
+                addPrefixDivider(childView)
+            }
+        }
+    }
+
+    private fun addPrefixDivider(inputView: TextInputWidget) {
+        inputView.prefixTextView.setCompoundDrawablesWithIntrinsicBounds(
+            null,
+            null,
+            ContextCompat.getDrawable(requireContext(), R.drawable.divider_input_prefix),
+            null
         )
     }
 

@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
@@ -16,6 +15,7 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.presentation.payment.forms.FormsViewModel
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

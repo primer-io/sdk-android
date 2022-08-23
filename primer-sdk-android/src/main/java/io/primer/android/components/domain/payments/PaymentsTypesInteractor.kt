@@ -1,7 +1,6 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
-import io.primer.android.data.configuration.models.isAvailableOnHUC
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.base.None
@@ -36,9 +35,6 @@ internal class PaymentsTypesInteractor(
     ).flatMapLatest {
         paymentMethodModulesInteractor.execute(PaymentModuleParams(false))
             .mapLatest { it.descriptors.map { it.config } }
-            .mapLatest {
-                it.filter { it.isAvailableOnHUC() }
-            }
     }.flowOn(dispatcher)
         .onEach { paymentMethodType ->
             eventDispatcher.dispatchEvent(

@@ -29,10 +29,10 @@ import io.primer.android.threeds.data.models.PostAuthResponse
 import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
+import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
-import io.primer.android.threeds.domain.models.ThreeDsParams
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
@@ -350,7 +350,7 @@ internal class ThreeDsInteractorTest {
     fun `beginRemoteAuth() should dispatch token event when repository begin3DSAuth() was success and response code is not CHALLENGE`() {
         val beginAuthResponse = mockk<BeginAuthResponse>(relaxed = true)
         val authDetails = mockk<BasePaymentToken.AuthenticationDetails>(relaxed = true)
-        val threeDsParams = mockk<ThreeDsParams>(relaxed = true)
+        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
 
         every { beginAuthResponse.token.threeDSecureAuthentication }.returns(authDetails)
         every { beginAuthResponse.token }.returns(paymentMethodTokenInternal)
@@ -375,7 +375,7 @@ internal class ThreeDsInteractorTest {
     @Test
     fun `beginRemoteAuth() should not dispatch events when repository begin3DSAuth() was success`() {
         val beginAuthResponse = mockk<BeginAuthResponse>(relaxed = true)
-        val threeDsParams = mockk<ThreeDsParams>(relaxed = true)
+        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
 
         every { beginAuthResponse.authentication.responseCode } returns ResponseCode.CHALLENGE
         every { beginAuthResponse.token }.returns(paymentMethodTokenInternal)
@@ -399,7 +399,7 @@ internal class ThreeDsInteractorTest {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to execute 3DS auth.")
 
-        val threeDsParams = mockk<ThreeDsParams>(relaxed = true)
+        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
         coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
             flow {
                 throw Exception()
@@ -427,7 +427,7 @@ internal class ThreeDsInteractorTest {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to execute 3DS auth.")
 
-        val threeDsParams = mockk<ThreeDsParams>(relaxed = true)
+        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
         coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
             flow {
                 throw exception
@@ -463,7 +463,7 @@ internal class ThreeDsInteractorTest {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to execute 3DS auth.")
 
-        val threeDsParams = mockk<ThreeDsParams>(relaxed = true)
+        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
         coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
             flow {
                 throw exception
