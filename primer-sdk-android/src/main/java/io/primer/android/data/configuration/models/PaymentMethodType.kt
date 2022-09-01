@@ -67,6 +67,7 @@ internal enum class PaymentMethodType(
     RAPYD_FAST(ClientTokenIntent.RAPYD_FAST_REDIRECTION, Brand.FAST),
     RAPYD_PROMPTPAY(ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION, Brand.PROMPTPAY),
     XENDIT_OVO(ClientTokenIntent.XENDIT_OVO_REDIRECTION, Brand.UNKNOWN),
+    ADYEN_MULTIBANCO(ClientTokenIntent.PAYMENT_METHOD_VOUCHER, Brand.MULTIBANCO),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);

@@ -24,6 +24,10 @@ internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
                 paymentMethodType,
                 PrimerRawPhoneNumberData::class
             )
+            PaymentMethodType.ADYEN_MBWAY.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
+                paymentMethodType,
+                PrimerRawPhoneNumberData::class
+            )
             else -> PrimerHeadlessUniversalCheckoutPaymentMethod(paymentMethodType)
         }
     }

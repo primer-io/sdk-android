@@ -27,6 +27,7 @@ import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.settings.PrimerCardPaymentOptions
 import io.primer.android.data.settings.PrimerDebugOptions
+import io.primer.android.data.settings.PrimerGoCardlessOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
@@ -38,7 +39,7 @@ import io.primer.android.ui.settings.PrimerUIOptions
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.ref.WeakReference
-import java.util.UUID
+import java.util.*
 
 @Keep
 class MainViewModel(
@@ -88,7 +89,7 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Dev)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
     fun setCurrentEnv(env: PrimerEnv) {
         environment.postValue(env)
         this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
@@ -156,7 +157,8 @@ class MainViewModel(
             paymentMethodOptions = PrimerPaymentMethodOptions(
                 redirectScheme = "primer",
                 cardPaymentOptions = PrimerCardPaymentOptions(threeDsEnabled.value ?: false),
-                klarnaOptions = PrimerKlarnaOptions("This is custom description")
+                klarnaOptions = PrimerKlarnaOptions("This is custom description"),
+                goCardlessOptions = PrimerGoCardlessOptions("Test", "Test")
             ),
             uiOptions = PrimerUIOptions(
                 isInitScreenEnabled = true,
@@ -214,7 +216,9 @@ class MainViewModel(
 
                 if (result.requiredAction?.name != null) {
                     _transactionId.postValue(result.id)
-                    completion?.continueWithNewClientToken(result.requiredAction.clientToken.orEmpty())
+                    completion?.continueWithNewClientToken(
+                        result.requiredAction.clientToken.orEmpty()
+                    )
                 } else {
                     Log.w(javaClass.simpleName, "Required actions NAME is NULL")
                 }

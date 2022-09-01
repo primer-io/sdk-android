@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 data class TransactionResponse(
     val id: String,
     val date: String,
+    val orderId: String,
     val status: TransactionStatus,
     val requiredAction: RequiredActionData? = null,
 ) : ExampleAppRequestBody
@@ -44,4 +45,5 @@ enum class RequiredActionName {
     `3DS_AUTHENTICATION`,
     USE_PRIMER_SDK,
     PROCESSOR_3DS,
+    PAYMENT_METHOD_VOUCHER,
 }

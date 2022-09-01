@@ -13,5 +13,6 @@ ext {
             okhttp                 : "3.12.1",
             xJunitRunner           : '1.1.3',
             primer3ds              : "1.1.0",
+            primerKlarna           : "1.0.0"
     ]
 }

@@ -8,6 +8,7 @@ internal data class KlarnaPaymentData(
     override val redirectUrl: String,
     override val returnUrl: String,
     val sessionId: String,
+    val clientToken: String
 ) : BaseWebFlowPaymentData(redirectUrl, returnUrl) {
 
     override fun getRequestCode() = KlarnaDescriptor.KLARNA_REQUEST_CODE

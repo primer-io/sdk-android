@@ -76,10 +76,12 @@ dependencies {
     implementation AndroidDependencies.Lifecycle.viewModelSavedState
 
     implementation 'com.google.android.gms:play-services-wallet:19.1.0'
-    implementation 'com.hbb20:ccp:2.6.0'
 
     compileOnly Dependencies.ThreeDs.primer3ds
     testCompileOnly Dependencies.ThreeDs.primer3ds
+
+    compileOnly Dependencies.Klarna.primerKlarna
+    testImplementation Dependencies.Klarna.primerKlarna
 
     testImplementation TestDependencies.Kotlin.coroutines
     testImplementation TestDependencies.Android.archCore
@@ -97,6 +99,10 @@ repositories {
     }
     maven {
         url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
+    }
+    mavenLocal()
+    maven {
+        url 'https://x.klarnacdn.net/mobile-sdk/'
     }
 }
 

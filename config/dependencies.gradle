@@ -15,7 +15,10 @@ ext {
                     okhttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}",
             ],
             ThreeDs   : [
-                    primer3ds       : "io.primer:3ds-android:${Versions.primer3ds}",
+                    primer3ds: "io.primer:3ds-android:${Versions.primer3ds}",
+            ],
+            Klarna    : [
+                    primerKlarna: "io.primer:klarna-android:${Versions.primerKlarna}"
             ]
     ]
 }

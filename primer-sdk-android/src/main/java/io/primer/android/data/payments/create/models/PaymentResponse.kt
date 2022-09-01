@@ -2,6 +2,7 @@ package io.primer.android.data.payments.create.models
 
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.domain.payments.create.model.PaymentResult
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,14 +38,19 @@ internal enum class RequiredActionName {
 
     `3DS_AUTHENTICATION`,
     USE_PRIMER_SDK,
-    PROCESSOR_3DS
+    PROCESSOR_3DS,
+    PAYMENT_METHOD_VOUCHER
 }
 
-internal fun PaymentResponse.toPaymentResult() = PaymentResult(
+internal fun PaymentResponse.toPaymentResult(
+    paymentMethodData: PrimerCheckoutAdditionalInfo? = null
+) = PaymentResult(
     Payment(
         id,
         orderId
     ),
     status,
-    requiredAction?.clientToken
+    requiredAction?.name,
+    requiredAction?.clientToken,
+    paymentMethodData
 )

@@ -16,6 +16,7 @@ import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSour
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.infrastructure.metadata.datasource.MetaDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,7 +43,8 @@ internal class AnalyticsDataRepository(
     private val networkTypeDataSource: NetworkTypeDataSource,
     private val uncaughtHandlerDataSource: UncaughtHandlerDataSource,
     private val networkCallDataSource: NetworkCallDataSource,
-    private val timerDataSource: TimerDataSource
+    private val timerDataSource: TimerDataSource,
+    private val settings: PrimerSettings,
 ) : AnalyticsRepository {
 
     private val checkoutSessionId by lazy { UUID.randomUUID().toString() }
@@ -67,6 +69,7 @@ internal class AnalyticsDataRepository(
                         deviceIdDataSource.get(),
                         metaDataSource.getApplicationId(),
                         sdkSessionId,
+                        settings.sdkIntegrationType,
                         checkoutSessionId,
                         configuration?.clientSession?.clientSessionId,
                         configuration?.clientSession?.order?.id,
@@ -89,6 +92,7 @@ internal class AnalyticsDataRepository(
                     deviceIdDataSource.get(),
                     metaDataSource.getApplicationId(),
                     sdkSessionId,
+                    settings.sdkIntegrationType,
                     checkoutSessionId,
                     configuration?.clientSession?.clientSessionId,
                     configuration?.clientSession?.order?.id,

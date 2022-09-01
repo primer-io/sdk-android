@@ -18,7 +18,6 @@ import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.BankItem
 import io.primer.android.ui.BaseBankItem
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch

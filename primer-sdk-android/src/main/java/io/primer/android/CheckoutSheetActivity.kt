@@ -23,6 +23,7 @@ import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
+import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
 import io.primer.android.model.Serialization
@@ -58,7 +59,9 @@ import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.ui.fragments.forms.FastBankTransferFragment
 import io.primer.android.ui.fragments.forms.PromptPayFragment
 import io.primer.android.ui.fragments.forms.QrCodeFragment
+import io.primer.android.ui.fragments.multibanko.MultibancoPaymentFragment
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
+import io.primer.android.ui.payment.klarna.KlarnaPaymentData
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
@@ -212,6 +215,19 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     else -> Unit
                 }
             }
+            is CheckoutEvent.StartVoucherFlow -> {
+                when (it.paymentMethodType) {
+                    PaymentMethodType.ADYEN_MULTIBANCO.name -> {
+                        openFragment(
+                            MultibancoPaymentFragment.newInstance(
+                                it.statusUrl,
+                                it.paymentMethodType
+                            ),
+                            true
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -223,23 +239,32 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                     primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
                 )
             )
-            val title =
-                when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
-                    is KlarnaDescriptor -> paymentMethod.options.webViewTitle
-                    is ApayaDescriptor -> paymentMethod.options.webViewTitle
-                    else -> throw IllegalStateException("Unknown payment method.")
-                }
 
-            startActivityForResult(
-                WebViewActivity.getLaunchIntent(
-                    this,
-                    paymentData.redirectUrl,
-                    paymentData.returnUrl,
-                    title.orEmpty(),
-                    paymentData.getWebViewClientType()
-                ),
-                paymentData.getRequestCode()
-            )
+            when (val paymentMethod = primerViewModel.selectedPaymentMethod.value) {
+                is KlarnaDescriptor -> {
+                    startActivityForResult(
+                        NativeKlarnaActivity.getLaunchIntent(
+                            this,
+                            paymentMethod.options.webViewTitle.orEmpty(),
+                            (paymentData as KlarnaPaymentData).clientToken,
+                            paymentData.redirectUrl,
+                            RESULT_ERROR,
+                        ),
+                        paymentData.getRequestCode()
+                    )
+                }
+                is ApayaDescriptor -> startActivityForResult(
+                    WebViewActivity.getLaunchIntent(
+                        this,
+                        paymentData.redirectUrl,
+                        paymentData.returnUrl,
+                        paymentMethod.options.webViewTitle,
+                        paymentData.getWebViewClientType()
+                    ),
+                    paymentData.getRequestCode()
+                )
+                else -> throw IllegalStateException("Unknown payment method.")
+            }
         }
     //endregion
 
@@ -423,6 +448,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
         subscription = EventBus.subscribe {
             when (it) {
                 is CheckoutEvent.StartAsyncFlow,
+                is CheckoutEvent.StartVoucherFlow,
                 is CheckoutEvent.StartAsyncRedirectFlow,
                 is CheckoutEvent.Start3DS,
                 is CheckoutEvent.DismissInternal,
@@ -467,7 +493,8 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            KLARNA_REQUEST_CODE, APAYA_REQUEST_CODE ->
+            KLARNA_REQUEST_CODE -> handleKlarnaRequestResult(resultCode, data)
+            APAYA_REQUEST_CODE ->
                 handleWebFlowRequestResult(
                     resultCode,
                     data
@@ -475,6 +502,39 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             ASYNC_METHOD_REQUEST_CODE -> handleAsyncFlowRequestResult(resultCode)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
             else -> Unit
+        }
+    }
+
+    private fun handleKlarnaRequestResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            RESULT_OK -> {
+                val authToken =
+                    data?.extras?.getString(NativeKlarnaActivity.AUTH_TOKEN_KEY).toString()
+                val paymentMethod = primerViewModel.selectedPaymentMethod.value
+
+                tokenizationViewModel.handleKlarnaRequestResult(
+                    paymentMethod as KlarnaDescriptor?,
+                    authToken
+                )
+            }
+            RESULT_ERROR -> {
+                val exception =
+                    data?.extras?.getSerializable(NativeKlarnaActivity.ERROR_KEY) as Exception
+                errorEventResolver.resolve(
+                    exception,
+                    ErrorMapperType.KLARNA
+                )
+                onExit(CheckoutExitReason.ERROR)
+            }
+            RESULT_CANCELED -> {
+                errorEventResolver.resolve(
+                    PaymentMethodCancelledException(
+                        primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
+                    ),
+                    ErrorMapperType.DEFAULT
+                )
+                onExit(CheckoutExitReason.DISMISSED_BY_USER)
+            }
         }
     }
 

@@ -9,6 +9,10 @@ repositories {
     maven {
         url "${ARTIFACTORY_3DS_URL}"
     }
+    mavenLocal()
+    maven {
+        url 'https://x.klarnacdn.net/mobile-sdk/'
+    }
     jcenter()
 }
 
@@ -81,6 +85,8 @@ dependencies {
     implementation 'io.github.pilgr:paperdb:2.7.2'
 
     implementation "io.insert-koin:koin-android:3.2.0"
+
+   implementation 'io.primer:klarna-android:1.0.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 

@@ -23,6 +23,8 @@ internal class LocalFormDataSourceFactory(
                 FastBankTransferLocalFormDataSource(primerTheme, clientToken)
             PaymentMethodType.RAPYD_PROMPTPAY ->
                 PromptPayLocalFormDataSource(primerTheme, clientToken)
+            PaymentMethodType.ADYEN_MULTIBANCO ->
+                MultibancoLocalFormDataSource(primerTheme, clientToken)
             else -> throw IllegalStateException("Invalid paymentMethodType $paymentMethodType")
         }
 }

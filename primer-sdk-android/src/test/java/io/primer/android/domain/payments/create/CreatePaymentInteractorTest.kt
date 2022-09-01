@@ -11,7 +11,7 @@ import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.create.model.PaymentResult
-import io.primer.android.domain.payments.create.repository.CreatePaymentsRepository
+import io.primer.android.domain.payments.create.repository.CreatePaymentRepository
 import io.primer.android.domain.payments.helpers.PaymentResultEventsResolver
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +30,7 @@ import java.lang.Exception
 internal class CreatePaymentInteractorTest {
 
     @RelaxedMockK
-    internal lateinit var createPaymentsRepository: CreatePaymentsRepository
+    internal lateinit var createPaymentRepository: CreatePaymentRepository
 
     @RelaxedMockK
     internal lateinit var paymentResultEventsResolver: PaymentResultEventsResolver
@@ -45,7 +45,7 @@ internal class CreatePaymentInteractorTest {
         MockKAnnotations.init(this, relaxed = true)
         interactor =
             CreatePaymentInteractor(
-                createPaymentsRepository,
+                createPaymentRepository,
                 paymentResultEventsResolver,
                 errorEventResolver,
             )
@@ -56,14 +56,14 @@ internal class CreatePaymentInteractorTest {
         val createPaymentParams = mockk<CreatePaymentParams>(relaxed = true)
         val paymentResult = mockk<PaymentResult>(relaxed = true)
 
-        every { createPaymentsRepository.createPayment(any()) }.returns(flowOf(paymentResult))
+        every { createPaymentRepository.createPayment(any()) }.returns(flowOf(paymentResult))
 
         runTest {
             val result = interactor(createPaymentParams).first()
             assertEquals(paymentResult.payment.id, result)
         }
 
-        verify { createPaymentsRepository.createPayment(any()) }
+        verify { createPaymentRepository.createPayment(any()) }
     }
 
     @Test
@@ -71,12 +71,12 @@ internal class CreatePaymentInteractorTest {
         val createPaymentParams = mockk<CreatePaymentParams>(relaxed = true)
         val paymentResult = mockk<PaymentResult>(relaxed = true)
 
-        every { createPaymentsRepository.createPayment(any()) }.returns(flowOf(paymentResult))
+        every { createPaymentRepository.createPayment(any()) }.returns(flowOf(paymentResult))
         runTest {
             interactor(createPaymentParams).first()
         }
 
-        verify { createPaymentsRepository.createPayment(any()) }
+        verify { createPaymentRepository.createPayment(any()) }
         verify {
             paymentResultEventsResolver.resolve(
                 paymentResult,
@@ -90,7 +90,7 @@ internal class CreatePaymentInteractorTest {
         val createPaymentParams = mockk<CreatePaymentParams>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
 
-        every { createPaymentsRepository.createPayment(any()) }.returns(flow { throw exception })
+        every { createPaymentRepository.createPayment(any()) }.returns(flow { throw exception })
 
         assertThrows<Exception> {
             runTest {
@@ -98,7 +98,7 @@ internal class CreatePaymentInteractorTest {
             }
         }
 
-        verify { createPaymentsRepository.createPayment(any()) }
+        verify { createPaymentRepository.createPayment(any()) }
         verify {
             errorEventResolver.resolve(
                 exception,

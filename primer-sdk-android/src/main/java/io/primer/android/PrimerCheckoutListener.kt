@@ -5,8 +5,9 @@ import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
 @JvmDefaultWithCompatibility
@@ -21,6 +22,8 @@ interface PrimerCheckoutListener {
         resumeToken: String,
         decisionHandler: PrimerResumeDecisionHandler
     ) = Unit
+
+    fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
 
     fun onBeforePaymentCreated(
         paymentMethodData: PrimerPaymentMethodData,

@@ -11,7 +11,7 @@ internal data class PrimerPhoneCode(
     @SerialName("dial_code") val dialCode: String
 ) : PrimerBaseCountryData() {
 
-    companion object {
+    internal companion object {
         val default: PrimerPhoneCode = PrimerPhoneCode("United Kingdom", CountryCode.BG, "+44")
     }
 }

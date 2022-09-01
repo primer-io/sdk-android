@@ -119,4 +119,13 @@
     <string name="country_select">Select country</string>
     <string name="no_results">No results</string>
     <string name="no_results_for_query">Sorry, no results\nfound that match “%s”</string>
+    <string name="confirmToPayButtonTitle">Confirm to pay</string>
+    <string name="multibancoTitleConditions">Complete your payment</string>
+    <string name="multibancoPayment1Step">Please make the payment at an ATM, or using online banking.</string>
+    <string name="multibancoPayment2Step">Go to a Multibanco ATM, select the Multibanco payment method and enter the payment details</string>
+    <string name="multibancoPayment3Step">Login to your online banking to pay by bank transfer using the payment details</string>
+    <string name="multibancoCompleteDescription">Please make the payment at an ATM, or using online banking.</string>
+    <string name="multibancoEntity">Entity</string>
+    <string name="multibancoReference">Reference</string>
+    <string name="multibancoAmount">Amount</string>
 </resources>

@@ -109,6 +109,10 @@
     *;
 }
 
+-keep class io.primer.android.domain.payments.additionalInfo.* {
+    *;
+}
+
 -keep enum io.primer.android.data.configuration.models.CountryCode {
     *;
 }

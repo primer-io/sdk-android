@@ -14,6 +14,9 @@ internal data class Form(
     val expiration: String? = null,
     val qrCodeUrl: String? = null,
     val inputPrefix: FormInputPrefix? = null,
+    val expiresAt: String? = null,
+    val reference: String? = null,
+    val entity: String? = null,
 )
 
 internal data class FormInput(

@@ -15,6 +15,7 @@ import io.primer.android.data.configuration.models.PaymentMethodConfigDataRespon
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
+import io.primer.android.domain.deeplink.klarna.KlarnaDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -49,6 +50,9 @@ class TokenizationViewModelTest : KoinTest {
     private lateinit var asyncDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
 
     @RelaxedMockK
+    private lateinit var klarnaDeeplinkInteractor: KlarnaDeeplinkInteractor
+
+    @RelaxedMockK
     private lateinit var model: Model
 
     @RelaxedMockK
@@ -65,7 +69,8 @@ class TokenizationViewModelTest : KoinTest {
                 tokenizationInteractor,
                 apayaSessionInteractor,
                 paypalOrderInfoInteractor,
-                asyncDeeplinkInteractor
+                asyncDeeplinkInteractor,
+                klarnaDeeplinkInteractor
             )
     }
 

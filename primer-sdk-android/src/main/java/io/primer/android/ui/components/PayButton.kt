@@ -14,6 +14,7 @@ import io.primer.android.model.MonetaryAmount
 import io.primer.android.ui.PayAmountText
 
 private const val FADE_IN_DURATION_MS = 900L
+private const val BUTTON_PROGRESS_ALPHA = 0.5f
 
 internal class PayButton @JvmOverloads constructor(
     context: Context,
@@ -75,9 +76,16 @@ internal class PayButton @JvmOverloads constructor(
         binding.progressIndicator.isVisible = true
         binding.progressIndicator
             .animate()
-            .alpha(0.5f)
+            .alpha(BUTTON_PROGRESS_ALPHA)
             .setDuration(FADE_IN_DURATION_MS)
             .start()
+    }
+
+    fun hideProgress() {
+        binding.button.text = notLoadingText
+        binding.button.isEnabled = true
+        binding.progressIndicator.isVisible = false
+        binding.progressIndicator.clearAnimation()
     }
 
     fun setTheme(theme: PrimerTheme) {

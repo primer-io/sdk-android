@@ -5,7 +5,6 @@ import io.primer.android.data.configuration.models.PaymentMethodConfigDataRespon
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
-import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
@@ -38,9 +37,6 @@ internal class AdyenMbWayPaymentMethodDescriptor(
         NewFragmentBehaviour(
             DynamicFormFragment::newInstance, returnToPreviousOnBack = true
         )
-
-    override val sdkCapabilities: List<SDKCapability>
-        get() = listOf(SDKCapability.DROP_IN)
 
     override val behaviours: List<SelectedPaymentMethodBehaviour>
         get() = listOf(

@@ -9,7 +9,7 @@ import io.primer.android.di.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
 
-internal class CreatePaymentsDataSource(private val primerHttpClient: PrimerHttpClient) :
+internal class CreatePaymentDataSource(private val primerHttpClient: PrimerHttpClient) :
     BaseFlowDataSource<PaymentResponse, BaseRemoteRequest<CreatePaymentRequest>> {
 
     override fun execute(input: BaseRemoteRequest<CreatePaymentRequest>): Flow<PaymentResponse> {

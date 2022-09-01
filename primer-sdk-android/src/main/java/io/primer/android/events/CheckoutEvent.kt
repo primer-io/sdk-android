@@ -7,12 +7,13 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.domain.PrimerCheckoutData
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.action.models.PrimerClientSession
+import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
-import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
@@ -31,6 +32,9 @@ internal sealed class CheckoutEvent(
         val resumeHandler: PrimerResumeDecisionHandler,
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
+
+    class ResumePending(val paymentMethodData: PrimerCheckoutAdditionalInfo?) :
+        CheckoutEvent(CheckoutEventType.RESUME_PENDING)
 
     class ResumeSuccessInternal(
         val resumeToken: String,
@@ -64,9 +68,8 @@ internal sealed class CheckoutEvent(
         val createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) : CheckoutEvent(CheckoutEventType.PAYMENT_STARTED)
 
-    class PaymentSuccess(
-        val data: PrimerCheckoutData,
-    ) : CheckoutEvent(CheckoutEventType.PAYMENT_SUCCESS)
+    class PaymentSuccess(val data: PrimerCheckoutData) :
+        CheckoutEvent(CheckoutEventType.PAYMENT_SUCCESS)
 
     class CheckoutError(
         val error: PrimerError,
@@ -116,6 +119,12 @@ internal sealed class CheckoutEvent(
         val statusUrl: String,
         val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
+
+    internal class StartVoucherFlow(
+        val clientTokenIntent: String,
+        val statusUrl: String,
+        val paymentMethodType: String,
+    ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
 
     // components helpers
     class ConfigurationSuccess(

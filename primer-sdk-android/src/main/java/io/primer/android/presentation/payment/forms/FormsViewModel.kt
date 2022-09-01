@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.makePhoneDigitsOnly
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
@@ -50,13 +51,16 @@ internal class FormsViewModel(
     fun onInputChanged(
         id: String,
         formType: FormType,
-        inputForValidation: CharSequence?,
         data: CharSequence?,
         regex: Regex?
     ) = viewModelScope.launch {
-        formValidationInteractor.execute(FormValidationParam(inputForValidation, formType, regex))
+        val preparedData = when (formType) {
+            FormType.PHONE -> "+${data.makePhoneDigitsOnly()}"
+            else -> data
+        }
+        formValidationInteractor.execute(FormValidationParam(preparedData, formType, regex))
             .collect { validated ->
-                inputStates[id] = InputState(data, validated)
+                inputStates[id] = InputState(preparedData, validated)
                 _validationLiveData.postValue(inputStates.values.all { it.validated })
             }
     }

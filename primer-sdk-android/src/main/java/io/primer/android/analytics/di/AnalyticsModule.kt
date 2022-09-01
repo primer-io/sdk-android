@@ -58,6 +58,7 @@ internal val analyticsModule = {
                 get(),
                 get(),
                 get<Interceptor>() as HttpAnalyticsInterceptor,
+                get(),
                 get()
             )
         }

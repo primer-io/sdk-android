@@ -20,8 +20,11 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
 
     init {
         if (
-            listOf(PaymentMethodType.PAYMENT_CARD, PaymentMethodType.XENDIT_OVO).map { it.name }
-                .contains(paymentMethodType).not()
+            listOf(
+                PaymentMethodType.PAYMENT_CARD,
+                PaymentMethodType.XENDIT_OVO,
+                PaymentMethodType.ADYEN_MBWAY
+            ).map { it.name }.contains(paymentMethodType).not()
         ) {
             throw UnsupportedPaymentMethodException(paymentMethodType)
         }

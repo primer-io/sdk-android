@@ -1,6 +1,7 @@
 package io.primer.android.data.payments.forms.datasource
 
 import io.primer.android.R
+import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.MBWayPhoneNumberValidator
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
 import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.data.payments.forms.models.ButtonType
@@ -33,7 +34,7 @@ internal class MbWayLocalFormDataSource(
                     null,
                     null,
                     FORM_PHONE_MAX_LENGTH,
-                    FORM_VALIDATION,
+                    MBWayPhoneNumberValidator.PHONE_NUMBER_REGEX.pattern,
                     DialCodeCountryPrefix(
                         countriesRepository.getPhoneCodeByCountryCode(CountryCode.PT)
                     )
@@ -45,7 +46,6 @@ internal class MbWayLocalFormDataSource(
     private companion object {
 
         const val FORM_ID = "phoneNumber"
-        const val FORM_VALIDATION = "^(\\d){9,14}\$"
         const val FORM_PHONE_MAX_LENGTH = 18
     }
 }

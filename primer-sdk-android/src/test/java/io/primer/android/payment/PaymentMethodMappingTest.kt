@@ -626,4 +626,18 @@ internal class PaymentMethodMappingTest {
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
     }
+
+    @Test
+    fun `test maps adyen multibanco correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (
+            val result = factory.getPaymentMethodFor(
+                PaymentMethodImplementationType.NATIVE_SDK,
+                PaymentMethodType.ADYEN_MULTIBANCO.name
+            )
+        ) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
 }

@@ -9,6 +9,7 @@ internal data class AnalyticsMessageEventRequest(
     override val properties: MessageProperties,
     override val appIdentifier: String,
     override val sdkSessionId: String,
+    override val sdkIntegrationType: SdkIntegrationType,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,

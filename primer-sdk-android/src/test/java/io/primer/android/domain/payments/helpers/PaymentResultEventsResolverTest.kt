@@ -52,7 +52,9 @@ internal class PaymentResultEventsResolverTest {
 
         val clientToken = slot<String>()
 
-        verify { resumeHandler.continueWithNewClientToken(capture(clientToken)) }
+        verify {
+            resumeHandler.continueWithNewClientToken(capture(clientToken))
+        }
 
         assertEquals(paymentResult.clientToken, clientToken.captured)
     }

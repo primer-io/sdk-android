@@ -19,7 +19,10 @@ internal data class ClientToken(
     val qrCode: String? = null,
     val accountNumber: String? = null,
     val expiration: String? = null,
-    val qrCodeUrl: String? = null
+    val qrCodeUrl: String? = null,
+    val expiresAt: String? = null,
+    val reference: String? = null,
+    val entity: String? = null
 ) {
 
     companion object {

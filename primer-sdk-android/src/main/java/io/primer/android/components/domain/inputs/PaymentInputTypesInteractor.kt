@@ -75,6 +75,7 @@ internal class PaymentInputTypesInteractor(
                         .plus(billingAddressesFields)
                         .filterNotNull()
                 }
+                PaymentMethodType.ADYEN_MBWAY.name,
                 PaymentMethodType.XENDIT_OVO.name -> listOf(PrimerInputElementType.PHONE_NUMBER)
                 else -> emptyList()
             }

@@ -3,29 +3,31 @@ package io.primer.android
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import io.primer.android.data.action.models.actionSerializationModule
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
 import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.data.action.models.actionSerializationModule
 import io.primer.android.data.error.DefaultErrorMapper
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.settings.internal.PrimerIntent
+import io.primer.android.data.token.model.ClientToken
 import io.primer.android.data.tokenization.models.tokenizationSerializationModule
+import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DIAppContext
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.Serialization
-import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.model.CheckoutExitReason
-import io.primer.android.data.token.model.ClientToken
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.events.EventDispatcher
-import io.primer.android.data.settings.PrimerPaymentHandling
-import io.primer.android.data.settings.internal.PrimerIntent
-import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.di.DIAppContext
+import io.primer.android.model.CheckoutExitReason
+import io.primer.android.model.Serialization
 import kotlinx.serialization.encodeToString
+import org.koin.core.component.get
 
-class Primer private constructor() : PrimerInterface {
+class Primer private constructor() : PrimerInterface, DIAppComponent {
 
     private var listener: PrimerCheckoutListener? = null
     private var config: PrimerConfig = PrimerConfig()
@@ -42,6 +44,9 @@ class Primer private constructor() : PrimerInterface {
                 }
                 is CheckoutEvent.ResumeSuccess -> {
                     listener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
+                }
+                is CheckoutEvent.ResumePending -> {
+                    listener?.onResumePending(e.paymentMethodData)
                 }
                 is CheckoutEvent.PaymentCreateStarted -> {
                     listener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
@@ -150,8 +155,12 @@ class Primer private constructor() : PrimerInterface {
             Serialization.addModule(actionSerializationModule)
 
             val encodedConfig = Serialization.json.encodeToString(PrimerConfig.serializer(), config)
-
-            DIAppContext.init(context.applicationContext, config)
+            if (config.settings.fromHUC.not()) {
+                DIAppContext.init(context.applicationContext, config)
+            } else {
+                val config = get<PrimerConfig>()
+                config.intent = this.config.intent
+            }
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {
                     putExtra("config", encodedConfig)
@@ -173,7 +182,8 @@ class Primer private constructor() : PrimerInterface {
         LocalAnalyticsDataSource.instance.addEvent(
             AnalyticsSdkFunctionEventRequest(
                 properties = FunctionProperties(params.name, params.params),
-                sdkSessionId = SdkSessionDataSource.getSessionId()
+                sdkSessionId = SdkSessionDataSource.getSessionId(),
+                sdkIntegrationType = config.settings.sdkIntegrationType
             )
         )
     }

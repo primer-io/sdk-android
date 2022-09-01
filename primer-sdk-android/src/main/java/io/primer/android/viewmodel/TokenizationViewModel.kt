@@ -14,6 +14,7 @@ import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
+import io.primer.android.domain.deeplink.klarna.KlarnaDeeplinkInteractor
 import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
 import io.primer.android.domain.payments.apaya.models.ApayaPaymentData
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
@@ -46,7 +47,8 @@ internal class TokenizationViewModel(
     private val tokenizationInteractor: TokenizationInteractor,
     private val apayaSessionInteractor: ApayaSessionInteractor,
     private val paypalOrderInfoInteractor: PaypalOrderInfoInteractor,
-    private val asyncPaymentMethodDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
+    private val asyncPaymentMethodDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor,
+    private val klarnaDeeplinkInteractor: KlarnaDeeplinkInteractor
 ) : ViewModel(), DIAppComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
@@ -150,7 +152,6 @@ internal class TokenizationViewModel(
         redirectUrl: String?,
     ) {
         when (paymentMethodDescriptor) {
-            is KlarnaDescriptor -> handleKlarnaRequestResult(paymentMethodDescriptor, redirectUrl)
             is ApayaDescriptor -> handleApayaRequestResult(paymentMethodDescriptor, redirectUrl)
         }
     }
@@ -209,13 +210,13 @@ internal class TokenizationViewModel(
                 )
             ) {
                 is OperationResult.Success -> {
-                    val hppRedirectUrl = result.data.getString("hppRedirectUrl")
                     val sessionId = result.data.getString("sessionId")
                     klarnaPaymentData.postValue(
                         KlarnaPaymentData(
-                            redirectUrl = hppRedirectUrl,
+                            redirectUrl = klarnaDeeplinkInteractor(None()),
                             returnUrl = returnUrl,
-                            sessionId = sessionId
+                            sessionId = sessionId,
+                            clientToken = result.data.getString("clientToken")
                         )
                     )
                 }
@@ -226,30 +227,17 @@ internal class TokenizationViewModel(
         }
     }
 
-    private fun handleKlarnaRequestResult(klarna: KlarnaDescriptor?, redirectUrl: String?) {
-        // TODO move uri parsing to collaborator
-        val uri = Uri.parse(redirectUrl)
-        val klarnaAuthToken = uri.getQueryParameter("token")
-
-        if (redirectUrl == null || klarna == null ||
-            klarna.config.id == null || klarnaAuthToken == null
+    fun handleKlarnaRequestResult(klarna: KlarnaDescriptor?, authToken: String?) {
+        if (klarna == null ||
+            klarna.config.id == null || authToken == null
         ) {
             return klarnaError.postValue(Error())
         }
 
-        vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
+        vaultKlarnaPayment(klarna.config.id, authToken, klarna)
     }
 
-    fun handleRecurringKlarnaRequestResult(klarna: KlarnaDescriptor?, klarnaAuthToken: String) {
-
-        if (klarna == null || klarna.config.id == null) {
-            return klarnaError.postValue(Error())
-        }
-
-        vaultKlarnaPayment(klarna.config.id, klarnaAuthToken, klarna)
-    }
-
-    fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
+    private fun vaultKlarnaPayment(id: String, token: String, klarna: KlarnaDescriptor) {
         val localeData = generateLocaleJson()
 
         val body = JSONObject()

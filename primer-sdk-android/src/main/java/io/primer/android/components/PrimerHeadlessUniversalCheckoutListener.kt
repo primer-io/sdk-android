@@ -7,6 +7,7 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
@@ -33,6 +34,8 @@ interface PrimerHeadlessUniversalCheckoutListener {
     ) {
         createPaymentHandler.continuePaymentCreation()
     }
+
+    fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
 
     fun onCheckoutCompleted(checkoutData: PrimerCheckoutData)
 

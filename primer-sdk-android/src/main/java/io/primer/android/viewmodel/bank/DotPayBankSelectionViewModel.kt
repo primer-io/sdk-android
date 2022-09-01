@@ -7,7 +7,6 @@ import io.primer.android.domain.rpc.banks.BanksFilterInteractor
 import io.primer.android.domain.rpc.banks.BanksInteractor
 import io.primer.android.domain.rpc.banks.models.IssuingBankFilterParams
 import io.primer.android.ui.BankItem
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 internal class DotPayBankSelectionViewModel(

@@ -9,6 +9,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
     override val properties: FunctionProperties,
     override val appIdentifier: String? = null,
     override val sdkSessionId: String,
+    override val sdkIntegrationType: SdkIntegrationType,
     override val checkoutSessionId: String? = null,
     override val clientSessionId: String? = null,
     override val orderId: String? = null,

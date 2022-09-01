@@ -164,7 +164,7 @@ internal class DefaultThreeDsInteractor(
 
     companion object {
 
-        const val PRIMER_3DS_INIT_ERROR = "Cannot perform 3DS. Continue without 3DS." +
+        const val PRIMER_3DS_INIT_ERROR = "Cannot perform 3DS. Continue without 3DS. " +
             "Please check debug options in order to run 3DS in debug mode."
     }
 }

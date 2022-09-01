@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/primer_select_payment_method_layout"
@@ -45,24 +45,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout"
             app:layout_constraintEnd_toStartOf="parent"
-            app:layout_constraintStart_toStartOf="parent" >
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/primer_sheet_title_layout">
 
             <LinearLayout
                 android:id="@+id/primer_saved_payment_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/primer_list_margin"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/saved_payment_method_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-
                     android:layout_marginEnd="@dimen/small_padding"
+
+                    android:layout_weight="1"
                     android:text="@string/saved_payment_methods"
                     android:textColor="@color/primer_text_color_muted" />
 
@@ -80,22 +80,22 @@
                 android:id="@+id/saved_payment_method_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp" >
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
                 <include
                     android:id="@+id/saved_payment_method"
                     layout="@layout/payment_method_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp" />
 
                 <io.primer.android.ui.components.PayButton
                     android:id="@+id/payAllButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:elevation="0dp"
-                    tools:layout_height="48dp"/>
+                    tools:layout_height="48dp" />
 
             </io.primer.android.ui.components.PaymentMethodButtonGroupBox>
 
@@ -106,22 +106,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_vertical_margin"
-            android:textAllCaps="true"
             android:text="@string/available_payment_methods"
+            android:textAllCaps="true"
             android:textColor="@color/primer_text_color_muted"
-            app:layout_constraintTop_toBottomOf="@+id/primer_saved_payment_section"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/primer_saved_payment_section" />
 
         <LinearLayout
             android:id="@+id/primer_sheet_payment_methods_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/other_ways_to_pay_label" />
 
         <ProgressBar
             android:id="@+id/primer_select_payment_method_spinner"

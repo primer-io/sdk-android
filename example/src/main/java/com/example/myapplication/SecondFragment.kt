@@ -23,6 +23,8 @@ import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
@@ -190,6 +192,15 @@ class SecondFragment : Fragment() {
         override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
             Log.d(TAG, "onResumeSuccess")
             viewModel.resumePayment(resumeToken, decisionHandler)
+        }
+
+        override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) {
+            Log.d(TAG, "onResumePending $additionalInfo")
+            when (additionalInfo) {
+                is MultibancoCheckoutAdditionalInfo -> {
+                    Log.d(TAG, "onResumePending MULTIBANCO: $additionalInfo")
+                }
+            }
         }
 
         override fun onDismissed() {

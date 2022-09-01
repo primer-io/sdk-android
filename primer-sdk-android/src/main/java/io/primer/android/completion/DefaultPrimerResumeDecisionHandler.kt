@@ -3,8 +3,15 @@ package io.primer.android.completion
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.token.model.ClientToken
+import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
+import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -23,10 +30,13 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private val validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
+    private val paymentResultRepository: PaymentResultRepository,
     private val analyticsRepository: AnalyticsRepository,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private var logger: Logger,
+    private val config: PrimerConfig,
+    private val paymentMethodDataHelper: PrimerPaymentMethodDataHelper,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : PrimerResumeDecisionHandler {
 
@@ -55,9 +65,34 @@ internal open class DefaultPrimerResumeDecisionHandler(
                 clientTokenRepository.setClientToken(clientToken)
                 try {
                     handleClientToken(clientToken)
+                    handlePaymentMethodData(clientToken)
                 } catch (e: IllegalArgumentException) {
                     errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
                 }
+            }
+        }
+    }
+
+    private fun handlePaymentMethodData(clientToken: String) {
+        val clientTokenConfig = ClientToken.fromString(clientToken)
+        if (clientTokenConfig.intent == ClientTokenIntent.PAYMENT_METHOD_VOUCHER.name) {
+            if (
+                config.settings.paymentHandling == PrimerPaymentHandling.MANUAL
+            ) {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.ResumePending(
+                        paymentMethodDataHelper.prepareDataFromClientToken(clientTokenConfig)
+                    )
+                )
+            } else {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.PaymentSuccess(
+                        PrimerCheckoutData(
+                            paymentResultRepository.getPaymentResult().payment,
+                            paymentMethodDataHelper.prepareDataFromClientToken(clientTokenConfig)
+                        )
+                    )
+                )
             }
         }
     }

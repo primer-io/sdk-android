@@ -17,21 +17,23 @@ import com.example.myapplication.viewmodels.MainViewModel
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
-import io.primer.android.components.manager.PrimerCardManager
-import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
+import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.manager.PrimerCardManager
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
-import io.primer.android.ui.CardNetwork
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.components.ui.widgets.elements.PrimerInputElementListener
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import io.primer.android.ui.CardNetwork
 
 @OptIn(ExperimentalPrimerApi::class)
 class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
@@ -136,6 +138,21 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             ) {
                 showLoading("Resume success $resumeToken. Resuming payment.")
                 viewModel.resumePayment(resumeToken, decisionHandler)
+            }
+
+            override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) {
+                super.onResumePending(additionalInfo)
+                Log.d(TAG, "onResumePending $additionalInfo")
+                hideLoading()
+                when (additionalInfo) {
+                    is MultibancoCheckoutAdditionalInfo -> {
+                        AlertDialog.Builder(context)
+                            .setMessage("MultibancoData: $additionalInfo")
+                            .setPositiveButton("OK") { d, _ -> d.dismiss() }
+                            .show()
+                        Log.d(TAG, "onResumePending MULTIBANCO: $additionalInfo")
+                    }
+                }
             }
 
             override fun onBeforePaymentCreated(

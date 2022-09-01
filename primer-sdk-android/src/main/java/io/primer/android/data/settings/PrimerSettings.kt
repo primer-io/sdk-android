@@ -1,5 +1,6 @@
 package io.primer.android.data.settings
 
+import io.primer.android.analytics.data.models.SdkIntegrationType
 import io.primer.android.data.configuration.models.CustomerDataResponse
 import io.primer.android.data.configuration.models.OrderDataResponse
 import io.primer.android.ui.settings.PrimerUIOptions
@@ -21,6 +22,11 @@ data class PrimerSettings(
 
     internal var order = OrderDataResponse()
     internal var customer = CustomerDataResponse()
+
+    internal val sdkIntegrationType = when (fromHUC) {
+        true -> SdkIntegrationType.HEADLESS
+        false -> SdkIntegrationType.DROP_IN
+    }
 
     val currency: String
         @Throws

@@ -25,6 +25,7 @@ internal object DIAppContext {
                 countriesModule(),
                 formsModule(),
                 apayaModule(),
+                klarnaModule(),
                 asyncPaymentMethodModule(),
                 tokenizationModule(),
                 rpcModule(),

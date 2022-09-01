@@ -9,6 +9,7 @@ internal data class AnalyticsTimerEventRequest(
     override val properties: TimerProperties,
     override val appIdentifier: String,
     override val sdkSessionId: String,
+    override val sdkIntegrationType: SdkIntegrationType,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,

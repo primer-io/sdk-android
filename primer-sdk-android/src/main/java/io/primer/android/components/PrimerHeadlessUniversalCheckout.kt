@@ -28,6 +28,7 @@ import io.primer.android.di.DIAppContext
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.HUCError
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -72,6 +73,8 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 )
                 is CheckoutEvent.ResumeSuccess ->
                     componentsListener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
+                is CheckoutEvent.ResumePending ->
+                    componentsListener?.onResumePending(e.paymentMethodData)
 
                 is CheckoutEvent.PaymentCreateStartedHUC -> {
                     componentsListener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
@@ -221,6 +224,8 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     }
 
     override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) = Unit
+
+    override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
 
     internal fun startTokenization(
         paymentMethodType: String,

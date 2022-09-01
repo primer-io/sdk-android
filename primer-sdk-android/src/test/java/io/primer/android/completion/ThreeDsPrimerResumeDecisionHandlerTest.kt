@@ -7,16 +7,21 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import io.mockk.verifyOrder
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.token.exception.InvalidClientTokenException
 import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
-import io.primer.android.domain.token.repository.ValidateTokenRepository
+import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
+import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
@@ -46,6 +51,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var paymentMethodRepository: PaymentMethodRepository
 
     @RelaxedMockK
+    internal lateinit var paymentResultRepository: PaymentResultRepository
+
+    @RelaxedMockK
     internal lateinit var threeDsSdkClassValidator: ThreeDsSdkClassValidator
 
     @RelaxedMockK
@@ -61,6 +69,12 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
+    internal lateinit var config: PrimerConfig
+
+    @RelaxedMockK
+    internal lateinit var paymentMethodDataHelper: PrimerPaymentMethodDataHelper
+
+    @RelaxedMockK
     internal lateinit var logger: Logger
 
     private lateinit var resumeHandler: ThreeDsPrimerResumeDecisionHandler
@@ -73,11 +87,14 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 verificationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
+                paymentResultRepository,
                 analyticsRepository,
                 threeDsSdkClassValidator,
                 errorEventResolver,
                 eventDispatcher,
                 logger,
+                config,
+                paymentMethodDataHelper,
                 instantExecutorExtension.dispatcher
             )
     }
@@ -141,11 +158,16 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
             resumeHandler.continueWithNewClientToken("")
         }
 
-        val event = slot<Throwable>()
+        val event1 = slot<Throwable>()
+        val event2 = slot<Throwable>()
 
-        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.PAYMENT_RESUME) }
+        verifyOrder {
+            errorEventResolver.resolve(capture(event1), ErrorMapperType.PAYMENT_RESUME)
+            errorEventResolver.resolve(capture(event2), ErrorMapperType.PAYMENT_RESUME)
+        }
 
-        assert(event.captured.javaClass == ThreeDsLibraryNotFoundException::class.java)
+        assert(event1.captured.javaClass == ThreeDsLibraryNotFoundException::class.java)
+        assert(event2.captured.javaClass == InvalidClientTokenException::class.java)
     }
 
     @Test

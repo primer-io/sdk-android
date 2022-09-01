@@ -1,5 +1,6 @@
 package io.primer.android.ui.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -9,22 +10,32 @@ import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.hbb20.CountryCodePicker
 import io.primer.android.R
 import io.primer.android.databinding.FragmentFormFieldsBinding
+import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.FormField
+import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.fragments.country.SelectCountryFragment
+import io.primer.android.viewmodel.PrimerViewModel
+import kotlin.properties.Delegates
 
 private const val BOTTOM_MARGIN = 16
 
 internal class FormFieldsFragment : FormChildFragment() {
+
+    private var primerViewModel: PrimerViewModel by Delegates.notNull()
 
     private var binding: FragmentFormFieldsBinding by autoCleaned()
     private val fieldIds: MutableMap<String, Int> = HashMap()
@@ -36,7 +47,12 @@ internal class FormFieldsFragment : FormChildFragment() {
 
     private sealed class InputElementFactory(protected val field: FormField) {
 
-        abstract fun create(ctx: Context, l: InputChangeListener, initialValue: String): View
+        abstract fun create(
+            ctx: Context,
+            l: InputChangeListener,
+            initialValue: String,
+            onOpenFragment: ((fragment: Fragment) -> Unit)? = null
+        ): View
 
         protected fun createLayoutParams(): LinearLayout.LayoutParams {
             return LinearLayout.LayoutParams(
@@ -49,7 +65,12 @@ internal class FormFieldsFragment : FormChildFragment() {
 
         class EditText(field: FormField) : InputElementFactory(field) {
 
-            override fun create(ctx: Context, l: InputChangeListener, initialValue: String): View {
+            override fun create(
+                ctx: Context,
+                l: InputChangeListener,
+                initialValue: String,
+                onOpenFragment: ((fragment: Fragment) -> Unit)?
+            ): View {
 
                 val id = View.generateViewId()
                 val inputLayout = View.inflate(ctx, R.layout.form_input, null) as TextInputLayout
@@ -108,27 +129,53 @@ internal class FormFieldsFragment : FormChildFragment() {
             }
         }
 
-        class CountryCode(field: FormField) : InputElementFactory(field) {
+        class CountryCodeElement(field: FormField) : InputElementFactory(field) {
 
-            override fun create(ctx: Context, l: InputChangeListener, initialValue: String): View {
+            @SuppressLint("ClickableViewAccessibility")
+            override fun create(
+                ctx: Context,
+                l: InputChangeListener,
+                initialValue: String,
+                onOpenFragment: ((fragment: Fragment) -> Unit)?
+            ): View {
                 val id = View.generateViewId()
                 val inputLayout = View.inflate(ctx, R.layout.country_code_input, null)
-                val picker = inputLayout.findViewById<CountryCodePicker>(R.id.country_code_picker)
-                val label = inputLayout.findViewById<TextView>(R.id.country_code_label)
+                val countryChooserInput = inputLayout.findViewById<MaterialAutoCompleteTextView>(
+                    R.id.card_form_country_code_input
+                )
+                val countryChooserBox = inputLayout.findViewById<TextInputWidget>(
+                    R.id.card_form_country_code
+                )
 
                 inputLayout.id = id
+                countryChooserBox.placeholderText = ctx.getString(field.labelId)
+                countryChooserBox.boxBackgroundColor = Color.GRAY
 
-                label.text = ctx.getString(field.labelId)
-                picker.setDefaultCountryUsingNameCode(initialValue)
-                picker.setCountryForNameCode(initialValue)
-
-                picker.setOnCountryChangeListener {
-                    l.onValueChange(picker.selectedCountryNameCode)
+                countryChooserInput.setRawInputType(InputType.TYPE_NULL)
+                countryChooserInput.showSoftInputOnFocus = false
+                countryChooserInput.setOnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus && (v is android.widget.EditText) && v.text.isNullOrBlank()) {
+                        openCountryChooser(onOpenFragment) { country: PrimerCountry ->
+                            countryChooserInput.setText(country.name)
+                            l.onValueChange(country.code.name)
+                        }
+                    }
+                }
+                countryChooserInput.setOnTouchListener { v, event ->
+                    if (event.action == MotionEvent.ACTION_UP) v.requestFocus()
+                    true
                 }
 
                 inputLayout.layoutParams = createLayoutParams()
 
                 return inputLayout
+            }
+
+            private fun openCountryChooser(
+                onOpenFragment: ((fragment: Fragment) -> Unit)?,
+                onSelectCountry: (PrimerCountry) -> Unit
+            ) {
+                onOpenFragment?.invoke(SelectCountryFragment.newInstance(onSelectCountry))
             }
         }
     }
@@ -144,6 +191,16 @@ internal class FormFieldsFragment : FormChildFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        primerViewModel = ViewModelProvider(requireActivity()).get(PrimerViewModel::class.java)
+        primerViewModel.selectCountryCode.observe(viewLifecycleOwner) { country ->
+            country ?: return@observe
+            parentFragmentManager.commit {
+                parentFragmentManager.findFragmentByTag(FRAGMENT_SELECT_COUNTRY_TAG)?.let {
+                    remove(it)
+                }
+            }
+        }
 
         viewModel.fields.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
@@ -218,7 +275,12 @@ internal class FormFieldsFragment : FormChildFragment() {
                     viewModel.setValue(field.name, text)
                 }
             },
-            viewModel.getValue(field.name)
+            viewModel.getValue(field.name),
+            onOpenFragment = { fragment ->
+                parentFragmentManager.commit {
+                    add(R.id.fragment_country_chooser, fragment, FRAGMENT_SELECT_COUNTRY_TAG)
+                }
+            }
         )
 
         fieldIds[field.name] = element.id
@@ -228,8 +290,12 @@ internal class FormFieldsFragment : FormChildFragment() {
 
     private fun getElementFactory(field: FormField): InputElementFactory {
         return when (field.inputType) {
-            FormField.Type.COUNTRY_CODE -> InputElementFactory.CountryCode(field)
+            FormField.Type.COUNTRY_CODE -> InputElementFactory.CountryCodeElement(field)
             else -> InputElementFactory.EditText(field)
         }
+    }
+
+    private companion object {
+        private const val FRAGMENT_SELECT_COUNTRY_TAG = "SelectCountryFragment"
     }
 }

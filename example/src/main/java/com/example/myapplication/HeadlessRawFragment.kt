@@ -261,8 +261,8 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     }
 
     private fun getRawData(paymentMethodType: String): PrimerRawData {
-        when (paymentMethodType) {
-            "PAYMENT_CARD" -> return PrimerRawCardData(
+        return when (paymentMethodType) {
+            "PAYMENT_CARD" -> PrimerRawCardData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARD_NUMBER
                 ).editText?.text.toString(),
@@ -279,7 +279,12 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     PrimerInputElementType.CARDHOLDER_NAME
                 ).editText?.text.toString(),
             )
-            "XENDIT_OVO" -> return PrimerRawPhoneNumberData(
+            "XENDIT_OVO" -> PrimerRawPhoneNumberData(
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.PHONE_NUMBER
+                ).editText?.text.toString()
+            )
+            "ADYEN_MBWAY" -> PrimerRawPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.PHONE_NUMBER
                 ).editText?.text.toString()

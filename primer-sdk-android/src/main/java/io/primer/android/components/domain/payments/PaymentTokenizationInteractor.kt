@@ -13,8 +13,8 @@ import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.logging.Logger
 import io.primer.android.payment.PaymentMethodDescriptor
+import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
-import io.primer.android.payment.async.ovo.XenditOvoPaymentMethodDescriptor
 import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -40,7 +40,7 @@ internal class PaymentTokenizationInteractor(
                     descriptor is CreditCard && params.inputData is PrimerRawCardData -> {
                         params.inputData.setTokenizableValues(descriptor)
                     }
-                    descriptor is XenditOvoPaymentMethodDescriptor &&
+                    descriptor is AsyncPaymentMethodDescriptor &&
                         params.inputData is PrimerRawPhoneNumberData -> {
                         params.inputData.setTokenizableValues(
                             descriptor,

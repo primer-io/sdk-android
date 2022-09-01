@@ -2,6 +2,7 @@ package com.example.myapplication.datamodels
 
 enum class AppCountryCode(val currencyCode: CurrencyCode, val flag: String) {
     US(CurrencyCode.USD, "🇺🇸"),
+    PT(CurrencyCode.EUR, "🇵🇹"),
     GB(CurrencyCode.GBP, "🇬🇧"),
     BE(CurrencyCode.EUR, "🇧🇪"),
     DE(CurrencyCode.EUR, "🇩🇪"),
@@ -21,6 +22,5 @@ enum class AppCountryCode(val currencyCode: CurrencyCode, val flag: String) {
     CA(CurrencyCode.CAD, "🇨🇦"),
     PH(CurrencyCode.PHP, "🇵🇭"),
     ID(CurrencyCode.IDR, "🇮🇩"),
-    PT(CurrencyCode.EUR, "🇵🇹"),
     TH(CurrencyCode.THB, "🇹🇭");
 }

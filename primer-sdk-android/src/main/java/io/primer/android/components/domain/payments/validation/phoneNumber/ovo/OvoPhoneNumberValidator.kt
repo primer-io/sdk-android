@@ -6,20 +6,19 @@ import io.primer.android.components.domain.payments.validation.PaymentInputTypeV
 
 internal class OvoPhoneNumberValidator : PaymentInputTypeValidator<String> {
     override fun validate(input: String?): PrimerInputValidationError? {
-        if (input.isNullOrBlank()) {
-            return PrimerInputValidationError(
+        return if (input.isNullOrBlank()) {
+            PrimerInputValidationError(
                 "invalid-phone-number",
                 "Phone number can not be blank.",
                 PrimerInputElementType.PHONE_NUMBER
             )
         } else if (PHONE_NUMBER_REGEX.matches(input).not()) {
-            return PrimerInputValidationError(
+            PrimerInputValidationError(
                 "invalid-phone-number",
                 "Phone number is not valid.",
                 PrimerInputElementType.PHONE_NUMBER
             )
-        }
-        return null
+        } else null
     }
 
     private companion object {

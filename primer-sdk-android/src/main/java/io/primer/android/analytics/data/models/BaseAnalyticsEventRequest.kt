@@ -22,6 +22,7 @@ internal sealed class BaseAnalyticsEventRequest {
     abstract val properties: BaseAnalyticsProperties
     abstract val appIdentifier: String?
     abstract val sdkSessionId: String
+    abstract val sdkIntegrationType: SdkIntegrationType
     abstract val checkoutSessionId: String?
     abstract val clientSessionId: String?
     abstract val orderId: String?
@@ -44,6 +45,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     deviceId: String,
     appIdentifier: String,
     sdkSessionId: String,
+    sdkIntegrationType: SdkIntegrationType,
     checkoutSessionId: String,
     clientSessionId: String?,
     orderId: String?,
@@ -60,6 +62,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         this,
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -76,6 +79,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         this,
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -92,6 +96,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         this,
         sdkSessionId,
         appIdentifier,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -108,6 +113,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         this,
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -124,6 +130,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         this,
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -140,6 +147,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
     deviceId: String,
     appIdentifier: String,
     sdkSessionId: String,
+    sdkIntegrationType: SdkIntegrationType,
     checkoutSessionId: String,
     clientSessionId: String?,
     orderId: String?,
@@ -156,6 +164,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         UIProperties(action, objectType, place, objectId, context?.toAnalyticsContext()),
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -172,6 +181,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         TimerProperties(id, timerType),
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -188,6 +198,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         MessageProperties(messageType, message, severity, diagnosticsId),
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -204,6 +215,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         FunctionProperties(name, params),
         appIdentifier,
         sdkSessionId,
+        sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
         orderId,

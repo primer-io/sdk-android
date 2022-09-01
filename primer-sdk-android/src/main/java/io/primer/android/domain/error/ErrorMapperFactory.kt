@@ -7,6 +7,7 @@ internal enum class ErrorMapperType {
     SESSION_CREATE,
     HUC,
     PAYMENT_METHODS,
+    KLARNA,
     DEFAULT
 }
 

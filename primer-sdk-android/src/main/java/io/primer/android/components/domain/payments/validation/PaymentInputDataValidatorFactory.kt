@@ -7,6 +7,7 @@ import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhon
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.components.domain.payments.validation.card.CardInputDataValidator
 import io.primer.android.components.domain.payments.validation.otp.blik.BlikInputDataValidator
+import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.MBWayPhoneNumberInputDataValidator
 import io.primer.android.components.domain.payments.validation.phoneNumber.ovo.OvoPhoneNumberInputDataValidator
 import io.primer.android.data.configuration.models.PaymentMethodType
 
@@ -25,6 +26,7 @@ internal class PaymentInputDataValidatorFactory(
             is PrimerRawPhoneNumberData -> {
                 when (paymentMethodType) {
                     PaymentMethodType.XENDIT_OVO.name -> OvoPhoneNumberInputDataValidator()
+                    PaymentMethodType.ADYEN_MBWAY.name -> MBWayPhoneNumberInputDataValidator()
                     else -> throw IllegalArgumentException(
                         "Unsupported phone data validation for $paymentMethodType."
                     )

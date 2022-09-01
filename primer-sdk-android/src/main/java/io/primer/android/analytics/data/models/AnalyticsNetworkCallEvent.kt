@@ -9,6 +9,7 @@ internal data class AnalyticsNetworkCallEvent(
     override val properties: NetworkCallProperties,
     override val appIdentifier: String,
     override val sdkSessionId: String,
+    override val sdkIntegrationType: SdkIntegrationType,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,

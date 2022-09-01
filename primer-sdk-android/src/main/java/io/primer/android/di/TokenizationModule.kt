@@ -36,7 +36,10 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
-                get(named(RESUME_HANDLER_LOGGER_NAME))
+                get(),
+                get(named(RESUME_HANDLER_LOGGER_NAME)),
+                get(),
+                get()
             )
         }
 
@@ -79,6 +82,6 @@ internal val tokenizationModule = {
                 get(),
             )
         }
-        viewModel { TokenizationViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModel { TokenizationViewModel(get(), get(), get(), get(), get(), get(), get()) }
     }
 }

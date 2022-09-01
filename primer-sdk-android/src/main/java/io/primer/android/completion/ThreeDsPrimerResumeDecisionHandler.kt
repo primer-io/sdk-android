@@ -1,12 +1,15 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
-import io.primer.android.domain.token.repository.ValidateTokenRepository
-import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
+import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
@@ -20,20 +23,26 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
     paymentMethodRepository: PaymentMethodRepository,
+    paymentResultRepository: PaymentResultRepository,
     analyticsRepository: AnalyticsRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
+    config: PrimerConfig,
+    paymentMethodDataHelper: PrimerPaymentMethodDataHelper,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
     clientTokenRepository,
     paymentMethodRepository,
+    paymentResultRepository,
     analyticsRepository,
     errorEventResolver,
     eventDispatcher,
     logger,
+    config,
+    paymentMethodDataHelper,
     coroutineDispatcher
 ) {
 

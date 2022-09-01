@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/country_code_label"
-        style="@style/Primer.Text.FormLabelSmall"
+    <io.primer.android.ui.components.TextInputWidget
+        android:id="@+id/card_form_country_code"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.hbb20.CountryCodePicker
-        android:id="@+id/country_code_picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:ccpDialog_allowSearch="true"
-        app:ccpDialog_background="@color/primer_app_background"
-        app:ccpDialog_searchEditTextTint="@color/primer_text_color_default"
-        app:ccpDialog_textColor="@color/primer_text_color_default"
-        app:ccp_autoDetectLanguage="true"
-        app:ccp_showFullName="true"
-        app:ccp_showNameCode="false"
-        app:ccp_showPhoneCode="false"
-        app:ccp_showFlag="false"
-        app:ccp_textGravity="LEFT"
+        android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+        android:layout_weight="1"
+        android:hint="@string/countryLabel"
+        app:endIconDrawable="@drawable/ic_input_drop_down"
+        app:endIconMode="dropdown_menu"
+        app:endIconTint="@android:color/black"
+        app:errorEnabled="false"
+        app:errorIconDrawable="@null"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/country_code_label" />
-    <View
-        app:layout_constraintStart_toStartOf="@id/country_code_picker"
-        app:layout_constraintEnd_toEndOf="@id/country_code_picker"
-        app:layout_constraintTop_toBottomOf="@id/country_code_picker"
-        android:layout_width="match_parent"
-        android:layout_height="1dp" android:background="@color/primer_text_color_default" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/card_form_country_code_input"
+            style="@style/Primer.FormInput.Outbox.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:maxLines="1"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"
+            tools:text="@string/countryLabel"
+            tools:textColor="@android:color/black" />
+
+    </io.primer.android.ui.components.TextInputWidget>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
