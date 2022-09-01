@@ -28,6 +28,7 @@ buildscript {
         classpath projectDependencies.androidJunit5
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+        classpath "org.jacoco:org.jacoco.core:0.8.8"
     }
 }
 
@@ -37,11 +38,14 @@ plugins {
 }
 
 sonarqube {
-  properties {
-    property "sonar.projectKey", "primer-sdk-android"
-    property "sonar.organization", "tino-primer"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
+    properties {
+        property "sonar.projectKey", "primer-sdk-android"
+        property "sonar.organization", "tino-primer"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.jacoco.reportPath", "**/jacoco/*.exec"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testReleaseUnitTestCoverage/testReleaseUnitTestCoverage.xml"
+    }
 }
 
 task clean(type: Delete) {

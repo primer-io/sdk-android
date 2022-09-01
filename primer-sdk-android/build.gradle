@@ -16,6 +16,7 @@ plugins {
 }
 
 apply plugin: 'kotlinx-serialization'
+apply plugin: 'jacoco'
 
 apply from: "$rootDir/config/android-common.gradle"
 apply from: "$rootDir/config/test-dependencies.gradle"
@@ -25,6 +26,7 @@ android {
         debug {
             minifyEnabled false
             debuggable true
+            testCoverageEnabled true
         }
         release {
             minifyEnabled true
@@ -100,7 +102,13 @@ repositories {
 
 subprojects {
     tasks.withType(Javadoc).all { enabled = false }
+    tasks["sonarqube"].dependsOn "testReleaseUnitTestCoverage"
+}
+
+jacoco {
+    toolVersion = "0.8.8"
 }
 
 apply from: "$rootDir/config/analysis.gradle"
 apply from: "$rootDir/config/publish.gradle"
+apply from: "$rootDir/config/jacoco.gradle"
