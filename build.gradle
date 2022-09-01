@@ -43,8 +43,8 @@ sonarqube {
         property "sonar.organization", "tino-primer"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", "**/jacoco/*.exec"
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testReleaseUnitTestCoverage/testReleaseUnitTestCoverage.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "primer-sdk-android/build/reports/jacoco/testReleaseUnitTestCoverage/testReleaseUnitTestCoverage.xml"
+        property "sonar.language","kotlin"
     }
 }
 
