@@ -3,11 +3,7 @@ package io.primer.android.payment.google
 import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.data.configuration.models.PaymentMethodType
-
-enum class GooglePayButtonStyle {
-    WHITE,
-    BLACK,
-}
+import io.primer.android.data.settings.GooglePayButtonStyle
 
 internal data class GooglePay(
     val merchantName: String? = null,

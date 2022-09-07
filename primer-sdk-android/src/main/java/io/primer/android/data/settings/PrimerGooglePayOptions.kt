@@ -1,6 +1,10 @@
 package io.primer.android.data.settings
 
-import io.primer.android.payment.google.GooglePayButtonStyle
+
+enum class GooglePayButtonStyle {
+    WHITE,
+    BLACK,
+}
 
 data class PrimerGooglePayOptions(
     var merchantName: String? = null,
