@@ -72,7 +72,7 @@ internal class AnalyticsDataRepository(
                         settings.sdkIntegrationType,
                         checkoutSessionId,
                         configuration?.clientSession?.clientSessionId,
-                        configuration?.clientSession?.order?.id,
+                        configuration?.clientSession?.order?.orderId,
                         configuration?.primerAccountId,
                         localClientTokenDataSource.get().analyticsUrlV2
                     )
@@ -95,7 +95,7 @@ internal class AnalyticsDataRepository(
                     settings.sdkIntegrationType,
                     checkoutSessionId,
                     configuration?.clientSession?.clientSessionId,
-                    configuration?.clientSession?.order?.id,
+                    configuration?.clientSession?.order?.orderId,
                     configuration?.primerAccountId,
                     localClientTokenDataSource.get().analyticsUrlV2
                 )

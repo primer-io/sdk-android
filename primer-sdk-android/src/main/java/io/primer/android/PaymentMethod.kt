@@ -3,7 +3,6 @@ package io.primer.android
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodChecker
-import kotlinx.serialization.modules.SerializersModule
 
 /**
  * Represents an abstract **PaymentMethod**. A PaymentMethod declares a [PaymentMethodModule].
@@ -14,7 +13,6 @@ import kotlinx.serialization.modules.SerializersModule
  * 1. Declare its [PaymentMethodDescriptorFactory] that will be used to create the corresponding
  * [PaymentMethodDescriptor].
  * @see [PaymentMethodModule]
- * @see [SerializersModule]
  */
 internal interface PaymentMethod {
 

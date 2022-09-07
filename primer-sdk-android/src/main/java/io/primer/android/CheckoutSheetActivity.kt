@@ -26,7 +26,6 @@ import io.primer.android.events.EventBus
 import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
-import io.primer.android.model.Serialization
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -78,9 +77,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private val primerViewModel: PrimerViewModel by viewModel()
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
     private val errorEventResolver: BaseErrorEventResolver by inject()
+    private val config: PrimerConfig by inject()
 
     private lateinit var sheet: CheckoutSheetFragment
-    private lateinit var config: PrimerConfig
 
     private val viewStatusObserver = Observer<ViewStatus> { viewStatus ->
         if (config.settings.fromHUC) {
@@ -372,17 +371,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val json = Serialization.json
-
-        val config = intent.getStringExtra("config")
-            ?.let { json.decodeFromString(PrimerConfig.serializer(), it) }
-            ?: return
-
         if (config.settings.fromHUC) {
             ensureClicksGoThrough()
         }
-
-        this.config = config
 
         primerViewModel.initializeAnalytics()
 

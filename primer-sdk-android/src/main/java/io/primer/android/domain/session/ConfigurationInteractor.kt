@@ -31,6 +31,6 @@ internal class ConfigurationInteractor(
 
         const val CONFIGURATION_ERROR =
             "Failed to initialise due to a failed network call. Please ensure" +
-                "your internet connection is stable and try again."
+                " your internet connection is stable and try again."
     }
 }

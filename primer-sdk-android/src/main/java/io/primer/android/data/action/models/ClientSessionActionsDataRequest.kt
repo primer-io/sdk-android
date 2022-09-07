@@ -1,64 +1,172 @@
 package io.primer.android.data.action.models
 
+import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.data.models.EmptyDataRequest
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.JSONSerializer
 import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.threeds.data.models.Address
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
+import org.json.JSONArray
+import org.json.JSONObject
 
-internal val actionSerializationModule: SerializersModule = SerializersModule {
-    polymorphic(ClientSessionActionsDataRequest.Action::class) {
-        subclass(
-            ClientSessionActionsDataRequest.SetPaymentMethod::class,
-            ClientSessionActionsDataRequest.SetPaymentMethod.serializer()
-        )
-        subclass(
-            ClientSessionActionsDataRequest.UnsetPaymentMethod::class,
-            ClientSessionActionsDataRequest.UnsetPaymentMethod.serializer()
-        )
-        subclass(
-            ClientSessionActionsDataRequest.SetBillingAddress::class,
-            ClientSessionActionsDataRequest.SetBillingAddress.serializer()
-        )
-    }
-}
-
-@Serializable
 internal data class ClientSessionActionsDataRequest(
     val actions: List<Action>
-) {
-    @Serializable
-    sealed class Action
+) : JSONSerializable {
 
-    @Serializable
-    @SerialName("SELECT_PAYMENT_METHOD")
-    data class SetPaymentMethod(val params: SetPaymentMethodRequestDataParams) : Action()
+    sealed class Action : JSONSerializable
 
-    @Serializable
+    data class SetPaymentMethod(val params: SetPaymentMethodRequestDataParams) : Action() {
+        companion object {
+
+            @JvmField
+            val serializer = object : JSONSerializer<SetPaymentMethod> {
+                override fun serialize(t: SetPaymentMethod): JSONObject {
+                    return JSONObject().apply {
+                        put(TYPE_FIELD, "SELECT_PAYMENT_METHOD")
+                        put(
+                            PARAMS_FIELD,
+                            JSONSerializationUtils
+                                .getSerializer<SetPaymentMethodRequestDataParams>()
+                                .serialize(t.params)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     data class SetPaymentMethodRequestDataParams(
         val paymentMethodType: String,
         val binData: BinData? = null
-    )
+    ) : JSONSerializable {
+        companion object {
 
-    @Serializable
-    @SerialName("UNSELECT_PAYMENT_METHOD")
-    data class UnsetPaymentMethod(val params: Unit = Unit) : Action()
+            private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
+            private const val BIN_DATA_FIELD = "binData"
 
-    @Serializable
-    @SerialName("SET_BILLING_ADDRESS")
+            @JvmField
+            val serializer = object : JSONSerializer<SetPaymentMethodRequestDataParams> {
+                override fun serialize(t: SetPaymentMethodRequestDataParams): JSONObject {
+                    return JSONObject().apply {
+                        put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
+                        putOpt(
+                            BIN_DATA_FIELD,
+                            t.binData?.let {
+                                JSONSerializationUtils.getSerializer<BinData>()
+                                    .serialize(t.binData)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    data class UnsetPaymentMethod(val params: Unit = Unit) : Action() {
+        companion object {
+
+            @JvmField
+            val serializer = object : JSONSerializer<UnsetPaymentMethod> {
+                override fun serialize(t: UnsetPaymentMethod): JSONObject {
+                    return JSONObject().apply {
+                        put(TYPE_FIELD, "UNSELECT_PAYMENT_METHOD")
+                        put(
+                            PARAMS_FIELD,
+                            JSONSerializationUtils.getSerializer<EmptyDataRequest>()
+                                .serialize(EmptyDataRequest())
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     class SetBillingAddress(
         val params: SetBillingAddressRequestDataParams
-    ) : Action()
+    ) : Action() {
+        companion object {
 
-    @Serializable
+            @JvmField
+            val serializer = object : JSONSerializer<SetBillingAddress> {
+                override fun serialize(t: SetBillingAddress): JSONObject {
+                    return JSONObject().apply {
+                        put(TYPE_FIELD, "SET_BILLING_ADDRESS")
+                        put(
+                            PARAMS_FIELD,
+                            JSONSerializationUtils
+                                .getSerializer<SetBillingAddressRequestDataParams>()
+                                .serialize(t.params)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     data class SetBillingAddressRequestDataParams(
         val billingAddress: Address
-    )
+    ) : JSONSerializable {
+
+        companion object {
+
+            private const val BILLING_ADDRESS_FIELD = "billingAddress"
+
+            @JvmField
+            val serializer = object : JSONSerializer<SetBillingAddressRequestDataParams> {
+                override fun serialize(t: SetBillingAddressRequestDataParams): JSONObject {
+                    return JSONObject().apply {
+                        put(
+                            BILLING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getSerializer<Address>()
+                                .serialize(t.billingAddress)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        // common
+        private const val TYPE_FIELD = "type"
+        private const val PARAMS_FIELD = "params"
+        private const val ACTIONS_FIELD = "actions"
+
+        @JvmField
+        val serializer = object : JSONSerializer<ClientSessionActionsDataRequest> {
+            override fun serialize(t: ClientSessionActionsDataRequest): JSONObject {
+                return JSONObject().apply {
+                    put(
+                        ACTIONS_FIELD,
+                        JSONArray().apply {
+                            t.actions.map { action ->
+                                put(
+                                    when (action) {
+                                        is SetPaymentMethod ->
+                                            JSONSerializationUtils.getSerializer<SetPaymentMethod>()
+                                                .serialize(action)
+                                        is UnsetPaymentMethod ->
+                                            JSONSerializationUtils
+                                                .getSerializer<UnsetPaymentMethod>()
+                                                .serialize(action)
+                                        is SetBillingAddress ->
+                                            JSONSerializationUtils
+                                                .getSerializer<SetBillingAddress>()
+                                                .serialize(action)
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
 
 internal fun BaseActionUpdateParams.toActionData() = when (this) {
@@ -83,5 +191,4 @@ internal fun BaseActionUpdateParams.toActionData() = when (this) {
             )
         )
     )
-    else -> throw IllegalStateException("Unsupported action mapping for $this.")
 }

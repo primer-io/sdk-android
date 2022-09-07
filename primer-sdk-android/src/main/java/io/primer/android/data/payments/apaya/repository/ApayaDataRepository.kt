@@ -11,9 +11,11 @@ import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.repository.ApayaRepository
 import io.primer.android.extensions.doOnError
 import io.primer.android.http.exception.HttpException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ApayaDataRepository(
     private val remoteApayaDataSource: RemoteApayaDataSource,
     private var configurationDataSource: LocalConfigurationDataSource,

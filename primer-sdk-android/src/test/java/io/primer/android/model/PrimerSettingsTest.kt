@@ -25,7 +25,7 @@ class PrimerSettingsTest {
     @Test
     fun `currentAmount is amount if order amount values not present`() {
         val settings = PrimerSettings().apply {
-            order = OrderDataResponse(amount = 150)
+            order = OrderDataResponse(merchantAmount = 150)
         }
         assert(settings.currentAmount == 150)
     }

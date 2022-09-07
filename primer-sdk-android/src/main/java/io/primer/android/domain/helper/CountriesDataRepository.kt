@@ -3,14 +3,14 @@ package io.primer.android.domain.helper
 import android.content.Context
 import android.util.Log
 import io.primer.android.R
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.domain.action.models.PrimerCountriesCodeInfo
 import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.domain.action.models.PrimerPhoneCode
-import io.primer.android.model.Serialization
-import kotlinx.serialization.decodeFromString
 import org.json.JSONArray
-import org.json.JSONTokener
+import org.json.JSONObject
 import java.io.IOException
 
 internal class CountriesDataRepository(private val context: Context) :
@@ -49,19 +49,19 @@ internal class CountriesDataRepository(private val context: Context) :
      */
     @Throws(IOException::class)
     private fun parseFileAndLoadCountries(dataJson: String) {
-        val countryCodesData = Serialization.json
-            .decodeFromString<PrimerCountriesCodeInfo>(dataJson)
+        val countryCodesData =
+            JSONSerializationUtils.getDeserializer<PrimerCountriesCodeInfo>()
+                .deserialize(JSONObject(dataJson))
         countries.clear()
         countries.addAll(
             countryCodesData.countries.entries.map { entry ->
-                val tokenize = JSONTokener(entry.value.toString())
-                val valueJson = tokenize.nextValue()
-                if (valueJson is JSONArray) {
-                    val name = if (valueJson.length() == 0) "N/A"
-                    else valueJson.optString(0, "N/A")
-                    PrimerCountry(name, enumValueOf(entry.key))
+                if (entry.value is ArrayList<*>) {
+                    PrimerCountry(
+                        (entry.value as ArrayList<*>).firstOrNull()?.toString() ?: "N/A",
+                        enumValueOf(entry.key)
+                    )
                 } else {
-                    PrimerCountry(valueJson.toString(), enumValueOf(entry.key))
+                    PrimerCountry(entry.value.toString(), enumValueOf(entry.key))
                 }
             }
         )
@@ -74,8 +74,9 @@ internal class CountriesDataRepository(private val context: Context) :
                 ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
                 try {
-                    val phoneCodesData = Serialization.json
-                        .decodeFromString<List<PrimerPhoneCode>>(dataJson)
+                    val phoneCodesData = JSONArray(dataJson).sequence<JSONObject>().map {
+                        JSONSerializationUtils.getDeserializer<PrimerPhoneCode>().deserialize(it)
+                    }.toList()
                     phoneCodes.clear()
                     phoneCodes.addAll(phoneCodesData)
                 } catch (e: IOException) {

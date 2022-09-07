@@ -1,7 +1,7 @@
 package io.primer.android.domain.session.models
 
 import io.primer.android.data.configuration.models.CheckoutModuleType
-import io.primer.android.data.configuration.models.ClientSessionResponse
+import io.primer.android.data.configuration.models.ClientSessionDataResponse
 
 internal data class Configuration(
     val paymentMethods: List<PaymentMethodConfig>,
@@ -11,6 +11,8 @@ internal data class Configuration(
 
 internal data class PaymentMethodConfig(val type: String)
 
-internal data class ClientSession(val paymentMethod: ClientSessionResponse.PaymentMethod?)
+internal data class ClientSession(
+    val paymentMethod: ClientSessionDataResponse.PaymentMethodDataResponse?
+)
 
 internal data class CheckoutModule(val type: CheckoutModuleType, val options: Map<String, Boolean>?)

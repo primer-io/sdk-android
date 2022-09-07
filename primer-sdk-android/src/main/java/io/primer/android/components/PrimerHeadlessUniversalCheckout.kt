@@ -22,7 +22,6 @@ import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.domain.PrimerCheckoutData
@@ -32,7 +31,6 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.Serialization
 import org.koin.core.component.get
 
 @ExperimentalPrimerApi
@@ -267,7 +265,6 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     private fun setupDI(context: Context, config: PrimerConfig) {
         DIAppContext.app?.close()
         DIAppContext.init(context.applicationContext, config)
-        Serialization.addModule(tokenizationSerializationModule)
         // refresh the instances
         headlessUniversalCheckout = get()
         navigator = get()

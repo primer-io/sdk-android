@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 internal val apayaModule = {
     module {
-        single { PrimerHttpClient(get(), get()) }
+        single { PrimerHttpClient(get()) }
         single { RemoteApayaDataSource(get()) }
         single<ApayaRepository> { ApayaDataRepository(get(), get()) }
         single { ApayaSessionParamsValidator() }

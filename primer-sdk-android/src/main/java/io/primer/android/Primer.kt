@@ -8,23 +8,19 @@ import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
 import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
-import io.primer.android.data.action.models.actionSerializationModule
 import io.primer.android.data.error.DefaultErrorMapper
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.settings.internal.PrimerIntent
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.events.EventDispatcher
 import io.primer.android.model.CheckoutExitReason
-import io.primer.android.model.Serialization
-import kotlinx.serialization.encodeToString
 import org.koin.core.component.get
 
 class Primer private constructor() : PrimerInterface, DIAppComponent {
@@ -86,7 +82,7 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
         addAnalyticsEvent(
             SdkFunctionParams(
                 "configure",
-                mapOf("settings" to Serialization.json.encodeToString(this.config))
+                mapOf("settings" to this.config.toString())
             )
         )
     }
@@ -150,11 +146,6 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
                     ?: context.packageName.let { "$it.primer" }
             WebviewInteropRegister.init(scheme)
 
-            // TODO: refactor the way we pass in the config.
-            Serialization.addModule(tokenizationSerializationModule)
-            Serialization.addModule(actionSerializationModule)
-
-            val encodedConfig = Serialization.json.encodeToString(PrimerConfig.serializer(), config)
             if (config.settings.fromHUC.not()) {
                 DIAppContext.init(context.applicationContext, config)
             } else {
@@ -163,7 +154,6 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
             }
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {
-                    putExtra("config", encodedConfig)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }.run { context.startActivity(this) }
         } catch (expected: Exception) {

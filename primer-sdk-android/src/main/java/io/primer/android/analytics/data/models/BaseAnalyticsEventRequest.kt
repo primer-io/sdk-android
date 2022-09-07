@@ -12,12 +12,15 @@ import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
-import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.Serializable
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.JSONSerializer
+import org.json.JSONObject
 
-@Serializable
 @Suppress("UnusedPrivateMember")
-internal sealed class BaseAnalyticsEventRequest {
+internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserializable {
     abstract val device: DeviceData?
     abstract val properties: BaseAnalyticsProperties
     abstract val appIdentifier: String?
@@ -29,14 +32,109 @@ internal sealed class BaseAnalyticsEventRequest {
     abstract val primerAccountId: String?
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
-    @EncodeDefault val createdAt: Long = System.currentTimeMillis()
-    @EncodeDefault protected val sdkType: String = "ANDROID_NATIVE"
-    @EncodeDefault protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
+    protected val createdAt: Long = System.currentTimeMillis()
+    protected val sdkType: String = "ANDROID_NATIVE"
+    protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest
+
+    protected companion object {
+        const val DEVICE_FIELD = "device"
+        const val PROPERTIES_FIELD = "properties"
+        const val APP_IDENTIFIER_FIELD = "appIdentifier"
+        const val SDK_SESSION_ID_FIELD = "sdkSessionId"
+        const val CHECKOUT_SESSION_ID_FIELD = "checkoutSessionId"
+        const val CLIENT_SESSION_ID_FIELD = "clientSessionId"
+        const val ORDER_ID_FIELD = "orderId"
+        const val PRIMER_ACCOUNT_ID_FIELD = "primerAccountId"
+        const val ANALYTICS_URL_FIELD = "analyticsUrl"
+        const val EVENT_TYPE_FIELD = "eventType"
+        const val CREATED_AT_FIELD = "createdAt"
+        const val SDK_TYPE_FIELD = "sdkType"
+        const val SDK_VERSION_FIELD = "sdkVersion"
+        const val SDK_INTEGRATION_TYPE_FIELD = "sdkIntegrationType"
+
+        @JvmField
+        val serializer = object : JSONSerializer<BaseAnalyticsEventRequest> {
+            override fun serialize(t: BaseAnalyticsEventRequest): JSONObject {
+                return when (t.eventType) {
+                    AnalyticsEventType.UI_EVENT ->
+                        AnalyticsUIEventRequest.serializer.serialize(t as AnalyticsUIEventRequest)
+                    AnalyticsEventType.APP_CRASHED_EVENT ->
+                        AnalyticsCrashEventRequest
+                            .serializer.serialize(t as AnalyticsCrashEventRequest)
+                    AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
+                        AnalyticsNetworkConnectivityEventRequest
+                            .serializer.serialize(t as AnalyticsNetworkConnectivityEventRequest)
+                    AnalyticsEventType.NETWORK_CALL_EVENT ->
+                        AnalyticsNetworkCallEvent
+                            .serializer.serialize(t as AnalyticsNetworkCallEvent)
+                    AnalyticsEventType.TIMER_EVENT ->
+                        AnalyticsTimerEventRequest
+                            .serializer.serialize(t as AnalyticsTimerEventRequest)
+                    AnalyticsEventType.MESSAGE_EVENT ->
+                        AnalyticsMessageEventRequest.serializer.serialize(
+                            t as AnalyticsMessageEventRequest
+                        )
+                    AnalyticsEventType.SDK_FUNCTION_EVENT ->
+                        AnalyticsSdkFunctionEventRequest.serializer.serialize(
+                            t as AnalyticsSdkFunctionEventRequest
+                        )
+                }
+            }
+        }
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<BaseAnalyticsEventRequest> {
+            override fun deserialize(t: JSONObject): BaseAnalyticsEventRequest {
+                return when (AnalyticsEventType.valueOf(t.getString(EVENT_TYPE_FIELD))) {
+                    AnalyticsEventType.UI_EVENT ->
+                        AnalyticsUIEventRequest.deserializer.deserialize(t)
+                    AnalyticsEventType.APP_CRASHED_EVENT ->
+                        AnalyticsCrashEventRequest.deserializer.deserialize(t)
+                    AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
+                        AnalyticsNetworkConnectivityEventRequest.deserializer.deserialize(t)
+                    AnalyticsEventType.NETWORK_CALL_EVENT ->
+                        AnalyticsNetworkCallEvent.deserializer.deserialize(t)
+                    AnalyticsEventType.TIMER_EVENT ->
+                        AnalyticsTimerEventRequest.deserializer.deserialize(t)
+                    AnalyticsEventType.MESSAGE_EVENT ->
+                        AnalyticsMessageEventRequest.deserializer.deserialize(t)
+                    AnalyticsEventType.SDK_FUNCTION_EVENT ->
+                        AnalyticsSdkFunctionEventRequest.deserializer.deserialize(t)
+                }
+            }
+        }
+
+        val baseSerializer = object : JSONSerializer<BaseAnalyticsEventRequest> {
+            override fun serialize(t: BaseAnalyticsEventRequest): JSONObject {
+                return JSONObject().apply {
+                    putOpt(
+                        DEVICE_FIELD,
+                        t.device?.let {
+                            JSONSerializationUtils.getSerializer<DeviceData>()
+                                .serialize(it)
+                        }
+                    )
+                    put(APP_IDENTIFIER_FIELD, t.appIdentifier)
+                    put(SDK_SESSION_ID_FIELD, t.sdkSessionId)
+                    putOpt(CHECKOUT_SESSION_ID_FIELD, t.checkoutSessionId)
+                    putOpt(CLIENT_SESSION_ID_FIELD, t.clientSessionId)
+                    putOpt(ORDER_ID_FIELD, t.orderId)
+                    putOpt(PRIMER_ACCOUNT_ID_FIELD, t.primerAccountId)
+                    putOpt(ANALYTICS_URL_FIELD, t.analyticsUrl)
+                    putOpt(EVENT_TYPE_FIELD, t.eventType.name)
+                    put(CREATED_AT_FIELD, t.createdAt)
+                    put(SDK_TYPE_FIELD, t.sdkType)
+                    put(SDK_VERSION_FIELD, t.sdkVersion)
+                    put(SDK_INTEGRATION_TYPE_FIELD, t.sdkIntegrationType.name)
+                }
+            }
+        }
+    }
 }
 
-internal abstract class BaseAnalyticsProperties
+internal abstract class BaseAnalyticsProperties : JSONSerializable, JSONDeserializable
 
 internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     batteryLevel: Int,

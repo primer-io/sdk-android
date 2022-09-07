@@ -8,8 +8,8 @@ internal data class ConfigurationData(
     val coreUrl: String,
     val paymentMethods: List<PaymentMethodConfigDataResponse>,
     val checkoutModules: List<CheckoutModuleDataResponse> = listOf(),
-    val keys: ConfigurationKeys?,
-    val clientSession: ClientSessionResponse?,
+    val keys: ConfigurationKeysDataResponse?,
+    val clientSession: ClientSessionDataResponse?,
     val environment: Environment,
     val primerAccountId: String?,
     val iconsDisplayMetadata: List<Map<String, List<IconDisplayMetadata>>>

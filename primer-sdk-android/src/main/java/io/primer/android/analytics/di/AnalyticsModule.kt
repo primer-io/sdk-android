@@ -36,7 +36,6 @@ internal val analyticsModule = {
         single(named(ANALYTICS_HTTP_CLIENT_NAME)) {
             PrimerHttpClient(
                 HttpClientFactory().build(),
-                get()
             )
         }
         single { ScreenSizeDataSource(get()) }
@@ -47,7 +46,7 @@ internal val analyticsModule = {
         single { UncaughtHandlerDataSource() }
         single { AnalyticsDataSender(get(), get(), get()) }
         single { LocalAnalyticsDataSource.instance }
-        single { FileAnalyticsDataSource(get(), get()) }
+        single { FileAnalyticsDataSource(get()) }
         single { AnalyticsFileProvider(get()) }
         single { RemoteAnalyticsDataSource(get(named(ANALYTICS_HTTP_CLIENT_NAME))) }
         single { TimerEventProvider() }

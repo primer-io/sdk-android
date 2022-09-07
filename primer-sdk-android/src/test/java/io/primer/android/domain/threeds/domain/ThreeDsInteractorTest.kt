@@ -349,7 +349,7 @@ internal class ThreeDsInteractorTest {
     @Test
     fun `beginRemoteAuth() should dispatch token event when repository begin3DSAuth() was success and response code is not CHALLENGE`() {
         val beginAuthResponse = mockk<BeginAuthResponse>(relaxed = true)
-        val authDetails = mockk<BasePaymentToken.AuthenticationDetails>(relaxed = true)
+        val authDetails = mockk<BasePaymentToken.AuthenticationDetailsDataResponse>(relaxed = true)
         val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
 
         every { beginAuthResponse.token.threeDSecureAuthentication }.returns(authDetails)
@@ -721,6 +721,8 @@ internal class ThreeDsInteractorTest {
                 analyticsId = UUID.randomUUID().toString(),
                 tokenType = TokenType.MULTI_USE,
                 paymentInstrumentType = "PAYMENT_CARD",
+                vaultData = null,
+                threeDSecureAuthentication = null,
                 paymentInstrumentData = PaymentInstrumentData(
                     network = "VISA",
                     binData = BinData("VISA")

@@ -5,8 +5,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5'
     }
 }
 
@@ -15,8 +15,7 @@ plugins {
     id 'kotlin-android'
 }
 
-apply plugin: 'kotlinx-serialization'
-apply plugin: 'jacoco'
+apply plugin: 'com.dicedmelon.gradle.jacoco-android'
 
 apply from: "$rootDir/config/android-common.gradle"
 apply from: "$rootDir/config/test-dependencies.gradle"
@@ -52,8 +51,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation Dependencies.Kotlin.Serialization.core
-    implementation Dependencies.Kotlin.Serialization.json
 
     implementation "io.insert-koin:koin-android:$koinVersion"
 
@@ -87,6 +84,7 @@ dependencies {
     testImplementation TestDependencies.Android.archCore
     testImplementation TestDependencies.Android.liveData
     testImplementation TestDependencies.Koin.test
+    testImplementation TestDependencies.Serialization.json
 
     androidTestImplementation TestDependencies.Android.Espresso.core
 }
@@ -108,13 +106,18 @@ repositories {
 
 subprojects {
     tasks.withType(Javadoc).all { enabled = false }
-    tasks["sonarqube"].dependsOn "testReleaseUnitTestCoverage"
+    tasks["sonarqube"].dependsOn "jacocoTestReleaseUnitTestReport"
+    tasks["jacocoTestReleaseUnitTestReport"].dependsOn "testReleaseUnitTest"
 }
 
 jacoco {
     toolVersion = "0.8.8"
 }
 
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
+}
+
 apply from: "$rootDir/config/analysis.gradle"
 apply from: "$rootDir/config/publish.gradle"
-apply from: "$rootDir/config/jacoco.gradle"

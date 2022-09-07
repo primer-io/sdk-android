@@ -8,14 +8,16 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:fitsSystemWindows="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/hucRawButton">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="140dp">
+            android:paddingBottom="10dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/customerIdTextFieldLayout"
@@ -114,8 +116,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                tools:listitem="@android:layout/simple_spinner_dropdown_item"
-                android:layout_marginVertical="10dp" />
+                android:layout_marginVertical="10dp"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/apikeyTextFieldLayout"

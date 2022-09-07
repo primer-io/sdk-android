@@ -1,18 +1,18 @@
 package io.primer.android.analytics.infrastructure.datasource
 
-import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.analytics.data.models.BaseAnalyticsEventRequest
+import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.FileOutputStream
 
 internal class FileAnalyticsDataSource(
     private val fileProvider: AnalyticsFileProvider,
-    private val json: Json,
 ) : BaseFlowCacheDataSource<List<BaseAnalyticsEventRequest>, List<BaseAnalyticsEventRequest>> {
 
     override fun get(): Flow<List<BaseAnalyticsEventRequest>> = flow {
@@ -23,7 +23,12 @@ internal class FileAnalyticsDataSource(
                 }
         if (bufferedReader.isNotBlank()) {
             try {
-                emit(json.decodeFromString(bufferedReader))
+                emit(
+                    JSONArray(bufferedReader).sequence<JSONObject>().map {
+                        JSONSerializationUtils.getDeserializer<BaseAnalyticsEventRequest>()
+                            .deserialize(it)
+                    }.toList()
+                )
             } catch (ignored: Exception) {
                 // if there is a problem while decoding file, then we do a hard reset!
                 update(listOf())
@@ -35,8 +40,17 @@ internal class FileAnalyticsDataSource(
         val fileOutputStream = FileOutputStream(
             fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH)
         )
-        fileOutputStream.write(json.encodeToString(input).toByteArray())
         fileOutputStream.use {
+            it.write(
+                JSONArray().apply {
+                    input.map { analyticsEvent ->
+                        put(
+                            JSONSerializationUtils.getSerializer<BaseAnalyticsEventRequest>()
+                                .serialize(analyticsEvent)
+                        )
+                    }
+                }.toString().toByteArray()
+            )
             it.flush()
         }
     }

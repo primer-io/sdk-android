@@ -8,10 +8,12 @@ import io.primer.android.data.rpc.banks.models.toIssuingBank
 import io.primer.android.data.rpc.banks.models.toIssuingBankRequest
 import io.primer.android.domain.rpc.banks.models.IssuingBankParams
 import io.primer.android.domain.rpc.banks.repository.IssuingBankRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class IssuingBankDataRepository(
     private val remoteIssuingBankDataSource: RemoteIssuingBankFlowDataSource,
     private val localIssuingBankDataSource: LocalIssuingBankDataSource,

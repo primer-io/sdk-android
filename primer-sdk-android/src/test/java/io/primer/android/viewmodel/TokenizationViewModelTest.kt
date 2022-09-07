@@ -83,8 +83,8 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.valueBy(PrimerInputElementType.CVV) } returns "cvv"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_MONTH) } returns "month"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_YEAR) } returns "year"
-        val paymentMethodConfig =
-            PaymentMethodConfigDataResponse("id", type = PaymentMethodType.PAYMENT_CARD.name)
+        val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true)
+        every { paymentMethodConfig.type }.returns(PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
         )
@@ -118,8 +118,8 @@ class TokenizationViewModelTest : KoinTest {
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_MONTH) } returns "month"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_YEAR) } returns "year"
         coEvery { tokenizationInteractor(any()) } returns flowOf("token")
-        val paymentMethodConfig =
-            PaymentMethodConfigDataResponse("id", type = PaymentMethodType.PAYMENT_CARD.name)
+        val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true)
+        every { paymentMethodConfig.type }.returns(PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
             paymentMethodConfig,
         )

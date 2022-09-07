@@ -2,9 +2,7 @@ package io.primer.android.ui.settings
 
 import android.content.Context
 import androidx.annotation.DimenRes
-import kotlinx.serialization.Serializable
 
-@Serializable
 sealed class DimensionData {
 
     fun getDimension(context: Context): Float {
@@ -22,7 +20,6 @@ sealed class DimensionData {
     }
 }
 
-@Serializable
 class ResourceDimension private constructor(
     @DimenRes val default: Int,
 ) : DimensionData() {
@@ -35,7 +32,6 @@ class ResourceDimension private constructor(
     }
 }
 
-@Serializable
 class DynamicDimension private constructor(
     val default: Float,
 ) : DimensionData() {
