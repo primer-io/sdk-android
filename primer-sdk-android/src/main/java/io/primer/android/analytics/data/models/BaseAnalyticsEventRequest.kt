@@ -1,6 +1,7 @@
 package io.primer.android.analytics.data.models
 
 import io.primer.android.BuildConfig
+import io.primer.android.analytics.data.helper.AnalyticsSdkTypeResolver
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
@@ -33,7 +34,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
     protected val createdAt: Long = System.currentTimeMillis()
-    protected val sdkType: String = "ANDROID_NATIVE"
+    protected val sdkType: AnalyticsSdkType = AnalyticsSdkTypeResolver().resolve()
     protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest
@@ -125,7 +126,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
                     putOpt(ANALYTICS_URL_FIELD, t.analyticsUrl)
                     putOpt(EVENT_TYPE_FIELD, t.eventType.name)
                     put(CREATED_AT_FIELD, t.createdAt)
-                    put(SDK_TYPE_FIELD, t.sdkType)
+                    put(SDK_TYPE_FIELD, t.sdkType.name)
                     put(SDK_VERSION_FIELD, t.sdkVersion)
                     put(SDK_INTEGRATION_TYPE_FIELD, t.sdkIntegrationType.name)
                 }
