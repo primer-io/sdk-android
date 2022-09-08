@@ -1,23 +1,20 @@
 package io.primer.android.model
 
-import io.primer.android.http.exception.HttpException
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.models.ConfigurationData
-import io.primer.android.data.tokenization.models.TokenizationRequest
-import io.primer.android.data.error.model.APIError
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.error.model.APIError
 import io.primer.android.data.payments.exception.SessionCreateException
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.di.ApiVersion
 import io.primer.android.di.SDK_API_VERSION_HEADER
+import io.primer.android.http.exception.HttpException
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonObject
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Headers
@@ -62,7 +59,6 @@ internal suspend inline fun Call.await(): Response =
 internal class Model constructor(
     private val okHttpClient: OkHttpClient,
     private val localConfigurationDataSource: LocalConfigurationDataSource,
-    private val json: Json,
 ) {
 
     // FIXME avoid this null-assertion
@@ -73,12 +69,12 @@ internal class Model constructor(
         tokenizationRequest: TokenizationRequest,
     ): Flow<PaymentMethodTokenInternal> =
         flow {
-
-            val map =
-                json.encodeToJsonElement(tokenizationRequest).jsonObject
-                    .filterNot { it.key == "type" }
             val body =
-                RequestBody.create(MediaType.get("application/json"), json.encodeToString(map))
+                RequestBody.create(
+                    MediaType.get("application/json"),
+                    JSONSerializationUtils.getSerializer<TokenizationRequest>()
+                        .serialize(tokenizationRequest).toString()
+                )
 
             // FIXME extra endpoint construction to collaborator (non-static call)
             val url =
@@ -110,9 +106,9 @@ internal class Model constructor(
                 response.body()?.close()
                 continuation.resume(json)
             }
-            val token: PaymentMethodTokenInternal = json
-                .decodeFromString(PaymentMethodTokenInternal.serializer(), jsonBody.toString())
-
+            val token: PaymentMethodTokenInternal =
+                JSONSerializationUtils.getDeserializer<PaymentMethodTokenInternal>()
+                    .deserialize(jsonBody)
             emit(token)
         }
 

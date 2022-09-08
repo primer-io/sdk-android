@@ -1,88 +1,117 @@
 package io.primer.android.data.error.model
 
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.logging.DefaultLogger
-import io.primer.android.model.Serialization
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Response
 import okhttp3.ResponseBody
-import java.io.IOException
-import java.util.Collections
+import org.json.JSONObject
 
-@Serializable
 internal data class APIError(
     val description: String,
-    val errorId: String? = null,
-    val diagnosticsId: String? = null,
-    val validationErrors: List<ValidationError> = Collections.emptyList(),
-) {
+    val errorId: String?,
+    val diagnosticsId: String?,
+    val validationErrors: List<ValidationError>,
+) : JSONDeserializable {
 
-    @Serializable
     data class ValidationErrorDetail(
         val path: String,
         val description: String,
-    )
+    ) : JSONDeserializable {
+        companion object {
 
-    @Serializable
+            private const val PATH_FIELD = "path"
+            private const val DESCRIPTION_FIELD = "description"
+
+            @JvmField
+            val deserializer = object : JSONDeserializer<ValidationErrorDetail> {
+                override fun deserialize(t: JSONObject): ValidationErrorDetail {
+                    return ValidationErrorDetail(
+                        t.getString(PATH_FIELD),
+                        t.getString(DESCRIPTION_FIELD),
+                    )
+                }
+            }
+        }
+    }
+
     data class ValidationError(
         val model: String,
         val errors: List<ValidationErrorDetail>,
-    )
+    ) : JSONDeserializable {
+        companion object {
+
+            private const val MODEL_FIELD = "model"
+            private const val ERRORS_FIELD = "errors"
+
+            @JvmField
+            val deserializer = object : JSONDeserializer<ValidationError> {
+                override fun deserialize(t: JSONObject): ValidationError {
+                    return ValidationError(
+                        t.getString(MODEL_FIELD),
+                        t.getJSONArray(ERRORS_FIELD).sequence<JSONObject>().map {
+                            JSONSerializationUtils.getDeserializer<ValidationErrorDetail>()
+                                .deserialize(it)
+                        }.toList(),
+                    )
+                }
+            }
+        }
+    }
 
     companion object {
-
-        private val json = Serialization.json
-
         private val log = DefaultLogger("api-error")
 
-        private val DEFAULT_ERROR_ELEMENT = json.parseToJsonElement(
-            "{\"description\":\"Unknown Client Error\"}"
-        )
+        private const val DEFAULT_ERROR_ELEMENT =
+            """{
+                    "error": {
+                        "description": "Unknown Client Error."
+                    }
+                }"""
 
         fun create(response: Response): APIError {
-            return json.decodeFromJsonElement(getErrorFromContent(response.body()))
+            return JSONSerializationUtils.getDeserializer<APIError>()
+                .deserialize(getErrorFromContent(response.body()))
         }
 
-        fun create(ignored: IOException?): APIError {
-            return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
-        }
-
-        fun createDefault(): APIError {
-            return json.decodeFromJsonElement(DEFAULT_ERROR_ELEMENT)
-        }
-
-        fun createDefaultWithMessage(message: String): APIError {
-            return APIError(message)
-        }
-
-        private fun getErrorFromContent(body: ResponseBody?): JsonObject {
+        private fun getErrorFromContent(body: ResponseBody?): JSONObject {
             if (body == null) {
-                return DEFAULT_ERROR_ELEMENT.jsonObject
+                return JSONObject(DEFAULT_ERROR_ELEMENT)
             }
 
             val content = body.string()
 
             try {
-                val element = json.parseToJsonElement(content).jsonObject
-                if (element.containsKey("error")) {
-                    return element["error"]!!.jsonObject
-                }
-
-                if (element.containsKey("message")) {
-                    val message =
-                        element["message"]?.jsonPrimitive?.content ?: "Unknown Client Error"
-                    val jsonString = "{\"description\": \"$message\"}"
-                    return json.parseToJsonElement(jsonString).jsonObject
-                }
+                return JSONObject(content).getJSONObject("error")
             } catch (ignored: Exception) {
                 log.warn("Failed to decode json response")
                 log.warn(content)
             }
 
-            return DEFAULT_ERROR_ELEMENT.jsonObject
+            return JSONObject(DEFAULT_ERROR_ELEMENT)
+        }
+
+        private const val DESCRIPTION_FIELD = "description"
+        private const val ERROR_ID_FIELD = "errorId"
+        private const val DIAGNOSTICS_ID_FIELD = "diagnosticsId"
+        private const val VALIDATION_ERRORS_FIELD = "validationErrors"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<APIError> {
+            override fun deserialize(t: JSONObject): APIError {
+                return APIError(
+                    t.getString(DESCRIPTION_FIELD),
+                    t.optNullableString(ERROR_ID_FIELD),
+                    t.optNullableString(DIAGNOSTICS_ID_FIELD),
+                    t.getJSONArray(VALIDATION_ERRORS_FIELD).sequence<JSONObject>().map {
+                        JSONSerializationUtils.getDeserializer<ValidationError>()
+                            .deserialize(it)
+                    }.toList(),
+                )
+            }
         }
     }
 }

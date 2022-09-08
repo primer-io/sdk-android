@@ -1,5 +1,6 @@
 package io.primer.android.data.payments.methods.datasource
 
+import io.primer.android.core.data.models.EmptyDataRequest
 import io.primer.android.data.base.datasource.BaseFlowDataSource
 import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
@@ -10,8 +11,8 @@ internal class RemoteVaultedPaymentMethodsExchangeDataSource(
 ) : BaseFlowDataSource<PaymentMethodTokenInternal, BaseRemoteRequest<String>> {
 
     override fun execute(input: BaseRemoteRequest<String>) =
-        primerHttpClient.post<Unit, PaymentMethodTokenInternal>(
+        primerHttpClient.post<EmptyDataRequest, PaymentMethodTokenInternal>(
             "${input.configuration.pciUrl}/payment-instruments/${input.data}/exchange",
-            Unit
+            EmptyDataRequest()
         )
 }

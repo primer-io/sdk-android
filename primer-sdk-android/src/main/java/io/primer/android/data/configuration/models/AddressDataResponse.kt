@@ -1,19 +1,21 @@
 package io.primer.android.data.configuration.models
 
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.domain.action.models.PrimerAddress
-import kotlinx.serialization.Serializable
+import org.json.JSONObject
 
-@Serializable
 internal data class AddressDataResponse(
-    val firstName: String? = null,
-    val lastName: String? = null,
-    val addressLine1: String? = null,
-    val addressLine2: String? = null,
-    val postalCode: String? = null,
-    val city: String? = null,
-    val state: String? = null,
-    val countryCode: CountryCode? = null,
-) {
+    val firstName: String?,
+    val lastName: String?,
+    val addressLine1: String?,
+    val addressLine2: String?,
+    val postalCode: String?,
+    val city: String?,
+    val state: String?,
+    val countryCode: CountryCode?,
+) : JSONDeserializable {
     fun toAddress() = PrimerAddress(
         firstName,
         lastName,
@@ -24,4 +26,33 @@ internal data class AddressDataResponse(
         state,
         countryCode
     )
+
+    companion object {
+
+        private const val FIRST_NAME_FIELD = "firstName"
+        private const val LAST_NAME_FIELD = "lastName"
+        private const val ADDRESS_LINE_1_FIELD = "addressLine1"
+        private const val ADDRESS_LINE_2_FIELD = "addressLine2"
+        private const val CITY_FIELD = "city"
+        private const val STATE_FIELD = "state"
+        private const val COUNTRY_CODE_FIELD = "countryCode"
+        private const val POSTAL_CODE_FIELD = "postalCode"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<AddressDataResponse> {
+
+            override fun deserialize(t: JSONObject): AddressDataResponse {
+                return AddressDataResponse(
+                    t.optNullableString(FIRST_NAME_FIELD),
+                    t.optNullableString(LAST_NAME_FIELD),
+                    t.optNullableString(ADDRESS_LINE_1_FIELD),
+                    t.optNullableString(ADDRESS_LINE_2_FIELD),
+                    t.optNullableString(POSTAL_CODE_FIELD),
+                    t.optNullableString(CITY_FIELD),
+                    t.optNullableString(STATE_FIELD),
+                    t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
+                )
+            }
+        }
+    }
 }

@@ -103,7 +103,7 @@ internal sealed class CheckoutEvent(
     ) :
         CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
 
-    internal class Start3DS(
+    class Start3DS(
         val processor3DSData: Processor3DS? = null
     ) : CheckoutEvent(CheckoutEventType.START_3DS)
 
@@ -114,17 +114,23 @@ internal sealed class CheckoutEvent(
         val statusUrl: String,
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
 
-    internal class StartAsyncFlow(
+    class StartAsyncFlow(
         val clientTokenIntent: String,
         val statusUrl: String,
         val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 
-    internal class StartVoucherFlow(
+    class StartVoucherFlow(
         val clientTokenIntent: String,
         val statusUrl: String,
         val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
+
+    object AsyncFlowRedirect : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_REDIRECT)
+
+    object AsyncFlowPollingError : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_POLLING_ERROR)
+
+    object AsyncFlowCancelled : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_CANCELLED)
 
     // components helpers
     class ConfigurationSuccess(

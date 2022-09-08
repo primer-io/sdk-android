@@ -6,9 +6,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import io.primer.android.utils.UiMode
-import kotlinx.serialization.Serializable
 
-@Serializable
 sealed class ColorData {
 
     fun getColor(context: Context, isDarkMode: Boolean?): Int {
@@ -23,7 +21,6 @@ sealed class ColorData {
     }
 }
 
-@Serializable
 class ResourceColor private constructor(
     @ColorRes val default: Int,
     @ColorRes val dark: Int,
@@ -37,7 +34,6 @@ class ResourceColor private constructor(
     }
 }
 
-@Serializable
 class DynamicColor private constructor(
     @ColorInt val default: Int,
     @ColorInt val dark: Int,

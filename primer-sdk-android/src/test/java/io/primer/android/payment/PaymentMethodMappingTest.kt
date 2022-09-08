@@ -21,8 +21,8 @@ internal class PaymentMethodMappingTest {
 
     private val settings: PrimerSettings = PrimerSettings().apply {
         order = OrderDataResponse(
-            amount = 50,
-            currency = "USD",
+            merchantAmount = 50,
+            currencyCode = "USD",
             countryCode = CountryCode.US,
         )
     }

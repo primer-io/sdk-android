@@ -3,6 +3,7 @@ package io.primer.android.ui.base.webview
 import io.primer.android.ui.payment.apaya.ApayaWebViewClient
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewClient
 import io.primer.android.ui.payment.klarna.KlarnaWebViewClient
+import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewClient
 
 internal interface WebViewClientFactory {
 
@@ -22,6 +23,11 @@ internal interface WebViewClientFactory {
                     url,
                     captureUrl
                 )
+                WebViewClientType.PROCESSOR_3DS -> Processor3dsWebViewClient(
+                    activity,
+                    url,
+                    captureUrl
+                )
             }
         }
     }
@@ -30,5 +36,6 @@ internal interface WebViewClientFactory {
 internal enum class WebViewClientType {
     KLARNA,
     APAYA,
-    ASYNC
+    ASYNC,
+    PROCESSOR_3DS
 }

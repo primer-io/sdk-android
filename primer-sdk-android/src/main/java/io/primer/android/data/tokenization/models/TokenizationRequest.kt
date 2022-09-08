@@ -1,59 +1,80 @@
 package io.primer.android.data.tokenization.models
 
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONSerializer
 import io.primer.android.domain.tokenization.models.TokenizationParams
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 import org.json.JSONObject
 
-@Serializable
-internal abstract class TokenizationRequest {
+internal abstract class TokenizationRequest : JSONSerializable {
 
-    abstract val paymentInstrument: JsonElement
+    abstract val paymentInstrument: JSONObject
+
+    companion object {
+        @JvmField
+        val serializer = object : JSONSerializer<TokenizationRequest> {
+            override fun serialize(t: TokenizationRequest): JSONObject {
+                return when (t) {
+                    is TokenizationCheckoutRequest ->
+                        TokenizationCheckoutRequest.serializer.serialize(t)
+                    is TokenizationVaultRequest -> TokenizationVaultRequest.serializer.serialize(t)
+                    else -> throw IllegalStateException("Unsupported instance of $t")
+                }
+            }
+        }
+    }
 }
 
 internal fun TokenizationParams.toTokenizationRequest(): TokenizationRequest {
     return when (paymentMethodIntent) {
         PrimerSessionIntent.CHECKOUT -> TokenizationCheckoutRequest(
-            paymentMethodDescriptor.toPaymentInstrument().toJson()
+            paymentMethodDescriptor.toPaymentInstrument()
         )
         PrimerSessionIntent.VAULT -> TokenizationVaultRequest(
-            paymentMethodDescriptor.toPaymentInstrument().toJson(),
+            paymentMethodDescriptor.toPaymentInstrument(),
             TokenType.MULTI_USE.name,
             paymentMethodIntent.toString()
         )
     }
 }
 
-internal fun JSONObject.toJson(): JsonElement {
-    return Json.parseToJsonElement(this.toString())
-}
-
-@Serializable
-@Suppress("UnusedPrivateMember")
 internal data class TokenizationVaultRequest(
-    override val paymentInstrument: JsonElement,
+    override val paymentInstrument: JSONObject,
     private val tokenType: String,
     private val paymentFlow: String,
-) : TokenizationRequest()
+) : TokenizationRequest() {
 
-@Serializable
+    companion object {
+        private const val PAYMENT_INSTRUMENT_FIELD = "paymentInstrument"
+        private const val TOKEN_TYPE_FIELD = "tokenType"
+        private const val PAYMENT_FLOW_FIELD = "paymentFlow"
+
+        @JvmField
+        val serializer = object : JSONSerializer<TokenizationVaultRequest> {
+            override fun serialize(t: TokenizationVaultRequest): JSONObject {
+                return JSONObject().apply {
+                    put(PAYMENT_INSTRUMENT_FIELD, t.paymentInstrument)
+                    put(TOKEN_TYPE_FIELD, t.tokenType)
+                    put(PAYMENT_FLOW_FIELD, t.paymentFlow)
+                }
+            }
+        }
+    }
+}
+
 internal data class TokenizationCheckoutRequest(
-    override val paymentInstrument: JsonElement,
-) : TokenizationRequest()
+    override val paymentInstrument: JSONObject,
+) : TokenizationRequest() {
+    companion object {
+        private const val PAYMENT_INSTRUMENT_FIELD = "paymentInstrument"
 
-internal val tokenizationSerializationModule = SerializersModule {
-    polymorphic(TokenizationRequest::class) {
-        subclass(
-            TokenizationVaultRequest::class,
-            TokenizationVaultRequest.serializer()
-        )
-        subclass(
-            TokenizationCheckoutRequest::class,
-            TokenizationCheckoutRequest.serializer()
-        )
+        @JvmField
+        val serializer = object : JSONSerializer<TokenizationCheckoutRequest> {
+            override fun serialize(t: TokenizationCheckoutRequest): JSONObject {
+                return JSONObject().apply {
+                    put(PAYMENT_INSTRUMENT_FIELD, t.paymentInstrument)
+                }
+            }
+        }
     }
 }

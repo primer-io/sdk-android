@@ -7,7 +7,6 @@ import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
-import kotlinx.serialization.Transient
 
 internal data class GoCardless(
     val companyName: String? = null,
@@ -26,7 +25,6 @@ internal data class GoCardless(
 
     override val canBeVaulted: Boolean = true
 
-    @Transient
     override val module: PaymentMethodModule = object : PaymentMethodModule {
         override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
             // no-op

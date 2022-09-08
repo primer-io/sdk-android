@@ -7,6 +7,7 @@ import io.primer.android.components.domain.payments.PaymentTokenizationInteracto
 import io.primer.android.components.domain.payments.PaymentsTypesInteractor
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.base.None
+import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
@@ -41,6 +42,7 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     paymentInputDataTypeValidateInteractor: PaymentInputDataTypeValidateInteractor,
     paymentInputTypesInteractor: PaymentInputTypesInteractor,
     actionInteractor: ActionInteractor,
+    asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor,
     private val paymentsTypesInteractor: PaymentsTypesInteractor,
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val createPaymentInteractor: CreatePaymentInteractor,
@@ -50,9 +52,11 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     paymentInputTypesInteractor,
     paymentTokenizationInteractor,
     paymentInputDataTypeValidateInteractor,
-    actionInteractor
+    actionInteractor,
+    asyncPaymentMethodInteractor
 ),
     HeadlessUniversalCheckoutDelegate {
+
     private var transactionId: String? = null
 
     override fun start() {

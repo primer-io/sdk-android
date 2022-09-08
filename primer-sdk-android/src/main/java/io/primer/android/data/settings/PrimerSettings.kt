@@ -4,15 +4,11 @@ import io.primer.android.analytics.data.models.SdkIntegrationType
 import io.primer.android.data.configuration.models.CustomerDataResponse
 import io.primer.android.data.configuration.models.OrderDataResponse
 import io.primer.android.ui.settings.PrimerUIOptions
-import io.primer.android.utils.LocaleSerializer
-import kotlinx.serialization.Serializable
 import java.util.Locale
 
-@Serializable
 data class PrimerSettings(
     var paymentHandling: PrimerPaymentHandling = PrimerPaymentHandling.AUTO,
-    @Serializable(with = LocaleSerializer::class) var locale: Locale = Locale.getDefault(),
-
+    var locale: Locale = Locale.getDefault(),
     var paymentMethodOptions: PrimerPaymentMethodOptions = PrimerPaymentMethodOptions(),
     var uiOptions: PrimerUIOptions = PrimerUIOptions(),
     var debugOptions: PrimerDebugOptions = PrimerDebugOptions(),
@@ -30,11 +26,11 @@ data class PrimerSettings(
 
     val currency: String
         @Throws
-        get() = order.currency ?: throw IllegalArgumentException(CURRENCY_EXCEPTION)
+        get() = order.currencyCode ?: throw IllegalArgumentException(CURRENCY_EXCEPTION)
 
     val currentAmount: Int
         @Throws
-        get() = order.amount ?: order.totalOrderAmount ?: throw IllegalArgumentException(
+        get() = order.merchantAmount ?: order.totalOrderAmount ?: throw IllegalArgumentException(
             AMOUNT_EXCEPTION
         )
 

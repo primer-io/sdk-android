@@ -4,9 +4,7 @@ import androidx.annotation.RestrictTo
 import io.primer.android.components.ui.assets.Brand
 import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.data.token.model.ClientTokenIntent
-import kotlinx.serialization.Serializable
 
-@Serializable
 internal enum class PaymentMethodType(
     internal val intents: Array<ClientTokenIntent>? = null,
     internal val brand: Brand,

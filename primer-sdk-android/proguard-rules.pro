@@ -77,8 +77,6 @@
     *;
 }
 
--keep,includedescriptorclasses class io.primer.android.data.tokenization.models.PaymentInstrumentData$$serializer { *; }
-
 -keep class io.primer.android.data.tokenization.models.ExternalPayerInfo {
     *;
 }
@@ -116,10 +114,6 @@
 -keep enum io.primer.android.data.configuration.models.CountryCode {
     *;
 }
-
--keep,includedescriptorclasses class io.primer.android.data.configuration.models.CountryCode$$serializer { *; }
-
--keep,includedescriptorclasses class io.primer.android.data.configuration.models.PaymentMethodType$$serializer { *; }
 
 -keep enum io.primer.android.data.configuration.models.PaymentMethodType {
     public *;
@@ -223,29 +217,4 @@
 }
 
 # for annotations
--keep @interface kotlinx.serialization.Serializable
 -keep @interface io.primer.android.ExperimentalPrimerApi
-
-#----------------------------------Serialization--------------------------------------------------#
--keepattributes RuntimeVisibleAnnotations,AnnotationDefault
-
--keepclassmembers class kotlinx.serialization.json.** {
-    *** Companion;
-}
-
--keepclasseswithmembers class kotlinx.serialization.json.** {
-    kotlinx.serialization.KSerializer serializer(...);
-}
-
--keepclassmembers @kotlinx.serialization.Serializable class io.primer.android.** {
-    # lookup for plugin generated serializable classes
-    *** Companion;
-    # lookup for serializable objects
-    *** INSTANCE;
-    kotlinx.serialization.KSerializer serializer(...);
-}
-# lookup for plugin generated serializable classes
--if @kotlinx.serialization.Serializable class io.primer.android.**
--keepclassmembers class io.primer.android.<1>$Companion {
-    kotlinx.serialization.KSerializer serializer(...);
-}

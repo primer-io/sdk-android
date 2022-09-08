@@ -1,8 +1,5 @@
 package io.primer.android.threeds.data.models
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 internal enum class ChallengePreference {
 
     NO_PREFERENCE,

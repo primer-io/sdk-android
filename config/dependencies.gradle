@@ -5,10 +5,6 @@ ext {
             Kotlin    : [
                     stdlib       : "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}",
                     coroutines   : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}",
-                    Serialization: [
-                            core: "org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinSerialization}",
-                            json: "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinSerialization}"
-                    ]
             ],
             Networking: [
                     okhttp                  : "com.squareup.okhttp3:okhttp:${Versions.okhttp}",

@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.helper
 
-import io.primer.android.data.payments.create.models.PaymentResponse
+import io.primer.android.data.payments.create.models.PaymentDataResponse
 import io.primer.android.data.payments.create.models.RequiredActionName
 import io.primer.android.data.payments.create.models.toPaymentResult
 import io.primer.android.data.token.model.ClientToken
@@ -11,7 +11,7 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 
 internal class PrimerPaymentMethodDataHelper {
 
-    fun preparePaymentResult(response: PaymentResponse): PaymentResult {
+    fun preparePaymentResult(response: PaymentDataResponse): PaymentResult {
         return when (response.requiredAction?.name) {
             RequiredActionName.PAYMENT_METHOD_VOUCHER -> {
                 val clientToken = response.requiredAction.clientToken

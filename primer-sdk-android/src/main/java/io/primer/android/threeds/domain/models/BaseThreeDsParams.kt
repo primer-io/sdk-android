@@ -85,7 +85,7 @@ internal data class ThreeDsVaultParams(
         challengePreference,
         config.settings.currentAmount,
         config.settings.currency,
-        config.settings.order.id,
+        config.settings.order.orderId,
         config.settings.customer.firstName,
         config.settings.customer.emailAddress,
         authenticationRequestParameters.sdkAppID.orEmpty(),

@@ -16,7 +16,7 @@ internal class AsyncPaymentMethodWebViewClient(
 
     override fun getCaptureUrl(url: String?) = url
 
-    override fun canCaptureUrl(url: String?) = false
+    override fun canCaptureUrl(url: String?) = CAPTURE_URLS.any { url?.contains(it) == true }
 
     override fun handleDeepLink(request: WebResourceRequest?): Boolean {
         getIntentFromRequest(request)?.let {
@@ -28,5 +28,10 @@ internal class AsyncPaymentMethodWebViewClient(
 
     override fun cannotHandleIntent(intent: Intent) {
         Log.e(TAG, "Cannot handle intent: ${intent.data}")
+    }
+
+    private companion object {
+        val CAPTURE_URLS =
+            listOf("primer.io/static/loading.html", "primer.io/static/loading-spinner.html")
     }
 }

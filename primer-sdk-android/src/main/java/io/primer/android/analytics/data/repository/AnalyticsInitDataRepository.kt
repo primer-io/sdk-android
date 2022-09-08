@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
@@ -27,7 +28,7 @@ internal data class AnalyticsInitDataRepository(
             .flatMapLatest {
                 localAnalyticsDataSource.addEvents(it)
                 analyticsDataSender.sendEvents(it)
-            }
+            }.catch { it.printStackTrace() }
             .collect { }
     }
 }

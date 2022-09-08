@@ -3,9 +3,7 @@ package io.primer.android.ui.settings
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import io.primer.android.R
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class PrimerTheme internal constructor(
     internal val isDarkMode: Boolean?,
     internal val primaryColor: ColorData,
@@ -378,7 +376,6 @@ data class SearchInputThemeData(
 
 // Internal models
 
-@Serializable
 internal data class ButtonTheme constructor(
     val defaultColor: ColorData,
     val disabledColor: ColorData,
@@ -388,13 +385,11 @@ internal data class ButtonTheme constructor(
     val cornerRadius: DimensionData,
 )
 
-@Serializable
 internal data class TextTheme(
     val defaultColor: ColorData,
     val fontSize: DimensionData,
 )
 
-@Serializable
 internal data class BorderTheme(
     val defaultColor: ColorData,
     val selectedColor: ColorData,
@@ -402,7 +397,6 @@ internal data class BorderTheme(
     val width: DimensionData,
 )
 
-@Serializable
 internal data class InputTheme(
     val backgroundColor: ColorData,
     val cornerRadius: DimensionData,
@@ -411,7 +405,6 @@ internal data class InputTheme(
     val border: BorderTheme,
 )
 
-@Serializable
 internal data class SearchInputTheme(
     val backgroundColor: ColorData,
     val cornerRadius: DimensionData,

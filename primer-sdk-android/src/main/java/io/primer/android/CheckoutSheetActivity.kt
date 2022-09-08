@@ -26,7 +26,6 @@ import io.primer.android.events.EventBus
 import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
-import io.primer.android.model.Serialization
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -62,6 +61,7 @@ import io.primer.android.ui.fragments.forms.QrCodeFragment
 import io.primer.android.ui.fragments.multibanko.MultibancoPaymentFragment
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.android.ui.payment.klarna.KlarnaPaymentData
+import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
@@ -78,9 +78,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     private val primerViewModel: PrimerViewModel by viewModel()
     private val tokenizationViewModel: TokenizationViewModel by viewModel()
     private val errorEventResolver: BaseErrorEventResolver by inject()
+    private val config: PrimerConfig by inject()
 
     private lateinit var sheet: CheckoutSheetFragment
-    private lateinit var config: PrimerConfig
 
     private val viewStatusObserver = Observer<ViewStatus> { viewStatus ->
         if (config.settings.fromHUC) {
@@ -147,14 +147,14 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             is CheckoutEvent.Start3DS -> {
                 it.processor3DSData?.let { data ->
                     startActivityForResult(
-                        AsyncPaymentMethodWebViewActivity.getLaunchIntent(
+                        Processor3dsWebViewActivity.getLaunchIntent(
                             this,
                             data.redirectUrl,
                             "",
                             data.statusUrl,
                             data.title,
                             PaymentMethodType.PAYMENT_CARD.name,
-                            WebViewClientType.ASYNC
+                            WebViewClientType.PROCESSOR_3DS
                         ),
                         ASYNC_METHOD_REQUEST_CODE
                     )
@@ -163,12 +163,16 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 }
             }
             is CheckoutEvent.StartAsyncRedirectFlow -> {
+                openFragment(
+                    PaymentMethodStatusFragment.newInstance(
+                        it.statusUrl,
+                        it.paymentMethodType
+                    )
+                )
                 startActivityForResult(
                     AsyncPaymentMethodWebViewActivity.getLaunchIntent(
                         this,
                         it.redirectUrl,
-                        tokenizationViewModel.asyncRedirectUrl.value.orEmpty(),
-                        it.statusUrl,
                         (
                             primerViewModel.selectedPaymentMethod.value as?
                                 AsyncPaymentMethodDescriptor
@@ -372,17 +376,9 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val json = Serialization.json
-
-        val config = intent.getStringExtra("config")
-            ?.let { json.decodeFromString(PrimerConfig.serializer(), it) }
-            ?: return
-
         if (config.settings.fromHUC) {
             ensureClicksGoThrough()
         }
-
-        this.config = config
 
         primerViewModel.initializeAnalytics()
 

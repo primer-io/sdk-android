@@ -1,5 +1,6 @@
 package io.primer.android.analytics.di
 
+import io.primer.android.HttpClientFactory
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.RemoteAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.TimerDataSource
@@ -17,6 +18,7 @@ import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSour
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
 import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
+import io.primer.android.http.PrimerHttpClient
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import io.primer.android.presentation.base.BaseViewModel
@@ -26,10 +28,16 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 private const val ANALYTICS_LOGGER_NAME = "ANALYTICS_LOGGER"
+private const val ANALYTICS_HTTP_CLIENT_NAME = "ANALYTICS_HTTP_CLIENT"
 
 internal val analyticsModule = {
     module {
         factory<Logger>(named(ANALYTICS_LOGGER_NAME)) { DefaultLogger(ANALYTICS_LOGGER_NAME) }
+        single(named(ANALYTICS_HTTP_CLIENT_NAME)) {
+            PrimerHttpClient(
+                HttpClientFactory().build(),
+            )
+        }
         single { ScreenSizeDataSource(get()) }
         single { BatteryLevelDataSource(get()) }
         single { BatteryStatusDataSource(get()) }
@@ -38,9 +46,9 @@ internal val analyticsModule = {
         single { UncaughtHandlerDataSource() }
         single { AnalyticsDataSender(get(), get(), get()) }
         single { LocalAnalyticsDataSource.instance }
-        single { FileAnalyticsDataSource(get(), get()) }
+        single { FileAnalyticsDataSource(get()) }
         single { AnalyticsFileProvider(get()) }
-        single { RemoteAnalyticsDataSource(get()) }
+        single { RemoteAnalyticsDataSource(get(named(ANALYTICS_HTTP_CLIENT_NAME))) }
         single { TimerEventProvider() }
         single { TimerDataSource(get()) }
         single<AnalyticsRepository> {

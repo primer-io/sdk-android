@@ -1,8 +1,5 @@
 package io.primer.android.ui.settings
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class PrimerUIOptions(
     var isInitScreenEnabled: Boolean = true,
     var isSuccessScreenEnabled: Boolean = true,

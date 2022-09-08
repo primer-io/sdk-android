@@ -1,25 +1,26 @@
 package io.primer.android.data.configuration.models
 
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.extensions.optNullableBoolean
+import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.payments.displayMetadata.model.IconDisplayMetadata
-import io.primer.android.domain.ClientSessionData
-import io.primer.android.domain.action.models.PrimerClientSession
-import io.primer.android.domain.session.models.CheckoutModule
-import io.primer.android.domain.session.models.ClientSession
 import io.primer.android.domain.session.models.PaymentMethodConfig
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import org.json.JSONObject
 
-@Serializable
 internal data class ConfigurationDataResponse(
     val pciUrl: String,
     val coreUrl: String,
     val paymentMethods: List<PaymentMethodConfigDataResponse>,
-    val checkoutModules: List<CheckoutModuleDataResponse> = listOf(),
-    val keys: ConfigurationKeys? = null,
-    val clientSession: ClientSessionResponse? = null,
-    @SerialName("env") val environment: Environment,
-    val primerAccountId: String? = null,
-) {
+    val checkoutModules: List<CheckoutModuleDataResponse>,
+    val keys: ConfigurationKeysDataResponse?,
+    val clientSession: ClientSessionDataResponse?,
+    val environment: Environment,
+    val primerAccountId: String?,
+) : JSONDeserializable {
+
     fun toConfigurationData(iconDisplayMetaData: List<Map<String, List<IconDisplayMetadata>>>) =
         ConfigurationData(
             pciUrl,
@@ -32,95 +33,132 @@ internal data class ConfigurationDataResponse(
             primerAccountId,
             iconDisplayMetaData
         )
+
+    companion object {
+        private const val PCI_URL_FIELD = "pciUrl"
+        private const val CORE_URL_FIELD = "coreUrl"
+        private const val PAYMENT_METHODS_CONFIG_FIELD = "paymentMethods"
+        private const val CHECKOUT_MODULES_FIELD = "checkoutModules"
+        private const val CONFIGURATION_KEYS_FIELD = "keys"
+        private const val CLIENT_SESSION_FIELD = "clientSession"
+        private const val ENVIRONMENT_FIELD = "env"
+        private const val PRIMER_ACCOUNT_ID_FIELD = "primerAccountId"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<ConfigurationDataResponse> {
+
+            override fun deserialize(t: JSONObject): ConfigurationDataResponse {
+                return ConfigurationDataResponse(
+                    t.getString(PCI_URL_FIELD),
+                    t.getString(CORE_URL_FIELD),
+                    t.getJSONArray(PAYMENT_METHODS_CONFIG_FIELD).sequence<JSONObject>()
+                        .map {
+                            JSONSerializationUtils
+                                .getDeserializer<PaymentMethodConfigDataResponse>()
+                                .deserialize(it)
+                        }.toList(),
+                    t.getJSONArray(CHECKOUT_MODULES_FIELD).sequence<JSONObject>()
+                        .map {
+                            JSONSerializationUtils
+                                .getDeserializer<CheckoutModuleDataResponse>()
+                                .deserialize(it)
+                        }.toList(),
+                    t.optJSONObject(CONFIGURATION_KEYS_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getDeserializer<ConfigurationKeysDataResponse>()
+                            .deserialize(it)
+                    },
+                    JSONSerializationUtils
+                        .getDeserializer<ClientSessionDataResponse>()
+                        .deserialize(t.getJSONObject(CLIENT_SESSION_FIELD)),
+                    Environment.valueOf(t.getString(ENVIRONMENT_FIELD)),
+                    t.optNullableString(PRIMER_ACCOUNT_ID_FIELD)
+                )
+            }
+        }
+    }
 }
 
-@Serializable
 internal data class PaymentMethodConfigDataResponse(
-    val id: String? = null, // payment card has null only
-    val name: String? = null,
-    val implementationType: PaymentMethodImplementationType =
-        PaymentMethodImplementationType.UNKNOWN,
+    val id: String?, // payment card has null only
+    val name: String?,
+    val implementationType: PaymentMethodImplementationType,
     val type: String,
-    val options: PaymentMethodRemoteConfigOptions? = null,
-    val displayMetadata: PaymentMethodDisplayMetadataResponse? = null
-) {
+    val options: PaymentMethodRemoteConfigOptions?,
+    val displayMetadata: PaymentMethodDisplayMetadataResponse?
+) : JSONDeserializable {
     fun toPaymentMethodConfig() = PaymentMethodConfig(type)
+
+    companion object {
+        private const val ID_FIELD = "id"
+        private const val NAME_FIELD = "name"
+        private const val IMPLEMENTATION_TYPE_FIELD = "implementationType"
+        private const val TYPE_FIELD = "type"
+        private const val OPTIONS_FIELD = "options"
+        private const val DISPLAY_METADATA_FIELD = "displayMetadata"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<PaymentMethodConfigDataResponse> {
+
+            override fun deserialize(t: JSONObject): PaymentMethodConfigDataResponse {
+                return PaymentMethodConfigDataResponse(
+                    t.optNullableString(ID_FIELD),
+                    t.optNullableString(NAME_FIELD),
+                    PaymentMethodImplementationType.safeValueOf(
+                        t.optNullableString(
+                            IMPLEMENTATION_TYPE_FIELD
+                        )
+                    ),
+                    t.getString(TYPE_FIELD),
+                    t.optJSONObject(OPTIONS_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getDeserializer<PaymentMethodRemoteConfigOptions>()
+                            .deserialize(it)
+                    },
+                    t.optJSONObject(DISPLAY_METADATA_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getDeserializer<PaymentMethodDisplayMetadataResponse>()
+                            .deserialize(it)
+                    }
+                )
+            }
+        }
+    }
 }
 
 internal enum class PaymentMethodImplementationType {
     NATIVE_SDK,
     WEB_REDIRECT,
     UNKNOWN;
+
+    companion object {
+        fun safeValueOf(type: String?) = values().find { type == it.name } ?: UNKNOWN
+    }
 }
 
-@Serializable
 internal data class PaymentMethodRemoteConfigOptions(
-    val merchantId: String? = null,
-    val merchantAccountId: String? = null,
-    val threeDSecureEnabled: Boolean? = null,
-)
+    val merchantId: String?,
+    val merchantAccountId: String?,
+    val threeDSecureEnabled: Boolean?,
+) : JSONDeserializable {
 
-@Serializable
-internal data class ClientSessionResponse(
-    val clientSessionId: String? = null,
-    val customerId: String? = null,
-    val orderId: String? = null,
-    val amount: Int? = null,
-    val currencyCode: String? = null,
-    val customer: CustomerDataResponse? = null,
-    val order: OrderDataResponse? = null,
-    val paymentMethod: PaymentMethod? = null,
-) {
+    companion object {
+        private const val MERCHANT_ID_FIELD = "merchantId"
+        private const val MERCHANT_ACCOUNT_ID_FIELD = "merchantAccountId"
+        private const val THREE_DS_SECURE_ENABLED_FIELD = "threeDSecureEnabled"
 
-    @Serializable
-    data class PaymentMethod(
-        val vaultOnSuccess: Boolean? = null,
-        val options: List<PaymentMethodOption> = listOf(),
-    ) {
+        @JvmField
+        val deserializer = object : JSONDeserializer<PaymentMethodRemoteConfigOptions> {
 
-        val surcharges: Map<String, Int>
-            get() {
-                val map = mutableMapOf<String, Int>()
-                options.forEach { option ->
-                    if (option.type == "PAYMENT_CARD") {
-                        option.networks?.forEach { network ->
-                            map[network.type] = network.surcharge
-                        }
-                    } else {
-                        map[option.type] = option.surcharge ?: 0
-                    }
-                }
-                return map
+            override fun deserialize(t: JSONObject): PaymentMethodRemoteConfigOptions {
+                return PaymentMethodRemoteConfigOptions(
+                    t.optNullableString(MERCHANT_ID_FIELD),
+                    t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
+                    t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD)
+                )
             }
+        }
     }
-
-    // todo: may be better to use sealed class/polymorphism
-    @Serializable
-    data class PaymentMethodOption(
-        val type: String,
-        val surcharge: Int? = null,
-        val networks: List<NetworkOption>? = null,
-    )
-
-    @Serializable
-    data class NetworkOption(
-        val type: String,
-        val surcharge: Int,
-    )
-
-    fun toClientSessionData() = ClientSessionData(
-        PrimerClientSession(
-            customer?.customerId ?: customerId,
-            order?.id ?: orderId,
-            order?.currency ?: currencyCode,
-            order?.totalOrderAmount ?: amount,
-            order?.lineItems?.map { it.toLineItem() },
-            order?.toOrder(),
-            customer?.toCustomer(),
-        )
-    )
-
-    fun toClientSession() = ClientSession(paymentMethod)
 }
 
 internal enum class Environment(val environment: String) {
@@ -129,67 +167,4 @@ internal enum class Environment(val environment: String) {
     SANDBOX("sandbox"),
     STAGING("staging"),
     PRODUCTION("production"),
-}
-
-@Serializable
-internal data class CheckoutModuleDataResponse(
-    val type: CheckoutModuleType = CheckoutModuleType.UNKNOWN,
-    val requestUrl: String? = null,
-    val options: Map<String, Boolean>? = null,
-) {
-    fun toCheckoutModule() = CheckoutModule(type, options)
-}
-
-@Serializable
-internal enum class CheckoutModuleType {
-
-    BILLING_ADDRESS,
-    CARD_INFORMATION,
-    UNKNOWN
-}
-
-@Serializable
-internal data class PaymentMethodDisplayMetadataResponse(
-    @SerialName("button") internal val buttonData: ButtonDataResponse
-) {
-
-    @Serializable
-    internal data class ButtonDataResponse(
-        val iconUrl: IconUrlDataResponse? = null,
-        @SerialName("backgroundColor") val backgroundColorData: ColorDataResponse? = null,
-        @SerialName("borderColor") val borderColorData: ColorDataResponse? = null,
-        @SerialName("borderWidth") val borderWidthData: BorderWidthData? = null,
-        val cornerRadius: Float? = null,
-        val text: String? = null,
-        @SerialName("textColor") val textColorData: ColorDataResponse? = null,
-        val iconPositionRelativeToText: IconPosition = IconPosition.START
-    ) {
-        @Serializable
-        internal data class IconUrlDataResponse(
-            val colored: String? = null,
-            val light: String? = null,
-            val dark: String? = null
-        )
-
-        @Serializable
-        internal data class ColorDataResponse(
-            val colored: String? = null,
-            val light: String? = null,
-            val dark: String? = null
-        )
-
-        @Serializable
-        internal data class BorderWidthData(
-            val colored: Float? = null,
-            val light: Float? = null,
-            val dark: Float? = null
-        )
-    }
-}
-
-internal enum class IconPosition {
-    START,
-    END,
-    ABOVE,
-    BELOW
 }

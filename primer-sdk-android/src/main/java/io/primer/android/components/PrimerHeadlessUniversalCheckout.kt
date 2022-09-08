@@ -22,7 +22,6 @@ import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.data.tokenization.models.tokenizationSerializationModule
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.DIAppContext
 import io.primer.android.domain.PrimerCheckoutData
@@ -32,7 +31,6 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.model.Serialization
 import org.koin.core.component.get
 
 @ExperimentalPrimerApi
@@ -58,19 +56,21 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                     componentsListener?.onPaymentMethodShowed(e.paymentMethodType)
                 is CheckoutEvent.Start3DS -> {
                     if (e.processor3DSData == null) navigator?.openThreeDsScreen()
-                    else navigator?.openAsyncWebViewScreen(
+                    else navigator?.openProcessor3dsViewScreen(
                         e.processor3DSData.title,
                         e.processor3DSData.paymentMethodType,
                         e.processor3DSData.redirectUrl,
                         e.processor3DSData.statusUrl
                     )
                 }
-                is CheckoutEvent.StartAsyncRedirectFlow -> navigator?.openAsyncWebViewScreen(
-                    e.title,
-                    e.paymentMethodType,
-                    e.redirectUrl,
-                    e.statusUrl
-                )
+                is CheckoutEvent.StartAsyncRedirectFlow -> {
+                    headlessUniversalCheckout?.startAsyncFlow(e.statusUrl, e.paymentMethodType)
+                    navigator?.openAsyncWebViewScreen(
+                        e.title,
+                        e.paymentMethodType,
+                        e.redirectUrl,
+                    )
+                }
                 is CheckoutEvent.ResumeSuccess ->
                     componentsListener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
                 is CheckoutEvent.ResumePending ->
@@ -107,6 +107,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 is CheckoutEvent.ClientSessionUpdateStarted -> {
                     componentsListener?.onBeforeClientSessionUpdated()
                 }
+                is CheckoutEvent.AsyncFlowCancelled -> headlessUniversalCheckout?.clear()
                 else -> Unit
             }
         }
@@ -267,7 +268,6 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     private fun setupDI(context: Context, config: PrimerConfig) {
         DIAppContext.app?.close()
         DIAppContext.init(context.applicationContext, config)
-        Serialization.addModule(tokenizationSerializationModule)
         // refresh the instances
         headlessUniversalCheckout = get()
         navigator = get()

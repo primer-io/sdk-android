@@ -1,21 +1,50 @@
 package io.primer.android.domain.action.models
 
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.extensions.toMap
 import io.primer.android.data.configuration.models.CountryCode
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
+import org.json.JSONObject
 
-@Serializable
 internal data class PrimerCountry(
     override val name: String,
     override val code: CountryCode
-) : PrimerBaseCountryData() {
+) : PrimerBaseCountryData(), JSONDeserializable {
     companion object {
         val default: PrimerCountry = PrimerCountry("United Kingdom", CountryCode.BG)
+
+        private const val NAME_FIELD = "name"
+        private const val COUNTRY_CODE_FIELD = "code"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<PrimerCountry> {
+            override fun deserialize(t: JSONObject): PrimerCountry {
+                return PrimerCountry(
+                    t.getString(NAME_FIELD),
+                    CountryCode.valueOf(t.getString(COUNTRY_CODE_FIELD))
+                )
+            }
+        }
     }
 }
 
-@Serializable
-data class PrimerCountriesCodeInfo(
+internal data class PrimerCountriesCodeInfo(
     val locale: String,
-    val countries: Map<String, JsonElement>
-)
+    val countries: Map<String, *>
+) : JSONDeserializable {
+
+    companion object {
+        private const val LOCALE_FIELD = "locale"
+        private const val COUNTRIES_FIELD = "countries"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<PrimerCountriesCodeInfo> {
+            override fun deserialize(t: JSONObject): PrimerCountriesCodeInfo {
+                return PrimerCountriesCodeInfo(
+                    t.getString(LOCALE_FIELD),
+                    t.getJSONObject(COUNTRIES_FIELD).toMap()
+                )
+            }
+        }
+    }
+}

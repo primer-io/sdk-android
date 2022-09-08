@@ -1,16 +1,16 @@
 package io.primer.android.http
 
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.data.error.model.APIError
 import io.primer.android.http.exception.HttpException
 import io.primer.android.http.exception.JsonDecodingException
 import io.primer.android.http.exception.JsonEncodingException
 import io.primer.android.model.await
-import io.primer.android.data.error.model.APIError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -25,10 +25,9 @@ private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 
 internal class PrimerHttpClient(
     private val okHttpClient: OkHttpClient,
-    private val json: Json,
 ) {
 
-    inline fun <reified R> get(
+    inline fun <reified R : JSONDeserializable> get(
         url: String,
         headers: Map<String, String> = hashMapOf()
     ): Flow<R> =
@@ -44,7 +43,7 @@ internal class PrimerHttpClient(
             )
         }
 
-    inline fun <reified T, reified R> post(
+    inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> post(
         url: String,
         request: T,
         headers: Map<String, String> = hashMapOf(),
@@ -61,7 +60,7 @@ internal class PrimerHttpClient(
             )
         }
 
-    inline fun <reified R> delete(
+    inline fun <reified R : JSONDeserializable> delete(
         url: String,
         headers: Map<String, String> = hashMapOf()
     ): Flow<R> =
@@ -77,7 +76,9 @@ internal class PrimerHttpClient(
             )
         }
 
-    private suspend inline fun <reified R> executeRequest(request: Request): R {
+    private suspend inline fun <reified R : JSONDeserializable> executeRequest(
+        request: Request
+    ): R {
         val response: Response = okHttpClient
             .newCall(request)
             .await()
@@ -96,17 +97,17 @@ internal class PrimerHttpClient(
         }
 
         return try {
-            json.decodeFromString(jsonBody.toString())
+            JSONSerializationUtils.getDeserializer<R>().deserialize(jsonBody)
         } catch (expected: Exception) {
             throw JsonDecodingException(expected)
         }
     }
 
-    private inline fun <reified T> getRequestBody(request: T): RequestBody {
+    private inline fun <reified T : JSONSerializable> getRequestBody(request: T): RequestBody {
         return try {
             RequestBody.create(
                 MediaType.get(CONTENT_TYPE_APPLICATION_JSON),
-                json.encodeToString(request)
+                JSONSerializationUtils.getSerializer<T>().serialize(request).toString()
             )
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)

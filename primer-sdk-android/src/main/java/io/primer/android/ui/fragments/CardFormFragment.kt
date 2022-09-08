@@ -316,7 +316,7 @@ internal class CardFormFragment : BaseFragment() {
         binding.cardFormCardNumber.setSuffixTextColor(ColorStateList.valueOf(textColor))
         val inputFrame = binding.cardFormCardNumber
         val surcharge = primerViewModel.findSurchargeAmount("PAYMENT_CARD", networkAsString)
-        val currency = localConfig.settings.order.currency
+        val currency = localConfig.settings.order.currencyCode
         val amount = MonetaryAmount.create(currency, surcharge)
         val amountText = "+" + PaymentUtils.amountToCurrencyString(amount)
         val surchargeText = if (surcharge > 0) amountText else ""
@@ -622,9 +622,6 @@ internal class CardFormFragment : BaseFragment() {
     private fun onKeyboardVisibilityChanged(visible: Boolean) {
         val hasFocus = cardInputFields.entries.any { it.value.isFocused }
         if (hasFocus && !visible) cardInputFields.entries.forEach { it.value.clearFocus() }
-        else if (visible && !hasFocus &&
-            !tokenizationViewModel.hasField(PrimerInputElementType.CARD_NUMBER)
-        ) focusFirstInput()
     }
 
     private fun getIsDirty(name: String): Boolean {

@@ -4,9 +4,7 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.model.MonetaryAmount
-import kotlinx.serialization.Serializable
 
-@Serializable
 internal data class PrimerConfig(
     var settings: PrimerSettings = PrimerSettings(),
 ) {
@@ -17,7 +15,7 @@ internal data class PrimerConfig(
 
     internal val monetaryAmount: MonetaryAmount?
         get() {
-            val currency = settings.order.currency
+            val currency = settings.order.currencyCode
             val amount = settings.currentAmount
             return MonetaryAmount.create(currency, amount)
         }
@@ -30,7 +28,7 @@ internal data class PrimerConfig(
 
     internal fun getMonetaryAmountWithSurcharge(): MonetaryAmount? {
         val amount = settings.currentAmount
-        val currency = settings.order.currency
+        val currency = settings.order.currencyCode
         return MonetaryAmount.create(currency, amount)
     }
 

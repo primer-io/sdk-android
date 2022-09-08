@@ -2,6 +2,7 @@ package io.primer.android.payment.google
 
 import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.GooglePayButtonStyle
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
@@ -38,7 +39,6 @@ internal class GooglePayDescriptor constructor(
 
     val merchantId: String?
         get() = config.options?.merchantId
-//            ?.replace("\"", "") // FIXME issue with kotlin serialization here
 
     override fun getLoadingState() = when (options.buttonStyle) {
         GooglePayButtonStyle.BLACK ->

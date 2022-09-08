@@ -2,23 +2,23 @@ apply from: "$rootDir/config/versions.gradle"
 
 ext {
     TestDependencies = [
-            Junit  : [
+            Junit        : [
                     jupiter      : "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}",
                     jupiterEngine: "org.junit.jupiter:junit-jupiter-engine:${Versions.junit5}",
                     jupiterParams: "org.junit.jupiter:junit-jupiter-params:${Versions.junit5}",
                     testRunner   : "de.mannodermaus.junit5:android-test-runner:${Versions.androidJunit5TestRunner}"
             ],
-            Mockk  : [
+            Mockk        : [
                     mockk       : "io.mockk:mockk:${Versions.mockk}",
                     mockkAndroid: "io.mockk:mockk-android:${Versions.mockk}"
             ],
-            Kotlin : [
+            Kotlin       : [
                     coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}",
             ],
-            Koin   : [
+            Koin         : [
                     test: "io.insert-koin:koin-test:$koinVersion"
             ],
-            Android: [
+            Android      : [
                     testRunner  : "androidx.test:runner:1.1.1",
                     fragment    : "androidx.fragment:fragment-testing:${Versions.fragment}",
                     xJunitRunner: "androidx.test.ext:junit:${Versions.xJunitRunner}",
@@ -32,5 +32,8 @@ ext {
                             accessibility: "androidx.test.espresso:espresso-accessibility:${Versions.espresso}"
                     ]
             ],
+            Serialization: [
+                    "json": "org.json:json:${Versions.json}"
+            ]
     ]
 }

@@ -10,7 +10,6 @@ import io.primer.android.analytics.data.helper.AnalyticsDataSender
 import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.analytics.data.repository.AnalyticsInitDataRepository
 import io.primer.android.http.PrimerHttpClient
-import io.primer.android.model.Serialization
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -18,11 +17,10 @@ internal class AnalyticsInitializer : Initializer<AnalyticsInitDataRepository> {
 
     override fun create(context: Context): AnalyticsInitDataRepository {
         val fileAnalyticsDataSource =
-            FileAnalyticsDataSource(AnalyticsFileProvider(context), Serialization.json)
+            FileAnalyticsDataSource(AnalyticsFileProvider(context))
         val remoteAnalyticsFlowDataSource = RemoteAnalyticsDataSource(
             PrimerHttpClient(
                 HttpClientFactory().build(),
-                Serialization.json
             )
         )
         return AnalyticsInitDataRepository(

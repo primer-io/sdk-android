@@ -1,6 +1,6 @@
 package io.primer.android.events
 
-enum class CheckoutEventType {
+internal enum class CheckoutEventType {
     TOKENIZE_SUCCESS,
     TOKEN_ADDED_TO_VAULT,
     RESUME_PENDING,
@@ -20,6 +20,9 @@ enum class CheckoutEventType {
     PAYMENT_CONTINUE_HUC,
     CLIENT_SESSION_UPDATE_STARTED,
     CLIENT_SESSION_UPDATE_SUCCESS,
+    ASYNC_FLOW_REDIRECT,
+    ASYNC_FLOW_POLLING_ERROR,
+    ASYNC_FLOW_CANCELLED,
     CONFIGURATION_SUCCESS,
     TOKENIZE_STARTED,
     PREPARATION_STARTED,

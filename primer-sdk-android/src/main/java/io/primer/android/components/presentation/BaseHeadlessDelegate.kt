@@ -12,6 +12,8 @@ import io.primer.android.components.domain.payments.models.PaymentTokenizationDe
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
+import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.ui.CardNetwork
@@ -36,6 +38,8 @@ internal interface HeadlessDelegate {
         submit: Boolean,
         completion: ((Error?) -> Unit) = {},
     )
+
+    fun startAsyncFlow(url: String, paymentMethodType: String)
 }
 
 internal open class DefaultHeadlessDelegate(
@@ -44,6 +48,7 @@ internal open class DefaultHeadlessDelegate(
     private val paymentTokenizationInteractor: PaymentTokenizationInteractor,
     private val paymentInputDataTypeValidateInteractor: PaymentInputDataTypeValidateInteractor,
     private val actionInteractor: ActionInteractor,
+    private val asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor
 ) : HeadlessDelegate {
 
     protected val scope: CoroutineScope = CoroutineScope(SupervisorJob())
@@ -92,6 +97,13 @@ internal open class DefaultHeadlessDelegate(
                 .collect {
                     completion(null)
                 }
+        }
+    }
+
+    override fun startAsyncFlow(url: String, paymentMethodType: String) {
+        scope.launch {
+            asyncPaymentMethodInteractor(AsyncMethodParams(url, paymentMethodType)).catch { }
+                .collect {}
         }
     }
 

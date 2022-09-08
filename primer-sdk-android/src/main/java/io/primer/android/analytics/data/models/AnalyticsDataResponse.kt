@@ -1,6 +1,20 @@
 package io.primer.android.analytics.data.models
 
-import kotlinx.serialization.Serializable
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import org.json.JSONObject
 
-@Serializable
-internal data class AnalyticsDataResponse(val result: String)
+internal data class AnalyticsDataResponse(val result: String) : JSONDeserializable {
+
+    companion object {
+        private const val RESULT_FIELD = "result"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<AnalyticsDataResponse> {
+
+            override fun deserialize(t: JSONObject): AnalyticsDataResponse {
+                return AnalyticsDataResponse(t.getString(RESULT_FIELD))
+            }
+        }
+    }
+}
