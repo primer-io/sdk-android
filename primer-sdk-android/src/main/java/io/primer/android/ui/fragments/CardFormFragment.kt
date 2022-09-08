@@ -622,9 +622,6 @@ internal class CardFormFragment : BaseFragment() {
     private fun onKeyboardVisibilityChanged(visible: Boolean) {
         val hasFocus = cardInputFields.entries.any { it.value.isFocused }
         if (hasFocus && !visible) cardInputFields.entries.forEach { it.value.clearFocus() }
-        else if (visible && !hasFocus &&
-            !tokenizationViewModel.hasField(PrimerInputElementType.CARD_NUMBER)
-        ) focusFirstInput()
     }
 
     private fun getIsDirty(name: String): Boolean {
