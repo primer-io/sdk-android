@@ -9,6 +9,8 @@ import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.CancellationException
@@ -24,6 +26,7 @@ internal class AsyncPaymentMethodInteractor(
     private val paymentMethodRepository: PaymentMethodRepository,
     private val resumeEventResolver: ResumeEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
+    private val eventDispatcher: EventDispatcher,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<AsyncStatus, AsyncMethodParams>() {
 
@@ -40,6 +43,7 @@ internal class AsyncPaymentMethodInteractor(
                 it.resumeToken
             )
         }.doOnError {
+            eventDispatcher.dispatchEvent(CheckoutEvent.AsyncFlowPollingError)
             when (it) {
                 is CancellationException -> baseErrorEventResolver.resolve(
                     PaymentMethodCancelledException(

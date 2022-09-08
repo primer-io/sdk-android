@@ -47,7 +47,7 @@ internal data class AnalyticsMessageEventRequest(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
                     JSONSerializationUtils.getDeserializer<MessageProperties>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
+                        t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),

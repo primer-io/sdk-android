@@ -68,6 +68,10 @@
             android:theme="@style/Theme.AppCompat.WebView" />
 
         <activity
+            android:name=".ui.payment.processor3ds.Processor3dsWebViewActivity"
+            android:label=""
+            android:theme="@style/Theme.AppCompat.WebView" />
+        <activity
             android:name=".ui.deeplink.async.AsyncPaymentMethodDeeplinkActivity"
             android:exported="true"
             android:label=""

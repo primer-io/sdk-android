@@ -48,7 +48,7 @@ internal data class AnalyticsUIEventRequest(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
                     JSONSerializationUtils.getDeserializer<UIProperties>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
+                        t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
@@ -143,6 +143,19 @@ internal data class AnalyticsContext(
                     putOpt(URL_FIELD, t.url)
                     putOpt(DECISION_FIELD, t.decision?.name)
                 }
+            }
+        }
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<AnalyticsContext> {
+            override fun deserialize(t: JSONObject): AnalyticsContext {
+                return AnalyticsContext(
+                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
+                    t.optNullableString(ISSUER_ID_FIELD),
+                    t.optNullableString(PAYMENT_METHOD_ID_FIELD),
+                    t.optNullableString(URL_FIELD),
+                    t.optNullableString(DECISION_FIELD)?.let { DummyDecisionType.valueOf(it) }
+                )
             }
         }
     }

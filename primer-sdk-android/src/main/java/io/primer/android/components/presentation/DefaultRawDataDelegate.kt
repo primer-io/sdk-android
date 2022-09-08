@@ -9,7 +9,6 @@ import io.primer.android.components.domain.payments.models.PaymentRawDataParams
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
-import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.catch
@@ -23,8 +22,6 @@ internal interface RawDataDelegate : HeadlessDelegate {
         inputData: PrimerRawData
     )
 
-    fun startAsyncFlow(url: String, paymentMethodType: String)
-
     fun cleanup()
 }
 
@@ -33,15 +30,16 @@ internal class DefaultRawDataDelegate(
     paymentInputTypesInteractor: PaymentInputTypesInteractor,
     paymentTokenizationInteractor: PaymentTokenizationInteractor,
     actionInteractor: ActionInteractor,
+    asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor,
     private val paymentInputDataChangedInteractor: PaymentInputDataChangedInteractor,
     private val paymentInputDataTypeValidateInteractor: PaymentInputDataTypeValidateInteractor,
-    private val asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor,
 ) : DefaultHeadlessDelegate(
     tokenizationInteractor,
     paymentInputTypesInteractor,
     paymentTokenizationInteractor,
     paymentInputDataTypeValidateInteractor,
-    actionInteractor
+    actionInteractor,
+    asyncPaymentMethodInteractor
 ),
     RawDataDelegate {
 
@@ -64,13 +62,6 @@ internal class DefaultRawDataDelegate(
                     )
                 )
             }.catch { it.printStackTrace() }.collect {}
-        }
-    }
-
-    override fun startAsyncFlow(url: String, paymentMethodType: String) {
-        scope.launch {
-            asyncPaymentMethodInteractor(AsyncMethodParams(url, paymentMethodType)).catch { }
-                .collect {}
         }
     }
 

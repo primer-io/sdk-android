@@ -50,7 +50,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
                         )
                     },
                     JSONSerializationUtils.getDeserializer<FunctionProperties>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
+                        t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.optNullableString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
@@ -80,7 +80,7 @@ internal data class FunctionProperties(
             override fun serialize(t: FunctionProperties): JSONObject {
                 return JSONObject().apply {
                     put(NAME_FIELD, t.name)
-                    put(PARAMS_FIELD, t.params)
+                    put(PARAMS_FIELD, JSONObject(t.params))
                 }
             }
         }

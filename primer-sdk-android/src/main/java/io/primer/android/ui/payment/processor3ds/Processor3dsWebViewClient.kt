@@ -1,4 +1,4 @@
-package io.primer.android.ui.payment.async
+package io.primer.android.ui.payment.processor3ds
 
 import android.content.Intent
 import android.util.Log
@@ -6,7 +6,7 @@ import android.webkit.WebResourceRequest
 import io.primer.android.ui.base.webview.BaseWebViewClient
 import io.primer.android.ui.base.webview.WebViewActivity
 
-internal class AsyncPaymentMethodWebViewClient(
+internal class Processor3dsWebViewClient(
     activity: WebViewActivity,
     url: String?,
     returnUrl: String?,
@@ -16,7 +16,7 @@ internal class AsyncPaymentMethodWebViewClient(
 
     override fun getCaptureUrl(url: String?) = url
 
-    override fun canCaptureUrl(url: String?) = CAPTURE_URLS.any { url?.contains(it) == true }
+    override fun canCaptureUrl(url: String?) = false
 
     override fun handleDeepLink(request: WebResourceRequest?): Boolean {
         getIntentFromRequest(request)?.let {
@@ -28,10 +28,5 @@ internal class AsyncPaymentMethodWebViewClient(
 
     override fun cannotHandleIntent(intent: Intent) {
         Log.e(TAG, "Cannot handle intent: ${intent.data}")
-    }
-
-    private companion object {
-        val CAPTURE_URLS =
-            listOf("primer.io/static/loading.html", "primer.io/static/loading-spinner.html")
     }
 }

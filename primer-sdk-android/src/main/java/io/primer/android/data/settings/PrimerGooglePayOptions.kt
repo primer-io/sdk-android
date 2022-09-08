@@ -1,6 +1,5 @@
 package io.primer.android.data.settings
 
-
 enum class GooglePayButtonStyle {
     WHITE,
     BLACK,

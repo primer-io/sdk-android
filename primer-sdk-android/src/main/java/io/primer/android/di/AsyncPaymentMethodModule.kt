@@ -33,6 +33,7 @@ internal val asyncPaymentMethodModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get()
             )
         }

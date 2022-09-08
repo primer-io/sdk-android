@@ -18,6 +18,7 @@ import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
+import io.primer.android.events.EventDispatcher
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -46,6 +47,9 @@ class AsyncPaymentMethodInteractorTest {
     @RelaxedMockK
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
+    @RelaxedMockK
+    internal lateinit var eventDispather: EventDispatcher
+
     private lateinit var interactor: AsyncPaymentMethodInteractor
 
     @BeforeEach
@@ -57,6 +61,7 @@ class AsyncPaymentMethodInteractorTest {
                 paymentMethodRepository,
                 resumeEventResolver,
                 errorEventResolver,
+                eventDispather
             )
     }
 

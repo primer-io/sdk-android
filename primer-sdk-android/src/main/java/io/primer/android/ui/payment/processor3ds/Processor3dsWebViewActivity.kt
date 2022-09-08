@@ -1,4 +1,4 @@
-package io.primer.android.ui.payment.async
+package io.primer.android.ui.payment.processor3ds
 
 import android.content.Context
 import android.content.Intent
@@ -11,54 +11,39 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.di.DIAppComponent
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppComponent {
-
-    private var subscription: EventBus.SubscriptionHandle? = null
+internal class Processor3dsWebViewActivity : WebViewActivity(), DIAppComponent {
 
     private val asyncPaymentMethodViewModel: AsyncPaymentMethodViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         logAnalyticsViewed()
+        asyncPaymentMethodViewModel.getStatus(
+            intent?.extras?.getString(STATUS_URL_KEY).orEmpty(),
+            intent?.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
+
+        )
         setupObservers()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         logBackPressed()
-        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled)
         return super.onSupportNavigateUp()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        subscription?.unregister()
-    }
-
     private fun setupObservers() {
-        subscription = EventBus.subscribe {
-            when (it) {
-                is CheckoutEvent.AsyncFlowRedirect -> {
-                    setResult(RESULT_OK)
-                    finish()
-                }
-                is CheckoutEvent.AsyncFlowPollingError -> {
-                    setResult(RESULT_ERROR)
-                    finish()
-                }
-                else -> Unit
-            }
+        asyncPaymentMethodViewModel.statusUrlLiveData.observe(this) {
+            setResult(RESULT_OK)
+            finish()
+        }
+        asyncPaymentMethodViewModel.statusUrlErrorData.observe(this) {
+            setResult(RESULT_ERROR)
+            finish()
         }
     }
 
@@ -86,15 +71,22 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
 
     internal companion object {
 
+        // url that polls payment status
+        const val STATUS_URL_KEY = "STATUS_URL_KEY"
+
         fun getLaunchIntent(
             context: Context,
             paymentUrl: String,
+            captureUrl: String,
+            statusUrl: String,
             title: String,
             paymentMethodType: String,
             webViewClientType: WebViewClientType,
         ): Intent {
-            return Intent(context, AsyncPaymentMethodWebViewActivity::class.java).apply {
+            return Intent(context, Processor3dsWebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)
+                putExtra(CAPTURE_URL_KEY, captureUrl)
+                putExtra(STATUS_URL_KEY, statusUrl)
                 putExtra(PAYMENT_METHOD_TYPE_KEY, paymentMethodType)
                 putExtra(TOOLBAR_TITLE_KEY, title)
                 putExtra(WEB_VIEW_CLIENT_TYPE, webViewClientType)

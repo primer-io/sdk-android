@@ -65,8 +65,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import java.util.Currency
 import java.util.Collections
+import java.util.Currency
 
 @ExperimentalCoroutinesApi
 internal class PrimerViewModel(
@@ -390,8 +390,10 @@ internal class PrimerViewModel(
     override fun onEvent(e: CheckoutEvent) {
         when (e) {
             is CheckoutEvent.TokenAddedToVaultInternal -> {
-                val hasMatch = vaultedPaymentMethods.value
-                    ?.count { it.token == e.data.token } ?: 0 > 0
+                val hasMatch = (
+                    vaultedPaymentMethods.value
+                        ?.count { it.token == e.data.token } ?: 0
+                    ) > 0
                 if (hasMatch) {
                     _vaultedPaymentMethods.value = vaultedPaymentMethods.value?.plus(
                         e.data.toPaymentMethodVaultToken()

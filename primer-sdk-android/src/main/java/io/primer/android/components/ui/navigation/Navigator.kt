@@ -5,6 +5,7 @@ import android.content.Intent
 import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
+import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 
 internal class Navigator(private val context: Context) {
 
@@ -20,17 +21,35 @@ internal class Navigator(private val context: Context) {
         title: String,
         paymentMethodType: String,
         redirectUrl: String,
-        statusUrl: String
     ) {
         context.startActivity(
             AsyncPaymentMethodWebViewActivity.getLaunchIntent(
+                context,
+                redirectUrl,
+                title,
+                paymentMethodType,
+                WebViewClientType.ASYNC
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            },
+        )
+    }
+
+    fun openProcessor3dsViewScreen(
+        title: String,
+        paymentMethodType: String,
+        redirectUrl: String,
+        statusUrl: String
+    ) {
+        context.startActivity(
+            Processor3dsWebViewActivity.getLaunchIntent(
                 context,
                 redirectUrl,
                 "",
                 statusUrl,
                 title,
                 paymentMethodType,
-                WebViewClientType.ASYNC
+                WebViewClientType.PROCESSOR_3DS
             ).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             },

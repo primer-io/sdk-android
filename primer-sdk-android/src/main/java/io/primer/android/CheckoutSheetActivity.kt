@@ -61,6 +61,7 @@ import io.primer.android.ui.fragments.forms.QrCodeFragment
 import io.primer.android.ui.fragments.multibanko.MultibancoPaymentFragment
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.android.ui.payment.klarna.KlarnaPaymentData
+import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
@@ -146,14 +147,14 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
             is CheckoutEvent.Start3DS -> {
                 it.processor3DSData?.let { data ->
                     startActivityForResult(
-                        AsyncPaymentMethodWebViewActivity.getLaunchIntent(
+                        Processor3dsWebViewActivity.getLaunchIntent(
                             this,
                             data.redirectUrl,
                             "",
                             data.statusUrl,
                             data.title,
                             PaymentMethodType.PAYMENT_CARD.name,
-                            WebViewClientType.ASYNC
+                            WebViewClientType.PROCESSOR_3DS
                         ),
                         ASYNC_METHOD_REQUEST_CODE
                     )
@@ -162,12 +163,16 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                 }
             }
             is CheckoutEvent.StartAsyncRedirectFlow -> {
+                openFragment(
+                    PaymentMethodStatusFragment.newInstance(
+                        it.statusUrl,
+                        it.paymentMethodType
+                    )
+                )
                 startActivityForResult(
                     AsyncPaymentMethodWebViewActivity.getLaunchIntent(
                         this,
                         it.redirectUrl,
-                        tokenizationViewModel.asyncRedirectUrl.value.orEmpty(),
-                        it.statusUrl,
                         (
                             primerViewModel.selectedPaymentMethod.value as?
                                 AsyncPaymentMethodDescriptor

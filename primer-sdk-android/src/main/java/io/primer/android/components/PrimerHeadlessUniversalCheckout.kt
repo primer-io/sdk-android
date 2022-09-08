@@ -56,19 +56,21 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                     componentsListener?.onPaymentMethodShowed(e.paymentMethodType)
                 is CheckoutEvent.Start3DS -> {
                     if (e.processor3DSData == null) navigator?.openThreeDsScreen()
-                    else navigator?.openAsyncWebViewScreen(
+                    else navigator?.openProcessor3dsViewScreen(
                         e.processor3DSData.title,
                         e.processor3DSData.paymentMethodType,
                         e.processor3DSData.redirectUrl,
                         e.processor3DSData.statusUrl
                     )
                 }
-                is CheckoutEvent.StartAsyncRedirectFlow -> navigator?.openAsyncWebViewScreen(
-                    e.title,
-                    e.paymentMethodType,
-                    e.redirectUrl,
-                    e.statusUrl
-                )
+                is CheckoutEvent.StartAsyncRedirectFlow -> {
+                    headlessUniversalCheckout?.startAsyncFlow(e.statusUrl, e.paymentMethodType)
+                    navigator?.openAsyncWebViewScreen(
+                        e.title,
+                        e.paymentMethodType,
+                        e.redirectUrl,
+                    )
+                }
                 is CheckoutEvent.ResumeSuccess ->
                     componentsListener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
                 is CheckoutEvent.ResumePending ->
@@ -105,6 +107,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 is CheckoutEvent.ClientSessionUpdateStarted -> {
                     componentsListener?.onBeforeClientSessionUpdated()
                 }
+                is CheckoutEvent.AsyncFlowCancelled -> headlessUniversalCheckout?.clear()
                 else -> Unit
             }
         }

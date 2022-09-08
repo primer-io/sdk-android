@@ -48,7 +48,7 @@ internal data class AnalyticsNetworkCallEvent(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
                     JSONSerializationUtils.getDeserializer<NetworkCallProperties>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
+                        t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),

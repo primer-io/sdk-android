@@ -19,13 +19,13 @@ internal data class AnalyticsDataRequest(val data: List<BaseAnalyticsEventReques
                     put(
                         DATA_FIELD,
                         JSONArray().apply {
-                            put(
-                                t.data.map {
+                            t.data.map {
+                                put(
                                     JSONSerializationUtils
                                         .getSerializer<BaseAnalyticsEventRequest>()
                                         .serialize(it)
-                                }
-                            )
+                                )
+                            }
                         }
                     )
                 }
