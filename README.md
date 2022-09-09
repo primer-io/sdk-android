@@ -1,10 +1,10 @@
 
-<h1 align="center"><img src="./assets/primer-logo.png?raw=true" height="24px"> Primer iOS SDK</h1>
+<h1 align="center"><img src="./assets/primer-logo.png?raw=true" height="24px"> Primer Android SDK</h1>
 
 <div align="center">
   <h3 align="center">
 
-[Primer's](https://primer.io) Official Universal Checkout iOS SDK
+[Primer's](https://primer.io) Official Universal Checkout Android SDK
 
   </h3>
 </div>
