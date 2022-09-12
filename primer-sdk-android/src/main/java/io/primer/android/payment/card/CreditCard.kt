@@ -1,10 +1,10 @@
 package io.primer.android.payment.card
 
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.putFor
 import io.primer.android.components.domain.inputs.models.valueBy
+import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
@@ -65,7 +65,9 @@ internal class CreditCard(
     override fun validate(): List<SyncValidationError> {
         val errors = ArrayList<SyncValidationError>()
 
-        if (availableFields[PrimerInputElementType.CARDHOLDER_NAME] == true) {
+        if (availableFields[PrimerInputElementType.CARDHOLDER_NAME] == null ||
+            availableFields[PrimerInputElementType.CARDHOLDER_NAME] == true
+        ) {
             val name = values.valueBy(PrimerInputElementType.CARDHOLDER_NAME)
             if (name.isEmpty()) {
                 errors.add(
@@ -163,7 +165,10 @@ internal class CreditCard(
         )
         if (expiry.isValid()) fields.add(PrimerInputElementType.EXPIRY_DATE.field)
 
-        if (availableFields[PrimerInputElementType.CARDHOLDER_NAME] == true &&
+        val containsCardholderName =
+            availableFields[PrimerInputElementType.CARDHOLDER_NAME] == null ||
+                availableFields[PrimerInputElementType.CARDHOLDER_NAME] == true
+        if (containsCardholderName &&
             values.valueBy(PrimerInputElementType.CARDHOLDER_NAME).isNotBlank()
         ) fields.add(PrimerInputElementType.CARDHOLDER_NAME.field)
 
