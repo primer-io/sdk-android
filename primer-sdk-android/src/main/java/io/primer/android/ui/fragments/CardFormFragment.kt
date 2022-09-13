@@ -53,8 +53,9 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
-import java.util.Collections
 import java.util.TreeMap
+import java.util.Collections
+import kotlin.collections.HashMap
 
 /**
  * A simple [Fragment] subclass.
@@ -533,11 +534,15 @@ internal class CardFormFragment : BaseFragment() {
                     FieldFocuser.focus(cardInputFields[PrimerInputElementType.EXPIRY_DATE])
                 PrimerInputElementType.EXPIRY_DATE ->
                     FieldFocuser.focus(cardInputFields[PrimerInputElementType.CVV])
-                PrimerInputElementType.CARDHOLDER_NAME -> binding.billingAddressForm.findNextFocus()
                 PrimerInputElementType.CVV -> {
+                    val containsCardholderName =
+                        primerViewModel.showCardInformation.value.let { options ->
+                            options.via(PrimerInputElementType.ALL) ?: options.via(
+                                PrimerInputElementType.CARDHOLDER_NAME
+                            )
+                        }
                     when {
-                        primerViewModel.showCardInformation.value
-                            .via(PrimerInputElementType.CARDHOLDER_NAME) == true ->
+                        containsCardholderName == null || containsCardholderName ->
                             takeFocusCardholderName()
                         else -> binding.billingAddressForm.findNextFocus()
                     }
@@ -547,9 +552,13 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun takeFocusCardholderName() {
-        val cardInformation = primerViewModel.showCardInformation.value
-        if (cardInformation.via(PrimerInputElementType.CARDHOLDER_NAME) == true
-        ) FieldFocuser.focus(
+        val containsCardholderName =
+            primerViewModel.showCardInformation.value.let { options ->
+                options.via(PrimerInputElementType.ALL) ?: options.via(
+                    PrimerInputElementType.CARDHOLDER_NAME
+                )
+            }
+        if (containsCardholderName == null || containsCardholderName) FieldFocuser.focus(
             cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]
         )
     }

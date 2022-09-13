@@ -18,6 +18,7 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
     override val primerAccountId: String?,
     override val analyticsUrl: String?,
     override val eventType: AnalyticsEventType = AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT,
+    override val createdAt: Long = System.currentTimeMillis()
 ) : BaseAnalyticsEventRequest() {
 
     override fun copy(newAnalyticsUrl: String?): AnalyticsNetworkConnectivityEventRequest = copy(
@@ -57,6 +58,7 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
                     t.optNullableString(ORDER_ID_FIELD),
                     t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
                     t.optNullableString(ANALYTICS_URL_FIELD),
+                    createdAt = t.getLong(CREATED_AT_FIELD)
                 )
             }
         }

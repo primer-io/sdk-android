@@ -18,6 +18,7 @@ internal data class AnalyticsMessageEventRequest(
     override val primerAccountId: String?,
     override val analyticsUrl: String?,
     override val eventType: AnalyticsEventType = AnalyticsEventType.MESSAGE_EVENT,
+    override val createdAt: Long = System.currentTimeMillis()
 ) : BaseAnalyticsEventRequest() {
 
     override fun copy(newAnalyticsUrl: String?): AnalyticsMessageEventRequest = copy(
@@ -57,6 +58,7 @@ internal data class AnalyticsMessageEventRequest(
                     t.optNullableString(ORDER_ID_FIELD),
                     t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
                     t.optNullableString(ANALYTICS_URL_FIELD),
+                    createdAt = t.getLong(CREATED_AT_FIELD)
                 )
             }
         }
