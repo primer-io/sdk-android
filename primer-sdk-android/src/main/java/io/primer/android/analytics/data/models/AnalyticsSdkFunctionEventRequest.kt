@@ -19,6 +19,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
     override val primerAccountId: String? = null,
     override val analyticsUrl: String? = null,
     override val eventType: AnalyticsEventType = AnalyticsEventType.SDK_FUNCTION_EVENT,
+    override val createdAt: Long = System.currentTimeMillis()
 ) : BaseAnalyticsEventRequest() {
 
     override fun copy(newAnalyticsUrl: String?): AnalyticsSdkFunctionEventRequest = copy(
@@ -60,6 +61,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
                     t.optNullableString(ORDER_ID_FIELD),
                     t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
                     t.optNullableString(ANALYTICS_URL_FIELD),
+                    createdAt = t.getLong(CREATED_AT_FIELD)
                 )
             }
         }
