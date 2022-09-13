@@ -33,7 +33,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
     abstract val primerAccountId: String?
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
-    protected val createdAt: Long = System.currentTimeMillis()
+    abstract val createdAt: Long
     protected val sdkType: AnalyticsSdkType = AnalyticsSdkTypeResolver().resolve()
     protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
