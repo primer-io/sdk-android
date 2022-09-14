@@ -7,6 +7,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
+import io.primer.android.payment.async.bancontact.AdyenBancontactPaymentMethodDescriptor
 import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.fastbanktransfer.RapydFastPaymentMethodDescriptor
@@ -91,6 +92,11 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_MULTIBANCO -> AdyenMultibancoPaymentMethodDescriptor(
+                    localConfig,
+                    paymentMethod as AsyncPaymentMethod,
+                    paymentMethodRemoteConfig
+                )
+                PaymentMethodType.ADYEN_BANCONTACT -> AdyenBancontactPaymentMethodDescriptor(
                     localConfig,
                     paymentMethod as AsyncPaymentMethod,
                     paymentMethodRemoteConfig

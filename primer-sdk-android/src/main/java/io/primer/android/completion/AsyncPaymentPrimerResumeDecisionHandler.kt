@@ -54,6 +54,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
             ClientTokenIntent.OMISE_PROMPTPAY_REDIRECTION.name,
             ClientTokenIntent.ADYEN_BLIK_REDIRECTION.name,
             ClientTokenIntent.ADYEN_MBWAY_REDIRECTION.name,
+            ClientTokenIntent.ADYEN_BANCONTACT_PAYCONIQ_REDIRECTION.name,
             ClientTokenIntent.XENDIT_OVO_REDIRECTION.name -> {
                 eventDispatcher.dispatchEvents(
                     listOf(
