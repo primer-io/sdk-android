@@ -36,8 +36,8 @@ internal sealed class CheckoutEvent(
     class ResumePending(val paymentMethodInfo: PrimerCheckoutAdditionalInfo?) :
         CheckoutEvent(CheckoutEventType.RESUME_PENDING)
 
-    class QRCodeInfoReceived(val paymentMethodInfo: PrimerCheckoutAdditionalInfo) :
-        CheckoutEvent(CheckoutEventType.QR_CODE_INFO_RECEIVED)
+    class OnAdditionalInfoReceived(val paymentMethodInfo: PrimerCheckoutAdditionalInfo) :
+        CheckoutEvent(CheckoutEventType.ON_ADDITIONAL_INFO_RECEIVED)
 
     class ResumeSuccessInternal(
         val resumeToken: String,
