@@ -156,9 +156,9 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 }
             }
 
-            override fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
-                super.onQRCodeInfoReceived(additionalInfo)
-                Log.d(TAG, "onQRCodeInfoReceived $additionalInfo")
+            override fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
+                super.onAdditionalInfoReceived(additionalInfo)
+                Log.d(TAG, "onAdditionalInfoReceived $additionalInfo")
                 hideLoading()
                 when (additionalInfo) {
                     is PromptPayCheckoutAdditionalInfo -> {
@@ -166,7 +166,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                             .setMessage("PromptPay: $additionalInfo")
                             .setPositiveButton("OK") { d, _ -> d.dismiss() }
                             .show()
-                        Log.d(TAG, "onQRCodeInfoReceived OMISE PromptPay: $additionalInfo")
+                        Log.d(TAG, "onAdditionalInfoReceived: $additionalInfo")
                     }
                 }
             }

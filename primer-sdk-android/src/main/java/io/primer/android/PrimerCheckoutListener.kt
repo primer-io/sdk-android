@@ -25,7 +25,7 @@ interface PrimerCheckoutListener {
 
     fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
 
-    fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
+    fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
 
     fun onBeforePaymentCreated(
         paymentMethodData: PrimerPaymentMethodData,

@@ -204,12 +204,12 @@ class SecondFragment : Fragment() {
             }
         }
 
-        override fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
-            super.onQRCodeInfoReceived(additionalInfo)
-            Log.d(TAG, "onQRCodeInfoReceived $additionalInfo")
+        override fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
+            super.onAdditionalInfoReceived(additionalInfo)
+            Log.d(TAG, "onAdditionalInfoReceived $additionalInfo")
             when (additionalInfo) {
                 is PromptPayCheckoutAdditionalInfo -> {
-                    Log.d(TAG, "onQRCodeInfoReceived PROMPTPAY: $additionalInfo")
+                    Log.d(TAG, "onAdditionalInfoReceived: $additionalInfo")
                 }
             }
         }
