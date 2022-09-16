@@ -71,10 +71,15 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                         e.redirectUrl,
                     )
                 }
+                is CheckoutEvent.StartAsyncFlow -> {
+                    headlessUniversalCheckout?.startAsyncFlow(e.statusUrl, e.paymentMethodType)
+                }
                 is CheckoutEvent.ResumeSuccess ->
                     componentsListener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
                 is CheckoutEvent.ResumePending ->
-                    componentsListener?.onResumePending(e.paymentMethodData)
+                    componentsListener?.onResumePending(e.paymentMethodInfo)
+                is CheckoutEvent.QRCodeInfoReceived ->
+                    componentsListener?.onQRCodeInfoReceived(e.paymentMethodInfo)
 
                 is CheckoutEvent.PaymentCreateStartedHUC -> {
                     componentsListener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
@@ -227,6 +232,8 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) = Unit
 
     override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
+
+    override fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
 
     internal fun startTokenization(
         paymentMethodType: String,

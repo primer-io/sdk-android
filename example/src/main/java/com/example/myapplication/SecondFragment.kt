@@ -25,6 +25,7 @@ import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.threeds.data.models.ResponseCode
@@ -199,6 +200,16 @@ class SecondFragment : Fragment() {
             when (additionalInfo) {
                 is MultibancoCheckoutAdditionalInfo -> {
                     Log.d(TAG, "onResumePending MULTIBANCO: $additionalInfo")
+                }
+            }
+        }
+
+        override fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
+            super.onQRCodeInfoReceived(additionalInfo)
+            Log.d(TAG, "onQRCodeInfoReceived $additionalInfo")
+            when (additionalInfo) {
+                is PromptPayCheckoutAdditionalInfo -> {
+                    Log.d(TAG, "onQRCodeInfoReceived PROMPTPAY: $additionalInfo")
                 }
             }
         }

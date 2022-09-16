@@ -21,6 +21,7 @@ internal class LocalFormDataSourceFactory(
             PaymentMethodType.XFERS_PAYNOW -> XfersLocalFormDataSource(clientToken)
             PaymentMethodType.RAPYD_FAST ->
                 FastBankTransferLocalFormDataSource(primerTheme, clientToken)
+            PaymentMethodType.OMISE_PROMPTPAY,
             PaymentMethodType.RAPYD_PROMPTPAY ->
                 PromptPayLocalFormDataSource(primerTheme, clientToken)
             PaymentMethodType.ADYEN_MULTIBANCO ->

@@ -54,8 +54,9 @@ internal class SearchViewWidgetV2(
         }
 
         setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                if (event.rawX >= (right - compoundDrawables[DRAWABLE_END_INDEX].bounds.width())) {
+            if (event.action == MotionEvent.ACTION_UP && compoundDrawables.isNotEmpty()) {
+                val iconBounds = compoundDrawables[DRAWABLE_END_INDEX]?.bounds?.width()
+                if (iconBounds != null && event.rawX >= (right - iconBounds)) {
                     setText("")
                     true
                 }

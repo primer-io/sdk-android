@@ -209,6 +209,7 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
                         ),
                         true
                     )
+                    ClientTokenIntent.OMISE_PROMPTPAY_REDIRECTION.name,
                     ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION.name -> openFragment(
                         PromptPayFragment.newInstance(
                             it.statusUrl,

@@ -12,13 +12,13 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
-import io.primer.android.domain.token.repository.ValidateTokenRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
+import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
@@ -48,6 +48,9 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
     internal lateinit var paymentMethodRepository: PaymentMethodRepository
 
     @RelaxedMockK
+    internal lateinit var paymentMethodsRepository: PaymentMethodsRepository
+
+    @RelaxedMockK
     internal lateinit var paymentResultRepository: PaymentResultRepository
 
     @RelaxedMockK
@@ -64,9 +67,6 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
 
     @RelaxedMockK
     internal lateinit var config: PrimerConfig
-
-    @RelaxedMockK
-    internal lateinit var paymentMethodDataHelper: PrimerPaymentMethodDataHelper
 
     @RelaxedMockK
     internal lateinit var logger: Logger
@@ -87,7 +87,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodDataHelper,
+                paymentMethodsRepository,
                 instantExecutorExtension.dispatcher
             )
     }

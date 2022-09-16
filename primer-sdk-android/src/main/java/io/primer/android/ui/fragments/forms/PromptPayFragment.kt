@@ -1,11 +1,14 @@
 package io.primer.android.ui.fragments.forms
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import io.primer.android.R
 import io.primer.android.databinding.FragmentPromptPayBinding
 import io.primer.android.di.DIAppComponent
@@ -15,6 +18,9 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import io.primer.android.utils.ImageLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
 
 internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
@@ -22,6 +28,10 @@ internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
     private var binding: FragmentPromptPayBinding by autoCleaned()
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
+
+    private val base64Pattern by lazy {
+        Regex("^([A-Za-z0-9+\\/]{4})*([A-Za-z0-9\\/]{3}=|[A-Za-z0-9\\/]{2}==)?\$")
+    }
 
     private val imageLoader: ImageLoader by inject()
 
@@ -51,20 +61,31 @@ internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
 
     override fun setupForm(form: Form) {
         super.setupForm(form)
-        setupQrCode(form.qrCodeUrl)
+        setupQrCode(form.qrCodeUrl, form.qrCode)
     }
 
-    private fun setupQrCode(qrCodeUrl: String?) {
-        if (!qrCodeUrl.isNullOrBlank()) {
+    private fun setupQrCode(qrCodeUrl: String?, qrCode: String?) {
+        if (!qrCode.isNullOrBlank() && qrCode.contains(base64Pattern)) {
+            lifecycleScope.launch(Dispatchers.Default) {
+                val imageBytes = Base64.decode(qrCode, Base64.DEFAULT)
+                val decodedImage =
+                    BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                withContext(Dispatchers.Main) {
+                    binding.ivQrImage.setImageBitmap(decodedImage)
+                }
+            }
+        } else {
             ContextCompat.getDrawable(
                 requireContext(),
                 R.drawable.placeholder_qr
             )?.let { placeholder ->
-                imageLoader.loadImage(
-                    qrCodeUrl,
-                    placeholder,
-                    binding.ivQrImage
-                )
+                if (!qrCodeUrl.isNullOrBlank()) {
+                    imageLoader.loadImage(
+                        qrCodeUrl,
+                        placeholder,
+                        binding.ivQrImage
+                    )
+                }
             }
         }
     }

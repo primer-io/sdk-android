@@ -170,11 +170,11 @@ internal class BillingAddressFormView @JvmOverloads constructor(
     }
 
     fun onHandleAvailable(billingFields: Map<String, Boolean>?) {
-        if (billingFields == null) {
+        if (billingFields == null || billingFields.isEmpty()) {
             fields().forEach { it.onFocusChangeListener = null }
             isVisible = false
         } else {
-            isVisible = true
+            isVisible = billingFields.values.contains(true)
             fields.forEach { data ->
                 data.second.isVisible = billingFields[data.first.field] ?: false
             }

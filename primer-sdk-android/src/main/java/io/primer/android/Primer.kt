@@ -42,7 +42,10 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
                     listener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
                 }
                 is CheckoutEvent.ResumePending -> {
-                    listener?.onResumePending(e.paymentMethodData)
+                    listener?.onResumePending(e.paymentMethodInfo)
+                }
+                is CheckoutEvent.QRCodeInfoReceived -> {
+                    listener?.onQRCodeInfoReceived(e.paymentMethodInfo)
                 }
                 is CheckoutEvent.PaymentCreateStarted -> {
                     listener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)

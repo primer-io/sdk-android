@@ -10,8 +10,7 @@ enum class PrimerInputElementType(val field: String) {
     EXPIRY_DATE("expiryDate"),
     EXPIRY_MONTH("expirationMonth"),
     EXPIRY_YEAR("expirationYear"),
-    CARDHOLDER_NAME("cardHolderName"),
-    FORM_CARDHOLDER_NAME("cardholderName"), // use only for card tokenization
+    CARDHOLDER_NAME("cardholderName"),
     POSTAL_CODE("postalCode"),
     COUNTRY_CODE("countryCode"),
     CITY("city"),

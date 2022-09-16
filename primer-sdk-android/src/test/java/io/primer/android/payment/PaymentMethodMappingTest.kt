@@ -640,4 +640,18 @@ internal class PaymentMethodMappingTest {
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
     }
+
+    @Test
+    fun `test maps omise promptpay correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (
+            val result = factory.getPaymentMethodFor(
+                PaymentMethodImplementationType.NATIVE_SDK,
+                PaymentMethodType.OMISE_PROMPTPAY.name
+            )
+        ) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
 }

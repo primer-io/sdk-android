@@ -3,6 +3,7 @@ package io.primer.android.payment
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfoResolver
 import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.payment.LoadingState
@@ -23,6 +24,8 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
     abstract val vaultCapability: VaultCapability
 
     open val sdkCapabilities = listOf(SDKCapability.HEADLESS, SDKCapability.DROP_IN)
+
+    open val additionalInfoResolver: PrimerCheckoutAdditionalInfoResolver? = null
 
     internal val brand = PaymentMethodType.safeValueOf(config.type).brand
 

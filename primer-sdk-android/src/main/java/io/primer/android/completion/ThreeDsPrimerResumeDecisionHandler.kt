@@ -3,11 +3,11 @@ package io.primer.android.completion
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -30,7 +30,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
     config: PrimerConfig,
-    paymentMethodDataHelper: PrimerPaymentMethodDataHelper,
+    paymentMethodsRepository: PaymentMethodsRepository,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
@@ -42,7 +42,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     eventDispatcher,
     logger,
     config,
-    paymentMethodDataHelper,
+    paymentMethodsRepository,
     coroutineDispatcher
 ) {
 

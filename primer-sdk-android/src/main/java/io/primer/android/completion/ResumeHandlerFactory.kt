@@ -2,9 +2,9 @@ package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.EventDispatcher
@@ -23,7 +23,7 @@ internal class ResumeHandlerFactory(
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val config: PrimerConfig,
-    private val paymentMethodDataHelper: PrimerPaymentMethodDataHelper
+    private val paymentMethodsRepository: PaymentMethodsRepository
 ) {
 
     fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
@@ -39,7 +39,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodDataHelper
+                paymentMethodsRepository
             )
             ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
                 validationTokenRepository,
@@ -51,7 +51,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodDataHelper
+                paymentMethodsRepository
             )
             else -> DefaultPrimerResumeDecisionHandler(
                 validationTokenRepository,
@@ -63,7 +63,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodDataHelper
+                paymentMethodsRepository
             )
         }
     }

@@ -6,12 +6,12 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutQRCodeInfo
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -24,6 +24,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 internal open class DefaultPrimerResumeDecisionHandler(
@@ -36,7 +38,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     private var logger: Logger,
     private val config: PrimerConfig,
-    private val paymentMethodDataHelper: PrimerPaymentMethodDataHelper,
+    private val paymentMethodsRepository: PaymentMethodsRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : PrimerResumeDecisionHandler {
 
@@ -73,28 +75,34 @@ internal open class DefaultPrimerResumeDecisionHandler(
         }
     }
 
-    private fun handlePaymentMethodData(clientToken: String) {
+    private suspend fun handlePaymentMethodData(clientToken: String) {
         val clientTokenConfig = ClientToken.fromString(clientToken)
-        if (clientTokenConfig.intent == ClientTokenIntent.PAYMENT_METHOD_VOUCHER.name) {
-            if (
-                config.settings.paymentHandling == PrimerPaymentHandling.MANUAL
-            ) {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.ResumePending(
-                        paymentMethodDataHelper.prepareDataFromClientToken(clientTokenConfig)
-                    )
-                )
-            } else {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.PaymentSuccess(
-                        PrimerCheckoutData(
-                            paymentResultRepository.getPaymentResult().payment,
-                            paymentMethodDataHelper.prepareDataFromClientToken(clientTokenConfig)
-                        )
-                    )
-                )
+        paymentMethodsRepository.getPaymentMethodDescriptors().mapLatest { descriptors ->
+            val descriptor = descriptors.firstOrNull { descriptor ->
+                PaymentMethodType.safeValueOf(descriptor.config.type).intents
+                    ?.map { it.name }?.contains(clientTokenConfig.intent) == true
             }
-        }
+
+            descriptor?.additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
+                when (data) {
+                    is PrimerCheckoutQRCodeInfo -> {
+                        eventDispatcher.dispatchEvent(CheckoutEvent.QRCodeInfoReceived(data))
+                    }
+                    else -> {
+                        if (config.settings.paymentHandling == PrimerPaymentHandling.MANUAL) {
+                            eventDispatcher.dispatchEvent(CheckoutEvent.ResumePending(data))
+                        } else {
+                            val paymentResult = paymentResultRepository.getPaymentResult()
+                            eventDispatcher.dispatchEvent(
+                                CheckoutEvent.PaymentSuccess(
+                                    PrimerCheckoutData(paymentResult.payment, data)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }.collect()
     }
 
     protected open fun handleClientToken(clientToken: String) {

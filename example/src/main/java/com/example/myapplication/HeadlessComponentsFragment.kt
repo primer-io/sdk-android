@@ -31,6 +31,7 @@ import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.ui.CardNetwork
@@ -151,6 +152,21 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                             .setPositiveButton("OK") { d, _ -> d.dismiss() }
                             .show()
                         Log.d(TAG, "onResumePending MULTIBANCO: $additionalInfo")
+                    }
+                }
+            }
+
+            override fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
+                super.onQRCodeInfoReceived(additionalInfo)
+                Log.d(TAG, "onQRCodeInfoReceived $additionalInfo")
+                hideLoading()
+                when (additionalInfo) {
+                    is PromptPayCheckoutAdditionalInfo -> {
+                        AlertDialog.Builder(context)
+                            .setMessage("PromptPay: $additionalInfo")
+                            .setPositiveButton("OK") { d, _ -> d.dismiss() }
+                            .show()
+                        Log.d(TAG, "onQRCodeInfoReceived OMISE PromptPay: $additionalInfo")
                     }
                 }
             }

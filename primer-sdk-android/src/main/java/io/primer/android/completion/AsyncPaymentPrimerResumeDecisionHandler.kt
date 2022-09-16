@@ -3,9 +3,9 @@ package io.primer.android.completion
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.data.tokenization.helper.PrimerPaymentMethodDataHelper
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -25,7 +25,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
     config: PrimerConfig,
-    paymentMethodDataHelper: PrimerPaymentMethodDataHelper,
+    paymentMethodsRepository: PaymentMethodsRepository,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
@@ -37,7 +37,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     eventDispatcher,
     logger,
     config,
-    paymentMethodDataHelper,
+    paymentMethodsRepository,
     coroutineDispatcher
 ) {
 
@@ -51,6 +51,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
             ClientTokenIntent.XFERS_PAYNOW_REDIRECTION.name,
             ClientTokenIntent.RAPYD_FAST_REDIRECTION.name,
             ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION.name,
+            ClientTokenIntent.OMISE_PROMPTPAY_REDIRECTION.name,
             ClientTokenIntent.ADYEN_BLIK_REDIRECTION.name,
             ClientTokenIntent.ADYEN_MBWAY_REDIRECTION.name,
             ClientTokenIntent.XENDIT_OVO_REDIRECTION.name -> {
