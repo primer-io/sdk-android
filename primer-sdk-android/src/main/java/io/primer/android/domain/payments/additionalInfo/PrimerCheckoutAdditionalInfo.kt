@@ -11,7 +11,7 @@ data class MultibancoCheckoutAdditionalInfo(
 ) : PrimerCheckoutAdditionalInfo
 
 data class PromptPayCheckoutAdditionalInfo(
-    val expiration: String,
+    val expiresAt: String,
     val qrCodeUrl: String?,
     val qrCodeBase64: String?,
 ) : PrimerCheckoutQRCodeInfo

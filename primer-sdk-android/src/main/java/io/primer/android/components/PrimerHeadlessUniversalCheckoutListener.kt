@@ -37,7 +37,7 @@ interface PrimerHeadlessUniversalCheckoutListener {
 
     fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
 
-    fun onQRCodeInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
+    fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
 
     fun onCheckoutCompleted(checkoutData: PrimerCheckoutData)
 

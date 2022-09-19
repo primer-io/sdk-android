@@ -86,7 +86,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
             descriptor?.additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
                 when (data) {
                     is PrimerCheckoutQRCodeInfo -> {
-                        eventDispatcher.dispatchEvent(CheckoutEvent.QRCodeInfoReceived(data))
+                        eventDispatcher.dispatchEvent(CheckoutEvent.OnAdditionalInfoReceived(data))
                     }
                     else -> {
                         if (config.settings.paymentHandling == PrimerPaymentHandling.MANUAL) {
