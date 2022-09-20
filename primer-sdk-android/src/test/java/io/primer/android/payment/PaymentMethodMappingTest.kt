@@ -661,7 +661,7 @@ internal class PaymentMethodMappingTest {
         when (
             val result = factory.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
-                PaymentMethodType.ADYEN_BANCONTACT.name
+                PaymentMethodType.ADYEN_BANCONTACT_CARD.name
             )
         ) {
             is Failure -> Assert.fail()

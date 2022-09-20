@@ -96,7 +96,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                     paymentMethod as AsyncPaymentMethod,
                     paymentMethodRemoteConfig
                 )
-                PaymentMethodType.ADYEN_BANCONTACT -> AdyenBancontactPaymentMethodDescriptor(
+                PaymentMethodType.ADYEN_BANCONTACT_CARD -> AdyenBancontactPaymentMethodDescriptor(
                     localConfig,
                     paymentMethod as AsyncPaymentMethod,
                     paymentMethodRemoteConfig

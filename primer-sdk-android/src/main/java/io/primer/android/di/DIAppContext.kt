@@ -31,6 +31,7 @@ internal object DIAppContext {
                 rpcModule(),
                 paypalModule(),
                 dummyApmModule(),
+                bancontactApmModule(),
                 NetworkModule(),
                 imageLoaderModule(),
                 PaymentsModule(),

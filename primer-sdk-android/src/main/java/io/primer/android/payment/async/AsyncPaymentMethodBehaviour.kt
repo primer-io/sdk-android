@@ -8,11 +8,15 @@ internal abstract class InitialTokenizationBehaviour : SelectedPaymentMethodBeha
     abstract fun execute(tokenizationViewModel: TokenizationViewModel)
 }
 
-internal class AsyncPaymentMethodBehaviour(private val asyncMethod: AsyncPaymentMethodDescriptor) :
-    InitialTokenizationBehaviour() {
+internal open class AsyncPaymentMethodBehaviour(
+    private val asyncMethod: AsyncPaymentMethodDescriptor
+) : InitialTokenizationBehaviour() {
+
+    protected open val instrumentType = "OFF_SESSION_PAYMENT"
+
     override fun execute(tokenizationViewModel: TokenizationViewModel) {
         tokenizationViewModel.resetPaymentMethod(asyncMethod)
-        asyncMethod.setTokenizableValue("type", "OFF_SESSION_PAYMENT")
+        asyncMethod.setTokenizableValue("type", instrumentType)
         asyncMethod.setTokenizableValue("paymentMethodType", asyncMethod.config.type)
         asyncMethod.setTokenizableValue("paymentMethodConfigId", asyncMethod.config.id!!)
         // ...
@@ -30,4 +34,10 @@ internal class AsyncPaymentMethodBehaviour(private val asyncMethod: AsyncPayment
 
         tokenizationViewModel.tokenize()
     }
+}
+
+internal class CardAsyncPaymentMethodBehaviour(asyncMethod: AsyncPaymentMethodDescriptor) :
+    AsyncPaymentMethodBehaviour(asyncMethod) {
+
+    override val instrumentType: String = "CARD_OFF_SESSION_PAYMENT"
 }

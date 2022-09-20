@@ -4,13 +4,12 @@ import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.payment.NewMiddleFragmentBehaviour
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
-import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
-import io.primer.android.ui.fragments.multibanko.MultibancoConditionsFragment
+import io.primer.android.payment.async.CardAsyncPaymentMethodBehaviour
+import io.primer.android.ui.fragments.bancontact.BancontactCardFragment
 import io.primer.android.ui.payment.LoadingState
 
 internal class AdyenBancontactPaymentMethodDescriptor(
@@ -24,15 +23,10 @@ internal class AdyenBancontactPaymentMethodDescriptor(
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (localConfig.settings.fromHUC) super.selectedBehaviour
-        else NewMiddleFragmentBehaviour(
-            MultibancoConditionsFragment::newInstance,
-            onActionContinue = { super.selectedBehaviour },
-            returnToPreviousOnBack = true
-        )
+        get() = NewFragmentBehaviour(BancontactCardFragment::newInstance)
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> =
-        listOf(NewFragmentBehaviour(PaymentMethodLoadingFragment::newInstance, true))
+        listOf(CardAsyncPaymentMethodBehaviour(this))
 
     override fun getLoadingState() = LoadingState(
         if (localConfig.settings.uiOptions.theme.isDarkMode == true)

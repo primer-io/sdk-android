@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:paddingBottom="@dimen/large_vertical_margin"
+    tools:context=".ui.fragments.forms.FastBankTransferFragment"
+    tools:layout_height="match_parent"
+    tools:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/go_back_description"
+        android:paddingTop="@dimen/large_vertical_margin"
+        android:paddingEnd="@dimen/large_vertical_margin"
+        android:paddingBottom="@dimen/large_vertical_margin"
+        android:src="@drawable/icon_go_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_payment_method_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="58dp"
+        android:layout_marginEnd="58dp"
+        android:contentDescription="@string/payment_method_icon"
+        android:maxHeight="58dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_logo_payconiq_light"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_back" />
+
+    <LinearLayout
+        android:id="@+id/card_info_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xxxl_vertical_margin"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_payment_method_icon">
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/card_form_card_number"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:hint="@string/card_number"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null"
+            app:suffixTextColor="@android:color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_card_number_input"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789 "
+                android:drawablePadding="10dp"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                tools:ignore="TouchTargetSizeCheck"
+                tools:text="1234123412341234"
+                tools:textColor="@android:color/black" />
+        </io.primer.android.ui.components.TextInputWidget>
+
+        <LinearLayout
+            android:id="@+id/ll_card_secrets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <io.primer.android.ui.components.TextInputWidget
+                android:id="@+id/card_form_card_expiry"
+                style="@style/Primer.FormInput.Outbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:hint="@string/card_expiry_formatted"
+                app:errorEnabled="false"
+                app:errorIconDrawable="@null">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/card_form_card_expiry_input"
+                    style="@style/Primer.FormInput.Outbox.Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789/ "
+                    android:imeOptions="actionNext"
+                    android:inputType="date"
+                    android:maxLength="5"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            </io.primer.android.ui.components.TextInputWidget>
+
+        </LinearLayout>
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/card_form_cardholder_name"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:hint="@string/card_name_on_card"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_cardholder_name_input"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                tools:ignore="TouchTargetSizeCheck" />
+        </io.primer.android.ui.components.TextInputWidget>
+
+    </LinearLayout>
+
+    <io.primer.android.ui.components.PayButton
+        android:id="@+id/btnPay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xl_vertical_margin"
+        android:layout_marginBottom="@dimen/xxl_vertical_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_info_container"
+        tools:layout_height="48dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
