@@ -23,8 +23,10 @@ import io.primer.android.ui.fragments.SuccessType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
@@ -61,7 +63,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
     override fun continueWithNewClientToken(clientToken: String) = callIfNotHandled {
         addAnalyticsEvent("handleNewClientToken")
         CoroutineScope(dispatcher).launch {
-            validationTokenRepository.validate(clientToken).catch { e ->
+            validateClientToken(clientToken).catch { e ->
                 errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
             }.collect {
                 clientTokenRepository.setClientToken(clientToken)
@@ -146,6 +148,13 @@ internal open class DefaultPrimerResumeDecisionHandler(
                 mapOf("class" to javaClass.simpleName)
             )
         )
+    }
+
+    private fun validateClientToken(clientToken: String): Flow<Boolean> {
+        return when (config.settings.paymentHandling) {
+            PrimerPaymentHandling.MANUAL -> validationTokenRepository.validate(clientToken)
+            PrimerPaymentHandling.AUTO -> flowOf(true)
+        }
     }
 
     protected companion object {
