@@ -26,6 +26,7 @@ internal data class BeginAuthDataRequest(
         private const val MAX_PROTOCOL_VERSION_FIELD = "maxProtocolVersion"
         private const val CHALLENGE_PREFERENCE_FIELD = "challengePreference"
         private const val AMOUNT_FIELD = "amount"
+        private const val DEVICE_FIELD = "device"
         private const val CURRENCY_CODE_FIELD = "currencyCode"
         private const val ORDER_ID_FIELD = "orderId"
         private const val CUSTOMER_FIELD = "customer"
@@ -41,6 +42,12 @@ internal data class BeginAuthDataRequest(
                     putOpt(AMOUNT_FIELD, t.amount)
                     putOpt(CURRENCY_CODE_FIELD, t.currencyCode)
                     putOpt(ORDER_ID_FIELD, t.orderId)
+                    put(
+                        DEVICE_FIELD,
+                        JSONSerializationUtils
+                            .getSerializer<SDKAuthDataRequest>()
+                            .serialize(t.device)
+                    )
                     t.customer?.let {
                         put(
                             CUSTOMER_FIELD,
