@@ -37,6 +37,7 @@ import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeIn
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
 import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
+import io.primer.android.domain.payments.methods.models.VaultInstrumentParams
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.domain.payments.resume.models.ResumeParams
@@ -200,7 +201,9 @@ internal class PrimerViewModel(
             configurationInteractor(ConfigurationParams(config.settings.fromHUC))
                 .flatMapLatest {
                     paymentMethodModulesInteractor(PaymentModuleParams(true)).zip(
-                        vaultedPaymentMethodsInteractor(None())
+                        vaultedPaymentMethodsInteractor(
+                            VaultInstrumentParams(config.settings.fromHUC.not())
+                        )
                     ) { descriptorsHolder, paymentModelTokens ->
                         _vaultedPaymentMethods.postValue(paymentModelTokens)
                         if (getSelectedPaymentMethodId().isEmpty() &&
