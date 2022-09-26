@@ -1,7 +1,10 @@
 package io.primer.android.ui.fragments.bancontact
 
+import io.primer.android.R
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.presentation.base.BaseViewModel
+import io.primer.android.ui.CardNumberFormatter
+import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.utils.removeSpaces
 
 internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor) :
@@ -11,14 +14,18 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
 
     fun collectData() = inputStates.map { it.key to it.value }
 
-    fun onUpdateCardNumberInput(cardNumber: String): Boolean {
+    fun onUpdateCardNumberInput(cardNumber: String): Int? {
         inputStates["number"] = cardNumber.removeSpaces()
 
-        // validation
-        return true
+        val numberFormatted = CardNumberFormatter.fromString(cardNumber)
+        return when {
+            numberFormatted.isEmpty() -> R.string.form_error_required
+            !numberFormatted.isValid() -> R.string.form_error_invalid
+            else -> null
+        }
     }
 
-    fun onUpdateCardExpiry(expiry: String): Boolean {
+    fun onUpdateCardExpiry(expiry: String): Int? {
         if (expiry.contains("/")) {
             val dates = expiry.split("/")
             if (dates.size > 1) {
@@ -33,16 +40,23 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
                 }
             }
         }
-        // validation
-        return true
+
+        val expiryFormatted = ExpiryDateFormatter.fromString(expiry)
+        return when {
+            expiryFormatted.isEmpty() -> R.string.form_error_required
+            !expiryFormatted.isValid() -> R.string.form_error_invalid
+            else -> null
+        }
     }
 
-    fun onUpdateCardholderName(cardholderName: String): Boolean {
+    fun onUpdateCardholderName(cardholderName: String): Int? {
         if (cardholderName.isNotBlank()) {
             inputStates["cardholderName"] = cardholderName
         }
-        // validation
-        return true
+        return when {
+            cardholderName.isEmpty() -> R.string.form_error_required
+            else -> null
+        }
     }
 
     companion object {

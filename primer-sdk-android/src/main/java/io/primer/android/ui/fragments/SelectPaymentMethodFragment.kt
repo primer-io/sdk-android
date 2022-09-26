@@ -7,7 +7,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -237,35 +236,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
         paymentMethodsDisplayMetadata: List<BaseDisplayMetadata>
     ) {
         val factory = primerViewModel.paymentMethodButtonGroupFactory
-
-        // for test vai appertize, remove after complete BE
-        binding.btnTest.setOnClickListener {
-            Toast.makeText(
-                requireContext(),
-                "APM not provided from configuration",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        paymentMethods.firstOrNull {
-            it.config.type == PaymentMethodType.ADYEN_BANCONTACT_CARD.name
-        }?.let { pm ->
-            binding.btnTest.setOnClickListener {
-                // ensure other buttons can't be clicked
-                disableButtons()
-
-                // select payment method
-                primerViewModel.selectPaymentMethod(pm)
-
-                // handle non-form cases
-                pm.behaviours.firstOrNull()?.let {
-                    val isNotForm = pm.type != PaymentMethodUiType.FORM
-                    if (isNotForm) {
-                        primerViewModel.executeBehaviour(it)
-                    }
-                }
-            }
-        }
-        // tests
 
         val boxes = factory.build(
             requireContext(),

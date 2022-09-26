@@ -24,7 +24,8 @@ internal data class ClientToken(
     val qrCodeUrl: String?,
     val expiresAt: String?,
     val reference: String?,
-    val entity: String?
+    val entity: String?,
+    val redirectionUrl: String?
 ) : JSONDeserializable {
 
     companion object {
@@ -71,6 +72,7 @@ internal data class ClientToken(
         private const val EXPIRES_AT_FIELD = "expiresAt"
         private const val REFERENCE_FIELD = "reference"
         private const val ENTITY_FIELD = "entity"
+        private const val REDIRECTION_URL_FIELD = "redirectionUrl"
 
         @JvmField
         val deserializer = object : JSONDeserializer<ClientToken> {
@@ -90,6 +92,7 @@ internal data class ClientToken(
                     t.optNullableString(EXPIRES_AT_FIELD),
                     t.optNullableString(REFERENCE_FIELD),
                     t.optNullableString(ENTITY_FIELD),
+                    t.optNullableString(REDIRECTION_URL_FIELD),
                 )
             }
         }

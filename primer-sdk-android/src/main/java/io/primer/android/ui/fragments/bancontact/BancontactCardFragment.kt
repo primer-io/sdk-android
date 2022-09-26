@@ -8,42 +8,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import io.primer.android.R
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentFormBancontactCardBinding
-import io.primer.android.di.DIAppComponent
-import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
-import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.utils.hideKeyboard
 import io.primer.android.utils.sanitized
-import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.TokenizationStatus
+import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
+import kotlin.reflect.KFunction1
 
 @ExperimentalCoroutinesApi
-internal class BancontactCardFragment : Fragment(), DIAppComponent {
-    private val theme: PrimerTheme by inject()
+internal class BancontactCardFragment : BaseFragment() {
+
     private val localConfig: PrimerConfig by inject()
 
-    private val primerViewModel: PrimerViewModel by activityViewModels()
+    private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
     private val viewModel: BancontactCardViewModel by viewModel()
 
     private var binding: FragmentFormBancontactCardBinding by autoCleaned()
 
     private val inputViews: MutableList<TextInputWidget> = mutableListOf()
     private var network: CardNetwork.Descriptor? = null
-    private val networkAsString: String get() = network?.type.toString()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,10 +53,20 @@ internal class BancontactCardFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupTokenizeObserver()
         setupComponents()
         setupTheme()
         setupInputs()
         setupListeners()
+    }
+
+    private fun setupTokenizeObserver() {
+        tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                TokenizationStatus.LOADING -> binding.btnPay.showProgress()
+                else -> binding.btnPay.hideProgress()
+            }
+        }
     }
 
     private fun setupComponents() {
@@ -68,6 +75,7 @@ internal class BancontactCardFragment : Fragment(), DIAppComponent {
         inputViews.add(binding.cardFormCardholderName)
 
         updateCardNumberInputIcon()
+        updateSubmitButton()
     }
 
     private fun setupTheme() {
@@ -116,62 +124,129 @@ internal class BancontactCardFragment : Fragment(), DIAppComponent {
         binding.ivBack.setOnClickListener { parentFragmentManager.popBackStack() }
 
         binding.btnPay.setOnClickListener {
-            val descriptor =
-                primerViewModel.selectedPaymentMethod.value as AsyncPaymentMethodDescriptor
+            it.hideKeyboard()
+            validateAllFields()
+            if (isReadyForPAy()) {
+                val descriptor =
+                    primerViewModel.selectedPaymentMethod.value as AsyncPaymentMethodDescriptor
 
-            viewModel.collectData().forEach { input ->
-                descriptor.setTokenizableValue(input.first, input.second)
+                viewModel.collectData().forEach { input ->
+                    descriptor.setTokenizableValue(input.first, input.second)
+                }
+
+                descriptor.behaviours.forEach {
+                    primerViewModel.executeBehaviour(it)
+                }
             }
+        }
 
-            descriptor.behaviours.forEach {
-                primerViewModel.executeBehaviour(it)
+        binding.cardFormCardNumber.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                saveAndValidateContent(
+                    binding.cardFormCardNumber.editText?.text,
+                    viewModel::onUpdateCardNumberInput,
+                    binding.cardFormCardNumber,
+                    R.string.card_number
+                )
+            }
+        }
+        binding.cardFormCardExpiry.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                saveAndValidateContent(
+                    binding.cardFormCardExpiry.editText?.text,
+                    viewModel::onUpdateCardExpiry,
+                    binding.cardFormCardExpiry,
+                    R.string.card_expiry
+                )
+            }
+        }
+        binding.cardFormCardholderName.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                saveAndValidateContent(
+                    binding.cardFormCardholderName.editText?.text,
+                    viewModel::onUpdateCardholderName,
+                    binding.cardFormCardholderName,
+                    R.string.card_holder_name
+                )
             }
         }
 
         binding.cardFormCardNumber.editText?.addTextChangedListener(
             afterTextChanged = ::onCardNumberInput
         )
+
         binding.cardFormCardExpiry.editText?.addTextChangedListener {
-            viewModel.onUpdateCardExpiry(it.toString().sanitized())
+            binding.cardFormCardExpiry.removeError()
+            updateSubmitButton()
         }
+
         binding.cardFormCardholderName.editText?.addTextChangedListener {
-            viewModel.onUpdateCardholderName(it.toString().sanitized())
+            binding.cardFormCardholderName.removeError()
+            updateSubmitButton()
+        }
+    }
+
+    private fun saveAndValidateContent(
+        content: Editable?,
+        onValidateAndSave: KFunction1<String, Int?>,
+        inputWidget: TextInputWidget,
+        inputNameResId: Int
+    ) {
+        onValidateAndSave.invoke(content.toString().sanitized()).let { invalidMsgId ->
+            val errorMsg = if (invalidMsgId == null) null else getString(
+                invalidMsgId,
+                getString(inputNameResId)
+            )
+            inputWidget.error = errorMsg
+            inputWidget.isErrorEnabled = errorMsg != null
         }
     }
 
     private fun onCardNumberInput(content: Editable?) {
         val newNetwork = CardNetwork.lookup(content.toString())
         val isSameNetwork = network?.type?.equals(newNetwork.type) ?: false
-        viewModel.onUpdateCardNumberInput(content.toString().sanitized())
+        binding.cardFormCardNumber.removeError()
         if (isSameNetwork) return
 
         network = newNetwork
 
         updateCardNumberInputIcon()
-        emitCardNetworkAction()
+        updateSubmitButton()
     }
 
-    private fun emitCardNetworkAction() {
-        val actionParams = if (network == null || network?.type == CardNetwork.Type.UNKNOWN) {
-            ActionUpdateUnselectPaymentMethodParams
-        } else {
-            ActionUpdateSelectPaymentMethodParams(
-                PaymentMethodType.PAYMENT_CARD.name,
-                networkAsString
-            )
-        }
-
-        primerViewModel.dispatchAction(actionParams) {
-            lifecycleScope.launchWhenStarted {
-                updateSubmitButton()
-            }
-        }
+    private fun validateAllFields() {
+        saveAndValidateContent(
+            binding.cardFormCardNumber.editText?.text,
+            viewModel::onUpdateCardNumberInput,
+            binding.cardFormCardNumber,
+            R.string.card_number
+        )
+        saveAndValidateContent(
+            binding.cardFormCardExpiry.editText?.text,
+            viewModel::onUpdateCardExpiry,
+            binding.cardFormCardExpiry,
+            R.string.card_expiry
+        )
+        saveAndValidateContent(
+            binding.cardFormCardholderName.editText?.text,
+            viewModel::onUpdateCardholderName,
+            binding.cardFormCardholderName,
+            R.string.card_holder_name
+        )
     }
 
     private fun updateSubmitButton() {
         val amount = localConfig.getMonetaryAmountWithSurcharge()
         val amountString = PayAmountText.generate(requireContext(), amount)
         binding.btnPay.text = getString(R.string.pay_specific_amount, amountString)
+
+        binding.btnPay.isEnabled = isReadyForPAy()
+    }
+
+    private fun isReadyForPAy(): Boolean {
+        return !binding.cardFormCardNumber.isErrorEnabled &&
+            !binding.cardFormCardExpiry.isErrorEnabled &&
+            !binding.cardFormCardholderName.isErrorEnabled
     }
 
     private fun updateCardNumberInputIcon() {

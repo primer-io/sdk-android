@@ -9,6 +9,7 @@ import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.payment.async.CardAsyncPaymentMethodBehaviour
+import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.fragments.bancontact.BancontactCardFragment
 import io.primer.android.ui.payment.LoadingState
 
@@ -23,10 +24,16 @@ internal class AdyenBancontactPaymentMethodDescriptor(
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = NewFragmentBehaviour(BancontactCardFragment::newInstance)
+        get() = NewFragmentBehaviour(
+            BancontactCardFragment::newInstance,
+            returnToPreviousOnBack = true
+        )
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> =
-        listOf(CardAsyncPaymentMethodBehaviour(this))
+        listOf(
+            CardAsyncPaymentMethodBehaviour(this),
+            NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() })
+        )
 
     override fun getLoadingState() = LoadingState(
         if (localConfig.settings.uiOptions.theme.isDarkMode == true)

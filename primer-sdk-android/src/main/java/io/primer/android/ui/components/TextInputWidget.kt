@@ -124,4 +124,10 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
             filters = filters.plus(customFilters)
         }
     }
+
+    fun removeError() {
+        if (!isErrorEnabled) return
+        error = null
+        isErrorEnabled = false
+    }
 }

@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:paddingBottom="@dimen/large_vertical_margin"
-    tools:context=".ui.fragments.forms.FastBankTransferFragment"
-    tools:layout_height="match_parent"
+    tools:context=".ui.fragments.bancontact.BancontactCardFragment"
     tools:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent">
 
     <ImageView
@@ -31,7 +30,7 @@
         android:contentDescription="@string/payment_method_icon"
         android:maxHeight="58dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_logo_payconiq_light"
+        android:src="@drawable/ic_logo_bancontact"
         app:layout_constraintBottom_toBottomOf="@+id/iv_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
