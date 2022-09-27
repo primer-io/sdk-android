@@ -1,6 +1,7 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
@@ -42,6 +43,13 @@ internal class PaymentTokenizationInteractor(
                     }
                     descriptor is AsyncPaymentMethodDescriptor &&
                         params.inputData is PrimerRawPhoneNumberData -> {
+                        params.inputData.setTokenizableValues(
+                            descriptor,
+                            asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()
+                        )
+                    }
+                    descriptor is AsyncPaymentMethodDescriptor &&
+                        params.inputData is PrimerRawBancontactCardData -> {
                         params.inputData.setTokenizableValues(
                             descriptor,
                             asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()

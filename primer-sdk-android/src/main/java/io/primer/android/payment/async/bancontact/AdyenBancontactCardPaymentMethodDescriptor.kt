@@ -13,7 +13,7 @@ import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.fragments.bancontact.BancontactCardFragment
 import io.primer.android.ui.payment.LoadingState
 
-internal class AdyenBancontactPaymentMethodDescriptor(
+internal class AdyenBancontactCardPaymentMethodDescriptor(
     override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
     config: PaymentMethodConfigDataResponse,

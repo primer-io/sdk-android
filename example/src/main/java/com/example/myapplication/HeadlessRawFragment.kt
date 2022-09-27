@@ -29,6 +29,8 @@ import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.PrimerRawData
+import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardMetadata
+import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
@@ -195,6 +197,9 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             is PrimerCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
                 PrimerInputElementType.CARD_NUMBER
             ).prefixText = metadata.cardNetwork.name
+            is PrimerBancontactCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
+                PrimerInputElementType.CARD_NUMBER
+            ).prefixText = metadata.cardNetwork.name
         }
     }
 
@@ -278,6 +283,20 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARDHOLDER_NAME
                 ).editText?.text.toString(),
+            )
+            "ADYEN_BANCONTACT_CARD" -> PrimerRawBancontactCardData(
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.CARD_NUMBER
+                ).editText?.text.toString().trim(),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.EXPIRY_DATE
+                ).editText?.text.toString().substringBefore("/").trim(),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.EXPIRY_DATE
+                ).editText?.text.toString().substringAfter("/").trim(),
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.CARDHOLDER_NAME
+                ).editText?.text.toString().trim(),
             )
             "XENDIT_OVO" -> PrimerRawPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(

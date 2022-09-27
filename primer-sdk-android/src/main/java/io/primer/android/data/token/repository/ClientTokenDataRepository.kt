@@ -13,7 +13,6 @@ internal class ClientTokenDataRepository(
     )
 
     override fun getRedirectUrl() = clientTokenDataSource.get().redirectUrl
-        ?: clientTokenDataSource.get().redirectionUrl
 
     override fun getStatusUrl() = clientTokenDataSource.get().statusUrl
 
