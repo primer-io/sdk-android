@@ -2,6 +2,7 @@ package io.primer.android.ui.fragments.bancontact
 
 import io.primer.android.R
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.ui.CardNumberFormatter
 import io.primer.android.ui.ExpiryDateFormatter
@@ -15,7 +16,7 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
     fun collectData() = inputStates.map { it.key to it.value }
 
     fun onUpdateCardNumberInput(cardNumber: String): Int? {
-        inputStates["number"] = cardNumber.removeSpaces()
+        inputStates[PrimerInputElementType.CARD_NUMBER.name] = cardNumber.removeSpaces()
 
         val numberFormatted = CardNumberFormatter.fromString(cardNumber)
         return when {
@@ -32,10 +33,11 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
                 val month = dates[0]
                 val year = dates[1]
                 if (month.isNotBlank()) {
-                    inputStates["expirationMonth"] = String.format("%02d", month.toInt())
+                    inputStates[PrimerInputElementType.EXPIRY_MONTH.name] =
+                        String.format("%02d", month.toInt())
                 }
                 if (year.isNotBlank()) {
-                    inputStates["expirationYear"] =
+                    inputStates[PrimerInputElementType.EXPIRY_YEAR.name] =
                         String.format("%d", (CENTURY_YEARS + year.toInt()))
                 }
             }
@@ -51,7 +53,7 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
 
     fun onUpdateCardholderName(cardholderName: String): Int? {
         if (cardholderName.isNotBlank()) {
-            inputStates["cardholderName"] = cardholderName
+            inputStates[PrimerInputElementType.CARDHOLDER_NAME.name] = cardholderName
         }
         return when {
             cardholderName.isEmpty() -> R.string.form_error_required

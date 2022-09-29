@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentThirdBinding
@@ -21,6 +22,7 @@ import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.manager.PrimerBancontactCardManager
 import io.primer.android.components.manager.PrimerCardManager
 import io.primer.android.components.manager.PrimerCardManagerListener
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
@@ -43,6 +45,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private val viewModel: MainViewModel by activityViewModels()
     private val headlessUniversalCheckout by lazy { PrimerHeadlessUniversalCheckout.current }
     private val cardManager by lazy { PrimerCardManager.newInstance() }
+    private val cardBancontactManager by lazy { PrimerBancontactCardManager.newInstance() }
 
     private val inputElementListener = object : PrimerInputElementListener {
         override fun inputElementValueChanged(inputElement: PrimerInputElement) {
@@ -99,6 +102,13 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         showLoading("Loading client token.")
 
         cardManager.setCardManagerListener(object : PrimerCardManagerListener {
+            override fun onCardValidationChanged(isCardFormValid: Boolean) {
+                Log.d(TAG, "onCardValidChanged $isCardFormValid")
+                binding.nextButton.isEnabled = isCardFormValid
+            }
+        })
+
+        cardBancontactManager.setCardManagerListener(object : PrimerCardManagerListener {
             override fun onCardValidationChanged(isCardFormValid: Boolean) {
                 Log.d(TAG, "onCardValidChanged $isCardFormValid")
                 binding.nextButton.isEnabled = isCardFormValid
@@ -212,7 +222,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         })
 
         binding.nextButton.setOnClickListener {
-            cardManager.tokenize()
+            if (cardManager.isCardFormValid()) cardManager.tokenize()
+            if (cardBancontactManager.isCardFormValid()) cardBancontactManager.tokenize()
         }
     }
 
@@ -239,15 +250,25 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
         paymentMethodTypes.forEach {
             when (it.paymentMethodType) {
-                "PAYMENT_CARD" -> createForm(
-                    cardManager.getRequiredInputElementTypes().orEmpty()
+                "PAYMENT_CARD" -> cardManager.setInputElements(
+                    createForm(
+                        "PaymentCard",
+                        cardManager.getRequiredInputElementTypes().orEmpty()
+                    )
+                )
+                "ADYEN_BANCONTACT_CARD" -> cardBancontactManager.setInputElements(
+                    createForm(
+                        "BancontactCard",
+                        cardBancontactManager.getRequiredInputElementTypes().orEmpty()
+                    )
                 )
                 else -> addPaymentMethodView(it.paymentMethodType)
             }
         }
     }
 
-    private fun createForm(requiredInputElementTypes: List<PrimerInputElementType>) {
+    private fun createForm(title: String, requiredInputElementTypes: List<PrimerInputElementType>)
+        : List<PrimerInputElement> {
         val inputElements = requiredInputElementTypes.map { type ->
             PrimerEditTextFactory.createFromType(requireContext(), type).apply {
                 (this as TextView).setHint(getHint(type))
@@ -256,12 +277,23 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
 
         val viewGroup = (binding.parentView as ViewGroup)
-        viewGroup.removeAllViews()
-        inputElements.forEach {
-            viewGroup.addView((it as TextView))
+        LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(resources.getDimensionPixelSize(R.dimen.large_padding))
+            setBackgroundResource(R.drawable.background_section_outline)
+            addView(
+                TextView(requireContext()).apply {
+                    text = title
+                }
+            )
+
+            inputElements.forEach {
+                addView((it as TextView))
+            }
+            viewGroup.addView(this)
         }
 
-        cardManager.setInputElements(inputElements)
+        return inputElements
     }
 
     private fun addPaymentMethodView(paymentMethodType: String) {
