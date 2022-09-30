@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.wallet.PaymentData
@@ -16,7 +15,6 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -69,7 +67,7 @@ import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 
-internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
+internal class CheckoutSheetActivity : BaseCheckoutActivity() {
 
     private var subscription: EventBus.SubscriptionHandle? = null
     private var exited = false
@@ -376,6 +374,10 @@ internal class CheckoutSheetActivity : AppCompatActivity(), DIAppComponent {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isInitialized().not()) {
+            finish()
+            return
+        }
 
         if (config.settings.fromHUC) {
             ensureClicksGoThrough()
