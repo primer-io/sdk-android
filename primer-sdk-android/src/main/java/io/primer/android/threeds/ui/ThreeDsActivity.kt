@@ -23,12 +23,14 @@ internal class ThreeDsActivity : BaseCheckoutActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DIAppContext.app?.modules(threeDsModule)
-        setContentView(R.layout.activity_primer_progress)
-        setupViews()
-        setupObservers()
-        logAnalyticsViewed()
-        viewModel.startThreeDsFlow()
+        if (isInitialized()) {
+            DIAppContext.app?.modules(threeDsModule)
+            setContentView(R.layout.activity_primer_progress)
+            setupViews()
+            setupObservers()
+            logAnalyticsViewed()
+            viewModel.startThreeDsFlow()
+        } else finish()
     }
 
     override fun onNewIntent(intent: Intent?) {

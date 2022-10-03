@@ -11,6 +11,7 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
@@ -26,8 +27,10 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logAnalyticsViewed()
-        setupObservers()
+        DIAppContext.app?.let {
+            logAnalyticsViewed()
+            setupObservers()
+        } ?: onBackPressed()
     }
 
     override fun onSupportNavigateUp(): Boolean {

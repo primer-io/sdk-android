@@ -23,11 +23,11 @@ internal data class OrderDataResponse(
 
     data class LineItemDataResponse(
         val name: String? = null,
-        val itemId: String,
-        val description: String,
-        val unitAmount: Int,
+        val itemId: String? = null,
+        val description: String? = null,
+        val unitAmount: Int? = null,
         val quantity: Int,
-        val discountAmount: Int = 0,
+        val discountAmount: Int? = null,
         val taxAmount: Int? = null,
         val taxCode: String? = null,
     ) : JSONDeserializable {
@@ -57,11 +57,11 @@ internal data class OrderDataResponse(
                 override fun deserialize(t: JSONObject): LineItemDataResponse {
                     return LineItemDataResponse(
                         t.optNullableString(NAME_FIELD),
-                        t.getString(ITEM_ID_FIELD),
-                        t.getString(DESCRIPTION_FIELD),
-                        t.getInt(UNIT_AMOUNT_FIELD),
+                        t.optNullableString(ITEM_ID_FIELD),
+                        t.optNullableString(DESCRIPTION_FIELD),
+                        t.optNullableInt(UNIT_AMOUNT_FIELD),
                         t.getInt(QUANTITY_FIELD),
-                        t.getInt(DISCOUNT_AMOUNT_FIELD),
+                        t.optNullableInt(DISCOUNT_AMOUNT_FIELD),
                         t.optNullableInt(TAX_AMOUNT_FIELD),
                         t.optNullableString(TAX_CODE_FIELD),
                     )
