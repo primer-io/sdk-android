@@ -16,7 +16,7 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
     fun collectData() = inputStates.map { it.key to it.value }
 
     fun onUpdateCardNumberInput(cardNumber: String): Int? {
-        inputStates[PrimerInputElementType.CARD_NUMBER.name] = cardNumber.removeSpaces()
+        inputStates[PrimerInputElementType.CARD_NUMBER.field] = cardNumber.removeSpaces()
 
         val numberFormatted = CardNumberFormatter.fromString(cardNumber)
         return when {
@@ -33,11 +33,11 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
                 val month = dates[0]
                 val year = dates[1]
                 if (month.isNotBlank()) {
-                    inputStates[PrimerInputElementType.EXPIRY_MONTH.name] =
+                    inputStates[PrimerInputElementType.EXPIRY_MONTH.field] =
                         String.format("%02d", month.toInt())
                 }
                 if (year.isNotBlank()) {
-                    inputStates[PrimerInputElementType.EXPIRY_YEAR.name] =
+                    inputStates[PrimerInputElementType.EXPIRY_YEAR.field] =
                         String.format("%d", (CENTURY_YEARS + year.toInt()))
                 }
             }
@@ -53,7 +53,7 @@ internal class BancontactCardViewModel(analyticsInteractor: AnalyticsInteractor)
 
     fun onUpdateCardholderName(cardholderName: String): Int? {
         if (cardholderName.isNotBlank()) {
-            inputStates[PrimerInputElementType.CARDHOLDER_NAME.name] = cardholderName
+            inputStates[PrimerInputElementType.CARDHOLDER_NAME.field] = cardholderName
         }
         return when {
             cardholderName.isEmpty() -> R.string.form_error_required
