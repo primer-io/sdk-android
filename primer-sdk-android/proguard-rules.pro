@@ -146,6 +146,10 @@
     *;
 }
 
+-keep class io.primer.android.components.manager.PrimerBancontactCardManager$Companion {
+    *;
+}
+
 -keep interface io.primer.android.components.ui.widgets.** {
     *;
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/pay_button_height"
-    android:animateLayoutChanges="true"
     android:gravity="center"
     tools:background="@color/primer_pay_button_background">
 

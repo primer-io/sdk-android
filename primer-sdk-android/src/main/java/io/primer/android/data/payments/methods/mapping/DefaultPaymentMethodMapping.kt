@@ -49,6 +49,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                     PaymentMethodType.ADYEN_MULTIBANCO,
                     PaymentMethodType.RAPYD_PROMPTPAY,
                     PaymentMethodType.OMISE_PROMPTPAY,
+                    PaymentMethodType.ADYEN_BANCONTACT_CARD,
                     PaymentMethodType.XENDIT_OVO -> AsyncMethodFactory(
                         type,
                         settings

@@ -42,13 +42,13 @@ internal class PaymentMethodButtonGroupFactory(
                     )
                     button.setOnClickListener { onClick(d) }
                     box.addView(button)
-                    surchargeMapping[100000] = box
+                    surchargeMapping[KEY_SURCHARGING_BOX] = box
                 } else {
                     val key = getSurcharge(d)
                     val box = surchargeMapping[key] ?: PaymentMethodButtonGroupBox(context).apply {
                         if (surcharges.count() != 0) {
                             if (key == 0) {
-                                hideSurchargeFrame(24)
+                                hideSurchargeFrame(FRAME_PADDING)
                             } else {
                                 val text = formatter.formatSurchargeAsString(key, context = context)
                                 showSurchargeLabel(text)
@@ -99,5 +99,11 @@ internal class PaymentMethodButtonGroupFactory(
     private fun getSurcharge(descriptor: PaymentMethodDescriptor): Int {
         val paymentMethodType = descriptor.config.type
         return surcharges[paymentMethodType] ?: return 0
+    }
+
+    companion object {
+        private const val FRAME_PADDING = 24
+
+        private const val KEY_SURCHARGING_BOX = 100000
     }
 }

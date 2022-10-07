@@ -26,6 +26,9 @@ internal class LocalFormDataSourceFactory(
                 PromptPayLocalFormDataSource(primerTheme, clientToken)
             PaymentMethodType.ADYEN_MULTIBANCO ->
                 MultibancoLocalFormDataSource(primerTheme, clientToken)
+            PaymentMethodType.ADYEN_BANCONTACT_CARD -> BancontactCardLocalFormDataSource(
+                primerTheme
+            )
             else -> throw IllegalStateException("Invalid paymentMethodType $paymentMethodType")
         }
 }

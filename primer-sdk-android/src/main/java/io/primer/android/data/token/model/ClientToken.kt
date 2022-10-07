@@ -24,7 +24,7 @@ internal data class ClientToken(
     val qrCodeUrl: String?,
     val expiresAt: String?,
     val reference: String?,
-    val entity: String?
+    val entity: String?,
 ) : JSONDeserializable {
 
     companion object {

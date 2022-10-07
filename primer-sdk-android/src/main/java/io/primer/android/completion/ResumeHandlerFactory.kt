@@ -41,7 +41,8 @@ internal class ResumeHandlerFactory(
                 config,
                 paymentMethodsRepository
             )
-            ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
+            ASYNC_PAYMENT_METHOD,
+            CARD_ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
@@ -72,5 +73,6 @@ internal class ResumeHandlerFactory(
 
         const val CARD_INSTRUMENT_TYPE = "PAYMENT_CARD"
         const val ASYNC_PAYMENT_METHOD = "OFF_SESSION_PAYMENT"
+        const val CARD_ASYNC_PAYMENT_METHOD = "CARD_OFF_SESSION_PAYMENT"
     }
 }

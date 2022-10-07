@@ -1,10 +1,12 @@
 package io.primer.android.components.domain.payments.validation
 
 import io.primer.android.components.domain.core.models.PrimerRawData
+import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
+import io.primer.android.components.domain.payments.validation.card.BancontactCardInputDataValidator
 import io.primer.android.components.domain.payments.validation.card.CardInputDataValidator
 import io.primer.android.components.domain.payments.validation.otp.blik.BlikInputDataValidator
 import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.MBWayPhoneNumberInputDataValidator
@@ -23,6 +25,7 @@ internal class PaymentInputDataValidatorFactory(
             is PrimerRawCardData -> CardInputDataValidator(
                 checkoutModuleRepository,
             )
+            is PrimerRawBancontactCardData -> BancontactCardInputDataValidator()
             is PrimerRawPhoneNumberData -> {
                 when (paymentMethodType) {
                     PaymentMethodType.XENDIT_OVO.name -> OvoPhoneNumberInputDataValidator()

@@ -654,4 +654,18 @@ internal class PaymentMethodMappingTest {
             is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
         }
     }
+
+    @Test
+    fun `test maps adyen bancontact correctly`() {
+        val factory = DefaultPaymentMethodMapping(settings)
+        when (
+            val result = factory.getPaymentMethodFor(
+                PaymentMethodImplementationType.NATIVE_SDK,
+                PaymentMethodType.ADYEN_BANCONTACT_CARD.name
+            )
+        ) {
+            is Failure -> Assert.fail()
+            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+        }
+    }
 }

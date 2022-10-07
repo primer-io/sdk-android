@@ -7,6 +7,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorFactory
+import io.primer.android.payment.async.bancontact.AdyenBancontactCardPaymentMethodDescriptor
 import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.fastbanktransfer.RapydFastPaymentMethodDescriptor
@@ -95,6 +96,12 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                     paymentMethod as AsyncPaymentMethod,
                     paymentMethodRemoteConfig
                 )
+                PaymentMethodType.ADYEN_BANCONTACT_CARD ->
+                    AdyenBancontactCardPaymentMethodDescriptor(
+                        localConfig,
+                        paymentMethod as AsyncPaymentMethod,
+                        paymentMethodRemoteConfig
+                    )
                 else -> throw IllegalStateException(
                     "Unknown payment type ${paymentMethodRemoteConfig.type}"
                 )

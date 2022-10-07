@@ -2,6 +2,7 @@ package io.primer.android.components.manager
 
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
+import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.ui.widgets.PrimerCardNumberEditText
@@ -102,5 +103,70 @@ class PrimerCardManager private constructor() :
 
     companion object {
         fun newInstance(): PrimerUniversalCheckoutCardManagerInterface = PrimerCardManager()
+    }
+}
+
+@ExperimentalPrimerApi
+class PrimerBancontactCardManager private constructor() :
+    PrimerUniversalCheckoutCardManagerInterface,
+    PrimerTextChangedListener {
+
+    private val inputElements = mutableListOf<PrimerInputElement>()
+    private var cardFormValid: Boolean = false
+    private var listener: PrimerCardManagerListener? = null
+
+    override fun getRequiredInputElementTypes(): List<PrimerInputElementType>? {
+        return PrimerHeadlessUniversalCheckout.instance.getRequiredInputElementTypes(
+            PaymentMethodType.ADYEN_BANCONTACT_CARD.name
+        )
+    }
+
+    override fun setInputElements(elements: List<PrimerInputElement>) {
+        inputElements.clear()
+        inputElements.addAll(elements)
+        setupInputElementsListeners()
+    }
+
+    override fun tokenize() {
+        PrimerHeadlessUniversalCheckout.instance.startTokenization(
+            PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+            PrimerRawBancontactCardData(
+                getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString(),
+                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
+                    .getOrElse(0) { "" },
+                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
+                    .getOrElse(1) { "" },
+                getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME).toString(),
+            )
+        )
+    }
+
+    override fun isCardFormValid() =
+        inputElements.isNotEmpty() && inputElements.all { it.isValid() }
+
+    override fun setCardManagerListener(listener: PrimerCardManagerListener) {
+        this.listener = listener
+    }
+
+    override fun onTextChanged(text: String?) {
+        if (cardFormValid != isCardFormValid()) {
+            this.cardFormValid = isCardFormValid()
+            listener?.onCardValidationChanged(isCardFormValid())
+        }
+    }
+
+    private fun setupInputElementsListeners() {
+        inputElements.forEach { (it as? PrimerEditText)?.setTextChangedListener(this) }
+    }
+
+    private fun getInputElementValue(inputElementType: PrimerInputElementType): String? {
+        return (
+            inputElements.firstOrNull { it.getType() == inputElementType } as? PrimerEditText
+            )?.getSanitizedText()?.toString()
+    }
+
+    companion object {
+        fun newInstance(): PrimerUniversalCheckoutCardManagerInterface =
+            PrimerBancontactCardManager()
     }
 }

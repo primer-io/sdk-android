@@ -9,6 +9,8 @@ import io.primer.android.di.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
 
+internal const val HEADER_ACCEPT = "accept"
+
 internal class CreatePaymentDataSource(private val primerHttpClient: PrimerHttpClient) :
     BaseFlowDataSource<PaymentDataResponse, BaseRemoteRequest<CreatePaymentDataRequest>> {
 
@@ -17,7 +19,10 @@ internal class CreatePaymentDataSource(private val primerHttpClient: PrimerHttpC
         return primerHttpClient.post(
             "${input.configuration.pciUrl}/payments",
             input.data,
-            mapOf(SDK_API_VERSION_HEADER to ApiVersion.PAYMENTS_VERSION.version)
+            mapOf(
+                SDK_API_VERSION_HEADER to ApiVersion.PAYMENTS_VERSION.version,
+                HEADER_ACCEPT to "*/*",
+            )
         )
     }
 }

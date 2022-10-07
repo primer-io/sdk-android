@@ -47,6 +47,14 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
         values.put(parent, (values.optJSONObject(parent) ?: JSONObject()).put(key, value))
     }
 
+    fun appendTokenizableValue(superParent: String, parent: String, key: String, value: String) {
+        values.put(
+            superParent,
+            (values.optJSONObject(superParent) ?: JSONObject())
+                .put(parent, (values.optJSONObject(parent) ?: JSONObject()).put(key, value))
+        )
+    }
+
     open fun validate(): List<SyncValidationError> {
         return Collections.emptyList()
     }

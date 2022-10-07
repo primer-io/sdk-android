@@ -8,11 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.text.TextUtilsCompat
+import androidx.core.view.ViewCompat
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.payment.utils.ButtonViewHelper
+import java.util.Locale
 
 internal class CreditCardViewCreator(
     private val config: PrimerConfig
@@ -35,8 +38,14 @@ internal class CreditCardViewCreator(
             context,
             R.drawable.ic_logo_credit_card
         )
-
-        text.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+        val layoutDirection = TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault())
+        val isLeftToRight = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+        text.setCompoundDrawablesWithIntrinsicBounds(
+            if (isLeftToRight) drawable else null,
+            null,
+            if (isLeftToRight) null else drawable,
+            null
+        )
 
         text.setTextColor(
             theme.paymentMethodButton.text.defaultColor.getColor(
@@ -54,7 +63,7 @@ internal class CreditCardViewCreator(
         val icon = text.compoundDrawables
 
         DrawableCompat.setTint(
-            DrawableCompat.wrap(icon[0]),
+            DrawableCompat.wrap(icon.first { it != null }),
             theme.paymentMethodButton.text.defaultColor.getColor(
                 context,
                 theme.isDarkMode

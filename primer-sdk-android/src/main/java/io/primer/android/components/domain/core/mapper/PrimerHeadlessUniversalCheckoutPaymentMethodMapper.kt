@@ -1,6 +1,7 @@
 package io.primer.android.components.domain.core.mapper
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
@@ -28,6 +29,11 @@ internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
                 paymentMethodType,
                 PrimerRawPhoneNumberData::class
             )
+            PaymentMethodType.ADYEN_BANCONTACT_CARD.name ->
+                PrimerHeadlessUniversalCheckoutPaymentMethod(
+                    paymentMethodType,
+                    PrimerRawBancontactCardData::class
+                )
             else -> PrimerHeadlessUniversalCheckoutPaymentMethod(paymentMethodType)
         }
     }
