@@ -16,7 +16,7 @@ data class PrimerRawCardData(
         setTokenizableField(PrimerInputElementType.CARD_NUMBER, cardNumber)
         setTokenizableField(
             PrimerInputElementType.EXPIRY_DATE,
-            "$expirationMonth/$expirationYear"
+            "${expirationMonth.padStart(2, '0')}/$expirationYear"
         )
         setTokenizableField(PrimerInputElementType.CVV, cvv)
         cardHolderName?.apply {
