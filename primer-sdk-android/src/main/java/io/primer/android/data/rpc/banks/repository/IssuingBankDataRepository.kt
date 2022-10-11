@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@ExperimentalCoroutinesApi
 internal class IssuingBankDataRepository(
     private val remoteIssuingBankDataSource: RemoteIssuingBankFlowDataSource,
     private val localIssuingBankDataSource: LocalIssuingBankDataSource,
