@@ -28,3 +28,15 @@ internal class MultibancoCheckoutAdditionalInfoResolver : PrimerCheckoutAddition
         )
     }
 }
+
+
+internal class RetailOutletsCheckoutAdditionalInfoResolver : PrimerCheckoutAdditionalInfoResolver {
+
+    override fun resolve(clientToken: ClientToken): PrimerCheckoutAdditionalInfo {
+        return RetailOutletsCheckoutAdditionalInfo(
+            clientToken.expiresAt.orEmpty(),
+            clientToken.couponCode.orEmpty(),
+            clientToken.retailerName.orEmpty()
+        )
+    }
+}

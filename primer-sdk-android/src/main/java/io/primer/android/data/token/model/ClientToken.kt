@@ -25,6 +25,8 @@ internal data class ClientToken(
     val expiresAt: String?,
     val reference: String?,
     val entity: String?,
+    val couponCode: String?,
+    val retailerName: String?,
 ) : JSONDeserializable {
 
     companion object {
@@ -71,6 +73,8 @@ internal data class ClientToken(
         private const val EXPIRES_AT_FIELD = "expiresAt"
         private const val REFERENCE_FIELD = "reference"
         private const val ENTITY_FIELD = "entity"
+        private const val COUPON_CODE = "couponCode"
+        private const val RETAILER_NAME = "retailerName"
 
         @JvmField
         val deserializer = object : JSONDeserializer<ClientToken> {
@@ -90,6 +94,8 @@ internal data class ClientToken(
                     t.optNullableString(EXPIRES_AT_FIELD),
                     t.optNullableString(REFERENCE_FIELD),
                     t.optNullableString(ENTITY_FIELD),
+                    t.optNullableString(COUPON_CODE),
+                    t.optNullableString(RETAILER_NAME),
                 )
             }
         }

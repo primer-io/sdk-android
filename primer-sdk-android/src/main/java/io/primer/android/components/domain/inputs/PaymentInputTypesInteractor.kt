@@ -84,6 +84,8 @@ internal class PaymentInputTypesInteractor(
                 }
                 PaymentMethodType.ADYEN_MBWAY.name,
                 PaymentMethodType.XENDIT_OVO.name -> listOf(PrimerInputElementType.PHONE_NUMBER)
+                PaymentMethodType.XENDIT_RETAIL_OUTLETS.name ->
+                    listOf(PrimerInputElementType.RETAIL_OUTLET)
                 else -> emptyList()
             }
         } catch (e: IllegalArgumentException) {

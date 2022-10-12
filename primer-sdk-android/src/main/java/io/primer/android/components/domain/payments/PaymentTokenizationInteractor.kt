@@ -5,6 +5,7 @@ import io.primer.android.components.domain.core.models.bancontact.PrimerRawBanco
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
+import io.primer.android.components.domain.core.models.retail_outlet.PrimerRawRetailerData
 import io.primer.android.components.domain.exception.InvalidTokenizationDataException
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -16,6 +17,7 @@ import io.primer.android.logging.Logger
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
+import io.primer.android.payment.async.retail_outlet.XenditRetailOutletPaymentMethodDescriptor
 import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -57,6 +59,13 @@ internal class PaymentTokenizationInteractor(
                     }
                     descriptor is AdyenBlikPaymentMethodDescriptor &&
                         params.inputData is PrimerOtpCodeRawData -> {
+                        params.inputData.setTokenizableValues(
+                            descriptor,
+                            asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()
+                        )
+                    }
+                    descriptor is XenditRetailOutletPaymentMethodDescriptor &&
+                        params.inputData is PrimerRawRetailerData -> {
                         params.inputData.setTokenizableValues(
                             descriptor,
                             asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()

@@ -35,6 +35,7 @@ import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
+import io.primer.android.components.domain.core.models.retail_outlet.PrimerRawRetailerData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
@@ -306,6 +307,11 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             "ADYEN_MBWAY" -> PrimerRawPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.PHONE_NUMBER
+                ).editText?.text.toString()
+            )
+            "XENDIT_RETAIL_OUTLETS" -> PrimerRawRetailerData(
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.RETAIL_OUTLET
                 ).editText?.text.toString()
             )
             else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
