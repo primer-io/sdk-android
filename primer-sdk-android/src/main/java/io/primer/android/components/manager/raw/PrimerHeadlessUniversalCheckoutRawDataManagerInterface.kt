@@ -3,6 +3,7 @@ package io.primer.android.components.manager.raw
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.data.payments.configure.PrimerInitializationData
 
 @JvmDefaultWithCompatibility
 @ExperimentalPrimerApi
@@ -34,8 +35,14 @@ interface PrimerHeadlessUniversalCheckoutRawDataManagerInterface {
     /**
      * This method should be called when disposing the listener in order to free Primer SDK resource.
      * Once instance of [PrimerHeadlessUniversalCheckoutRawDataManager] has freed up the used resources,
-     * it is in the same state as newly created [PrimerHeadlessUniversalCheckoutRawDataManager] and can be used once again,
-     * but should go through [setManagerListener] once again.
+     * it is in the same state as newly created [PrimerHeadlessUniversalCheckoutRawDataManager]
+     * and can be used once again, but should go through [setManagerListener] once again.
      */
     fun cleanup()
+
+    /**
+     * This method should be called when payment method require to preload
+     * additional data, like retail outlets or banks list.
+     */
+    fun configure(completion: (PrimerInitializationData?, Error?) -> Unit)
 }

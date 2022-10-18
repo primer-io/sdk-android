@@ -1,4 +1,4 @@
-package io.primer.android.components.domain.core.models.retail_outlet
+package io.primer.android.components.domain.core.models.retailOutlet
 
 import io.primer.android.components.domain.core.models.PrimerAsyncRawDataTokenizationHelper
 import io.primer.android.components.domain.core.models.PrimerRawData

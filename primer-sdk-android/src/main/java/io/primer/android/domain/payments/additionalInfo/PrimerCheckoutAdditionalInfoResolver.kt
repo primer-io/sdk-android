@@ -29,14 +29,13 @@ internal class MultibancoCheckoutAdditionalInfoResolver : PrimerCheckoutAddition
     }
 }
 
-
 internal class RetailOutletsCheckoutAdditionalInfoResolver : PrimerCheckoutAdditionalInfoResolver {
 
     override fun resolve(clientToken: ClientToken): PrimerCheckoutAdditionalInfo {
-        return RetailOutletsCheckoutAdditionalInfo(
+        return XenditCheckoutVoucherAdditionalInfo(
             clientToken.expiresAt.orEmpty(),
             clientToken.couponCode.orEmpty(),
-            clientToken.retailerName.orEmpty()
+            clientToken.merchantName.orEmpty()
         )
     }
 }

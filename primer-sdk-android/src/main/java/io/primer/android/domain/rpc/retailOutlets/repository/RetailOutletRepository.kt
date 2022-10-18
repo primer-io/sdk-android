@@ -1,7 +1,7 @@
-package io.primer.android.domain.rpc.retail_outlets.repository
+package io.primer.android.domain.rpc.retailOutlets.repository
 
-import io.primer.android.domain.rpc.retail_outlets.models.RetailOutlet
-import io.primer.android.domain.rpc.retail_outlets.models.RetailOutletParams
+import io.primer.android.domain.rpc.retailOutlets.models.RetailOutlet
+import io.primer.android.domain.rpc.retailOutlets.models.RetailOutletParams
 import kotlinx.coroutines.flow.Flow
 
 internal interface RetailOutletRepository {

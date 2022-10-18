@@ -1,9 +1,9 @@
-package io.primer.android.domain.rpc.retail_outlets
+package io.primer.android.domain.rpc.retailOutlets
 
 import io.primer.android.domain.base.BaseFlowInteractor
-import io.primer.android.domain.rpc.retail_outlets.models.RetailOutlet
-import io.primer.android.domain.rpc.retail_outlets.models.RetailOutletFilterParams
-import io.primer.android.domain.rpc.retail_outlets.repository.RetailOutletRepository
+import io.primer.android.domain.rpc.retailOutlets.models.RetailOutlet
+import io.primer.android.domain.rpc.retailOutlets.models.RetailOutletFilterParams
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn

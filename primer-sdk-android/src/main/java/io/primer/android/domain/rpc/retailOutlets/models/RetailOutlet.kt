@@ -1,6 +1,6 @@
-package io.primer.android.domain.rpc.retail_outlets.models
+package io.primer.android.domain.rpc.retailOutlets.models
 
-internal data class RetailOutlet(
+data class RetailOutlet(
     val id: String,
     val name: String,
     val disabled: Boolean,

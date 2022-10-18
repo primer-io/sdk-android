@@ -5,7 +5,7 @@ import io.primer.android.components.domain.core.models.bancontact.PrimerRawBanco
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
-import io.primer.android.components.domain.core.models.retail_outlet.PrimerRawRetailerData
+import io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData
 import io.primer.android.data.configuration.models.PaymentMethodType
 
 internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {

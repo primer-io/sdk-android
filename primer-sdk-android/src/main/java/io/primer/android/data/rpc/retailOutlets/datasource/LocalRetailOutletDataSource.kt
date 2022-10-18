@@ -1,7 +1,7 @@
-package io.primer.android.data.rpc.retail_outlets.datasource
+package io.primer.android.data.rpc.retailOutlets.datasource
 
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
-import io.primer.android.data.rpc.retail_outlets.models.RetailOutletDataResponse
+import io.primer.android.data.rpc.retailOutlets.models.RetailOutletDataResponse
 import kotlinx.coroutines.flow.flowOf
 
 internal class LocalRetailOutletDataSource :

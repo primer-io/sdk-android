@@ -6,10 +6,10 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.domain.rpc.retail_outlets.RetailOutletFilterInteractor
-import io.primer.android.domain.rpc.retail_outlets.models.RetailOutlet
-import io.primer.android.domain.rpc.retail_outlets.models.RetailOutletFilterParams
-import io.primer.android.domain.rpc.retail_outlets.repository.RetailOutletRepository
+import io.primer.android.domain.rpc.retailOutlets.RetailOutletFilterInteractor
+import io.primer.android.domain.rpc.retailOutlets.models.RetailOutlet
+import io.primer.android.domain.rpc.retailOutlets.models.RetailOutletFilterParams
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf

@@ -1,4 +1,4 @@
-package io.primer.android.domain.rpc.retail_outlets.models
+package io.primer.android.domain.rpc.retailOutlets.models
 
 import io.primer.android.domain.base.Params
 

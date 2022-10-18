@@ -7,8 +7,11 @@ import io.primer.android.components.domain.payments.PaymentInputDataTypeValidate
 import io.primer.android.components.domain.payments.PaymentTokenizationInteractor
 import io.primer.android.components.domain.payments.models.PaymentRawDataParams
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.RetailOutletInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.catch
@@ -31,6 +34,9 @@ internal class DefaultRawDataDelegate(
     paymentTokenizationInteractor: PaymentTokenizationInteractor,
     actionInteractor: ActionInteractor,
     asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor,
+    paymentMethodsRepository: PaymentMethodsRepository,
+    retailOutletInteractor: RetailOutletInteractor,
+    config: PrimerConfig,
     private val paymentInputDataChangedInteractor: PaymentInputDataChangedInteractor,
     private val paymentInputDataTypeValidateInteractor: PaymentInputDataTypeValidateInteractor,
 ) : DefaultHeadlessDelegate(
@@ -39,7 +45,10 @@ internal class DefaultRawDataDelegate(
     paymentTokenizationInteractor,
     paymentInputDataTypeValidateInteractor,
     actionInteractor,
-    asyncPaymentMethodInteractor
+    asyncPaymentMethodInteractor,
+    paymentMethodsRepository,
+    retailOutletInteractor,
+    config,
 ),
     RawDataDelegate {
 

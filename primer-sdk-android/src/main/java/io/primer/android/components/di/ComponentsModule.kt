@@ -10,10 +10,11 @@ import io.primer.android.components.domain.payments.PaymentsTypesInteractor
 import io.primer.android.components.domain.payments.metadata.PaymentRawDataMetadataRetrieverFactory
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.components.domain.payments.validation.PaymentInputDataValidatorFactory
-import io.primer.android.components.presentation.DefaultRawDataDelegate
 import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckoutDelegate
+import io.primer.android.components.presentation.DefaultRawDataDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
+import io.primer.android.di.RETAIL_OUTLET_SCOPE
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import org.koin.core.qualifier.named
@@ -75,6 +76,9 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
+                getScope(RETAIL_OUTLET_SCOPE).get(),
+                get(),
+                get(),
                 get(),
                 get(),
                 get()
@@ -105,6 +109,9 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
+                get(),
+                get(),
+                getScope(RETAIL_OUTLET_SCOPE).get(),
                 get(),
                 get(),
                 get()

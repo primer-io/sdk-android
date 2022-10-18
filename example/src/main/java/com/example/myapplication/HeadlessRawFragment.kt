@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.os.Bundle
@@ -35,15 +36,19 @@ import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
-import io.primer.android.components.domain.core.models.retail_outlet.PrimerRawRetailerData
+import io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
+import io.primer.android.data.payments.configure.PrimerInitializationData
+import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.XenditCheckoutVoucherAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import kotlin.math.pow
@@ -150,6 +155,17 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 hideLoading()
                 AlertDialog.Builder(context).setMessage("On Checkout Completed $checkoutData")
                     .show()
+            }
+
+            override fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
+                super.onAdditionalInfoReceived(additionalInfo)
+                when (additionalInfo) {
+                    is XenditCheckoutVoucherAdditionalInfo -> {
+                        AlertDialog.Builder(context)
+                            .setMessage("Obtained additional info: $additionalInfo")
+                            .show()
+                    }
+                }
             }
 
             @SuppressLint("NewApi")
@@ -309,11 +325,6 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     PrimerInputElementType.PHONE_NUMBER
                 ).editText?.text.toString()
             )
-            "XENDIT_RETAIL_OUTLETS" -> PrimerRawRetailerData(
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.RETAIL_OUTLET
-                ).editText?.text.toString()
-            )
             else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
         }
     }
@@ -322,7 +333,45 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         rawDataManager =
             PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(paymentMethodType)
         rawDataManager.setManagerListener(this)
-        createForm(paymentMethodType, rawDataManager.getRequiredInputElementTypes())
+        if (paymentMethodType == "XENDIT_RETAIL_OUTLETS") {
+            rawDataManager.configure { primerInitializationData, error ->
+                if (error == null) {
+                    showChooser(primerInitializationData)
+                } else {
+                    AlertDialog.Builder(context)
+                        .setMessage(error.message.orEmpty())
+                        .show()
+                }
+            }
+        } else {
+            createForm(paymentMethodType, rawDataManager.getRequiredInputElementTypes())
+        }
+    }
+
+    private fun showChooser(primerInitializationData: PrimerInitializationData?) {
+        when (primerInitializationData) {
+            is RetailOutletsList -> {
+                val retailerNames = primerInitializationData.result.map { it.name }.toTypedArray()
+                val itemClick = DialogInterface.OnClickListener { dialog, which ->
+                    if (which > -1) {
+                        rawDataManager.setRawData(
+                            PrimerRawRetailerData(
+                                primerInitializationData.result[which].id
+                            )
+                        )
+
+                        rawDataManager.submit()
+                    }
+                    dialog.dismiss()
+                }
+                AlertDialog.Builder(context)
+                    .setItems(
+                        retailerNames,
+                        itemClick
+                    )
+                    .show()
+            }
+        }
     }
 
     companion object {

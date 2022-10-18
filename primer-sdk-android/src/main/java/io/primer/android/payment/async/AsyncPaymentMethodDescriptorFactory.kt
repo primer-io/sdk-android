@@ -17,7 +17,7 @@ import io.primer.android.payment.async.multibanco.AdyenMultibancoPaymentMethodDe
 import io.primer.android.payment.async.ovo.XenditOvoPaymentMethodDescriptor
 import io.primer.android.payment.async.promptpay.OmisePromptPayPaymentMethodDescriptor
 import io.primer.android.payment.async.promptpay.RapydPromptPayPaymentMethodDescriptor
-import io.primer.android.payment.async.retail_outlet.XenditRetailOutletPaymentMethodDescriptor
+import io.primer.android.payment.async.retailOutlet.XenditRetailOutletPaymentMethodDescriptor
 import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.PrimerTestSofortPaymentMethodDescriptor
 import io.primer.android.payment.async.webRedirect.WebRedirectPaymentMethodDescriptor

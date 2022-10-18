@@ -1,4 +1,4 @@
-package io.primer.android.data.rpc.retail_outlets.models
+package io.primer.android.data.rpc.retailOutlets.models
 
 import io.primer.android.core.serialization.json.JSONSerializable
 import io.primer.android.core.serialization.json.JSONSerializer

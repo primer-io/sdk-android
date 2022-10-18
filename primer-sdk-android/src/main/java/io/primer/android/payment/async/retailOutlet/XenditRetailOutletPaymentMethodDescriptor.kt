@@ -1,4 +1,4 @@
-package io.primer.android.payment.async.retail_outlet
+package io.primer.android.payment.async.retailOutlet
 
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
