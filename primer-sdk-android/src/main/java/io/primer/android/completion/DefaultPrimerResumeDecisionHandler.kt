@@ -81,8 +81,8 @@ internal open class DefaultPrimerResumeDecisionHandler(
         val clientTokenConfig = ClientToken.fromString(clientToken)
         paymentMethodsRepository.getPaymentMethodDescriptors().mapLatest { descriptors ->
             val descriptor = descriptors.firstOrNull { descriptor ->
-                PaymentMethodType.safeValueOf(descriptor.config.type).intents
-                    ?.map { it.name }?.contains(clientTokenConfig.intent) == true
+                descriptor.config.type ==
+                    paymentMethodRepository.getPaymentMethod().paymentMethodType
             }
 
             descriptor?.additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->

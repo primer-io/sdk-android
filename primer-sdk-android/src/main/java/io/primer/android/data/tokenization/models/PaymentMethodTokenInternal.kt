@@ -46,16 +46,18 @@ internal data class PaymentMethodTokenInternal(
         val deserializer = object : JSONDeserializer<PaymentMethodTokenInternal> {
 
             override fun deserialize(t: JSONObject): PaymentMethodTokenInternal {
+                val paymentInstrumentDataJson = t.optJSONObject(PAYMENT_INSTRUMENT_DATA_FIELD)
+                val paymentInstrumentData = paymentInstrumentDataJson?.let {
+                    JSONSerializationUtils.getDeserializer<PaymentInstrumentData>()
+                        .deserialize(it)
+                }
+                val paymentMethodType = paymentInstrumentDataJson
+                    ?.optNullableString(PAYMENT_METHOD_TYPE_FIELD)
                 return PaymentMethodTokenInternal(
                     t.getString(TOKEN_FIELD),
                     t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
-                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD) ?: t.getString(
-                        PAYMENT_INSTRUMENT_TYPE_FIELD
-                    ),
-                    t.optJSONObject(PAYMENT_INSTRUMENT_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<PaymentInstrumentData>()
-                            .deserialize(it)
-                    },
+                    paymentMethodType ?: t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
+                    paymentInstrumentData,
                     t.optJSONObject(VAULT_DATA_FIELD)?.let {
                         JSONSerializationUtils.getDeserializer<VaultDataResponse>()
                             .deserialize(it)

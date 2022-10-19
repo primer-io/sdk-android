@@ -34,8 +34,7 @@ internal class RetailOutletsCheckoutAdditionalInfoResolver : PrimerCheckoutAddit
     override fun resolve(clientToken: ClientToken): PrimerCheckoutAdditionalInfo {
         return XenditCheckoutVoucherAdditionalInfo(
             clientToken.expiresAt.orEmpty(),
-            clientToken.couponCode.orEmpty(),
-            clientToken.merchantName.orEmpty()
+            clientToken.reference.orEmpty(),
         )
     }
 }
