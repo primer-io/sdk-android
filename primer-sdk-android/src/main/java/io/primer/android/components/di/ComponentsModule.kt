@@ -88,6 +88,7 @@ internal val componentsModule = {
         factory {
             PaymentInputDataValidatorFactory(
                 get(),
+                getScope(RETAIL_OUTLET_SCOPE).get(),
             )
         }
 

@@ -5,9 +5,7 @@ import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 
-data class PrimerRawRetailerData(
-    val id: String
-) : PrimerRawData {
+data class PrimerRawRetailerData(val id: String) : PrimerRawData {
 
     internal fun setTokenizableValues(
         descriptor: AsyncPaymentMethodDescriptor,

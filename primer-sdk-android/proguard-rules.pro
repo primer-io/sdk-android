@@ -124,6 +124,22 @@
     *;
 }
 
+-keep public interface io.primer.android.data.payments.configure.PrimerInitializationData {
+    public *;
+}
+
+-keep class io.primer.android.data.payments.configure.** {
+    *;
+}
+
+-keep class io.primer.android.domain.rpc.retailOutlets.models.* {
+    *;
+}
+
+-keep class io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData {
+    *;
+}
+
 -keep class io.primer.android.domain.error.models.PrimerError {
     public *;
 }

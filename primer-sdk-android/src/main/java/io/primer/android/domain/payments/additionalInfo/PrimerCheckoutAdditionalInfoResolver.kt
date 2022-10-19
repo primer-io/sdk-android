@@ -1,9 +1,9 @@
 package io.primer.android.domain.payments.additionalInfo
 
-import com.google.gson.internal.bind.util.ISO8601Utils
 import io.primer.android.data.token.model.ClientToken
 import java.text.DateFormat
-import java.text.ParsePosition
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 internal interface PrimerCheckoutAdditionalInfoResolver {
 
@@ -34,6 +34,7 @@ internal class MultibancoCheckoutAdditionalInfoResolver : PrimerCheckoutAddition
 
 internal class RetailOutletsCheckoutAdditionalInfoResolver : PrimerCheckoutAdditionalInfoResolver {
 
+    private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private val expiresDateFormat = DateFormat.getDateTimeInstance(
         DateFormat.MEDIUM,
         DateFormat.SHORT
@@ -44,7 +45,7 @@ internal class RetailOutletsCheckoutAdditionalInfoResolver : PrimerCheckoutAddit
     override fun resolve(clientToken: ClientToken): PrimerCheckoutAdditionalInfo {
         return XenditCheckoutVoucherAdditionalInfo(
             clientToken.expiresAt?.let {
-                ISO8601Utils.parse(it, ParsePosition(0))?.let { expiresAt ->
+                dateFormatISO.parse(it)?.let { expiresAt ->
                     expiresDateFormat.format(expiresAt)
                 }
             } ?: "",
