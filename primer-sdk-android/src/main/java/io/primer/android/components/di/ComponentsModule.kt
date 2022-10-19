@@ -77,7 +77,7 @@ internal val componentsModule = {
                 get(),
                 get(),
                 getScope(RETAIL_OUTLET_SCOPE).get(),
-                get(),
+                getScope(RETAIL_OUTLET_SCOPE).get(),
                 get(),
                 get(),
                 get(),
@@ -112,7 +112,7 @@ internal val componentsModule = {
                 get(),
                 get(),
                 getScope(RETAIL_OUTLET_SCOPE).get(),
-                get(),
+                getScope(RETAIL_OUTLET_SCOPE).get(),
                 get(),
                 get()
             )

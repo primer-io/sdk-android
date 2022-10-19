@@ -3,6 +3,7 @@ package io.primer.android.components.presentation
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
+import io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.payments.PaymentInputDataTypeValidateInteractor
@@ -12,7 +13,6 @@ import io.primer.android.components.domain.payments.models.PaymentTokenizationDe
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
@@ -21,6 +21,7 @@ import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.rpc.retailOutlets.RetailOutletInteractor
 import io.primer.android.domain.rpc.retailOutlets.models.RetailOutletParams
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.ui.CardNetwork
@@ -67,7 +68,7 @@ internal open class DefaultHeadlessDelegate(
     private val asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor,
     private val paymentMethodsRepository: PaymentMethodsRepository,
     private val retailOutletInteractor: RetailOutletInteractor,
-    private val config: PrimerConfig
+    private val retailOutletRepository: RetailOutletRepository
 ) : HeadlessDelegate {
 
     protected val scope: CoroutineScope = CoroutineScope(SupervisorJob())
@@ -101,6 +102,7 @@ internal open class DefaultHeadlessDelegate(
         completion: ((Error?) -> Unit),
     ) {
         scope.launch {
+            prepareAdditionalInfo(rawData)
             paymentInputDataTypeValidateInteractor(
                 PaymentRawDataParams(
                     type,
@@ -116,6 +118,14 @@ internal open class DefaultHeadlessDelegate(
                 .collect {
                     completion(null)
                 }
+        }
+    }
+
+    private fun prepareAdditionalInfo(rawData: PrimerRawData) {
+        when (rawData) {
+            is PrimerRawRetailerData -> {
+                retailOutletRepository.setSelectedRetailOutlet(rawData.id)
+            }
         }
     }
 

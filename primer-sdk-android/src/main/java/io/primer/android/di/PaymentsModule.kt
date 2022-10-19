@@ -20,7 +20,7 @@ internal val PaymentsModule = {
         single { CreatePaymentDataSource(get()) }
         single { LocalPaymentDataSource() }
         single { ResumePaymentDataSource(get()) }
-        single { PrimerPaymentMethodDataHelper(get(), get()) }
+        single { PrimerPaymentMethodDataHelper(get(), get(), getScope(RETAIL_OUTLET_SCOPE).get()) }
 
         single<CreatePaymentRepository> {
             CreatePaymentDataRepository(

@@ -21,4 +21,5 @@ data class PromptPayCheckoutAdditionalInfo(
 data class XenditCheckoutVoucherAdditionalInfo(
     val expiresAt: String,
     val couponCode: String,
+    val retailerName: String?,
 ) : PrimerCheckoutVoucherAdditionalInfo

@@ -4,15 +4,18 @@ import io.primer.android.data.payments.create.models.PaymentDataResponse
 import io.primer.android.data.payments.create.models.RequiredActionName
 import io.primer.android.data.payments.create.models.toPaymentResult
 import io.primer.android.data.token.model.ClientToken
+import io.primer.android.domain.payments.additionalInfo.RetailOutletsCheckoutAdditionalInfoResolver
 import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 
 internal class PrimerPaymentMethodDataHelper(
     private val paymentMethodRepository: PaymentMethodRepository,
-    private val paymentMethodsRepository: PaymentMethodsRepository
+    private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val retailerOutletsRepository: RetailOutletRepository
 ) {
 
     suspend fun preparePaymentResult(response: PaymentDataResponse): PaymentResult {
@@ -27,7 +30,14 @@ internal class PrimerPaymentMethodDataHelper(
                                 paymentMethodRepository.getPaymentMethod().paymentMethodType
                         }
                     }.first()
-                val additionalInfo = descriptor.additionalInfoResolver?.resolve(clientTokenData)
+                val additionalInfo = when (val resolver = descriptor.additionalInfoResolver) {
+                    is RetailOutletsCheckoutAdditionalInfoResolver -> {
+                        resolver.retailerName = retailerOutletsRepository
+                            .getSelectedRetailOutlet()?.name
+                        resolver.resolve(clientTokenData)
+                    }
+                    else -> descriptor.additionalInfoResolver?.resolve(clientTokenData)
+                }
                 response.toPaymentResult(additionalInfo)
             }
             else -> response.toPaymentResult()

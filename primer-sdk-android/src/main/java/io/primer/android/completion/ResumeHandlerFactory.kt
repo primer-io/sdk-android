@@ -5,6 +5,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.EventDispatcher
@@ -23,7 +24,8 @@ internal class ResumeHandlerFactory(
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val config: PrimerConfig,
-    private val paymentMethodsRepository: PaymentMethodsRepository
+    private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val retailerOutletRepository: RetailOutletRepository
 ) {
 
     fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
@@ -39,7 +41,8 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository
+                paymentMethodsRepository,
+                retailerOutletRepository
             )
             ASYNC_PAYMENT_METHOD,
             CARD_ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
@@ -52,7 +55,8 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository
+                paymentMethodsRepository,
+                retailerOutletRepository
             )
             else -> DefaultPrimerResumeDecisionHandler(
                 validationTokenRepository,
@@ -64,7 +68,8 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository
+                paymentMethodsRepository,
+                retailerOutletRepository
             )
         }
     }

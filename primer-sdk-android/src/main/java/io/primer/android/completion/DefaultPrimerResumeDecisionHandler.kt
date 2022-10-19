@@ -10,8 +10,10 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutQRCodeInfo
+import io.primer.android.domain.payments.additionalInfo.RetailOutletsCheckoutAdditionalInfoResolver
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -41,6 +43,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private var logger: Logger,
     private val config: PrimerConfig,
     private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val retailerOutletRepository: RetailOutletRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : PrimerResumeDecisionHandler {
 
@@ -85,7 +88,15 @@ internal open class DefaultPrimerResumeDecisionHandler(
                     paymentMethodRepository.getPaymentMethod().paymentMethodType
             }
 
-            descriptor?.additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
+            val additionalInfoResolver = descriptor?.additionalInfoResolver
+            when (additionalInfoResolver) {
+                is RetailOutletsCheckoutAdditionalInfoResolver -> {
+                    additionalInfoResolver.retailerName = retailerOutletRepository
+                        .getSelectedRetailOutlet()?.name
+                }
+            }
+
+            additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
                 when (data) {
                     is PrimerCheckoutQRCodeInfo -> {
                         eventDispatcher.dispatchEvent(CheckoutEvent.OnAdditionalInfoReceived(data))
