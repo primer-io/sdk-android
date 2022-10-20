@@ -9,6 +9,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.models.HUCError
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -90,7 +91,7 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
         listener = null
     }
 
-    override fun configure(completion: (PrimerInitializationData?, Error?) -> Unit) {
+    override fun configure(completion: (PrimerInitializationData?, PrimerError?) -> Unit) {
         delegate.configure(paymentMethodType, completion)
     }
 

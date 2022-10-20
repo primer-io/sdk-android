@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.flowOf
 internal class LocalRetailOutletDataSource :
     BaseFlowCacheDataSource<List<RetailOutletDataResponse>, List<RetailOutletDataResponse>> {
 
-    private val issuersList = mutableListOf<RetailOutletDataResponse>()
+    private val retailersList = mutableListOf<RetailOutletDataResponse>()
 
-    override fun get() = flowOf(issuersList)
+    override fun get() = flowOf(retailersList)
 
     override fun update(input: List<RetailOutletDataResponse>) {
-        issuersList.clear()
-        issuersList.addAll(input)
+        retailersList.clear()
+        retailersList.addAll(input)
     }
 }

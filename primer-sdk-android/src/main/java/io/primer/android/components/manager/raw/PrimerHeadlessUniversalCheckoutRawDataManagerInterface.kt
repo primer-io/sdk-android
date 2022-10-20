@@ -4,6 +4,7 @@ import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.payments.configure.PrimerInitializationData
+import io.primer.android.domain.error.models.PrimerError
 
 @JvmDefaultWithCompatibility
 @ExperimentalPrimerApi
@@ -44,5 +45,5 @@ interface PrimerHeadlessUniversalCheckoutRawDataManagerInterface {
      * This method should be called when payment method require to preload
      * additional data, like retail outlets or banks list.
      */
-    fun configure(completion: (PrimerInitializationData?, Error?) -> Unit)
+    fun configure(completion: (PrimerInitializationData?, PrimerError?) -> Unit)
 }

@@ -11,11 +11,13 @@ import io.primer.android.components.domain.payments.PaymentTokenizationInteracto
 import io.primer.android.components.domain.payments.models.PaymentRawDataParams
 import io.primer.android.components.domain.payments.models.PaymentTokenizationDescriptorParams
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
@@ -55,7 +57,7 @@ internal interface HeadlessDelegate {
 
     fun configure(
         paymentMethodType: String,
-        completion: (PrimerInitializationData?, Error?) -> Unit
+        completion: (PrimerInitializationData?, PrimerError?) -> Unit
     )
 }
 
@@ -138,7 +140,7 @@ internal open class DefaultHeadlessDelegate(
 
     override fun configure(
         paymentMethodType: String,
-        completion: (PrimerInitializationData?, Error?) -> Unit
+        completion: (PrimerInitializationData?, PrimerError?) -> Unit
     ) {
         when (paymentMethodType) {
             PaymentMethodType.XENDIT_RETAIL_OUTLETS.name -> {
@@ -152,18 +154,15 @@ internal open class DefaultHeadlessDelegate(
                     retailOutletInteractor(
                         RetailOutletParams(descriptor.config.id.orEmpty())
                     ).catch {
-                        withContext(Dispatchers.Main) { completion(null, Error(it)) }
+                        withContext(Dispatchers.Main) {
+                            completion(null, DefaultErrorMapper().getPrimerError(it))
+                        }
                     }.collect {
                         withContext(Dispatchers.Main) { completion(RetailOutletsList(it), null) }
                     }
                 }
             }
-            else -> {
-                throw IllegalArgumentException(
-                    "Unsupported method configure() " +
-                        "for payment method type $paymentMethodType"
-                )
-            }
+            else -> completion(null, null)
         }
     }
 

@@ -339,7 +339,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     showChooser(primerInitializationData)
                 } else {
                     AlertDialog.Builder(context)
-                        .setMessage(error.message.orEmpty())
+                        .setMessage(error.description)
                         .show()
                 }
             }

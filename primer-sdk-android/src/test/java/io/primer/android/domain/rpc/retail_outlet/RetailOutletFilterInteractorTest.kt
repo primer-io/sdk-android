@@ -35,7 +35,7 @@ class RetailOutletFilterInteractorTest {
     }
 
     @Test
-    fun `filterIssuingBanks() should return list of sorted and filtered banks IssuingBankRepository getCachedIssuingBanks() was success`() {
+    fun `filterRetailOutlets() should return list of sorted and filtered retailer outlets RetailOutletsRepository getCachedRetailOutlets() was success`() {
         val filter = "u"
         val params = RetailOutletFilterParams(filter)
         coEvery { repository.getCachedRetailOutlets() }.returns(flowOf(retailOutlets))
