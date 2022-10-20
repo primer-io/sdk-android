@@ -20,6 +20,7 @@ import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -69,6 +70,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
     @RelaxedMockK
+    internal lateinit var retailOutletRepository: RetailOutletRepository
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
@@ -95,6 +99,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 logger,
                 config,
                 paymentMethodsRepository,
+                retailOutletRepository,
                 instantExecutorExtension.dispatcher
             )
     }

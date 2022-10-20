@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        val countryDataSource = CountryDataSource(AppCountryCode.NL)
+        val countryDataSource = CountryDataSource(AppCountryCode.PH)
         val countryRepository = CountryRepository(countryDataSource)
 
         mainViewModel = ViewModelProvider(

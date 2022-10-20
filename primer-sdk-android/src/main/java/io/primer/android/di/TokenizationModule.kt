@@ -39,7 +39,8 @@ internal val tokenizationModule = {
                 get(),
                 get(named(RESUME_HANDLER_LOGGER_NAME)),
                 get(),
-                get()
+                get(),
+                getScope(RETAIL_OUTLET_SCOPE).get(),
             )
         }
 
