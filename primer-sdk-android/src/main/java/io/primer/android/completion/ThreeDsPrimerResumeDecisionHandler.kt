@@ -8,6 +8,7 @@ import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -31,6 +32,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     logger: Logger,
     config: PrimerConfig,
     paymentMethodsRepository: PaymentMethodsRepository,
+    retailerOutletRepository: RetailOutletRepository,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
@@ -43,6 +45,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     logger,
     config,
     paymentMethodsRepository,
+    retailerOutletRepository,
     coroutineDispatcher
 ) {
 

@@ -11,8 +11,11 @@ import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
+import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.domain.payments.resume.models.ResumeParams
+import io.primer.android.domain.rpc.retailOutlets.RetailOutletInteractor
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.config.toImageDisplayMetadata
@@ -43,6 +46,9 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     paymentInputTypesInteractor: PaymentInputTypesInteractor,
     actionInteractor: ActionInteractor,
     asyncPaymentMethodInteractor: AsyncPaymentMethodInteractor,
+    paymentMethodsRepository: PaymentMethodsRepository,
+    retailOutletInteractor: RetailOutletInteractor,
+    retailOutletRepository: RetailOutletRepository,
     private val paymentsTypesInteractor: PaymentsTypesInteractor,
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val createPaymentInteractor: CreatePaymentInteractor,
@@ -53,7 +59,10 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     paymentTokenizationInteractor,
     paymentInputDataTypeValidateInteractor,
     actionInteractor,
-    asyncPaymentMethodInteractor
+    asyncPaymentMethodInteractor,
+    paymentMethodsRepository,
+    retailOutletInteractor,
+    retailOutletRepository,
 ),
     HeadlessUniversalCheckoutDelegate {
 

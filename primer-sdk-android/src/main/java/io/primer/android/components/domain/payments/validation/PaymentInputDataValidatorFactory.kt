@@ -5,16 +5,20 @@ import io.primer.android.components.domain.core.models.bancontact.PrimerRawBanco
 import io.primer.android.components.domain.core.models.card.PrimerRawCardData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
+import io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
 import io.primer.android.components.domain.payments.validation.card.BancontactCardInputDataValidator
 import io.primer.android.components.domain.payments.validation.card.CardInputDataValidator
 import io.primer.android.components.domain.payments.validation.otp.blik.BlikInputDataValidator
 import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.MBWayPhoneNumberInputDataValidator
 import io.primer.android.components.domain.payments.validation.phoneNumber.ovo.OvoPhoneNumberInputDataValidator
+import io.primer.android.components.domain.payments.validation.retailerOutlet.XenditRetailerOutletInputValidator
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 
 internal class PaymentInputDataValidatorFactory(
     private val checkoutModuleRepository: CheckoutModuleRepository,
+    private val retailOutletRepository: RetailOutletRepository
 ) {
 
     fun getPaymentInputDataValidator(
@@ -40,6 +44,15 @@ internal class PaymentInputDataValidatorFactory(
                     PaymentMethodType.ADYEN_BLIK.name -> BlikInputDataValidator()
                     else -> throw IllegalArgumentException(
                         "Unsupported otp data validation for $paymentMethodType."
+                    )
+                }
+            }
+            is PrimerRawRetailerData -> {
+                when (paymentMethodType) {
+                    PaymentMethodType.XENDIT_RETAIL_OUTLETS.name ->
+                        XenditRetailerOutletInputValidator(retailOutletRepository)
+                    else -> throw IllegalArgumentException(
+                        "Unsupported retailer outlet validation for $paymentMethodType."
                     )
                 }
             }

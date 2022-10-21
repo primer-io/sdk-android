@@ -17,6 +17,7 @@ import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
@@ -63,6 +64,9 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
     @RelaxedMockK
+    internal lateinit var retailOutletRepository: RetailOutletRepository
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
@@ -88,6 +92,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
                 logger,
                 config,
                 paymentMethodsRepository,
+                retailOutletRepository,
                 instantExecutorExtension.dispatcher
             )
     }

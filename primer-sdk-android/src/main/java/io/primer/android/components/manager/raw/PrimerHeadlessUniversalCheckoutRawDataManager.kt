@@ -6,8 +6,10 @@ import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.presentation.DefaultRawDataDelegate
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.models.HUCError
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -24,7 +26,8 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
                 PaymentMethodType.PAYMENT_CARD,
                 PaymentMethodType.XENDIT_OVO,
                 PaymentMethodType.ADYEN_MBWAY,
-                PaymentMethodType.ADYEN_BANCONTACT_CARD
+                PaymentMethodType.ADYEN_BANCONTACT_CARD,
+                PaymentMethodType.XENDIT_RETAIL_OUTLETS
             ).map { it.name }.contains(paymentMethodType).not()
         ) {
             throw UnsupportedPaymentMethodException(paymentMethodType)
@@ -86,6 +89,10 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
         subscription = null
         delegate.cleanup()
         listener = null
+    }
+
+    override fun configure(completion: (PrimerInitializationData?, PrimerError?) -> Unit) {
+        delegate.configure(paymentMethodType, completion)
     }
 
     companion object {

@@ -153,6 +153,10 @@ internal enum class Brand(
         R.drawable.ic_logo_multibanco_light,
         iconDarkResId = R.drawable.ic_logo_multibanco_dark
     ),
+    RETAIL_OUTLETS(
+        R.drawable.ic_retail_outlets,
+        iconDarkResId = R.drawable.ic_retail_outlets_light
+    ),
     UNKNOWN(0)
 }
 

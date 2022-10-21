@@ -4,6 +4,8 @@ interface PrimerCheckoutAdditionalInfo
 
 interface PrimerCheckoutQRCodeInfo : PrimerCheckoutAdditionalInfo
 
+interface PrimerCheckoutVoucherAdditionalInfo : PrimerCheckoutAdditionalInfo
+
 data class MultibancoCheckoutAdditionalInfo(
     val expiresAt: String,
     val reference: String,
@@ -15,3 +17,9 @@ data class PromptPayCheckoutAdditionalInfo(
     val qrCodeUrl: String?,
     val qrCodeBase64: String?,
 ) : PrimerCheckoutQRCodeInfo
+
+data class XenditCheckoutVoucherAdditionalInfo(
+    val expiresAt: String,
+    val couponCode: String,
+    val retailerName: String?,
+) : PrimerCheckoutVoucherAdditionalInfo

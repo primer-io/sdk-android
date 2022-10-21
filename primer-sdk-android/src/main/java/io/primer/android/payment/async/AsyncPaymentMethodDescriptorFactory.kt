@@ -17,6 +17,7 @@ import io.primer.android.payment.async.multibanco.AdyenMultibancoPaymentMethodDe
 import io.primer.android.payment.async.ovo.XenditOvoPaymentMethodDescriptor
 import io.primer.android.payment.async.promptpay.OmisePromptPayPaymentMethodDescriptor
 import io.primer.android.payment.async.promptpay.RapydPromptPayPaymentMethodDescriptor
+import io.primer.android.payment.async.retailOutlet.XenditRetailOutletPaymentMethodDescriptor
 import io.primer.android.payment.async.sepa.AdyenSepaPaymentMethodDescriptor
 import io.primer.android.payment.async.sofort.PrimerTestSofortPaymentMethodDescriptor
 import io.primer.android.payment.async.webRedirect.WebRedirectPaymentMethodDescriptor
@@ -98,6 +99,12 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                 )
                 PaymentMethodType.ADYEN_BANCONTACT_CARD ->
                     AdyenBancontactCardPaymentMethodDescriptor(
+                        localConfig,
+                        paymentMethod as AsyncPaymentMethod,
+                        paymentMethodRemoteConfig
+                    )
+                PaymentMethodType.XENDIT_RETAIL_OUTLETS ->
+                    XenditRetailOutletPaymentMethodDescriptor(
                         localConfig,
                         paymentMethod as AsyncPaymentMethod,
                         paymentMethodRemoteConfig
