@@ -76,7 +76,7 @@ class TokenizationViewModelTest : KoinTest {
 
     @Test
     fun `resetting the payment method emits the NONE tokenization status`() {
-        val mockJson: JSONObject = mockk()
+        val mockJson: JSONObject = mockk(relaxed = true)
         every { mockJson.valueBy(PrimerInputElementType.CARDHOLDER_NAME) } returns "name"
         every { mockJson.valueBy(PrimerInputElementType.CARD_NUMBER) } returns "number"
         every { mockJson.valueBy(PrimerInputElementType.EXPIRY_DATE) } returns "expiry"

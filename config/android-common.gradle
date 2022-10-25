@@ -22,14 +22,14 @@ android {
     kotlinOptions {
         jvmTarget = projectJvmTarget.toString()
     }
-//
-//    testOptions {
-//        execution 'ANDROIDX_TEST_ORCHESTRATOR'
-//
-//        unitTests.all {
-//            useJUnitPlatform() // <--- this is the important part
-//        }
-//    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        unitTests.all {
+            useJUnitPlatform() // <--- this is the important part
+        }
+    }
 }
 
 apply from: "$rootDir/config/dependencies.gradle"
