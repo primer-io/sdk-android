@@ -14,7 +14,6 @@ import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckou
 import io.primer.android.components.presentation.DefaultRawDataDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
-import io.primer.android.di.RETAIL_OUTLET_SCOPE
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import org.koin.core.qualifier.named
@@ -76,8 +75,8 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
-                getScope(RETAIL_OUTLET_SCOPE).get(),
-                getScope(RETAIL_OUTLET_SCOPE).get(),
+                get(),
+                get(),
                 get(),
                 get(),
                 get(),
@@ -88,7 +87,7 @@ internal val componentsModule = {
         factory {
             PaymentInputDataValidatorFactory(
                 get(),
-                getScope(RETAIL_OUTLET_SCOPE).get(),
+                get(),
             )
         }
 
@@ -112,8 +111,8 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
-                getScope(RETAIL_OUTLET_SCOPE).get(),
-                getScope(RETAIL_OUTLET_SCOPE).get(),
+                get(),
+                get(),
                 get(),
                 get()
             )
