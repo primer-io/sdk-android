@@ -90,7 +90,6 @@ internal open class DefaultHeadlessDelegate(
                     TokenizationParams(
                         it,
                         PrimerSessionIntent.CHECKOUT,
-                        false
                     )
                 )
             }.catch { }.collect { }

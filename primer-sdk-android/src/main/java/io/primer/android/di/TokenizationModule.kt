@@ -79,8 +79,6 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
-                get(),
-                get(),
             )
         }
         viewModel { TokenizationViewModel(get(), get(), get(), get(), get(), get(), get()) }

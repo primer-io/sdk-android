@@ -7,5 +7,4 @@ import io.primer.android.payment.PaymentMethodDescriptor
 internal data class TokenizationParams(
     val paymentMethodDescriptor: PaymentMethodDescriptor,
     val paymentMethodIntent: PrimerSessionIntent,
-    val is3DSOnVaultingEnabled: Boolean,
 ) : Params

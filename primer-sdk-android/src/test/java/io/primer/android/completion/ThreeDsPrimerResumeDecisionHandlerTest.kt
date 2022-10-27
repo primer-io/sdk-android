@@ -36,6 +36,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
@@ -125,6 +128,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
         verify { eventDispatcher.dispatchEvent(capture(event)) }
 
         assert(event.captured.type == CheckoutEventType.START_3DS)
+        assertNull((event.captured as CheckoutEvent.Start3DS).processor3DSData)
     }
 
     @Test
@@ -176,6 +180,60 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     }
 
     @Test
+    fun `handleNewClientToken() should dispatch Start3DS event with data when ClientTokenIntent is PROCESSOR_3DS and paymentMethodInstrumentType is PAYMENT_CARD`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.PROCESSOR_3DS.name
+        )
+        every { clientTokenRepository.getStatusUrl() }.returns(CLIENT_TOKEN_STATUS_URL)
+        every { clientTokenRepository.getRedirectUrl() }.returns(CLIENT_TOKEN_REDIRECT_URL)
+        every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
+        every { paymentMethodToken.paymentInstrumentType }.returns(PAYMENT_CARD_IDENTIFIER)
+        every { verificationTokenRepository.validate(any()) }.returns(
+            flowOf(true)
+        )
+
+        runTest {
+            resumeHandler.continueWithNewClientToken("")
+        }
+
+        val event = slot<CheckoutEvent>()
+
+        verify { eventDispatcher.dispatchEvent(capture(event)) }
+
+        assert(event.captured.type == CheckoutEventType.START_3DS)
+
+        val processor3DSData = (event.captured as CheckoutEvent.Start3DS).processor3DSData
+
+        assertNotNull(processor3DSData)
+        assertEquals(PAYMENT_CARD_IDENTIFIER, processor3DSData.paymentMethodType)
+        assertEquals(CLIENT_TOKEN_STATUS_URL, processor3DSData.statusUrl)
+        assertEquals(CLIENT_TOKEN_REDIRECT_URL, processor3DSData.redirectUrl)
+    }
+
+    @Test
+    fun `handleNewClientToken() should dispatch resume error event when ClientTokenIntent is PROCESSOR_3DS and paymentMethodInstrumentType is not PAYMENT_CARD`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.PROCESSOR_3DS.name
+        )
+        every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
+        every { verificationTokenRepository.validate(any()) }.returns(
+            flowOf(true)
+        )
+
+        runTest {
+            resumeHandler.continueWithNewClientToken("")
+        }
+
+        val event = slot<Throwable>()
+
+        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.PAYMENT_RESUME) }
+
+        assert(event.captured.javaClass == IllegalArgumentException::class.java)
+    }
+
+    @Test
     fun `handleNewClientToken() should dispatch resume error event when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is not PAYMENT_CARD`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
@@ -197,5 +255,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
 
     private companion object {
         val PAYMENT_CARD_IDENTIFIER = PaymentMethodType.PAYMENT_CARD.name
+        val CLIENT_TOKEN_STATUS_URL = "https://primer.api/status"
+        val CLIENT_TOKEN_REDIRECT_URL = "https://primer.io"
     }
 }

@@ -31,6 +31,7 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
+import io.primer.android.ui.CardNetwork
 import org.koin.core.component.get
 
 @ExperimentalPrimerApi
@@ -299,6 +300,13 @@ class PrimerHeadlessUniversalCheckout private constructor() :
             assetType: ImageType,
         ): Int? {
             return PrimerAssetManager.getAsset(paymentMethodType, assetType)
+        }
+
+        @DrawableRes
+        fun getAsset(
+            cardNetwork: CardNetwork.Type,
+        ): Int {
+            return PrimerAssetManager.getAsset(cardNetwork)
         }
     }
 }

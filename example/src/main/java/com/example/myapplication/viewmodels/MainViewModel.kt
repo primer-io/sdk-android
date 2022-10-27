@@ -25,7 +25,6 @@ import com.example.myapplication.utils.CombinedLiveData
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
-import io.primer.android.data.settings.PrimerCardPaymentOptions
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGoCardlessOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
@@ -66,9 +65,6 @@ class MainViewModel(
         .build()
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
-
-    private val _threeDsEnabled: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
-    val threeDsEnabled: LiveData<Boolean> = _threeDsEnabled
 
     private val _threeDsResult: MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> =
         MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?>()
@@ -156,7 +152,6 @@ class MainViewModel(
             paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
             paymentMethodOptions = PrimerPaymentMethodOptions(
                 redirectScheme = "primer",
-                cardPaymentOptions = PrimerCardPaymentOptions(threeDsEnabled.value ?: false),
                 klarnaOptions = PrimerKlarnaOptions("This is custom description"),
                 goCardlessOptions = PrimerGoCardlessOptions("Test", "Test")
             ),

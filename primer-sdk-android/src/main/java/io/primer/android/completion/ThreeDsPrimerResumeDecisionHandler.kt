@@ -51,22 +51,27 @@ internal class ThreeDsPrimerResumeDecisionHandler(
 
     override fun handleClientToken(clientToken: String) {
         super.handleClientToken(clientToken)
-        if (threeDsSdkClassValidator.is3dsSdkIncluded()) {
-            var processor3DSData: Processor3DS? = null
-            if (
-                clientTokenRepository.getClientTokenIntent() == ClientTokenIntent.PROCESSOR_3DS.name
-            ) {
-                processor3DSData = Processor3DS(
-                    clientTokenRepository.getRedirectUrl().orEmpty(),
-                    clientTokenRepository.getStatusUrl().orEmpty()
+        when {
+            clientTokenRepository.getClientTokenIntent() == ClientTokenIntent.PROCESSOR_3DS.name
+            -> {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.Start3DS(
+                        Processor3DS(
+                            clientTokenRepository.getRedirectUrl().orEmpty(),
+                            clientTokenRepository.getStatusUrl().orEmpty()
+                        )
+                    )
                 )
             }
-            eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS(processor3DSData))
-        } else errorEventResolver.resolve(
-            ThreeDsLibraryNotFoundException(
-                ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
-            ),
-            ErrorMapperType.PAYMENT_RESUME
-        )
+            threeDsSdkClassValidator.is3dsSdkIncluded() -> {
+                eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
+            }
+            else -> errorEventResolver.resolve(
+                ThreeDsLibraryNotFoundException(
+                    ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
+                ),
+                ErrorMapperType.PAYMENT_RESUME
+            )
+        }
     }
 }

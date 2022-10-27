@@ -107,7 +107,6 @@ internal class TokenizationViewModel(
                 TokenizationParams(
                     paymentMethod ?: return@launch,
                     config.paymentMethodIntent,
-                    config.settings.paymentMethodOptions.cardPaymentOptions.is3DSOnVaultingEnabled
                 )
             )
                 .onStart { tokenizationStatus.postValue(TokenizationStatus.LOADING) }

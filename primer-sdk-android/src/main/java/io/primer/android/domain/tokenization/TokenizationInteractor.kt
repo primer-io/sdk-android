@@ -1,8 +1,5 @@
 package io.primer.android.domain.tokenization
 
-import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.data.tokenization.models.toPaymentMethodToken
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
@@ -10,12 +7,8 @@ import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolv
 import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import io.primer.android.domain.tokenization.repository.TokenizationRepository
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventDispatcher
 import io.primer.android.extensions.doOnError
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
-import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
-import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator.Companion.THREE_DS_CLASS_NOT_LOADED_ERROR
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,11 +21,9 @@ import kotlinx.coroutines.flow.onEach
 internal class TokenizationInteractor(
     private val tokenizationRepository: TokenizationRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
-    private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val preTokenizationEventsResolver: PreTokenizationEventsResolver,
     private val postTokenizationEventResolver: PostTokenizationEventResolver,
     private val errorEventResolver: BaseErrorEventResolver,
-    private val eventDispatcher: EventDispatcher,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<String, TokenizationParams>() {
 
@@ -42,24 +33,8 @@ internal class TokenizationInteractor(
         }.flatMapLatest {
             tokenizationRepository.tokenize(params)
                 .onEach {
-                    val token = it.toPaymentMethodToken()
                     paymentMethodRepository.setPaymentMethod(it)
-                    val perform3ds =
-                        token.paymentInstrumentType == PaymentMethodType.PAYMENT_CARD.name &&
-                            params.is3DSOnVaultingEnabled &&
-                            params.paymentMethodIntent == PrimerSessionIntent.VAULT &&
-                            params.paymentMethodDescriptor.config.options?.threeDSecureEnabled ==
-                            true
-                    when {
-                        perform3ds -> {
-                            if (threeDsSdkClassValidator.is3dsSdkIncluded()) {
-                                eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
-                            } else postTokenizationEventResolver.resolve(
-                                it.setClientThreeDsError(THREE_DS_CLASS_NOT_LOADED_ERROR)
-                            )
-                        }
-                        else -> postTokenizationEventResolver.resolve(it)
-                    }
+                    postTokenizationEventResolver.resolve(it)
                 }
                 .map { it.token }
         }
