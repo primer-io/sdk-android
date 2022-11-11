@@ -10,5 +10,6 @@ internal interface PaymentMethodViewCreator {
 
     companion object {
         const val DEFAULT_EXPORTED_ICON_SCALE = 3.0f
+        const val DEFAULT_EXPORTED_ICON_MAX_HEIGHT = 48.0f
     }
 }

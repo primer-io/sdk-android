@@ -23,13 +23,29 @@ internal fun Drawable.updateTint(@ColorInt color: Int): Drawable {
     return this
 }
 
-internal fun Drawable.scaleImage(context: Context, scaleFactor: Float): Drawable {
+internal fun Drawable.scaleImage(
+    context: Context,
+    scaleFactor: Float,
+    maxHeight: Float? = null
+): Drawable {
     if (this !is BitmapDrawable) return this
 
-    val newWidth = (intrinsicWidth * scaleFactor).dPtoPx(context)
-    val newHeight = (intrinsicHeight * scaleFactor).dPtoPx(context)
-    val scaledBitmap =
-        Bitmap.createBitmap(newWidth.roundToInt(), newHeight.roundToInt(), Bitmap.Config.ARGB_8888)
+    var newWidth = (intrinsicWidth * scaleFactor).dPtoPx(context)
+    var newHeight = (intrinsicHeight * scaleFactor).dPtoPx(context)
+
+    maxHeight?.let {
+        if (maxHeight < newHeight) {
+            val ratio = maxHeight / newHeight
+            newHeight = maxHeight
+            newWidth *= ratio
+        }
+    }
+
+    val scaledBitmap = Bitmap.createBitmap(
+        newWidth.roundToInt(),
+        newHeight.roundToInt(),
+        Bitmap.Config.ARGB_8888
+    )
 
     val ratioX: Float = newWidth / bitmap.width
     val ratioY: Float = newHeight / bitmap.height
