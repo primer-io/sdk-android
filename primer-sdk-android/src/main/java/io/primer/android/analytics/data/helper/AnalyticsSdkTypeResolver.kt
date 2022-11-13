@@ -6,7 +6,7 @@ internal class AnalyticsSdkTypeResolver {
 
     fun resolve(): AnalyticsSdkType {
         return if (ReactNativeClassValidator().isReactNativeAvailableOnClassPath()) {
-            AnalyticsSdkType.RN_ANDROID_NATIVE
+            AnalyticsSdkType.RN_ANDROID
         } else AnalyticsSdkType.ANDROID_NATIVE
     }
 }
