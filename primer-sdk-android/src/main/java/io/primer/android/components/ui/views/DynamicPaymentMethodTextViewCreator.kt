@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.components.ui.assets.PrimerAssetManager
+import io.primer.android.components.ui.views.PaymentMethodViewCreator.Companion.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
 import io.primer.android.components.ui.views.PaymentMethodViewCreator.Companion.DEFAULT_EXPORTED_ICON_SCALE
 import io.primer.android.data.configuration.models.IconPosition
 import io.primer.android.databinding.PrimerPaymentMethodTextButtonBinding
@@ -15,6 +16,8 @@ import io.primer.android.payment.config.TextDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
 import io.primer.android.ui.extensions.scaleImage
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.utils.dPtoPx
+import io.primer.android.utils.toResourcesScale
 
 internal class DynamicPaymentMethodTextViewCreator(
     private val theme: PrimerTheme,
@@ -44,7 +47,9 @@ internal class DynamicPaymentMethodTextViewCreator(
                     it
                 )?.scaleImage(
                     context,
-                    context.resources.displayMetrics.density / DEFAULT_EXPORTED_ICON_SCALE
+                    context.resources.displayMetrics
+                        .toResourcesScale() / DEFAULT_EXPORTED_ICON_SCALE,
+                    maxHeight = DEFAULT_EXPORTED_ICON_MAX_HEIGHT.dPtoPx(context)
                 )
             }
             displayMetadata.iconPosition?.apply {

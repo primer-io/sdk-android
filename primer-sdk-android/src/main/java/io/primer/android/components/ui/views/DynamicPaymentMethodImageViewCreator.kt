@@ -13,6 +13,7 @@ import io.primer.android.payment.config.ImageDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
 import io.primer.android.ui.extensions.scaleImage
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.utils.dPtoPx
 import io.primer.android.utils.toResourcesScale
 
 internal class DynamicPaymentMethodImageViewCreator(
@@ -46,7 +47,9 @@ internal class DynamicPaymentMethodImageViewCreator(
                 paymentMethodAsset?.scaleImage(
                     context,
                     context.resources.displayMetrics.toResourcesScale() /
-                        DEFAULT_EXPORTED_ICON_SCALE
+                        DEFAULT_EXPORTED_ICON_SCALE,
+                    maxHeight = PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
+                        .dPtoPx(context)
                 )
             )
         }
