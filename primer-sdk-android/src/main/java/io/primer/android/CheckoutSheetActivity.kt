@@ -171,6 +171,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                     AsyncPaymentMethodWebViewActivity.getLaunchIntent(
                         this,
                         it.redirectUrl,
+                        it.deeplinkUrl,
                         (
                             primerViewModel.selectedPaymentMethod.value as?
                                 AsyncPaymentMethodDescriptor

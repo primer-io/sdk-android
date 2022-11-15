@@ -3,7 +3,6 @@ package io.primer.android.ui.payment.klarna
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.webkit.WebResourceRequest
 import androidx.core.net.toUri
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.BaseWebViewClient
@@ -26,8 +25,8 @@ internal class KlarnaWebViewClient(
         return url?.let { Uri.parse(url).scheme.toString() }
     }
 
-    override fun handleDeepLink(request: WebResourceRequest?): Boolean {
-        request?.url?.let { uri ->
+    override fun handleDeepLink(uri: Uri?): Boolean {
+        uri?.let { uri ->
             if (uri.scheme.orEmpty().contains(BANKID_SCHEME)) {
                 handleIntent(
                     Intent(Intent.ACTION_VIEW).apply {
@@ -35,7 +34,7 @@ internal class KlarnaWebViewClient(
                     }
                 )
                 return true
-            } else super.handleDeepLink(request)
+            } else super.handleDeepLink(uri)
         }
 
         return true

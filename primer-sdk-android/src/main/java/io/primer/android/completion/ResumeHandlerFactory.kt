@@ -3,6 +3,7 @@ package io.primer.android.completion
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -25,7 +26,8 @@ internal class ResumeHandlerFactory(
     private val logger: Logger,
     private val config: PrimerConfig,
     private val paymentMethodsRepository: PaymentMethodsRepository,
-    private val retailerOutletRepository: RetailOutletRepository
+    private val retailerOutletRepository: RetailOutletRepository,
+    private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
 ) {
 
     fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
@@ -56,7 +58,8 @@ internal class ResumeHandlerFactory(
                 logger,
                 config,
                 paymentMethodsRepository,
-                retailerOutletRepository
+                retailerOutletRepository,
+                asyncPaymentMethodDeeplinkRepository
             )
             else -> DefaultPrimerResumeDecisionHandler(
                 validationTokenRepository,

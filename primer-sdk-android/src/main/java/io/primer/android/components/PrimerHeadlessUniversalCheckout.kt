@@ -70,6 +70,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                         e.title,
                         e.paymentMethodType,
                         e.redirectUrl,
+                        e.deeplinkUrl
                     )
                 }
                 is CheckoutEvent.StartAsyncFlow -> {

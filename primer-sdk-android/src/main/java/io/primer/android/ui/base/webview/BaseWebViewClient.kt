@@ -1,6 +1,7 @@
 package io.primer.android.ui.base.webview
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -32,32 +33,43 @@ internal abstract class BaseWebViewClient(
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         val isDeeplink = URLUtil.isNetworkUrl(request?.url?.toString().orEmpty()).not() ||
-            canAnyAppHandleUrl(request)
+            canAnyAppHandleUrl(request?.url)
         return if (isDeeplink) {
-            handleDeepLink(request)
+            handleDeepLink(request?.url)
         } else {
             handleNetworkUrl(request)
         }
     }
 
+    @Deprecated("Deprecated in Java")
+    @SuppressWarnings("deprecation")
+    override fun onReceivedError(
+        view: WebView?,
+        errorCode: Int,
+        description: String?,
+        failingUrl: String?
+    ) {
+        super.onReceivedError(view, errorCode, description, failingUrl)
+        handleError(failingUrl, errorCode)
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
         error: WebResourceError?,
     ) {
         super.onReceivedError(view, request, error)
-        if (request?.url?.toString() == url) {
-            cannotHandleIntent(Intent(request?.url?.toString()))
-        }
+        handleError(request?.url?.toString(), error?.errorCode)
     }
 
     abstract fun getUrlState(url: String): UrlState
 
     abstract fun getCaptureUrl(url: String?): String?
 
-    protected open fun handleDeepLink(request: WebResourceRequest?): Boolean {
+    protected open fun handleDeepLink(uri: Uri?): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
-        request?.url.let { uri ->
+        uri.let { uri ->
             intent.apply { data = uri }
         }
         intent.data?.let { data ->
@@ -122,10 +134,10 @@ internal abstract class BaseWebViewClient(
         return captureUrl?.let { url.orEmpty().contains(captureUrl) } == true
     }
 
-    protected fun getIntentFromRequest(request: WebResourceRequest?) =
-        request?.url?.let { uri ->
-            if (request.url.scheme == INTENT_SCHEMA) {
-                Intent.parseUri(request.url.toString(), Intent.URI_INTENT_SCHEME)
+    protected fun getIntentFromUri(uri: Uri?) =
+        uri?.let { uri ->
+            if (uri.scheme == INTENT_SCHEMA) {
+                Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME)
             } else {
                 Intent(Intent.ACTION_VIEW).apply { data = uri }
             }
@@ -157,13 +169,26 @@ internal abstract class BaseWebViewClient(
         }
     }
 
-    private fun canAnyAppHandleUrl(request: WebResourceRequest?): Boolean {
-        val intent = getIntentFromRequest(request)
+    private fun canAnyAppHandleUrl(uri: Uri?): Boolean {
+        val intent = getIntentFromUri(uri)
         val apps = intent?.let {
             activity.packageManager.queryIntentActivities(intent, 0)
                 .map { it.activityInfo.packageName }.toSet()
         } ?: emptySet()
         return apps.minus(browserApps).isEmpty().not()
+    }
+
+    /**
+     * 1. In case return url is same as url, we need to trigger error.
+     * 2. In case there is an HTTP POST redirect, we won't enter @see [shouldOverrideUrlLoading].
+     * We will try to handle the deeplink in that case for ERROR_UNSUPPORTED_SCHEME.
+     */
+    private fun handleError(requestUrl: String?, errorCode: Int?) {
+        when {
+            requestUrl == url -> cannotHandleIntent(Intent(requestUrl))
+            errorCode == ERROR_UNSUPPORTED_SCHEME && canCaptureUrl(requestUrl)
+            -> handleDeepLink(Uri.parse(requestUrl))
+        }
     }
 
     internal enum class UrlState {

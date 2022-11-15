@@ -41,6 +41,7 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
+                get()
             )
         }
 
