@@ -21,6 +21,11 @@ internal class ApayaDescriptor constructor(
         const val APAYA_REQUEST_CODE = 1001
     }
 
+    override val behaviours: List<SelectedPaymentMethodBehaviour>
+        get() = if (localConfig.settings.uiOptions.isInitScreenEnabled.not() &&
+            localConfig.isStandalonePaymentMethod
+        ) listOf() else super.behaviours
+
     override val selectedBehaviour: SelectedPaymentMethodBehaviour = RecurringApayaBehaviour(this)
 
     override val type: PaymentMethodUiType

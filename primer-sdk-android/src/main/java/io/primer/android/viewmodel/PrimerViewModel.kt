@@ -223,7 +223,13 @@ internal class PrimerViewModel(
                                     if (isNotForm) {
                                         executeBehaviour(it)
                                     }
+                                } ?: run {
+                                // show a selector screen for forms
+                                val isForm = paymentMethod.type == PaymentMethodUiType.FORM
+                                if (isForm) {
+                                    viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
                                 }
+                            }
                         } ?: run {
                             viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
                         }

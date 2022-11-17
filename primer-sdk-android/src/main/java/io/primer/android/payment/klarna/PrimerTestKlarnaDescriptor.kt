@@ -1,6 +1,7 @@
 package io.primer.android.payment.klarna
 
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewMiddleFragmentBehaviour
 import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -12,8 +13,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 internal class PrimerTestKlarnaDescriptor constructor(
     options: Klarna,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : KlarnaDescriptor(options, config), DummyResultDescriptorHandler {
+) : KlarnaDescriptor(options, localConfig, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewMiddleFragmentBehaviour(

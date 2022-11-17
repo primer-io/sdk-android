@@ -76,7 +76,7 @@ class SecondFragment : Fragment() {
                         context,
                         token,
                         viewModel.useStandalonePaymentMethod.value!!,
-                        PrimerSessionIntent.CHECKOUT
+                        PrimerSessionIntent.VAULT
                     )
                 }
             }

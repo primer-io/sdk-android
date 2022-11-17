@@ -114,7 +114,7 @@ internal class DynamicFormFragment : BaseFormFragment() {
                     viewModel.onInputChanged(
                         formData.id,
                         formData.formType,
-                        TextUtils.concat(prefixText, it),
+                        TextUtils.concat(prefixText ?: "", it),
                         formData.regex
                     )
                 }

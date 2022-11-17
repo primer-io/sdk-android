@@ -2,6 +2,7 @@ package io.primer.android.payment.klarna
 
 import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -12,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 internal open class KlarnaDescriptor constructor(
     val options: Klarna,
+    val localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config) {
 
@@ -22,6 +24,11 @@ internal open class KlarnaDescriptor constructor(
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = RecurringKlarnaBehaviour(this)
+
+    override val behaviours: List<SelectedPaymentMethodBehaviour>
+        get() = if (localConfig.settings.uiOptions.isInitScreenEnabled.not() &&
+            localConfig.isStandalonePaymentMethod
+        ) listOf() else super.behaviours
 
     override val type: PaymentMethodUiType
         get() = PaymentMethodUiType.SIMPLE_BUTTON
