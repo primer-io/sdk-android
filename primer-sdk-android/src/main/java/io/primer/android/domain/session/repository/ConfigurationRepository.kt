@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 internal interface ConfigurationRepository {
 
     fun fetchConfiguration(fromCache: Boolean): Flow<Configuration>
+
+    fun getConfiguration(): Configuration
 }

@@ -15,6 +15,7 @@ internal data class ConfigurationData(
     val iconsDisplayMetadata: List<Map<String, List<IconDisplayMetadata>>>
 ) {
     fun toConfiguration() = Configuration(
+        environment,
         paymentMethods.map { it.toPaymentMethodConfig() },
         clientSession?.toClientSession(),
         checkoutModules.map { it.toCheckoutModule() }

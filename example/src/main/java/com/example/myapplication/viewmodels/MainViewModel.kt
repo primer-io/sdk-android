@@ -66,14 +66,6 @@ class MainViewModel(
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
 
-    private val _threeDsResult: MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> =
-        MutableLiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?>()
-    val threeDsResult: LiveData<PrimerPaymentMethodTokenData.AuthenticationDetails?> =
-        _threeDsResult
-
-    fun clearThreeDsResult(): Unit =
-        _threeDsResult.postValue(null)
-
     private val _customerId: MutableLiveData<String> = MutableLiveData<String>("customer8")
     val customerId: LiveData<String> = _customerId
     fun setCustomerId(id: String): Unit =
@@ -263,21 +255,6 @@ class MainViewModel(
                 }
             }
             _transactionState.postValue(state)
-        }
-    }
-
-    // 3DS
-    internal fun handleTokenData(paymentMethodToken: PrimerPaymentMethodTokenData) {
-        when {
-            paymentMethodToken.tokenType == TokenType.SINGLE_USE
-                && (paymentMethodToken.threeDSecureAuthentication?.responseCode == ResponseCode.AUTH_SUCCESS
-                || paymentMethodToken.threeDSecureAuthentication == null) -> {
-                createPayment(paymentMethodToken)
-            }
-            paymentMethodToken.threeDSecureAuthentication != null -> _threeDsResult.postValue(
-                paymentMethodToken.threeDSecureAuthentication
-            )
-            else -> return
         }
     }
 

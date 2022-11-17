@@ -6,6 +6,7 @@ import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
+import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -15,7 +16,9 @@ import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.payment.processor3ds.Processor3DS
+import io.primer.android.threeds.BuildConfig
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +30,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     paymentResultRepository: PaymentResultRepository,
     analyticsRepository: AnalyticsRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
+    private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
@@ -63,15 +67,22 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                     )
                 )
             }
-            threeDsSdkClassValidator.is3dsSdkIncluded() -> {
-                eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
+            threeDsSdkClassValidator.is3dsSdkIncluded().not() ->
+                errorEventResolver.resolve(
+                    ThreeDsLibraryNotFoundException(
+                        ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
+                    ),
+                    ErrorMapperType.PAYMENT_RESUME
+                )
+            threeDsLibraryVersionValidator.isValidVersion().not() -> {
+                errorEventResolver.resolve(
+                    ThreeDsLibraryVersionMismatchException(
+                        BuildConfig.SDK_VERSION_STRING
+                    ),
+                    ErrorMapperType.PAYMENT_RESUME
+                )
             }
-            else -> errorEventResolver.resolve(
-                ThreeDsLibraryNotFoundException(
-                    ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
-                ),
-                ErrorMapperType.PAYMENT_RESUME
-            )
+            else -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
         }
     }
 }
