@@ -1,8 +1,8 @@
 package io.primer.android.ui.payment.processor3ds
 
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
-import android.webkit.WebResourceRequest
 import io.primer.android.ui.base.webview.BaseWebViewClient
 import io.primer.android.ui.base.webview.WebViewActivity
 
@@ -18,8 +18,8 @@ internal class Processor3dsWebViewClient(
 
     override fun canCaptureUrl(url: String?) = false
 
-    override fun handleDeepLink(request: WebResourceRequest?): Boolean {
-        getIntentFromRequest(request)?.let {
+    override fun handleDeepLink(uri: Uri?): Boolean {
+        getIntentFromUri(uri)?.let {
             handleIntent(it)
         }
 

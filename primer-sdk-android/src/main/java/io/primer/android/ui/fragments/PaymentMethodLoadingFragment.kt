@@ -22,6 +22,8 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.scaleImage
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.utils.dPtoPx
+import io.primer.android.utils.toResourcesScale
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.inject
@@ -51,8 +53,10 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
                             }
                         )?.scaleImage(
                             requireContext(),
-                            requireContext().resources.displayMetrics.density /
-                                PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_SCALE
+                            requireContext().resources.displayMetrics.toResourcesScale() /
+                                PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_SCALE,
+                            maxHeight = PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
+                                .dPtoPx(requireContext())
                         )
                     )
                 }

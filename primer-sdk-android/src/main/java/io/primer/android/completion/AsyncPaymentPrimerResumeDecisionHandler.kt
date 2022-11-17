@@ -4,6 +4,7 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -28,6 +29,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     config: PrimerConfig,
     paymentMethodsRepository: PaymentMethodsRepository,
     retailerOutletRepository: RetailOutletRepository,
+    private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
@@ -94,6 +96,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                         paymentMethodType,
                         clientTokenRepository.getRedirectUrl().orEmpty(),
                         clientTokenRepository.getStatusUrl().orEmpty(),
+                        asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()
                     )
                 )
             )

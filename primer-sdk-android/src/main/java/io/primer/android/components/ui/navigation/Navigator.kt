@@ -21,11 +21,13 @@ internal class Navigator(private val context: Context) {
         title: String,
         paymentMethodType: String,
         redirectUrl: String,
+        deeplinkUrl: String
     ) {
         context.startActivity(
             AsyncPaymentMethodWebViewActivity.getLaunchIntent(
                 context,
                 redirectUrl,
+                deeplinkUrl,
                 title,
                 paymentMethodType,
                 WebViewClientType.ASYNC

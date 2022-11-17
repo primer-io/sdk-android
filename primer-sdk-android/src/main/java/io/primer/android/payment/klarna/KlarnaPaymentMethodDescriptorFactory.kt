@@ -18,10 +18,12 @@ internal class KlarnaPaymentMethodDescriptorFactory : PaymentMethodDescriptorFac
     ): PaymentMethodDescriptor = when (paymentMethodRemoteConfig.type) {
         PaymentMethodType.PRIMER_TEST_KLARNA.name -> PrimerTestKlarnaDescriptor(
             paymentMethod as Klarna,
+            localConfig,
             paymentMethodRemoteConfig
         )
         else -> KlarnaDescriptor(
             paymentMethod as Klarna,
+            localConfig,
             paymentMethodRemoteConfig
         )
     }

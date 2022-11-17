@@ -115,6 +115,7 @@ internal sealed class CheckoutEvent(
         val paymentMethodType: String,
         val redirectUrl: String,
         val statusUrl: String,
+        val deeplinkUrl: String
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
 
     class StartAsyncFlow(

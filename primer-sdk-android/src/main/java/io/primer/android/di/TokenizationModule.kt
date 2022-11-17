@@ -9,6 +9,7 @@ import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolv
 import io.primer.android.domain.tokenization.repository.TokenizationRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
+import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import io.primer.android.viewmodel.TokenizationViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -20,6 +21,8 @@ private const val RESUME_HANDLER_LOGGER_NAME = "RESUME_HANDLER"
 internal val tokenizationModule = {
     module {
         single { ThreeDsSdkClassValidator() }
+
+        single { ThreeDsLibraryVersionValidator(get()) }
 
         factory<Logger>(named(RESUME_HANDLER_LOGGER_NAME)) {
             DefaultLogger(
@@ -37,10 +40,12 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get(named(RESUME_HANDLER_LOGGER_NAME)),
                 get(),
                 get(),
                 get(),
+                get()
             )
         }
 

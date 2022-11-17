@@ -33,6 +33,9 @@ internal class ConfigurationDataRepository(
             .map { it.toConfiguration() }
     }
 
+    override fun getConfiguration(): Configuration =
+        localConfigurationDataSource.getConfiguration().toConfiguration()
+
     private companion object {
         const val DISPLAY_METADATA_QUERY_KEY = "withDisplayMetadata"
     }

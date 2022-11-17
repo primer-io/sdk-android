@@ -76,7 +76,7 @@ class SecondFragment : Fragment() {
                         context,
                         token,
                         viewModel.useStandalonePaymentMethod.value!!,
-                        PrimerSessionIntent.CHECKOUT
+                        PrimerSessionIntent.VAULT
                     )
                 }
             }
@@ -118,24 +118,6 @@ class SecondFragment : Fragment() {
             val adapter = GroupieAdapter()
             data.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
             binding.paymentMethodList.adapter = adapter
-        }
-
-        viewModel.threeDsResult.observe(viewLifecycleOwner) {
-            val message = it?.let {
-                when (it.responseCode) {
-                    ResponseCode.AUTH_SUCCESS -> getString(R.string.three_ds_success_message)
-                    else -> getString(
-                        R.string.three_ds_error_message,
-                        it.responseCode,
-                        it.reasonCode,
-                        it.reasonText
-                    )
-                }
-            }
-            message?.let {
-                AlertDialog.Builder(context).setMessage(it).show()
-                viewModel.clearThreeDsResult()
-            }
         }
 
         viewModel.fetchClientSession()

@@ -162,6 +162,10 @@
     *;
 }
 
+-keep class io.primer.android.components.manager.PrimerBancontactCardManager {
+    public *;
+}
+
 -keep class io.primer.android.components.manager.PrimerBancontactCardManager$Companion {
     *;
 }

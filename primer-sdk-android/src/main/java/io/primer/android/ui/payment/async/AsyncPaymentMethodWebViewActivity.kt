@@ -92,12 +92,14 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
         fun getLaunchIntent(
             context: Context,
             paymentUrl: String,
+            deeplinkUrl: String,
             title: String,
             paymentMethodType: String,
             webViewClientType: WebViewClientType,
         ): Intent {
             return Intent(context, AsyncPaymentMethodWebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)
+                putExtra(CAPTURE_URL_KEY, deeplinkUrl)
                 putExtra(PAYMENT_METHOD_TYPE_KEY, paymentMethodType)
                 putExtra(TOOLBAR_TITLE_KEY, title)
                 putExtra(WEB_VIEW_CLIENT_TYPE, webViewClientType)

@@ -4,7 +4,9 @@ import java.util.UUID
 
 internal sealed class ThreeDsError : PrimerError() {
 
-    object ThreeDsLibraryError : ThreeDsError()
+    object ThreeDsLibraryMissingError : ThreeDsError()
+
+    class ThreeDsLibraryVersionError(val validSdkVersion: String) : ThreeDsError()
 
     class ThreeDsInitError(val message: String) : ThreeDsError()
 
@@ -28,7 +30,8 @@ internal sealed class ThreeDsError : PrimerError() {
             is ThreeDsConfigurationError -> "3ds-invalid-configuration"
             is ThreeDsInitError -> "3ds-init-error"
             is ThreeDsChallengeFailedError -> "3ds-challenge-failed"
-            is ThreeDsLibraryError -> "missing-3ds-library"
+            is ThreeDsLibraryMissingError -> "missing-3ds-library"
+            is ThreeDsLibraryVersionError -> "invalid-3ds-library-version"
             is ThreeDsUnknownError -> "3ds-unknown-error"
         }
 
@@ -38,7 +41,10 @@ internal sealed class ThreeDsError : PrimerError() {
             is ThreeDsConfigurationError ->
                 "Cannot perform 3DS due to invalid configuration. $message"
             is ThreeDsChallengeFailedError -> "3DS Challenge failed due to $reason. $message"
-            is ThreeDsLibraryError -> "Cannot perform 3DS due to missing library on classpath."
+            is ThreeDsLibraryMissingError ->
+                "Cannot perform 3DS due to missing library on classpath."
+            is ThreeDsLibraryVersionError ->
+                "Cannot perform 3DS due to library versions mismatch."
             is ThreeDsUnknownError -> "An unknown error occurred while trying to perform 3DS."
         }
 
@@ -49,7 +55,10 @@ internal sealed class ThreeDsError : PrimerError() {
 
     override val recoverySuggestion: String?
         get() = when (this) {
-            is ThreeDsLibraryError -> "Please follow the integration guide and include 3DS library."
+            is ThreeDsLibraryMissingError ->
+                "Please follow the integration guide and include 3DS library."
+            is ThreeDsLibraryVersionError ->
+                "Please update to io.primer:3ds-android:$validSdkVersion"
             is ThreeDsInitError ->
                 "In case you are using emulator you may need to set " +
                     "PrimerDebugOptions.is3DSSanityCheckEnabled to false. " +

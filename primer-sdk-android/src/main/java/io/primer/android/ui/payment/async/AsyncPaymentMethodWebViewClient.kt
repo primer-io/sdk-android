@@ -1,8 +1,8 @@
 package io.primer.android.ui.payment.async
 
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
-import android.webkit.WebResourceRequest
 import io.primer.android.ui.base.webview.BaseWebViewClient
 import io.primer.android.ui.base.webview.WebViewActivity
 
@@ -16,10 +16,11 @@ internal class AsyncPaymentMethodWebViewClient(
 
     override fun getCaptureUrl(url: String?) = url
 
-    override fun canCaptureUrl(url: String?) = CAPTURE_URLS.any { url?.contains(it) == true }
+    override fun canCaptureUrl(url: String?) = CAPTURE_URLS.any { url?.contains(it) == true } ||
+        super.canCaptureUrl(url)
 
-    override fun handleDeepLink(request: WebResourceRequest?): Boolean {
-        getIntentFromRequest(request)?.let {
+    override fun handleDeepLink(uri: Uri?): Boolean {
+        getIntentFromUri(uri)?.let {
             handleIntent(it)
         }
 
