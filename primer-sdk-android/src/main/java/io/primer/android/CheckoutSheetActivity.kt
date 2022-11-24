@@ -85,28 +85,28 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
             return@Observer
         }
 
-        val fragment = when (viewStatus) {
-            ViewStatus.INITIALIZING -> {
+        val fragment = when {
+            viewStatus == ViewStatus.INITIALIZING &&
+                config.settings.uiOptions.isInitScreenEnabled -> {
                 InitializingFragment.newInstance()
             }
-            ViewStatus.SELECT_PAYMENT_METHOD -> {
+            viewStatus == ViewStatus.SELECT_PAYMENT_METHOD -> {
                 SelectPaymentMethodFragment.newInstance()
             }
-            ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> {
+            viewStatus == ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> {
                 VaultedPaymentMethodsFragment.newInstance()
             }
+            else -> null
         }
 
-        when {
-            viewStatus == ViewStatus.INITIALIZING &&
-                config.settings.uiOptions.isInitScreenEnabled.not() -> sheet?.dialog?.hide()
-            else -> sheet?.dialog?.show()
+        fragment?.let {
+            openFragment(
+                it,
+                initFinished
+            )
+        } ?: run {
+            sheet?.dialog?.hide()
         }
-
-        openFragment(
-            fragment,
-            initFinished
-        )
 
         if (!initFinished && viewStatus != ViewStatus.INITIALIZING) {
             initFinished = true
@@ -465,6 +465,17 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (config.settings.fromHUC.not()) {
+            val fragments = sheet?.childFragmentManager?.fragments
+            val descriptor = primerViewModel.selectedPaymentMethod.value
+            if (fragments.isEmpty() && descriptor != null) {
+                sheet?.dialog?.hide()
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         clearSubscription()
@@ -605,6 +616,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
     }
 
     private fun openFragment(fragment: Fragment, returnToPreviousOnBack: Boolean = false) {
+        sheet?.dialog?.show()
         openFragment(NewFragmentBehaviour({ fragment }, returnToPreviousOnBack))
     }
 
