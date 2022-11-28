@@ -28,7 +28,6 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import io.primer.android.threeds.data.models.ResponseCode
 
 class SecondFragment : Fragment() {
 
