@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
@@ -63,6 +64,7 @@ import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
@@ -590,7 +592,11 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 val googlePay = paymentMethod as? GooglePayDescriptor
                 data?.let {
                     val paymentData = PaymentData.getFromIntent(data)
-                    tokenizationViewModel.handleGooglePayRequestResult(paymentData, googlePay)
+
+                    lifecycleScope.launch {
+                        primerViewModel.handleGooglePayRequestResultForBillingAddress(paymentData)
+                        tokenizationViewModel.handleGooglePayRequestResult(paymentData, googlePay)
+                    }
                 }
             }
             RESULT_CANCELED -> {

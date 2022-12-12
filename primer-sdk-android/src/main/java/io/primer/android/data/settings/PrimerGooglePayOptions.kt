@@ -15,4 +15,5 @@ data class PrimerGooglePayOptions(
         "VISA"
     ),
     var buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
+    var captureBillingAddress: Boolean = false
 )
