@@ -59,10 +59,12 @@ internal sealed class ThreeDsError : PrimerError() {
                 "Please follow the integration guide and include 3DS library."
             is ThreeDsLibraryVersionError ->
                 "Please update to io.primer:3ds-android:$validSdkVersion"
-            is ThreeDsInitError ->
-                "In case you are using emulator you may need to set " +
-                    "PrimerDebugOptions.is3DSSanityCheckEnabled to false. " +
-                    "Contact Primer and provide us with diagnostics id $diagnosticsId"
+            is ThreeDsInitError -> """
+                If this application is not installed from a trusted source
+                (e.g. a debug version, or used on an emulator), try to set
+                'PrimerDebugOptions.is3DSSanityCheckEnabled' to false.
+                Contact Primer and provide us with diagnostics id $diagnosticsId
+            """.trimIndent()
             is ThreeDsConfigurationError,
             is ThreeDsChallengeFailedError,
             is ThreeDsUnknownError,
