@@ -13,6 +13,7 @@ import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
+import io.primer.android.model.MonetaryAmount
 import io.primer.android.payment.async.ipay88.IPay88CardPaymentMethodDescriptor
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.utils.PaymentUtils
@@ -23,7 +24,6 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URLEncoder
-import java.util.Currency
 
 internal class AsyncPaymentPrimerResumeDecisionHandler(
     validationTokenRepository: ValidateTokenRepository,
@@ -115,15 +115,19 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                                         descriptor.paymentId,
                                         descriptor.paymentMethod,
                                         requireNotNull(descriptor.config.options?.merchantId),
-                                        PaymentUtils.minorToAmount(
-                                            config.settings.currentAmount,
-                                            Currency.getInstance(config.settings.currency)
+                                        PaymentUtils.amountToDecimalString(
+                                            MonetaryAmount.create(
+                                                config.settings.currency,
+                                                config.settings.currentAmount
+                                            )
                                         ).toString(),
                                         requireNotNull(clientTokenRepository.getTransactionId()),
                                         config.settings.order.let {
-                                            it.lineItems.joinToString { it.description.orEmpty() }
+                                            it.lineItems.joinToString { it.name.orEmpty() }
                                                 .ifEmpty {
-                                                    it.description.orEmpty()
+                                                    it.lineItems.joinToString {
+                                                        it.description.orEmpty()
+                                                    }
                                                 }
                                         },
                                         config.settings.currency,

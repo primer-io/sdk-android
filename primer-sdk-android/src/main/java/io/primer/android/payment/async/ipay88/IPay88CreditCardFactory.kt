@@ -49,15 +49,20 @@ internal class IPay88CreditCardFactory(private val type: String, val settings: P
 
         if (
             settings.order.let {
-                it.lineItems.joinToString { it.description.orEmpty() }
+                it.lineItems.joinToString { lineItem -> lineItem.name.orEmpty() }
                     .ifEmpty {
-                        it.description.orEmpty()
+                        it.lineItems.joinToString { lineItem ->
+                            lineItem.description.orEmpty()
+                        }
                     }
             }.isBlank()
         ) {
             return Failure(
                 Exception(
-                    "Invalid client session value for 'description' with value 'null'"
+                    """
+                     "Invalid client session value for lineItems 'name, description'
+                      with value 'null'"   
+                    """.trimIndent()
                 )
             )
         }
@@ -74,7 +79,7 @@ internal class IPay88CreditCardFactory(private val type: String, val settings: P
             )
         }
 
-        if (settings.customer.emailAddress == null) {
+        if (settings.customer.emailAddress.isNullOrBlank()) {
             return Failure(
                 Exception(
                     "Invalid client session value for 'emailAddress' with value 'null'"

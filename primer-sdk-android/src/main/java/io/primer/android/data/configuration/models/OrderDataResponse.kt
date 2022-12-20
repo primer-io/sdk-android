@@ -16,7 +16,6 @@ internal data class OrderDataResponse(
     var merchantAmount: Int? = null,
     val totalOrderAmount: Int? = null,
     var countryCode: CountryCode? = null,
-    var description: String? = null,
     var lineItems: List<LineItemDataResponse> = emptyList(),
     val fees: List<FeeDataResponse> = listOf(),
 ) : JSONDeserializable {
@@ -100,7 +99,6 @@ internal data class OrderDataResponse(
         private const val MERCHANT_AMOUNT_FIELD = "merchantAmount"
         private const val TOTAL_ORDER_AMOUNT_FIELD = "totalOrderAmount"
         private const val COUNTRY_CODE_FIELD = "countryCode"
-        private const val DESCRIPTION_FIELD = "description"
         private const val LINE_ITEMS_FIELD = "lineItems"
         private const val FEES_FIELD = "fees"
 
@@ -114,7 +112,6 @@ internal data class OrderDataResponse(
                     t.optNullableInt(MERCHANT_AMOUNT_FIELD),
                     t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
                     t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
-                    t.optNullableString(DESCRIPTION_FIELD),
                     t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils.getDeserializer<LineItemDataResponse>()
                             .deserialize(it)
