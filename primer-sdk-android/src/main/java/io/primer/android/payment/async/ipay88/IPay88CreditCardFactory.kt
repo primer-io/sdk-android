@@ -14,6 +14,7 @@ import java.util.Currency
 internal class IPay88CreditCardFactory(private val type: String, val settings: PrimerSettings) :
     PaymentMethodFactory {
 
+    @Suppress("LongMethod")
     override fun build(): Either<PaymentMethod, Exception> {
         val iPay88 = AsyncPaymentMethod(
             type,
@@ -27,79 +28,100 @@ internal class IPay88CreditCardFactory(private val type: String, val settings: P
             )
         }
 
-        val amount: Int
+        val errors = mutableListOf<String>()
+
+        var amount = 0
         try {
             amount = settings.currentAmount
         } catch (e: IllegalArgumentException) {
-            return Failure(Exception(e.message))
+            errors.add(e.message.toString())
         }
 
         if (amount == 0) {
-            return Failure(Exception("Invalid client session value for 'amount' with value '0'"))
-        }
-
-        if (settings.order.countryCode != CountryCode.MY) {
-            return Failure(
-                Exception(
-                    "Invalid client session value for 'countryCode' with value" +
-                        " '${settings.order.countryCode}'"
-                )
-            )
-        }
-
-        if (
-            settings.order.let {
-                it.lineItems.joinToString { lineItem -> lineItem.name.orEmpty() }
-                    .ifEmpty {
-                        it.lineItems.joinToString { lineItem ->
-                            lineItem.description.orEmpty()
-                        }
-                    }
-            }.isBlank()
-        ) {
-            return Failure(
-                Exception(
-                    """
-                     "Invalid client session value for lineItems 'name, description'
-                      with value 'null'"   
-                    """.trimIndent()
-                )
-            )
-        }
-
-        if (
-            settings.customer.let {
-                "${it.firstName.orEmpty()} ${it.lastName.orEmpty()}}"
-            }.isBlank()
-        ) {
-            return Failure(
-                Exception(
-                    "Invalid client session value for 'firstName, lastName' with value 'null'"
-                )
-            )
-        }
-
-        if (settings.customer.emailAddress.isNullOrBlank()) {
-            return Failure(
-                Exception(
-                    "Invalid client session value for 'emailAddress' with value 'null'"
-                )
+            errors.add(
+                """
+                Invalid client session value for 'amount' with value '0' | 
+                Check if you have provided a valid value for 'amount' in your client session.
+                """.trimIndent()
             )
         }
 
         try {
             val currency = Currency.getInstance(settings.currency)
-            if (currency.currencyCode != MYR_CURRENCY_CODE)
-                return Failure(
-                    Exception(
-                        "Invalid client session value for 'currencyCode'" +
-                            " with value '${currency.currencyCode}'"
-                    )
+            if (currency.currencyCode != MYR_CURRENCY_CODE) {
+                errors.add(
+                    """
+                    Invalid client session value for 'currency' with value '${settings.currency}' | 
+                    Allowed values are [MYR].
+                    """.trimIndent()
                 )
+            }
         } catch (e: IllegalArgumentException) {
-            return Failure(Exception(e.message))
+            errors.add(e.message.toString())
         }
 
+        if (settings.order.countryCode != CountryCode.MY) {
+            errors.add(
+                """
+                Invalid client session value for 'countryCode' with value
+                 '${settings.order.countryCode}' |  Allowed values are [MY].
+                """.trimIndent()
+            )
+        }
+
+        val lineItemsNamesJoined = settings.order.let {
+            it.lineItems.map { lineItem -> lineItem.name }
+        }
+
+        val lineItemsDescriptionJoined = settings.order.let {
+            it.lineItems.map { lineItem -> lineItem.description }
+        }
+
+        if (
+            lineItemsNamesJoined.all { it.isNullOrBlank() } &&
+            lineItemsDescriptionJoined.all { it.isNullOrBlank() }
+        ) {
+            errors.add(
+                """
+                Invalid client session value for 'order.lineItems.name' or 
+                'order.lineItems.description' with value 'null' | 
+                Check if you have provided a valid value for 'order.lineItems.name' or 
+                'order.lineItems.description' in your client session."
+                """.trimIndent()
+            )
+        }
+
+        if (settings.customer.firstName.isNullOrBlank()) {
+            errors.add(
+                """
+                Invalid client session value for 'customer.firstName' with value 
+                '${settings.customer.firstName}' | 
+                Check if you have provided a valid value for 'customer.firstName' in your client session."
+                """.trimIndent()
+            )
+        }
+
+        if (settings.customer.lastName.isNullOrBlank()) {
+            errors.add(
+                """
+                Invalid client session value for 'customer.lastName' with value 
+                '${settings.customer.lastName}' | 
+                Check if you have provided a valid value for 'customer.lastName' in your client session."
+                """.trimIndent()
+            )
+        }
+
+        if (settings.customer.emailAddress.isNullOrBlank()) {
+            errors.add(
+                """
+                Invalid client session value for 'customer.emailAddress' with value 
+                '${settings.customer.emailAddress}' | 
+                Check if you have provided a valid value for 'customer.emailAddress' in your client session."
+                """.trimIndent()
+            )
+        }
+
+        if (errors.isNotEmpty()) return Failure(Exception(errors.joinToString("\n")))
         return Success(iPay88)
     }
 
