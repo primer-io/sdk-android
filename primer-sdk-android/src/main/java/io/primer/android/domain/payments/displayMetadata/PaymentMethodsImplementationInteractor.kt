@@ -27,7 +27,7 @@ internal class PaymentMethodsImplementationInteractor(
             }
 
         val difference = paymentMethodsImplementation.minus(
-            filteredPaymentMethodsImplementation
+            filteredPaymentMethodsImplementation.toSet()
         )
         difference.forEach {
             logAnalyticsEvent(it.paymentMethodType)

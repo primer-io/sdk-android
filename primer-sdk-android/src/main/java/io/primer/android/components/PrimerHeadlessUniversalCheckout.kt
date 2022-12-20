@@ -32,6 +32,8 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.ui.CardNetwork
+import io.primer.android.ui.base.webview.WebViewActivity
+import io.primer.ipay88.api.ui.IPay88LauncherParams
 import org.koin.core.component.get
 
 @ExperimentalPrimerApi
@@ -76,6 +78,26 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 is CheckoutEvent.StartAsyncFlow -> {
                     headlessUniversalCheckout?.startAsyncFlow(e.statusUrl, e.paymentMethodType)
                 }
+                is CheckoutEvent.StartIPay88Flow -> {
+                    headlessUniversalCheckout?.startAsyncFlow(e.statusUrl, e.paymentMethodType)
+                    navigator?.openHeadlessScreen(
+                        IPay88LauncherParams(
+                            e.paymentId,
+                            e.paymentMethod,
+                            e.merchantCode,
+                            e.amount,
+                            e.referenceNumber,
+                            e.prodDesc,
+                            e.currencyCode,
+                            e.countryCode,
+                            e.customerId,
+                            e.customerEmail,
+                            e.backendCallbackUrl,
+                            e.deeplinkUrl,
+                            WebViewActivity.RESULT_ERROR
+                        )
+                    )
+                }
                 is CheckoutEvent.ResumeSuccess ->
                     componentsListener?.onResumeSuccess(e.resumeToken, e.resumeHandler)
                 is CheckoutEvent.ResumePending ->
@@ -114,7 +136,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 is CheckoutEvent.ClientSessionUpdateStarted -> {
                     componentsListener?.onBeforeClientSessionUpdated()
                 }
-                is CheckoutEvent.AsyncFlowCancelled -> headlessUniversalCheckout?.clear()
+                is CheckoutEvent.AsyncFlowCancelled -> headlessUniversalCheckout?.clear(e.exception)
                 else -> Unit
             }
         }
@@ -200,7 +222,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     }
 
     override fun cleanup() {
-        headlessUniversalCheckout?.clear()
+        headlessUniversalCheckout?.clear(null)
         headlessUniversalCheckout = null
         componentsListener = null
         subscription?.unregister()

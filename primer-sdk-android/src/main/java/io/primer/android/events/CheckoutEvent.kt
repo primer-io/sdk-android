@@ -17,6 +17,7 @@ import io.primer.android.model.CheckoutExitReason
 import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
+import kotlinx.coroutines.CancellationException
 
 internal sealed class CheckoutEvent(
     val type: CheckoutEventType,
@@ -124,6 +125,25 @@ internal sealed class CheckoutEvent(
         val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 
+    @Suppress("LongParameterList")
+    class StartIPay88Flow(
+        val clientTokenIntent: String,
+        val statusUrl: String,
+        val paymentMethodType: String,
+        val paymentId: String,
+        val paymentMethod: Int,
+        val merchantCode: String,
+        val amount: String,
+        val referenceNumber: String,
+        val prodDesc: String,
+        val currencyCode: String,
+        val countryCode: String?,
+        val customerId: String?,
+        val customerEmail: String?,
+        val backendCallbackUrl: String,
+        val deeplinkUrl: String
+    ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
+
     class StartVoucherFlow(
         val clientTokenIntent: String,
         val statusUrl: String,
@@ -134,7 +154,8 @@ internal sealed class CheckoutEvent(
 
     object AsyncFlowPollingError : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_POLLING_ERROR)
 
-    object AsyncFlowCancelled : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_CANCELLED)
+    data class AsyncFlowCancelled(val exception: CancellationException? = null) :
+        CheckoutEvent(CheckoutEventType.ASYNC_FLOW_CANCELLED)
 
     // components helpers
     class ConfigurationSuccess(

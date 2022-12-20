@@ -35,13 +35,13 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
 
     override fun onSupportNavigateUp(): Boolean {
         logBackPressed()
-        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled)
+        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled())
         return super.onSupportNavigateUp()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled)
+        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled())
     }
 
     override fun onDestroy() {

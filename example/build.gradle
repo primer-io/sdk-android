@@ -86,7 +86,8 @@ dependencies {
 
     implementation "io.insert-koin:koin-android:3.2.0"
 
-   implementation 'io.primer:klarna-android:1.0.0'
+    implementation 'io.primer:klarna-android:1.0.0'
+    implementation 'io.primer:ipay88-android:1.0.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 

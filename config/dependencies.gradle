@@ -15,6 +15,9 @@ ext {
             ],
             Klarna    : [
                     primerKlarna: "io.primer:klarna-android:${Versions.primerKlarna}"
+            ],
+            iPay88    : [
+                    primeriPay88: "io.primer:ipay88-android:${Versions.primeriPay88}"
             ]
     ]
 }

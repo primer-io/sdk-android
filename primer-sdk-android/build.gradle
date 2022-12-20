@@ -80,6 +80,9 @@ dependencies {
     compileOnly Dependencies.Klarna.primerKlarna
     testImplementation Dependencies.Klarna.primerKlarna
 
+    compileOnly Dependencies.iPay88.primeriPay88
+    testImplementation Dependencies.iPay88.primeriPay88
+
     testImplementation TestDependencies.Kotlin.coroutines
     testImplementation TestDependencies.Android.archCore
     testImplementation TestDependencies.Android.liveData

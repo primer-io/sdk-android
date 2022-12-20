@@ -8,6 +8,7 @@ internal enum class ErrorMapperType {
     HUC,
     PAYMENT_METHODS,
     KLARNA,
+    I_PAY88,
     DEFAULT
 }
 

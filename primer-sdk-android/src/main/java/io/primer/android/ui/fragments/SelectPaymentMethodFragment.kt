@@ -303,7 +303,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     val data = paymentMethod.paymentInstrumentData
                     titleLabel.text = data?.cardholderName
-                    val last4: Int = data?.last4Digits ?: throw Error("card data is invalid!")
+                    val last4: Int =
+                        data?.last4Digits ?: throw IllegalStateException("card data is invalid!")
 
                     lastFourLabel.text = getString(R.string.last_four, last4)
                     val expirationYear = "${data.expirationYear}"

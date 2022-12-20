@@ -5,6 +5,7 @@ import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.async.exception.AsyncFlowIgnoredCancellationException
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
@@ -45,6 +46,7 @@ internal class AsyncPaymentMethodInteractor(
         }.doOnError {
             eventDispatcher.dispatchEvent(CheckoutEvent.AsyncFlowPollingError)
             when (it) {
+                is AsyncFlowIgnoredCancellationException -> Unit
                 is CancellationException -> baseErrorEventResolver.resolve(
                     PaymentMethodCancelledException(
                         params.paymentMethodType

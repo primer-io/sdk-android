@@ -37,10 +37,10 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
-        descriptor?.getLoadingState()?.let { loadingState ->
+        descriptor?.getLoadingState().let { loadingState ->
             logAnalytics(descriptor.config.type)
             binding.apply {
-                if (loadingState.imageResIs > 0) {
+                if (loadingState != null && loadingState.imageResIs > 0) {
                     selectedPaymentLogo.setImageResource(loadingState.imageResIs)
                 } else {
                     selectedPaymentLogo.setImageDrawable(
@@ -60,7 +60,7 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
                         )
                     )
                 }
-                loadingState.textResId?.let {
+                loadingState?.textResId?.let {
                     selectedPaymentLoadingText.isVisible = true
                     progressBar.isVisible = false
                     selectedPaymentLoadingText.text = loadingState.args

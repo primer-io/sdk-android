@@ -19,10 +19,11 @@ data class PrimerSettings(
     internal var order = OrderDataResponse()
     internal var customer = CustomerDataResponse()
 
-    internal val sdkIntegrationType = when (fromHUC) {
-        true -> SdkIntegrationType.HEADLESS
-        false -> SdkIntegrationType.DROP_IN
-    }
+    internal val sdkIntegrationType: SdkIntegrationType
+        get() = when (fromHUC) {
+            true -> SdkIntegrationType.HEADLESS
+            false -> SdkIntegrationType.DROP_IN
+        }
 
     val currency: String
         @Throws
