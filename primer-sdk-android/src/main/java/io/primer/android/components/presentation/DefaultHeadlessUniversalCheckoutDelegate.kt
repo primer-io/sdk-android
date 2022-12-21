@@ -23,6 +23,7 @@ import io.primer.android.payment.config.toTextDisplayMetadata
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 internal interface HeadlessUniversalCheckoutDelegate {
     fun start()
@@ -36,7 +37,7 @@ internal interface HeadlessUniversalCheckoutDelegate {
 
     fun resumePayment(resumeToken: String, resumeHandler: PrimerResumeDecisionHandler)
 
-    fun clear()
+    fun clear(exception: CancellationException?)
 }
 
 internal class DefaultHeadlessUniversalCheckoutDelegate(
@@ -110,5 +111,6 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
         }
     }
 
-    override fun clear() = scope.coroutineContext.job.cancelChildren()
+    override fun clear(exception: CancellationException?) =
+        scope.coroutineContext.job.cancelChildren(exception)
 }

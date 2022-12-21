@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wallet.PaymentData
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
@@ -34,6 +35,8 @@ import io.primer.android.payment.apaya.ApayaDescriptor.Companion.APAYA_REQUEST_C
 import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor.Companion.ASYNC_METHOD_REQUEST_CODE
+import io.primer.android.payment.async.ipay88.IPay88CardPaymentMethodDescriptor
+import io.primer.android.payment.async.ipay88.IPay88CardPaymentMethodDescriptor.Companion.IPAY88_METHOD_REQUEST_CODE
 import io.primer.android.payment.google.GooglePayDescriptor
 import io.primer.android.payment.google.GooglePayDescriptor.Companion.GOOGLE_PAY_REQUEST_CODE
 import io.primer.android.payment.google.InitialCheckRequiredBehaviour
@@ -63,6 +66,9 @@ import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
+import io.primer.ipay88.api.ui.IPay88LauncherParams
+import io.primer.ipay88.api.ui.NativeIPay88Activity
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
@@ -216,8 +222,41 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                         ),
                         true
                     )
-                    else -> Unit
                 }
+            }
+            is CheckoutEvent.StartIPay88Flow -> {
+                val paymentMethodDescriptor = primerViewModel.selectedPaymentMethod.value
+                if (paymentMethodDescriptor !is IPay88CardPaymentMethodDescriptor) {
+                    onExit(CheckoutExitReason.ERROR)
+                }
+                openFragment(
+                    PaymentMethodStatusFragment.newInstance(
+                        it.statusUrl,
+                        it.paymentMethodType
+                    ),
+                    false
+                )
+                startActivityForResult(
+                    NativeIPay88Activity.getLaunchIntent(
+                        this,
+                        IPay88LauncherParams(
+                            it.paymentId,
+                            it.paymentMethod,
+                            it.merchantCode,
+                            it.amount,
+                            it.referenceNumber,
+                            it.prodDesc,
+                            it.currencyCode,
+                            it.countryCode,
+                            it.customerId,
+                            it.customerEmail,
+                            it.backendCallbackUrl,
+                            it.deeplinkUrl,
+                            RESULT_ERROR
+                        )
+                    ),
+                    IPAY88_METHOD_REQUEST_CODE
+                )
             }
             is CheckoutEvent.StartVoucherFlow -> {
                 when (it.paymentMethodType) {
@@ -449,6 +488,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
             when (it) {
                 is CheckoutEvent.StartAsyncFlow,
                 is CheckoutEvent.StartVoucherFlow,
+                is CheckoutEvent.StartIPay88Flow,
                 is CheckoutEvent.StartAsyncRedirectFlow,
                 is CheckoutEvent.Start3DS,
                 is CheckoutEvent.DismissInternal,
@@ -512,6 +552,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 )
             ASYNC_METHOD_REQUEST_CODE -> handleAsyncFlowRequestResult(resultCode)
             GOOGLE_PAY_REQUEST_CODE -> handleGooglePayRequestResult(resultCode, data)
+            IPAY88_METHOD_REQUEST_CODE -> handleIPayRequestResult(resultCode, data)
             else -> Unit
         }
     }
@@ -583,6 +624,24 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         }
     }
 
+    private fun handleIPayRequestResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            RESULT_OK -> Unit
+            RESULT_ERROR -> {
+                val exception =
+                    data?.extras?.getSerializable(NativeIPay88Activity.ERROR_KEY) as Exception
+                errorEventResolver.resolve(
+                    exception,
+                    ErrorMapperType.I_PAY88
+                )
+                onExit(CheckoutExitReason.ERROR)
+            }
+            RESULT_CANCELED -> {
+                onExit(CheckoutExitReason.DISMISSED_BY_USER)
+            }
+        }
+    }
+
     private fun handleGooglePayRequestResult(resultCode: Int, data: Intent?) {
         when (resultCode) {
             RESULT_OK -> {
@@ -590,7 +649,11 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 val googlePay = paymentMethod as? GooglePayDescriptor
                 data?.let {
                     val paymentData = PaymentData.getFromIntent(data)
-                    tokenizationViewModel.handleGooglePayRequestResult(paymentData, googlePay)
+
+                    lifecycleScope.launch {
+                        primerViewModel.handleGooglePayRequestResultForBillingAddress(paymentData)
+                        tokenizationViewModel.handleGooglePayRequestResult(paymentData, googlePay)
+                    }
                 }
             }
             RESULT_CANCELED -> {

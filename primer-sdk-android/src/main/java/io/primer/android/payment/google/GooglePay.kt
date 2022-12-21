@@ -18,6 +18,7 @@ internal data class GooglePay(
         "VISA"
     ),
     val buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
+    val billingAddressRequired: Boolean = false
 ) : PaymentMethod {
 
     override val type = PaymentMethodType.GOOGLE_PAY.name
@@ -25,7 +26,6 @@ internal data class GooglePay(
     override val canBeVaulted: Boolean = false
 
     internal val allowedCardAuthMethods: List<String> = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
-    internal val billingAddressRequired: Boolean = false
 
     override val module: PaymentMethodModule by lazy { GooglePayModule() }
 }

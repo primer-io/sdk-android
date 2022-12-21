@@ -242,3 +242,6 @@
 
 # for annotations
 -keep @interface io.primer.android.ExperimentalPrimerApi
+
+# for the BuildConfig
+-keep class io.primer.android.BuildConfig { *; }

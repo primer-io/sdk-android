@@ -107,6 +107,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".components.ui.activity.HeadlessActivity"
+            android:exported="false"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

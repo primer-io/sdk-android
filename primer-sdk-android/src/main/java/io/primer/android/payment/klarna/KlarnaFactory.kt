@@ -16,7 +16,7 @@ internal class KlarnaFactory(private val type: String, val settings: PrimerSetti
         val klarnaOptions = settings.paymentMethodOptions.klarnaOptions
         val klarna = Klarna(
             type,
-            klarnaOptions.recurringPaymentDescription ?: settings.order.description,
+            klarnaOptions.recurringPaymentDescription,
             klarnaOptions.webViewTitle ?: "Klarna"
         )
 

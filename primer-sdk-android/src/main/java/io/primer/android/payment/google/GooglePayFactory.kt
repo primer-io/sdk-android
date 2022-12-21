@@ -42,6 +42,7 @@ internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFac
             currency.currencyCode,
             settings.paymentMethodOptions.googlePayOptions.allowedCardNetworks,
             settings.paymentMethodOptions.googlePayOptions.buttonStyle,
+            settings.paymentMethodOptions.googlePayOptions.captureBillingAddress
         )
 
         return Success(googlePay)

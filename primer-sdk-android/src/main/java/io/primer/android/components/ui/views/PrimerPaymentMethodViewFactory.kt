@@ -19,7 +19,8 @@ internal class PrimerPaymentMethodViewFactory(
         container: ViewGroup?
     ): View {
         return when (PaymentMethodType.safeValueOf(displayMetadata.paymentMethodType)) {
-            PaymentMethodType.PAYMENT_CARD -> CreditCardViewCreator(config).create(
+            PaymentMethodType.PAYMENT_CARD,
+            PaymentMethodType.IPAY88_CARD -> CreditCardViewCreator(config).create(
                 context,
                 container
             )

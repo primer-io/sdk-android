@@ -157,6 +157,9 @@ internal enum class Brand(
         R.drawable.ic_retail_outlets,
         iconDarkResId = R.drawable.ic_retail_outlets_light
     ),
+    IPAY_88(
+        R.drawable.ic_logo_credit_card
+    ),
     UNKNOWN(0)
 }
 

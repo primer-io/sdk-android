@@ -4,6 +4,7 @@ import io.primer.android.components.data.error.HUCErrorMapper
 import io.primer.android.data.action.error.ActionUpdateErrorMapper
 import io.primer.android.data.payments.apaya.error.SessionCreateErrorMapper
 import io.primer.android.data.payments.create.error.PaymentCreateErrorMapper
+import io.primer.android.data.payments.iPay88.error.IPayErrorMapper
 import io.primer.android.data.payments.klarna.error.KlarnaErrorMapper
 import io.primer.android.data.payments.methods.error.PaymentMethodsErrorMapper
 import io.primer.android.data.payments.resume.error.PaymentResumeErrorMapper
@@ -22,6 +23,7 @@ internal class DefaultErrorMapperFactory : ErrorMapperFactory {
             ErrorMapperType.HUC -> HUCErrorMapper()
             ErrorMapperType.PAYMENT_METHODS -> PaymentMethodsErrorMapper()
             ErrorMapperType.KLARNA -> KlarnaErrorMapper()
+            ErrorMapperType.I_PAY88 -> IPayErrorMapper()
             ErrorMapperType.DEFAULT -> DefaultErrorMapper()
         }
     }

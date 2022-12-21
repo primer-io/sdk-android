@@ -16,5 +16,9 @@ internal class ClientTokenDataRepository(
 
     override fun getStatusUrl() = clientTokenDataSource.get().statusUrl
 
+    override fun getBackendCallbackUrl() = clientTokenDataSource.get().backendCallbackUrl
+
+    override fun getTransactionId() = clientTokenDataSource.get().primerTransactionId
+
     override fun getClientTokenIntent() = clientTokenDataSource.get().intent
 }

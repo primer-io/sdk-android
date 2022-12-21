@@ -27,6 +27,7 @@ import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGoCardlessOptions
+import io.primer.android.data.settings.PrimerGooglePayOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
@@ -145,7 +146,8 @@ class MainViewModel(
             paymentMethodOptions = PrimerPaymentMethodOptions(
                 redirectScheme = "primer",
                 klarnaOptions = PrimerKlarnaOptions("This is custom description"),
-                goCardlessOptions = PrimerGoCardlessOptions("Test", "Test")
+                goCardlessOptions = PrimerGoCardlessOptions("Test", "Test"),
+                googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true)
             ),
             uiOptions = PrimerUIOptions(
                 isInitScreenEnabled = true,

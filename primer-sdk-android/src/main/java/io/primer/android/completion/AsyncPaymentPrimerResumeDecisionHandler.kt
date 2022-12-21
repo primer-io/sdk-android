@@ -13,9 +13,17 @@ import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
+import io.primer.android.model.MonetaryAmount
+import io.primer.android.payment.async.ipay88.IPay88CardPaymentMethodDescriptor
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import io.primer.android.utils.PaymentUtils
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URLEncoder
 
 internal class AsyncPaymentPrimerResumeDecisionHandler(
     validationTokenRepository: ValidateTokenRepository,
@@ -26,11 +34,11 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     baseErrorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
-    config: PrimerConfig,
-    paymentMethodsRepository: PaymentMethodsRepository,
+    private val config: PrimerConfig,
+    private val paymentMethodsRepository: PaymentMethodsRepository,
     retailerOutletRepository: RetailOutletRepository,
     private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
     clientTokenRepository,
@@ -68,7 +76,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                         CheckoutEvent.StartAsyncFlow(
                             clientTokenRepository.getClientTokenIntent(),
                             clientTokenRepository.getStatusUrl().orEmpty(),
-                            paymentMethodType
+                            paymentMethodType,
                         )
                     )
                 )
@@ -86,6 +94,62 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                         )
                     )
                 )
+            }
+            ClientTokenIntent.IPAY88_CARD_REDIRECTION.name -> {
+                CoroutineScope(coroutineDispatcher).launch {
+                    paymentMethodsRepository.getPaymentMethodDescriptors()
+                        .mapLatest { descriptors ->
+                            val descriptor = descriptors.firstOrNull { descriptor ->
+                                descriptor.config.type ==
+                                    paymentMethodRepository.getPaymentMethod().paymentMethodType
+                            } as IPay88CardPaymentMethodDescriptor
+                            eventDispatcher.dispatchEvents(
+                                listOf(
+                                    CheckoutEvent.PaymentMethodPresented(
+                                        paymentMethodType
+                                    ),
+                                    CheckoutEvent.StartIPay88Flow(
+                                        clientTokenRepository.getClientTokenIntent(),
+                                        clientTokenRepository.getStatusUrl().orEmpty(),
+                                        paymentMethodType,
+                                        descriptor.paymentId,
+                                        descriptor.paymentMethod,
+                                        requireNotNull(descriptor.config.options?.merchantId),
+                                        PaymentUtils.amountToDecimalString(
+                                            MonetaryAmount.create(
+                                                config.settings.currency,
+                                                config.settings.currentAmount
+                                            )
+                                        ).toString(),
+                                        requireNotNull(clientTokenRepository.getTransactionId()),
+                                        config.settings.order.let {
+                                            it.lineItems.joinToString { it.name.orEmpty() }
+                                                .ifEmpty {
+                                                    it.lineItems.joinToString {
+                                                        it.description.orEmpty()
+                                                    }
+                                                }
+                                        },
+                                        config.settings.currency,
+                                        config.settings.order.countryCode?.name,
+                                        config.settings.customer.let {
+                                            "${it.firstName.orEmpty()} ${it.lastName.orEmpty()}"
+                                        },
+                                        config.settings.customer.emailAddress,
+                                        requireNotNull(
+                                            withContext(Dispatchers.IO) {
+                                                URLEncoder.encode(
+                                                    clientTokenRepository.getBackendCallbackUrl(),
+                                                    Charsets.UTF_8.name()
+                                                )
+                                            }
+                                        ),
+                                        ""
+                                    )
+                                )
+                            )
+                        }.collect {}
+                }
             }
             else -> eventDispatcher.dispatchEvents(
                 listOf(

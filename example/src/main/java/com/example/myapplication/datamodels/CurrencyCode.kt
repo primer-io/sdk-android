@@ -20,4 +20,5 @@ enum class CurrencyCode(val symbol: String) {
     PHP("₱"),
     IDR("Rp"),
     THB("฿"),
+    MYR("Rg"),
 }

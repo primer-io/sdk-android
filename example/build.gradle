@@ -79,14 +79,15 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     implementation "com.xwray:groupie:2.9.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "io.primer:3ds-android:1.1.1"
+    implementation "io.primer:3ds-android:1.1.2"
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'io.github.pilgr:paperdb:2.7.2'
 
     implementation "io.insert-koin:koin-android:3.2.0"
 
-   implementation 'io.primer:klarna-android:1.0.0'
+    implementation 'io.primer:klarna-android:1.0.0'
+    implementation 'io.primer:ipay88-android:1.0.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 

@@ -118,7 +118,7 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
         addAnalyticsEvent(
             SdkFunctionParams(
                 "showPaymentMethod",
-                mapOf("paymentMethod" to paymentMethod, "intent" to intent.name)
+                mapOf("paymentMethodType" to paymentMethod, "intent" to intent.name)
             )
         )
 

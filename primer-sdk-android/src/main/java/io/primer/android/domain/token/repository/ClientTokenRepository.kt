@@ -8,6 +8,10 @@ internal interface ClientTokenRepository {
 
     fun getRedirectUrl(): String?
 
+    fun getBackendCallbackUrl(): String?
+
+    fun getTransactionId(): String?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

@@ -6,6 +6,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payment.apaya.ApayaFactory
 import io.primer.android.payment.async.AsyncMethodFactory
+import io.primer.android.payment.async.ipay88.IPay88CreditCardFactory
 import io.primer.android.payment.card.CardFactory
 import io.primer.android.payment.gocardless.GoCardlessFactory
 import io.primer.android.payment.google.GooglePayFactory
@@ -39,6 +40,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                     PaymentMethodType.PAYPAL -> PayPalFactory(settings, type).build()
                     PaymentMethodType.GOCARDLESS -> GoCardlessFactory(settings).build()
                     PaymentMethodType.APAYA -> ApayaFactory(settings).build()
+                    PaymentMethodType.IPAY88_CARD -> IPay88CreditCardFactory(type, settings).build()
                     PaymentMethodType.PRIMER_TEST_SOFORT,
                     PaymentMethodType.ADYEN_IDEAL,
                     PaymentMethodType.ADYEN_DOTPAY,
