@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wallet.PaymentData
+import com.klarna.mobile.sdk.api.payments.KlarnaPaymentCategory
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
@@ -291,6 +292,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                             paymentMethod.options.webViewTitle.orEmpty(),
                             (paymentData as KlarnaPaymentData).clientToken,
                             paymentData.redirectUrl,
+                            KlarnaPaymentCategory.PAY_NOW,
                             RESULT_ERROR,
                         ),
                         paymentData.getRequestCode()
