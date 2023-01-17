@@ -3,6 +3,7 @@ package io.primer.android.payment.paypal
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.NewMiddleFragmentBehaviour
+import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.dummy.DummyDecisionType
@@ -37,4 +38,7 @@ internal class PrimerTestPayPalDescriptor constructor(
         setTokenizableValue("paymentMethodConfigId", config.id!!)
         appendTokenizableValue("sessionInfo", "platform", "ANDROID")
     }
+
+    override val headlessDefinition: HeadlessDefinition?
+        get() = null
 }

@@ -9,7 +9,7 @@ internal data class PrimerPhoneCode(
     override val name: String,
     override val code: CountryCode,
     val dialCode: String
-) : PrimerBaseCountryData(), JSONDeserializable {
+) : PrimerBaseCountryData, JSONDeserializable {
 
     internal companion object {
         val default: PrimerPhoneCode = PrimerPhoneCode("United Kingdom", CountryCode.BG, "+44")

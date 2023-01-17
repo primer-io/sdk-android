@@ -12,16 +12,19 @@ import java.util.Collections
 
 internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigDataResponse) {
 
+    // remove
     protected val values: JSONObject by lazy { JSONObject() }
 
     abstract val selectedBehaviour: SelectedPaymentMethodBehaviour
 
-    open val behaviours: List<SelectedPaymentMethodBehaviour> =
-        listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))
-
     abstract val type: PaymentMethodUiType
 
     abstract val vaultCapability: VaultCapability
+
+    abstract val headlessDefinition: HeadlessDefinition?
+
+    open val behaviours: List<SelectedPaymentMethodBehaviour> =
+        listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))
 
     open val sdkCapabilities = listOf(SDKCapability.HEADLESS, SDKCapability.DROP_IN)
 
@@ -29,24 +32,20 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
 
     internal val brand = PaymentMethodType.safeValueOf(config.type).brand
 
+    // remove
     open fun getLoadingState(): LoadingState? = null
 
+    // remove
     fun setTokenizableValue(key: String, value: String) {
         values.put(key, value)
     }
 
-    fun setTokenizableField(type: PrimerInputElementType, value: String) {
-        values.put(type.field, value)
-    }
-
-    fun setTokenizableValue(key: String, value: JSONObject) {
-        values.put(key, value)
-    }
-
+    // remove
     fun appendTokenizableValue(parent: String, key: String, value: String) {
         values.put(parent, (values.optJSONObject(parent) ?: JSONObject()).put(key, value))
     }
 
+    // remove
     fun appendTokenizableValue(superParent: String, parent: String, key: String, value: String) {
         values.put(
             superParent,
@@ -55,28 +54,34 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
         )
     }
 
+    // remove
     open fun validate(): List<SyncValidationError> {
         return Collections.emptyList()
     }
 
+    // remove
     open fun getValidAutoFocusableFields(): Set<String> = hashSetOf()
 
+    // remove
     open fun toPaymentInstrument(): JSONObject {
         return values
     }
 
+    // remove
     fun pushValues(json: JSONObject) {
         json.keys().forEach {
             values.put(it, json[it])
         }
     }
 
+    // remove
     fun hasFieldValue(type: PrimerInputElementType): Boolean {
         val data = if (values.has(type.field)) values.get(type.field) else null
         return if (data is String) data.isNotBlank()
         else data != null
     }
 
+    // remove
     fun clearInputField(type: PrimerInputElementType) {
         values.remove(type.field)
     }

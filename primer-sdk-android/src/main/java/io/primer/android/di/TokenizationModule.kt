@@ -1,6 +1,7 @@
 package io.primer.android.di
 
 import io.primer.android.completion.ResumeHandlerFactory
+import io.primer.android.data.tokenization.datasource.RemoteTokenizationDataSource
 import io.primer.android.data.tokenization.repository.TokenizationDataRepository
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -72,9 +73,14 @@ internal val tokenizationModule = {
             )
         }
 
+        single {
+            RemoteTokenizationDataSource(get())
+        }
+
         single<TokenizationRepository> {
             TokenizationDataRepository(
-                get()
+                get(),
+                get(),
             )
         }
         single {
@@ -86,6 +92,6 @@ internal val tokenizationModule = {
                 get(),
             )
         }
-        viewModel { TokenizationViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { TokenizationViewModel(get(), get(), get()) }
     }
 }

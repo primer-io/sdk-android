@@ -1,11 +1,13 @@
 package io.primer.android.payment.async.promptpay
 
 import io.primer.android.R
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.payments.additionalInfo.OmiseCheckoutAdditionalInfoResolver
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfoResolver
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
@@ -17,8 +19,6 @@ internal class OmisePromptPayPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     config: PaymentMethodConfigDataResponse,
 ) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
-
-    override val title = "PROMPTPAY"
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> =
         listOf(
@@ -35,4 +35,7 @@ internal class OmisePromptPayPaymentMethodDescriptor(
 
     override val additionalInfoResolver: PrimerCheckoutAdditionalInfoResolver
         get() = OmiseCheckoutAdditionalInfoResolver()
+
+    override val headlessDefinition: HeadlessDefinition
+        get() = HeadlessDefinition(listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI))
 }

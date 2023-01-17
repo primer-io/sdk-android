@@ -1,6 +1,7 @@
 package io.primer.android.components.ui.widgets
 
 import android.content.Context
+import android.text.InputFilter
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
@@ -15,6 +16,7 @@ class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
         attachTextFormatter(TextInputMask.ExpiryDate())
         keyListener = DigitsKeyListener.getInstance(ALLOWED_CHARS)
         setRawInputType(InputType.TYPE_CLASS_DATETIME or InputType.TYPE_DATETIME_VARIATION_DATE)
+        filters = arrayOf<InputFilter>(InputFilter.LengthFilter(EXPIRY_DATE_MAX_LENGTH))
     }
 
     override fun getType() = PrimerInputElementType.EXPIRY_DATE
@@ -23,6 +25,7 @@ class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
         .isValid()
 
     private companion object {
+        const val EXPIRY_DATE_MAX_LENGTH = 5
         const val ALLOWED_CHARS = "0123456789/ "
     }
 }

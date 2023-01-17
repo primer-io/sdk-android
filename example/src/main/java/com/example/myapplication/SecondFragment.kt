@@ -16,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import com.example.myapplication.databinding.FragmentSecondBinding
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.PrimerCheckoutListener
-import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
@@ -49,7 +48,6 @@ class SecondFragment : Fragment() {
 
         binding.vaultButton.isVisible = false
         binding.checkoutButton.isVisible = false
-        binding.showPaymentMethodButton.isVisible = false
 
         // VAULT MANAGER
         binding.vaultButton.setOnClickListener {
@@ -67,34 +65,14 @@ class SecondFragment : Fragment() {
             }
         }
 
-        // SHOW PAYMENT METHOD
-        binding.showPaymentMethodButton.setOnClickListener {
-            viewModel.clientToken.value?.let { token ->
-                activity?.let { context ->
-                    Primer.instance.showPaymentMethod(
-                        context,
-                        token,
-                        viewModel.useStandalonePaymentMethod.value!!,
-                        PrimerSessionIntent.VAULT
-                    )
-                }
-            }
-        }
-
         viewModel.postalCode.observe(viewLifecycleOwner) { value ->
             binding.postalCodeLabel.text = requireContext().getString(R.string.postal_code, value)
         }
 
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
-            if (viewModel.vaultDisabled) {
-                binding.vaultButton.isVisible = false
-            } else {
                 binding.vaultButton.isVisible = token != null
-            }
 
             binding.checkoutButton.isVisible = token != null
-            binding.showPaymentMethodButton.isVisible =
-                token != null && viewModel.isStandalonePaymentMethod
 
             if (token != null) {
                 initializeCheckout()
@@ -176,7 +154,7 @@ class SecondFragment : Fragment() {
             viewModel.resumePayment(resumeToken, decisionHandler)
         }
 
-        override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) {
+        override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo) {
             Log.d(TAG, "onResumePending $additionalInfo")
             when (additionalInfo) {
                 is MultibancoCheckoutAdditionalInfo -> {

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 internal class VaultedPaymentMethodsDeleteInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val logger: Logger,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<String, VaultDeleteParams>() {
 
     override fun execute(params: VaultDeleteParams) =

@@ -1,11 +1,9 @@
 package io.primer.android.components.manager.raw
 
-import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.error.PrimerInputValidationError
 
 @JvmDefaultWithCompatibility
-@ExperimentalPrimerApi
 interface PrimerHeadlessUniversalCheckoutRawDataManagerListener {
 
     fun onValidationChanged(isValid: Boolean, errors: List<PrimerInputValidationError>)

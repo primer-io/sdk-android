@@ -18,7 +18,7 @@ internal class CreatePaymentInteractor(
     private val createPaymentsRepository: CreatePaymentRepository,
     private val paymentResultEventsResolver: PaymentResultEventsResolver,
     private val errorEventResolver: BaseErrorEventResolver,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<String, CreatePaymentParams>() {
 
     override fun execute(params: CreatePaymentParams): Flow<String> {

@@ -4,10 +4,10 @@ import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.error.model.APIError
+import io.primer.android.data.extensions.await
 import io.primer.android.http.exception.HttpException
 import io.primer.android.http.exception.JsonDecodingException
 import io.primer.android.http.exception.JsonEncodingException
-import io.primer.android.model.await
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine

@@ -21,28 +21,29 @@ internal class AnalyticsDataSender(
 ) {
 
     fun sendEvents(events: List<BaseAnalyticsEventRequest>): Flow<Unit> {
-        val grouped = events.groupBy { it.analyticsUrl ?: ANALYTICS_URL }
-        return grouped.map {
-            remoteAnalyticsDataSource.execute(
-                BaseRemoteUrlRequest(
-                    it.key,
-                    AnalyticsDataRequest(it.value.map { it.copy(newAnalyticsUrl = null) })
-                )
-            ).map { grouped[it] }
-                .retry(NUM_OF_RETRIES)
-                .catch {
+        val groupedChunks =
+            events.chunked(CHUNK_SIZE).map { it.groupBy { it.analyticsUrl ?: ANALYTICS_URL } }
+        return groupedChunks.map { chunk ->
+            chunk.map { group ->
+                remoteAnalyticsDataSource.execute(
+                    BaseRemoteUrlRequest(
+                        group.key,
+                        AnalyticsDataRequest(group.value.map { it.copy(newAnalyticsUrl = null) })
+                    )
+                ).map { chunk[group.key] }.retry(NUM_OF_RETRIES).catch {
                     emit(emptyList())
                 }
-        }.merge()
-            .onEach {
-                localAnalyticsDataSource.remove(it.orEmpty())
-            }.onCompletion {
-                fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
-            }.map { }
+            }
+        }.flatten().merge().onEach { sentEvents ->
+            localAnalyticsDataSource.remove(sentEvents.orEmpty())
+        }.onCompletion {
+            fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+        }.map { }
     }
 
     private companion object {
         const val ANALYTICS_URL = "https://analytics.production.data.primer.io/sdk-logs"
         const val NUM_OF_RETRIES = 3L
+        const val CHUNK_SIZE = 100
     }
 }

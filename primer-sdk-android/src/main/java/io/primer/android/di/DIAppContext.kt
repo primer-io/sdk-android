@@ -31,6 +31,7 @@ internal object DIAppContext {
                 tokenizationModule(),
                 rpcModule(),
                 paypalModule(),
+                googlePayModule(),
                 dummyApmModule(),
                 bancontactApmModule(),
                 NetworkModule(),

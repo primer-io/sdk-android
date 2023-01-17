@@ -6,7 +6,7 @@ import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -18,11 +18,7 @@ import io.primer.android.payment.async.ipay88.IPay88CardPaymentMethodDescriptor
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.utils.PaymentUtils
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 
 internal class AsyncPaymentPrimerResumeDecisionHandler(
@@ -35,7 +31,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     logger: Logger,
     private val config: PrimerConfig,
-    private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
     private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -49,7 +45,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     eventDispatcher,
     logger,
     config,
-    paymentMethodsRepository,
+    paymentMethodDescriptorsRepository,
     retailerOutletRepository,
     coroutineDispatcher
 ) {
@@ -96,74 +92,88 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                 )
             }
             ClientTokenIntent.IPAY88_CARD_REDIRECTION.name -> {
-                CoroutineScope(coroutineDispatcher).launch {
-                    paymentMethodsRepository.getPaymentMethodDescriptors()
-                        .mapLatest { descriptors ->
-                            val descriptor = descriptors.firstOrNull { descriptor ->
-                                descriptor.config.type ==
-                                    paymentMethodRepository.getPaymentMethod().paymentMethodType
-                            } as IPay88CardPaymentMethodDescriptor
-                            eventDispatcher.dispatchEvents(
-                                listOf(
-                                    CheckoutEvent.PaymentMethodPresented(
-                                        paymentMethodType
-                                    ),
-                                    CheckoutEvent.StartIPay88Flow(
-                                        clientTokenRepository.getClientTokenIntent(),
-                                        clientTokenRepository.getStatusUrl().orEmpty(),
-                                        paymentMethodType,
-                                        descriptor.paymentId,
-                                        descriptor.paymentMethod,
-                                        requireNotNull(descriptor.config.options?.merchantId),
-                                        PaymentUtils.amountToDecimalString(
-                                            MonetaryAmount.create(
-                                                config.settings.currency,
-                                                config.settings.currentAmount
-                                            )
-                                        ).toString(),
-                                        requireNotNull(clientTokenRepository.getTransactionId()),
-                                        config.settings.order.let {
-                                            it.lineItems.joinToString { it.name.orEmpty() }
-                                                .ifEmpty {
-                                                    it.lineItems.joinToString {
-                                                        it.description.orEmpty()
-                                                    }
-                                                }
-                                        },
-                                        config.settings.currency,
-                                        config.settings.order.countryCode?.name,
-                                        config.settings.customer.let {
-                                            "${it.firstName.orEmpty()} ${it.lastName.orEmpty()}"
-                                        },
-                                        config.settings.customer.emailAddress,
-                                        requireNotNull(
-                                            withContext(Dispatchers.IO) {
-                                                URLEncoder.encode(
-                                                    clientTokenRepository.getBackendCallbackUrl(),
-                                                    Charsets.UTF_8.name()
-                                                )
-                                            }
-                                        ),
-                                        ""
-                                    )
+                val descriptor =
+                    paymentMethodDescriptorsRepository.getPaymentMethodDescriptors()
+                        .firstOrNull { descriptor ->
+                            descriptor.config.type ==
+                                paymentMethodRepository.getPaymentMethod().paymentMethodType
+                        } as IPay88CardPaymentMethodDescriptor
+
+                eventDispatcher.dispatchEvents(
+                    listOf(
+                        CheckoutEvent.PaymentMethodPresented(
+                            paymentMethodType
+                        ),
+                        CheckoutEvent.StartIPay88Flow(
+                            clientTokenRepository.getClientTokenIntent(),
+                            clientTokenRepository.getStatusUrl().orEmpty(),
+                            paymentMethodType,
+                            descriptor.paymentId,
+                            descriptor.paymentMethod,
+                            requireNotNull(descriptor.config.options?.merchantId),
+                            PaymentUtils.amountToDecimalString(
+                                MonetaryAmount.create(
+                                    config.settings.currency,
+                                    config.settings.currentAmount
                                 )
-                            )
-                        }.collect {}
-                }
-            }
-            else -> eventDispatcher.dispatchEvents(
-                listOf(
-                    CheckoutEvent.PaymentMethodPresented(paymentMethodType),
-                    CheckoutEvent.StartAsyncRedirectFlow(
-                        paymentMethodRepository.getPaymentMethod().paymentInstrumentData
-                            ?.paymentMethodType?.split("_")?.last().orEmpty(),
-                        paymentMethodType,
-                        clientTokenRepository.getRedirectUrl().orEmpty(),
-                        clientTokenRepository.getStatusUrl().orEmpty(),
-                        asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()
+                            ).toString(),
+                            requireNotNull(clientTokenRepository.getTransactionId()),
+                            config.settings.order.let {
+                                it.lineItems.joinToString { it.name.orEmpty() }
+                                    .ifEmpty {
+                                        it.lineItems.joinToString {
+                                            it.description.orEmpty()
+                                        }
+                                    }
+                            },
+                            config.settings.currency,
+                            config.settings.order.countryCode?.name,
+                            config.settings.customer.let {
+                                "${it.firstName.orEmpty()} ${it.lastName.orEmpty()}"
+                            },
+                            config.settings.customer.emailAddress,
+                            requireNotNull(
+                                URLEncoder.encode(
+                                    clientTokenRepository.getBackendCallbackUrl(),
+                                    Charsets.UTF_8.name()
+                                )
+                            ),
+                            "",
+                            config.paymentMethodIntent
+                        )
                     )
                 )
-            )
+            }
+            else -> {
+                when (config.settings.fromHUC) {
+                    true -> eventDispatcher.dispatchEvents(
+                        listOf(
+                            CheckoutEvent.StartAsyncRedirectFlowHUC(
+                                paymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                                    ?.paymentMethodType?.split("_")?.last().orEmpty(),
+                                paymentMethodType,
+                                clientTokenRepository.getRedirectUrl().orEmpty(),
+                                clientTokenRepository.getStatusUrl().orEmpty(),
+                                config.paymentMethodIntent,
+                                asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()
+                            )
+                        )
+                    )
+                    false -> eventDispatcher.dispatchEvents(
+                        listOf(
+                            CheckoutEvent.StartAsyncRedirectFlow(
+                                paymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                                    ?.paymentMethodType?.split("_")?.last().orEmpty(),
+                                paymentMethodType,
+                                clientTokenRepository.getRedirectUrl().orEmpty(),
+                                clientTokenRepository.getStatusUrl().orEmpty(),
+                                config.paymentMethodIntent,
+                                asyncPaymentMethodDeeplinkRepository.getDeeplinkUrl()
+                            )
+                        )
+                    )
+                }
+            }
         }
     }
 }

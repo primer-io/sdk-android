@@ -8,6 +8,8 @@ import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
 import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
+import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
@@ -109,23 +111,6 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
         show(context, clientToken)
     }
 
-    override fun showPaymentMethod(
-        context: Context,
-        clientToken: String,
-        paymentMethod: String,
-        intent: PrimerSessionIntent,
-    ) {
-        addAnalyticsEvent(
-            SdkFunctionParams(
-                "showPaymentMethod",
-                mapOf("paymentMethodType" to paymentMethod, "intent" to intent.name)
-            )
-        )
-
-        config.intent = PrimerIntent(intent, paymentMethod)
-        show(context, clientToken)
-    }
-
     /**
      * Private method to set and subscribe using passed in listener. Clears previous subscriptions.
      */
@@ -138,23 +123,15 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
 
     /**
      * Private method to instantiate [CheckoutSheetActivity] and initialise the SDK.
-     * Also configures any redirect schemes.
      */
     private fun show(context: Context, clientToken: String) {
         try {
             setupAndVerifyClientToken(clientToken)
-
-            val scheme =
-                config.settings.paymentMethodOptions.redirectScheme
-                    ?: context.packageName.let { "$it.primer" }
-            WebviewInteropRegister.init(scheme)
-
-            if (config.settings.fromHUC.not()) {
-                DIAppContext.init(context.applicationContext, config)
-            } else {
-                val config = get<PrimerConfig>()
-                config.intent = this.config.intent
+            DIAppContext.app?.let {
+                get<DefaultHeadlessManagerDelegate>().reset()
+                get<DefaultRawDataManagerDelegate>().reset()
             }
+            DIAppContext.init(context.applicationContext, config)
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -176,7 +153,8 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
             AnalyticsSdkFunctionEventRequest(
                 properties = FunctionProperties(params.name, params.params),
                 sdkSessionId = SdkSessionDataSource.getSessionId(),
-                sdkIntegrationType = config.settings.sdkIntegrationType
+                sdkIntegrationType = config.settings.sdkIntegrationType,
+                sdkPaymentHandling = config.settings.paymentHandling
             )
         )
     }

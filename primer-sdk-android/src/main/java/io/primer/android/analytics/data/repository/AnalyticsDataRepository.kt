@@ -1,6 +1,5 @@
 package io.primer.android.analytics.data.repository
 
-import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.datasource.TimerDataSource
@@ -12,6 +11,7 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.analytics.infrastructure.datasource.BatteryLevelDataSource
 import io.primer.android.analytics.infrastructure.datasource.BatteryStatusDataSource
 import io.primer.android.analytics.infrastructure.datasource.DeviceIdDataSource
+import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSource
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
@@ -20,7 +20,6 @@ import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.infrastructure.metadata.datasource.MetaDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
@@ -70,6 +69,7 @@ internal class AnalyticsDataRepository(
                         metaDataSource.getApplicationId(),
                         sdkSessionId,
                         settings.sdkIntegrationType,
+                        settings.paymentHandling,
                         checkoutSessionId,
                         configuration?.clientSession?.clientSessionId,
                         configuration?.clientSession?.order?.orderId,
@@ -81,24 +81,23 @@ internal class AnalyticsDataRepository(
         }.onEach { fileAnalyticsDataSource.update(localAnalyticsDataSource.get()) }
         .mapLatest { }
 
-    override fun addEvent(params: BaseAnalyticsParams): Flow<Boolean> {
+    override fun addEvent(params: BaseAnalyticsParams): Boolean {
         val configuration = localConfigurationDataSource.getConfigurationNullable()
-        return flowOf(
-            localAnalyticsDataSource.addEvent(
-                params.toAnalyticsEvent(
-                    batteryLevelDataSource.get(),
-                    batteryStatusDataSource.get(),
-                    screenSizeDataSource.get(),
-                    deviceIdDataSource.get(),
-                    metaDataSource.getApplicationId(),
-                    sdkSessionId,
-                    settings.sdkIntegrationType,
-                    checkoutSessionId,
-                    configuration?.clientSession?.clientSessionId,
-                    configuration?.clientSession?.order?.orderId,
-                    configuration?.primerAccountId,
-                    localClientTokenDataSource.get().analyticsUrlV2
-                )
+        return localAnalyticsDataSource.addEvent(
+            params.toAnalyticsEvent(
+                batteryLevelDataSource.get(),
+                batteryStatusDataSource.get(),
+                screenSizeDataSource.get(),
+                deviceIdDataSource.get(),
+                metaDataSource.getApplicationId(),
+                sdkSessionId,
+                settings.sdkIntegrationType,
+                settings.paymentHandling,
+                checkoutSessionId,
+                configuration?.clientSession?.clientSessionId,
+                configuration?.clientSession?.order?.orderId,
+                configuration?.primerAccountId,
+                localClientTokenDataSource.get().analyticsUrlV2
             )
         )
     }

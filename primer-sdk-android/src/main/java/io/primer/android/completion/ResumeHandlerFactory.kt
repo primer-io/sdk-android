@@ -5,7 +5,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -27,7 +27,7 @@ internal class ResumeHandlerFactory(
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
     private val config: PrimerConfig,
-    private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
     private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
 ) {
@@ -46,7 +46,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository,
+                paymentMethodDescriptorsRepository,
                 retailerOutletRepository
             )
             ASYNC_PAYMENT_METHOD,
@@ -60,7 +60,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository,
+                paymentMethodDescriptorsRepository,
                 retailerOutletRepository,
                 asyncPaymentMethodDeeplinkRepository
             )
@@ -74,7 +74,7 @@ internal class ResumeHandlerFactory(
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository,
+                paymentMethodDescriptorsRepository,
                 retailerOutletRepository
             )
         }

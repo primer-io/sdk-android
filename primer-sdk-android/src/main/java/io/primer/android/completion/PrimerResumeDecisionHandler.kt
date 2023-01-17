@@ -1,10 +1,8 @@
 package io.primer.android.completion
 
-interface PrimerResumeDecisionHandler {
+interface PrimerResumeDecisionHandler : PrimerHeadlessUniversalCheckoutResumeDecisionHandler {
 
     fun handleFailure(message: String?)
 
     fun handleSuccess()
-
-    fun continueWithNewClientToken(clientToken: String)
 }

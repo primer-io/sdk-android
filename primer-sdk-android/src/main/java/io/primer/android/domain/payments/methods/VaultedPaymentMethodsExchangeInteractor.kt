@@ -26,7 +26,7 @@ internal class VaultedPaymentMethodsExchangeInteractor(
     private val preTokenizationEventsResolver: PreTokenizationEventsResolver,
     private val postTokenizationEventResolver: PostTokenizationEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<PaymentMethodTokenInternal, VaultTokenParams>() {
 
     override fun execute(params: VaultTokenParams): Flow<PaymentMethodTokenInternal> {

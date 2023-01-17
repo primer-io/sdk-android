@@ -17,11 +17,8 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_payment_method">Add payment method</string>
     <string name="show_checkout">Show Checkout</string>
-    <string name="show_payment_method">Show Payment Method</string>
     <string name="add_klarna">Add Klarna</string>
     <string name="add_apaya">Pay by mobile</string>
     <string name="add_customer_id">Add customer ID</string>

@@ -31,9 +31,9 @@ internal sealed class PaymentMethodError : PrimerError() {
     override val errorId: String
         get() = when (this) {
             is MisConfiguredPaymentMethodError -> "misconfigured-payment-method"
-            is PaymentMethodCancelledError -> "cancelled"
-            is UnsupportedPaymentMethodError -> "unsupported-payment-method"
-            is UnsupportedIntentPaymentMethodError -> "unsupported-intent"
+            is PaymentMethodCancelledError -> "payment-cancelled"
+            is UnsupportedPaymentMethodError -> "unsupported-payment-method-type"
+            is UnsupportedIntentPaymentMethodError -> "unsupported-session-intent"
         }
 
     override val description: String

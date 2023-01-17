@@ -4,6 +4,7 @@ import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
@@ -16,8 +17,6 @@ internal class RapydPromptPayPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     config: PaymentMethodConfigDataResponse,
 ) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
-
-    override val title = "PROMPTPAY"
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> =
         listOf(
@@ -34,4 +33,7 @@ internal class RapydPromptPayPaymentMethodDescriptor(
         if (localConfig.settings.uiOptions.theme.isDarkMode == true)
             R.drawable.ic_logo_promptpay_dark else R.drawable.ic_logo_promptpay_light
     )
+
+    override val headlessDefinition: HeadlessDefinition?
+        get() = null
 }

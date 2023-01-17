@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 
 internal class FormValidationInteractor(
     private val validatorFactory: ValidatorFactory,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<Boolean, FormValidationParam>() {
 
     override fun execute(params: FormValidationParam) =

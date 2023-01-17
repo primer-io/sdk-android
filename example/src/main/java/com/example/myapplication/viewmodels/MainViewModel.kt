@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.constants.ThemeList
 import com.example.myapplication.datamodels.AppCountryCode
 import com.example.myapplication.datamodels.PrimerEnv
@@ -20,22 +22,21 @@ import com.example.myapplication.repositories.CountryRepository
 import com.example.myapplication.repositories.PaymentInstrumentsRepository
 import com.example.myapplication.repositories.PaymentsRepository
 import com.example.myapplication.repositories.ResumeRepository
-import com.example.myapplication.utils.AmountUtils
 import com.example.myapplication.utils.CombinedLiveData
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.settings.PrimerDebugOptions
-import io.primer.android.data.settings.PrimerGoCardlessOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.data.tokenization.models.TokenType
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import io.primer.android.threeds.data.models.ResponseCode
 import io.primer.android.ui.settings.PrimerUIOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.ref.WeakReference
@@ -45,7 +46,8 @@ import java.util.*
 class MainViewModel(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
-    private val apiKeyDataSource: ApiKeyDataSource
+    private val apiKeyDataSource: ApiKeyDataSource,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val paymentInstrumentsRepository = PaymentInstrumentsRepository()
@@ -55,14 +57,14 @@ class MainViewModel(
 
     enum class Mode {
         CHECKOUT, VAULT;
-
-        val isVaulting: Boolean get() = this == VAULT
     }
 
     val mode = MutableLiveData(Mode.CHECKOUT)
 
     private val client: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor())
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
         .build()
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
@@ -84,8 +86,11 @@ class MainViewModel(
         this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
     }
 
-    val apiKeyLiveData = MutableLiveData<String>(apiKeyDataSource
-        .getApiKey(environment.value ?: PrimerEnv.Dev))
+    val apiKeyLiveData = MutableLiveData<String>(
+        apiKeyDataSource
+            .getApiKey(environment.value ?: PrimerEnv.Dev)
+    )
+
     fun setApiKeyForSelectedEnv(apiKey: String?) {
         val env = environment.value ?: return
         if (!apiKey.isNullOrBlank()) {
@@ -109,8 +114,7 @@ class MainViewModel(
     fun setMetadata(metadata: String) = _metadata.postValue(metadata)
 
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
-    val clientToken: MutableLiveData<String?> = MutableLiveData<String?>()
-    val useStandalonePaymentMethod: MutableLiveData<String> = MutableLiveData()
+    val clientToken: MutableLiveData<String?> = savedStateHandle.getLiveData("token")
 
     val paymentInstruments: MutableLiveData<List<PrimerPaymentMethodTokenData>> =
         MutableLiveData<List<PrimerPaymentMethodTokenData>>()
@@ -133,12 +137,6 @@ class MainViewModel(
     val canLaunchPrimer: MutableLiveData<Boolean> =
         CombinedLiveData(customerId, _amount, ::canLaunch)
 
-    val vaultDisabled: Boolean
-        get() = isStandalonePaymentMethod
-            && useStandalonePaymentMethod.value == "GOOGLE_PAY"
-    val isStandalonePaymentMethod: Boolean
-        get() = useStandalonePaymentMethod.value != null
-
     val settings: PrimerSettings
         get() = PrimerSettings(
             // todo: refactor to reintroduce custom values through client session
@@ -146,7 +144,6 @@ class MainViewModel(
             paymentMethodOptions = PrimerPaymentMethodOptions(
                 redirectScheme = "primer",
                 klarnaOptions = PrimerKlarnaOptions("This is custom description"),
-                goCardlessOptions = PrimerGoCardlessOptions("Test", "Test"),
                 googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true)
             ),
             uiOptions = PrimerUIOptions(
@@ -173,7 +170,13 @@ class MainViewModel(
         countryRepository.getCurrency(),
         environment.value?.environment ?: throw Error("no environment set!"),
         metadata.value
-    ) { t -> clientToken.postValue(t) }
+    ) { t ->
+        viewModelScope.launch {
+            withContext(Dispatchers.Main) {
+                savedStateHandle["token"] = t
+            }
+        }
+    }
 
     fun fetchPaymentInstruments() {
         paymentInstruments.postValue(listOf())
@@ -223,6 +226,7 @@ class MainViewModel(
                 TransactionState.SUCCESS -> {
                     completion?.handleSuccess()
                 }
+                else -> Unit
             }
             _transactionState.postValue(state)
         }
@@ -258,9 +262,5 @@ class MainViewModel(
             }
             _transactionState.postValue(state)
         }
-    }
-
-    fun getAmountConverted(): Int {
-        return AmountUtils.covert(amount.value!!, countryCode.value?.currencyCode!!)
     }
 }

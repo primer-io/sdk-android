@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.makePhoneDigitsOnly
+import io.primer.android.components.domain.payments.paymentMethods.raw.phoneNumber.mbway.makePhoneDigitsOnly
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
 import io.primer.android.domain.payments.async.models.AsyncMethodParams

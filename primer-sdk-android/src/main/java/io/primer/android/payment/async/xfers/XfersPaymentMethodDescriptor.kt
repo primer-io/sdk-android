@@ -4,6 +4,7 @@ import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewFragmentBehaviour
+import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
@@ -17,8 +18,6 @@ internal class XfersPaymentMethodDescriptor(
     config: PaymentMethodConfigDataResponse,
 ) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
 
-    override val title = "XFERS"
-
     override fun getLoadingState() = LoadingState(R.drawable.ic_logo_xfers_square)
 
     override val behaviours: List<SelectedPaymentMethodBehaviour>
@@ -28,4 +27,7 @@ internal class XfersPaymentMethodDescriptor(
 
     override val sdkCapabilities: List<SDKCapability>
         get() = listOf(SDKCapability.DROP_IN)
+
+    override val headlessDefinition: HeadlessDefinition?
+        get() = null
 }

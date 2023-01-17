@@ -2,68 +2,156 @@ package io.primer.android.components.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import io.primer.android.BaseCheckoutActivity
-import io.primer.android.domain.base.BaseErrorEventResolver
-import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.domain.payments.async.exception.AsyncFlowIgnoredCancellationException
+import io.primer.android.components.domain.BaseEvent
+import io.primer.android.components.presentation.HeadlessViewModelFactory
+import io.primer.android.components.presentation.NativeUIHeadlessViewModel
+import io.primer.android.components.presentation.paymentMethods.nativeUi.googlepay.GooglePayEvent
+import io.primer.android.components.ui.extensions.toIPay88LauncherParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
+import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.ui.base.webview.WebViewActivity
-import io.primer.ipay88.api.ui.IPay88LauncherParams
+import io.primer.android.ui.base.webview.WebViewClientType
+import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.ipay88.api.ui.NativeIPay88Activity
-import org.koin.core.component.inject
+import org.koin.android.ext.android.inject
 
 internal class HeadlessActivity : BaseCheckoutActivity() {
 
-    private val errorEventResolver: BaseErrorEventResolver by inject()
     private val eventDispatcher: EventDispatcher by inject()
-
     private var resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (result.resultCode) {
-                RESULT_OK -> Unit
-                WebViewActivity.RESULT_ERROR -> {
-                    val exception =
-                        result.data?.extras?.getSerializable(NativeIPay88Activity.ERROR_KEY)
-                            as Exception
-                    errorEventResolver.resolve(
-                        exception,
-                        ErrorMapperType.I_PAY88
-                    )
-                    eventDispatcher.dispatchEvent(
-                        CheckoutEvent.AsyncFlowCancelled(
-                            AsyncFlowIgnoredCancellationException()
-                        )
-                    )
-                }
-                RESULT_CANCELED -> {
-                    eventDispatcher.dispatchEvent(CheckoutEvent.AsyncFlowCancelled())
-                }
-            }
-            finish()
-        }
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+    private lateinit var manager: NativeUIHeadlessViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val params = getLauncherParams()
+        val params = getLauncherParams() ?: return
+        savedInstanceState?.let {
+            intent.putExtra(LAUNCHED_BROWSER_KEY, it.getBoolean(LAUNCHED_BROWSER_KEY))
+        }
+
+        manager = HeadlessViewModelFactory().getManager(
+            this,
+            params.paymentMethodType,
+            params.sessionIntent
+        ).also { manager ->
+            manager.startActivityEvent.observe(this) {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.PaymentMethodPresented(params.paymentMethodType)
+                )
+                startRedirect(it)
+            }
+            manager.finishActivityEvent.observe(this) {
+                finish()
+            }
+        }
+        manager.initialize(
+            params.paymentMethodType,
+            params.sessionIntent,
+            if (savedInstanceState == null) params.initialState else null
+        )
         // we don't want to start again in case of config change
-        if (savedInstanceState == null) {
-            resultLauncher.launch(NativeIPay88Activity.getLaunchIntent(this, params))
+        if (savedInstanceState == null && params.initialState == null) {
+            manager.start(
+                params.paymentMethodType,
+                params.sessionIntent
+            )
         }
     }
 
-    private fun getLauncherParams() =
-        intent.getSerializableExtra(PARAMS_KEY) as IPay88LauncherParams
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(
+            LAUNCHED_BROWSER_KEY,
+            intent.getBooleanExtra(LAUNCHED_BROWSER_KEY, false)
+        )
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        manager.onEvent(BaseEvent.OnResult(data, resultCode))
+    }
+
+    override fun onNewIntent(newIntent: Intent?) {
+        super.onNewIntent(newIntent)
+        manager.onEvent(BaseEvent.OnBrowserResult(newIntent?.data))
+        intent.putExtra(ENTERED_NEW_INTENT_KEY, true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (
+            intent.getBooleanExtra(ENTERED_NEW_INTENT_KEY, false).not() &&
+            intent.getBooleanExtra(LAUNCHED_BROWSER_KEY, false)
+        ) {
+            // in case user returns without finalizing flow in browser, we will cancel the flow.
+            manager.onEvent(BaseEvent.OnBrowserResult(null))
+        }
+    }
+
+    private fun getLauncherParams() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        intent.getSerializableExtra(PARAMS_KEY, PaymentMethodLauncherParams::class.java)
+    } else intent.getSerializableExtra(PARAMS_KEY) as PaymentMethodLauncherParams
+
+    private fun startRedirect(params: PaymentMethodRedirectLauncherParams) {
+        when (params) {
+            is KlarnaActivityLauncherParams -> resultLauncher.launch(
+                NativeKlarnaActivity.getLaunchIntent(
+                    this,
+                    params.webViewTitle,
+                    params.clientToken,
+                    params.redirectUrl,
+                    params.paymentCategory,
+                    params.errorCode
+                )
+            )
+            is WebRedirectActivityLauncherParams -> resultLauncher.launch(
+                AsyncPaymentMethodWebViewActivity.getLaunchIntent(
+                    this,
+                    params.paymentUrl,
+                    params.returnUrl,
+                    params.title,
+                    params.paymentMethodType,
+                    WebViewClientType.ASYNC
+                )
+            )
+            is BrowserLauncherParams -> {
+                intent.putExtra(LAUNCHED_BROWSER_KEY, true)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(params.url)))
+            }
+            is GooglePayActivityLauncherParams -> manager.onEvent(
+                GooglePayEvent.StartRedirect(this)
+            )
+            is ApayaActivityLauncherParams -> resultLauncher.launch(
+                WebViewActivity.getLaunchIntent(
+                    this,
+                    params.redirectUrl,
+                    params.returnUrl,
+                    params.webViewTitle,
+                    WebViewClientType.APAYA
+                )
+            )
+            is IPay88ActivityLauncherParams -> resultLauncher.launch(
+                NativeIPay88Activity.getLaunchIntent(this, params.toIPay88LauncherParams())
+            )
+        }
+    }
 
     internal companion object {
 
         private const val PARAMS_KEY = "LAUNCHER_PARAMS"
+        private const val ENTERED_NEW_INTENT_KEY = "ENTERED_NEW_INTENT"
+        private const val LAUNCHED_BROWSER_KEY = "LAUNCHED_BROWSER"
 
         fun getLaunchIntent(
             context: Context,
-            params: IPay88LauncherParams
+            params: PaymentMethodLauncherParams
         ): Intent {
             return Intent(context, HeadlessActivity::class.java).putExtra(
                 PARAMS_KEY, params

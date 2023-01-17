@@ -10,9 +10,9 @@ import io.primer.android.data.base.datasource.BaseFlowDataSource
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.configuration.models.getImageAsset
+import io.primer.android.data.extensions.await
 import io.primer.android.data.payments.displayMetadata.model.IconDisplayMetadata
 import io.primer.android.infrastructure.files.ImagesFileProvider
-import io.primer.android.model.await
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

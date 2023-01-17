@@ -6,11 +6,11 @@ import io.primer.android.data.action.repository.ActionDataRepository
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource
-import io.primer.android.data.payments.methods.repository.PaymentMethodsDataRepository
+import io.primer.android.data.payments.methods.repository.PaymentMethodDescriptorsDataRepository
 import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodsDataRepository
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
@@ -55,8 +55,8 @@ internal val PaymentMethodsModule = {
         single<PaymentMethodMapping> { DefaultPaymentMethodMapping(get()) }
         single<BillingAddressValidator> { DefaultBillingAddressValidator() }
 
-        single<PaymentMethodsRepository> {
-            PaymentMethodsDataRepository(
+        single<PaymentMethodDescriptorsRepository> {
+            PaymentMethodDescriptorsDataRepository(
                 get(),
                 get(),
                 get(),
@@ -68,7 +68,6 @@ internal val PaymentMethodsModule = {
 
         single {
             PaymentMethodModulesInteractor(
-                get(),
                 get(),
                 get(),
                 get(),
@@ -104,7 +103,7 @@ internal val PaymentMethodsModule = {
 
         factory { ActionUpdateFilter(get(), get()) }
 
-        factory {
+        single {
             ActionInteractor(
                 get(),
                 get(),

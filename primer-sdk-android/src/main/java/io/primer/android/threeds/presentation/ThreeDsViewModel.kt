@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import com.netcetera.threeds.sdk.api.transaction.Transaction
-import io.primer.android.BuildConfig
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.presentation.base.BaseViewModel
@@ -44,8 +43,7 @@ internal class ThreeDsViewModel(
         viewModelScope.launch {
             threeDsInteractor.initialize(
                 ThreeDsInitParams(
-                    config.settings.debugOptions.is3DSSanityCheckEnabled
-                        ?: BuildConfig.DEBUG.not(),
+                    config.settings.debugOptions.is3DSSanityCheckEnabled,
                     config.settings.locale
                 )
             ).catch {

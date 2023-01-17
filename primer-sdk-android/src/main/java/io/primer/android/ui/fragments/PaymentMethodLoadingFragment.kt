@@ -14,16 +14,13 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.ui.assets.ImageColor
-import io.primer.android.components.ui.assets.PrimerAssetManager
-import io.primer.android.components.ui.views.PaymentMethodViewCreator
+import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
+import io.primer.android.components.ui.extensions.get
 import io.primer.android.databinding.FragmentPaymentMethodLoadingBinding
 import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.extensions.scaleImage
 import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.utils.dPtoPx
-import io.primer.android.utils.toResourcesScale
 import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.inject
@@ -44,19 +41,14 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
                     selectedPaymentLogo.setImageResource(loadingState.imageResIs)
                 } else {
                     selectedPaymentLogo.setImageDrawable(
-                        PrimerAssetManager.getAsset(
+                        PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
                             requireContext(),
-                            descriptor.config.type,
+                            descriptor.config.type
+                        ).paymentMethodLogo.get(
                             when (theme.isDarkMode == true) {
                                 true -> ImageColor.DARK
                                 false -> ImageColor.LIGHT
                             }
-                        )?.scaleImage(
-                            requireContext(),
-                            requireContext().resources.displayMetrics.toResourcesScale() /
-                                PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_SCALE,
-                            maxHeight = PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
-                                .dPtoPx(requireContext())
                         )
                     )
                 }

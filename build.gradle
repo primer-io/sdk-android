@@ -1,17 +1,20 @@
 buildscript {
     ext {
         projectJvmTarget = JavaVersion.VERSION_1_8
-        kotlinVersion = '1.6.21'
+        kotlinVersion = '1.7.20'
 
         koinVersion = '3.2.2'
 
         projectDependencies = [
-                androidGradlePlugin: 'com.android.tools.build:gradle:7.1.2',
+                androidGradlePlugin: 'com.android.tools.build:gradle:7.3.1',
                 kotlinGradlePlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
                 androidJunit5      : 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1',
                 staticAnalysis     : [
                         ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:10.2.0',
-                ]
+                ],
+                mavenPublish       : 'com.github.dcendents:android-maven-gradle-plugin:2.1',
+                jacoco             : 'org.jacoco:org.jacoco.core:0.8.8',
+                dexCount           : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:3.1.0'
         ]
     }
 
@@ -26,9 +29,9 @@ buildscript {
         classpath projectDependencies.kotlinGradlePlugin
         classpath projectDependencies.staticAnalysis.ktlintGradle
         classpath projectDependencies.androidJunit5
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath "org.jacoco:org.jacoco.core:0.8.8"
+        classpath projectDependencies.mavenPublish
+        classpath projectDependencies.jacoco
+        classpath projectDependencies.dexCount
     }
 }
 
@@ -44,7 +47,9 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "/home/runner/work/primer-sdk-android/primer-sdk-android/primer-sdk-android/build/jacoco/jacoco.xml"
-        property "sonar.language","kotlin"
+        property "sonar.language", "kotlin"
+        property "sonar.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*"
+        property "sonar.coverage.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*"
     }
 }
 

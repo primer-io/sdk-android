@@ -38,21 +38,6 @@ interface PrimerInterface {
     fun showVaultManager(context: Context, clientToken: String)
 
     /**
-     * Initialise and show specific payment method flows with Primer.
-     *
-     * @param clientToken base64 string containing information about this Primer session.
-     * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
-     * @param paymentMethod the payment method flow to be shown.
-     * @param intent whether to trigger checkout or vault session.
-     */
-    fun showPaymentMethod(
-        context: Context,
-        clientToken: String,
-        paymentMethod: String,
-        intent: PrimerSessionIntent,
-    )
-
-    /**
      * Dismiss the checkout
      */
     fun dismiss(clearListeners: Boolean = false)

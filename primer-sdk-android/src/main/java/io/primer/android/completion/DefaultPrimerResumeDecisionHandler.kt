@@ -12,7 +12,7 @@ import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutQRCodeInfo
 import io.primer.android.domain.payments.additionalInfo.RetailOutletsCheckoutAdditionalInfoResolver
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -42,10 +42,10 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private val eventDispatcher: EventDispatcher,
     private var logger: Logger,
     private val config: PrimerConfig,
-    private val paymentMethodsRepository: PaymentMethodsRepository,
+    private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : PrimerResumeDecisionHandler {
+) : PrimerHeadlessUniversalCheckoutResumeDecisionHandler, PrimerResumeDecisionHandler {
 
     private var handlerUsed = false
 
@@ -82,40 +82,45 @@ internal open class DefaultPrimerResumeDecisionHandler(
 
     private suspend fun handlePaymentMethodData(clientToken: String) {
         val clientTokenConfig = ClientToken.fromString(clientToken)
-        paymentMethodsRepository.getPaymentMethodDescriptors().mapLatest { descriptors ->
-            val descriptor = descriptors.firstOrNull { descriptor ->
-                descriptor.config.type ==
-                    paymentMethodRepository.getPaymentMethod().paymentMethodType
-            }
-
-            val additionalInfoResolver = descriptor?.additionalInfoResolver
-            when (additionalInfoResolver) {
-                is RetailOutletsCheckoutAdditionalInfoResolver -> {
-                    additionalInfoResolver.retailerName = retailerOutletRepository
-                        .getSelectedRetailOutlet()?.name
+        paymentMethodDescriptorsRepository.resolvePaymentMethodDescriptors()
+            .mapLatest { descriptors ->
+                val descriptor = descriptors.firstOrNull { descriptor ->
+                    descriptor.config.type ==
+                        paymentMethodRepository.getPaymentMethod().paymentMethodType
                 }
-            }
 
-            additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
-                when (data) {
-                    is PrimerCheckoutQRCodeInfo -> {
-                        eventDispatcher.dispatchEvent(CheckoutEvent.OnAdditionalInfoReceived(data))
+                val additionalInfoResolver = descriptor?.additionalInfoResolver
+                when (additionalInfoResolver) {
+                    is RetailOutletsCheckoutAdditionalInfoResolver -> {
+                        additionalInfoResolver.retailerName = retailerOutletRepository
+                            .getSelectedRetailOutlet()?.name
                     }
-                    else -> {
-                        if (config.settings.paymentHandling == PrimerPaymentHandling.MANUAL) {
-                            eventDispatcher.dispatchEvent(CheckoutEvent.ResumePending(data))
-                        } else {
-                            val paymentResult = paymentResultRepository.getPaymentResult()
+                }
+
+                additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
+                    when (data) {
+                        is PrimerCheckoutQRCodeInfo -> {
                             eventDispatcher.dispatchEvent(
-                                CheckoutEvent.PaymentSuccess(
-                                    PrimerCheckoutData(paymentResult.payment, data)
+                                CheckoutEvent.OnAdditionalInfoReceived(
+                                    data
                                 )
                             )
                         }
+                        else -> {
+                            if (config.settings.paymentHandling == PrimerPaymentHandling.MANUAL) {
+                                eventDispatcher.dispatchEvent(CheckoutEvent.ResumePending(data))
+                            } else {
+                                val paymentResult = paymentResultRepository.getPaymentResult()
+                                eventDispatcher.dispatchEvent(
+                                    CheckoutEvent.PaymentSuccess(
+                                        PrimerCheckoutData(paymentResult.payment, data)
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
-            }
-        }.collect()
+            }.collect()
     }
 
     protected open fun handleClientToken(clientToken: String) {

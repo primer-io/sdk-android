@@ -67,7 +67,7 @@ internal data class PaymentMethodTokenInternal(
                             .getDeserializer<AuthenticationDetailsDataResponse>()
                             .deserialize(it)
                     },
-                    t.getBoolean(IS_VAULTED_FIELD),
+                    t.optBoolean(IS_VAULTED_FIELD),
                     t.getString(ANALYTICS_ID_FIELD),
                     TokenType.valueOf(t.getString(TOKEN_TYPE_FIELD))
                 )

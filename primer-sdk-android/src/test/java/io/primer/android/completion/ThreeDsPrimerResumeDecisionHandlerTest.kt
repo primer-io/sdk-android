@@ -20,7 +20,7 @@ import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -57,7 +57,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var paymentMethodRepository: PaymentMethodRepository
 
     @RelaxedMockK
-    internal lateinit var paymentMethodsRepository: PaymentMethodsRepository
+    internal lateinit var paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository
 
     @RelaxedMockK
     internal lateinit var paymentResultRepository: PaymentResultRepository
@@ -107,7 +107,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository,
+                paymentMethodDescriptorsRepository,
                 retailOutletRepository,
                 instantExecutorExtension.dispatcher
             )
@@ -291,7 +291,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
 
     private companion object {
         val PAYMENT_CARD_IDENTIFIER = PaymentMethodType.PAYMENT_CARD.name
-        val CLIENT_TOKEN_STATUS_URL = "https://primer.api/status"
-        val CLIENT_TOKEN_REDIRECT_URL = "https://primer.io"
+        const val CLIENT_TOKEN_STATUS_URL = "https://primer.api/status"
+        const val CLIENT_TOKEN_REDIRECT_URL = "https://primer.io"
     }
 }

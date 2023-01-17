@@ -1,8 +1,11 @@
 package io.primer.android.di
 
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.async.redirect.repository.AsyncPaymentMethodDataRepository
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.AsyncPaymentMethodConfigInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.repository.AsyncPaymentMethodRepository
 import io.primer.android.data.deeplink.async.AsyncPaymentMethodDeeplinkDataRepository
-import io.primer.android.data.payments.async.datasource.RemoteAsyncPaymentMethodStatusDataSource
-import io.primer.android.data.payments.async.repository.AsyncPaymentMethodStatusDataRepository
+import io.primer.android.data.payments.status.datasource.RemoteAsyncPaymentMethodStatusDataSource
+import io.primer.android.data.payments.status.repository.AsyncPaymentMethodStatusDataRepository
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.async.AsyncPaymentMethodInteractor
@@ -38,8 +41,14 @@ internal val asyncPaymentMethodModule = {
             )
         }
         single {
-            AsyncPaymentMethodDeeplinkInteractor(
+            AsyncPaymentMethodDeeplinkInteractor(get(),)
+        }
+
+        single<AsyncPaymentMethodRepository> { AsyncPaymentMethodDataRepository(get(), get()) }
+        single {
+            AsyncPaymentMethodConfigInteractor(
                 get(),
+                get()
             )
         }
 

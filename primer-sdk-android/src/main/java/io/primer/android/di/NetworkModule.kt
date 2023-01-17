@@ -3,7 +3,6 @@ package io.primer.android.di
 import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
-import io.primer.android.model.Model
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -43,12 +42,6 @@ internal val NetworkModule = {
             }
             builder.addInterceptor(get())
                 .build()
-        }
-        single {
-            Model(
-                get(),
-                get(),
-            )
         }
     }
 }

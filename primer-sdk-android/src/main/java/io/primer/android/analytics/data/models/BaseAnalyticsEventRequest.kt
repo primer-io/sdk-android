@@ -18,6 +18,7 @@ import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 
 @Suppress("UnusedPrivateMember")
@@ -27,6 +28,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
     abstract val appIdentifier: String?
     abstract val sdkSessionId: String
     abstract val sdkIntegrationType: SdkIntegrationType
+    abstract val sdkPaymentHandling: PrimerPaymentHandling
     abstract val checkoutSessionId: String?
     abstract val clientSessionId: String?
     abstract val orderId: String?
@@ -54,6 +56,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
         const val SDK_TYPE_FIELD = "sdkType"
         const val SDK_VERSION_FIELD = "sdkVersion"
         const val SDK_INTEGRATION_TYPE_FIELD = "sdkIntegrationType"
+        const val SDK_PAYMENT_HANDLING_FIELD = "sdkPaymentHandling"
 
         @JvmField
         val serializer = object : JSONSerializer<BaseAnalyticsEventRequest> {
@@ -129,6 +132,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
                     put(SDK_TYPE_FIELD, t.sdkType.name)
                     put(SDK_VERSION_FIELD, t.sdkVersion)
                     put(SDK_INTEGRATION_TYPE_FIELD, t.sdkIntegrationType.name)
+                    put(SDK_PAYMENT_HANDLING_FIELD, t.sdkPaymentHandling.name)
                 }
             }
         }
@@ -145,6 +149,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     appIdentifier: String,
     sdkSessionId: String,
     sdkIntegrationType: SdkIntegrationType,
+    sdkPaymentHandling: PrimerPaymentHandling,
     checkoutSessionId: String,
     clientSessionId: String?,
     orderId: String?,
@@ -162,6 +167,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -179,6 +185,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -196,6 +203,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         sdkSessionId,
         appIdentifier,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -213,6 +221,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -230,6 +239,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -247,6 +257,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
     appIdentifier: String,
     sdkSessionId: String,
     sdkIntegrationType: SdkIntegrationType,
+    sdkPaymentHandling: PrimerPaymentHandling,
     checkoutSessionId: String,
     clientSessionId: String?,
     orderId: String?,
@@ -264,6 +275,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -281,6 +293,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -298,6 +311,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,
@@ -315,6 +329,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
+        sdkPaymentHandling,
         checkoutSessionId,
         clientSessionId,
         orderId,

@@ -10,8 +10,6 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
-import io.primer.android.di.DIAppComponent
-import io.primer.android.di.DIAppContext
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
@@ -19,7 +17,7 @@ import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppComponent {
+internal class AsyncPaymentMethodWebViewActivity : WebViewActivity() {
 
     private var subscription: EventBus.SubscriptionHandle? = null
 
@@ -27,33 +25,32 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity(), DIAppCompo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DIAppContext.app?.let {
-            logAnalyticsViewed()
-            setupObservers()
-        } ?: onBackPressed()
+        logAnalyticsViewed()
+        setupObservers()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         logBackPressed()
-        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled())
         return super.onSupportNavigateUp()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        logBackPressed()
         super.onBackPressed()
-        EventBus.broadcast(CheckoutEvent.AsyncFlowCancelled())
     }
 
     override fun onDestroy() {
         super.onDestroy()
         subscription?.unregister()
+        subscription = null
     }
 
     private fun setupObservers() {
         subscription = EventBus.subscribe {
             when (it) {
                 is CheckoutEvent.AsyncFlowRedirect -> {
-                    setResult(RESULT_OK)
+                    setResult(RESULT_OK, intent)
                     finish()
                 }
                 is CheckoutEvent.AsyncFlowPollingError -> {

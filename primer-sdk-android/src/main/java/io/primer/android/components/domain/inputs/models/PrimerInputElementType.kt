@@ -20,7 +20,8 @@ enum class PrimerInputElementType(val field: String) {
     PHONE_NUMBER("phoneNumber"),
     FIRST_NAME("firstName"),
     LAST_NAME("lastName"),
-    RETAIL_OUTLET("retailOutlet");
+    RETAIL_OUTLET("retailOutlet"),
+    OTP_CODE("otpCode");
 
     companion object {
         fun fieldOf(key: String): PrimerInputElementType? {

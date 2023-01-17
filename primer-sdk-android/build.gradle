@@ -1,3 +1,5 @@
+import com.getkeepsafe.dexcount.OutputFormat
+
 buildscript {
     repositories {
         mavenCentral()
@@ -13,6 +15,7 @@ buildscript {
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'com.getkeepsafe.dexcount'
 }
 
 apply plugin: 'com.dicedmelon.gradle.jacoco-android'
@@ -47,11 +50,13 @@ android {
     kotlinOptions {
         freeCompilerArgs += '-Xjvm-default=all'
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-
     implementation "io.insert-koin:koin-android:$koinVersion"
 
     implementation Dependencies.Networking.okhttp
@@ -117,10 +122,26 @@ jacoco {
     toolVersion = "0.8.8"
 }
 
+jacocoAndroidUnitTestReport {
+    excludes += [
+            '**/example/**',
+            '**/di/**',
+            '**/ui/**'
+    ]
+}
+
+dexcount {
+    format = OutputFormat.JSON
+    includeClasses = false
+    orderByMethodCount = true
+    maxTreeDepth = 5
+}
+
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     jacoco.excludes = ['jdk.internal.*']
 }
+
 
 apply from: "$rootDir/config/analysis.gradle"
 apply from: "$rootDir/config/publish.gradle"

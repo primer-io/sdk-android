@@ -7,18 +7,19 @@ import io.primer.android.logging.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 
 internal class AnalyticsInteractor(
     private val analyticsRepository: AnalyticsRepository,
     private val logger: Logger,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<Boolean, BaseAnalyticsParams>() {
 
     fun initialize() = analyticsRepository.initialize().flowOn(dispatcher)
 
     override fun execute(params: BaseAnalyticsParams) =
-        analyticsRepository.addEvent(params).catch { logger.warn(ANALYTICS_ERROR) }
+        flowOf(analyticsRepository.addEvent(params)).catch { logger.warn(ANALYTICS_ERROR) }
 
     fun send() = analyticsRepository.send()
 

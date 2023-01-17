@@ -10,7 +10,7 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 /**
  * A **PaymentMethodModule** contains all the dependencies of a particular [PaymentMethod]. It can
- * be [initialize]d if necessary and it can also register a [PaymentMethodChecker] with the
+ * be [initialized] if necessary and it can also register a [PaymentMethodChecker] with the
  * [PaymentMethodCheckerRegistry], as well as a [PaymentMethodDescriptorFactory] with the
  * [PaymentMethodDescriptorFactoryRegistry].
  */
@@ -46,7 +46,6 @@ internal interface PaymentMethodModule {
      * @see [PaymentMethod]
      * @see [PaymentMethodDescriptor]
      * @see [PaymentMethodDescriptorFactoryRegistry]
-     * @see [PrimerPaymentMethodDescriptorResolver]
      */
     fun registerPaymentMethodDescriptorFactory(
         paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,

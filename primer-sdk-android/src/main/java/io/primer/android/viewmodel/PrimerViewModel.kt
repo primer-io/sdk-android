@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.wallet.PaymentData
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
@@ -36,7 +35,6 @@ import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
-import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
 import io.primer.android.domain.payments.methods.models.VaultInstrumentParams
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
@@ -67,11 +65,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.util.Collections
 import java.util.Currency
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalCoroutinesApi
 internal class PrimerViewModel(
@@ -204,7 +199,7 @@ internal class PrimerViewModel(
         viewModelScope.launch {
             configurationInteractor(ConfigurationParams(config.settings.fromHUC))
                 .flatMapLatest {
-                    paymentMethodModulesInteractor(PaymentModuleParams(true)).zip(
+                    paymentMethodModulesInteractor(None()).zip(
                         vaultedPaymentMethodsInteractor(
                             VaultInstrumentParams(config.settings.fromHUC.not())
                         )
@@ -434,6 +429,7 @@ internal class PrimerViewModel(
                     ).collect { }
                 }
             }
+            else -> Unit
         }
     }
 
@@ -486,36 +482,4 @@ internal class PrimerViewModel(
     fun validateBillingAddress(): List<SyncValidationError> = billingAddressValidator.validate(
         billingAddressFields.value.orEmpty(), showBillingFields.value.orEmpty()
     )
-
-    suspend fun handleGooglePayRequestResultForBillingAddress(
-        paymentData: PaymentData?
-    ) = suspendCoroutine<Unit> { continuation ->
-        val paymentInformation = paymentData?.toJson() ?: run {
-            continuation.resume(Unit)
-            return@suspendCoroutine
-        }
-        val paymentMethodData = JSONObject(paymentInformation).getJSONObject("paymentMethodData")
-        val userInfo = paymentMethodData.getJSONObject("info")
-        val billingAddress = userInfo.optJSONObject("billingAddress")
-
-        if (billingAddress != null) {
-            val name = billingAddress.optString("name").split(" ")
-            val firstName = name.firstOrNull()
-            val lastName = name.filter { it != firstName }.joinToString(" ")
-            val action = ActionUpdateBillingAddressParams(
-                firstName,
-                lastName,
-                billingAddress.optString("address1"),
-                billingAddress.optString("address2"),
-                billingAddress.optString("locality"),
-                billingAddress.optString("postalCode"),
-                billingAddress.optString("countryCode"),
-                billingAddress.optString("administrativeArea")
-            )
-
-            dispatchAction(action) { continuation.resume(Unit) }
-        } else {
-            continuation.resume(Unit)
-        }
-    }
 }

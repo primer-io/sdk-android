@@ -15,11 +15,7 @@ import io.primer.android.data.configuration.models.PaymentMethodConfigDataRespon
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
-import io.primer.android.domain.deeplink.klarna.KlarnaDeeplinkInteractor
-import io.primer.android.domain.payments.apaya.ApayaSessionInteractor
-import io.primer.android.domain.payments.paypal.PaypalOrderInfoInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
-import io.primer.android.model.Model
 import io.primer.android.payment.card.CreditCard
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -38,22 +34,10 @@ class TokenizationViewModelTest : KoinTest {
     private lateinit var viewModel: TokenizationViewModel
 
     @RelaxedMockK
-    private lateinit var apayaSessionInteractor: ApayaSessionInteractor
-
-    @RelaxedMockK
     private lateinit var tokenizationInteractor: TokenizationInteractor
 
     @RelaxedMockK
-    private lateinit var paypalOrderInfoInteractor: PaypalOrderInfoInteractor
-
-    @RelaxedMockK
-    private lateinit var asyncDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
-
-    @RelaxedMockK
-    private lateinit var klarnaDeeplinkInteractor: KlarnaDeeplinkInteractor
-
-    @RelaxedMockK
-    private lateinit var model: Model
+    private lateinit var asyncPaymentMethodDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
 
     @RelaxedMockK
     private lateinit var config: PrimerConfig
@@ -64,13 +48,9 @@ class TokenizationViewModelTest : KoinTest {
 
         viewModel =
             TokenizationViewModel(
-                model,
                 config,
                 tokenizationInteractor,
-                apayaSessionInteractor,
-                paypalOrderInfoInteractor,
-                asyncDeeplinkInteractor,
-                klarnaDeeplinkInteractor
+                asyncPaymentMethodDeeplinkInteractor
             )
     }
 

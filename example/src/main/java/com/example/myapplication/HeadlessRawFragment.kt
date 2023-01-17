@@ -18,25 +18,34 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentThirdBinding
 import com.example.myapplication.datamodels.TransactionState
+import com.example.myapplication.repositories.AppApiKeyRepository
+import com.example.myapplication.viewmodels.HeadlessManagerViewModel
+import com.example.myapplication.viewmodels.HeadlessManagerViewModelFactory
 import com.example.myapplication.viewmodels.MainViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.primer.android.ExperimentalPrimerApi
+import io.primer.android.completion.PrimerHeadlessUniversalCheckoutResumeDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
-import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
+import io.primer.android.components.PrimerHeadlessUniversalCheckoutUiListener
+import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardMetadata
-import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
+import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
-import io.primer.android.components.domain.core.models.card.PrimerRawCardData
+import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
-import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
-import io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData
+import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeData
+import io.primer.android.components.domain.core.models.phoneNumber.PrimerPhoneNumberData
+import io.primer.android.components.domain.core.models.retailOutlet.PrimerRetailerData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
@@ -47,6 +56,7 @@ import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.XenditCheckoutVoucherAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
@@ -57,7 +67,11 @@ import kotlin.math.pow
 class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
 
     private val viewModel: MainViewModel by activityViewModels()
-    private val headlessUniversalCheckout by lazy { PrimerHeadlessUniversalCheckout.current }
+    private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
+
+    private val headlessUniversalCheckout by lazy {
+        PrimerHeadlessUniversalCheckout.current
+    }
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 
     private var _binding: FragmentThirdBinding? = null
@@ -75,6 +89,11 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        headlessManagerViewModel = ViewModelProvider(
+            this,
+            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+        )[HeadlessManagerViewModel::class.java]
+
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
             token?.let {
                 headlessUniversalCheckout.start(
@@ -86,7 +105,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             }
         }
 
-        viewModel.transactionState.observe(viewLifecycleOwner) { state ->
+        headlessManagerViewModel.transactionState.observe(viewLifecycleOwner) { state ->
             val message = when (state) {
                 TransactionState.SUCCESS -> viewModel.transactionResponse.value.toString()
                 TransactionState.ERROR -> requireContext().getString(R.string.something_went_wrong)
@@ -100,40 +119,39 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         viewModel.fetchClientSession()
         showLoading("Loading client token.")
 
-        headlessUniversalCheckout.setListener(object : PrimerHeadlessUniversalCheckoutListener {
+        headlessUniversalCheckout.setCheckoutListener(object :
+            PrimerHeadlessUniversalCheckoutListener {
             override fun onAvailablePaymentMethodsLoaded(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
                 Log.d(TAG, paymentMethods.toString())
                 setupPaymentMethod(paymentMethods)
                 hideLoading()
             }
 
-            override fun onPreparationStarted(paymentMethodType: String) {
-                showLoading("Preparation started $paymentMethodType")
-                Log.d(TAG, "onPreparationStarted")
-            }
-
             override fun onTokenizationStarted(paymentMethodType: String) {
                 showLoading("Tokenization started $paymentMethodType")
             }
 
-            override fun onPaymentMethodShowed(paymentMethodType: String) {
-                Log.d(TAG, "onPaymentMethodShowed $paymentMethodType")
-            }
-
             override fun onTokenizeSuccess(
                 paymentMethodTokenData: PrimerPaymentMethodTokenData,
-                decisionHandler: PrimerResumeDecisionHandler
+                decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
             ) {
                 showLoading("Tokenization success $paymentMethodTokenData. Creating payment.")
-                viewModel.createPayment(paymentMethodTokenData, decisionHandler)
+                headlessManagerViewModel.createPayment(
+                    paymentMethodTokenData, requireNotNull(viewModel.environment.value),
+                    viewModel.descriptor.value.orEmpty(), decisionHandler
+                )
             }
 
-            override fun onResumeSuccess(
+            override fun onCheckoutResume(
                 resumeToken: String,
-                decisionHandler: PrimerResumeDecisionHandler
+                decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
             ) {
                 showLoading("Resume success $resumeToken. Resuming payment.")
-                viewModel.resumePayment(resumeToken, decisionHandler)
+                headlessManagerViewModel.resumePayment(
+                    resumeToken,
+                    requireNotNull(viewModel.environment.value),
+                    decisionHandler
+                )
             }
 
             override fun onBeforePaymentCreated(
@@ -157,8 +175,8 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     .show()
             }
 
-            override fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
-                super.onAdditionalInfoReceived(additionalInfo)
+            override fun onCheckoutAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
+                super.onCheckoutAdditionalInfoReceived(additionalInfo)
                 when (additionalInfo) {
                     is XenditCheckoutVoucherAdditionalInfo -> {
                         AlertDialog.Builder(context)
@@ -180,6 +198,19 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 binding.nextButton.text =
                     format.format(clientSession.totalAmount?.toDouble()!! / 10.0.pow(currency.defaultFractionDigits))
             }
+        })
+
+        headlessUniversalCheckout.setCheckoutUiListener(object :
+            PrimerHeadlessUniversalCheckoutUiListener {
+            override fun onPreparationStarted(paymentMethodType: String) {
+                showLoading("Preparation started $paymentMethodType")
+                Log.d(TAG, "onPreparationStarted")
+            }
+
+            override fun onPaymentMethodShowed(paymentMethodType: String) {
+                Log.d(TAG, "onPaymentMethodShowed $paymentMethodType")
+            }
+
         })
 
         binding.nextButton.setOnClickListener {
@@ -222,7 +253,10 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
 
     private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
         paymentMethodTypes.forEach { paymentMethod ->
-            if (paymentMethod.requiredInputDataClass != null) {
+            if (paymentMethod.paymentMethodManagerCategories.contains(
+                    PrimerPaymentMethodManagerCategory.RAW_DATA
+                )
+            ) {
                 val viewGroup = (binding.parentView as ViewGroup)
                 viewGroup.addView(Button(context).apply {
                     text = paymentMethod.paymentMethodType
@@ -284,16 +318,13 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
 
     private fun getRawData(paymentMethodType: String): PrimerRawData {
         return when (paymentMethodType) {
-            "PAYMENT_CARD" -> PrimerRawCardData(
+            "PAYMENT_CARD" -> PrimerCardData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARD_NUMBER
                 ).editText?.text.toString(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.EXPIRY_DATE
-                ).editText?.text.toString().substringBefore("/"),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.EXPIRY_DATE
-                ).editText?.text.toString().substringAfter("/"),
+                ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CVV
                 ).editText?.text.toString(),
@@ -301,28 +332,30 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     PrimerInputElementType.CARDHOLDER_NAME
                 ).editText?.text.toString(),
             )
-            "ADYEN_BANCONTACT_CARD" -> PrimerRawBancontactCardData(
+            "ADYEN_BANCONTACT_CARD" -> PrimerBancontactCardData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARD_NUMBER
                 ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.EXPIRY_DATE
-                ).editText?.text.toString().substringBefore("/").trim(),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.EXPIRY_DATE
-                ).editText?.text.toString().substringAfter("/").trim(),
+                ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARDHOLDER_NAME
                 ).editText?.text.toString().trim(),
             )
-            "XENDIT_OVO" -> PrimerRawPhoneNumberData(
+            "XENDIT_OVO" -> PrimerPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.PHONE_NUMBER
                 ).editText?.text.toString()
             )
-            "ADYEN_MBWAY" -> PrimerRawPhoneNumberData(
+            "ADYEN_MBWAY" -> PrimerPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.PHONE_NUMBER
+                ).editText?.text.toString()
+            )
+            "ADYEN_BLIK" -> PrimerOtpCodeData(
+                binding.pmView.findViewWithTag<TextInputLayout>(
+                    PrimerInputElementType.OTP_CODE
                 ).editText?.text.toString()
             )
             else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
@@ -330,21 +363,31 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     }
 
     private fun setupManager(paymentMethodType: String) {
-        rawDataManager =
-            PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(paymentMethodType)
-        rawDataManager.setManagerListener(this)
-        if (paymentMethodType == "XENDIT_RETAIL_OUTLETS") {
-            rawDataManager.configure { primerInitializationData, error ->
-                if (error == null) {
-                    showChooser(primerInitializationData)
-                } else {
-                    AlertDialog.Builder(context)
-                        .setMessage(error.description)
-                        .show()
+        try {
+            rawDataManager =
+                PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(paymentMethodType)
+            rawDataManager.setListener(this)
+            if (paymentMethodType == "XENDIT_RETAIL_OUTLETS") {
+                rawDataManager.configure { primerInitializationData, error ->
+                    if (error == null) {
+                        showChooser(primerInitializationData)
+                    } else {
+                        AlertDialog.Builder(context)
+                            .setMessage(error.description)
+                            .show()
+                    }
                 }
+            } else {
+                createForm(paymentMethodType, rawDataManager.getRequiredInputElementTypes())
             }
-        } else {
-            createForm(paymentMethodType, rawDataManager.getRequiredInputElementTypes())
+        } catch (e: SdkUninitializedException) {
+            AlertDialog.Builder(context).setMessage(e.message).setNegativeButton(
+                android.R.string.cancel
+            ) { _, _ -> findNavController().navigateUp() }.show()
+        } catch (e: UnsupportedPaymentIntentException) {
+            AlertDialog.Builder(context).setMessage(e.message).setNegativeButton(
+                android.R.string.cancel
+            ) { _, _ -> findNavController().navigateUp() }.show()
         }
     }
 
@@ -355,7 +398,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 val itemClick = DialogInterface.OnClickListener { dialog, which ->
                     if (which > -1) {
                         rawDataManager.setRawData(
-                            PrimerRawRetailerData(
+                            PrimerRetailerData(
                                 primerInitializationData.result[which].id
                             )
                         )

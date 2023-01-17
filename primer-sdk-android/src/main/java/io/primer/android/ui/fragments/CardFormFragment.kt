@@ -547,6 +547,7 @@ internal class CardFormFragment : BaseFragment() {
                         else -> binding.billingAddressForm.findNextFocus()
                     }
                 }
+                else -> Unit
             }
         }
     }

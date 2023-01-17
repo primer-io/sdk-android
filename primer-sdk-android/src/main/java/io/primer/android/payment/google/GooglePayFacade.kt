@@ -2,6 +2,8 @@ package io.primer.android.payment.google
 
 import android.app.Activity
 import android.content.Context
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.IsReadyToPayRequest
@@ -9,16 +11,13 @@ import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
-import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class GooglePayFacade constructor(
+internal class GooglePayFacade constructor(
     private val paymentsClient: PaymentsClient,
 ) {
 
@@ -66,7 +65,6 @@ class GooglePayFacade constructor(
         billingAddressRequired: Boolean,
     ): JSONObject {
         return JSONObject().apply {
-
             val parameters = JSONObject().apply {
                 put("allowedAuthMethods", JSONArray(allowedCardAuthMethods))
                 put("allowedCardNetworks", JSONArray(allowedCardNetworks))
@@ -88,20 +86,30 @@ class GooglePayFacade constructor(
 
     private suspend fun checkIfIsReadyToPay(request: JSONObject): Boolean =
         suspendCoroutine { continuation: Continuation<Boolean> ->
-            val isReadyToPayRequest = IsReadyToPayRequest.fromJson(request.toString())
-            paymentsClient
-                .isReadyToPay(isReadyToPayRequest)
-                .addOnCompleteListener { completedTask ->
-                    try {
-                        completedTask.getResult(ApiException::class.java)?.let { isAvailable ->
-                            continuation.resume(isAvailable)
+            if (isGooglePlayServicesAvailable().not()) continuation.resume(false)
+            else {
+                val isReadyToPayRequest = IsReadyToPayRequest.fromJson(request.toString())
+                paymentsClient
+                    .isReadyToPay(isReadyToPayRequest)
+                    .addOnCompleteListener { completedTask ->
+                        try {
+                            completedTask.getResult(ApiException::class.java)?.let { isAvailable ->
+                                continuation.resume(isAvailable)
+                            }
+                        } catch (ignored: ApiException) {
+                            // continuation.resumeWithException(exception) // TODO log error
+                            continuation.resume(false)
                         }
-                    } catch (exception: ApiException) {
-                        // continuation.resumeWithException(exception) // TODO log error
-                        continuation.resume(false)
                     }
-                }
+            }
         }
+
+    private fun isGooglePlayServicesAvailable(): Boolean {
+        val googleApiAvailability: GoogleApiAvailability = GoogleApiAvailability.getInstance()
+        val resultCode: Int =
+            googleApiAvailability.isGooglePlayServicesAvailable(paymentsClient.applicationContext)
+        return resultCode == ConnectionResult.SUCCESS
+    }
 
     fun pay(
         activity: Activity,
@@ -175,9 +183,6 @@ class GooglePayFacade constructor(
     }
 
     private fun pay(activity: Activity, request: JSONObject) {
-        EventBus.broadcast(
-            CheckoutEvent.PaymentMethodPresented(PaymentMethodType.GOOGLE_PAY.name)
-        )
         val paymentDataRequest = PaymentDataRequest.fromJson(request.toString())
         AutoResolveHelper.resolveTask(
             paymentsClient.loadPaymentData(paymentDataRequest),
@@ -192,7 +197,7 @@ class GooglePayFacade constructor(
     }
 }
 
-class GooglePayFacadeFactory {
+internal class GooglePayFacadeFactory {
 
     fun create(
         applicationContext: Context,
