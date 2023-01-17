@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/primer_form_title_margin"
@@ -35,13 +35,12 @@
                 style="@style/Primer.Text.Title.Small"
                 android:layout_width="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="38dp"
                 android:layout_marginEnd="38dp"
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="start"
                 android:text="@string/pay_with_card" />
 
-        </FrameLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvCardDetailTitle"
@@ -154,6 +153,7 @@
             android:id="@+id/billingAddressDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:visibility="gone"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp"
             android:background="#E5E5EA" />

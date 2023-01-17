@@ -5,6 +5,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.putFor
 import io.primer.android.components.domain.inputs.models.valueBy
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
@@ -19,6 +20,7 @@ import io.primer.android.utils.removeSpaces
 import org.json.JSONObject
 
 internal class CreditCard(
+    private val localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
 ) : PaymentMethodDescriptor(config), DIAppComponent {
 
@@ -26,7 +28,10 @@ internal class CreditCard(
 
     // FIXME static call + instantiation makes it impossible to properly test
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = NewFragmentBehaviour(CardFormFragment::newInstance, returnToPreviousOnBack = true)
+        get() = NewFragmentBehaviour(
+            CardFormFragment::newInstance,
+            localConfig.isStandalonePaymentMethod.not()
+        )
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> = emptyList()
 
