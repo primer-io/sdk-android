@@ -1,5 +1,7 @@
 package io.primer.android.components.manager
 
+import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
@@ -53,16 +55,43 @@ private constructor(private val paymentMethodType: String) :
     }
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType> {
+        PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.CARD_COMPONENTS.name
+                )
+            )
+        )
         return delegate.getRequiredInputElementTypes(paymentMethodType)
     }
 
     override fun setInputElements(elements: List<PrimerInputElement>) {
+        PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.CARD_COMPONENTS.name
+                )
+            )
+        )
         inputElements.clear()
         inputElements.addAll(elements)
         setupInputElementsListeners()
     }
 
     override fun submit() {
+        PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.CARD_COMPONENTS.name
+                )
+            )
+        )
         delegate.startTokenization(paymentMethodType, getRawData(paymentMethodType))
     }
 
@@ -70,6 +99,15 @@ private constructor(private val paymentMethodType: String) :
         inputElements.isNotEmpty() && inputElements.all { it.isValid() }
 
     override fun setCardManagerListener(listener: PrimerCardComponentsManagerListener) {
+        PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.CARD_COMPONENTS.name
+                )
+            )
+        )
         this.listener = listener
     }
 

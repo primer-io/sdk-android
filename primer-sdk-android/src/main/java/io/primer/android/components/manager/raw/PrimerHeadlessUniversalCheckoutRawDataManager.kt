@@ -31,7 +31,10 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
             SdkFunctionParams(
                 object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
-                mapOf("paymentMethodType" to paymentMethodType)
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
             )
         )
         headlessManagerDelegate.configure(paymentMethodType, completion)
@@ -41,21 +44,39 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
         listener: PrimerHeadlessUniversalCheckoutRawDataManagerListener
     ) {
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
-            SdkFunctionParams(object {}.javaClass.enclosingMethod?.toGenericString().orEmpty())
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
+            )
         )
         rawDelegate.setListener(listener)
     }
 
     override fun submit() {
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
-            SdkFunctionParams(object {}.javaClass.enclosingMethod?.toGenericString().orEmpty())
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
+            )
         )
         rawDelegate.submit(paymentMethodType, rawData)
     }
 
     override fun setRawData(rawData: PrimerRawData) {
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
-            SdkFunctionParams(object {}.javaClass.enclosingMethod?.toGenericString().orEmpty())
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
+            )
         )
         this.rawData = rawData
         headlessManagerDelegate.dispatchRawDataAction(paymentMethodType, rawData, false)
@@ -64,14 +85,26 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType> {
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
-            SdkFunctionParams(object {}.javaClass.enclosingMethod?.toGenericString().orEmpty())
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
+            )
         )
         return rawDelegate.getRequiredInputElementTypes(paymentMethodType)
     }
 
     override fun cleanup() {
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
-            SdkFunctionParams(object {}.javaClass.enclosingMethod?.toGenericString().orEmpty())
+            SdkFunctionParams(
+                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
+            )
         )
         rawDelegate.cleanup()
     }

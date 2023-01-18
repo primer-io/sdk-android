@@ -39,8 +39,9 @@ class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
             SdkFunctionParams(
                 object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
                 mapOf(
+                    "category" to PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
                     "paymentMethodType" to paymentMethodType,
-                    "sdkIntent" to sessionIntent.name
+                    "intent" to sessionIntent.name
                 )
             )
         )

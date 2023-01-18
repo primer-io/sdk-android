@@ -24,52 +24,114 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
     private val eventBusListener = object : EventBus.EventListener {
         override fun onEvent(e: CheckoutEvent) {
-            headlessUniversalCheckout?.addAnalyticsEvent(
-                SdkFunctionParams(
-                    object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
-                    mapOf("event" to e.type.name)
-                )
-            )
             when (e) {
                 is CheckoutEvent.TokenizationSuccessHUC -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onTokenizeSuccess")
+                    )
                     checkoutListener?.onTokenizeSuccess(
                         e.data, e.resumeHandler
                     )
                 }
-                is CheckoutEvent.TokenizationStarted ->
+                is CheckoutEvent.TokenizationStarted -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams(
+                            "onTokenizationStarted",
+                            mapOf("paymentMethodType" to e.paymentMethodType)
+                        )
+                    )
                     checkoutListener?.onTokenizationStarted(e.paymentMethodType)
+                }
                 is CheckoutEvent.ConfigurationSuccess -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams(
+                            "onAvailablePaymentMethodsLoaded",
+                            mapOf("availablePaymentMethods" to e.paymentMethods.toString())
+                        )
+                    )
                     checkoutListener?.onAvailablePaymentMethodsLoaded(e.paymentMethods)
                 }
-                is CheckoutEvent.PreparationStarted ->
+                is CheckoutEvent.PreparationStarted -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams(
+                            "onPreparationStarted",
+                            mapOf("paymentMethodType" to e.paymentMethodType)
+                        )
+                    )
                     uiListener?.onPreparationStarted(e.paymentMethodType)
-                is CheckoutEvent.PaymentMethodPresented -> uiListener?.onPaymentMethodShowed(
-                    e.paymentMethodType
-                )
-                is CheckoutEvent.ResumeSuccessHUC -> checkoutListener?.onCheckoutResume(
-                    e.resumeToken,
-                    e.resumeHandler
-                )
-                is CheckoutEvent.ResumePending ->
+                }
+                is CheckoutEvent.PaymentMethodPresented -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams(
+                            "onPaymentMethodShowed",
+                            mapOf("paymentMethodType" to e.paymentMethodType)
+                        )
+                    )
+                    uiListener?.onPaymentMethodShowed(
+                        e.paymentMethodType
+                    )
+                }
+                is CheckoutEvent.ResumeSuccessHUC -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onCheckoutResume")
+                    )
+                    checkoutListener?.onCheckoutResume(
+                        e.resumeToken,
+                        e.resumeHandler
+                    )
+                }
+                is CheckoutEvent.ResumePending -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onResumePending")
+                    )
                     checkoutListener?.onResumePending(e.paymentMethodInfo)
-                is CheckoutEvent.OnAdditionalInfoReceived ->
+                }
+                is CheckoutEvent.OnAdditionalInfoReceived -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onCheckoutAdditionalInfoReceived")
+                    )
                     checkoutListener?.onCheckoutAdditionalInfoReceived(e.paymentMethodInfo)
+                }
                 is CheckoutEvent.PaymentCreateStartedHUC -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onBeforePaymentCreated")
+                    )
                     checkoutListener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
                 }
                 is CheckoutEvent.PaymentSuccess -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onCheckoutCompleted")
+                    )
                     checkoutListener?.onCheckoutCompleted(e.data)
                 }
                 is CheckoutEvent.CheckoutPaymentError -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams(
+                            "onFailed",
+                            mapOf("error" to e.error.toString())
+                        )
+                    )
                     checkoutListener?.onFailed(e.error, e.data)
                 }
                 is CheckoutEvent.CheckoutError -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams(
+                            "onFailed",
+                            mapOf("error" to e.error.toString())
+                        )
+                    )
                     checkoutListener?.onFailed(e.error)
                 }
                 is CheckoutEvent.ClientSessionUpdateSuccess -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onClientSessionUpdated")
+                    )
                     checkoutListener?.onClientSessionUpdated(e.data)
                 }
                 is CheckoutEvent.ClientSessionUpdateStarted -> {
+                    headlessUniversalCheckout?.addAnalyticsEvent(
+                        SdkFunctionParams("onBeforeClientSessionUpdated")
+                    )
                     checkoutListener?.onBeforeClientSessionUpdated()
                 }
                 else -> Unit
@@ -123,7 +185,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 SdkFunctionParams(
                     object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
                     mapOf(
-                        "settings" to this.config?.settings.toString(),
+                        "sdkSettings" to this.config?.settings.toString(),
                         "clientToken" to clientToken
                     )
                 )
