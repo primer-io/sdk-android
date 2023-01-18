@@ -18,7 +18,7 @@ internal enum class PaymentMethodType(
     ),
     KLARNA(brand = Brand.KLARNA),
     PRIMER_TEST_KLARNA(brand = Brand.KLARNA),
-    GOOGLE_PAY(brand = Brand.GOOGLE_PAY),
+    GOOGLE_PAY(ClientTokenIntent.`3DS_AUTHENTICATION`, Brand.GOOGLE_PAY),
     PAYPAL(brand = Brand.PAYPAL),
     PRIMER_TEST_PAYPAL(brand = Brand.PAYPAL),
     GOCARDLESS(brand = Brand.GOCARDLESS),

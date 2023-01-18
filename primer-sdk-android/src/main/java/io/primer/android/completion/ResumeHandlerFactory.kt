@@ -1,6 +1,7 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
@@ -34,7 +35,8 @@ internal class ResumeHandlerFactory(
 
     fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
         return when (paymentInstrumentType) {
-            CARD_INSTRUMENT_TYPE -> ThreeDsPrimerResumeDecisionHandler(
+            CARD_INSTRUMENT_TYPE,
+            PaymentMethodType.GOOGLE_PAY.name -> ThreeDsPrimerResumeDecisionHandler(
                 validationTokenRepository,
                 clientTokenRepository,
                 paymentMethodRepository,
