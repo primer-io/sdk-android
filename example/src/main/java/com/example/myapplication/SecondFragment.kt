@@ -75,7 +75,7 @@ class SecondFragment : Fragment() {
                         context,
                         token,
                         viewModel.useStandalonePaymentMethod.value!!,
-                        PrimerSessionIntent.VAULT
+                        PrimerSessionIntent.CHECKOUT
                     )
                 }
             }
@@ -118,6 +118,8 @@ class SecondFragment : Fragment() {
             data.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
             binding.paymentMethodList.adapter = adapter
         }
+
+        viewModel.useStandalonePaymentMethod.postValue("PAYMENT_CARD")
 
         viewModel.fetchClientSession()
     }

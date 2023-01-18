@@ -220,7 +220,6 @@ internal class PrimerViewModel(
                         _paymentMethods.postValue(descriptorsHolder.descriptors)
                         descriptorsHolder.selectedPaymentMethodDescriptor?.let {
                             val paymentMethod = descriptorsHolder.selectedPaymentMethodDescriptor
-                            _selectedPaymentMethod.postValue(paymentMethod)
                             paymentMethod.behaviours.firstOrNull()
                                 ?.let {
                                     val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
@@ -228,12 +227,9 @@ internal class PrimerViewModel(
                                         executeBehaviour(it)
                                     }
                                 } ?: run {
-                                // show a selector screen for forms
-                                val isForm = paymentMethod.type == PaymentMethodUiType.FORM
-                                if (isForm) {
-                                    viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
-                                }
+                                // ignore and let the `selectedBehaviour` execute
                             }
+                            _selectedPaymentMethod.postValue(paymentMethod)
                         } ?: run {
                             viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
                         }
