@@ -193,8 +193,8 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
             deviceId
         ),
         this,
-        sdkSessionId,
         appIdentifier,
+        sdkSessionId,
         sdkIntegrationType,
         checkoutSessionId,
         clientSessionId,
