@@ -37,37 +37,39 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
-        descriptor?.getLoadingState().let { loadingState ->
-            logAnalytics(descriptor.config.type)
-            binding.apply {
-                if (loadingState != null && loadingState.imageResIs > 0) {
-                    selectedPaymentLogo.setImageResource(loadingState.imageResIs)
-                } else {
-                    selectedPaymentLogo.setImageDrawable(
-                        PrimerAssetManager.getAsset(
-                            requireContext(),
-                            descriptor.config.type,
-                            when (theme.isDarkMode == true) {
-                                true -> ImageColor.DARK
-                                false -> ImageColor.LIGHT
-                            }
-                        )?.scaleImage(
-                            requireContext(),
-                            requireContext().resources.displayMetrics.toResourcesScale() /
-                                PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_SCALE,
-                            maxHeight = PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
-                                .dPtoPx(requireContext())
+        descriptor?.let {
+            descriptor.getLoadingState().let { loadingState ->
+                logAnalytics(descriptor.config.type)
+                binding.apply {
+                    if (loadingState != null && loadingState.imageResIs > 0) {
+                        selectedPaymentLogo.setImageResource(loadingState.imageResIs)
+                    } else {
+                        selectedPaymentLogo.setImageDrawable(
+                            PrimerAssetManager.getAsset(
+                                requireContext(),
+                                descriptor.config.type,
+                                when (theme.isDarkMode == true) {
+                                    true -> ImageColor.DARK
+                                    false -> ImageColor.LIGHT
+                                }
+                            )?.scaleImage(
+                                requireContext(),
+                                requireContext().resources.displayMetrics.toResourcesScale() /
+                                    PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_SCALE,
+                                PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
+                                    .dPtoPx(requireContext())
+                            )
                         )
-                    )
-                }
-                loadingState?.textResId?.let {
-                    selectedPaymentLoadingText.isVisible = true
-                    progressBar.isVisible = false
-                    selectedPaymentLoadingText.text = loadingState.args
-                        ?.let { args -> getString(it, args) } ?: getString(it)
-                } ?: run {
-                    selectedPaymentLoadingText.isVisible = false
-                    progressBar.isVisible = true
+                    }
+                    loadingState?.textResId?.let {
+                        selectedPaymentLoadingText.isVisible = true
+                        progressBar.isVisible = false
+                        selectedPaymentLoadingText.text = loadingState.args
+                            ?.let { args -> getString(it, args) } ?: getString(it)
+                    } ?: run {
+                        selectedPaymentLoadingText.isVisible = false
+                        progressBar.isVisible = true
+                    }
                 }
             }
         }

@@ -99,6 +99,7 @@ internal class CardFormFragment : BaseFragment() {
 
         primerViewModel.showBillingFields.observe(viewLifecycleOwner) { billingFields ->
             binding.billingAddressForm.onHandleAvailable(billingFields)
+            binding.billingAddressDivider.isVisible = billingFields.isNullOrEmpty().not()
 
             renderInputFields()
             configureActionDone()
@@ -207,6 +208,8 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun renderCancelButton() {
         binding.ivBack.apply {
+            isVisible = localConfig.isStandalonePaymentMethod.not()
+
             imageTintList = ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     requireContext(),
