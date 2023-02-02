@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="add_bank_account">增加銀行帳戶</string>
+    <string name="add_card">增加新卡</string>
+    <string name="add_new_payment_method">增加支付方式</string>
+    <string name="additional_fees_may_apply">可能會產生額外費用</string>
+    <string name="addressLine1">地址 (第一行)</string>
+    <!-- An error message displayed when the Address line 1 is not correct -->
+    <string name="addressLine1ErrorRequired">必須填寫 地址 (第一行)</string>
+    <!-- The billing address Address line 1 container view label -->
+    <string name="addressLine2">地址 (第二行)</string>
+    <!-- The billing address Address line 2 container view label -->
+    <string name="available_payment_methods">可使用支付方式</string>
+    <string name="bank_account">銀行帳戶</string>
+    <string name="bank_selection_error_message">無法搜尋銀行，請檢查網絡連線再重試</string>
+    <string name="bank_selection_hint">搜尋銀行</string>
+    <string name="bank_selection_title">選擇銀行</string>
+    <string name="bank_selection_try_again">重新連線</string>
+    <string name="billingAddressLabel">帳單地址</string>
+    <!-- Navigation -->
+    <string name="cancel">取消</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">卡詳細資訊</string>
+    <string name="card_expiry">到期日</string>
+    <string name="card_expiry_formatted">有效日期 (MM/YY)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">持卡人姓名</string>
+    <string name="card_name_on_card">持卡人姓名</string>
+    <string name="card_network_fallback">卡片</string>
+    <string name="card_number">卡號</string>
+    <!-- An error message displayed when the city field is not correct -->
+    <string name="check_icon">查詢圖案</string>
+    <string name="choose_payment_method">選擇付款方式</string>
+    <!-- An error message displayed when the city field is not correct -->
+    <string name="cityErrorRequired">必須填寫城市</string>
+    <string name="cityLabel">城市</string>
+    <string name="completeYourPayment">完成付款</string>
+    <string name="completeYourPaymentInTheApp">使用 {appName} 來完成付款</string>
+    <string name="confirm">確定</string>
+    <string name="confirm_dd_mandate">確定授權</string>
+    <string name="confirmToPayButtonTitle">確認付款</string>
+    <string name="country_search_hint">查找國家</string>
+    <string name="country_select">選擇國家</string>
+    <!-- An error message displayed when the Country is not correct -->
+    <string name="countryCodeErrorRequired">必須填寫國家地區</string>
+    <string name="countryLabel">國家地區</string>
+    <string name="credit_debit_card">信用卡/扣帳卡</string>
+    <string name="data_will_be_lost">資料已經刪除</string>
+    <string name="dd_cancel_message">"是否取消增加銀行帳戶? "</string>
+    <string name="dd_mandate_error">請確認所有資料正確</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">簽訂此授權協議，代表你同意授權 (A) %1$s 發送指示去銀行從你的帳戶扣款，及 (B) 讓銀行根據 %1$s 的指示從你的銀行戶口中扣款</string>
+    <string name="delete">刪除</string>
+    <string name="done">完成</string>
+    <string name="dueAt">到期日為</string>
+    <string name="edit">修改</string>
+    <string name="edit_saved_payment_methods">修改已儲存卡片</string>
+    <string name="email">電郵</string>
+    <string name="enter_address">輸入你的地址</string>
+    <string name="enter_card_details">輸入卡片資料</string>
+    <string name="enter_email">輸入你的電郵</string>
+    <string name="enter_name">輸入你的姓名</string>
+    <string name="error_default">錯誤!</string>
+    <string name="expires_12_21">有效期至12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="first_last_name">全名</string>
+    <!-- An error message displayed when the First Name is not correct -->
+    <string name="firstNameErrorRequired">必須填寫名字</string>
+    <string name="firstNameLabel">名字</string>
+    <string name="form_error_invalid">%1$s 無效</string>
+    <string name="form_error_required">必須填寫%1$s</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">返回</string>
+    <string name="iban">NOT AVAILABLE IN HK</string>
+    <string name="icon_showing_state">圖案顯示狀態</string>
+    <!-- forms -->
+    <string name="input_description_otp">從你的銀行流動應用程式，獲取六位數號碼</string>
+    <string name="input_hint_form_blik_otp">六位數號碼</string>
+    <string name="input_hint_form_phone_number">電話號碼</string>
+    <string name="input_title_bank_details">提供銀行資料</string>
+    <string name="input_title_phone_number">輸入電話號碼</string>
+    <string name="john_doe">John Doe</string>
+    <string name="label_authorized">授權</string>
+    <string name="label_declined">拒絕</string>
+    <string name="label_failed">失敗</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- An error message displayed when the Last Name is not correct -->
+    <string name="lastNameErrorRequired">必須填寫姓氏</string>
+    <string name="lastNameLabel">姓氏</string>
+    <string name="manage">管理</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="name">姓名</string>
+    <string name="next">下一步</string>
+    <string name="no_additional_fee">沒有額外費用</string>
+    <string name="no_results">無結果</string>
+    <string name="other_ways_of_paying">其他付款方式</string>
+    <string name="other_ways_to_pay">使用其他方式支付</string>
+    <string name="pay">支付</string>
+    <string name="pay_amount">%1$s</string>
+    <string name="pay_by_card">刷卡支付</string>
+    <string name="pay_by_mobile">手機行動支付</string>
+    <string name="pay_specific_amount">支付 %s</string>
+    <string name="pay_with">支付使用</string>
+    <string name="pay_with_card">換成刷卡支付</string>
+    <string name="pay_with_crypto">使用虛擬貨幣支付</string>
+    <string name="payment_method_added_message">成功增加新的付款方式!</string>
+    <string name="payment_method_blik_loading_placeholder">請輸入一次性密碼</string>
+    <string name="payment_method_deletion_message">"是否刪除此付款方式? "</string>
+    <string name="payment_method_error">選擇另一種付款方式</string>
+    <string name="payment_method_icon">付款方式圖案</string>
+    <string name="payment_method_not_added_message">不能增加你的付款方式</string>
+    <string name="payment_method_xfers_description">上傳截圖到你的銀行流動應用程式</string>
+    <string name="payment_method_xfers_title">掃瞄支付或截圖</string>
+    <string name="payment_request_completed_successfully">你已成功付款!</string>
+    <string name="payment_request_unsuccessful">付款失敗</string>
+    <string name="phone_code_search_hint">查找代碼</string>
+    <string name="pleaseTransferFunds">請使用您在新加坡的銀行賬戶通過FAST（首選）、MEPS或GIRO將資金轉入提供的星展銀行帳戶。</string>
+    <string name="postalCodeErrorRequired">郵遞區編碼為必填項</string>
+    <string name="postalCodeLabel">郵政編碼</string>
+    <string name="save_this_card">保存此卡</string>
+    <string name="saved_payment_methods">已儲存付款方式</string>
+    <string name="scanToPay">掃瞄支付或截圖</string>
+    <string name="search_placeholder">搜索</string>
+    <string name="search_result">搜尋結果</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA 核心銀行扣款授權書</string>
+    <!-- An error message displayed when the State, Region or County field is not correct -->
+    <string name="stateErrorRequired">必須填寫區</string>
+    <string name="stateLabel">區</string>
+    <string name="success_icon_description">成功</string>
+    <string name="success_text">成功!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">分期支付</string>
+    <string name="uploadScreenshot">上傳截圖到你的銀行流動應用程式</string>
+</resources>
