@@ -18,7 +18,7 @@
     <string name="billingAddressLabel">ที่อยู่เรียกเก็บเงิน</string>
     <!-- Navigation -->
     <string name="cancel">ยกเลิก</string>
-    <string name="card_cvv">CCV หรือ Card Verification Value รหัสยืนยันความปลอดภัยในการชำระค่าสินค้า/บริการแบบออนไลน์</string>
+    <string name="card_cvv">CVV</string>
     <string name="card_details">รายละเอียดบัตร</string>
     <string name="card_expiry">วันหมดอายุ</string>
     <string name="card_expiry_formatted">วันหมดอายุ (ดด/ปป)</string>
