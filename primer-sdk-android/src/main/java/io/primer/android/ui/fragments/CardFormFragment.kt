@@ -53,9 +53,7 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
-import java.util.TreeMap
-import java.util.Collections
-import kotlin.collections.HashMap
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -99,6 +97,7 @@ internal class CardFormFragment : BaseFragment() {
 
         primerViewModel.showBillingFields.observe(viewLifecycleOwner) { billingFields ->
             binding.billingAddressForm.onHandleAvailable(billingFields)
+            binding.billingAddressDivider.isVisible = billingFields.isNullOrEmpty().not()
 
             renderInputFields()
             configureActionDone()
@@ -207,6 +206,8 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun renderCancelButton() {
         binding.ivBack.apply {
+            // TODO isVisible = localConfig.isStandalonePaymentMethod.not()
+
             imageTintList = ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     requireContext(),

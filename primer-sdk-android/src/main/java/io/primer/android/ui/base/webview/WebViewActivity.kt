@@ -15,7 +15,7 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_webview)
+        setContentView(R.layout.activity_primer_webview)
 
         setupViews()
         setupWebView()

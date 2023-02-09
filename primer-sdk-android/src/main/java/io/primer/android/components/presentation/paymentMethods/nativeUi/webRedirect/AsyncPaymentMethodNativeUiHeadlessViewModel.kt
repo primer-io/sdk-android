@@ -68,6 +68,7 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
         onEvent(AsyncEvent.OnLoadConfiguration(paymentMethodType))
     }
 
+    @Suppress("LongMethod")
     override fun onEvent(e: Event) {
         val validTransition = stateMachine.transition(e) as? StateMachine.Transition.Valid
             ?: throw IllegalStateException("Invalid transition for event $e")

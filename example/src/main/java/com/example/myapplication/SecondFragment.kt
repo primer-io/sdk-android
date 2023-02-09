@@ -96,7 +96,7 @@ class SecondFragment : Fragment() {
             data.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
             binding.paymentMethodList.adapter = adapter
         }
-
+        
         viewModel.fetchClientSession()
     }
 

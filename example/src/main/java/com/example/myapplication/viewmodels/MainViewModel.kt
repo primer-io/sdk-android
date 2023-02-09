@@ -132,7 +132,7 @@ class MainViewModel(
         _transactionState.postValue(TransactionState.IDLE)
 
     private fun canLaunch(id: String?, amt: Int?) =
-        !id.isNullOrEmpty() && (amt ?: 0) > 0
+        !id.isNullOrEmpty() && amt != null
 
     val canLaunchPrimer: MutableLiveData<Boolean> =
         CombinedLiveData(customerId, _amount, ::canLaunch)
