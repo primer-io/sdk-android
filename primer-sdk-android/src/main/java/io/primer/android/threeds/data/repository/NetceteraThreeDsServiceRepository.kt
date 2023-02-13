@@ -187,12 +187,13 @@ internal class NetceteraThreeDsServiceRepository(
             else -> TEST_SCHEME_ID
         }
 
-    private companion object {
+    internal companion object {
 
-        const val TEST_SCHEME_NAME = "test_schema"
+        private const val TEST_SCHEME_NAME = "test_schema"
+        private const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
+
         const val TEST_SCHEME_ID = "A999999999"
 
-        const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
         const val KEYS_CONFIG_ERROR = "3DS Config params missing."
         const val LICENCE_CONFIG_ERROR = "3DS Config licence is missing."
     }

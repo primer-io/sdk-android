@@ -1,6 +1,7 @@
 package io.primer.android.threeds.presentation
 
 import android.app.Activity
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -120,7 +121,8 @@ internal class ThreeDsViewModel(
         }
     }
 
-    override fun onCleared() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onCleared() {
         super.onCleared()
         threeDsInteractor.cleanup()
     }

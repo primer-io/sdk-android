@@ -2,6 +2,7 @@ package io.primer.android.threeds.domain.respository
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData
@@ -12,6 +13,7 @@ import java.util.Locale
 
 internal interface ThreeDsServiceRepository {
 
+    @Throws(ThreeDsConfigurationException::class)
     suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,

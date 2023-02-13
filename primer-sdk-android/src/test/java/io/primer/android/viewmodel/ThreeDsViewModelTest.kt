@@ -11,6 +11,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -268,5 +269,14 @@ class ThreeDsViewModelTest {
         coVerify { threeDsInteractor.continueRemoteAuth(any()) }
 
         observer.assertValue(Unit)
+    }
+
+    @Test
+    fun `onCleared() should call interactor cleanup()`() {
+        runTest {
+            viewModel.onCleared()
+        }
+
+        verify { threeDsInteractor.cleanup() }
     }
 }

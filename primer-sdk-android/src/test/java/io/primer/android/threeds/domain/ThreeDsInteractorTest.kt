@@ -1,4 +1,4 @@
-package io.primer.android.domain.threeds.domain
+package io.primer.android.threeds.domain
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
