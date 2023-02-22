@@ -1,6 +1,8 @@
 package io.primer.android.di
 
 import io.primer.android.BuildConfig
+import io.primer.android.analytics.data.datasource.SdkSessionDataSource
+import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import okhttp3.Interceptor
@@ -13,8 +15,8 @@ private const val CONTENT_TYPE_HEADER = "Content-Type"
 private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 private const val SDK_VERSION_HEADER = "Primer-SDK-Version"
 private const val SDK_CLIENT_HEADER = "Primer-SDK-Client"
-private const val SDK_CLIENT_VALUE = "ANDROID_NATIVE"
 private const val CLIENT_TOKEN_HEADER = "Primer-Client-Token"
+private const val PRIMER_SDK_SESSION_ID_HEADER = "Primer-SDK-Session-ID"
 
 internal val NetworkModule = {
     module {
@@ -25,7 +27,11 @@ internal val NetworkModule = {
                     chain.request().newBuilder()
                         .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
                         .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
-                        .addHeader(SDK_CLIENT_HEADER, SDK_CLIENT_VALUE)
+                        .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
+                        .addHeader(
+                            PRIMER_SDK_SESSION_ID_HEADER,
+                            SdkSessionDataSource.getSessionId()
+                        )
                         .addHeader(
                             CLIENT_TOKEN_HEADER,
                             get<LocalClientTokenDataSource>().get().accessToken

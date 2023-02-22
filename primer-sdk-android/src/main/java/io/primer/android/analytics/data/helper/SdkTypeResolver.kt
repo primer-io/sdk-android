@@ -1,13 +1,13 @@
 package io.primer.android.analytics.data.helper
 
-import io.primer.android.analytics.data.models.AnalyticsSdkType
+import io.primer.android.analytics.data.models.SdkType
 
-internal class AnalyticsSdkTypeResolver {
+internal class SdkTypeResolver {
 
-    fun resolve(): AnalyticsSdkType {
+    fun resolve(): SdkType {
         return if (ReactNativeClassValidator().isReactNativeAvailableOnClassPath()) {
-            AnalyticsSdkType.RN_ANDROID
-        } else AnalyticsSdkType.ANDROID_NATIVE
+            SdkType.RN_ANDROID
+        } else SdkType.ANDROID_NATIVE
     }
 }
 
