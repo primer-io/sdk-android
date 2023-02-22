@@ -41,6 +41,7 @@ import io.primer.android.ui.fragments.forms.FastBankTransferFragment
 import io.primer.android.ui.fragments.forms.PromptPayFragment
 import io.primer.android.ui.fragments.forms.QrCodeFragment
 import io.primer.android.ui.fragments.multibanko.MultibancoPaymentFragment
+import io.primer.android.ui.mock.PaymentMethodMockActivity
 import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -118,6 +119,14 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
                 }
+            }
+            is CheckoutEvent.Start3DSMock -> {
+                startActivity(
+                    PaymentMethodMockActivity.getLaunchIntent(
+                        this,
+                        PaymentMethodType.PAYMENT_CARD.name
+                    )
+                )
             }
             is CheckoutEvent.Start3DS -> {
                 it.processor3DSData?.let { data ->
@@ -290,6 +299,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 is CheckoutEvent.StartVoucherFlow,
                 is CheckoutEvent.StartAsyncRedirectFlow,
                 is CheckoutEvent.Start3DS,
+                is CheckoutEvent.Start3DSMock,
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
                 is CheckoutEvent.ShowError,

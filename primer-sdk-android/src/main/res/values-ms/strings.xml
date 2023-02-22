@@ -145,4 +145,5 @@
     <string name="test_mail_com">ujian@mel.com</string>
     <string name="twoc_2p_button">Bayar secara ansuran</string>
     <string name="uploadScreenshot">Muat naik tangkap layar tersebut menggunakan aplikasi perbankan anda</string>
+    <string name="primer_payment_method_button_content_description">Pay with %s</string>
 </resources>

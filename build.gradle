@@ -48,8 +48,8 @@ sonarqube {
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "/home/runner/work/primer-sdk-android/primer-sdk-android/primer-sdk-android/build/jacoco/jacoco.xml"
         property "sonar.language", "kotlin"
-        property "sonar.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*"
-        property "sonar.coverage.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*"
+        property "sonar.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*, **/analytics/**/*"
+        property "sonar.coverage.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*, **/analytics/**/*"
     }
 }
 

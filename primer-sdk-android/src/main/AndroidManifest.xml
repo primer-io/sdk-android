@@ -95,6 +95,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.mock.PaymentMethodMockActivity"
+            android:exported="false"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.WebView" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

@@ -6,12 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.myapplication.databinding.FragmentFirstBinding
+import com.example.myapplication.databinding.FragmentSettingsBinding
 import com.example.myapplication.datamodels.PrimerEnv
 import com.example.myapplication.utils.HideKeyboardFocusChangeListener
 import com.example.myapplication.utils.MoneyTextWatcher
@@ -19,9 +20,9 @@ import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.SettingsViewModel
 import io.primer.android.data.settings.PrimerPaymentHandling
 
-class FirstFragment : Fragment() {
+class MerchantSettingsFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -32,13 +33,14 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        configureFlowToggleViews()
+        configureClientTokenTextField()
         configureCustomerIdTextField()
         configureCountryTextField()
         configureAmountTextField()
@@ -48,7 +50,7 @@ class FirstFragment : Fragment() {
         configureEnvDropDown()
 
         viewModel.canLaunchPrimer.observe(viewLifecycleOwner) { canLaunch ->
-            binding.nextButton.isEnabled = canLaunch
+            binding.universalCheckoutButton.isEnabled = canLaunch
         }
 
         settingsViewModel.country.observe(viewLifecycleOwner) { country ->
@@ -66,6 +68,11 @@ class FirstFragment : Fragment() {
         viewModel.apiKeyLiveData.observe(viewLifecycleOwner) { apiKey ->
             binding.apiKeyTextField.setText(apiKey)
         }
+
+        viewModel.selectedFlow.observe(viewLifecycleOwner) { flow ->
+            binding.clientTokenTextFieldLayout.isVisible =
+                flow == MainViewModel.SelectedFlow.CLIENT_TOKEN
+        }
     }
 
     private fun configureEnvDropDown() {
@@ -77,23 +84,53 @@ class FirstFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.dropDownEnvironment.adapter = adapter
         }
-        binding.dropDownEnvironment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when (position) {
-                    ENV_SANDBOX_ID -> viewModel.setCurrentEnv(PrimerEnv.Sandbox)
-                    ENV_DEV_ID -> viewModel.setCurrentEnv(PrimerEnv.Dev)
-                    ENV_STAGING_ID -> viewModel.setCurrentEnv(PrimerEnv.Staging)
-                    ENV_PROD_ID -> viewModel.setCurrentEnv(PrimerEnv.Production)
+        binding.dropDownEnvironment.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    when (position) {
+                        ENV_SANDBOX_ID -> viewModel.setCurrentEnv(PrimerEnv.Sandbox)
+                        ENV_DEV_ID -> viewModel.setCurrentEnv(PrimerEnv.Dev)
+                        ENV_STAGING_ID -> viewModel.setCurrentEnv(PrimerEnv.Staging)
+                        ENV_PROD_ID -> viewModel.setCurrentEnv(PrimerEnv.Production)
+                    }
                 }
-            }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        }
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            }
     }
 
     private fun configureEnvSetup() {
         binding.apiKeyTextField.addTextChangedListener {
             viewModel.setApiKeyForSelectedEnv(it?.toString())
+        }
+    }
+
+    private fun configureFlowToggleViews() {
+        binding.flowToggleGroup.apply {
+            addOnButtonCheckedListener { _, checkedId, _ ->
+                viewModel.setSelectedFlow(
+                    when (checkedId) {
+                        binding.clientSession.id -> MainViewModel.SelectedFlow.CREATE_SESSION
+                        binding.clientToken.id -> MainViewModel.SelectedFlow.CLIENT_TOKEN
+                        else -> throw IllegalStateException()
+                    }
+                )
+            }
+            check(binding.clientSession.id)
+        }
+    }
+
+    private fun configureClientTokenTextField() {
+        binding.clientTokenTextField.apply {
+            setText(viewModel.clientToken.value)
+            addTextChangedListener { viewModel.setClientToken(it.toString()) }
+            onFocusChangeListener =
+                HideKeyboardFocusChangeListener(R.id.clientTokenTextField, activity)
         }
     }
 
@@ -157,8 +194,8 @@ class FirstFragment : Fragment() {
         binding.hucRawButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_HeadlessRawFragment)
         }
-        binding.nextButton.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.universalCheckoutButton.setOnClickListener {
+            findNavController().navigate(R.id.action_MerchantSettingsFragment_to_MerchantCheckoutFragment)
         }
     }
 

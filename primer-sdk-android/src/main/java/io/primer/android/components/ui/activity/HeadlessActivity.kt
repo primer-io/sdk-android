@@ -17,6 +17,7 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType
+import io.primer.android.ui.mock.PaymentMethodMockActivity
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.ipay88.api.ui.NativeIPay88Activity
 import org.koin.android.ext.android.inject
@@ -101,6 +102,9 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
 
     private fun startRedirect(params: PaymentMethodRedirectLauncherParams) {
         when (params) {
+            is KlarnaMockActivityLauncherParams -> resultLauncher.launch(
+                PaymentMethodMockActivity.getLaunchIntent(this, params.paymentMethodType)
+            )
             is KlarnaActivityLauncherParams -> resultLauncher.launch(
                 NativeKlarnaActivity.getLaunchIntent(
                     this,

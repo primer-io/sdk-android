@@ -19,6 +19,7 @@ import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
+import io.primer.android.domain.mock.repository.ConfigurationMockRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -72,6 +73,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var analyticsRepository: AnalyticsRepository
 
     @RelaxedMockK
+    internal lateinit var configurationMockRepository: ConfigurationMockRepository
+
+    @RelaxedMockK
     internal lateinit var verificationTokenRepository: ValidateTokenRepository
 
     @RelaxedMockK
@@ -101,6 +105,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 paymentMethodRepository,
                 paymentResultRepository,
                 analyticsRepository,
+                configurationMockRepository,
                 threeDsSdkClassValidator,
                 threeDsLibraryVersionValidator,
                 errorEventResolver,
@@ -121,6 +126,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
         every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
+        every { configurationMockRepository.isMockedFlow() }.returns(false)
 
         every { verificationTokenRepository.validate(any()) }.returns(
             flowOf(true)
@@ -136,6 +142,31 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
 
         assert(event.captured.type == CheckoutEventType.START_3DS)
         assertNull((event.captured as CheckoutEvent.Start3DS).processor3DSData)
+    }
+
+    @Test
+    fun `handleNewClientToken() should dispatch Start3DSMock event when ClientTokenIntent is 3DS_AUTHENTICATION and threeDsSdkClassValidator is3dsSdkIncluded is true and isValidVersion is true and isMockedFlow is true`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
+        every { paymentMethodToken.paymentInstrumentType }.returns(PAYMENT_CARD_IDENTIFIER)
+        every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
+        every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
+        every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
+        every { configurationMockRepository.isMockedFlow() }.returns(true)
+
+        every { verificationTokenRepository.validate(any()) }.returns(
+            flowOf(true)
+        )
+
+        runTest {
+            resumeHandler.continueWithNewClientToken("")
+        }
+
+        val event = slot<CheckoutEvent>()
+
+        verify { eventDispatcher.dispatchEvent(capture(event)) }
+
+        assert(event.captured.type == CheckoutEventType.START_3DS_MOCK)
     }
 
     @Test

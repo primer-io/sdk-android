@@ -220,7 +220,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.clientToken.postValue(null)
+        viewModel.setClientToken(null)
         headlessUniversalCheckout.cleanup()
         if (::rawDataManager.isInitialized) rawDataManager.cleanup()
         _binding = null

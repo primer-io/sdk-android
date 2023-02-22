@@ -6,6 +6,7 @@ import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.primer.android.R
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.components.ui.extensions.get
 import io.primer.android.databinding.PrimerPaymentMethodImageButtonBinding
@@ -38,7 +39,10 @@ internal class DynamicPaymentMethodImageViewCreator(
                 paymentMethodParent.background = RippleDrawable(rippleColor, content, null)
             }
 
-            paymentMethodParent.contentDescription = displayMetadata.name
+            paymentMethodParent.contentDescription = context.getString(
+                R.string.primer_payment_method_button_content_description,
+                displayMetadata.name
+            )
             paymentMethodIcon.setImageDrawable(paymentMethodAsset)
         }
         return binding.root

@@ -126,7 +126,8 @@ jacocoAndroidUnitTestReport {
     excludes += [
             '**/example/**',
             '**/di/**',
-            '**/ui/**'
+            '**/ui/**',
+            '**/analytics/**',
     ]
 }
 

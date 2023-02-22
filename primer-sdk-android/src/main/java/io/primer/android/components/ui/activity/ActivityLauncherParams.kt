@@ -28,6 +28,14 @@ internal data class KlarnaActivityLauncherParams(
     sessionIntent,
 )
 
+internal data class KlarnaMockActivityLauncherParams(
+    val errorCode: Int,
+    override val sessionIntent: PrimerSessionIntent
+) : PaymentMethodRedirectLauncherParams(
+    PaymentMethodType.KLARNA.name,
+    sessionIntent,
+)
+
 internal data class WebRedirectActivityLauncherParams(
     val statusUrl: String,
     val paymentUrl: String,

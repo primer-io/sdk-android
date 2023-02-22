@@ -55,6 +55,11 @@ class MainViewModel(
     private val paymentsRepository = PaymentsRepository(apiKeyDataSource)
     private val resumeRepository = ResumeRepository(apiKeyDataSource)
 
+    enum class SelectedFlow {
+        CREATE_SESSION,
+        CLIENT_TOKEN
+    }
+
     enum class Mode {
         CHECKOUT, VAULT;
     }
@@ -69,13 +74,22 @@ class MainViewModel(
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
 
+    private val _selectedFlow = MutableLiveData<SelectedFlow>()
+    val selectedFlow: LiveData<SelectedFlow> = _selectedFlow
+    fun setSelectedFlow(flow: SelectedFlow) = _selectedFlow.postValue(flow)
+
+    private val _clientToken = savedStateHandle.getLiveData<String?>("token")
+    val clientToken: LiveData<String?> = _clientToken
+    fun setClientToken(token: String?) = _clientToken.postValue(token)
+
+    private val _payAfterVaulting = MutableLiveData<Boolean>()
+    val payAfterVaulting: LiveData<Boolean> = _payAfterVaulting
+    fun setPayAfterVaulting(payAfterVault: Boolean) = _payAfterVaulting.postValue(payAfterVault)
+
     private val _customerId: MutableLiveData<String> = MutableLiveData<String>("customer8")
     val customerId: LiveData<String> = _customerId
     fun setCustomerId(id: String): Unit =
         _customerId.postValue(id)
-
-    private val _postalCode = MutableLiveData("")
-    val postalCode: LiveData<String> = _postalCode
 
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
@@ -114,7 +128,6 @@ class MainViewModel(
     fun setMetadata(metadata: String) = _metadata.postValue(metadata)
 
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
-    val clientToken: MutableLiveData<String?> = savedStateHandle.getLiveData("token")
 
     val paymentInstruments: MutableLiveData<List<PrimerPaymentMethodTokenData>> =
         MutableLiveData<List<PrimerPaymentMethodTokenData>>()

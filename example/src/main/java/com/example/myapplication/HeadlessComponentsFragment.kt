@@ -41,7 +41,6 @@ import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditi
 import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.ui.CardNetwork
 
-@OptIn(ExperimentalPrimerApi::class)
 class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -194,7 +193,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.clientToken.postValue(null)
+        viewModel.setClientToken(null)
     }
 
     private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {

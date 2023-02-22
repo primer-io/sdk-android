@@ -20,6 +20,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.klar
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.KlarnaPaymentModel
 import io.primer.android.components.ui.activity.KlarnaActivityLauncherParams
+import io.primer.android.components.ui.activity.KlarnaMockActivityLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.di.DIAppComponent
@@ -27,6 +28,7 @@ import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
 import io.primer.android.domain.deeplink.klarna.KlarnaDeeplinkInteractor
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.mock.ConfigurationMockInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
 import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentParams
@@ -42,6 +44,7 @@ internal class KlarnaHeadlessViewModel(
     private val klarnaDeeplinkInteractor: KlarnaDeeplinkInteractor,
     private val klarnaCustomerTokenInteractor: KlarnaCustomerTokenInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
+    private val configurationMockInteractor: ConfigurationMockInteractor,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     savedStateHandle: SavedStateHandle
 ) : NativeUIHeadlessViewModel(savedStateHandle), DIAppComponent {
@@ -65,16 +68,24 @@ internal class KlarnaHeadlessViewModel(
             validTransition.sideEffect is KlarnaSideEffect.NavigateToKlarna &&
                 e is KlarnaEvent.OnSessionCreated
             -> {
-                _startActivityEvent.postValue(
-                    KlarnaActivityLauncherParams(
-                        e.klarnaPaymentData.webViewTitle,
-                        e.klarnaPaymentData.clientToken,
-                        e.klarnaPaymentData.redirectUrl,
-                        e.klarnaPaymentData.paymentCategory,
-                        RESULT_ERROR,
-                        sessionIntent
+                when (configurationMockInteractor.execute(None())) {
+                    true -> _startActivityEvent.postValue(
+                        KlarnaMockActivityLauncherParams(
+                            RESULT_ERROR,
+                            sessionIntent
+                        )
                     )
-                )
+                    false -> _startActivityEvent.postValue(
+                        KlarnaActivityLauncherParams(
+                            e.klarnaPaymentData.webViewTitle,
+                            e.klarnaPaymentData.clientToken,
+                            e.klarnaPaymentData.redirectUrl,
+                            e.klarnaPaymentData.paymentCategory,
+                            RESULT_ERROR,
+                            sessionIntent
+                        )
+                    )
+                }
             }
             validTransition.sideEffect is KlarnaSideEffect.HandleResult &&
                 e is BaseEvent.OnResult -> {
@@ -177,6 +188,7 @@ internal class KlarnaHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return KlarnaHeadlessViewModel(
+                    get(),
                     get(),
                     get(),
                     get(),

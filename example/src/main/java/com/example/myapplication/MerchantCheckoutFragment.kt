@@ -8,13 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.components.PaymentMethodItem
+import com.example.myapplication.constants.PrimerDropInCallbacks
+import com.example.myapplication.databinding.FragmentUniversalCheckoutBinding
+import com.example.myapplication.datamodels.CheckoutDataWithError
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.viewmodels.MainViewModel
-import io.primer.android.Primer
-import androidx.fragment.app.activityViewModels
-import com.example.myapplication.databinding.FragmentSecondBinding
+import com.example.myapplication.viewmodels.MainViewModel.Mode
+import com.google.gson.Gson
 import com.xwray.groupie.GroupieAdapter
+import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
@@ -28,9 +33,11 @@ import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditio
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
-class SecondFragment : Fragment() {
+class MerchantCheckoutFragment : Fragment() {
 
-    private var _binding: FragmentSecondBinding? = null
+    private val callbacks: ArrayList<String> = arrayListOf()
+    private var checkoutDataWithError: CheckoutDataWithError? = null
+    private var _binding: FragmentUniversalCheckoutBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -39,7 +46,7 @@ class SecondFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentUniversalCheckoutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -51,26 +58,28 @@ class SecondFragment : Fragment() {
 
         // VAULT MANAGER
         binding.vaultButton.setOnClickListener {
-            viewModel.mode.postValue(MainViewModel.Mode.VAULT)
+            callbacks.clear()
+            viewModel.mode.postValue(Mode.VAULT)
             viewModel.clientToken.value?.let { token ->
+                checkoutDataWithError = null
+                callbacks.add(PrimerDropInCallbacks.ON_VAULT_MANAGER_CLICKED)
                 activity?.let { context -> Primer.instance.showVaultManager(context, token) }
             }
         }
 
         // UNIVERSAL CHECKOUT
         binding.checkoutButton.setOnClickListener {
-            viewModel.mode.postValue(MainViewModel.Mode.CHECKOUT)
+            viewModel.mode.postValue(Mode.CHECKOUT)
+            callbacks.clear()
             viewModel.clientToken.value?.let { token ->
+                checkoutDataWithError = null
+                callbacks.add(PrimerDropInCallbacks.ON_UNIVERSAL_CHECKOUT_CLICKED)
                 activity?.let { context -> Primer.instance.showUniversalCheckout(context, token) }
             }
         }
 
-        viewModel.postalCode.observe(viewLifecycleOwner) { value ->
-            binding.postalCodeLabel.text = requireContext().getString(R.string.postal_code, value)
-        }
-
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
-                binding.vaultButton.isVisible = token != null
+            binding.vaultButton.isVisible = token != null
 
             binding.checkoutButton.isVisible = token != null
 
@@ -96,8 +105,12 @@ class SecondFragment : Fragment() {
             data.iterator().forEach { t -> adapter.add(PaymentMethodItem(t, ::onSelect)) }
             binding.paymentMethodList.adapter = adapter
         }
-        
-        viewModel.fetchClientSession()
+
+        if (viewModel.clientToken.value == null ||
+            viewModel.selectedFlow.value != MainViewModel.SelectedFlow.CLIENT_TOKEN
+        ) {
+            viewModel.fetchClientSession()
+        }
     }
 
     private fun initializeCheckout() = viewModel.configure(listener)
@@ -109,6 +122,7 @@ class SecondFragment : Fragment() {
             decisionHandler: PrimerPaymentCreationDecisionHandler
         ) {
             decisionHandler.continuePaymentCreation()
+            callbacks.add(PrimerDropInCallbacks.ON_BEFORE_PAYMENT_CREATED)
             Log.d(TAG, "onBeforePaymentCreated with $paymentMethodData")
         }
 
@@ -117,28 +131,34 @@ class SecondFragment : Fragment() {
             checkoutData: PrimerCheckoutData?,
             errorHandler: PrimerErrorDecisionHandler?
         ) {
-            AlertDialog.Builder(context).setMessage("onFailed ${error.description} with data $checkoutData")
-                .show()
-            errorHandler?.showErrorMessage("Something went wrong!")
+            callbacks.add(PrimerDropInCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
+            checkoutDataWithError = CheckoutDataWithError(checkoutData?.payment, error)
+            errorHandler?.showErrorMessage(
+                "SDK error id: ${error.errorId}, description: ${error.description}"
+            )
         }
 
         override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
-            AlertDialog.Builder(context).setMessage("onCheckoutCompleted $checkoutData").show()
+            Log.d(TAG, "onCheckoutCompleted")
+            checkoutDataWithError = CheckoutDataWithError(checkoutData.payment)
+            callbacks.add(PrimerDropInCallbacks.ON_CHECKOUT_COMPLETED)
         }
 
         override fun onBeforeClientSessionUpdated() {
             Log.d(TAG, "onBeforeClientSessionUpdated")
+            callbacks.add(PrimerDropInCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
         }
 
         override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
             super.onClientSessionUpdated(clientSession)
+            callbacks.add(PrimerDropInCallbacks.ON_CLIENT_SESSION_UPDATED)
             Log.d(TAG, "onClientSessionUpdated with result $clientSession")
         }
 
         override fun onFailed(error: PrimerError, errorHandler: PrimerErrorDecisionHandler?) {
-            AlertDialog.Builder(context).setMessage("onFailed $error")
-                .show()
-            errorHandler?.showErrorMessage("Something went wrong!")
+            errorHandler?.showErrorMessage(
+                "SDK error id: ${error.errorId}, description: ${error.description}"
+            )
         }
 
         override fun onTokenizeSuccess(
@@ -146,10 +166,18 @@ class SecondFragment : Fragment() {
             decisionHandler: PrimerResumeDecisionHandler
         ) {
             Log.d(TAG, "onTokenizeSuccess")
-            viewModel.createPayment(paymentMethodTokenData, decisionHandler)
+            callbacks.add(PrimerDropInCallbacks.ON_TOKENIZE_SUCCESS)
+            when {
+                paymentMethodTokenData.isVaulted &&
+                    viewModel.payAfterVaulting.value != true -> decisionHandler.handleSuccess()
+                else -> viewModel.createPayment(paymentMethodTokenData, decisionHandler)
+            }
         }
 
-        override fun onResumeSuccess(resumeToken: String, decisionHandler: PrimerResumeDecisionHandler) {
+        override fun onResumeSuccess(
+            resumeToken: String,
+            decisionHandler: PrimerResumeDecisionHandler
+        ) {
             Log.d(TAG, "onResumeSuccess")
             viewModel.resumePayment(resumeToken, decisionHandler)
         }
@@ -174,7 +202,24 @@ class SecondFragment : Fragment() {
         }
 
         override fun onDismissed() {
-            Log.d(TAG, "onDismissed")
+            callbacks.add(PrimerDropInCallbacks.ON_DISMISSED)
+            findNavController().navigate(
+                R.id.action_MerchantCheckoutFragment_to_MerchantResultFragment,
+                Bundle().apply {
+                    putInt(
+                        MerchantResultFragment.PAYMENT_STATUS_KEY,
+                        if (checkoutDataWithError?.error != null) MerchantResultFragment.Companion.PaymentStatus.FAILURE.ordinal
+                        else MerchantResultFragment.Companion.PaymentStatus.SUCCESS.ordinal
+                    )
+                    putStringArrayList(
+                        MerchantResultFragment.INVOKED_CALLBACKS_KEY,
+                        callbacks
+                    )
+                    putString(
+                        MerchantResultFragment.PAYMENT_RESPONSE_KEY,
+                        Gson().toJson(checkoutDataWithError)
+                    )
+                })
             viewModel.clientToken.value?.let { _ -> fetchSavedPaymentMethods() }
         }
     }
@@ -203,7 +248,7 @@ class SecondFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.clientToken.postValue(null)
+        viewModel.setClientToken(null)
         _binding = null
     }
 

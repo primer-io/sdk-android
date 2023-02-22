@@ -11,6 +11,7 @@ internal enum class CheckoutEventType {
     SHOW_SUCCESS,
     DISMISS_INTERNAL,
     START_3DS,
+    START_3DS_MOCK,
     START_ASYNC_REDIRECT_FLOW,
     START_ASYNC_FLOW,
     START_VOUCHER_FLOW,

@@ -5,6 +5,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
+import io.primer.android.domain.mock.repository.ConfigurationMockRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -22,6 +23,7 @@ internal class ResumeHandlerFactory(
     private val paymentMethodRepository: PaymentMethodRepository,
     private val paymentResultRepository: PaymentResultRepository,
     private val analyticsRepository: AnalyticsRepository,
+    private val configurationMockRepository: ConfigurationMockRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
     private val errorEventResolver: BaseErrorEventResolver,
@@ -42,6 +44,7 @@ internal class ResumeHandlerFactory(
                 paymentMethodRepository,
                 paymentResultRepository,
                 analyticsRepository,
+                configurationMockRepository,
                 threeDsSdkClassValidator,
                 threeDsLibraryVersionValidator,
                 errorEventResolver,

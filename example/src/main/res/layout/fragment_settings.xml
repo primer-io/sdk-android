@@ -4,20 +4,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstFragment">
+    tools:context=".MerchantSettingsFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fitsSystemWindows="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/hucRawButton">
+        app:layout_constraintBottom_toTopOf="@id/hucRawButton"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
-            android:paddingBottom="10dp">
+            android:padding="@dimen/medium_padding">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/flowToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checkedButton="@id/clientSession"
+                android:orientation="horizontal"
+                app:singleSelection="true">
+
+                <Button
+                    android:id="@+id/clientSession"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/flow_client_session"
+                    android:gravity="center"
+                    android:text="@string/flow_client_session"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/clientToken"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/flow_client_token"
+                    android:gravity="center"
+                    android:text="@string/flow_client_token"
+                    android:textAllCaps="false" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/clientTokenTextFieldLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="@string/client_token"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/clientTokenTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/Primer.Text.Large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/sdk_settings" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/customerIdTextFieldLayout"
@@ -181,19 +236,19 @@
         android:text="@string/huc_ui"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"
-        app:layout_constraintBottom_toTopOf="@id/nextButton"
+        app:layout_constraintBottom_toTopOf="@id/universalCheckoutButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/nextButton"
+        android:id="@+id/universalCheckoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="36dp"
         android:layout_weight="1"
-        android:text="@string/next"
+        android:text="@string/button_primer_sdk"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"
         app:layout_constraintBottom_toBottomOf="parent"

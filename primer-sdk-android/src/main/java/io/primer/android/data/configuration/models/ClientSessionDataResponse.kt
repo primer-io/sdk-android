@@ -16,6 +16,7 @@ internal data class ClientSessionDataResponse(
     val clientSessionId: String?,
     val customerId: String?,
     val orderId: String?,
+    val testId: String?,
     val amount: Int?,
     val currencyCode: String?,
     val customer: CustomerDataResponse?,
@@ -131,6 +132,7 @@ internal data class ClientSessionDataResponse(
         private const val CLIENT_SESSION_ID_FIELD = "clientSessionId"
         private const val CUSTOMER_ID_FIELD = "customerId"
         private const val ORDER_ID_FIELD = "orderId"
+        private const val TEST_ID_FIELD = "testId"
         private const val AMOUNT_FIELD = "amount"
         private const val CURRENCY_CODE_FIELD = "currencyCode"
         private const val CUSTOMER_DATA_FIELD = "customer"
@@ -145,6 +147,7 @@ internal data class ClientSessionDataResponse(
                     t.optNullableString(CLIENT_SESSION_ID_FIELD),
                     t.optNullableString(CUSTOMER_ID_FIELD),
                     t.optNullableString(ORDER_ID_FIELD),
+                    t.optNullableString(TEST_ID_FIELD),
                     t.optNullableInt(AMOUNT_FIELD),
                     t.optNullableString(CURRENCY_CODE_FIELD),
                     t.optJSONObject(CUSTOMER_DATA_FIELD)?.let {

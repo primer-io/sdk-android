@@ -106,10 +106,10 @@ internal data class APIError(
                     t.getString(DESCRIPTION_FIELD),
                     t.optNullableString(ERROR_ID_FIELD),
                     t.optNullableString(DIAGNOSTICS_ID_FIELD),
-                    t.getJSONArray(VALIDATION_ERRORS_FIELD).sequence<JSONObject>().map {
+                    t.optJSONArray(VALIDATION_ERRORS_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils.getDeserializer<ValidationError>()
                             .deserialize(it)
-                    }.toList(),
+                    }?.toList().orEmpty(),
                 )
             }
         }

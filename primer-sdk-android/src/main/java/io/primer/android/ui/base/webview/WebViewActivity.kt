@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.widget.Toolbar
+import io.primer.android.BuildConfig
 import io.primer.android.BaseCheckoutActivity
 import io.primer.android.R
 
@@ -53,12 +54,14 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
         webView.apply {
             settings.apply {
                 setSupportZoom(false)
                 loadsImagesAutomatically = true
                 javaScriptEnabled = true
                 useWideViewPort = true
+                loadWithOverviewMode = true
                 domStorageEnabled = true
             }
         }

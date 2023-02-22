@@ -1,5 +1,6 @@
 package io.primer.android.completion
 
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.configuration.models.PaymentMethodType
@@ -58,8 +59,12 @@ internal open class DefaultPrimerResumeDecisionHandler(
 
     override fun handleSuccess() = callIfNotHandled {
         addAnalyticsEvent("handleSuccess")
+        val successType = when (config.intent.paymentMethodIntent) {
+            PrimerSessionIntent.CHECKOUT -> SuccessType.PAYMENT_SUCCESS
+            PrimerSessionIntent.VAULT -> SuccessType.VAULT_TOKENIZATION_SUCCESS
+        }
         eventDispatcher.dispatchEvent(
-            CheckoutEvent.ShowSuccess(successType = SuccessType.PAYMENT_SUCCESS)
+            CheckoutEvent.ShowSuccess(successType = successType)
         )
     }
 

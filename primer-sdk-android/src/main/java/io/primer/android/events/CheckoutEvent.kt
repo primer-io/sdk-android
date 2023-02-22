@@ -129,6 +129,8 @@ internal sealed class CheckoutEvent(
         val processor3DSData: Processor3DS? = null
     ) : CheckoutEvent(CheckoutEventType.START_3DS)
 
+    object Start3DSMock : CheckoutEvent(CheckoutEventType.START_3DS_MOCK)
+
     class StartAsyncRedirectFlow(
         val title: String,
         val paymentMethodType: String,
