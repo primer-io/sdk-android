@@ -11,6 +11,8 @@ import io.primer.android.http.exception.HttpException
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.threeds.data.exception.ThreeDsFailedException
 import io.primer.android.threeds.data.exception.ThreeDsInitException
+import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
+import io.primer.android.threeds.data.exception.ThreeDsProtocolFailedException
 
 internal class PaymentResumeErrorMapper : DefaultErrorMapper() {
 
@@ -27,6 +29,13 @@ internal class PaymentResumeErrorMapper : DefaultErrorMapper() {
                 throwable.errorCode,
                 throwable.message
             )
+            is ThreeDsProtocolFailedException -> ThreeDsError.ThreeDsChallengeProtocolFailedError(
+                throwable.errorCode,
+                throwable.message,
+                throwable.context
+            )
+            is ThreeDsMissingDirectoryServerException ->
+                ThreeDsError.ThreeDsMissingDirectoryServerIdError(throwable.cardNetwork)
             is HttpException ->
                 when (throwable.isClientError()) {
                     true -> HttpError.HttpClientError(

@@ -1,5 +1,6 @@
 package io.primer.android.components.presentation
 
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
 import io.primer.android.components.domain.payments.PaymentInputDataTypeValidateInteractor
@@ -54,6 +55,7 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val createPaymentInteractor: CreatePaymentInteractor,
     private val resumePaymentInteractor: ResumePaymentInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
 ) : DefaultHeadlessDelegate(
     tokenizationInteractor,
     paymentInputTypesInteractor,
@@ -71,6 +73,7 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
 
     override fun start() {
         scope.launch { paymentsTypesInteractor(None()).collect {} }
+        scope.launch { analyticsInteractor.initialize().collect {} }
     }
 
     override fun getPaymentMethodsDisplayMetadata(isDarkMode: Boolean) =

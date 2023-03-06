@@ -14,10 +14,13 @@ import com.netcetera.threeds.sdk.api.transaction.challenge.events.RuntimeErrorEv
 import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.R
+import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.threeds.data.exception.ThreeDsFailedException
 import io.primer.android.threeds.data.exception.ThreeDsInitException
+import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
+import io.primer.android.threeds.data.exception.ThreeDsProtocolFailedException
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData
@@ -97,11 +100,12 @@ internal class NetceteraThreeDsServiceRepository(
     override fun performProviderAuth(
         cardNetwork: CardNetwork,
         protocolVersion: ProtocolVersion,
+        environment: Environment
     ): Flow<Transaction> =
         flow {
             emit(
                 threeDS2Service.createTransaction(
-                    directoryServerIdForCard(cardNetwork),
+                    directoryServerIdForCard(cardNetwork, environment),
                     protocolVersion.versionNumber
                 )
             )
@@ -142,17 +146,36 @@ internal class NetceteraThreeDsServiceRepository(
                     }
 
                     override fun cancelled() {
-                        cancel(ThreeDsFailedException(message = "3DS cancelled."))
+                        cancel(
+                            ThreeDsFailedException(
+                                errorCode = THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
+                                message = "3DS cancelled."
+                            )
+                        )
                     }
 
                     override fun timedout() {
-                        cancel(ThreeDsFailedException(message = "3DS timed out."))
+                        cancel(
+                            ThreeDsFailedException(
+                                errorCode = THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
+                                message = "3DS timed out."
+                            )
+                        )
                     }
 
                     override fun protocolError(errorEvent: ProtocolErrorEvent) {
+                        val errorMessage = errorEvent.errorMessage
                         cancel(
-                            ThreeDsFailedException(
+                            ThreeDsProtocolFailedException(
                                 errorEvent.errorMessage.errorCode,
+                                ThreeDsFailureContextParams(
+                                    errorMessage.errorDescription,
+                                    errorMessage.errorCode,
+                                    errorMessage.errorMessageType,
+                                    errorMessage.errorComponent,
+                                    errorMessage.transactionID,
+                                    errorMessage.messageVersionNumber
+                                ),
                                 errorEvent.errorMessage.errorDetails
                             )
                         )
@@ -176,7 +199,8 @@ internal class NetceteraThreeDsServiceRepository(
     override fun performCleanup() =
         threeDS2Service.cleanup(context)
 
-    private fun directoryServerIdForCard(cardNetwork: CardNetwork) =
+    @Throws(ThreeDsMissingDirectoryServerException::class)
+    private fun directoryServerIdForCard(cardNetwork: CardNetwork, environment: Environment) =
         when (cardNetwork) {
             CardNetwork.VISA -> DsRidValues.VISA
             CardNetwork.AMEX -> DsRidValues.AMEX
@@ -184,7 +208,10 @@ internal class NetceteraThreeDsServiceRepository(
             CardNetwork.UNIONPAY -> DsRidValues.UNION
             CardNetwork.JCB -> DsRidValues.JCB
             CardNetwork.MASTERCARD -> DsRidValues.MASTERCARD
-            else -> TEST_SCHEME_ID
+            else -> when (environment == Environment.PRODUCTION) {
+                true -> throw ThreeDsMissingDirectoryServerException(cardNetwork)
+                false -> TEST_SCHEME_ID
+            }
         }
 
     private companion object {
@@ -195,5 +222,8 @@ internal class NetceteraThreeDsServiceRepository(
         const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
         const val KEYS_CONFIG_ERROR = "3DS Config params missing."
         const val LICENCE_CONFIG_ERROR = "3DS Config licence is missing."
+
+        const val THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE = "-4"
+        const val THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE = "-3"
     }
 }

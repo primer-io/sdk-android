@@ -424,8 +424,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         if (config.settings.fromHUC) {
             ensureClicksGoThrough()
         }
-
-        primerViewModel.initializeAnalytics()
+        if (config.settings.fromHUC.not()) {
+            primerViewModel.initializeAnalytics()
+        }
 
         addTimerDurationEvent(TimerType.START)
 

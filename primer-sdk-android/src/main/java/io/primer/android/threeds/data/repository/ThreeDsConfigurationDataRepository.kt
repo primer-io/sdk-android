@@ -2,6 +2,7 @@ package io.primer.android.threeds.data.repository
 
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.models.Environment
+import io.primer.android.threeds.domain.models.ThreeDsAuthParams
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.helpers.ProtocolVersion
@@ -21,11 +22,14 @@ internal class ThreeDsConfigurationDataRepository(
                 )
             }
 
-    override fun getProtocolVersion() = localConfigurationDataSource.get()
+    override fun getPreAuthConfiguration() = localConfigurationDataSource.get()
         .map {
-            when (it.environment) {
-                Environment.PRODUCTION -> ProtocolVersion.V_210
-                else -> ProtocolVersion.V_220
-            }
+            ThreeDsAuthParams(
+                it.environment,
+                when (it.environment) {
+                    Environment.PRODUCTION -> ProtocolVersion.V_210
+                    else -> ProtocolVersion.V_220
+                }
+            )
         }
 }

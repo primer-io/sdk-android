@@ -1,5 +1,6 @@
 package io.primer.android.data.token.model
 
+@Suppress("EnumNaming")
 internal enum class ClientTokenIntent {
 
     CHECKOUT,

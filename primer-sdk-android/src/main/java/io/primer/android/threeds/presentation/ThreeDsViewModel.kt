@@ -7,7 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.BuildConfig
+import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.ObjectType
+import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.threeds.data.models.BeginAuthResponse
@@ -94,15 +98,18 @@ internal class ThreeDsViewModel(
         transaction: Transaction,
         authData: BeginAuthResponse,
     ) {
+        logThreeDsScreenPresented()
         viewModelScope.launch {
             threeDsInteractor.performChallenge(
                 activity,
                 transaction,
                 authData,
             ).catch {
+                logThreeDsScreenDismissed()
                 _threeDsFinishedEvent.postValue(Unit)
                 transaction.close()
             }.collect {
+                logThreeDsScreenDismissed()
                 _challengeStatusChangedEvent.postValue(it)
             }
         }
@@ -148,4 +155,20 @@ internal class ThreeDsViewModel(
                 )
             }
         }
+
+    private fun logThreeDsScreenPresented() = addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.PRESENT,
+            ObjectType.`3RD_PARTY_VIEW`,
+            Place.`3DS_VIEW`,
+        )
+    )
+
+    private fun logThreeDsScreenDismissed() = addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.DISMISS,
+            ObjectType.`3RD_PARTY_VIEW`,
+            Place.`3DS_VIEW`,
+        )
+    )
 }

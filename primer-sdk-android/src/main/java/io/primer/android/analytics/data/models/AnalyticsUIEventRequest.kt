@@ -4,7 +4,6 @@ import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
-import io.primer.android.payment.dummy.DummyDecisionType
 import org.json.JSONObject
 
 internal data class AnalyticsUIEventRequest(
@@ -119,56 +118,12 @@ internal data class UIProperties(
     }
 }
 
-internal data class AnalyticsContext(
-    val paymentMethodType: String? = null,
-    val issuerId: String? = null,
-    val paymentMethodId: String? = null,
-    val url: String? = null,
-    val decision: DummyDecisionType? = null
-) : BaseAnalyticsProperties() {
-
-    companion object {
-
-        private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
-        private const val ISSUER_ID_FIELD = "issuerId"
-        private const val PAYMENT_METHOD_ID_FIELD = "paymentMethodId"
-        private const val URL_FIELD = "url"
-        private const val DECISION_FIELD = "decision"
-
-        @JvmField
-        val serializer = object : JSONSerializer<AnalyticsContext> {
-            override fun serialize(t: AnalyticsContext): JSONObject {
-                return JSONObject().apply {
-                    putOpt(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
-                    putOpt(ISSUER_ID_FIELD, t.issuerId)
-                    putOpt(PAYMENT_METHOD_ID_FIELD, t.paymentMethodId)
-                    putOpt(URL_FIELD, t.url)
-                    putOpt(DECISION_FIELD, t.decision?.name)
-                }
-            }
-        }
-
-        @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsContext> {
-            override fun deserialize(t: JSONObject): AnalyticsContext {
-                return AnalyticsContext(
-                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
-                    t.optNullableString(ISSUER_ID_FIELD),
-                    t.optNullableString(PAYMENT_METHOD_ID_FIELD),
-                    t.optNullableString(URL_FIELD),
-                    t.optNullableString(DECISION_FIELD)?.let { DummyDecisionType.valueOf(it) }
-                )
-            }
-        }
-    }
-}
-
 internal enum class AnalyticsAction {
-    CLICK, HOVER, VIEW, FOCUS, BLUR
+    CLICK, HOVER, VIEW, FOCUS, BLUR, PRESENT, DISMISS
 }
 
 internal enum class ObjectType {
-    BUTTON, LABEL, INPUT, IMAGE, ALERT, LOADER, LIST_ITEM, WEB_PAGE, VIEW,
+    BUTTON, LABEL, INPUT, IMAGE, ALERT, LOADER, LIST_ITEM, WEB_PAGE, VIEW, `3RD_PARTY_VIEW`
 }
 
 internal enum class ObjectId {

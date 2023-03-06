@@ -10,6 +10,7 @@ import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
@@ -294,7 +295,13 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             screenData,
             deviceId
         ),
-        MessageProperties(messageType, message, severity, diagnosticsId),
+        MessageProperties(
+            messageType,
+            message,
+            severity,
+            diagnosticsId,
+            context?.toAnalyticsContext()
+        ),
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,
@@ -325,20 +332,28 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
 }
 
 internal fun BaseContextParams.toAnalyticsContext() = when (this) {
-    is PaymentMethodContextParams -> AnalyticsContext(
+    is PaymentMethodContextParams -> PaymentMethodAnalyticsContext(
         paymentMethodType = paymentMethodType
     )
-    is BankIssuerContextParams -> AnalyticsContext(
+    is BankIssuerContextParams -> BankIssuerAnalyticsContext(
         issuerId = issuerId
     )
-    is PaymentInstrumentIdContextParams -> AnalyticsContext(
+    is PaymentInstrumentIdContextParams -> PaymentInstrumentIdAnalyticsContext(
         paymentMethodId = id
     )
-    is UrlContextParams -> AnalyticsContext(
+    is UrlContextParams -> UrlAnalyticsContext(
         url = url
     )
-    is DummyApmDecisionParams -> AnalyticsContext(
+    is DummyApmDecisionParams -> DummyApmAnalyticsContext(
         decision = decision
+    )
+    is ThreeDsFailureContextParams -> ThreeDsFailureAnalyticsContext(
+        description,
+        errorCode,
+        errorType,
+        component,
+        transactionId,
+        version
     )
     else -> throw IllegalStateException("Unsupported event params")
 }

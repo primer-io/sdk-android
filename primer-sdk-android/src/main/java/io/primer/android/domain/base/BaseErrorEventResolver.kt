@@ -21,7 +21,8 @@ internal abstract class BaseErrorEventResolver(
                 MessageType.ERROR,
                 error.description,
                 Severity.ERROR,
-                error.diagnosticsId
+                error.diagnosticsId,
+                error.context
             )
         )
         dispatch(error.exposedError)

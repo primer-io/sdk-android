@@ -1,5 +1,7 @@
 package io.primer.android.domain.error.models
 
+import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
+import io.primer.android.threeds.data.models.CardNetwork
 import java.util.UUID
 
 internal sealed class ThreeDsError : PrimerError() {
@@ -12,9 +14,20 @@ internal sealed class ThreeDsError : PrimerError() {
 
     class ThreeDsConfigurationError(val message: String) : ThreeDsError()
 
+    class ThreeDsMissingDirectoryServerIdError(val cardNetwork: CardNetwork) : ThreeDsError()
+
     class ThreeDsChallengeFailedError(
-        internal val reason: String?,
+        internal val errorCode: String?,
         internal val message: String?
+    ) : ThreeDsError() {
+        override val exposedError: PrimerError
+            get() = this
+    }
+
+    class ThreeDsChallengeProtocolFailedError(
+        internal val errorCode: String,
+        internal val message: String,
+        override val context: ThreeDsFailureContextParams
     ) : ThreeDsError() {
         override val exposedError: PrimerError
             get() = this
@@ -29,7 +42,9 @@ internal sealed class ThreeDsError : PrimerError() {
         get() = when (this) {
             is ThreeDsConfigurationError -> "3ds-invalid-configuration"
             is ThreeDsInitError -> "3ds-init-error"
-            is ThreeDsChallengeFailedError -> "3ds-challenge-failed"
+            is ThreeDsMissingDirectoryServerIdError -> "3ds-missing-directory-server-id"
+            is ThreeDsChallengeFailedError, is ThreeDsChallengeProtocolFailedError ->
+                "3ds-challenge-failed"
             is ThreeDsLibraryMissingError -> "missing-3ds-library"
             is ThreeDsLibraryVersionError -> "invalid-3ds-library-version"
             is ThreeDsUnknownError -> "3ds-unknown-error"
@@ -37,15 +52,21 @@ internal sealed class ThreeDsError : PrimerError() {
 
     override val description: String
         get() = when (this) {
-            is ThreeDsInitError -> "Cannot perform 3DS due to security reasons. $message"
+            is ThreeDsInitError -> "Primer3DS: Cannot perform 3DS due to security reasons. $message"
             is ThreeDsConfigurationError ->
-                "Cannot perform 3DS due to invalid configuration. $message"
-            is ThreeDsChallengeFailedError -> "3DS Challenge failed due to $reason. $message"
+                "Primer3DS: Cannot perform 3DS due to invalid configuration. $message"
+            is ThreeDsMissingDirectoryServerIdError ->
+                "Primer3DS: Cannot perform 3DS due to missing directory server for $cardNetwork"
+            is ThreeDsChallengeFailedError ->
+                "Primer3DS: 3DS Challenge failed due to [$errorCode]. $message"
+            is ThreeDsChallengeProtocolFailedError ->
+                "Primer3DS: 3DS Challenge failed due to [$errorCode]. $message"
             is ThreeDsLibraryMissingError ->
-                "Cannot perform 3DS due to missing library on classpath."
+                "Primer3DS: Cannot perform 3DS due to missing library on classpath."
             is ThreeDsLibraryVersionError ->
-                "Cannot perform 3DS due to library versions mismatch."
-            is ThreeDsUnknownError -> "An unknown error occurred while trying to perform 3DS."
+                "Primer3DS: Cannot perform 3DS due to library versions mismatch."
+            is ThreeDsUnknownError ->
+                "Primer3DS: An unknown error occurred while trying to perform 3DS."
         }
 
     override val diagnosticsId = UUID.randomUUID().toString()
@@ -67,7 +88,9 @@ internal sealed class ThreeDsError : PrimerError() {
             """.trimIndent()
             is ThreeDsConfigurationError,
             is ThreeDsChallengeFailedError,
+            is ThreeDsChallengeProtocolFailedError,
             is ThreeDsUnknownError,
+            is ThreeDsMissingDirectoryServerIdError
             -> "Contact Primer and provide us with diagnostics id $diagnosticsId"
         }
 }

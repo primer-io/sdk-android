@@ -69,7 +69,8 @@ internal data class MessageProperties(
     val messageType: MessageType,
     val message: String,
     val severity: Severity,
-    val diagnosticsId: String? = null
+    val diagnosticsId: String? = null,
+    val context: AnalyticsContext? = null
 ) : BaseAnalyticsProperties() {
     companion object {
 
@@ -77,6 +78,7 @@ internal data class MessageProperties(
         private const val MESSAGE_FIELD = "message"
         private const val SEVERITY_FIELD = "severity"
         private const val DIAGNOSTICS_ID_FIELD = "diagnosticsId"
+        private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
         val serializer = object : JSONSerializer<MessageProperties> {
@@ -86,6 +88,13 @@ internal data class MessageProperties(
                     put(MESSAGE_FIELD, t.message)
                     put(SEVERITY_FIELD, t.severity.name)
                     putOpt(DIAGNOSTICS_ID_FIELD, t.diagnosticsId)
+                    putOpt(
+                        ANALYTICS_CONTEXT_FIELD,
+                        t.context?.let {
+                            JSONSerializationUtils.getSerializer<AnalyticsContext>()
+                                .serialize(it)
+                        }
+                    )
                 }
             }
         }
@@ -97,7 +106,11 @@ internal data class MessageProperties(
                     MessageType.valueOf(t.getString(MESSAGE_TYPE_FIELD)),
                     t.getString(MESSAGE_FIELD),
                     Severity.valueOf(t.getString(SEVERITY_FIELD)),
-                    t.optNullableString(DIAGNOSTICS_ID_FIELD)
+                    t.optNullableString(DIAGNOSTICS_ID_FIELD),
+                    t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
+                        JSONSerializationUtils.getDeserializer<AnalyticsContext>()
+                            .deserialize(it)
+                    }
                 )
             }
         }

@@ -80,6 +80,7 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get()
             )
         }
