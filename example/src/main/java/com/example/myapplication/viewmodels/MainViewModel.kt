@@ -80,7 +80,9 @@ class MainViewModel(
 
     private val _clientToken = savedStateHandle.getLiveData<String?>("token")
     val clientToken: LiveData<String?> = _clientToken
-    fun setClientToken(token: String?) = _clientToken.postValue(token)
+    fun setClientToken(token: String?) = _clientToken.postValue(token.takeIf {
+        it.isNullOrBlank().not()
+    })
 
     private val _payAfterVaulting = MutableLiveData<Boolean>()
     val payAfterVaulting: LiveData<Boolean> = _payAfterVaulting

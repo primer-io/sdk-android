@@ -7,5 +7,6 @@ internal data class MessageAnalyticsParams(
     val messageType: MessageType,
     val message: String,
     val severity: Severity,
-    val diagnosticsId: String? = null
+    val diagnosticsId: String? = null,
+    val context: BaseContextParams? = null
 ) : BaseAnalyticsParams()

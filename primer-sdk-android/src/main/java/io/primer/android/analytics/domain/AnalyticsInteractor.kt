@@ -14,7 +14,7 @@ internal class AnalyticsInteractor(
     private val analyticsRepository: AnalyticsRepository,
     private val logger: Logger,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseFlowInteractor<Boolean, BaseAnalyticsParams>() {
+) : BaseFlowInteractor<Unit, BaseAnalyticsParams>() {
 
     fun initialize() = analyticsRepository.initialize().flowOn(dispatcher)
 

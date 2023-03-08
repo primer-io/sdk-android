@@ -85,13 +85,14 @@ internal class DefaultThreeDsInteractor(
             }
 
     override fun authenticateSdk() =
-        threeDsConfigurationRepository.getProtocolVersion().flatMapLatest { protocolVersion ->
+        threeDsConfigurationRepository.getPreAuthConfiguration().flatMapLatest { authParams ->
             threeDsServiceRepository.performProviderAuth(
                 CardNetwork.valueOf(
                     paymentMethodRepository.getPaymentMethod().paymentInstrumentData
                         ?.binData?.network.orEmpty().uppercase()
                 ),
-                protocolVersion
+                authParams.protocolVersion,
+                authParams.environment
             )
         }.flowOn(dispatcher)
             .doOnError {
@@ -123,10 +124,9 @@ internal class DefaultThreeDsInteractor(
             transaction,
             authResponse,
             threeDsAppUrlRepository.getAppUrl(transaction)
-        )
-            .doOnError {
-                handleErrorEvent(it)
-            }
+        ).doOnError {
+            handleErrorEvent(it)
+        }
 
     override fun continueRemoteAuth(sdkTokenId: String) =
         threeDsRepository.continue3DSAuth(sdkTokenId)

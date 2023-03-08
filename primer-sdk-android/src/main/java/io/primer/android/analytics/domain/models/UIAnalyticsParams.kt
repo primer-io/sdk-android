@@ -26,3 +26,12 @@ internal data class PaymentInstrumentIdContextParams(val id: String) : BaseConte
 internal data class UrlContextParams(val url: String) : BaseContextParams()
 
 internal data class DummyApmDecisionParams(val decision: DummyDecisionType) : BaseContextParams()
+
+internal data class ThreeDsFailureContextParams(
+    val description: String,
+    val errorCode: String,
+    val errorType: String,
+    val component: String,
+    val transactionId: String,
+    val version: String
+) : BaseContextParams()

@@ -31,6 +31,7 @@ import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.models.ChallengeStatusData
+import io.primer.android.threeds.domain.models.ThreeDsAuthParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
@@ -266,10 +267,13 @@ internal class ThreeDsInteractorTest {
     @Test
     fun `performProviderAuth() should return transaction when repository performProviderAuth() was success`() {
         val transactionMock = mockk<Transaction>(relaxed = true)
-        every { threeDsConfigurationRepository.getProtocolVersion() }.returns(
-            flowOf(ProtocolVersion.V_210)
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersion }.returns(ProtocolVersion.V_210)
+
+        every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
         )
-        coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }.returns(
             flowOf(transactionMock)
         )
         runTest {
@@ -277,7 +281,7 @@ internal class ThreeDsInteractorTest {
             assertEquals(transactionMock, transaction)
         }
 
-        coVerify { threeDsServiceRepository.performProviderAuth(any(), any()) }
+        coVerify { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }
     }
 
     @Test
@@ -285,10 +289,13 @@ internal class ThreeDsInteractorTest {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to perform provider auth.")
 
-        every { threeDsConfigurationRepository.getProtocolVersion() }.returns(
-            flowOf(ProtocolVersion.V_210)
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersion }.returns(ProtocolVersion.V_210)
+
+        every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
         )
-        coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }.returns(
             flow {
                 throw exception
             }
@@ -302,7 +309,7 @@ internal class ThreeDsInteractorTest {
             }
         }
 
-        coVerify { threeDsServiceRepository.performProviderAuth(any(), any()) }
+        coVerify { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }
         verify { postTokenizationEventResolver.resolve(capture(token)) }
 
         assertNotNull(token.captured.threeDSecureAuthentication)
@@ -315,10 +322,13 @@ internal class ThreeDsInteractorTest {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to perform provider auth.")
 
-        every { threeDsConfigurationRepository.getProtocolVersion() }.returns(
-            flowOf(ProtocolVersion.V_210)
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersion }.returns(ProtocolVersion.V_210)
+
+        every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
         )
-        coEvery { threeDsServiceRepository.performProviderAuth(any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }.returns(
             flow {
                 throw exception
             }

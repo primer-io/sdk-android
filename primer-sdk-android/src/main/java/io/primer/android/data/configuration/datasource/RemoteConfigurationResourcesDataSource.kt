@@ -1,10 +1,10 @@
 package io.primer.android.data.configuration.datasource
 
 import io.primer.android.analytics.data.helper.TimerEventProvider
-import io.primer.android.analytics.data.models.AnalyticsContext
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerProperties
 import io.primer.android.analytics.data.models.TimerType
+import io.primer.android.analytics.data.models.UrlAnalyticsContext
 import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.data.base.datasource.BaseFlowDataSource
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
@@ -145,7 +145,7 @@ internal class RemoteConfigurationResourcesDataSource(
         TimerProperties(
             TimerId.PM_IMAGE_LOADING_DURATION,
             timerType,
-            AnalyticsContext(
+            UrlAnalyticsContext(
                 paymentMethodType = paymentMethodType,
                 url = iconUrl
             )

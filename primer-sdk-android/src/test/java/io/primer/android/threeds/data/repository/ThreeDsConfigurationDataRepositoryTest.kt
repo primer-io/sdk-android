@@ -73,18 +73,19 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     }
 
     @Test
-    fun `getProtocolVersion should return V_210 when environment is PRODUCTION`() {
+    fun `getPreAuthConfiguration should return V_210 when environment is PRODUCTION`() {
         val configurationData = mockk<ConfigurationData>(relaxed = true)
         every { configurationData.environment }.returns(Environment.PRODUCTION)
         coEvery { configurationDataSource.get() }.returns(flowOf(configurationData))
 
         runTest {
-            val protocolVersion = repository.getProtocolVersion().first()
-            assertEquals(ProtocolVersion.V_210, protocolVersion)
+            val preAuthConfiguration = repository.getPreAuthConfiguration().first()
+            assertEquals(ProtocolVersion.V_210, preAuthConfiguration.protocolVersion)
+            assertEquals(Environment.PRODUCTION, preAuthConfiguration.environment)
         }
 
         coVerify { configurationDataSource.get() }
-        coVerify { repository.getProtocolVersion() }
+        coVerify { repository.getPreAuthConfiguration() }
     }
 
     @Test
@@ -94,12 +95,13 @@ internal class ThreeDsConfigurationDataRepositoryTest {
         coEvery { configurationDataSource.get() }.returns(flowOf(configurationData))
 
         runTest {
-            val protocolVersion = repository.getProtocolVersion().first()
-            assertEquals(ProtocolVersion.V_220, protocolVersion)
+            val preAuthConfiguration = repository.getPreAuthConfiguration().first()
+            assertEquals(ProtocolVersion.V_220, preAuthConfiguration.protocolVersion)
+            assertEquals(Environment.SANDBOX, preAuthConfiguration.environment)
         }
 
         coVerify { configurationDataSource.get() }
-        coVerify { repository.getProtocolVersion() }
+        coVerify { repository.getPreAuthConfiguration() }
     }
 
     @Test
@@ -109,12 +111,13 @@ internal class ThreeDsConfigurationDataRepositoryTest {
         coEvery { configurationDataSource.get() }.returns(flowOf(configurationData))
 
         runTest {
-            val protocolVersion = repository.getProtocolVersion().first()
-            assertEquals(ProtocolVersion.V_220, protocolVersion)
+            val preAuthConfiguration = repository.getPreAuthConfiguration().first()
+            assertEquals(ProtocolVersion.V_220, preAuthConfiguration.protocolVersion)
+            assertEquals(Environment.STAGING, preAuthConfiguration.environment)
         }
 
         coVerify { configurationDataSource.get() }
-        coVerify { repository.getProtocolVersion() }
+        coVerify { repository.getPreAuthConfiguration() }
     }
 
     @Test
@@ -124,11 +127,12 @@ internal class ThreeDsConfigurationDataRepositoryTest {
         coEvery { configurationDataSource.get() }.returns(flowOf(configurationData))
 
         runTest {
-            val protocolVersion = repository.getProtocolVersion().first()
-            assertEquals(ProtocolVersion.V_220, protocolVersion)
+            val preAuthConfiguration = repository.getPreAuthConfiguration().first()
+            assertEquals(ProtocolVersion.V_220, preAuthConfiguration.protocolVersion)
+            assertEquals(Environment.DEV, preAuthConfiguration.environment)
         }
 
         coVerify { configurationDataSource.get() }
-        coVerify { repository.getProtocolVersion() }
+        coVerify { repository.getPreAuthConfiguration() }
     }
 }

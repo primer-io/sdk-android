@@ -13,8 +13,10 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.data.configuration.models.Environment
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.threeds.data.exception.ThreeDsInitException
+import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.helpers.ProtocolVersion
@@ -130,13 +132,15 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should return Transaction object`() {
         val cardNetwork = mockk<CardNetwork>(relaxed = true)
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         val transactionMock = mockk<Transaction>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
-            val transaction = repository.performProviderAuth(cardNetwork, protocolVersion).first()
+            val transaction =
+                repository.performProviderAuth(cardNetwork, protocolVersion, environment).first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -147,12 +151,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-VISA for CardNetwork-VISA`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.VISA, protocolVersion).first()
+                repository.performProviderAuth(CardNetwork.VISA, protocolVersion, environment)
+                    .first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -166,12 +172,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-MASTERCARD for CardNetwork-MASTERCARD`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.MASTERCARD, protocolVersion).first()
+                repository.performProviderAuth(CardNetwork.MASTERCARD, protocolVersion, environment)
+                    .first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -185,12 +193,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-AMEX for CardNetwork-AMEX`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.AMEX, protocolVersion).first()
+                repository.performProviderAuth(CardNetwork.AMEX, protocolVersion, environment)
+                    .first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -204,12 +214,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-JCB for CardNetwork-JCB`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.JCB, protocolVersion).first()
+                repository.performProviderAuth(CardNetwork.JCB, protocolVersion, environment)
+                    .first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -223,12 +235,17 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-DINERS for CardNetwork-DINERS_CLUB`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.DINERS_CLUB, protocolVersion).first()
+                repository.performProviderAuth(
+                    CardNetwork.DINERS_CLUB,
+                    protocolVersion,
+                    environment
+                ).first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -242,12 +259,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-DINERS for CardNetwork-DISCOVER`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.DISCOVER, protocolVersion).first()
+                repository.performProviderAuth(CardNetwork.DISCOVER, protocolVersion, environment)
+                    .first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -261,12 +280,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `performProviderAuth should select directory server DsRidValues-UNION for CardNetwork-UNIONPAY`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
         runTest {
             val transaction =
-                repository.performProviderAuth(CardNetwork.UNIONPAY, protocolVersion).first()
+                repository.performProviderAuth(CardNetwork.UNIONPAY, protocolVersion, environment)
+                    .first()
             assertEquals(transactionMock, transaction)
         }
 
@@ -277,7 +298,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     }
 
     @Test
-    fun `performProviderAuth should select directory server TEST_SCHEME_ID for any other card network`() {
+    fun `performProviderAuth should select directory server TEST_SCHEME_ID for any other card network if environment is SANDBOX`() {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
 
@@ -287,7 +308,8 @@ internal class NetceteraThreeDsServiceRepositoryTest {
             val transaction =
                 repository.performProviderAuth(
                     CardNetwork.OTHER,
-                    protocolVersion
+                    protocolVersion,
+                    Environment.SANDBOX
                 ).first()
             assertEquals(transactionMock, transaction)
         }
@@ -296,6 +318,24 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
 
         assertEquals(NetceteraThreeDsServiceRepository.TEST_SCHEME_ID, cardNetwork.captured)
+    }
+
+    @Test
+    fun `performProviderAuth should throw ThreeDsMissingDirectoryServerException for any other card network if environment is PRODUCTION`() {
+        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
+        val transactionMock = mockk<Transaction>(relaxed = true)
+
+        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
+
+        assertThrows<ThreeDsMissingDirectoryServerException>() {
+            runTest {
+                repository.performProviderAuth(
+                    CardNetwork.OTHER,
+                    protocolVersion,
+                    Environment.PRODUCTION
+                ).first()
+            }
+        }
     }
 
     @Test

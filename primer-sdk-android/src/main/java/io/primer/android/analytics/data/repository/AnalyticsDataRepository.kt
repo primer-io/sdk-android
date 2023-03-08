@@ -81,9 +81,9 @@ internal class AnalyticsDataRepository(
         }.onEach { fileAnalyticsDataSource.update(localAnalyticsDataSource.get()) }
         .mapLatest { }
 
-    override fun addEvent(params: BaseAnalyticsParams): Boolean {
+    override fun addEvent(params: BaseAnalyticsParams) {
         val configuration = localConfigurationDataSource.getConfigurationNullable()
-        return localAnalyticsDataSource.addEvent(
+        localAnalyticsDataSource.addEvent(
             params.toAnalyticsEvent(
                 batteryLevelDataSource.get(),
                 batteryStatusDataSource.get(),
@@ -100,6 +100,7 @@ internal class AnalyticsDataRepository(
                 localClientTokenDataSource.get().analyticsUrlV2
             )
         )
+        fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
     }
 
     override fun send() = analyticsDataSender.sendEvents(localAnalyticsDataSource.get())

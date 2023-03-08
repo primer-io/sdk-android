@@ -82,7 +82,6 @@ class MerchantCheckoutFragment : Fragment() {
             binding.vaultButton.isVisible = token != null
 
             binding.checkoutButton.isVisible = token != null
-
             if (token != null) {
                 initializeCheckout()
                 fetchSavedPaymentMethods()

@@ -3,6 +3,8 @@ package io.primer.android.threeds.domain.respository
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
+import io.primer.android.data.configuration.models.Environment
+import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
 import io.primer.android.threeds.data.models.BeginAuthResponse
 import io.primer.android.threeds.data.models.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData
@@ -20,9 +22,11 @@ internal interface ThreeDsServiceRepository {
         threeDsKeysParams: ThreeDsKeysParams?,
     ): Flow<Unit>
 
+    @Throws(ThreeDsMissingDirectoryServerException::class)
     fun performProviderAuth(
         cardNetwork: CardNetwork,
         protocolVersion: ProtocolVersion,
+        environment: Environment
     ): Flow<Transaction>
 
     fun performChallenge(
