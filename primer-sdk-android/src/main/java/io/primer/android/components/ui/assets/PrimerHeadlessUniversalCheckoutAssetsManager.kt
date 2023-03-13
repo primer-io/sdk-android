@@ -6,15 +6,13 @@ import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.presentation.assets.DefaultAssetsHeadlessDelegate
 import io.primer.android.di.DIAppComponent
 import io.primer.android.ui.CardNetwork
-import org.koin.core.component.inject
+import org.koin.core.component.get
 
 class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIAppComponent {
 
-    private val delegate: DefaultAssetsHeadlessDelegate by inject()
-
     @Throws(SdkUninitializedException::class)
     internal fun getPaymentMethodAssets(context: Context): List<PrimerPaymentMethodAsset> {
-        return delegate.getCurrentPaymentMethods().map {
+        return getAssetsDelegate().getCurrentPaymentMethods().map {
             getPaymentMethodAsset(context, it)
         }
     }
@@ -24,6 +22,7 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
         context: Context,
         paymentMethodType: String
     ): PrimerPaymentMethodAsset {
+        val delegate = getAssetsDelegate()
         return PrimerPaymentMethodAsset(
             paymentMethodType,
             PrimerPaymentMethodLogo(
@@ -55,8 +54,10 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
     internal fun getCardNetworkImage(
         cardNetwork: CardNetwork.Type,
     ): Int {
-        return delegate.getCardNetworkImage(cardNetwork)
+        return getAssetsDelegate().getCardNetworkImage(cardNetwork)
     }
+
+    private fun getAssetsDelegate(): DefaultAssetsHeadlessDelegate = get()
 
     companion object {
 

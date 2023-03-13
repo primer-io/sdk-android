@@ -50,7 +50,14 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity() {
         subscription = EventBus.subscribe {
             when (it) {
                 is CheckoutEvent.AsyncFlowRedirect -> {
-                    setResult(RESULT_OK, intent)
+                    when (
+                        it.uri?.pathSegments?.contains(
+                            AsyncPaymentMethodWebViewClient.CANCEL_STATE_QUERY_PARAM
+                        )
+                    ) {
+                        true -> setResult(RESULT_CANCELED)
+                        else -> setResult(RESULT_OK)
+                    }
                     finish()
                 }
                 is CheckoutEvent.AsyncFlowPollingError -> {

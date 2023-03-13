@@ -44,7 +44,7 @@ internal class ExpiryDateFormatter(
         }
 
         val now = getDate()
-        val maxMonth = month.replace("0", "").toInt() - 1
+        val maxMonth = month.toInt() - 1
         val maxYear = getYear(now).toInt()
         val max = getDate(maxMonth, maxYear)
 

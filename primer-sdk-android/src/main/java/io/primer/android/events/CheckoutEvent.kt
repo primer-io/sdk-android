@@ -1,6 +1,7 @@
 package io.primer.android.events
 
 import io.primer.android.PrimerSessionIntent
+import android.net.Uri
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerHeadlessUniversalCheckoutResumeDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
@@ -183,7 +184,8 @@ internal sealed class CheckoutEvent(
         val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
 
-    object AsyncFlowRedirect : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_REDIRECT)
+    data class AsyncFlowRedirect(val uri: Uri?) :
+        CheckoutEvent(CheckoutEventType.ASYNC_FLOW_REDIRECT)
 
     object AsyncFlowPollingError : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_POLLING_ERROR)
 
