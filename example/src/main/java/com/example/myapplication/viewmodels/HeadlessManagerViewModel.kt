@@ -27,6 +27,7 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import okhttp3.OkHttpClient
@@ -59,6 +60,10 @@ class HeadlessManagerViewModel(
 
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> = _uiState
+    fun resetUiState() {
+        _uiState.value = UiState.InitializedHeadless
+    }
+
     private val _paymentMethodsLoaded =
         MutableLiveData<List<PrimerHeadlessUniversalCheckoutPaymentMethod>>()
     val paymentMethodsLoaded: LiveData<List<PrimerHeadlessUniversalCheckoutPaymentMethod>> =
@@ -155,11 +160,11 @@ class HeadlessManagerViewModel(
 
     override fun onAvailablePaymentMethodsLoaded(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
         _uiState.postValue(UiState.InitializedHeadless)
-        _paymentMethodsLoaded.postValue(paymentMethods)
+        _paymentMethodsLoaded.value = paymentMethods
     }
 
     override fun onTokenizationStarted(paymentMethodType: String) {
-        _uiState.postValue(UiState.TokenizationStarted(paymentMethodType))
+        _uiState.value = UiState.TokenizationStarted(paymentMethodType)
     }
 
     override fun onTokenizeSuccess(
@@ -180,12 +185,12 @@ class HeadlessManagerViewModel(
 
     override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo) {
         super.onResumePending(additionalInfo)
-        _uiState.postValue(UiState.ResumePendingReceived(additionalInfo))
+        _uiState.value = UiState.ResumePendingReceived(additionalInfo)
     }
 
     override fun onCheckoutAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
         super.onCheckoutAdditionalInfoReceived(additionalInfo)
-        _uiState.postValue(UiState.AdditionalInfoReceived(additionalInfo))
+        _uiState.value = UiState.AdditionalInfoReceived(additionalInfo)
     }
 
     override fun onBeforePaymentCreated(
@@ -193,37 +198,39 @@ class HeadlessManagerViewModel(
         createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) {
         super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
-        _uiState.postValue(UiState.BeforePaymentCreateReceived(paymentMethodData))
+        _uiState.value = UiState.BeforePaymentCreateReceived(paymentMethodData)
     }
 
     override fun onFailed(error: PrimerError) {
-        _uiState.postValue(UiState.ShowError(error))
+        _uiState.value = UiState.ShowError(null, error)
     }
 
     override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
-        _uiState.postValue(UiState.ShowError(error))
+        _uiState.value = UiState.ShowError(checkoutData?.payment, error)
     }
 
     override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
-        _uiState.postValue(UiState.CheckoutCompleted(checkoutData))
+        _uiState.value = UiState.CheckoutCompleted(checkoutData)
     }
 
     override fun onBeforeClientSessionUpdated() {
         super.onBeforeClientSessionUpdated()
         Log.d(TAG, "onBeforeClientSessionUpdated")
+        _uiState.value = UiState.BeforeClientSessionUpdateReceived
     }
 
     override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
         super.onClientSessionUpdated(clientSession)
         Log.d(TAG, "onClientSessionUpdated")
+        _uiState.value = UiState.ClientSessionUpdatedReceived
     }
 
     override fun onPreparationStarted(paymentMethodType: String) {
-        _uiState.postValue(UiState.PreparationStarted(paymentMethodType))
+        _uiState.value = UiState.PreparationStarted(paymentMethodType)
     }
 
     override fun onPaymentMethodShowed(paymentMethodType: String) {
-        _uiState.postValue(UiState.PaymentMethodShowed(paymentMethodType))
+        _uiState.value = UiState.PaymentMethodShowed(paymentMethodType)
     }
 
     override fun onCleared() {
@@ -239,7 +246,7 @@ class HeadlessManagerViewModel(
 
 sealed class UiState {
     object InitializingHeadless : UiState()
-    object InitializedHeadless: UiState()
+    object InitializedHeadless : UiState()
     data class TokenizationStarted(val paymentMethodType: String) : UiState()
     data class PreparationStarted(val paymentMethodType: String) : UiState()
     data class PaymentMethodShowed(val paymentMethodType: String) : UiState()
@@ -258,6 +265,9 @@ sealed class UiState {
     data class BeforePaymentCreateReceived(val paymentMethodData: PrimerPaymentMethodData) :
         UiState()
 
-    data class ShowError(val error: PrimerError) : UiState()
+    object BeforeClientSessionUpdateReceived : UiState()
+    object ClientSessionUpdatedReceived : UiState()
+
+    data class ShowError(val payment: Payment?, val error: PrimerError) : UiState()
     data class CheckoutCompleted(val checkoutData: PrimerCheckoutData) : UiState()
 }

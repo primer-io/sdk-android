@@ -6,7 +6,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payment.apaya.ApayaFactory
 import io.primer.android.payment.async.AsyncMethodFactory
-import io.primer.android.payment.async.ipay88.IPay88CreditCardFactory
+import io.primer.android.payment.async.ipay88.IPay88PaymentMethodFactory
 import io.primer.android.payment.card.CardFactory
 import io.primer.android.payment.google.GooglePayFactory
 import io.primer.android.payment.klarna.KlarnaFactory
@@ -38,7 +38,6 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                     PaymentMethodType.PRIMER_TEST_PAYPAL,
                     PaymentMethodType.PAYPAL -> PayPalFactory(settings, type).build()
                     PaymentMethodType.APAYA -> ApayaFactory(settings).build()
-                    PaymentMethodType.IPAY88_CARD -> IPay88CreditCardFactory(type, settings).build()
                     PaymentMethodType.PRIMER_TEST_SOFORT,
                     PaymentMethodType.ADYEN_IDEAL,
                     PaymentMethodType.ADYEN_DOTPAY,
@@ -67,6 +66,8 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                     type,
                     settings
                 ).build()
+            PaymentMethodImplementationType.IPAY88_SDK ->
+                IPay88PaymentMethodFactory(type, settings).build()
             PaymentMethodImplementationType.UNKNOWN -> Failure(
                 Exception(
                     "Unknown payment method implementation $implementationType," +

@@ -86,6 +86,7 @@ internal class IPay88ActivityLauncherParams(
     val iPayPaymentId: String,
     val iPayMethod: Int,
     val merchantCode: String,
+    val actionType: String?,
     val amount: String,
     val referenceNumber: String,
     val prodDesc: String,
@@ -93,9 +94,18 @@ internal class IPay88ActivityLauncherParams(
     val countryCode: String?,
     val customerName: String?,
     val customerEmail: String?,
+    val remark: String?,
     val backendCallbackUrl: String,
     val deeplinkUrl: String,
     val errorCode: Int,
     override val paymentMethodType: String,
     override val sessionIntent: PrimerSessionIntent
 ) : PaymentMethodRedirectLauncherParams(paymentMethodType, sessionIntent)
+
+internal data class IPay88MockActivityLauncherParams(
+    val errorCode: Int,
+    override val sessionIntent: PrimerSessionIntent
+) : PaymentMethodRedirectLauncherParams(
+    PaymentMethodType.IPAY88_CARD.name,
+    sessionIntent,
+)

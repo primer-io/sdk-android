@@ -17,7 +17,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-private const val RESUME_HANDLER_LOGGER_NAME = "RESUME_HANDLER"
+internal const val RESUME_HANDLER_LOGGER_NAME = "RESUME_HANDLER"
 
 internal val tokenizationModule = {
     module {
@@ -47,7 +47,7 @@ internal val tokenizationModule = {
                 get(),
                 get(),
                 get(),
-                get()
+                get(),
             )
         }
 

@@ -1,5 +1,6 @@
 package io.primer.android.data.error
 
+import io.primer.android.data.base.exceptions.IllegalClientSessionValueException
 import io.primer.android.data.base.exceptions.IllegalValueException
 import io.primer.android.data.configuration.exception.MissingConfigurationException
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
@@ -56,6 +57,12 @@ internal open class DefaultErrorMapper : ErrorMapper {
             is MissingConfigurationException -> GeneralError.MissingConfigurationError
             is IllegalValueException -> GeneralError.InvalidValueError(
                 throwable.key,
+                throwable.message
+            )
+            is IllegalClientSessionValueException -> GeneralError.InvalidClientSessionValueError(
+                throwable.key,
+                throwable.value,
+                throwable.allowedValue,
                 throwable.message
             )
             else -> GeneralError.UnknownError(throwable.message.orEmpty())

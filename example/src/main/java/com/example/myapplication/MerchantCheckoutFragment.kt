@@ -15,9 +15,10 @@ import com.example.myapplication.constants.PrimerDropInCallbacks
 import com.example.myapplication.databinding.FragmentUniversalCheckoutBinding
 import com.example.myapplication.datamodels.CheckoutDataWithError
 import com.example.myapplication.datamodels.TransactionState
+import com.example.myapplication.datamodels.toMappedError
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.MainViewModel.Mode
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.xwray.groupie.GroupieAdapter
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
@@ -131,7 +132,8 @@ class MerchantCheckoutFragment : Fragment() {
             errorHandler: PrimerErrorDecisionHandler?
         ) {
             callbacks.add(PrimerDropInCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
-            checkoutDataWithError = CheckoutDataWithError(checkoutData?.payment, error)
+            checkoutDataWithError =
+                CheckoutDataWithError(checkoutData?.payment, error.toMappedError())
             errorHandler?.showErrorMessage(
                 "SDK error id: ${error.errorId}, description: ${error.description}"
             )
@@ -216,7 +218,8 @@ class MerchantCheckoutFragment : Fragment() {
                     )
                     putString(
                         MerchantResultFragment.PAYMENT_RESPONSE_KEY,
-                        Gson().toJson(checkoutDataWithError)
+                        GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+                            .toJson(checkoutDataWithError)
                     )
                 })
             viewModel.clientToken.value?.let { _ -> fetchSavedPaymentMethods() }

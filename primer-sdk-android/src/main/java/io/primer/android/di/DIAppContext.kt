@@ -37,6 +37,8 @@ internal object DIAppContext {
                 NetworkModule(),
                 imageLoaderModule(),
                 PaymentsModule(),
+                iPay88Module(),
+                paymentMethodMockModule(),
                 analyticsModule(),
                 componentsModule(),
                 errorResolverModule()

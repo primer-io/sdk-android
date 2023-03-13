@@ -126,7 +126,7 @@ internal data class ClientSessionDataResponse(
         )
     )
 
-    fun toClientSession() = ClientSession(paymentMethod)
+    fun toClientSession() = ClientSession(this)
 
     companion object {
         private const val CLIENT_SESSION_ID_FIELD = "clientSessionId"

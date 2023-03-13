@@ -6,6 +6,7 @@ import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
 import io.primer.android.analytics.domain.models.DummyApmDecisionParams
+import io.primer.android.analytics.domain.models.IPay88PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
@@ -362,6 +363,11 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
     is DummyApmDecisionParams -> DummyApmAnalyticsContext(
         decision = decision
     )
+    is IPay88PaymentMethodContextParams -> IPay88AnalyticsContext(
+        paymentMethodType = paymentMethodType,
+        iPay88PaymentMethodId = iPay88PaymentMethodId,
+        iPay88ActionType = iPay88ActionType
+    )
     is ThreeDsFailureContextParams -> ThreeDsFailureAnalyticsContext(
         description,
         errorCode,
@@ -370,5 +376,4 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
         transactionId,
         version
     )
-    else -> throw IllegalStateException("Unsupported event params")
 }

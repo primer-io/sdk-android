@@ -7,7 +7,7 @@
     <string name="loading">Loading...</string>
     <string name="tokenize">Tokenize</string>
 
-    <string name="huc_ui">HUC (UI)</string>
+    <string name="huc_ui">Headless SDK</string>
     <string name="huc_raw">HUC (RAW)</string>
 
     <string name="previous">Previous</string>

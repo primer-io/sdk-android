@@ -16,6 +16,7 @@ internal sealed class AnalyticsContext(
         BANK_ISSUER,
         DUMMY_APM,
         PAYMENT_METHOD_ID,
+        IPAY88,
         THREE_DS_FAILURE
     }
 
@@ -51,6 +52,10 @@ internal sealed class AnalyticsContext(
                         ThreeDsFailureAnalyticsContext.serializer.serialize(
                             t as ThreeDsFailureAnalyticsContext
                         )
+                    AnalyticsContextType.IPAY88 ->
+                        IPay88AnalyticsContext.serializer.serialize(
+                            t as IPay88AnalyticsContext
+                        )
                 }
             }
         }
@@ -74,6 +79,8 @@ internal sealed class AnalyticsContext(
                         PaymentInstrumentIdAnalyticsContext.deserializer.deserialize(t)
                     AnalyticsContextType.THREE_DS_FAILURE ->
                         ThreeDsFailureAnalyticsContext.deserializer.deserialize(t)
+                    AnalyticsContextType.IPAY88 ->
+                        IPay88AnalyticsContext.deserializer.deserialize(t)
                 }
             }
         }
@@ -217,6 +224,43 @@ internal data class PaymentInstrumentIdAnalyticsContext(val paymentMethodId: Str
             override fun deserialize(t: JSONObject): PaymentInstrumentIdAnalyticsContext {
                 return PaymentInstrumentIdAnalyticsContext(
                     t.optString(PAYMENT_METHOD_ID_FIELD)
+                )
+            }
+        }
+    }
+}
+
+internal data class IPay88AnalyticsContext(
+    val iPay88PaymentMethodId: String,
+    val iPay88ActionType: String,
+    val paymentMethodType: String
+) : AnalyticsContext(AnalyticsContextType.IPAY88) {
+
+    companion object {
+
+        private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
+        private const val IPAY88_PAYMENT_METHOD_ID_FIELD = "iPay88PaymentMethodId"
+        private const val IPAY88_ACTION_TYPE_FIELD = "iPay88ActionType"
+
+        @JvmField
+        val serializer = object : JSONSerializer<IPay88AnalyticsContext> {
+            override fun serialize(t: IPay88AnalyticsContext): JSONObject {
+                return JSONObject().apply {
+                    put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
+                    put(IPAY88_PAYMENT_METHOD_ID_FIELD, t.iPay88PaymentMethodId)
+                    put(IPAY88_ACTION_TYPE_FIELD, t.iPay88ActionType)
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
+                }
+            }
+        }
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<IPay88AnalyticsContext> {
+            override fun deserialize(t: JSONObject): IPay88AnalyticsContext {
+                return IPay88AnalyticsContext(
+                    t.getString(PAYMENT_METHOD_TYPE_FIELD),
+                    t.getString(IPAY88_PAYMENT_METHOD_ID_FIELD),
+                    t.getString(IPAY88_ACTION_TYPE_FIELD),
                 )
             }
         }

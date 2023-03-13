@@ -5,7 +5,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
-import io.primer.android.domain.mock.repository.ConfigurationMockRepository
+import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -23,7 +23,7 @@ internal class ResumeHandlerFactory(
     private val paymentMethodRepository: PaymentMethodRepository,
     private val paymentResultRepository: PaymentResultRepository,
     private val analyticsRepository: AnalyticsRepository,
-    private val configurationMockRepository: ConfigurationMockRepository,
+    private val mockConfigurationRepository: MockConfigurationRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
     private val errorEventResolver: BaseErrorEventResolver,
@@ -35,54 +35,63 @@ internal class ResumeHandlerFactory(
     private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
 ) {
 
-    fun getResumeHandler(paymentInstrumentType: String): PrimerResumeDecisionHandler {
-        return when (paymentInstrumentType) {
-            CARD_INSTRUMENT_TYPE,
-            PaymentMethodType.GOOGLE_PAY.name -> ThreeDsPrimerResumeDecisionHandler(
-                validationTokenRepository,
-                clientTokenRepository,
-                paymentMethodRepository,
-                paymentResultRepository,
-                analyticsRepository,
-                configurationMockRepository,
-                threeDsSdkClassValidator,
-                threeDsLibraryVersionValidator,
-                errorEventResolver,
-                eventDispatcher,
-                logger,
-                config,
-                paymentMethodDescriptorsRepository,
-                retailerOutletRepository
-            )
-            ASYNC_PAYMENT_METHOD,
-            CARD_ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
-                validationTokenRepository,
-                clientTokenRepository,
-                paymentMethodRepository,
-                paymentResultRepository,
-                analyticsRepository,
-                errorEventResolver,
-                eventDispatcher,
-                logger,
-                config,
-                paymentMethodDescriptorsRepository,
-                retailerOutletRepository,
-                asyncPaymentMethodDeeplinkRepository
-            )
-            else -> DefaultPrimerResumeDecisionHandler(
-                validationTokenRepository,
-                clientTokenRepository,
-                paymentMethodRepository,
-                paymentResultRepository,
-                analyticsRepository,
-                errorEventResolver,
-                eventDispatcher,
-                logger,
-                config,
-                paymentMethodDescriptorsRepository,
-                retailerOutletRepository
-            )
-        }
+    fun getResumeHandler(
+        paymentInstrumentType: String,
+    ): PrimerResumeDecisionHandler {
+        return paymentMethodDescriptorsRepository.getPaymentMethodDescriptors()
+            .firstOrNull { descriptor
+                ->
+                descriptor.config.type ==
+                    paymentMethodRepository.getPaymentMethod().paymentMethodType
+            }
+            ?.resumeHandler
+            ?: when (paymentInstrumentType) {
+                CARD_INSTRUMENT_TYPE,
+                PaymentMethodType.GOOGLE_PAY.name -> ThreeDsPrimerResumeDecisionHandler(
+                    validationTokenRepository,
+                    clientTokenRepository,
+                    paymentMethodRepository,
+                    paymentResultRepository,
+                    analyticsRepository,
+                    mockConfigurationRepository,
+                    threeDsSdkClassValidator,
+                    threeDsLibraryVersionValidator,
+                    errorEventResolver,
+                    eventDispatcher,
+                    logger,
+                    config,
+                    paymentMethodDescriptorsRepository,
+                    retailerOutletRepository
+                )
+                ASYNC_PAYMENT_METHOD,
+                CARD_ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
+                    validationTokenRepository,
+                    clientTokenRepository,
+                    paymentMethodRepository,
+                    paymentResultRepository,
+                    analyticsRepository,
+                    errorEventResolver,
+                    eventDispatcher,
+                    logger,
+                    config,
+                    paymentMethodDescriptorsRepository,
+                    retailerOutletRepository,
+                    asyncPaymentMethodDeeplinkRepository,
+                )
+                else -> DefaultPrimerResumeDecisionHandler(
+                    validationTokenRepository,
+                    clientTokenRepository,
+                    paymentMethodRepository,
+                    paymentResultRepository,
+                    analyticsRepository,
+                    errorEventResolver,
+                    eventDispatcher,
+                    logger,
+                    config,
+                    paymentMethodDescriptorsRepository,
+                    retailerOutletRepository
+                )
+            }
     }
 
     private companion object {

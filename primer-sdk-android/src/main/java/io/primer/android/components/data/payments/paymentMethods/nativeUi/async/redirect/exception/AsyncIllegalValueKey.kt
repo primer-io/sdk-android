@@ -2,8 +2,6 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.async
 
 import io.primer.android.data.base.exceptions.IllegalValueKey
 
-internal enum class AsyncIllegalValueKey : IllegalValueKey {
-    PAYMENT_METHOD_CONFIG_ID;
-
-    override val key = this.name
+internal enum class AsyncIllegalValueKey(override val key: String) : IllegalValueKey {
+    PAYMENT_METHOD_CONFIG_ID("configuration.id");
 }

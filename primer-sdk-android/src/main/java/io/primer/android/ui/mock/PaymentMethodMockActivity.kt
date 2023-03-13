@@ -10,15 +10,19 @@ import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.klarna.NativeKlarnaActivity
+import io.primer.android.presentation.mock.PaymentMethodMockViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.inject
 import java.util.UUID
+
 /**
  * An Activity used to only simulate 3rd party SDKs during UI tests.
  * Should never be called in production code.
-**/
+ **/
 internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
 
     private val eventResolver: ResumeEventResolver by inject()
+    private val viewModel: PaymentMethodMockViewModel by viewModel()
 
     private val paymentMethodType by lazy {
         intent.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
@@ -30,6 +34,7 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
 
         setupViews()
         setupListeners()
+        setupObservers()
     }
 
     private fun setupViews() {
@@ -49,12 +54,20 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
                     Intent().apply {
                         putExtra(NativeKlarnaActivity.AUTH_TOKEN_KEY, UUID.randomUUID().toString())
                     }
-                )
-                PaymentMethodType.PAYMENT_CARD.name -> eventResolver.resolve(
-                    paymentMethodType,
-                    UUID.randomUUID().toString()
-                )
+                ).also { finish() }
+                PaymentMethodType.IPAY88_CARD.name -> viewModel.finaliseMockedFlow()
+                PaymentMethodType.PAYMENT_CARD.name ->
+                    eventResolver.resolve(
+                        paymentMethodType,
+                        UUID.randomUUID().toString()
+                    ).also { finish() }
             }
+        }
+    }
+
+    private fun setupObservers() {
+        viewModel.finalizeMocked.observe(this) {
+            setResult(RESULT_OK)
             finish()
         }
     }

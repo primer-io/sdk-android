@@ -17,6 +17,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.asyn
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.models.AsyncPaymentMethodParams
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.WebRedirectActivityLauncherParams
+import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -45,11 +46,17 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
     override val initialState: State = AsyncState.Idle
 
     override fun initialize(
+        paymentMethodImplementationType: PaymentMethodImplementationType,
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         initialState: State?
     ) {
-        super.initialize(paymentMethodType, sessionIntent, initialState)
+        super.initialize(
+            paymentMethodImplementationType,
+            paymentMethodType,
+            sessionIntent,
+            initialState
+        )
         if (initialState is AsyncState.StartRedirect) {
             onEvent(
                 AsyncEvent.OnRedirect(

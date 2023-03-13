@@ -4,7 +4,6 @@ import io.primer.android.data.configuration.datasource.LocalConfigurationDataSou
 import io.primer.android.data.configuration.datasource.RemoteConfigurationDataSource
 import io.primer.android.data.configuration.datasource.RemoteConfigurationResourcesDataSource
 import io.primer.android.data.configuration.repository.ConfigurationDataRepository
-import io.primer.android.data.mock.repository.ConfigurationMockDataRepository
 import io.primer.android.data.payments.displayMetadata.repository.PaymentMethodImplementationDataRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
@@ -12,8 +11,6 @@ import io.primer.android.data.token.model.ClientToken
 import io.primer.android.data.token.repository.ClientTokenDataRepository
 import io.primer.android.data.token.repository.ValidateTokenDataRepository
 import io.primer.android.data.token.validation.ValidationTokenDataSource
-import io.primer.android.domain.mock.ConfigurationMockInteractor
-import io.primer.android.domain.mock.repository.ConfigurationMockRepository
 import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.domain.payments.displayMetadata.repository.PaymentMethodImplementationRepository
 import io.primer.android.domain.session.ConfigurationInteractor
@@ -80,14 +77,6 @@ internal val CheckoutConfigModule = { config: PrimerConfig, clientToken: ClientT
                 get(),
                 get(),
                 get(named(CHECKOUT_SESSION_HANDLER_LOGGER_NAME))
-            )
-        }
-
-        single<ConfigurationMockRepository> { ConfigurationMockDataRepository(get()) }
-
-        single {
-            ConfigurationMockInteractor(
-                get(),
             )
         }
 

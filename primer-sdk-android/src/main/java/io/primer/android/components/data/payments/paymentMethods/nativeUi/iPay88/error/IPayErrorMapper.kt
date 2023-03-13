@@ -1,4 +1,4 @@
-package io.primer.android.data.payments.iPay88.error
+package io.primer.android.components.data.payments.paymentMethods.nativeUi.iPay88.error
 
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.domain.error.models.IPay88Error

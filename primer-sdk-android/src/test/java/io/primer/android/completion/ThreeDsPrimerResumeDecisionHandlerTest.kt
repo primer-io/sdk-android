@@ -19,7 +19,7 @@ import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
-import io.primer.android.domain.mock.repository.ConfigurationMockRepository
+import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -73,7 +73,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var analyticsRepository: AnalyticsRepository
 
     @RelaxedMockK
-    internal lateinit var configurationMockRepository: ConfigurationMockRepository
+    internal lateinit var mockConfigurationRepository: MockConfigurationRepository
 
     @RelaxedMockK
     internal lateinit var verificationTokenRepository: ValidateTokenRepository
@@ -105,7 +105,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 paymentMethodRepository,
                 paymentResultRepository,
                 analyticsRepository,
-                configurationMockRepository,
+                mockConfigurationRepository,
                 threeDsSdkClassValidator,
                 threeDsLibraryVersionValidator,
                 errorEventResolver,
@@ -126,7 +126,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
         every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
-        every { configurationMockRepository.isMockedFlow() }.returns(false)
+        every { mockConfigurationRepository.isMockedFlow() }.returns(false)
 
         every { verificationTokenRepository.validate(any()) }.returns(
             flowOf(true)
@@ -152,7 +152,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
         every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
-        every { configurationMockRepository.isMockedFlow() }.returns(true)
+        every { mockConfigurationRepository.isMockedFlow() }.returns(true)
 
         every { verificationTokenRepository.validate(any()) }.returns(
             flowOf(true)

@@ -10,6 +10,7 @@ import io.primer.android.components.domain.Event
 import io.primer.android.components.domain.SideEffect
 import io.primer.android.components.domain.State
 import io.primer.android.components.ui.activity.PaymentMethodRedirectLauncherParams
+import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.utils.SingleLiveEvent
 import kotlin.properties.Delegates
 
@@ -34,12 +35,14 @@ internal abstract class NativeUIHeadlessViewModel(private val savedStateHandle: 
     val finishActivityEvent: LiveData<Unit> = _finishActivityEvent
 
     open fun initialize(
+        paymentMethodImplementationType: PaymentMethodImplementationType,
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         initialState: State? = null
     ) {
         stateMachine =
             DefaultPaymentMethodStateMachineFactory().create(
+                paymentMethodImplementationType,
                 paymentMethodType,
                 sessionIntent,
                 initialState ?: currentState

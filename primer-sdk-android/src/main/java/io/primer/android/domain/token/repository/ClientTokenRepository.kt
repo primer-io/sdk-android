@@ -12,6 +12,10 @@ internal interface ClientTokenRepository {
 
     fun getTransactionId(): String?
 
+    fun getActionType(): String?
+
+    fun getPaymentMethodId(): String?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

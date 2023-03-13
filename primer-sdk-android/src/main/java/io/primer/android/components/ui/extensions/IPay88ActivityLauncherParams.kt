@@ -8,6 +8,7 @@ internal fun IPay88ActivityLauncherParams.toIPay88LauncherParams() =
         iPayPaymentId,
         iPayMethod,
         merchantCode,
+        actionType,
         amount,
         referenceNumber,
         prodDesc,
@@ -15,6 +16,7 @@ internal fun IPay88ActivityLauncherParams.toIPay88LauncherParams() =
         countryCode,
         customerName,
         customerEmail,
+        remark,
         backendCallbackUrl,
         deeplinkUrl,
         errorCode

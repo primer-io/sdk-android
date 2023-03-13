@@ -7,7 +7,7 @@ import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
-import io.primer.android.domain.mock.repository.ConfigurationMockRepository
+import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
@@ -30,7 +30,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     paymentMethodRepository: PaymentMethodRepository,
     paymentResultRepository: PaymentResultRepository,
     analyticsRepository: AnalyticsRepository,
-    private val configurationMockRepository: ConfigurationMockRepository,
+    private val mockConfigurationRepository: MockConfigurationRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
     private val errorEventResolver: BaseErrorEventResolver,
@@ -84,7 +84,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                     ErrorMapperType.PAYMENT_RESUME
                 )
             }
-            else -> when (configurationMockRepository.isMockedFlow()) {
+            else -> when (mockConfigurationRepository.isMockedFlow()) {
                 true -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DSMock)
                 false -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
             }

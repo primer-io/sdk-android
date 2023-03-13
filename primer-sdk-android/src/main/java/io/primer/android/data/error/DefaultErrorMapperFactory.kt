@@ -7,7 +7,7 @@ import io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.
 import io.primer.android.data.payments.create.error.PaymentCreateErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.googlepay.error.GooglePayErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.error.KlarnaErrorMapper
-import io.primer.android.data.payments.iPay88.error.IPayErrorMapper
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.iPay88.error.IPayErrorMapper
 import io.primer.android.data.payments.methods.error.PaymentMethodsErrorMapper
 import io.primer.android.data.payments.resume.error.PaymentResumeErrorMapper
 import io.primer.android.domain.error.ErrorMapper

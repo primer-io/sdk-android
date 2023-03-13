@@ -29,6 +29,8 @@ internal data class CustomerDataResponse(
         shippingAddress?.toAddress()
     )
 
+    fun getFullName() = "${firstName.orEmpty()} ${lastName.orEmpty()}"
+
     companion object {
         private const val CUSTOMER_ID_FIELD = "customerId"
         private const val FIRST_NAME_FIELD = "firstName"

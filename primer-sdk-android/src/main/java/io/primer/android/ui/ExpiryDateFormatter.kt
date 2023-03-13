@@ -10,6 +10,7 @@ private val TWO_THROUGH_NINE = Regex("^[2-9]$")
 private val THREE_OR_FOUR_DIGITS = Regex("^[0-9]{3,4}$")
 private val SEPARATOR_CHAR = Regex("[\\s/-]+")
 private val INVALID_MONTH = Regex("^1[3-9].*")
+private const val MAXIMUM_YEAR_LENGTH = 4
 
 internal class ExpiryDateFormatter(
     private var month: String = "",
@@ -61,7 +62,7 @@ internal class ExpiryDateFormatter(
     fun getYear(date: Calendar? = null): String {
         val now = date ?: getDate()
         val prefix = now.get(Calendar.YEAR).toString().substring(0, 2)
-        return if (year.length == 4) year else "${prefix}$year"
+        return if (year.length == MAXIMUM_YEAR_LENGTH) year else "${prefix}$year"
     }
 
     companion object {

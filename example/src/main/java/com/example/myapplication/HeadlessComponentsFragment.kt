@@ -15,21 +15,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.myapplication.constants.PrimerHeadlessCallbacks
 import com.example.myapplication.databinding.FragmentThirdBinding
+import com.example.myapplication.datamodels.CheckoutDataWithError
 import com.example.myapplication.datamodels.TransactionState
+import com.example.myapplication.datamodels.toMappedError
 import com.example.myapplication.repositories.AppApiKeyRepository
 import com.example.myapplication.viewmodels.HeadlessManagerViewModel
 import com.example.myapplication.viewmodels.HeadlessManagerViewModelFactory
 import com.example.myapplication.viewmodels.MainViewModel
 import com.example.myapplication.viewmodels.UiState
-import io.primer.android.ExperimentalPrimerApi
+import com.google.gson.GsonBuilder
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager
 import io.primer.android.components.manager.PrimerCardComponentsManagerListener
+import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface
 import io.primer.android.components.manager.native.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
@@ -42,6 +45,9 @@ import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditio
 import io.primer.android.ui.CardNetwork
 
 class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
+
+    private val callbacks: ArrayList<String> = arrayListOf()
+    private var checkoutDataWithError: CheckoutDataWithError? = null
 
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
@@ -101,8 +107,14 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             when (state) {
                 is UiState.InitializingHeadless -> showLoading("Initializing Headless.")
                 is UiState.InitializedHeadless -> hideLoading()
-                is UiState.TokenizationStarted -> showLoading("Tokenization started ${state.paymentMethodType}")
-                is UiState.PreparationStarted -> showLoading("Preparation started ${state.paymentMethodType}")
+                is UiState.TokenizationStarted -> {
+                    callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
+                    showLoading("Tokenization started ${state.paymentMethodType}")
+                }
+                is UiState.PreparationStarted -> {
+                    callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
+                    showLoading("Preparation started ${state.paymentMethodType}")
+                }
                 is UiState.PaymentMethodShowed -> showLoading("Presented ${state.paymentMethodType}")
                 is UiState.TokenizationSuccessReceived -> {
                     showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
@@ -144,16 +156,26 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                     }
                 }
                 is UiState.BeforePaymentCreateReceived -> {
-                    showLoading("On Before Payment Created with ${state.paymentMethodData.paymentMethodType}")
+                    callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
+                }
+                is UiState.BeforeClientSessionUpdateReceived -> {
+                    callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
+                }
+                is UiState.ClientSessionUpdatedReceived -> {
+                    callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
                 }
                 is UiState.ShowError -> {
+                    checkoutDataWithError =
+                        CheckoutDataWithError(state.payment, state.error.toMappedError())
+                    callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
                     hideLoading()
-                    AlertDialog.Builder(context).setMessage("On Failed $state.error").show()
+                    navigateToResultScreen()
                 }
                 is UiState.CheckoutCompleted -> {
+                    checkoutDataWithError = CheckoutDataWithError(state.checkoutData.payment)
+                    callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
                     hideLoading()
-                    AlertDialog.Builder(context)
-                        .setMessage("On Checkout Completed ${state.checkoutData}").show()
+                    navigateToResultScreen()
                 }
             }
         }
@@ -178,6 +200,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
     }
 
+
     override fun inputElementValueChanged(inputElement: PrimerInputElement) {
         Log.d(TAG, "inputElementValueChanged ${inputElement.getType()}")
         binding.nextButton.isEnabled = cardManager.isCardFormValid()
@@ -200,7 +223,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         binding.pmView.removeAllViews()
         paymentMethodTypes.forEach {
             if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.CARD_COMPONENTS)) {
-                cardManager = PrimerHeadlessUniversalCheckoutCardComponentsManager.newInstance(it.paymentMethodType)
+                cardManager =
+                    PrimerHeadlessUniversalCheckoutCardComponentsManager.newInstance(it.paymentMethodType)
                 cardManager.setCardManagerListener(object : PrimerCardComponentsManagerListener {
                     override fun onCardValidationChanged(isCardFormValid: Boolean) {
                         Log.d(TAG, "onCardValidChanged $isCardFormValid")
@@ -253,7 +277,10 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         pmViewGroup.addView(ImageButton(context).apply {
             minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
             val paymentMethodAsset = try {
-                PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(requireContext(), paymentMethodType)
+                PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
+                    requireContext(),
+                    paymentMethodType
+                )
             } catch (e: SdkUninitializedException) {
                 null
             }
@@ -264,6 +291,9 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             setImageDrawable(
                 paymentMethodAsset?.paymentMethodLogo?.colored
             )
+
+            // TODO include name
+            contentDescription = "Pay with Card"
 
             setOnClickListener {
                 onPaymentMethodSelected(paymentMethodType)
@@ -300,6 +330,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     }
 
     private fun onPaymentMethodSelected(paymentMethodType: String) {
+        callbacks.clear()
+        checkoutDataWithError = null
         try {
             val nativeUiManager =
                 PrimerHeadlessUniversalCheckoutNativeUiManager.newInstance(paymentMethodType).also {
@@ -317,6 +349,27 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 android.R.string.cancel
             ) { _, _ -> findNavController().navigateUp() }.show()
         }
+    }
+
+    private fun navigateToResultScreen() {
+        headlessManagerViewModel.resetUiState()
+        findNavController().navigate(R.id.action_MerchantComponentsFragment_to_MerchantResultFragment,
+            Bundle().apply {
+                putInt(
+                    MerchantResultFragment.PAYMENT_STATUS_KEY,
+                    if (checkoutDataWithError?.error != null) MerchantResultFragment.Companion.PaymentStatus.FAILURE.ordinal
+                    else MerchantResultFragment.Companion.PaymentStatus.SUCCESS.ordinal
+                )
+                putStringArrayList(
+                    MerchantResultFragment.INVOKED_CALLBACKS_KEY,
+                    callbacks
+                )
+                putString(
+                    MerchantResultFragment.PAYMENT_RESPONSE_KEY,
+                    GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+                        .toJson(checkoutDataWithError)
+                )
+            })
     }
 
     companion object {

@@ -1,5 +1,6 @@
 package io.primer.android.payment
 
+import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
@@ -22,6 +23,8 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
     abstract val vaultCapability: VaultCapability
 
     abstract val headlessDefinition: HeadlessDefinition?
+
+    open val resumeHandler: PrimerResumeDecisionHandler? = null
 
     open val behaviours: List<SelectedPaymentMethodBehaviour> =
         listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))

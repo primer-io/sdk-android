@@ -26,7 +26,11 @@ internal data class ClientToken(
     val reference: String?,
     val entity: String?,
     val backendCallbackUrl: String?,
-    val primerTransactionId: String?
+    val primerTransactionId: String?,
+    val iPay88PaymentMethodId: String?,
+    val iPay88ActionType: String?,
+    val supportedCurrencyCode: String?,
+    val supportedCountry: String?,
 ) : JSONDeserializable {
 
     companion object {
@@ -75,6 +79,10 @@ internal data class ClientToken(
         private const val ENTITY_FIELD = "entity"
         private const val BACKEND_CALLBACK_URL_FIELD = "backendCallbackUrl"
         private const val PRIMER_TRANSACTION_ID_FIELD = "primerTransactionId"
+        private const val IPAY88_PAYMENT_METHOD_ID_FIELD = "iPay88PaymentMethodId"
+        private const val IPAY88_ACTION_TYPE_FIELD = "iPay88ActionType"
+        private const val SUPPORTED_CURRENCY_CODE_FIELD = "supportedCurrencyCode"
+        private const val SUPPORTED_COUNTRY_FIELD = "supportedCountry"
 
         @JvmField
         val deserializer = object : JSONDeserializer<ClientToken> {
@@ -95,7 +103,11 @@ internal data class ClientToken(
                     t.optNullableString(REFERENCE_FIELD),
                     t.optNullableString(ENTITY_FIELD),
                     t.optNullableString(BACKEND_CALLBACK_URL_FIELD),
-                    t.optNullableString(PRIMER_TRANSACTION_ID_FIELD)
+                    t.optNullableString(PRIMER_TRANSACTION_ID_FIELD),
+                    t.optNullableString(IPAY88_PAYMENT_METHOD_ID_FIELD),
+                    t.optNullableString(IPAY88_ACTION_TYPE_FIELD),
+                    t.optNullableString(SUPPORTED_CURRENCY_CODE_FIELD),
+                    t.optNullableString(SUPPORTED_COUNTRY_FIELD),
                 )
             }
         }

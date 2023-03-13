@@ -2,8 +2,6 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.klarn
 
 import io.primer.android.data.base.exceptions.IllegalValueKey
 
-internal enum class KlarnaIllegalValueKey : IllegalValueKey {
-    PAYMENT_METHOD_CONFIG_ID;
-
-    override val key = this.name
+internal enum class KlarnaIllegalValueKey(override val key: String) : IllegalValueKey {
+    PAYMENT_METHOD_CONFIG_ID("configuration.id");
 }

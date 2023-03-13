@@ -10,20 +10,22 @@ import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalCheckoutHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalVaultHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.webRedirect.AsyncPaymentMethodNativeUiHeadlessViewModel
+import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
 
 internal class HeadlessViewModelFactory {
 
-    internal fun getManager(
+    internal fun getViewModel(
         componentActivity: ComponentActivity,
+        paymentMethodImplementationType: PaymentMethodImplementationType,
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent
-    ) = when (paymentMethodType) {
-        PaymentMethodType.GOOGLE_PAY.name -> ViewModelProvider(
+    ) = when {
+        paymentMethodType == PaymentMethodType.GOOGLE_PAY.name -> ViewModelProvider(
             componentActivity,
             GooglePayHeadlessViewModel.Companion.Factory()
         )[paymentMethodType, GooglePayHeadlessViewModel::class.java]
-        PaymentMethodType.PAYPAL.name -> when (sessionIntent) {
+        paymentMethodType == PaymentMethodType.PAYPAL.name -> when (sessionIntent) {
             PrimerSessionIntent.CHECKOUT -> ViewModelProvider(
                 componentActivity,
                 PaypalCheckoutHeadlessViewModel.Companion.Factory()
@@ -33,18 +35,19 @@ internal class HeadlessViewModelFactory {
                 PaypalVaultHeadlessViewModel.Companion.Factory()
             )[paymentMethodType, PaypalVaultHeadlessViewModel::class.java]
         }
-        PaymentMethodType.KLARNA.name -> ViewModelProvider(
+        paymentMethodType == PaymentMethodType.KLARNA.name -> ViewModelProvider(
             componentActivity,
             KlarnaHeadlessViewModel.Companion.Factory()
         )[paymentMethodType, KlarnaHeadlessViewModel::class.java]
-        PaymentMethodType.APAYA.name -> ViewModelProvider(
+        paymentMethodType == PaymentMethodType.APAYA.name -> ViewModelProvider(
             componentActivity,
             ApayaHeadlessViewModel.Companion.Factory()
         )[paymentMethodType, ApayaHeadlessViewModel::class.java]
-        PaymentMethodType.IPAY88_CARD.name -> ViewModelProvider(
-            componentActivity,
-            IPay88HeadlessViewModel.Companion.Factory()
-        )[paymentMethodType, ApayaHeadlessViewModel::class.java]
+        paymentMethodImplementationType == PaymentMethodImplementationType.IPAY88_SDK ->
+            ViewModelProvider(
+                componentActivity,
+                IPay88HeadlessViewModel.Companion.Factory()
+            )[paymentMethodType, IPay88HeadlessViewModel::class.java]
         else -> ViewModelProvider(
             componentActivity,
             AsyncPaymentMethodNativeUiHeadlessViewModel.Companion.Factory()

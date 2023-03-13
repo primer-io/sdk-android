@@ -14,7 +14,7 @@ internal data class Configuration(
 internal data class PaymentMethodConfig(val type: String)
 
 internal data class ClientSession(
-    val paymentMethod: ClientSessionDataResponse.PaymentMethodDataResponse?
+    val clientSession: ClientSessionDataResponse?
 )
 
 internal data class CheckoutModule(val type: CheckoutModuleType, val options: Map<String, Boolean>?)

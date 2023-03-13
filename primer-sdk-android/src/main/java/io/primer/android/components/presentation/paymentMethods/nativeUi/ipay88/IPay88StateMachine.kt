@@ -54,7 +54,12 @@ internal object IPay88StateMachine {
             state<IPay88State.StartRedirect> {
                 on<IPay88Event.OnRedirect> {
                     transitionTo(
-                        IPay88State.Redirect(it.statusUrl, it.paymentMethodType),
+                        IPay88State.Redirect(
+                            it.statusUrl,
+                            it.paymentMethodType,
+                            it.iPay88PaymentMethodId,
+                            it.iPay88ActionType
+                        ),
                         IPaySideEffect.NavigateToIPayScreen
                     )
                 }
@@ -103,6 +108,7 @@ internal sealed class IPay88State : State {
         val iPayPaymentId: String,
         val iPayMethod: Int,
         val merchantCode: String,
+        val actionType: String,
         val amount: String,
         val referenceNumber: String,
         val prodDesc: String,
@@ -110,11 +116,18 @@ internal sealed class IPay88State : State {
         val countryCode: String?,
         val customerName: String?,
         val customerEmail: String?,
+        val remark: String?,
         val backendCallbackUrl: String,
         val deeplinkUrl: String,
     ) : IPay88State()
 
-    data class Redirect(val statusUrl: String, val paymentMethodType: String) : IPay88State()
+    data class Redirect(
+        val statusUrl: String,
+        val paymentMethodType: String,
+        val iPay88PaymentMethodId: String,
+        val iPay88ActionType: String,
+    ) : IPay88State()
+
     object HandlingResult : IPay88State()
     object StartPolling : IPay88State()
 }
@@ -131,9 +144,10 @@ internal sealed class IPay88Event : Event {
     data class OnRedirect(
         val paymentMethodType: String,
         val statusUrl: String,
-        val iPayPaymentId: String,
+        val iPay88PaymentMethodId: String,
         val iPayMethod: Int,
         val merchantCode: String,
+        val iPay88ActionType: String,
         val amount: String,
         val referenceNumber: String,
         val prodDesc: String,
@@ -141,6 +155,7 @@ internal sealed class IPay88Event : Event {
         val countryCode: String?,
         val customerName: String?,
         val customerEmail: String?,
+        val remark: String?,
         val backendCallbackUrl: String,
         val deeplinkUrl: String,
     ) : IPay88Event()

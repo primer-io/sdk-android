@@ -11,12 +11,14 @@ import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalCheckoutStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalVaultStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.webRedirect.AsyncStateMachine
+import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import java.io.Serializable
 
 internal interface PaymentMethodStateMachineFactory {
 
     fun create(
+        paymentMethodImplementationType: PaymentMethodImplementationType,
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         initialState: State
@@ -25,21 +27,29 @@ internal interface PaymentMethodStateMachineFactory {
 
 internal class DefaultPaymentMethodStateMachineFactory : PaymentMethodStateMachineFactory {
     override fun create(
+        paymentMethodImplementationType: PaymentMethodImplementationType,
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         initialState: State
     ): StateMachine<State, Event, SideEffect> {
-        return when (paymentMethodType) {
-            PaymentMethodType.GOOGLE_PAY.name -> GooglePayStateMachine.create(initialState)
-            PaymentMethodType.PAYPAL.name -> {
+        return when {
+            paymentMethodType == PaymentMethodType.GOOGLE_PAY.name -> GooglePayStateMachine.create(
+                initialState
+            )
+            paymentMethodType == PaymentMethodType.PAYPAL.name -> {
                 when (sessionIntent) {
                     PrimerSessionIntent.CHECKOUT -> PaypalCheckoutStateMachine.create(initialState)
                     PrimerSessionIntent.VAULT -> PaypalVaultStateMachine.create(initialState)
                 }
             }
-            PaymentMethodType.KLARNA.name -> KlarnaStateMachine.create(initialState)
-            PaymentMethodType.APAYA.name -> ApayaStateMachine.create(initialState)
-            PaymentMethodType.IPAY88_CARD.name -> IPay88StateMachine.create(initialState)
+            paymentMethodType == PaymentMethodType.KLARNA.name -> KlarnaStateMachine.create(
+                initialState
+            )
+            paymentMethodType == PaymentMethodType.APAYA.name -> ApayaStateMachine.create(
+                initialState
+            )
+            paymentMethodImplementationType == PaymentMethodImplementationType.IPAY88_SDK ->
+                IPay88StateMachine.create(initialState)
             else -> AsyncStateMachine.create(initialState)
         }
     }

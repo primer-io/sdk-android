@@ -14,7 +14,7 @@ internal data class UIAnalyticsParams(
     val context: BaseContextParams? = null
 ) : BaseAnalyticsParams()
 
-internal abstract class BaseContextParams
+internal sealed class BaseContextParams
 
 internal data class PaymentMethodContextParams(val paymentMethodType: String) :
     BaseContextParams()
@@ -26,6 +26,12 @@ internal data class PaymentInstrumentIdContextParams(val id: String) : BaseConte
 internal data class UrlContextParams(val url: String) : BaseContextParams()
 
 internal data class DummyApmDecisionParams(val decision: DummyDecisionType) : BaseContextParams()
+
+internal data class IPay88PaymentMethodContextParams(
+    val iPay88PaymentMethodId: String,
+    val iPay88ActionType: String,
+    val paymentMethodType: String
+) : BaseContextParams()
 
 internal data class ThreeDsFailureContextParams(
     val description: String,
