@@ -1,5 +1,6 @@
 package io.primer.android.analytics.data.repository
 
+import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.datasource.TimerDataSource
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
-import java.util.UUID
 
 @ExperimentalCoroutinesApi
 internal class AnalyticsDataRepository(
@@ -43,10 +43,10 @@ internal class AnalyticsDataRepository(
     private val uncaughtHandlerDataSource: UncaughtHandlerDataSource,
     private val networkCallDataSource: NetworkCallDataSource,
     private val timerDataSource: TimerDataSource,
+    private val checkoutSessionIdDataSource: CheckoutSessionIdDataSource,
     private val settings: PrimerSettings,
 ) : AnalyticsRepository {
 
-    private val checkoutSessionId by lazy { UUID.randomUUID().toString() }
     private val sdkSessionId by lazy { SdkSessionDataSource.getSessionId() }
 
     override fun initialize() = flowOf(
@@ -70,7 +70,7 @@ internal class AnalyticsDataRepository(
                         sdkSessionId,
                         settings.sdkIntegrationType,
                         settings.paymentHandling,
-                        checkoutSessionId,
+                        checkoutSessionIdDataSource.checkoutSessionId,
                         configuration?.clientSession?.clientSessionId,
                         configuration?.clientSession?.order?.orderId,
                         configuration?.primerAccountId,
@@ -93,7 +93,7 @@ internal class AnalyticsDataRepository(
                 sdkSessionId,
                 settings.sdkIntegrationType,
                 settings.paymentHandling,
-                checkoutSessionId,
+                checkoutSessionIdDataSource.checkoutSessionId,
                 configuration?.clientSession?.clientSessionId,
                 configuration?.clientSession?.order?.orderId,
                 configuration?.primerAccountId,
