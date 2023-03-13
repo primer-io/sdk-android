@@ -9,7 +9,7 @@ internal class AsyncPaymentMethodDeeplinkActivity : BaseCheckoutActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventBus.broadcast(CheckoutEvent.AsyncFlowRedirect)
+        EventBus.broadcast(CheckoutEvent.AsyncFlowRedirect(intent.data))
         finish()
     }
 }
