@@ -292,8 +292,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 paymentMethodAsset?.paymentMethodLogo?.colored
             )
 
-            // TODO include name
-            contentDescription = "Pay with Card"
+            contentDescription = "Pay with ${paymentMethodAsset?.paymentMethodName}"
 
             setOnClickListener {
                 onPaymentMethodSelected(paymentMethodType)

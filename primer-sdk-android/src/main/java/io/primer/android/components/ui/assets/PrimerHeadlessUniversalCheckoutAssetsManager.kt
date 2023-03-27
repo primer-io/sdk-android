@@ -25,6 +25,7 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
         val delegate = getAssetsDelegate()
         return PrimerPaymentMethodAsset(
             paymentMethodType,
+            delegate.getPaymentMethodName(paymentMethodType),
             PrimerPaymentMethodLogo(
                 delegate.getPaymentMethodLogo(
                     context,

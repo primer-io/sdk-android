@@ -5,6 +5,7 @@ import androidx.annotation.ColorInt
 
 data class PrimerPaymentMethodAsset(
     val paymentMethodType: String,
+    val paymentMethodName: String,
     val paymentMethodLogo: PrimerPaymentMethodLogo,
     val paymentMethodBackgroundColor: PrimerPaymentMethodBackgroundColor
 )

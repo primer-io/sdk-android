@@ -36,6 +36,8 @@ internal interface AssetsHeadlessDelegate {
         imageColor: ImageColor
     ): Drawable?
 
+    fun getPaymentMethodName(paymentMethodType: String): String
+
     @DrawableRes
     fun getCardNetworkImage(cardNetwork: CardNetwork.Type): Int
 
@@ -95,6 +97,12 @@ internal class DefaultAssetsHeadlessDelegate(
             )
             else -> null
         }
+    }
+
+    override fun getPaymentMethodName(paymentMethodType: String): String {
+        checkIfInitialized()
+        return paymentMethodModulesInteractor.getPaymentMethodDescriptors()
+            .find { it.config.type == paymentMethodType }?.let { it.config.name }.orEmpty()
     }
 
     override fun getCardNetworkImage(

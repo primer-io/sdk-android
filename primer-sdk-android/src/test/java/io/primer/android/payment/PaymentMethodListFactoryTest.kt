@@ -17,7 +17,7 @@ internal class PaymentMethodListFactoryTest {
     private val configList: List<PaymentMethodConfigDataResponse> = listOf(
         PaymentMethodConfigDataResponse(
             null,
-            null,
+            PaymentMethodType.PAYMENT_CARD.name,
             PaymentMethodImplementationType.NATIVE_SDK,
             PaymentMethodType.UNKNOWN.name,
             null,

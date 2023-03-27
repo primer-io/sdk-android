@@ -81,7 +81,7 @@ internal data class ConfigurationDataResponse(
 
 internal data class PaymentMethodConfigDataResponse(
     val id: String?, // payment card has null only
-    val name: String?,
+    val name: String,
     val implementationType: PaymentMethodImplementationType,
     val type: String,
     val options: PaymentMethodRemoteConfigOptions?,
@@ -103,7 +103,7 @@ internal data class PaymentMethodConfigDataResponse(
             override fun deserialize(t: JSONObject): PaymentMethodConfigDataResponse {
                 return PaymentMethodConfigDataResponse(
                     t.optNullableString(ID_FIELD),
-                    t.optNullableString(NAME_FIELD),
+                    t.getString(NAME_FIELD),
                     PaymentMethodImplementationType.safeValueOf(
                         t.optNullableString(
                             IMPLEMENTATION_TYPE_FIELD
