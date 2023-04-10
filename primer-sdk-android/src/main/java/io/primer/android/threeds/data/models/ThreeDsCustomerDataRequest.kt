@@ -1,7 +1,7 @@
 package io.primer.android.threeds.data.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class ThreeDsCustomerDataRequest(
@@ -10,7 +10,7 @@ internal data class ThreeDsCustomerDataRequest(
     val homePhone: String? = null,
     val mobilePhone: String? = null,
     val workPhone: String? = null,
-) : JSONSerializable {
+) : JSONObjectSerializable {
 
     companion object {
         private const val NAME_FIELD = "name"
@@ -20,7 +20,7 @@ internal data class ThreeDsCustomerDataRequest(
         private const val WORK_PHONE_FIELD = "workPhone"
 
         @JvmField
-        val serializer = object : JSONSerializer<ThreeDsCustomerDataRequest> {
+        val serializer = object : JSONObjectSerializer<ThreeDsCustomerDataRequest> {
             override fun serialize(t: ThreeDsCustomerDataRequest): JSONObject {
                 return JSONObject().apply {
                     putOpt(NAME_FIELD, t.name)

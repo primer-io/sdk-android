@@ -1,7 +1,7 @@
 package io.primer.android.data.rpc.banks.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.rpc.RpcFunction
@@ -13,7 +13,7 @@ internal data class IssuingBankDataRequest(
     val paymentMethodConfigId: String,
     val command: String,
     val parameters: IssuingBankDataParameters
-) : JSONSerializable {
+) : JSONObjectSerializable {
     companion object {
 
         private const val PAYMENT_METHOD_CONFIG_ID_FIELD = "paymentMethodConfigId"
@@ -21,14 +21,14 @@ internal data class IssuingBankDataRequest(
         private const val PARAMETERS_FIELD = "parameters"
 
         @JvmField
-        val serializer = object : JSONSerializer<IssuingBankDataRequest> {
+        val serializer = object : JSONObjectSerializer<IssuingBankDataRequest> {
             override fun serialize(t: IssuingBankDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
                     put(COMMAND_FIELD, t.command)
                     put(
                         PARAMETERS_FIELD,
-                        JSONSerializationUtils.getSerializer<IssuingBankDataParameters>()
+                        JSONSerializationUtils.getJsonObjectSerializer<IssuingBankDataParameters>()
                             .serialize(t.parameters)
                     )
                 }

@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.googlepay
 
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.PaymentInstrumentDataRequest
 import io.primer.android.domain.tokenization.models.paymentInstruments.googlepay.GooglePayFlow
 import org.json.JSONObject
@@ -18,7 +18,7 @@ internal data class GooglePayPaymentInstrumentDataRequest(
 
         @JvmField
         val serializer =
-            object : JSONSerializer<GooglePayPaymentInstrumentDataRequest> {
+            object : JSONObjectSerializer<GooglePayPaymentInstrumentDataRequest> {
                 override fun serialize(t: GooglePayPaymentInstrumentDataRequest): JSONObject {
                     return JSONObject().apply {
                         put(MERCHANT_ID_FIELD, t.merchantId)

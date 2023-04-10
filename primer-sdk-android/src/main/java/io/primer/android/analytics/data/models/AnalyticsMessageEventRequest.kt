@@ -2,7 +2,7 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
@@ -30,12 +30,12 @@ internal data class AnalyticsMessageEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsMessageEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsMessageEventRequest> {
             override fun serialize(t: AnalyticsMessageEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<MessageProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<MessageProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -84,7 +84,7 @@ internal data class MessageProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = object : JSONSerializer<MessageProperties> {
+        val serializer = object : JSONObjectSerializer<MessageProperties> {
             override fun serialize(t: MessageProperties): JSONObject {
                 return JSONObject().apply {
                     put(MESSAGE_TYPE_FIELD, t.messageType.name)
@@ -94,7 +94,7 @@ internal data class MessageProperties(
                     putOpt(
                         ANALYTICS_CONTEXT_FIELD,
                         t.context?.let {
-                            JSONSerializationUtils.getSerializer<AnalyticsContext>()
+                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
                                 .serialize(it)
                         }
                     )

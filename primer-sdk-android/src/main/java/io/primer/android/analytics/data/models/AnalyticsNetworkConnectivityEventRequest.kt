@@ -2,7 +2,7 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
@@ -30,12 +30,12 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsNetworkConnectivityEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsNetworkConnectivityEventRequest> {
             override fun serialize(t: AnalyticsNetworkConnectivityEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<NetworkTypeProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<NetworkTypeProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -77,7 +77,7 @@ internal data class NetworkTypeProperties(
         private const val NETWORK_TYPE_FIELD = "networkType"
 
         @JvmField
-        val serializer = object : JSONSerializer<NetworkTypeProperties> {
+        val serializer = object : JSONObjectSerializer<NetworkTypeProperties> {
             override fun serialize(t: NetworkTypeProperties): JSONObject {
                 return JSONObject().apply {
                     put(NETWORK_TYPE_FIELD, t.networkType.name)

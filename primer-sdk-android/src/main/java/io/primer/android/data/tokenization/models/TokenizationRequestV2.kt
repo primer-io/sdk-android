@@ -2,9 +2,9 @@ package io.primer.android.data.tokenization.models
 
 import android.util.Base64
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.AsyncPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactCardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactSessionInfoDataRequest
@@ -36,13 +36,13 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.Pa
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentParams
 import org.json.JSONObject
 
-internal abstract class TokenizationRequestV2 : JSONSerializable {
+internal abstract class TokenizationRequestV2 : JSONObjectSerializable {
 
     abstract val paymentInstrument: PaymentInstrumentDataRequest
 
     companion object {
         @JvmField
-        val serializer = object : JSONSerializer<TokenizationRequestV2> {
+        val serializer = object : JSONObjectSerializer<TokenizationRequestV2> {
             override fun serialize(t: TokenizationRequestV2): JSONObject {
                 return when (t) {
                     is TokenizationCheckoutRequestV2 ->
@@ -166,12 +166,13 @@ internal data class TokenizationVaultRequestV2(
         private const val PAYMENT_FLOW_FIELD = "paymentFlow"
 
         @JvmField
-        val serializer = object : JSONSerializer<TokenizationVaultRequestV2> {
+        val serializer = object : JSONObjectSerializer<TokenizationVaultRequestV2> {
             override fun serialize(t: TokenizationVaultRequestV2): JSONObject {
                 return JSONObject().apply {
                     put(
                         PAYMENT_INSTRUMENT_FIELD,
-                        JSONSerializationUtils.getSerializer<PaymentInstrumentDataRequest>()
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<PaymentInstrumentDataRequest>()
                             .serialize(t.paymentInstrument)
                     )
                     put(TOKEN_TYPE_FIELD, t.tokenType)
@@ -189,12 +190,13 @@ internal data class TokenizationCheckoutRequestV2(
         private const val PAYMENT_INSTRUMENT_FIELD = "paymentInstrument"
 
         @JvmField
-        val serializer = object : JSONSerializer<TokenizationCheckoutRequestV2> {
+        val serializer = object : JSONObjectSerializer<TokenizationCheckoutRequestV2> {
             override fun serialize(t: TokenizationCheckoutRequestV2): JSONObject {
                 return JSONObject().apply {
                     put(
                         PAYMENT_INSTRUMENT_FIELD,
-                        JSONSerializationUtils.getSerializer<PaymentInstrumentDataRequest>()
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<PaymentInstrumentDataRequest>()
                             .serialize(t.paymentInstrument)
                     )
                 }

@@ -1,8 +1,8 @@
 package io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class CreateSessionDataRequest(
@@ -10,7 +10,7 @@ internal data class CreateSessionDataRequest(
     val sessionType: String,
     val description: String?,
     val localeData: LocaleDataRequest,
-) : JSONSerializable {
+) : JSONObjectSerializable {
     companion object {
 
         private const val PAYMENT_METHOD_CONFIG_ID_FIELD = "paymentMethodConfigId"
@@ -19,7 +19,7 @@ internal data class CreateSessionDataRequest(
         private const val LOCALE_DATA_FIELD = "localeData"
 
         @JvmField
-        val serializer = object : JSONSerializer<CreateSessionDataRequest> {
+        val serializer = object : JSONObjectSerializer<CreateSessionDataRequest> {
             override fun serialize(t: CreateSessionDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
@@ -27,7 +27,7 @@ internal data class CreateSessionDataRequest(
                     putOpt(DESCRIPTION_FIELD, t.description)
                     put(
                         LOCALE_DATA_FIELD,
-                        JSONSerializationUtils.getSerializer<LocaleDataRequest>()
+                        JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
                             .serialize(t.localeData)
                     )
                 }

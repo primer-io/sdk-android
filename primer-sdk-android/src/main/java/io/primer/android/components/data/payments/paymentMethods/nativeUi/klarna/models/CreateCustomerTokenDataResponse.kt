@@ -2,9 +2,9 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.klarn
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
@@ -25,7 +25,7 @@ internal data class CreateCustomerTokenDataResponse(
         val orderLines: List<SessionOrderLines>,
         val billingAddress: BillingAddressData?,
         val tokenDetails: TokenDetailsData?
-    ) : JSONSerializable, JSONDeserializable {
+    ) : JSONObjectSerializable, JSONDeserializable {
 
         companion object {
             private const val RECURRING_DESCRIPTION_FIELD = "recurringDescription"
@@ -38,7 +38,7 @@ internal data class CreateCustomerTokenDataResponse(
             private const val TOKEN_DETAILS_FIELD = "tokenDetails"
 
             @JvmField
-            val serializer = object : JSONSerializer<SessionData> {
+            val serializer = object : JSONObjectSerializer<SessionData> {
 
                 override fun serialize(t: SessionData): JSONObject {
                     return JSONObject().apply {
@@ -52,7 +52,8 @@ internal data class CreateCustomerTokenDataResponse(
                             JSONArray().apply {
                                 t.orderLines.map {
                                     put(
-                                        JSONSerializationUtils.getSerializer<SessionOrderLines>()
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<SessionOrderLines>()
                                             .serialize(it)
                                     )
                                 }
@@ -61,16 +62,15 @@ internal data class CreateCustomerTokenDataResponse(
                         t.billingAddress?.let {
                             put(
                                 BILLING_ADDRESS_FIELD,
-                                JSONSerializationUtils.getSerializer<BillingAddressData>()
-                                    .serialize(
-                                        it
-                                    )
+                                JSONSerializationUtils
+                                    .getJsonObjectSerializer<BillingAddressData>()
+                                    .serialize(it)
                             )
                         }
                         t.tokenDetails?.let {
                             put(
                                 TOKEN_DETAILS_FIELD,
-                                JSONSerializationUtils.getSerializer<TokenDetailsData>()
+                                JSONSerializationUtils.getJsonObjectSerializer<TokenDetailsData>()
                                     .serialize(
                                         it
                                     )
@@ -123,7 +123,7 @@ internal data class CreateCustomerTokenDataResponse(
         val postalCode: String?,
         val state: String?,
         val title: String?
-    ) : JSONSerializable, JSONDeserializable {
+    ) : JSONObjectSerializable, JSONDeserializable {
 
         companion object {
 
@@ -141,7 +141,7 @@ internal data class CreateCustomerTokenDataResponse(
             private const val TITLE_FIELD = "state"
 
             @JvmField
-            val serializer = object : JSONSerializer<BillingAddressData> {
+            val serializer = object : JSONObjectSerializer<BillingAddressData> {
 
                 override fun serialize(t: BillingAddressData): JSONObject {
                     return JSONObject().apply {
@@ -191,7 +191,7 @@ internal data class CreateCustomerTokenDataResponse(
         val unitPrice: Int?,
         val totalAmount: Int?,
         val totalDiscountAmount: Int?
-    ) : JSONSerializable, JSONDeserializable {
+    ) : JSONObjectSerializable, JSONDeserializable {
 
         companion object {
             private const val TYPE_FIELD = "type"
@@ -202,7 +202,7 @@ internal data class CreateCustomerTokenDataResponse(
             private const val TOTAL_DISCOUNT_AMOUNT_FIELD = "total_discount_amount"
 
             @JvmField
-            val serializer = object : JSONSerializer<SessionOrderLines> {
+            val serializer = object : JSONObjectSerializer<SessionOrderLines> {
 
                 override fun serialize(t: SessionOrderLines): JSONObject {
                     return JSONObject().apply {
@@ -238,7 +238,7 @@ internal data class CreateCustomerTokenDataResponse(
         val maskedNumber: String?,
         val type: String,
         val expiryDate: String?
-    ) : JSONSerializable, JSONDeserializable {
+    ) : JSONObjectSerializable, JSONDeserializable {
 
         companion object {
             private const val BRAND_FIELD = "brand"
@@ -247,7 +247,7 @@ internal data class CreateCustomerTokenDataResponse(
             private const val EXPIRY_DATE_FIELD = "expiry_date"
 
             @JvmField
-            val serializer = object : JSONSerializer<TokenDetailsData> {
+            val serializer = object : JSONObjectSerializer<TokenDetailsData> {
 
                 override fun serialize(t: TokenDetailsData): JSONObject {
                     return JSONObject().apply {

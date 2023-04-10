@@ -1,7 +1,7 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard
 
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.configuration.models.PaymentInstrumentType
 import io.primer.android.data.tokenization.models.paymentInstruments.async.AsyncPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseSessionInfoDataRequest
@@ -36,7 +36,7 @@ internal data class AdyenBancontactCardPaymentInstrumentDataRequest(
 
         @JvmField
         val serializer =
-            object : JSONSerializer<AdyenBancontactCardPaymentInstrumentDataRequest> {
+            object : JSONObjectSerializer<AdyenBancontactCardPaymentInstrumentDataRequest> {
                 override fun serialize(t: AdyenBancontactCardPaymentInstrumentDataRequest):
                     JSONObject {
                     return JSONObject().apply {
@@ -46,7 +46,7 @@ internal data class AdyenBancontactCardPaymentInstrumentDataRequest(
                         put(
                             SESSION_INFO_FIELD,
                             JSONSerializationUtils
-                                .getSerializer<BaseSessionInfoDataRequest>()
+                                .getJsonObjectSerializer<BaseSessionInfoDataRequest>()
                                 .serialize(t.sessionInfo)
                         )
                         put(NUMBER_FIELD, t.number)

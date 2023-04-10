@@ -2,7 +2,7 @@ package io.primer.android.data.tokenization.models.paymentInstruments.klarna
 
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataResponse
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.PaymentInstrumentDataRequest
 import org.json.JSONObject
 
@@ -17,14 +17,15 @@ internal data class KlarnaPaymentInstrumentDataRequest(
 
         @JvmField
         val serializer =
-            object : JSONSerializer<KlarnaPaymentInstrumentDataRequest> {
+            object : JSONObjectSerializer<KlarnaPaymentInstrumentDataRequest> {
                 override fun serialize(t: KlarnaPaymentInstrumentDataRequest): JSONObject {
                     return JSONObject().apply {
                         putOpt(KLARNA_CUSTOMER_TOKEN_FIELD, t.klarnaCustomerToken)
                         put(
                             SESSION_DATA_FIELD,
                             JSONSerializationUtils
-                                .getSerializer<CreateCustomerTokenDataResponse.SessionData>()
+                                .getJsonObjectSerializer<
+                                    CreateCustomerTokenDataResponse.SessionData>()
                                 .serialize(t.sessionData)
                         )
                     }

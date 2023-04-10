@@ -2,7 +2,7 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
@@ -30,12 +30,12 @@ internal data class AnalyticsUIEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsUIEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsUIEventRequest> {
             override fun serialize(t: AnalyticsUIEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<UIProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<UIProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -85,7 +85,7 @@ internal data class UIProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = object : JSONSerializer<UIProperties> {
+        val serializer = object : JSONObjectSerializer<UIProperties> {
             override fun serialize(t: UIProperties): JSONObject {
                 return JSONObject().apply {
                     put(ACTION_FIELD, t.action.name)
@@ -95,7 +95,7 @@ internal data class UIProperties(
                     putOpt(
                         ANALYTICS_CONTEXT_FIELD,
                         t.context?.let {
-                            JSONSerializationUtils.getSerializer<AnalyticsContext>()
+                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
                                 .serialize(it)
                         }
                     )

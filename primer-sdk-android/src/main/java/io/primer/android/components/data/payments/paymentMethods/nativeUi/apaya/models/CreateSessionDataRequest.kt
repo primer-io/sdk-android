@@ -1,7 +1,7 @@
 package io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import org.json.JSONObject
 
@@ -11,7 +11,7 @@ internal data class CreateSessionDataRequest(
     val currencyCode: String,
     val phoneNumber: String,
     val reference: String,
-) : JSONSerializable {
+) : JSONObjectSerializable {
     companion object {
 
         private const val MERCHANT_ACCOUNT_ID_FIELD = "merchant_account_id"
@@ -21,7 +21,7 @@ internal data class CreateSessionDataRequest(
         private const val REFERENCE_FIELD = "reference"
 
         @JvmField
-        val serializer = object : JSONSerializer<CreateSessionDataRequest> {
+        val serializer = object : JSONObjectSerializer<CreateSessionDataRequest> {
             override fun serialize(t: CreateSessionDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(MERCHANT_ACCOUNT_ID_FIELD, t.merchantAccountId)

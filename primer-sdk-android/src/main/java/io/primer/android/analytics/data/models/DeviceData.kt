@@ -4,9 +4,9 @@ import android.os.Build
 import io.primer.android.analytics.extensions.getMemoryUsage
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 import java.util.Locale
 
@@ -20,7 +20,7 @@ internal data class DeviceData(
     val modelIdentifier: String = Build.MANUFACTURER,
     val modelName: String = Build.MODEL,
     val platformVersion: String = Build.VERSION.SDK_INT.toString(),
-) : JSONSerializable, JSONDeserializable {
+) : JSONObjectSerializable, JSONDeserializable {
     companion object {
 
         private const val BATTERY_LEVEL_FIELD = "batteryLevel"
@@ -34,14 +34,14 @@ internal data class DeviceData(
         private const val PLATFORM_VERSION_FIELD = "platformVersion"
 
         @JvmField
-        val serializer = object : JSONSerializer<DeviceData> {
+        val serializer = object : JSONObjectSerializer<DeviceData> {
             override fun serialize(t: DeviceData): JSONObject {
                 return JSONObject().apply {
                     put(BATTERY_LEVEL_FIELD, t.batteryLevel)
                     put(BATTERY_STATUS_FIELD, t.batteryStatus.name)
                     put(
                         SCREEN_DATA_FIELD,
-                        JSONSerializationUtils.getSerializer<ScreenData>()
+                        JSONSerializationUtils.getJsonObjectSerializer<ScreenData>()
                             .serialize(t.screen)
                     )
                     put(UNIQUE_DEVICE_ID_FIELD, t.uniqueDeviceIdentifier)

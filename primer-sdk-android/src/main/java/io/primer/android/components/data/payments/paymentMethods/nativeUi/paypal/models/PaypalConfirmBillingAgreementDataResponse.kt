@@ -3,9 +3,9 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypa
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalConfirmBillingAgreement
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import org.json.JSONObject
 
@@ -50,7 +50,7 @@ internal data class PaypalShippingAddressDataResponse(
     val state: String?,
     val countryCode: String?,
     val postalCode: String?,
-) : JSONSerializable, JSONDeserializable {
+) : JSONObjectSerializable, JSONDeserializable {
 
     companion object {
 
@@ -64,7 +64,7 @@ internal data class PaypalShippingAddressDataResponse(
         private const val POSTAL_CODE_FIELD = "postalCode"
 
         @JvmField
-        val serializer = object : JSONSerializer<PaypalShippingAddressDataResponse> {
+        val serializer = object : JSONObjectSerializer<PaypalShippingAddressDataResponse> {
 
             override fun serialize(t: PaypalShippingAddressDataResponse): JSONObject {
                 return JSONObject().apply {

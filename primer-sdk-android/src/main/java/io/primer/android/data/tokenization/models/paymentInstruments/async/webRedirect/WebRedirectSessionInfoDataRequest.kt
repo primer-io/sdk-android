@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async.webRedirect
 
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseSessionInfoDataRequest
 import org.json.JSONObject
 
@@ -12,7 +12,7 @@ internal data class WebRedirectSessionInfoDataRequest(
 
     companion object {
         @JvmField
-        val serializer = object : JSONSerializer<WebRedirectSessionInfoDataRequest> {
+        val serializer = object : JSONObjectSerializer<WebRedirectSessionInfoDataRequest> {
             override fun serialize(t: WebRedirectSessionInfoDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PLATFORM_FIELD, t.platform)

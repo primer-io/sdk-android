@@ -1,7 +1,7 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bankIssuer.BankIssuerSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.blik.BlikSessionInfoDataRequest
@@ -15,7 +15,7 @@ internal open class BaseSessionInfoDataRequest(
     open val locale: String,
     open val redirectionUrl: String,
     open val platform: String = "ANDROID",
-) : JSONSerializable {
+) : JSONObjectSerializable {
     companion object {
 
         const val PLATFORM_FIELD = "platform"
@@ -23,7 +23,7 @@ internal open class BaseSessionInfoDataRequest(
         const val REDIRECTION_URL_FIELD = "redirectionUrl"
 
         @JvmField
-        val serializer = object : JSONSerializer<BaseSessionInfoDataRequest> {
+        val serializer = object : JSONObjectSerializer<BaseSessionInfoDataRequest> {
             override fun serialize(t: BaseSessionInfoDataRequest): JSONObject {
                 return when (t) {
                     is WebRedirectSessionInfoDataRequest ->

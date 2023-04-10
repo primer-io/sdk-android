@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async.dummy
 
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseSessionInfoDataRequest
 import io.primer.android.payment.dummy.DummyDecisionType
 import org.json.JSONObject
@@ -16,7 +16,7 @@ internal data class PrimerDummySessionInfoDataRequest(
         private const val DECISION_FIELD = "flowDecision"
 
         @JvmField
-        val serializer = object : JSONSerializer<PrimerDummySessionInfoDataRequest> {
+        val serializer = object : JSONObjectSerializer<PrimerDummySessionInfoDataRequest> {
             override fun serialize(t: PrimerDummySessionInfoDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PLATFORM_FIELD, t.platform)

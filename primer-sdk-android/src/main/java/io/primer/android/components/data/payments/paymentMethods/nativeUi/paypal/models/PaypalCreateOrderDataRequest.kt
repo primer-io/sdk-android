@@ -1,7 +1,7 @@
 package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class PaypalCreateOrderDataRequest(
@@ -10,7 +10,7 @@ internal data class PaypalCreateOrderDataRequest(
     val currencyCode: String?,
     val returnUrl: String,
     val cancelUrl: String
-) : JSONSerializable {
+) : JSONObjectSerializable {
 
     companion object {
 
@@ -21,7 +21,7 @@ internal data class PaypalCreateOrderDataRequest(
         private const val CANCEL_URL_FIELD = "cancelUrl"
 
         @JvmField
-        val serializer = object : JSONSerializer<PaypalCreateOrderDataRequest> {
+        val serializer = object : JSONObjectSerializer<PaypalCreateOrderDataRequest> {
             override fun serialize(t: PaypalCreateOrderDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)

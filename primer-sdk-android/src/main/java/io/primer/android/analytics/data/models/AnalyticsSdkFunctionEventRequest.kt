@@ -2,7 +2,7 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.toStringMap
 import io.primer.android.data.settings.PrimerPaymentHandling
@@ -31,12 +31,12 @@ internal data class AnalyticsSdkFunctionEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsSdkFunctionEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsSdkFunctionEventRequest> {
             override fun serialize(t: AnalyticsSdkFunctionEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<FunctionProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<FunctionProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -81,7 +81,7 @@ internal data class FunctionProperties(
         private const val PARAMS_FIELD = "params"
 
         @JvmField
-        val serializer = object : JSONSerializer<FunctionProperties> {
+        val serializer = object : JSONObjectSerializer<FunctionProperties> {
             override fun serialize(t: FunctionProperties): JSONObject {
                 return JSONObject().apply {
                     put(NAME_FIELD, t.name)

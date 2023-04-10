@@ -1,8 +1,8 @@
 package io.primer.android.threeds.data.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.models.ThreeDsCheckoutParams
 import io.primer.android.threeds.domain.models.ThreeDsVaultParams
@@ -20,7 +20,7 @@ internal data class BeginAuthDataRequest(
     val device: SDKAuthDataRequest,
     val billingAddress: Address? = null,
     val shippingAddress: Address? = null,
-) : JSONSerializable {
+) : JSONObjectSerializable {
 
     companion object {
         private const val MAX_PROTOCOL_VERSION_FIELD = "maxProtocolVersion"
@@ -34,7 +34,7 @@ internal data class BeginAuthDataRequest(
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
         @JvmField
-        val serializer = object : JSONSerializer<BeginAuthDataRequest> {
+        val serializer = object : JSONObjectSerializer<BeginAuthDataRequest> {
             override fun serialize(t: BeginAuthDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(MAX_PROTOCOL_VERSION_FIELD, t.maxProtocolVersion)
@@ -45,14 +45,14 @@ internal data class BeginAuthDataRequest(
                     put(
                         DEVICE_FIELD,
                         JSONSerializationUtils
-                            .getSerializer<SDKAuthDataRequest>()
+                            .getJsonObjectSerializer<SDKAuthDataRequest>()
                             .serialize(t.device)
                     )
                     t.customer?.let {
                         put(
                             CUSTOMER_FIELD,
                             JSONSerializationUtils
-                                .getSerializer<ThreeDsCustomerDataRequest>()
+                                .getJsonObjectSerializer<ThreeDsCustomerDataRequest>()
                                 .serialize(it)
                         )
                     }
@@ -60,7 +60,7 @@ internal data class BeginAuthDataRequest(
                         put(
                             BILLING_ADDRESS_FIELD,
                             JSONSerializationUtils
-                                .getSerializer<Address>()
+                                .getJsonObjectSerializer<Address>()
                                 .serialize(it)
                         )
                     }
@@ -68,7 +68,7 @@ internal data class BeginAuthDataRequest(
                         put(
                             SHIPPING_ADDRESS_FIELD,
                             JSONSerializationUtils
-                                .getSerializer<Address>()
+                                .getJsonObjectSerializer<Address>()
                                 .serialize(it)
                         )
                     }

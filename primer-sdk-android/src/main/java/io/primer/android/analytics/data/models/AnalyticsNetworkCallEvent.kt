@@ -2,7 +2,7 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
@@ -31,12 +31,12 @@ internal data class AnalyticsNetworkCallEvent(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsNetworkCallEvent> {
+        val serializer = object : JSONObjectSerializer<AnalyticsNetworkCallEvent> {
             override fun serialize(t: AnalyticsNetworkCallEvent): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<NetworkCallProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<NetworkCallProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -88,7 +88,7 @@ internal data class NetworkCallProperties(
         private const val ERROR_BODY_FIELD = "errorBody"
 
         @JvmField
-        val serializer = object : JSONSerializer<NetworkCallProperties> {
+        val serializer = object : JSONObjectSerializer<NetworkCallProperties> {
             override fun serialize(t: NetworkCallProperties): JSONObject {
                 return JSONObject().apply {
                     put(NETWORK_CALL_TYPE_FIELD, t.networkCallType.name)

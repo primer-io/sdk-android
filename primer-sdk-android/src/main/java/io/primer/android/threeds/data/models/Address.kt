@@ -1,7 +1,7 @@
 package io.primer.android.threeds.data.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class Address(
@@ -16,7 +16,7 @@ internal data class Address(
     val state: String? = null,
     val countryCode: String,
     val postalCode: String,
-) : JSONSerializable {
+) : JSONObjectSerializable {
 
     companion object {
         private const val FIRST_NAME_FIELD = "firstName"
@@ -32,7 +32,7 @@ internal data class Address(
         private const val POSTAL_CODE_FIELD = "postalCode"
 
         @JvmField
-        val serializer = object : JSONSerializer<Address> {
+        val serializer = object : JSONObjectSerializer<Address> {
             override fun serialize(t: Address): JSONObject {
                 return JSONObject().apply {
                     putOpt(FIRST_NAME_FIELD, t.firstName)

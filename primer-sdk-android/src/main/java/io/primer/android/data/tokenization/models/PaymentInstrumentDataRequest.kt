@@ -1,7 +1,7 @@
 package io.primer.android.data.tokenization.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.AsyncPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactCardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.card.CardPaymentInstrumentDataRequest
@@ -11,12 +11,12 @@ import io.primer.android.data.tokenization.models.paymentInstruments.paypal.Payp
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentDataRequest
 import org.json.JSONObject
 
-internal open class PaymentInstrumentDataRequest : JSONSerializable {
+internal open class PaymentInstrumentDataRequest : JSONObjectSerializable {
 
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<PaymentInstrumentDataRequest> {
+        val serializer = object : JSONObjectSerializer<PaymentInstrumentDataRequest> {
             override fun serialize(t: PaymentInstrumentDataRequest): JSONObject {
                 return when (t) {
                     is KlarnaPaymentInstrumentDataRequest ->

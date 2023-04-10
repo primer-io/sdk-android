@@ -1,13 +1,13 @@
 package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class PaypalConfirmBillingAgreementDataRequest(
     val paymentMethodConfigId: String,
     val tokenId: String,
-) : JSONSerializable {
+) : JSONObjectSerializable {
 
     companion object {
 
@@ -15,7 +15,7 @@ internal data class PaypalConfirmBillingAgreementDataRequest(
         private const val TOKEN_ID_FIELD = "tokenId"
 
         @JvmField
-        val serializer = object : JSONSerializer<PaypalConfirmBillingAgreementDataRequest> {
+        val serializer = object : JSONObjectSerializer<PaypalConfirmBillingAgreementDataRequest> {
             override fun serialize(t: PaypalConfirmBillingAgreementDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)

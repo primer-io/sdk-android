@@ -1,7 +1,7 @@
 package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.payment.dummy.DummyDecisionType
 import org.json.JSONObject
@@ -25,7 +25,7 @@ internal sealed class AnalyticsContext(
         internal const val ANALYTICS_CONTEXT_TYPE_FIELD = "contextType"
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<AnalyticsContext> {
             override fun serialize(t: AnalyticsContext): JSONObject {
                 return when (t.contextType) {
                     AnalyticsContextType.PAYMENT_METHOD ->
@@ -96,7 +96,7 @@ internal data class UrlAnalyticsContext(val url: String?, val paymentMethodType:
         private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
 
         @JvmField
-        val serializer = object : JSONSerializer<UrlAnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<UrlAnalyticsContext> {
             override fun serialize(t: UrlAnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     putOpt(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
@@ -126,7 +126,7 @@ internal data class PaymentMethodAnalyticsContext(val paymentMethodType: String)
         private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
 
         @JvmField
-        val serializer = object : JSONSerializer<PaymentMethodAnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<PaymentMethodAnalyticsContext> {
             override fun serialize(t: PaymentMethodAnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
@@ -154,7 +154,7 @@ internal data class BankIssuerAnalyticsContext(val issuerId: String) :
         private const val ISSUER_ID_FIELD = "issuerId"
 
         @JvmField
-        val serializer = object : JSONSerializer<BankIssuerAnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<BankIssuerAnalyticsContext> {
             override fun serialize(t: BankIssuerAnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     put(ISSUER_ID_FIELD, t.issuerId)
@@ -182,7 +182,7 @@ internal data class DummyApmAnalyticsContext(val decision: DummyDecisionType) :
         private const val DECISION_FIELD = "decision"
 
         @JvmField
-        val serializer = object : JSONSerializer<DummyApmAnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<DummyApmAnalyticsContext> {
             override fun serialize(t: DummyApmAnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     put(DECISION_FIELD, t.decision.name)
@@ -210,7 +210,7 @@ internal data class PaymentInstrumentIdAnalyticsContext(val paymentMethodId: Str
         private const val PAYMENT_METHOD_ID_FIELD = "paymentMethodId"
 
         @JvmField
-        val serializer = object : JSONSerializer<PaymentInstrumentIdAnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<PaymentInstrumentIdAnalyticsContext> {
             override fun serialize(t: PaymentInstrumentIdAnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_ID_FIELD, t.paymentMethodId)
@@ -243,7 +243,7 @@ internal data class IPay88AnalyticsContext(
         private const val IPAY88_ACTION_TYPE_FIELD = "iPay88ActionType"
 
         @JvmField
-        val serializer = object : JSONSerializer<IPay88AnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<IPay88AnalyticsContext> {
             override fun serialize(t: IPay88AnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
@@ -287,7 +287,7 @@ internal data class ThreeDsFailureAnalyticsContext(
         private const val VERSION_FIELD = "version"
 
         @JvmField
-        val serializer = object : JSONSerializer<ThreeDsFailureAnalyticsContext> {
+        val serializer = object : JSONObjectSerializer<ThreeDsFailureAnalyticsContext> {
             override fun serialize(t: ThreeDsFailureAnalyticsContext): JSONObject {
                 return JSONObject().apply {
                     put(DESCRIPTION_FIELD, t.description)

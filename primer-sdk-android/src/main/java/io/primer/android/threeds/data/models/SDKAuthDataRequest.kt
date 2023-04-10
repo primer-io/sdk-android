@@ -1,7 +1,7 @@
 package io.primer.android.threeds.data.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class SDKAuthDataRequest(
@@ -11,7 +11,7 @@ internal data class SDKAuthDataRequest(
     val sdkEncData: String,
     val sdkEphemPubKey: String,
     val sdkReferenceNumber: String,
-) : JSONSerializable {
+) : JSONObjectSerializable {
 
     companion object {
         private const val SDK_APP_ID_FIELD = "sdkAppId"
@@ -22,7 +22,7 @@ internal data class SDKAuthDataRequest(
         private const val SDK_REFERENCE_NUMBER_FIELD = "sdkReferenceNumber"
 
         @JvmField
-        val serializer = object : JSONSerializer<SDKAuthDataRequest> {
+        val serializer = object : JSONObjectSerializer<SDKAuthDataRequest> {
             override fun serialize(t: SDKAuthDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(SDK_APP_ID_FIELD, t.sdkAppId)

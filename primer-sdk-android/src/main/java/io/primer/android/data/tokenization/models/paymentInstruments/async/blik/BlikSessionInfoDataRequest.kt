@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async.blik
 
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseSessionInfoDataRequest
 import org.json.JSONObject
 
@@ -15,7 +15,7 @@ internal data class BlikSessionInfoDataRequest(
         private const val BLIK_CODE_FIELD = "blikCode"
 
         @JvmField
-        val serializer = object : JSONSerializer<BlikSessionInfoDataRequest> {
+        val serializer = object : JSONObjectSerializer<BlikSessionInfoDataRequest> {
             override fun serialize(t: BlikSessionInfoDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PLATFORM_FIELD, t.platform)

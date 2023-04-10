@@ -2,7 +2,7 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.settings.PrimerPaymentHandling
@@ -32,12 +32,12 @@ internal data class AnalyticsCrashEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsCrashEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsCrashEventRequest> {
             override fun serialize(t: AnalyticsCrashEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<CrashProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<CrashProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -77,7 +77,7 @@ internal data class CrashProperties(val stacktrace: List<String>) : BaseAnalytic
         private const val STACKTRACE_FIELD = "stacktrace"
 
         @JvmField
-        val serializer = object : JSONSerializer<CrashProperties> {
+        val serializer = object : JSONObjectSerializer<CrashProperties> {
             override fun serialize(t: CrashProperties): JSONObject {
                 return JSONObject().apply {
                     put(STACKTRACE_FIELD, JSONArray(t.stacktrace))

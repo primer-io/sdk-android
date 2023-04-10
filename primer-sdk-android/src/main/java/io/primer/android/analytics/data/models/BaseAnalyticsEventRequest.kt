@@ -17,14 +17,14 @@ import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 
 @Suppress("UnusedPrivateMember")
-internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserializable {
+internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDeserializable {
     abstract val device: DeviceData?
     abstract val properties: BaseAnalyticsProperties
     abstract val appIdentifier: String?
@@ -61,7 +61,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
         const val SDK_PAYMENT_HANDLING_FIELD = "sdkPaymentHandling"
 
         @JvmField
-        val serializer = object : JSONSerializer<BaseAnalyticsEventRequest> {
+        val serializer = object : JSONObjectSerializer<BaseAnalyticsEventRequest> {
             override fun serialize(t: BaseAnalyticsEventRequest): JSONObject {
                 return when (t.eventType) {
                     AnalyticsEventType.UI_EVENT ->
@@ -112,13 +112,13 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
             }
         }
 
-        val baseSerializer = object : JSONSerializer<BaseAnalyticsEventRequest> {
+        val baseSerializer = object : JSONObjectSerializer<BaseAnalyticsEventRequest> {
             override fun serialize(t: BaseAnalyticsEventRequest): JSONObject {
                 return JSONObject().apply {
                     putOpt(
                         DEVICE_FIELD,
                         t.device?.let {
-                            JSONSerializationUtils.getSerializer<DeviceData>()
+                            JSONSerializationUtils.getJsonObjectSerializer<DeviceData>()
                                 .serialize(it)
                         }
                     )
@@ -141,7 +141,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONSerializable, JSONDeserial
     }
 }
 
-internal abstract class BaseAnalyticsProperties : JSONSerializable, JSONDeserializable
+internal abstract class BaseAnalyticsProperties : JSONObjectSerializable, JSONDeserializable
 
 internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     batteryLevel: Int,

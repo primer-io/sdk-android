@@ -1,6 +1,8 @@
 package io.primer.android.http
 
+import io.primer.android.core.serialization.json.JSONArraySerializer
 import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.error.model.APIError
@@ -105,9 +107,13 @@ internal class PrimerHttpClient(
 
     private inline fun <reified T : JSONSerializable> getRequestBody(request: T): RequestBody {
         return try {
+            val serialized = when (val serializer = JSONSerializationUtils.getJsonSerializer<T>()) {
+                is JSONObjectSerializer -> serializer.serialize(request).toString()
+                is JSONArraySerializer -> serializer.serialize(request).toString()
+            }
             RequestBody.create(
                 MediaType.get(CONTENT_TYPE_APPLICATION_JSON),
-                JSONSerializationUtils.getSerializer<T>().serialize(request).toString()
+                serialized
             )
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)

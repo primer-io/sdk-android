@@ -1,7 +1,7 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async
 
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.configuration.models.PaymentInstrumentType
 import io.primer.android.data.tokenization.models.PaymentInstrumentDataRequest
 import org.json.JSONObject
@@ -21,7 +21,7 @@ internal open class AsyncPaymentInstrumentDataRequest(
 
         @JvmField
         val serializer =
-            object : JSONSerializer<AsyncPaymentInstrumentDataRequest> {
+            object : JSONObjectSerializer<AsyncPaymentInstrumentDataRequest> {
                 override fun serialize(t: AsyncPaymentInstrumentDataRequest): JSONObject {
                     return JSONObject().apply {
                         putOpt(TYPE_FIELD, t.type.name)
@@ -30,7 +30,7 @@ internal open class AsyncPaymentInstrumentDataRequest(
                         put(
                             SESSION_INFO_FIELD,
                             JSONSerializationUtils
-                                .getSerializer<BaseSessionInfoDataRequest>()
+                                .getJsonObjectSerializer<BaseSessionInfoDataRequest>()
                                 .serialize(t.sessionInfo)
                         )
                     }

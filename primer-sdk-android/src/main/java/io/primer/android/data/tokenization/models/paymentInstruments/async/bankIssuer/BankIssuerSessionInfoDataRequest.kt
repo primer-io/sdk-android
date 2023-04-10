@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.async.bankIssuer
 
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseSessionInfoDataRequest
 import org.json.JSONObject
 
@@ -15,7 +15,7 @@ internal data class BankIssuerSessionInfoDataRequest(
         private const val ISSUER_FIELD = "issuer"
 
         @JvmField
-        val serializer = object : JSONSerializer<BankIssuerSessionInfoDataRequest> {
+        val serializer = object : JSONObjectSerializer<BankIssuerSessionInfoDataRequest> {
             override fun serialize(t: BankIssuerSessionInfoDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(PLATFORM_FIELD, t.platform)

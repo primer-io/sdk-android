@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models.paymentInstruments.card
 
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.data.tokenization.models.PaymentInstrumentDataRequest
 import org.json.JSONObject
 
@@ -21,7 +21,7 @@ internal data class CardPaymentInstrumentDataRequest(
 
         @JvmField
         val serializer =
-            object : JSONSerializer<CardPaymentInstrumentDataRequest> {
+            object : JSONObjectSerializer<CardPaymentInstrumentDataRequest> {
                 override fun serialize(t: CardPaymentInstrumentDataRequest): JSONObject {
                     return JSONObject().apply {
                         put(NUMBER_FIELD, t.number)
