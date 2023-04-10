@@ -57,7 +57,8 @@ android {
 }
 
 dependencies {
-    implementation "io.insert-koin:koin-android:$koinVersion"
+    // mut be added for Java interop, as it is required on compile classpath
+    api "io.insert-koin:koin-android:$koinVersion"
 
     implementation Dependencies.Networking.okhttp
     implementation Dependencies.Networking.okhttpLoggingInterceptor

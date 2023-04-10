@@ -8,7 +8,7 @@ import io.primer.android.data.configuration.models.OrderDataResponse
 import io.primer.android.ui.settings.PrimerUIOptions
 import java.util.Locale
 
-data class PrimerSettings(
+data class PrimerSettings @JvmOverloads constructor(
     var paymentHandling: PrimerPaymentHandling = PrimerPaymentHandling.AUTO,
     var locale: Locale = Locale.getDefault(),
     var paymentMethodOptions: PrimerPaymentMethodOptions = PrimerPaymentMethodOptions(),

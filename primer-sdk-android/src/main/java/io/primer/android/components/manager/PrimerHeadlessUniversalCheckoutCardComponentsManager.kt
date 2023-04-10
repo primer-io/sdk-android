@@ -169,6 +169,7 @@ private constructor(private val paymentMethodType: String) :
         private const val YEAR_DIVIDER = 100
 
         @Throws(SdkUninitializedException::class, UnsupportedPaymentMethodException::class)
+        @JvmStatic
         fun newInstance(paymentMethodType: String):
             PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface =
             PrimerHeadlessUniversalCheckoutCardComponentsManager(

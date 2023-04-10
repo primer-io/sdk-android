@@ -3,7 +3,7 @@ package io.primer.android.payment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.components.manager.native.PrimerHeadlessUniversalCheckoutNativeUiManager
+import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 
 internal class SelectedPaymentMethodManagerBehaviour(
     private val paymentMethodType: String,

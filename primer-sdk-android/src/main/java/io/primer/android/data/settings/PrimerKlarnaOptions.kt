@@ -3,7 +3,7 @@ package io.primer.android.data.settings
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PrimerKlarnaOptions(
+data class PrimerKlarnaOptions @JvmOverloads constructor(
     var recurringPaymentDescription: String? = null,
     @Deprecated("This property is deprecated and will be removed in future release.")
     var webViewTitle: String? = null,

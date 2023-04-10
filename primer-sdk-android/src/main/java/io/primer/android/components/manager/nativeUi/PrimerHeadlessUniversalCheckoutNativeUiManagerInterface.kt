@@ -1,9 +1,10 @@
-package io.primer.android.components.manager.native
+package io.primer.android.components.manager.nativeUi
 
 import android.content.Context
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 
+@JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutNativeUiManagerInterface {
 
     /**

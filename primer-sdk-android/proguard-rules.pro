@@ -202,20 +202,20 @@
 -keep class io.primer.android.components.domain.error.PrimerInputValidationError {
     *;
 }
--keep enum  io.primer.android.components.domain.inputs.models.PrimerInputElementType {
+-keep enum io.primer.android.components.domain.inputs.models.PrimerInputElementType {
     *;
 }
 
  #------------------------------------HUC native---------------------------------------------------#
--keep class io.primer.android.components.manager.native.PrimerHeadlessUniversalCheckoutNativeUiManager {
+-keep class io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager {
     public *;
 }
 
--keep class io.primer.android.components.manager.native.PrimerHeadlessUniversalCheckoutNativeUiManager$Companion {
-    public *;
+-keep class io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager$Companion {
+    *;
 }
 
--keep class io.primer.android.components.manager.native.PrimerHeadlessUniversalCheckoutNativeUiManagerInterface{
+-keep interface io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManagerInterface {
     public *;
 }
 

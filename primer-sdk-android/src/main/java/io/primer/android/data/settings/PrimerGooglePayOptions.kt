@@ -8,7 +8,7 @@ enum class GooglePayButtonStyle {
     BLACK,
 }
 
-data class PrimerGooglePayOptions(
+data class PrimerGooglePayOptions @JvmOverloads constructor(
     var merchantName: String? = null,
     var allowedCardNetworks: List<String> = listOf(
         "AMEX",

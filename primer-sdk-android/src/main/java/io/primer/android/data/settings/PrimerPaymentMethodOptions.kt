@@ -3,7 +3,7 @@ package io.primer.android.data.settings
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PrimerPaymentMethodOptions(
+data class PrimerPaymentMethodOptions @JvmOverloads constructor(
     var redirectScheme: String? = null,
     var googlePayOptions: PrimerGooglePayOptions = PrimerGooglePayOptions(),
     var klarnaOptions: PrimerKlarnaOptions = PrimerKlarnaOptions(),

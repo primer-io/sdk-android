@@ -62,6 +62,7 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
 
     companion object {
 
+        @JvmStatic
         private val assetManager by lazy { PrimerHeadlessUniversalCheckoutAssetsManager() }
 
         /**
@@ -69,14 +70,16 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
          * @throws SdkUninitializedException
          */
         @Throws(SdkUninitializedException::class)
+        @JvmStatic
         fun getPaymentMethodAssets(context: Context): List<PrimerPaymentMethodAsset> =
             assetManager.getPaymentMethodAssets(context)
 
-        @Throws(SdkUninitializedException::class)
         /**
          * Returns [PrimerPaymentMethodAsset] for a given [paymentMethodType].
          * @throws SdkUninitializedException
          */
+        @Throws(SdkUninitializedException::class)
+        @JvmStatic
         fun getPaymentMethodAsset(
             context: Context,
             paymentMethodType: String
@@ -84,6 +87,7 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
 
         @DrawableRes
         @Throws(SdkUninitializedException::class)
+        @JvmStatic
         fun getCardNetworkImage(
             cardNetwork: CardNetwork.Type,
         ): Int = assetManager.getCardNetworkImage(cardNetwork)

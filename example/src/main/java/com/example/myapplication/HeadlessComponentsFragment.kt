@@ -34,7 +34,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.PrimerCardComponentsManagerListener
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface
-import io.primer.android.components.manager.native.PrimerHeadlessUniversalCheckoutNativeUiManager
+import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement

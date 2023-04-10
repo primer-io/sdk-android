@@ -1,4 +1,4 @@
-package io.primer.android.components.manager.native
+package io.primer.android.components.manager.nativeUi
 
 import android.content.Context
 import android.content.Intent
@@ -85,6 +85,7 @@ class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
          */
 
         @Throws(SdkUninitializedException::class, UnsupportedPaymentMethodException::class)
+        @JvmStatic
         fun newInstance(
             paymentMethodType: String
         ): PrimerHeadlessUniversalCheckoutNativeUiManagerInterface {
