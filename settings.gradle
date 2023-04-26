@@ -2,3 +2,4 @@ include ':primer-sdk-android'
 include ':example'
 
 rootProject.name = "Primer"
+
