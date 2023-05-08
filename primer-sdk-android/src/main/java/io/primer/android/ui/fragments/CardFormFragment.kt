@@ -607,7 +607,7 @@ internal class CardFormFragment : BaseFragment() {
                     MessageAnalyticsParams(
                         MessageType.VALIDATION_FAILED,
                         input.error.toString(),
-                        Severity.WARN
+                        Severity.INFO
                     )
                 )
             }

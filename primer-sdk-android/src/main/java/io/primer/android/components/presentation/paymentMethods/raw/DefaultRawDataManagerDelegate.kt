@@ -80,9 +80,9 @@ internal class DefaultRawDataManagerDelegate(
                 e.errors.forEach { error ->
                     PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
                         MessageAnalyticsParams(
-                            MessageType.ERROR,
+                            MessageType.VALIDATION_FAILED,
                             error.description,
-                            Severity.ERROR,
+                            Severity.INFO,
                             error.diagnosticsId
                         )
                     )

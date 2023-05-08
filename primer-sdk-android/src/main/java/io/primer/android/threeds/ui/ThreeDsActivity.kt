@@ -68,7 +68,7 @@ internal class ThreeDsActivity : BaseCheckoutActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        DIAppContext.app?.unloadModules(threeDsModule)
+        getKoin().unloadModules(listOf(threeDsModule))
     }
 
     private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
