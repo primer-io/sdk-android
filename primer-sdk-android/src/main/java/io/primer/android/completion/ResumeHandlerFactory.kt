@@ -5,6 +5,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
+import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
@@ -14,6 +15,7 @@ import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 
@@ -26,6 +28,8 @@ internal class ResumeHandlerFactory(
     private val mockConfigurationRepository: MockConfigurationRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
+    private val threeDsRepository: ThreeDsRepository,
+    private val errorMapperFactory: ErrorMapperFactory,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
@@ -58,6 +62,9 @@ internal class ResumeHandlerFactory(
                     threeDsLibraryVersionValidator,
                     errorEventResolver,
                     eventDispatcher,
+                    threeDsRepository,
+                    errorMapperFactory,
+                    this,
                     logger,
                     config,
                     paymentMethodDescriptorsRepository,

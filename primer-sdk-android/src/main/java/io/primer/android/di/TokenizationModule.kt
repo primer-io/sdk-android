@@ -10,6 +10,9 @@ import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolv
 import io.primer.android.domain.tokenization.repository.TokenizationRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
+import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
+import io.primer.android.threeds.data.repository.ThreeDsDataRepository
+import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -21,6 +24,10 @@ internal const val RESUME_HANDLER_LOGGER_NAME = "RESUME_HANDLER"
 
 internal val tokenizationModule = {
     module {
+        single { Remote3DSAuthDataSource(get()) }
+
+        single<ThreeDsRepository> { ThreeDsDataRepository(get(), get()) }
+
         single { ThreeDsSdkClassValidator() }
 
         single { ThreeDsLibraryVersionValidator(get()) }
@@ -33,6 +40,8 @@ internal val tokenizationModule = {
 
         factory {
             ResumeHandlerFactory(
+                get(),
+                get(),
                 get(),
                 get(),
                 get(),

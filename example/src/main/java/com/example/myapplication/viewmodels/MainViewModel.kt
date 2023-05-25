@@ -32,6 +32,7 @@ import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.PrimerThreeDsOptions
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.ui.settings.PrimerUIOptions
 import kotlinx.coroutines.Dispatchers
@@ -159,7 +160,8 @@ class MainViewModel(
             paymentMethodOptions = PrimerPaymentMethodOptions(
                 redirectScheme = "primer",
                 klarnaOptions = PrimerKlarnaOptions("This is custom description"),
-                googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true)
+                googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true),
+                threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds")
             ),
             uiOptions = PrimerUIOptions(
                 isInitScreenEnabled = true,

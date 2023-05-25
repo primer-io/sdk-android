@@ -12,6 +12,8 @@ import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParam
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
+import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextParams
+import io.primer.android.analytics.domain.models.ThreeDsRuntimeFailureContextParams
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
@@ -368,12 +370,23 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
         iPay88PaymentMethodId = iPay88PaymentMethodId,
         iPay88ActionType = iPay88ActionType
     )
-    is ThreeDsFailureContextParams -> ThreeDsFailureAnalyticsContext(
+    is ThreeDsRuntimeFailureContextParams -> ThreeDsRuntimeFailureAnalyticsContext(
+        threeDsSdkVersion,
+        initProtocolVersion,
+        errorCode
+    )
+    is ThreeDsProtocolFailureContextParams -> ThreeDsProtocolFailureAnalyticsContext(
+        errorDetails,
         description,
         errorCode,
         errorType,
         component,
         transactionId,
-        version
+        version,
+        threeDsSdkVersion,
+        initProtocolVersion
+    )
+    is ThreeDsFailureContextParams -> ThreeDsFailureAnalyticsContext(
+        threeDsSdkVersion, initProtocolVersion
     )
 }

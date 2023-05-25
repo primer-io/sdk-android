@@ -4,6 +4,8 @@ import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.payment.dummy.DummyDecisionType
+import io.primer.android.threeds.BuildConfig
+import io.primer.android.threeds.data.models.postAuth.ThreeDsSdkProvider
 import org.json.JSONObject
 
 internal sealed class AnalyticsContext(
@@ -17,7 +19,9 @@ internal sealed class AnalyticsContext(
         DUMMY_APM,
         PAYMENT_METHOD_ID,
         IPAY88,
-        THREE_DS_FAILURE
+        THREE_DS_FAILURE,
+        THREE_DS_RUNTIME_FAILURE,
+        THREE_DS_PROTOCOL_FAILURE
     }
 
     companion object {
@@ -52,6 +56,14 @@ internal sealed class AnalyticsContext(
                         ThreeDsFailureAnalyticsContext.serializer.serialize(
                             t as ThreeDsFailureAnalyticsContext
                         )
+                    AnalyticsContextType.THREE_DS_RUNTIME_FAILURE ->
+                        ThreeDsRuntimeFailureAnalyticsContext.serializer.serialize(
+                            t as ThreeDsRuntimeFailureAnalyticsContext
+                        )
+                    AnalyticsContextType.THREE_DS_PROTOCOL_FAILURE ->
+                        ThreeDsProtocolFailureAnalyticsContext.serializer.serialize(
+                            t as ThreeDsProtocolFailureAnalyticsContext
+                        )
                     AnalyticsContextType.IPAY88 ->
                         IPay88AnalyticsContext.serializer.serialize(
                             t as IPay88AnalyticsContext
@@ -79,6 +91,10 @@ internal sealed class AnalyticsContext(
                         PaymentInstrumentIdAnalyticsContext.deserializer.deserialize(t)
                     AnalyticsContextType.THREE_DS_FAILURE ->
                         ThreeDsFailureAnalyticsContext.deserializer.deserialize(t)
+                    AnalyticsContextType.THREE_DS_RUNTIME_FAILURE ->
+                        ThreeDsRuntimeFailureAnalyticsContext.deserializer.deserialize(t)
+                    AnalyticsContextType.THREE_DS_PROTOCOL_FAILURE ->
+                        ThreeDsProtocolFailureAnalyticsContext.deserializer.deserialize(t)
                     AnalyticsContextType.IPAY88 ->
                         IPay88AnalyticsContext.deserializer.deserialize(t)
                 }
@@ -268,34 +284,28 @@ internal data class IPay88AnalyticsContext(
 }
 
 internal data class ThreeDsFailureAnalyticsContext(
-    val description: String,
-    val errorCode: String,
-    val errorType: String,
-    val component: String,
-    val transactionId: String,
-    val version: String
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String?,
+    val threeDsSdkWrapperVersion: String = BuildConfig.SDK_VERSION_STRING,
+    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_FAILURE) {
 
     companion object {
 
-        private const val DESCRIPTION_FIELD = "description"
-        private const val ERROR_CODE_FIELD = "errorCode"
-        private const val ERROR_TYPE_FIELD = "errorType"
-        private const val COMPONENT_FIELD = "component"
-        private const val TRANSACTION_FIELD = "transactionId"
-        private const val VERSION_FIELD = "version"
+        private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
+        private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
+        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsSdkWrapperVersion"
+        private const val SDK_PROVIDER_FIELD = "threeDsSdkProvider"
 
         @JvmField
         val serializer = object : JSONObjectSerializer<ThreeDsFailureAnalyticsContext> {
             override fun serialize(t: ThreeDsFailureAnalyticsContext): JSONObject {
                 return JSONObject().apply {
-                    put(DESCRIPTION_FIELD, t.description)
-                    put(ERROR_CODE_FIELD, t.errorCode)
-                    put(ERROR_TYPE_FIELD, t.errorType)
-                    put(COMPONENT_FIELD, t.component)
-                    put(TRANSACTION_FIELD, t.transactionId)
-                    put(VERSION_FIELD, t.version)
+                    putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
+                    putOpt(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsSdkWrapperVersion)
+                    put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
                     put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
             }
@@ -305,12 +315,123 @@ internal data class ThreeDsFailureAnalyticsContext(
         val deserializer = object : JSONDeserializer<ThreeDsFailureAnalyticsContext> {
             override fun deserialize(t: JSONObject): ThreeDsFailureAnalyticsContext {
                 return ThreeDsFailureAnalyticsContext(
+                    t.optNullableString(SDK_VERSION_FIELD),
+                    t.optNullableString(INIT_PROTOCOL_VERSION_FIELD),
+                    t.optString(SDK_WRAPPER_VERSION_FIELD),
+                )
+            }
+        }
+    }
+}
+
+internal data class ThreeDsRuntimeFailureAnalyticsContext(
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String,
+    val errorCode: String?,
+    val threeDsSdkWrapperVersion: String = BuildConfig.SDK_VERSION_STRING,
+    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
+) :
+    AnalyticsContext(AnalyticsContextType.THREE_DS_RUNTIME_FAILURE) {
+
+    companion object {
+
+        private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
+        private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
+        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsSdkWrapperVersion"
+        private const val SDK_PROVIDER_FIELD = "threeDsSdkProvider"
+        private const val ERROR_CODE_FIELD = "errorCode"
+
+        @JvmField
+        val serializer = object : JSONObjectSerializer<ThreeDsRuntimeFailureAnalyticsContext> {
+            override fun serialize(t: ThreeDsRuntimeFailureAnalyticsContext): JSONObject {
+                return JSONObject().apply {
+                    putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
+                    put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
+                    putOpt(ERROR_CODE_FIELD, t.errorCode)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsSdkWrapperVersion)
+                    put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
+                }
+            }
+        }
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<ThreeDsRuntimeFailureAnalyticsContext> {
+            override fun deserialize(t: JSONObject): ThreeDsRuntimeFailureAnalyticsContext {
+                return ThreeDsRuntimeFailureAnalyticsContext(
+                    t.optNullableString(SDK_VERSION_FIELD),
+                    t.optString(INIT_PROTOCOL_VERSION_FIELD),
+                    t.optNullableString(ERROR_CODE_FIELD),
+                    t.optString(SDK_WRAPPER_VERSION_FIELD),
+                )
+            }
+        }
+    }
+}
+
+internal data class ThreeDsProtocolFailureAnalyticsContext(
+    val errorDetails: String,
+    val description: String,
+    val errorCode: String,
+    val errorType: String,
+    val component: String,
+    val transactionId: String,
+    val version: String,
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String,
+    val threeDsSdkWrapperVersion: String = BuildConfig.SDK_VERSION_STRING,
+    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
+) :
+    AnalyticsContext(AnalyticsContextType.THREE_DS_PROTOCOL_FAILURE) {
+
+    companion object {
+
+        private const val ERROR_DETAILS_FIELD = "errorDetails"
+        private const val DESCRIPTION_FIELD = "description"
+        private const val ERROR_CODE_FIELD = "errorCode"
+        private const val ERROR_TYPE_FIELD = "errorType"
+        private const val COMPONENT_FIELD = "component"
+        private const val TRANSACTION_FIELD = "transactionId"
+        private const val VERSION_FIELD = "version"
+        private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
+        private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
+        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsSdkWrapperVersion"
+        private const val SDK_PROVIDER_FIELD = "threeDsSdkProvider"
+
+        @JvmField
+        val serializer = object : JSONObjectSerializer<ThreeDsProtocolFailureAnalyticsContext> {
+            override fun serialize(t: ThreeDsProtocolFailureAnalyticsContext): JSONObject {
+                return JSONObject().apply {
+                    put(ERROR_DETAILS_FIELD, t.errorDetails)
+                    put(DESCRIPTION_FIELD, t.description)
+                    put(ERROR_CODE_FIELD, t.errorCode)
+                    put(ERROR_TYPE_FIELD, t.errorType)
+                    put(COMPONENT_FIELD, t.component)
+                    put(TRANSACTION_FIELD, t.transactionId)
+                    put(VERSION_FIELD, t.version)
+                    putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
+                    put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsSdkWrapperVersion)
+                    put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
+                }
+            }
+        }
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<ThreeDsProtocolFailureAnalyticsContext> {
+            override fun deserialize(t: JSONObject): ThreeDsProtocolFailureAnalyticsContext {
+                return ThreeDsProtocolFailureAnalyticsContext(
+                    t.optString(ERROR_DETAILS_FIELD),
                     t.optString(DESCRIPTION_FIELD),
                     t.optString(ERROR_CODE_FIELD),
                     t.optString(ERROR_TYPE_FIELD),
                     t.optString(COMPONENT_FIELD),
                     t.optString(TRANSACTION_FIELD),
                     t.optString(VERSION_FIELD),
+                    t.optNullableString(SDK_VERSION_FIELD),
+                    t.optString(INIT_PROTOCOL_VERSION_FIELD),
+                    t.optString(SDK_WRAPPER_VERSION_FIELD),
                 )
             }
         }

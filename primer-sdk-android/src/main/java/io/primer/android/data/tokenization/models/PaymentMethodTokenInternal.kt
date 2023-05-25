@@ -5,7 +5,7 @@ import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.common.ResponseCode
 import org.json.JSONObject
 
 internal data class PaymentMethodTokenInternal(

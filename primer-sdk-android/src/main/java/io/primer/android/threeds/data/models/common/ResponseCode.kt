@@ -1,4 +1,4 @@
-package io.primer.android.threeds.data.models
+package io.primer.android.threeds.data.models.common
 
 enum class ResponseCode {
     NOT_PERFORMED,

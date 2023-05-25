@@ -2,7 +2,7 @@ package io.primer.android.domain.tokenization.models
 
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
 import io.primer.android.data.tokenization.models.TokenType
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.common.ResponseCode
 
 data class PrimerPaymentMethodTokenData(
     val token: String,

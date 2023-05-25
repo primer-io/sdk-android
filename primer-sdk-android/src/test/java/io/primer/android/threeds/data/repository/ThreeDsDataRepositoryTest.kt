@@ -10,8 +10,9 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.PostAuthResponse
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
+import io.primer.android.threeds.domain.models.SuccessThreeDsContinueAuthParams
 import io.primer.android.threeds.domain.models.ThreeDsVaultParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -68,7 +69,7 @@ internal class ThreeDsDataRepositoryTest {
         coEvery { configurationDataSource.get() }.returns(flowOf(configurationData))
 
         val continueAuthResponseMock = mockk<PostAuthResponse>(relaxed = true)
-        coEvery { remote3DSAuthDataSource.continue3dsAuth(any(), any()) }.returns(
+        coEvery { remote3DSAuthDataSource.continue3dsAuth(any(), any(), any()) }.returns(
             flowOf(
                 continueAuthResponseMock
             )
@@ -76,11 +77,15 @@ internal class ThreeDsDataRepositoryTest {
 
         runTest {
             val continueAuthResponse =
-                repository.continue3DSAuth("").first()
+                repository.continue3DSAuth(
+                    "",
+                    SuccessThreeDsContinueAuthParams("1.0.0", "2.1.0")
+                )
+                    .first()
             assertEquals(continueAuthResponseMock, continueAuthResponse)
         }
 
         coVerify { configurationDataSource.get() }
-        coVerify { remote3DSAuthDataSource.continue3dsAuth(any(), any()) }
+        coVerify { remote3DSAuthDataSource.continue3dsAuth(any(), any(), any()) }
     }
 }

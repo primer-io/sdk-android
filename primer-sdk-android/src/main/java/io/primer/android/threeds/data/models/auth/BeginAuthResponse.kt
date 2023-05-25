@@ -1,9 +1,10 @@
-package io.primer.android.threeds.data.models
+package io.primer.android.threeds.data.models.auth
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.threeds.data.models.common.AuthenticationDataResponse
 import org.json.JSONObject
 
 internal data class BeginAuthResponse(

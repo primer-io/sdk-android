@@ -1,17 +1,18 @@
-package io.primer.android.threeds.data.models
+package io.primer.android.threeds.data.models.postAuth
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.threeds.data.models.common.AuthenticationDataResponse
 import org.json.JSONObject
 
 internal data class PostAuthResponse(
     val token: PaymentMethodTokenInternal,
     val authentication: AuthenticationDataResponse?,
-    val resumeToken: String?,
+    val resumeToken: String,
 ) : JSONDeserializable {
+
     companion object {
         private const val TOKEN_FIELD = "token"
         private const val AUTHENTICATION_FIELD = "authentication"
@@ -34,7 +35,7 @@ internal data class PostAuthResponse(
                                 it
                             )
                     },
-                    t.optNullableString(RESUME_TOKEN_FIELD)
+                    t.optString(RESUME_TOKEN_FIELD)
                 )
             }
         }

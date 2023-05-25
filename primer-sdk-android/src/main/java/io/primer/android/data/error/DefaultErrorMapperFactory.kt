@@ -13,6 +13,7 @@ import io.primer.android.data.payments.resume.error.PaymentResumeErrorMapper
 import io.primer.android.domain.error.ErrorMapper
 import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.threeds.data.error.ThreeDsErrorMapper
 
 internal class DefaultErrorMapperFactory : ErrorMapperFactory {
 
@@ -28,6 +29,7 @@ internal class DefaultErrorMapperFactory : ErrorMapperFactory {
             ErrorMapperType.GOOGLE_PAY -> GooglePayErrorMapper()
             ErrorMapperType.APAYA -> ApayaErrorMapper()
             ErrorMapperType.I_PAY88 -> IPayErrorMapper()
+            ErrorMapperType.THREE_DS -> ThreeDsErrorMapper()
             ErrorMapperType.DEFAULT -> DefaultErrorMapper()
         }
     }

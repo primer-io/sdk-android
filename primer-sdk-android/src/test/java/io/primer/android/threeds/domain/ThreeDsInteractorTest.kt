@@ -12,21 +12,21 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.data.base.models.BasePaymentToken
+import io.primer.android.analytics.data.repository.AnalyticsDataRepository
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.data.tokenization.models.TokenType
 import io.primer.android.domain.error.CheckoutErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.token.repository.ClientTokenRepository
-import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.logging.DefaultLogger
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.PostAuthResponse
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.common.ResponseCode
+import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.BaseThreeDsParams
@@ -46,7 +46,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -76,13 +75,16 @@ internal class ThreeDsInteractorTest {
     internal lateinit var threeDsAppUrlRepository: ThreeDsAppUrlRepository
 
     @RelaxedMockK
-    internal lateinit var postTokenizationEventResolver: PostTokenizationEventResolver
-
-    @RelaxedMockK
     internal lateinit var resumeEventResolver: ResumeEventResolver
 
     @RelaxedMockK
+    internal lateinit var errorMapperFactory: ErrorMapperFactory
+
+    @RelaxedMockK
     internal lateinit var checkoutErrorEventResolver: CheckoutErrorEventResolver
+
+    @RelaxedMockK
+    internal lateinit var analyticsRepository: AnalyticsDataRepository
 
     @RelaxedMockK
     internal lateinit var logger: DefaultLogger
@@ -99,9 +101,10 @@ internal class ThreeDsInteractorTest {
             clientTokenRepository,
             threeDsAppUrlRepository,
             threeDsConfigurationRepository,
-            postTokenizationEventResolver,
             resumeEventResolver,
             checkoutErrorEventResolver,
+            errorMapperFactory,
+            analyticsRepository,
             logger,
         )
 
@@ -118,7 +121,7 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
             flowOf(keysParams)
         )
-        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }.returns(
             flowOf(Unit)
         )
 
@@ -127,37 +130,11 @@ internal class ThreeDsInteractorTest {
         }
 
         coVerify { threeDsConfigurationRepository.getConfiguration() }
-        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any()) }
+        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }
     }
 
     @Test
-    fun `initialize() should dispatch token with error event when repository service initialize() was success and config repository getConfiguration() failed and Intent was CHECKOUT`() {
-        val initParams = mockk<ThreeDsInitParams>(relaxed = true)
-        val exception = mockk<Exception>(relaxed = true)
-        coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
-            flow {
-                throw exception
-            }
-        )
-
-        val token = slot<PaymentMethodTokenInternal>()
-
-        assertThrows<Exception> {
-            runTest {
-                interactor.initialize(initParams).first()
-            }
-        }
-
-        coVerify { threeDsConfigurationRepository.getConfiguration() }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertNotNull(token.captured.threeDSecureAuthentication)
-        assertNotNull("CLIENT_ERROR", token.captured.threeDSecureAuthentication?.reasonCode)
-        assertNotNull(exception.message, token.captured.threeDSecureAuthentication?.reasonText)
-    }
-
-    @Test
-    fun `initialize() should dispatch resume error events when repository service initialize() was success and config repository getConfiguration() failed and Intent was 3DS_AUTHENTICATION`() {
+    fun `initialize() should dispatch error events when repository service initialize() was success and config repository getConfiguration() failed and Intent was 3DS_AUTHENTICATION`() {
         val initParams = mockk<ThreeDsInitParams>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Config failed.")
@@ -171,28 +148,20 @@ internal class ThreeDsInteractorTest {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
-        val event = slot<Throwable>()
-
-        assertThrows<Exception> {
+        val capturedException = assertThrows<Exception> {
             runTest {
                 interactor.initialize(initParams).first()
             }
         }
 
         coVerify { threeDsConfigurationRepository.getConfiguration() }
-        verify {
-            checkoutErrorEventResolver.resolve(
-                capture(event),
-                ErrorMapperType.PAYMENT_RESUME
-            )
-        }
 
-        assertEquals(exception.javaClass, event.captured.javaClass)
-        assertEquals(exception.message, event.captured.message)
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
     }
 
     @Test
-    fun `initialize() should dispatch token with error event when service repository initialize() failed and config repository getConfiguration() was success and Intent was CHECKOUT`() {
+    fun `initialize() should dispatch error events when service repository initialize() failed and config repository getConfiguration() was success and Intent was 3DS_AUTHENTICATION`() {
         val initParams = mockk<ThreeDsInitParams>(relaxed = true)
         val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
@@ -201,40 +170,7 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
             flowOf(keysParams)
         )
-        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
-            flow {
-                throw exception
-            }
-        )
-
-        val token = slot<PaymentMethodTokenInternal>()
-
-        assertThrows<Exception> {
-            runTest {
-                interactor.initialize(initParams).first()
-            }
-        }
-
-        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any()) }
-        coVerify { threeDsConfigurationRepository.getConfiguration() }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertNotNull(token.captured.threeDSecureAuthentication)
-        assertNotNull("CLIENT_ERROR", token.captured.threeDSecureAuthentication?.reasonCode)
-        assertNotNull(exception.message, token.captured.threeDSecureAuthentication?.reasonText)
-    }
-
-    @Test
-    fun `initialize() should dispatch resume error events when service repository initialize() failed and config repository getConfiguration() was success and Intent was 3DS_AUTHENTICATION`() {
-        val initParams = mockk<ThreeDsInitParams>(relaxed = true)
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("3DS init failed.")
-
-        coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
-            flowOf(keysParams)
-        )
-        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }.returns(
             flow {
                 throw exception
             }
@@ -243,32 +179,24 @@ internal class ThreeDsInteractorTest {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
-        val event = slot<Throwable>()
-
-        assertThrows<Exception> {
+        val capturedException = assertThrows<Exception> {
             runTest {
                 interactor.initialize(initParams).first()
             }
         }
 
-        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any()) }
+        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }
         coVerify { threeDsConfigurationRepository.getConfiguration() }
-        verify {
-            checkoutErrorEventResolver.resolve(
-                capture(event),
-                ErrorMapperType.PAYMENT_RESUME
-            )
-        }
 
-        assertEquals(exception.javaClass, event.captured.javaClass)
-        assertEquals(exception.message, event.captured.message)
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
     }
 
     @Test
     fun `performProviderAuth() should return transaction when repository performProviderAuth() was success`() {
         val transactionMock = mockk<Transaction>(relaxed = true)
         val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
-        every { authParams.protocolVersion }.returns(ProtocolVersion.V_210)
+        every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
             flowOf(authParams)
@@ -285,45 +213,12 @@ internal class ThreeDsInteractorTest {
     }
 
     @Test
-    fun `performProviderAuth() should dispatch token with error event when repository performProviderAuth() failed and Intent was CHECKOUT`() {
-        val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("Failed to perform provider auth.")
-
-        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
-        every { authParams.protocolVersion }.returns(ProtocolVersion.V_210)
-
-        every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
-            flowOf(authParams)
-        )
-        coEvery { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }.returns(
-            flow {
-                throw exception
-            }
-        )
-
-        val token = slot<PaymentMethodTokenInternal>()
-
-        assertThrows<Exception> {
-            runTest {
-                interactor.authenticateSdk().first()
-            }
-        }
-
-        coVerify { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertNotNull(token.captured.threeDSecureAuthentication)
-        assertNotNull("CLIENT_ERROR", token.captured.threeDSecureAuthentication?.reasonCode)
-        assertNotNull(exception.message, token.captured.threeDSecureAuthentication?.reasonText)
-    }
-
-    @Test
     fun `performProviderAuth() should dispatch resume error events when repository performProviderAuth() failed and Intent was 3DS_AUTHENTICATION`() {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to perform provider auth.")
 
         val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
-        every { authParams.protocolVersion }.returns(ProtocolVersion.V_210)
+        every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
             flowOf(authParams)
@@ -337,49 +232,46 @@ internal class ThreeDsInteractorTest {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
-        val event = slot<Throwable>()
-
-        assertThrows<Exception> {
+        val capturedException = assertThrows<Exception> {
             runTest {
                 interactor.authenticateSdk().first()
             }
         }
 
-        verify {
-            checkoutErrorEventResolver.resolve(
-                capture(event),
-                ErrorMapperType.PAYMENT_RESUME
-            )
-        }
-
-        assertEquals(exception.javaClass, event.captured.javaClass)
-        assertEquals(exception.message, event.captured.message)
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
     }
 
     @Test
-    fun `beginRemoteAuth() should dispatch token event when repository begin3DSAuth() was success and response code is not CHALLENGE`() {
+    fun `beginRemoteAuth() should dispatch resume events when repository begin3DSAuth() was success and status was not CHALLENGE`() {
         val beginAuthResponse = mockk<BeginAuthResponse>(relaxed = true)
-        val authDetails = mockk<BasePaymentToken.AuthenticationDetailsDataResponse>(relaxed = true)
         val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
 
-        every { beginAuthResponse.token.threeDSecureAuthentication }.returns(authDetails)
+        every { beginAuthResponse.authentication.responseCode } returns ResponseCode.AUTH_SUCCESS
         every { beginAuthResponse.token }.returns(paymentMethodTokenInternal)
+
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
+
         coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
             flowOf(
                 beginAuthResponse
             )
         )
 
-        val token = slot<PaymentMethodTokenInternal>()
         runTest {
             val response = interactor.beginRemoteAuth(threeDsParams).first()
             assertEquals(beginAuthResponse, response)
         }
 
-        coVerify { threeDsRepository.begin3DSAuth(any(), any()) }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
+        val paymentInstrumentType = slot<String>()
 
-        assertEquals(beginAuthResponse.token, token.captured)
+        coVerify { threeDsRepository.begin3DSAuth(any(), any()) }
+        verify { clientTokenRepository.getClientTokenIntent() }
+        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), "") }
+
+        assertEquals(beginAuthResponse.token.paymentInstrumentType, paymentInstrumentType.captured)
     }
 
     @Test
@@ -405,35 +297,7 @@ internal class ThreeDsInteractorTest {
     }
 
     @Test
-    fun `beginRemoteAuth() should dispatch token with error event when repository begin3DSAuth() failed and Intent was CHECKOUT`() {
-        val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("Failed to execute 3DS auth.")
-
-        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
-        coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
-            flow {
-                throw Exception()
-            }
-        )
-
-        val token = slot<PaymentMethodTokenInternal>()
-
-        assertThrows<Exception> {
-            runTest {
-                interactor.beginRemoteAuth(threeDsParams).first()
-            }
-        }
-
-        coVerify { threeDsRepository.begin3DSAuth(any(), any()) }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertNotNull(token.captured.threeDSecureAuthentication)
-        assertNotNull("CLIENT_ERROR", token.captured.threeDSecureAuthentication?.reasonCode)
-        assertNotNull(exception.message, token.captured.threeDSecureAuthentication?.reasonText)
-    }
-
-    @Test
-    fun `beginRemoteAuth() should dispatch resume error events when repository begin3DSAuth() failed and Intent was 3DS_AUTHENTICATION`() {
+    fun `beginRemoteAuth() should dispatch error events when repository begin3DSAuth() failed and Intent was 3DS_AUTHENTICATION`() {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to execute 3DS auth.")
 
@@ -448,40 +312,7 @@ internal class ThreeDsInteractorTest {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name
         )
 
-        val event = slot<Throwable>()
-
-        assertThrows<Exception> {
-            runTest {
-                interactor.beginRemoteAuth(threeDsParams).first()
-            }
-        }
-
-        coVerify { threeDsRepository.begin3DSAuth(any(), any()) }
-        verify {
-            checkoutErrorEventResolver.resolve(
-                capture(event),
-                ErrorMapperType.PAYMENT_RESUME
-            )
-        }
-
-        assertEquals(exception.javaClass, event.captured.javaClass)
-        assertEquals(exception.message, event.captured.message)
-    }
-
-    @Test
-    fun `beginRemoteAuth() should dispatch token error event with responseCode SKIPPED when repository begin3DSAuth() failed and Intent was CHECKOUT`() {
-        val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("Failed to execute 3DS auth.")
-
-        val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
-        coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
-            flow {
-                throw exception
-            }
-        )
-        val token = slot<PaymentMethodTokenInternal>()
-
-        assertThrows<Exception> {
+        val capturedException = assertThrows<Exception> {
             runTest {
                 interactor.beginRemoteAuth(threeDsParams).first()
             }
@@ -489,21 +320,32 @@ internal class ThreeDsInteractorTest {
 
         coVerify { threeDsRepository.begin3DSAuth(any(), any()) }
 
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertEquals(ResponseCode.SKIPPED, token.captured.threeDSecureAuthentication?.responseCode)
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
     }
 
     @Test
-    fun `performChallenge() should continue when repository performChallenge() was success`() {
+    fun `performChallenge() should log warnings when threeDsAppUrlRepository_getAppUrl() returns invalid URL and protocol version is higher than 2_1_0`() {
         val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val authResponse = mockk<BeginAuthResponse>(relaxed = true)
         val challengeStatusData = mockk<ChallengeStatusData>()
 
         every { authResponse.token }.returns(paymentMethodTokenInternal)
+        every { threeDsAppUrlRepository.getAppUrl(transaction) }.returns(null)
+        every { authResponse.authentication.protocolVersion }.returns(
+            ProtocolVersion.V_220.versionNumber
+        )
 
-        coEvery { threeDsServiceRepository.performChallenge(any(), any(), any(), any()) }.returns(
+        coEvery {
+            threeDsServiceRepository.performChallenge(
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        }.returns(
             flowOf(
                 challengeStatusData
             )
@@ -515,47 +357,45 @@ internal class ThreeDsInteractorTest {
             assertEquals(challengeStatusData, statusData)
         }
 
-        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any()) }
+        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
+        verify { logger.warn(any()) }
     }
 
     @Test
-    fun `performChallenge() should dispatch token error event with responseCode SKIPPED when repository performChallenge() failed and Intent was CHECKOUT`() {
+    fun `performChallenge() should continue when repository performChallenge() was success`() {
         val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val authResponse = mockk<BeginAuthResponse>(relaxed = true)
         val challengeStatusData = mockk<ChallengeStatusData>()
 
-        val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("Failed to perform 3DS challenge.")
-
         every { authResponse.token }.returns(paymentMethodTokenInternal)
 
         coEvery {
-            threeDsServiceRepository.performChallenge(any(), any(), any(), any())
+            threeDsServiceRepository.performChallenge(
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
         }.returns(
-            flow {
-                throw exception
-            }
+            flowOf(
+                challengeStatusData
+            )
         )
 
-        val token = slot<PaymentMethodTokenInternal>()
-
-        assertThrows<Exception> {
-            runTest {
-                val statusData =
-                    interactor.performChallenge(activity, transaction, authResponse).first()
-                assertEquals(challengeStatusData, statusData)
-            }
+        runTest {
+            val statusData =
+                interactor.performChallenge(activity, transaction, authResponse).first()
+            assertEquals(challengeStatusData, statusData)
         }
 
-        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any()) }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertEquals(ResponseCode.SKIPPED, token.captured.threeDSecureAuthentication?.responseCode)
+        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { logger.warn(any()) }
     }
 
     @Test
-    fun `performChallenge() should dispatch resume error events when repository performChallenge() failed and Intent was 3DS_AUTHENTICATION`() {
+    fun `performChallenge() should dispatch error events when repository performChallenge() failed and Intent was 3DS_AUTHENTICATION`() {
         val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val authResponse = mockk<BeginAuthResponse>(relaxed = true)
@@ -569,16 +409,14 @@ internal class ThreeDsInteractorTest {
         )
 
         coEvery {
-            threeDsServiceRepository.performChallenge(any(), any(), any(), any())
+            threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any())
         }.returns(
             flow {
                 throw exception
             }
         )
 
-        val event = slot<Throwable>()
-
-        assertThrows<Exception> {
+        val capturedException = assertThrows<Exception> {
             runTest {
                 val statusData =
                     interactor.performChallenge(activity, transaction, authResponse).first()
@@ -586,48 +424,24 @@ internal class ThreeDsInteractorTest {
             }
         }
 
-        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any()) }
-        verify { clientTokenRepository.getClientTokenIntent() }
-        verify {
-            checkoutErrorEventResolver.resolve(
-                capture(event),
-                ErrorMapperType.PAYMENT_RESUME
-            )
-        }
+        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
 
-        assertEquals(exception.javaClass, event.captured.javaClass)
-        assertEquals(exception.message, event.captured.message)
-    }
-
-    @Test
-    fun `continueRemoteAuth() should dispatch token event when repository continue3DSAuth() was success and Intent was CHECKOUT`() {
-        val postAuthResponse = mockk<PostAuthResponse>(relaxed = true)
-
-        every { postAuthResponse.token }.returns(paymentMethodTokenInternal)
-
-        coEvery { threeDsRepository.continue3DSAuth(any()) }.returns(
-            flowOf(postAuthResponse)
-        )
-
-        val token = slot<PaymentMethodTokenInternal>()
-
-        runTest {
-            val response = interactor.continueRemoteAuth("").first()
-            assertEquals(postAuthResponse, response)
-        }
-
-        coVerify { threeDsRepository.continue3DSAuth(any()) }
-
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
-
-        assertEquals(postAuthResponse.token, token.captured)
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
     }
 
     @Test
     fun `continueRemoteAuth() should dispatch resume events when repository continue3DSAuth() was success and Intent was 3DS_AUTHENTICATION`() {
         val postAuthResponse = mockk<PostAuthResponse>(relaxed = true)
 
-        coEvery { threeDsRepository.continue3DSAuth(any()) }.returns(
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
+
+        every { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
+        )
+
+        coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
             flowOf(postAuthResponse)
         )
 
@@ -638,11 +452,11 @@ internal class ThreeDsInteractorTest {
         val paymentInstrumentType = slot<String>()
 
         runTest {
-            val response = interactor.continueRemoteAuth("").first()
+            val response = interactor.continueRemoteAuth(ChallengeStatusData("", "Y")).first()
             assertEquals(postAuthResponse, response)
         }
 
-        coVerify { threeDsRepository.continue3DSAuth(any()) }
+        coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
         verify { clientTokenRepository.getClientTokenIntent() }
         verify { resumeEventResolver.resolve(capture(paymentInstrumentType), "") }
 
@@ -650,38 +464,52 @@ internal class ThreeDsInteractorTest {
     }
 
     @Test
-    fun `continueRemoteAuth() should dispatch token error event when repository continue3DSAuth() failed and Intent was CHECKOUT`() {
-        val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("Failed to continue 3DS auth.")
+    fun `continueRemoteAuthWithException() should dispatch resume events when repository continue3DSAuth() was success and Intent was 3DS_AUTHENTICATION`() {
+        val postAuthResponse = mockk<PostAuthResponse>(relaxed = true)
 
-        coEvery { threeDsRepository.continue3DSAuth(any()) }.returns(
-            flow {
-                throw exception
-            }
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
+
+        coEvery { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
         )
 
-        val token = slot<PaymentMethodTokenInternal>()
+        val threeDsException = mockk<Exception>(relaxed = true)
+        coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
+            flowOf(postAuthResponse)
+        )
 
-        assertThrows<Exception> {
-            runTest {
-                interactor.continueRemoteAuth("").first()
-            }
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
+
+        val paymentInstrumentType = slot<String>()
+
+        runTest {
+            val response = interactor.continueRemoteAuthWithException(threeDsException).first()
+            assertEquals(postAuthResponse, response)
         }
 
-        coVerify { threeDsRepository.continue3DSAuth(any()) }
+        coVerify { threeDsConfigurationRepository.getPreAuthConfiguration() }
+        coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
         verify { clientTokenRepository.getClientTokenIntent() }
-        verify { postTokenizationEventResolver.resolve(capture(token)) }
+        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), "") }
 
-        assertNotNull(token.captured.threeDSecureAuthentication)
-        assertNotNull("CLIENT_ERROR", token.captured.threeDSecureAuthentication?.reasonCode)
-        assertNotNull(exception.message, token.captured.threeDSecureAuthentication?.reasonText)
+        assertEquals(postAuthResponse.token.paymentInstrumentType, paymentInstrumentType.captured)
     }
 
     @Test
     fun `continueRemoteAuth() should dispatch resume error events when repository continue3DSAuth() failed and Intent was 3DS_AUTHENTICATION`() {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message }.returns("Failed to continue 3DS auth.")
-        coEvery { threeDsRepository.continue3DSAuth(any()) }.returns(
+
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
+
+        coEvery { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
+        )
+        coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
             flow {
                 throw exception
             }
@@ -695,16 +523,62 @@ internal class ThreeDsInteractorTest {
 
         assertThrows<Exception> {
             runTest {
-                interactor.continueRemoteAuth("").first()
+                interactor.continueRemoteAuth(ChallengeStatusData("", "Y")).first()
             }
         }
 
-        coVerify { threeDsRepository.continue3DSAuth(any()) }
+        coVerify { threeDsConfigurationRepository.getPreAuthConfiguration() }
+        coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
         verify { clientTokenRepository.getClientTokenIntent() }
         verify {
             checkoutErrorEventResolver.resolve(
                 capture(event),
-                ErrorMapperType.PAYMENT_RESUME
+                ErrorMapperType.THREE_DS
+            )
+        }
+
+        assertEquals(exception.javaClass, event.captured.javaClass)
+        assertEquals(exception.message, event.captured.message)
+    }
+
+    @Test
+    fun `continueRemoteAuthWithException() should dispatch resume error events when repository continue3DSAuth() failed and Intent was 3DS_AUTHENTICATION`() {
+        val exception = mockk<Exception>(relaxed = true)
+        every { exception.message }.returns("Failed to continue 3DS auth.")
+
+        val threeDsException = mockk<Exception>(relaxed = true)
+
+        val authParams = mockk<ThreeDsAuthParams>(relaxed = true)
+        every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
+
+        coEvery { threeDsConfigurationRepository.getPreAuthConfiguration() }.returns(
+            flowOf(authParams)
+        )
+        coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
+            flow {
+                throw exception
+            }
+        )
+
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
+
+        val event = slot<Throwable>()
+
+        assertThrows<Exception> {
+            runTest {
+                interactor.continueRemoteAuthWithException(threeDsException).first()
+            }
+        }
+
+        coVerify { threeDsConfigurationRepository.getPreAuthConfiguration() }
+        coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
+        verify { clientTokenRepository.getClientTokenIntent() }
+        verify {
+            checkoutErrorEventResolver.resolve(
+                capture(event),
+                ErrorMapperType.THREE_DS
             )
         }
 

@@ -5,6 +5,8 @@ import android.os.Parcelable
 import io.primer.android.analytics.data.models.SdkIntegrationType
 import io.primer.android.data.configuration.models.CustomerDataResponse
 import io.primer.android.data.configuration.models.OrderDataResponse
+import io.primer.android.extensions.readParcelable
+import io.primer.android.extensions.readSerializable
 import io.primer.android.ui.settings.PrimerUIOptions
 import java.util.Locale
 
@@ -40,11 +42,11 @@ data class PrimerSettings @JvmOverloads constructor(
 
     constructor(parcel: Parcel) : this(
         PrimerPaymentHandling.valueOf(parcel.readString().orEmpty()),
-        parcel.readSerializable() as Locale,
-        parcel.readParcelable(PrimerPaymentMethodOptions::class.java.classLoader)
+        parcel.readSerializable<Locale>() ?: Locale.getDefault(),
+        parcel.readParcelable<PrimerPaymentMethodOptions>()
             ?: PrimerPaymentMethodOptions(),
-        parcel.readParcelable(PrimerUIOptions::class.java.classLoader) ?: PrimerUIOptions(),
-        parcel.readParcelable(PrimerDebugOptions::class.java.classLoader) ?: PrimerDebugOptions()
+        parcel.readParcelable<PrimerUIOptions>() ?: PrimerUIOptions(),
+        parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions(),
     ) {
         fromHUC = parcel.readByte() != 0.toByte()
     }

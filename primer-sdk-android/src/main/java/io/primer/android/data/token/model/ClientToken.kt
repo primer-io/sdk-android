@@ -4,7 +4,9 @@ import android.util.Base64
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.extensions.optNullableBoolean
 import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.token.exception.ExpiredClientTokenException
 import io.primer.android.data.token.exception.InvalidClientTokenException
 import org.json.JSONObject
@@ -31,6 +33,8 @@ internal data class ClientToken(
     val iPay88ActionType: String?,
     val supportedCurrencyCode: String?,
     val supportedCountry: String?,
+    val useThreeDsWeakValidation: Boolean?,
+    val supportedThreeDsProtocolVersions: List<String>?
 ) : JSONDeserializable {
 
     companion object {
@@ -83,6 +87,9 @@ internal data class ClientToken(
         private const val IPAY88_ACTION_TYPE_FIELD = "iPay88ActionType"
         private const val SUPPORTED_CURRENCY_CODE_FIELD = "supportedCurrencyCode"
         private const val SUPPORTED_COUNTRY_FIELD = "supportedCountry"
+        private const val USE_THREE_DS_WEAK_VALIDATION = "useThreeDsWeakValidation"
+        private const val SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD =
+            "supportedThreeDsProtocolVersions"
 
         @JvmField
         val deserializer = object : JSONDeserializer<ClientToken> {
@@ -108,6 +115,9 @@ internal data class ClientToken(
                     t.optNullableString(IPAY88_ACTION_TYPE_FIELD),
                     t.optNullableString(SUPPORTED_CURRENCY_CODE_FIELD),
                     t.optNullableString(SUPPORTED_COUNTRY_FIELD),
+                    t.optNullableBoolean(USE_THREE_DS_WEAK_VALIDATION),
+                    t.optJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)?.sequence<String>()
+                        ?.toList()
                 )
             }
         }

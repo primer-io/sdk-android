@@ -15,9 +15,9 @@ import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.PostAuthResponse
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
+import io.primer.android.threeds.data.models.common.ResponseCode
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.helpers.ProtocolVersion
@@ -69,24 +69,27 @@ class ThreeDsViewModelTest {
     }
 
     @Test
-    fun `startThreeDsFlow() should receive finished event when initialize failed`() {
-        val observer = viewModel.threeDsFinishedEvent.test()
-        coEvery { threeDsInteractor.initialize(any()) }.returns(flow { throw Exception() })
+    fun `startThreeDsFlow() should receive error event when initialize failed`() {
+        val observer = viewModel.threeDsErrorEvent.test()
+        val exception = mockk<Exception>()
+        coEvery { threeDsInteractor.initialize(any()) }.returns(flow { throw exception })
 
         runTest {
             viewModel.startThreeDsFlow()
         }
 
         coVerify { threeDsInteractor.initialize(any()) }
-        observer.assertValue(Unit)
+        observer.assertValue(exception)
     }
 
     @Test
-    fun `performAuthorization() should receive finished event when interactor authenticateSdk() failed`() {
-        val observer = viewModel.threeDsFinishedEvent.test()
+    fun `performAuthorization() should receive error event when interactor authenticateSdk() failed`() {
+        val observer = viewModel.threeDsErrorEvent.test()
+        val exception = mockk<Exception>()
+
         coEvery {
             threeDsInteractor.authenticateSdk()
-        }.returns(flow { throw Exception() })
+        }.returns(flow { throw exception })
 
         runTest {
             viewModel.performAuthorization()
@@ -94,15 +97,16 @@ class ThreeDsViewModelTest {
 
         coVerify { threeDsInteractor.authenticateSdk() }
 
-        observer.assertValue(Unit)
+        observer.assertValue(exception)
     }
 
     @Test
-    fun `performAuthorization() should receive finished event when interactor beginRemoteAuth() failed`() {
+    fun `performAuthorization() should receive error event when interactor beginRemoteAuth() failed`() {
         val transaction = mockk<Transaction>(relaxed = true)
         val requestParameters = mock(AuthenticationRequestParameters::class.java)
+        val exception = mockk<Exception>()
 
-        val observer = viewModel.threeDsFinishedEvent.test()
+        val observer = viewModel.threeDsErrorEvent.test()
 
         `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
         every { transaction.authenticationRequestParameters }.returns(requestParameters)
@@ -112,7 +116,7 @@ class ThreeDsViewModelTest {
 
         coEvery {
             threeDsInteractor.beginRemoteAuth(any())
-        }.returns(flow { throw Exception() })
+        }.returns(flow { throw exception })
 
         runTest {
             viewModel.performAuthorization()
@@ -121,7 +125,7 @@ class ThreeDsViewModelTest {
         coVerify { threeDsInteractor.authenticateSdk() }
         coVerify { threeDsInteractor.beginRemoteAuth(any()) }
 
-        observer.assertValue(Unit)
+        observer.assertValue(exception)
     }
 
     @Test
@@ -191,7 +195,7 @@ class ThreeDsViewModelTest {
 
         val challengeStatusData = mockk<ChallengeStatusData>(relaxed = true)
 
-        val observer = viewModel.challengeStatusChangedEvent.test()
+        val observer = viewModel.threeDsStatusChangedEvent.test()
         coEvery {
             threeDsInteractor.performChallenge(
                 any(),
@@ -216,25 +220,26 @@ class ThreeDsViewModelTest {
     }
 
     @Test
-    fun `performChallenge() should receive finished event when interactor performChallenge() failed`() {
+    fun `performChallenge() should receive error event when interactor performChallenge() failed`() {
         val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val response = mockk<BeginAuthResponse>(relaxed = true)
+        val exception = mockk<Exception>()
 
-        val observer = viewModel.threeDsFinishedEvent.test()
+        val observer = viewModel.threeDsErrorEvent.test()
         coEvery {
             threeDsInteractor.performChallenge(
                 any(),
                 any(),
                 any()
             )
-        }.returns(flow { throw Exception() })
+        }.returns(flow { throw exception })
 
         runTest {
             viewModel.performChallenge(activity, transaction, response)
         }
 
-        observer.assertValue(Unit)
+        observer.assertValue(exception)
     }
 
     @Test
@@ -247,7 +252,7 @@ class ThreeDsViewModelTest {
         }.returns(flowOf(response))
 
         runTest {
-            viewModel.continueRemoteAuth("")
+            viewModel.continueRemoteAuth(ChallengeStatusData("", "Y"))
         }
 
         coVerify { threeDsInteractor.continueRemoteAuth(any()) }
@@ -263,10 +268,44 @@ class ThreeDsViewModelTest {
         }.returns(flow { throw Exception() })
 
         runTest {
-            viewModel.continueRemoteAuth("")
+            viewModel.continueRemoteAuth(ChallengeStatusData("", "Y"))
         }
 
         coVerify { threeDsInteractor.continueRemoteAuth(any()) }
+
+        observer.assertValue(Unit)
+    }
+
+    @Test
+    fun `continueRemoteAuthWithException() should receive finished event when interactor continueRemoteAuthWithException() was success`() {
+        val response = mockk<PostAuthResponse>(relaxed = true)
+
+        val observer = viewModel.threeDsFinishedEvent.test()
+        coEvery {
+            threeDsInteractor.continueRemoteAuthWithException(any())
+        }.returns(flowOf(response))
+
+        runTest {
+            viewModel.continueRemoteAuthWithException(Exception())
+        }
+
+        coVerify { threeDsInteractor.continueRemoteAuthWithException(any()) }
+
+        observer.assertValue(Unit)
+    }
+
+    @Test
+    fun `continueRemoteAuthWithException() should receive finished event when interactor continueRemoteAuthWithException() failed`() {
+        val observer = viewModel.threeDsFinishedEvent.test()
+        coEvery {
+            threeDsInteractor.continueRemoteAuthWithException(any())
+        }.returns(flow { throw Exception() })
+
+        runTest {
+            viewModel.continueRemoteAuthWithException(Exception())
+        }
+
+        coVerify { threeDsInteractor.continueRemoteAuthWithException(any()) }
 
         observer.assertValue(Unit)
     }

@@ -1,4 +1,4 @@
-package io.primer.android.threeds.data.models
+package io.primer.android.threeds.data.models.auth
 
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
@@ -12,7 +12,6 @@ private const val SDK_TIMEOUT_IN_SECONDS = 60
 
 internal data class BeginAuthDataRequest(
     val maxProtocolVersion: String,
-    val challengePreference: ChallengePreference,
     val amount: Int? = null,
     val currencyCode: String? = null,
     val orderId: String? = null,
@@ -24,7 +23,6 @@ internal data class BeginAuthDataRequest(
 
     companion object {
         private const val MAX_PROTOCOL_VERSION_FIELD = "maxProtocolVersion"
-        private const val CHALLENGE_PREFERENCE_FIELD = "challengePreference"
         private const val AMOUNT_FIELD = "amount"
         private const val DEVICE_FIELD = "device"
         private const val CURRENCY_CODE_FIELD = "currencyCode"
@@ -38,7 +36,6 @@ internal data class BeginAuthDataRequest(
             override fun serialize(t: BeginAuthDataRequest): JSONObject {
                 return JSONObject().apply {
                     put(MAX_PROTOCOL_VERSION_FIELD, t.maxProtocolVersion)
-                    put(CHALLENGE_PREFERENCE_FIELD, t.challengePreference.name)
                     putOpt(AMOUNT_FIELD, t.amount)
                     putOpt(CURRENCY_CODE_FIELD, t.currencyCode)
                     putOpt(ORDER_ID_FIELD, t.orderId)
@@ -82,7 +79,6 @@ internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
     return when (this) {
         is ThreeDsCheckoutParams -> BeginAuthDataRequest(
             maxProtocolVersion.versionNumber,
-            challengePreference,
             device = SDKAuthDataRequest(
                 sdkAppId,
                 sdkTransactionId,
@@ -94,7 +90,6 @@ internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
         )
         is ThreeDsVaultParams -> BeginAuthDataRequest(
             maxProtocolVersion.versionNumber,
-            challengePreference,
             amount,
             currency,
             orderId,

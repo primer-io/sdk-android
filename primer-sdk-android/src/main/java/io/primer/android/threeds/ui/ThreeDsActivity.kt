@@ -12,8 +12,6 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.di.DIAppContext
 import io.primer.android.threeds.di.threeDsModule
-import io.primer.android.threeds.domain.models.ChallengeStatusData.Companion.TRANSACTION_STATUS_FAILURE
-import io.primer.android.threeds.domain.models.ChallengeStatusData.Companion.TRANSACTION_STATUS_SUCCESS
 import io.primer.android.threeds.presentation.ThreeDsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -54,11 +52,12 @@ internal class ThreeDsActivity : BaseCheckoutActivity() {
             )
         }
 
-        viewModel.challengeStatusChangedEvent.observe(this) {
-            when (it.transactionStatus) {
-                TRANSACTION_STATUS_SUCCESS -> viewModel.continueRemoteAuth(it.sdkTransId)
-                TRANSACTION_STATUS_FAILURE -> finish()
-            }
+        viewModel.threeDsStatusChangedEvent.observe(this) {
+            viewModel.continueRemoteAuth(it)
+        }
+
+        viewModel.threeDsErrorEvent.observe(this) {
+            viewModel.continueRemoteAuthWithException(it)
         }
 
         viewModel.threeDsFinishedEvent.observe(this) {

@@ -131,11 +131,6 @@ interface ClientSession : ExampleAppRequestBody {
                                             amount = 100,
                                         )
                                     ),
-                                    MASTERCARD = NetworkOption(
-                                        surcharge = SurchargeOption(
-                                            amount = 200,
-                                        )
-                                    ),
                                     JCB = NetworkOption(
                                         surcharge = SurchargeOption(
                                             amount = 0,

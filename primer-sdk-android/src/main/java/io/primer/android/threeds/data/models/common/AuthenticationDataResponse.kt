@@ -1,4 +1,4 @@
-package io.primer.android.threeds.data.models
+package io.primer.android.threeds.data.models.common
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer

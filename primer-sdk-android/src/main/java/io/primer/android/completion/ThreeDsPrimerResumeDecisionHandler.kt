@@ -1,14 +1,21 @@
 package io.primer.android.completion
 
+import io.primer.android.analytics.data.models.MessageType
+import io.primer.android.analytics.data.models.Severity
+import io.primer.android.analytics.domain.models.MessageAnalyticsParams
+import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
 import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
 import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
@@ -18,28 +25,37 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.threeds.BuildConfig
+import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
+import io.primer.android.threeds.domain.models.FailureThreeDsContinueAuthParams
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 
 internal class ThreeDsPrimerResumeDecisionHandler(
     validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
-    paymentMethodRepository: PaymentMethodRepository,
+    private val paymentMethodRepository: PaymentMethodRepository,
     paymentResultRepository: PaymentResultRepository,
-    analyticsRepository: AnalyticsRepository,
+    private val analyticsRepository: AnalyticsRepository,
     private val mockConfigurationRepository: MockConfigurationRepository,
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    logger: Logger,
-    config: PrimerConfig,
+    private val threeDsRepository: ThreeDsRepository,
+    private val errorMapperFactory: ErrorMapperFactory,
+    private val resumeHandlerFactory: ResumeHandlerFactory,
+    private val logger: Logger,
+    private val config: PrimerConfig,
     paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
     validationTokenRepository,
     clientTokenRepository,
@@ -70,18 +86,17 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                 )
             }
             threeDsSdkClassValidator.is3dsSdkIncluded().not() ->
-                errorEventResolver.resolve(
+                continueAuthWithException(
                     ThreeDsLibraryNotFoundException(
-                        ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
+                        ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR,
                     ),
-                    ErrorMapperType.PAYMENT_RESUME
                 )
             threeDsLibraryVersionValidator.isValidVersion().not() -> {
-                errorEventResolver.resolve(
+                continueAuthWithException(
                     ThreeDsLibraryVersionMismatchException(
-                        BuildConfig.SDK_VERSION_STRING
+                        BuildConfig.SDK_VERSION_STRING,
+                        ThreeDsFailureContextParams(null, null)
                     ),
-                    ErrorMapperType.PAYMENT_RESUME
                 )
             }
             else -> when (mockConfigurationRepository.isMockedFlow()) {
@@ -90,4 +105,40 @@ internal class ThreeDsPrimerResumeDecisionHandler(
             }
         }
     }
+
+    private fun continueAuthWithException(throwable: Throwable) {
+        CoroutineScope(coroutineDispatcher).launch {
+            threeDsRepository.continue3DSAuth(
+                paymentMethodRepository.getPaymentMethod().token,
+                FailureThreeDsContinueAuthParams(
+                    error = errorMapperFactory.buildErrorMapper(
+                        ErrorMapperType.THREE_DS
+                    ).getPrimerError(throwable).also { error ->
+                        logAnalytics(error)
+                        logger.warn("${error.description} ${error.recoverySuggestion.orEmpty()}")
+                    }
+                )
+            ).catch {
+                errorEventResolver.resolve(
+                    it,
+                    ErrorMapperType.THREE_DS
+                )
+            }.collect {
+                ResumeEventResolver(config, resumeHandlerFactory, eventDispatcher).resolve(
+                    paymentMethodRepository.getPaymentMethod().paymentInstrumentType,
+                    it.resumeToken
+                )
+            }
+        }
+    }
+
+    private fun logAnalytics(error: PrimerError) = analyticsRepository.addEvent(
+        MessageAnalyticsParams(
+            MessageType.ERROR,
+            "${DefaultThreeDsInteractor.ANALYTICS_TAG_3DS}: ${error.description}",
+            Severity.ERROR,
+            error.diagnosticsId,
+            error.context
+        )
+    )
 }

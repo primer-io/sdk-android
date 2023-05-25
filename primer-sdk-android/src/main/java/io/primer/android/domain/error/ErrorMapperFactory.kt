@@ -11,6 +11,7 @@ internal enum class ErrorMapperType {
     GOOGLE_PAY,
     APAYA,
     I_PAY88,
+    THREE_DS,
     DEFAULT
 }
 

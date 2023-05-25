@@ -2,27 +2,35 @@ package io.primer.android.threeds.domain.interactor
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import io.primer.android.analytics.data.models.MessageType
+import io.primer.android.analytics.data.models.Severity
+import io.primer.android.analytics.domain.models.MessageAnalyticsParams
+import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.token.repository.ClientTokenRepository
-import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.extensions.doOnError
 import io.primer.android.logging.DefaultLogger
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.CardNetwork
-import io.primer.android.threeds.data.models.PostAuthResponse
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.common.CardNetwork
+import io.primer.android.threeds.data.models.common.ResponseCode
+import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.models.ChallengeStatusData
+import io.primer.android.threeds.domain.models.FailureThreeDsContinueAuthParams
+import io.primer.android.threeds.domain.models.SuccessThreeDsContinueAuthParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.domain.respository.ThreeDsAppUrlRepository
 import io.primer.android.threeds.domain.respository.ThreeDsConfigurationRepository
 import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
+import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -49,7 +57,11 @@ internal interface ThreeDsInteractor {
     ): Flow<ChallengeStatusData>
 
     fun continueRemoteAuth(
-        sdkTokenId: String,
+        challengeStatusData: ChallengeStatusData
+    ): Flow<PostAuthResponse>
+
+    fun continueRemoteAuthWithException(
+        throwable: Throwable
     ): Flow<PostAuthResponse>
 
     fun cleanup()
@@ -62,9 +74,10 @@ internal class DefaultThreeDsInteractor(
     private val clientTokenRepository: ClientTokenRepository,
     private val threeDsAppUrlRepository: ThreeDsAppUrlRepository,
     private val threeDsConfigurationRepository: ThreeDsConfigurationRepository,
-    private val postTokenizationEventResolver: PostTokenizationEventResolver,
     private val resumeEventResolver: ResumeEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
+    private val errorMapperFactory: ErrorMapperFactory,
+    private val analyticsRepository: AnalyticsRepository,
     private val logger: DefaultLogger,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ThreeDsInteractor {
@@ -76,13 +89,10 @@ internal class DefaultThreeDsInteractor(
             threeDsServiceRepository.initializeProvider(
                 threeDsInitParams.is3DSSanityCheckEnabled,
                 threeDsInitParams.locale,
+                clientTokenRepository.useThreeDsWeakValidation() ?: true,
                 keys
             )
         }.flowOn(dispatcher)
-            .doOnError {
-                logger.warn(PRIMER_3DS_INIT_ERROR)
-                handleErrorEvent(it)
-            }
 
     override fun authenticateSdk() =
         threeDsConfigurationRepository.getPreAuthConfiguration().flatMapLatest { authParams ->
@@ -91,13 +101,10 @@ internal class DefaultThreeDsInteractor(
                     paymentMethodRepository.getPaymentMethod().paymentInstrumentData
                         ?.binData?.network.orEmpty().uppercase()
                 ),
-                authParams.protocolVersion,
+                authParams.protocolVersions.max(),
                 authParams.environment
             )
         }.flowOn(dispatcher)
-            .doOnError {
-                handleErrorEvent(it)
-            }
 
     override fun beginRemoteAuth(
         threeDsParams: BaseThreeDsParams,
@@ -110,8 +117,6 @@ internal class DefaultThreeDsInteractor(
             if (it.authentication.responseCode != ResponseCode.CHALLENGE) {
                 handleAuthEvent(it.token, it.resumeToken)
             }
-        }.doOnError {
-            handleErrorEvent(it)
         }
 
     override fun performChallenge(
@@ -123,13 +128,50 @@ internal class DefaultThreeDsInteractor(
             activity,
             transaction,
             authResponse,
-            threeDsAppUrlRepository.getAppUrl(transaction)
-        ).doOnError {
-            handleErrorEvent(it)
-        }
+            threeDsAppUrlRepository.getAppUrl(transaction) ?: run {
+                when (
+                    authResponse.authentication.protocolVersion.orEmpty() >=
+                        ProtocolVersion.V_220.versionNumber
+                ) {
+                    true -> logger.warn(PRIMER_INVALID_APP_URL_ERROR)
+                    false -> Unit
+                }
+                null
+            },
+            authResponse.authentication.protocolVersion.orEmpty()
+        )
 
-    override fun continueRemoteAuth(sdkTokenId: String) =
-        threeDsRepository.continue3DSAuth(sdkTokenId)
+    override fun continueRemoteAuth(challengeStatusData: ChallengeStatusData) =
+        threeDsConfigurationRepository.getPreAuthConfiguration().flatMapLatest { params ->
+            threeDsRepository.continue3DSAuth(
+                challengeStatusData.paymentMethodToken,
+                SuccessThreeDsContinueAuthParams(
+                    threeDsServiceRepository.threeDsSdkVersion,
+                    params.protocolVersions.max().versionNumber,
+                )
+            )
+        }
+            .flowOn(dispatcher)
+            .onEach { handleAuthEvent(it.token, it.resumeToken) }
+            .doOnError { handleErrorEvent(it) }
+
+    override fun continueRemoteAuthWithException(throwable: Throwable) =
+        threeDsConfigurationRepository.getPreAuthConfiguration().flatMapLatest { params ->
+            threeDsRepository.continue3DSAuth(
+                paymentMethodRepository.getPaymentMethod().token,
+                FailureThreeDsContinueAuthParams(
+                    threeDsServiceRepository.threeDsSdkVersion,
+                    params.protocolVersions.max().versionNumber,
+                    errorMapperFactory.buildErrorMapper(ErrorMapperType.THREE_DS)
+                        .getPrimerError(throwable).also { error ->
+                            logAnalytics(error)
+                            logger.warn(
+                                "${error.description} ${error.recoverySuggestion.orEmpty()}"
+                            )
+                        }
+                )
+            )
+        }
             .flowOn(dispatcher)
             .onEach { handleAuthEvent(it.token, it.resumeToken) }
             .doOnError { handleErrorEvent(it) }
@@ -140,31 +182,42 @@ internal class DefaultThreeDsInteractor(
         } catch (_: Exception) {
         }
 
-    private fun handleAuthEvent(token: PaymentMethodTokenInternal, resumeToken: String? = null) {
+    private fun handleAuthEvent(token: PaymentMethodTokenInternal, resumeToken: String) {
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name -> resumeEventResolver.resolve(
                 token.paymentInstrumentType,
                 resumeToken
             )
-            else -> postTokenizationEventResolver.resolve(token)
+            else -> Unit
         }
     }
 
     private fun handleErrorEvent(throwable: Throwable) {
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name -> {
-                baseErrorEventResolver.resolve(throwable, ErrorMapperType.PAYMENT_RESUME)
+                baseErrorEventResolver.resolve(throwable, ErrorMapperType.THREE_DS)
             }
-            else -> postTokenizationEventResolver.resolve(
-                paymentMethodRepository.getPaymentMethod()
-                    .setClientThreeDsError(throwable.message.orEmpty())
-            )
+            else -> Unit
         }
     }
 
+    private fun logAnalytics(error: PrimerError) = analyticsRepository.addEvent(
+        MessageAnalyticsParams(
+            MessageType.ERROR,
+            "$ANALYTICS_TAG_3DS: ${error.description}",
+            Severity.ERROR,
+            error.diagnosticsId,
+            error.context
+        )
+    )
+
     companion object {
 
-        const val PRIMER_3DS_INIT_ERROR = "Cannot perform 3DS. Continue without 3DS. " +
-            "Please check debug options in order to run 3DS in debug mode."
+        private val PRIMER_INVALID_APP_URL_ERROR = """
+            threeDsAppRequestorUrl is not having a valid format ("https://applink"). In case you
+            want to support redirecting back during the OOB flows please set correct
+            threeDsAppRequestorUrl in PrimerThreeDsOptions during SDK initialization.
+        """.trimIndent()
+        const val ANALYTICS_TAG_3DS = "Primer3DS"
     }
 }

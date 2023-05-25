@@ -90,7 +90,7 @@
     *;
 }
 
--keep enum io.primer.android.threeds.data.models.ResponseCode
+-keep enum io.primer.android.threeds.data.models.common.ResponseCode
 
 -keep class io.primer.android.data.tokenization.models.BinData {
     *;

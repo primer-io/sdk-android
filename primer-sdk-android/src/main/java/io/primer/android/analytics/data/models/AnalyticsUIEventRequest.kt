@@ -149,6 +149,7 @@ internal enum class ObjectId {
     EXPIRY
 }
 
+@Suppress("EnumNaming")
 internal enum class Place {
     PAYMENT_METHODS_LIST, // The vaulted payment methods
     UNIVERSAL_CHECKOUT,

@@ -66,18 +66,7 @@
             android:exported="true"
             android:label=""
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="requestor.${applicationId}"
-                    android:scheme="primer_android_3ds" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent"/>
 
         <activity
             android:name=".components.ui.activity.HeadlessActivity"

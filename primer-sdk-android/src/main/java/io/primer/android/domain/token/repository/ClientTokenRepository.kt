@@ -16,6 +16,8 @@ internal interface ClientTokenRepository {
 
     fun getPaymentMethodId(): String?
 
+    fun useThreeDsWeakValidation(): Boolean?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

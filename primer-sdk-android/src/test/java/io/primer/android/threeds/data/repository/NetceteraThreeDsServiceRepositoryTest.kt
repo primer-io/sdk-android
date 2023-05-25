@@ -17,7 +17,7 @@ import io.primer.android.data.configuration.models.Environment
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.threeds.data.exception.ThreeDsInitException
 import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
-import io.primer.android.threeds.data.models.CardNetwork
+import io.primer.android.threeds.data.models.common.CardNetwork
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +27,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import java.util.Locale
 import kotlin.test.assertEquals
 
@@ -55,7 +57,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         ) {
             runTest {
                 repository.initializeProvider(
-                    false, Locale.getDefault(), null
+                    false, Locale.getDefault(), true, null
                 ).first()
             }
         }
@@ -71,7 +73,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         ) {
             runTest {
                 repository.initializeProvider(
-                    false, Locale.getDefault(), keysParams
+                    false, Locale.getDefault(), true, keysParams
                 ).first()
             }
         }
@@ -83,7 +85,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         runTest {
             val result = repository.initializeProvider(
-                false, Locale.getDefault(), keysParams
+                false, Locale.getDefault(), true, keysParams
             ).first()
             assertEquals(Unit, result)
         }
@@ -96,7 +98,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         runTest {
             val result = repository.initializeProvider(
-                true, Locale.getDefault(), keysParams
+                true, Locale.getDefault(), true, keysParams
             ).first()
             assertEquals(Unit, result)
         }
@@ -105,16 +107,18 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     }
 
     @Test
-    fun `initializeProvider should throw ThreeDsInitException with correct message when is3DSSanityCheckEnabled is enabled `() {
+    fun `initializeProvider should throw ThreeDsInitException with correct message when is3DSSanityCheckEnabled is enabled`() {
         val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        val warning = mockk<Warning>(relaxed = true)
+        val warning = mock(Warning::class.java)
+
+        Mockito.`when`(warning.id).thenReturn("S01")
 
         every { threeDS2Service.warnings }.returns(listOf(warning))
 
         val exception = assertThrows<ThreeDsInitException> {
             runTest {
                 repository.initializeProvider(
-                    true, Locale.getDefault(), keysParams
+                    true, Locale.getDefault(), true, keysParams
                 ).first()
             }
         }
@@ -123,8 +127,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         assertEquals(
             exception.message,
-            "3DS init failed with warnings: " +
-                listOf(warning).joinToString(",") { "${it.severity}  ${it.message}" }
+            listOf(warning).joinToString(",") { "${it.severity}  ${it.message}" }
         )
     }
 

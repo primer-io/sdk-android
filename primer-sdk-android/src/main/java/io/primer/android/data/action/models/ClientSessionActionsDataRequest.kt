@@ -9,7 +9,7 @@ import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
-import io.primer.android.threeds.data.models.Address
+import io.primer.android.threeds.data.models.auth.Address
 import org.json.JSONArray
 import org.json.JSONObject
 

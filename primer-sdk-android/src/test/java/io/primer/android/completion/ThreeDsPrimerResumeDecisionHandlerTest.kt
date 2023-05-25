@@ -7,18 +7,15 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.mockk.verifyOrder
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.data.token.exception.InvalidClientTokenException
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.error.CheckoutErrorEventResolver
+import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.domain.exception.ThreeDsLibraryNotFoundException
-import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
 import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
@@ -30,6 +27,7 @@ import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
 import io.primer.android.logging.Logger
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -88,6 +86,15 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
+    internal lateinit var threeDsRepository: ThreeDsRepository
+
+    @RelaxedMockK
+    internal lateinit var errorMapperFactory: ErrorMapperFactory
+
+    @RelaxedMockK
+    internal lateinit var resumeHandlerFactory: ResumeHandlerFactory
+
+    @RelaxedMockK
     internal lateinit var config: PrimerConfig
 
     @RelaxedMockK
@@ -110,6 +117,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 threeDsLibraryVersionValidator,
                 errorEventResolver,
                 eventDispatcher,
+                threeDsRepository,
+                errorMapperFactory,
+                resumeHandlerFactory,
                 logger,
                 config,
                 paymentMethodDescriptorsRepository,
@@ -191,7 +201,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     }
 
     @Test
-    fun `handleNewClientToken() should dispatch resume error event when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is PAYMENT_CARD and is3dsSdkIncluded is false and isValidVersion is true`() {
+    fun `handleNewClientToken() should continueAuthWithException when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is PAYMENT_CARD and is3dsSdkIncluded is false and isValidVersion is true`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
@@ -206,20 +216,11 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
             resumeHandler.continueWithNewClientToken("")
         }
 
-        val event1 = slot<Throwable>()
-        val event2 = slot<Throwable>()
-
-        verifyOrder {
-            errorEventResolver.resolve(capture(event1), ErrorMapperType.PAYMENT_RESUME)
-            errorEventResolver.resolve(capture(event2), ErrorMapperType.PAYMENT_RESUME)
-        }
-
-        assert(event1.captured.javaClass == ThreeDsLibraryNotFoundException::class.java)
-        assert(event2.captured.javaClass == InvalidClientTokenException::class.java)
+        verify { threeDsRepository.continue3DSAuth(any(), any()) }
     }
 
     @Test
-    fun `handleNewClientToken() should dispatch resume error event when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is PAYMENT_CARD and is3dsSdkIncluded is true and isValidVersion is false`() {
+    fun `handleNewClientToken() should continueAuthWithException when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is PAYMENT_CARD and is3dsSdkIncluded is true and isValidVersion is false`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
         every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
@@ -234,16 +235,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
             resumeHandler.continueWithNewClientToken("")
         }
 
-        val event1 = slot<Throwable>()
-        val event2 = slot<Throwable>()
-
-        verifyOrder {
-            errorEventResolver.resolve(capture(event1), ErrorMapperType.PAYMENT_RESUME)
-            errorEventResolver.resolve(capture(event2), ErrorMapperType.PAYMENT_RESUME)
-        }
-
-        assert(event1.captured.javaClass == ThreeDsLibraryVersionMismatchException::class.java)
-        assert(event2.captured.javaClass == InvalidClientTokenException::class.java)
+        verify { threeDsRepository.continue3DSAuth(any(), any()) }
     }
 
     @Test

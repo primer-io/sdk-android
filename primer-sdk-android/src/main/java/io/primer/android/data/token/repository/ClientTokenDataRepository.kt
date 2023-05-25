@@ -25,4 +25,6 @@ internal class ClientTokenDataRepository(
     override fun getPaymentMethodId() = clientTokenDataSource.get().iPay88PaymentMethodId
 
     override fun getClientTokenIntent() = clientTokenDataSource.get().intent
+
+    override fun useThreeDsWeakValidation() = clientTokenDataSource.get().useThreeDsWeakValidation
 }

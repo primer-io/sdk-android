@@ -1,3 +1,8 @@
 package io.primer.android.threeds.data.exception
 
-internal class ThreeDsInitException(override val message: String?) : IllegalStateException()
+import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
+
+internal class ThreeDsInitException(
+    override val message: String?,
+    val context: ThreeDsFailureContextParams
+) : IllegalStateException()
