@@ -124,7 +124,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
                                 .serialize(it)
                         }
                     )
-                    put(APP_IDENTIFIER_FIELD, t.appIdentifier)
+                    putOpt(APP_IDENTIFIER_FIELD, t.appIdentifier)
                     put(SDK_SESSION_ID_FIELD, t.sdkSessionId)
                     putOpt(CHECKOUT_SESSION_ID_FIELD, t.checkoutSessionId)
                     putOpt(CLIENT_SESSION_ID_FIELD, t.clientSessionId)
