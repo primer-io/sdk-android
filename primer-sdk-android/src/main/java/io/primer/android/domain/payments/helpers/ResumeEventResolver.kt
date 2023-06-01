@@ -12,14 +12,20 @@ internal class ResumeEventResolver(
     private val eventDispatcher: EventDispatcher,
 ) {
 
-    fun resolve(paymentInstrumentType: String, resumeToken: String? = null) {
+    fun resolve(paymentInstrumentType: String, isVaulted: Boolean, resumeToken: String? = null) {
         when (config.settings.paymentHandling) {
             PrimerPaymentHandling.AUTO -> {
                 val resumeEvent = when (config.settings.fromHUC) {
-                    true -> CheckoutEvent.ResumeSuccessInternalHUC(
-                        resumeToken.orEmpty(),
-                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
-                    )
+                    true -> when (isVaulted) {
+                        true -> CheckoutEvent.ResumeSuccessInternalVaultHUC(
+                            resumeToken.orEmpty(),
+                            resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
+                        )
+                        false -> CheckoutEvent.ResumeSuccessInternalHUC(
+                            resumeToken.orEmpty(),
+                            resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
+                        )
+                    }
                     false -> CheckoutEvent.ResumeSuccessInternal(
                         resumeToken.orEmpty(),
                         resumeHandlerFactory.getResumeHandler(paymentInstrumentType)

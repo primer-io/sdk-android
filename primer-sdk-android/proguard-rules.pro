@@ -74,6 +74,14 @@
     *;
 }
 
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData {
+    *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData* {
+    *;
+}
+
 -keep class io.primer.android.data.tokenization.models.PaymentInstrumentData {
     *;
 }
@@ -255,6 +263,19 @@
 }
 
 -keep class io.primer.android.domain.exception.UnsupportedPaymentIntentException {
+    public *;
+}
+
+ #------------------------------------Vault manager------------------------------------------------#
+-keep class io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager$Companion {
+    *;
+}
+
+-keep interface io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface {
     public *;
 }
 

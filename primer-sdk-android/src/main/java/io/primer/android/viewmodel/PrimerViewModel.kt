@@ -278,14 +278,15 @@ internal class PrimerViewModel(
         }
 
     fun exchangePaymentMethodToken(token: PaymentMethodVaultTokenInternal) = viewModelScope.launch {
-        exchangeInteractor(VaultTokenParams(token)).collect { }
+        exchangeInteractor(VaultTokenParams(token.token, token.paymentMethodType)).collect { }
     }
 
     fun deleteToken(token: BasePaymentToken) = viewModelScope.launch {
-        vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(token.token)).collect { token ->
+        vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(token.token)).onSuccess { token ->
             _vaultedPaymentMethods.value =
                 vaultedPaymentMethods.value?.filter { it.token != token }
         }
+            .onFailure { }
     }
 
     fun initializeAnalytics() = viewModelScope.launch {

@@ -269,7 +269,7 @@ internal class ThreeDsInteractorTest {
 
         coVerify { threeDsRepository.begin3DSAuth(any(), any()) }
         verify { clientTokenRepository.getClientTokenIntent() }
-        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), "") }
+        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), any(), any()) }
 
         assertEquals(beginAuthResponse.token.paymentInstrumentType, paymentInstrumentType.captured)
     }
@@ -458,7 +458,7 @@ internal class ThreeDsInteractorTest {
 
         coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
         verify { clientTokenRepository.getClientTokenIntent() }
-        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), "") }
+        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), any(), any()) }
 
         assertEquals(postAuthResponse.token.paymentInstrumentType, paymentInstrumentType.captured)
     }
@@ -493,7 +493,7 @@ internal class ThreeDsInteractorTest {
         coVerify { threeDsConfigurationRepository.getPreAuthConfiguration() }
         coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
         verify { clientTokenRepository.getClientTokenIntent() }
-        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), "") }
+        verify { resumeEventResolver.resolve(capture(paymentInstrumentType), any(), any()) }
 
         assertEquals(postAuthResponse.token.paymentInstrumentType, paymentInstrumentType.captured)
     }

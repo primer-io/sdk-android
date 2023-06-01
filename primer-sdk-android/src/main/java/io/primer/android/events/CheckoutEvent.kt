@@ -65,6 +65,12 @@ internal sealed class CheckoutEvent(
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
 
+    class ResumeSuccessInternalVaultHUC(
+        val resumeToken: String,
+        val resumeHandler: PrimerResumeDecisionHandler,
+    ) :
+        CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
+
     class Exit(val data: CheckoutExitInfo) :
         CheckoutEvent(CheckoutEventType.EXIT)
 
@@ -126,7 +132,17 @@ internal sealed class CheckoutEvent(
     ) :
         CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
 
+    class PaymentContinueVaultHUC(
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler
+    ) :
+        CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
+
     class Start3DS(
+        val processor3DSData: Processor3DS? = null
+    ) : CheckoutEvent(CheckoutEventType.START_3DS)
+
+    class Start3DSVault(
         val processor3DSData: Processor3DS? = null
     ) : CheckoutEvent(CheckoutEventType.START_3DS)
 

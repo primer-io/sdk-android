@@ -214,21 +214,7 @@ interface ClientSession : ExampleAppRequestBody {
         val ADYEN_GIROPAY: PaymentMethodOption? = null,
         val ADYEN_TRUSTLY: PaymentMethodOption? = null,
         val KLARNA: PaymentMethodOption? = null,
-        ) {
-
-        companion object {
-            val configuredValues: Set<String> = setOf(
-                "PAYPAL",
-                "PAYMENT_CARD",
-                "PROCESSOR_3DS",
-                "GOOGLE_PAY",
-                "ADYEN_SOFORT",
-                "ADYEN_IDEAL",
-                "ADYEN_GIROPAY",
-                "ADYEN_TRUSTLY"
-            )
-        }
-    }
+    )
 
     @Keep
     data class PaymentMethodOption(
@@ -256,25 +242,4 @@ interface ClientSession : ExampleAppRequestBody {
     data class NetworkOption(
         val surcharge: SurchargeOption
     )
-
-    @Keep
-    data class CaptureData(
-        val cardInformation: CardInformation,
-        val billingAddress: BillingAddress,
-    ) {
-
-        data class CardInformation(
-            val cardholderName: CaptureSetting
-        )
-
-        data class BillingAddress(
-            val postalCode: CaptureSetting,
-            val addressLine1: CaptureSetting,
-        )
-
-        data class CaptureSetting(
-            val capture: Boolean,
-            val required: Boolean,
-        )
-    }
 }

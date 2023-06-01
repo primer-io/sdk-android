@@ -59,6 +59,7 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
                 PaymentMethodType.PAYMENT_CARD.name ->
                     eventResolver.resolve(
                         paymentMethodType,
+                        false,
                         UUID.randomUUID().toString()
                     ).also { finish() }
             }

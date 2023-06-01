@@ -40,6 +40,7 @@ internal class AsyncPaymentMethodInteractor(
         .onEach {
             resumeEventResolver.resolve(
                 paymentMethodRepository.getPaymentMethod().paymentInstrumentType,
+                paymentMethodRepository.getPaymentMethod().isVaulted,
                 it.resumeToken
             )
         }.doOnError {

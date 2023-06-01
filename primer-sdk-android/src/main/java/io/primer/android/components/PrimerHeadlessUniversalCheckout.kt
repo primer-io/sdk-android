@@ -6,6 +6,7 @@ import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckoutDelegate
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
+import io.primer.android.components.presentation.vault.VaultManagerDelegate
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
@@ -246,6 +247,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         DIAppContext.app?.let {
             get<DefaultHeadlessManagerDelegate>().reset()
             get<DefaultRawDataManagerDelegate>().reset()
+            get<VaultManagerDelegate>().reset()
             it.close()
         }
         DIAppContext.init(context.applicationContext, config)

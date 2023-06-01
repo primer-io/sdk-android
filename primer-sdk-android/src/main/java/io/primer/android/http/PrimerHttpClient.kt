@@ -45,6 +45,18 @@ internal class PrimerHttpClient(
             )
         }
 
+    suspend inline fun <reified R : JSONDeserializable> suspendGet(
+        url: String,
+        headers: Map<String, String> = hashMapOf()
+    ): R =
+        executeRequest(
+            Request.Builder()
+                .url(url)
+                .headers(Headers.of(headers))
+                .get()
+                .build()
+        )
+
     inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> post(
         url: String,
         request: T,
@@ -62,21 +74,16 @@ internal class PrimerHttpClient(
             )
         }
 
-    inline fun <reified R : JSONDeserializable> delete(
+    suspend inline fun <reified R : JSONDeserializable> delete(
         url: String,
         headers: Map<String, String> = hashMapOf()
-    ): Flow<R> =
-        flow {
-            emit(
-                executeRequest(
-                    Request.Builder()
-                        .url(url)
-                        .headers(Headers.of(headers))
-                        .delete()
-                        .build()
-                )
-            )
-        }
+    ): R = executeRequest(
+        Request.Builder()
+            .url(url)
+            .headers(Headers.of(headers))
+            .delete()
+            .build()
+    )
 
     private suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request

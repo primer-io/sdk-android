@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.Flow
 internal interface VaultedPaymentMethodsRepository {
 
     // upon refactor of fragments, convert to domain model!
-    fun getVaultedPaymentMethods(): Flow<List<PaymentMethodVaultTokenInternal>>
+    suspend fun getVaultedPaymentMethods(fromCache: Boolean):
+        Result<List<PaymentMethodVaultTokenInternal>>
 
     fun exchangeVaultedPaymentToken(id: String): Flow<PaymentMethodTokenInternal>
 
-    fun deleteVaultedPaymentMethod(id: String): Flow<Unit>
+    suspend fun deleteVaultedPaymentMethod(id: String): Result<Unit>
 }

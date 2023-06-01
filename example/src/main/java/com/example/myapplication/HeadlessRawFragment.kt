@@ -19,6 +19,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentThirdBinding
 import com.example.myapplication.datamodels.TransactionState
@@ -28,7 +29,6 @@ import com.example.myapplication.viewmodels.HeadlessManagerViewModelFactory
 import com.example.myapplication.viewmodels.MainViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.completion.PrimerHeadlessUniversalCheckoutResumeDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
@@ -38,10 +38,10 @@ import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.core.models.PrimerRawData
-import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardMetadata
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
-import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
+import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerPhoneNumberData
@@ -51,6 +51,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
+import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager
 import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
 import io.primer.android.domain.PrimerCheckoutData
@@ -61,9 +62,10 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 import io.primer.android.domain.payments.additionalInfo.XenditCheckoutVoucherAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 
-@OptIn(ExperimentalPrimerApi::class)
 class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -125,6 +127,21 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 Log.d(TAG, paymentMethods.toString())
                 setupPaymentMethod(paymentMethods)
                 hideLoading()
+
+                val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+                    throwable.printStackTrace()
+                }
+                lifecycleScope.launch(exceptionHandler) {
+                    PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
+                        .fetchVaultedPaymentMethods().map {
+                            it.firstOrNull { it.paymentMethodType == "PAYMENT_CARD" }?.let {
+                                PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
+                                    .startPaymentFlow(it.id)
+                            }
+                        }.onFailure {
+                            it.printStackTrace()
+                        }
+                }
             }
 
             override fun onTokenizationStarted(paymentMethodType: String) {

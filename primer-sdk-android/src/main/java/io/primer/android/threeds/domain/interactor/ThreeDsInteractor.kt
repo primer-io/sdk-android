@@ -186,6 +186,8 @@ internal class DefaultThreeDsInteractor(
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name -> resumeEventResolver.resolve(
                 token.paymentInstrumentType,
+                if (paymentMethodRepository.getPaymentMethod().token == token.token)
+                    paymentMethodRepository.getPaymentMethod().isVaulted else token.isVaulted,
                 resumeToken
             )
             else -> Unit

@@ -100,7 +100,13 @@ class AsyncPaymentMethodInteractorTest {
         val resumeToken = slot<String>()
 
         coVerify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
-        verify { resumeEventResolver.resolve(capture(paymentMethodType), capture(resumeToken)) }
+        verify {
+            resumeEventResolver.resolve(
+                capture(paymentMethodType),
+                any(),
+                capture(resumeToken)
+            )
+        }
 
         assert(paymentMethodType.captured == PaymentMethodType.HOOLAH.name)
         assert(resumeToken.captured == asyncStatus.resumeToken)

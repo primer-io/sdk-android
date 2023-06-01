@@ -18,10 +18,17 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.vali
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.validation.rules.ValidSessionIntentRule
 import io.primer.android.components.domain.payments.paymentMethods.raw.validation.PaymentInputDataValidatorFactory
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
+import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodInteractor
+import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsExchangeInteractor
+import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsInteractor
+import io.primer.android.components.domain.payments.vault.validation.resolvers.VaultManagerInitValidationRulesResolver
+import io.primer.android.components.domain.payments.vault.validation.rules.ValidClientSessionCustomerIdRule
+import io.primer.android.components.domain.tokenization.helpers.VaultPostTokenizationEventResolver
 import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckoutDelegate
 import io.primer.android.components.presentation.assets.DefaultAssetsHeadlessDelegate
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
+import io.primer.android.components.presentation.vault.VaultManagerDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.logging.DefaultLogger
@@ -165,6 +172,53 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get()
+            )
+        }
+
+        factory { ValidClientSessionCustomerIdRule(get()) }
+        factory { VaultManagerInitValidationRulesResolver(get(), get()) }
+
+        single {
+            VaultManagerDelegate(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
+
+        factory {
+            VaultPostTokenizationEventResolver(
+                get(),
+                get(),
+                get(),
+            )
+        }
+
+        factory {
+            HeadlessVaultedPaymentMethodsExchangeInteractor(
+                get(),
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
+
+        factory {
+            HeadlessVaultedPaymentMethodsInteractor(
+                get(),
+            )
+        }
+
+        factory {
+            HeadlessVaultedPaymentMethodInteractor(
+                get(),
             )
         }
     }

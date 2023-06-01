@@ -75,8 +75,20 @@ internal class ThreeDsPrimerResumeDecisionHandler(
         super.handleClientToken(clientToken)
         when {
             clientTokenRepository.getClientTokenIntent() == ClientTokenIntent.PROCESSOR_3DS.name
-            -> {
-                eventDispatcher.dispatchEvent(
+            -> when (
+                config.settings.fromHUC &&
+                    paymentMethodRepository.getPaymentMethod().isVaulted
+            ) {
+                true ->
+                    eventDispatcher.dispatchEvent(
+                        CheckoutEvent.Start3DSVault(
+                            Processor3DS(
+                                clientTokenRepository.getRedirectUrl().orEmpty(),
+                                clientTokenRepository.getStatusUrl().orEmpty()
+                            )
+                        )
+                    )
+                false -> eventDispatcher.dispatchEvent(
                     CheckoutEvent.Start3DS(
                         Processor3DS(
                             clientTokenRepository.getRedirectUrl().orEmpty(),
@@ -101,7 +113,15 @@ internal class ThreeDsPrimerResumeDecisionHandler(
             }
             else -> when (mockConfigurationRepository.isMockedFlow()) {
                 true -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DSMock)
-                false -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
+                false -> {
+                    when (
+                        config.settings.fromHUC &&
+                            paymentMethodRepository.getPaymentMethod().isVaulted
+                    ) {
+                        true -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DSVault())
+                        false -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DS())
+                    }
+                }
             }
         }
     }
@@ -126,6 +146,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
             }.collect {
                 ResumeEventResolver(config, resumeHandlerFactory, eventDispatcher).resolve(
                     paymentMethodRepository.getPaymentMethod().paymentInstrumentType,
+                    paymentMethodRepository.getPaymentMethod().isVaulted,
                     it.resumeToken
                 )
             }

@@ -1,12 +1,12 @@
-package io.primer.android.domain.payments.methods
+package io.primer.android.components.domain.payments.vault
 
+import io.primer.android.components.domain.tokenization.helpers.VaultPostTokenizationEventResolver
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
-import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,11 +20,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 
 @ExperimentalCoroutinesApi
-internal class VaultedPaymentMethodsExchangeInteractor(
+internal class HeadlessVaultedPaymentMethodsExchangeInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
     private val preTokenizationEventsResolver: PreTokenizationEventsResolver,
-    private val postTokenizationEventResolver: PostTokenizationEventResolver,
+    private val postTokenizationEventResolver: VaultPostTokenizationEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<PaymentMethodTokenInternal, VaultTokenParams>() {

@@ -5,7 +5,6 @@ import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import io.primer.android.threeds.data.models.common.ResponseCode
 import org.json.JSONObject
 
 internal data class PaymentMethodTokenInternal(
@@ -19,17 +18,6 @@ internal data class PaymentMethodTokenInternal(
     val analyticsId: String,
     val tokenType: TokenType,
 ) : BasePaymentToken() {
-
-    fun setClientThreeDsError(errorMessage: String) =
-        this.copy(
-            threeDSecureAuthentication = AuthenticationDetailsDataResponse(
-                ResponseCode.SKIPPED,
-                "CLIENT_ERROR",
-                errorMessage,
-                "",
-                false
-            )
-        )
 
     companion object {
         private const val TOKEN_FIELD = "token"
@@ -81,6 +69,7 @@ internal fun PaymentMethodTokenInternal.toPaymentMethodToken() = PrimerPaymentMe
     analyticsId = analyticsId,
     tokenType = tokenType,
     paymentInstrumentType = paymentInstrumentType,
+    paymentMethodType = paymentMethodType,
     paymentInstrumentData = paymentInstrumentData?.let { paymentInstrumentData ->
         PaymentInstrumentData(
             paymentInstrumentData.network,
