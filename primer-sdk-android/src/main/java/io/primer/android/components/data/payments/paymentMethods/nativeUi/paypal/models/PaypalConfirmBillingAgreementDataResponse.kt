@@ -12,7 +12,7 @@ import org.json.JSONObject
 internal data class PaypalConfirmBillingAgreementDataResponse(
     val billingAgreementId: String,
     val externalPayerInfo: PaypalExternalPayerInfo,
-    val shippingAddress: PaypalShippingAddressDataResponse,
+    val shippingAddress: PaypalShippingAddressDataResponse?,
 ) : JSONDeserializable {
 
     companion object {
@@ -31,7 +31,7 @@ internal data class PaypalConfirmBillingAgreementDataResponse(
                         JSONSerializationUtils.getDeserializer<PaypalExternalPayerInfo>()
                             .deserialize(it)
                     },
-                    t.getJSONObject(SHIPPING_ADDRESS_FIELD).let {
+                    t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
                         JSONSerializationUtils.getDeserializer<PaypalShippingAddressDataResponse>()
                             .deserialize(it)
                     },

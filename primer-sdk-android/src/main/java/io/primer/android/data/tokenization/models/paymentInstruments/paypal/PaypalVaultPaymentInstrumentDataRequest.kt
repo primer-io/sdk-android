@@ -10,7 +10,7 @@ import org.json.JSONObject
 internal data class PaypalVaultPaymentInstrumentDataRequest(
     val billingAgreementId: String?,
     val externalPayerInfo: PaypalExternalPayerInfo,
-    val shippingAddressDataResponse: PaypalShippingAddressDataResponse
+    val shippingAddressDataResponse: PaypalShippingAddressDataResponse?
 ) : PaymentInstrumentDataRequest() {
     companion object {
 
@@ -32,9 +32,9 @@ internal data class PaypalVaultPaymentInstrumentDataRequest(
                                     .serialize(it)
                             }
                         )
-                        put(
+                        putOpt(
                             SHIPPING_ADDRESS_FIELD,
-                            t.shippingAddressDataResponse.let {
+                            t.shippingAddressDataResponse?.let {
                                 JSONSerializationUtils
                                     .getJsonObjectSerializer<PaypalShippingAddressDataResponse>()
                                     .serialize(it)

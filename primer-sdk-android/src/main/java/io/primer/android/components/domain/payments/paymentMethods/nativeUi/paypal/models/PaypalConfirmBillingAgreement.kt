@@ -6,5 +6,5 @@ import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal
 internal data class PaypalConfirmBillingAgreement(
     val billingAgreementId: String,
     val externalPayerInfo: PaypalExternalPayerInfo,
-    val shippingAddress: PaypalShippingAddressDataResponse,
+    val shippingAddress: PaypalShippingAddressDataResponse?,
 )
