@@ -45,6 +45,7 @@ class MerchantSettingsFragment : Fragment() {
         configureCountryTextField()
         configureAmountTextField()
         configurePaymentHandlingViews()
+        configureSdkUiSettingsViews()
         configureEnvSetup()
         configureNextButton()
         configureEnvDropDown()
@@ -175,6 +176,12 @@ class MerchantSettingsFragment : Fragment() {
             onFocusChangeListener =
                 HideKeyboardFocusChangeListener(R.id.metadataTextField, activity)
             addTextChangedListener { viewModel.setMetadata(it.toString()) }
+        }
+    }
+
+    private fun configureSdkUiSettingsViews() {
+        binding.disableInitScreen.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setInitScreenUiOptions(isChecked.not())
         }
     }
 

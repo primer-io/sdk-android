@@ -30,6 +30,7 @@
     <string name="payment_handling">Payment Handling</string>
     <string name="payment_handling_auto">AUTO</string>
     <string name="payment_handling_manual">MANUAL</string>
+    <string name="ui_settings_disable_init_screen">Disable init screen</string>
     <string name="env_production">Production</string>
     <string name="env_staging">Staging</string>
     <string name="env_dev">Dev</string>
@@ -41,6 +42,11 @@
     <string name="sdk_settings">SDK Settings</string>
     <string name="flow_client_session">Client session</string>
     <string name="flow_client_token">Client token</string>
+    <string name="payment_method_type">Payment method type</string>
+    <string name="checkout_intent">Checkout</string>
+    <string name="vault_intent">Vault</string>
+    <string name="universal_checkout_options">Universal Checkout Options</string>
+    <string name="vault_manager_options">Vault Manager Options</string>
 
     <string-array name="app_environments">
         <item>@string/env_sandbox</item>

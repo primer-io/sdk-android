@@ -66,7 +66,7 @@ class TokenizationViewModelTest : KoinTest {
         val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true)
         every { paymentMethodConfig.type }.returns(PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
-            paymentMethodConfig,
+            config, paymentMethodConfig,
         )
         paymentMethodDescriptor.pushValues(mockJson)
         val statusObserver = viewModel.tokenizationStatus.test()
@@ -101,7 +101,7 @@ class TokenizationViewModelTest : KoinTest {
         val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true)
         every { paymentMethodConfig.type }.returns(PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
-            paymentMethodConfig,
+            config, paymentMethodConfig,
         )
         runTest {
             viewModel.resetPaymentMethod(paymentMethodDescriptor)

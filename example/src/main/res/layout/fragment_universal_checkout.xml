@@ -4,50 +4,130 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="@dimen/large_vertical_margin"
     tools:context=".MerchantCheckoutFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/payment_method_list"
+    <TextView
+        android:id="@+id/show_payment_method_options"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toTopOf="@id/vault_button"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:text="Show Payment Method Options"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/intent_toggle_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/checkout"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/show_payment_method_options"
+        app:singleSelection="true">
+
+        <Button
+            android:id="@+id/checkout"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/checkout_intent"
+            android:gravity="center"
+            android:text="@string/checkout_intent"
+            android:textAllCaps="true" />
+
+        <Button
+            android:id="@+id/vault"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/vault_intent"
+            android:gravity="center"
+            android:text="@string/vault_intent"
+            android:textAllCaps="true" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/show_payment_method_input_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:hint="@string/payment_method_type"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/intent_toggle_group"
+        app:layout_constraintVertical_bias="0.0">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/show_payment_method_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/show_payment_method_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/show_payment_method"
+        android:visibility="gone"
+        app:backgroundTint="@color/primer"
+        app:cornerRadius="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/show_payment_method_input_layout"
+        app:layout_constraintTop_toBottomOf="@id/show_payment_method_input_layout" />
+
+    <TextView
+        android:id="@+id/vault_manager_options"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:text="@string/vault_manager_options"
+        app:layout_constraintTop_toBottomOf="@id/show_payment_method_button" />
 
     <Button
         android:id="@+id/vault_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:text="@string/add_payment_method"
+        android:visibility="gone"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"
-        app:layout_constraintBottom_toTopOf="@+id/checkout_button"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/checkout_button" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vault_manager_options" />
+
+    <TextView
+        android:id="@+id/universal_checkout_options"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:text="@string/universal_checkout_options"
+        app:layout_constraintTop_toBottomOf="@id/vault_button" />
 
     <Button
         android:id="@+id/checkout_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:text="@string/show_checkout"
+        android:visibility="gone"
         app:backgroundTint="@color/primer"
         app:cornerRadius="8sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/universal_checkout_options" />
 
     <ProgressBar
         android:id="@+id/wallet_progress_bar"

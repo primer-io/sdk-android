@@ -22,10 +22,10 @@ import io.primer.android.ui.payment.LoadingState
 import org.koin.core.component.inject
 
 internal class AdyenBancontactCardPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
+) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository by inject()
 
@@ -34,7 +34,7 @@ internal class AdyenBancontactCardPaymentMethodDescriptor(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             BancontactCardFragment::newInstance,
-            returnToPreviousOnBack = true
+            returnToPreviousOnBack = localConfig.isStandalonePaymentMethod.not()
         )
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> =

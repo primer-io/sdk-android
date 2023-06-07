@@ -13,14 +13,12 @@ import io.primer.android.payment.SelectedPaymentMethodManagerBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
 internal open class PayPalDescriptor constructor(
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config), DIAppComponent {
-
-    private val localConfig: PrimerConfig by inject()
+) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() =

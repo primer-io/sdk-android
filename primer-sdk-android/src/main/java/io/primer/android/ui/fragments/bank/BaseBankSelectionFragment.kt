@@ -89,6 +89,10 @@ internal abstract class BaseBankSelectionFragment :
             )
         )
 
+        baseBinding.paymentMethodBack.isVisible =
+            primerViewModel.selectedPaymentMethod.value?.localConfig
+                ?.isStandalonePaymentMethod?.not()
+                ?: false
         baseBinding.paymentMethodBack.setColorFilter(
             theme.titleText.defaultColor.getColor(
                 requireContext(),

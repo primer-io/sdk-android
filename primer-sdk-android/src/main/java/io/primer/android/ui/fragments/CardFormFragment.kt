@@ -207,7 +207,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun renderCancelButton() {
         binding.ivBack.apply {
-            // TODO isVisible = localConfig.isStandalonePaymentMethod.not()
+            isVisible = localConfig.isStandalonePaymentMethod.not()
 
             imageTintList = ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(

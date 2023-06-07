@@ -10,10 +10,10 @@ import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.payment.LoadingState
 
 internal open class SofortPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
+) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override fun getLoadingState() = LoadingState(R.drawable.ic_logo_sofort_square)
 

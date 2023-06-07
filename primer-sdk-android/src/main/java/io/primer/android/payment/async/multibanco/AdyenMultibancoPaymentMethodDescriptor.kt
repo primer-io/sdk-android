@@ -18,10 +18,10 @@ import io.primer.android.ui.fragments.multibanko.MultibancoConditionsFragment
 import io.primer.android.ui.payment.LoadingState
 
 internal class AdyenMultibancoPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
+) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 

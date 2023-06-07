@@ -4,6 +4,7 @@ import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfoResolver
 import io.primer.android.model.SyncValidationError
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
@@ -11,7 +12,10 @@ import io.primer.android.ui.payment.LoadingState
 import org.json.JSONObject
 import java.util.Collections
 
-internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigDataResponse) {
+internal abstract class PaymentMethodDescriptor(
+    val config: PaymentMethodConfigDataResponse,
+    val localConfig: PrimerConfig
+) {
 
     // remove
     protected val values: JSONObject by lazy { JSONObject() }
@@ -26,8 +30,17 @@ internal abstract class PaymentMethodDescriptor(val config: PaymentMethodConfigD
 
     open val resumeHandler: PrimerResumeDecisionHandler? = null
 
-    open val behaviours: List<SelectedPaymentMethodBehaviour> =
-        listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))
+    /**
+     The logic is the following:
+     1. if we are launched using `showPaymentMethod` (isStandalonePaymentMethod = true) and
+     we have disabled initial screen (isInitScreenEnabled.not()), we won't show loading screen.
+     2. Otherwise, we show loading screen.
+     */
+    open val behaviours: List<SelectedPaymentMethodBehaviour>
+        get() = if (localConfig.settings.uiOptions.isInitScreenEnabled.not() &&
+            localConfig.isStandalonePaymentMethod
+        ) listOf() else
+            listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))
 
     open val sdkCapabilities = listOf(SDKCapability.HEADLESS, SDKCapability.DROP_IN)
 

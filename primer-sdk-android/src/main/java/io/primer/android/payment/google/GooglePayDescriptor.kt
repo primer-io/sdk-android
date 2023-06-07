@@ -5,8 +5,8 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.GooglePayButtonStyle
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.HeadlessDefinition
+import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.SelectedPaymentMethodManagerBehaviour
@@ -14,10 +14,10 @@ import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
 
 internal class GooglePayDescriptor constructor(
-    val localConfig: PrimerConfig,
     val options: GooglePay,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config) {
+) : PaymentMethodDescriptor(config, localConfig) {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour =
         SelectedPaymentMethodManagerBehaviour(options.type, localConfig.paymentMethodIntent)

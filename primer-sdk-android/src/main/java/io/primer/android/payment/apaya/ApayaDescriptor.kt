@@ -14,17 +14,13 @@ import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
 
 internal class ApayaDescriptor constructor(
-    val localConfig: PrimerConfig,
     val options: Apaya,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config), DIAppComponent {
+) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour =
         SelectedPaymentMethodManagerBehaviour(options.type, localConfig.paymentMethodIntent)
-
-    override val behaviours: List<SelectedPaymentMethodBehaviour>
-        get() = if (localConfig.settings.uiOptions.isInitScreenEnabled.not()) listOf() else
-            super.behaviours
 
     override val type: PaymentMethodUiType
         get() = PaymentMethodUiType.SIMPLE_BUTTON

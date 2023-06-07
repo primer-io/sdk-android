@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 internal open class BankSelectionViewModel(
     private val interactor: BanksInteractor,
-    private val analyticsInteractor: AnalyticsInteractor
+    analyticsInteractor: AnalyticsInteractor
 ) : BaseViewModel(analyticsInteractor), DIAppComponent {
 
     protected val _itemsLiveData = MutableLiveData<List<BaseBankItem>>()

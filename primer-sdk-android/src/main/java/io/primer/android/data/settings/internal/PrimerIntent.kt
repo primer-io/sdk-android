@@ -6,11 +6,17 @@ import io.primer.android.PrimerSessionIntent
 
 internal data class PrimerIntent(
     val paymentMethodIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT,
+    val paymentMethodType: String? = null,
 ) : Parcelable {
-    constructor(parcel: Parcel) : this(PrimerSessionIntent.valueOf(parcel.readString().orEmpty()))
+
+    constructor(parcel: Parcel) : this(
+        PrimerSessionIntent.valueOf(parcel.readString().orEmpty()),
+        parcel.readString()
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(paymentMethodIntent.name)
+        parcel.writeString(paymentMethodType)
     }
 
     override fun describeContents(): Int {

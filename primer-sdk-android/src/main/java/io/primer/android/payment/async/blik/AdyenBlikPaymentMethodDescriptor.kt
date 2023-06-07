@@ -22,16 +22,17 @@ import io.primer.android.ui.payment.LoadingState
 import org.koin.core.component.inject
 
 internal class AdyenBlikPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
+) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository by inject()
 
     override val selectedBehaviour =
         NewFragmentBehaviour(
-            DynamicFormFragment::newInstance, returnToPreviousOnBack = true
+            DynamicFormFragment::newInstance,
+            returnToPreviousOnBack = localConfig.isStandalonePaymentMethod.not()
         )
 
     override fun getLoadingState() = LoadingState(

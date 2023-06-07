@@ -16,10 +16,10 @@ import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import org.koin.core.component.inject
 
 internal class XenditOvoPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : AsyncPaymentMethodDescriptor(localConfig, options, config) {
+) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository by inject()
 

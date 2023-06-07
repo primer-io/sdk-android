@@ -16,16 +16,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 internal open class KlarnaDescriptor constructor(
     val options: Klarna,
-    val localConfig: PrimerConfig,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config) {
+) : PaymentMethodDescriptor(config, localConfig) {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = SelectedPaymentMethodManagerBehaviour(options.type, localConfig.paymentMethodIntent)
-
-    override val behaviours: List<SelectedPaymentMethodBehaviour>
-        get() = if (localConfig.settings.uiOptions.isInitScreenEnabled.not()) listOf() else
-            super.behaviours
 
     override val type: PaymentMethodUiType
         get() = PaymentMethodUiType.SIMPLE_BUTTON

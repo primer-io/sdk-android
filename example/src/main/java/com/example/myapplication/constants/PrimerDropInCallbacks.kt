@@ -4,6 +4,7 @@ internal object PrimerDropInCallbacks {
 
     const val ON_UNIVERSAL_CHECKOUT_CLICKED = "openUniversalCheckoutClicked()"
     const val ON_VAULT_MANAGER_CLICKED = "openVaultManagerClicked()"
+    const val ON_SHOW_PAYMENT_METHOD_BUTTON_CLICKED = "showPaymentMethodButtonClicked()"
 
     const val ON_BEFORE_PAYMENT_CREATED = "onBeforePaymentCreated(paymentMethodData, decisionHandler)"
     const val ON_FAILED_WITH_CHECKOUT_DATA = "onFailed(error, checkoutData?, errorHandler?)"

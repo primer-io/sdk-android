@@ -10,6 +10,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.putFor
 import io.primer.android.components.domain.inputs.models.valueBy
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.HeadlessDefinition
@@ -25,8 +26,9 @@ import io.primer.android.utils.removeSpaces
 import org.json.JSONObject
 
 internal class CreditCard(
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config), DIAppComponent {
+) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
 
     var availableFields = mutableMapOf<PrimerInputElementType, Boolean>()
 
@@ -34,8 +36,7 @@ internal class CreditCard(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewFragmentBehaviour(
             CardFormFragment::newInstance,
-            true
-            // localConfig.isStandalonePaymentMethod.not()
+            localConfig.isStandalonePaymentMethod.not()
         )
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> = emptyList()

@@ -111,6 +111,23 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
         show(context, clientToken)
     }
 
+    override fun showPaymentMethod(
+        context: Context,
+        clientToken: String,
+        paymentMethod: String,
+        intent: PrimerSessionIntent,
+    ) {
+        addAnalyticsEvent(
+            SdkFunctionParams(
+                "showPaymentMethod",
+                mapOf("paymentMethodType" to paymentMethod, "intent" to intent.name)
+            )
+        )
+
+        config.intent = PrimerIntent(intent, paymentMethod)
+        show(context, clientToken)
+    }
+
     /**
      * Private method to set and subscribe using passed in listener. Clears previous subscriptions.
      */

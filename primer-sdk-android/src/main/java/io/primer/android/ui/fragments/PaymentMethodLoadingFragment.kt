@@ -34,7 +34,7 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
     private val selectedPaymentMethodObserver = Observer<PaymentMethodDescriptor?> { descriptor ->
-        descriptor?.getLoadingState().let { loadingState ->
+        descriptor?.getLoadingState()?.let { loadingState ->
             logAnalytics(descriptor.config.type)
             binding.apply {
                 if (loadingState != null && loadingState.imageResIs > 0) {

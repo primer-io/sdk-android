@@ -15,6 +15,9 @@ internal data class PrimerConfig(
 
     internal var intent: PrimerIntent = PrimerIntent()
 
+    internal val isStandalonePaymentMethod: Boolean
+        get() = intent.paymentMethodType != null
+
     internal val monetaryAmount: MonetaryAmount?
         get() {
             val currency = settings.order.currencyCode

@@ -12,10 +12,10 @@ import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.payment.LoadingState
 
 internal class WebRedirectPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : AsyncPaymentMethodDescriptor(localConfig, options, config), DIAppComponent {
+) : AsyncPaymentMethodDescriptor(options, localConfig, config), DIAppComponent {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour =
         SelectedPaymentMethodManagerBehaviour(options.type, localConfig.paymentMethodIntent)

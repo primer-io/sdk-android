@@ -144,6 +144,14 @@ class MainViewModel(
         paymentHandling
     )
 
+    private val _uiOptions: MutableLiveData<PrimerUIOptions> =
+        MutableLiveData(PrimerUIOptions(theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration)))
+    fun setInitScreenUiOptions(enabled: Boolean): Unit = _uiOptions.postValue(
+        _uiOptions.value?.copy(isInitScreenEnabled = enabled)
+    )
+
+    val useStandalonePaymentMethod: MutableLiveData<String> = MutableLiveData()
+
     fun resetTransactionState(): Unit =
         _transactionState.postValue(TransactionState.IDLE)
 
@@ -163,12 +171,7 @@ class MainViewModel(
                 googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds")
             ),
-            uiOptions = PrimerUIOptions(
-                isInitScreenEnabled = true,
-                isSuccessScreenEnabled = true,
-                isErrorScreenEnabled = true,
-                theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration),
-            ),
+            uiOptions = _uiOptions.value ?: PrimerUIOptions(),
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
         )
 

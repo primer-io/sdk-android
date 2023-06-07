@@ -142,6 +142,13 @@
                     android:text="@string/payment_handling_manual" />
             </RadioGroup>
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/disableInitScreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/ui_settings_disable_init_screen" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/descriptorTextFieldLayout"
                 android:layout_width="match_parent"

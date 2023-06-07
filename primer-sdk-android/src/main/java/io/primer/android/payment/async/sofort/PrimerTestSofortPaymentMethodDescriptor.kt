@@ -12,16 +12,16 @@ import io.primer.android.payment.dummy.DummyResultDescriptorHandler
 import io.primer.android.ui.fragments.dummy.DummyResultSelectorFragment
 
 internal class PrimerTestSofortPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : SofortPaymentMethodDescriptor(localConfig, options, config), DummyResultDescriptorHandler {
+) : SofortPaymentMethodDescriptor(options, localConfig, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewMiddleFragmentBehaviour(
             DummyResultSelectorFragment::newInstance,
             onActionContinue = { super.selectedBehaviour },
-            returnToPreviousOnBack = true
+            returnToPreviousOnBack = localConfig.isStandalonePaymentMethod.not()
         )
 
     override fun setDecision(decision: DummyDecisionType) {

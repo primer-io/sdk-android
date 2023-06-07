@@ -9,10 +9,10 @@ import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 
 internal abstract class AsyncPaymentMethodDescriptor constructor(
-    open val localConfig: PrimerConfig,
     open val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config), DIAppComponent {
+) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
 
     companion object {
 
