@@ -13,12 +13,14 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
+import io.primer.android.di.DIAppContext
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
+import io.primer.android.extensions.getParcelable
 import io.primer.android.model.CheckoutExitInfo
 import io.primer.android.model.CheckoutExitReason
 import io.primer.android.payment.NewFragmentBehaviour
@@ -260,6 +262,14 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        intent.getParcelable<PrimerConfig>(PRIMER_CONFIG_KEY)?.let { config ->
+            DIAppContext.init(
+                applicationContext,
+                config
+            )
+            intent.removeExtra(PRIMER_CONFIG_KEY)
+        } ?: run { finish() }
+
         super.onCreate(savedInstanceState)
 
         primerViewModel.initializeAnalytics()
@@ -369,5 +379,10 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
     private fun clearSubscription() {
         subscription?.unregister()
         subscription = null
+    }
+
+    internal companion object {
+
+        const val PRIMER_CONFIG_KEY = "PRIMER_CONFIG"
     }
 }

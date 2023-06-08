@@ -5,6 +5,7 @@ import android.os.Parcelable
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.extensions.readParcelable
 import io.primer.android.model.MonetaryAmount
 
 internal data class PrimerConfig(
@@ -29,8 +30,7 @@ internal data class PrimerConfig(
         get() = intent.paymentMethodIntent
 
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable<PrimerSettings>(PrimerSettings::class.java.classLoader)
-            ?: PrimerSettings()
+        parcel.readParcelable<PrimerSettings>() ?: PrimerSettings()
     ) {
         clientTokenBase64 = parcel.readString()
         intent = parcel.readParcelable(PrimerIntent::class.java.classLoader) ?: PrimerIntent()
@@ -49,6 +49,7 @@ internal data class PrimerConfig(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(settings, flags)
         parcel.writeString(clientTokenBase64)
+        parcel.writeParcelable(intent, flags)
     }
 
     override fun describeContents(): Int {

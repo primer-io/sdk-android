@@ -26,6 +26,7 @@
             android:name=".CheckoutSheetActivity"
             android:exported="true"
             android:label=""
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
             android:windowSoftInputMode="adjustResize" />
 

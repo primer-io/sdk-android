@@ -473,6 +473,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun toggleLoading(on: Boolean) {
         binding.btnSubmitForm.setProgress(on)
+        binding.btnSubmitForm.isEnabled = on.not()
         if (on) binding.cardFormErrorMessage.isInvisible = true
         cardInputFields.values
             .plus(binding.billingAddressForm.fields())
