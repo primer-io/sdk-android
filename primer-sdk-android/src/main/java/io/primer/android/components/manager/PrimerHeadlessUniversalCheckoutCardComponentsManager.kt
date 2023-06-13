@@ -27,10 +27,12 @@ interface PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface {
     fun setInputElements(elements: List<PrimerInputElement>)
     fun submit()
     fun isCardFormValid(): Boolean
-    fun setCardManagerListener(listener: PrimerCardComponentsManagerListener)
+    fun setCardManagerListener(
+        listener: PrimerHeadlessUniversalCheckoutCardComponentsManagerListener
+    )
 }
 
-interface PrimerCardComponentsManagerListener {
+interface PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
     fun onCardValidationChanged(isCardFormValid: Boolean)
 }
 
@@ -45,7 +47,7 @@ private constructor(private val paymentMethodType: String) :
 
     private val inputElements = mutableListOf<PrimerInputElement>()
     private var cardFormValid: Boolean = false
-    private var listener: PrimerCardComponentsManagerListener? = null
+    private var listener: PrimerHeadlessUniversalCheckoutCardComponentsManagerListener? = null
 
     init {
         headlessManagerDelegate.init(
@@ -98,7 +100,9 @@ private constructor(private val paymentMethodType: String) :
     override fun isCardFormValid() =
         inputElements.isNotEmpty() && inputElements.all { it.isValid() }
 
-    override fun setCardManagerListener(listener: PrimerCardComponentsManagerListener) {
+    override fun setCardManagerListener(
+        listener: PrimerHeadlessUniversalCheckoutCardComponentsManagerListener
+    ) {
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
             SdkFunctionParams(
                 object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
@@ -145,25 +149,30 @@ private constructor(private val paymentMethodType: String) :
     private fun getRawData(paymentMethodType: String) = when (paymentMethodType) {
         PaymentMethodType.PAYMENT_CARD.name -> PrimerCardData(
             getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString().removeSpaces(),
-            getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
-                .getOrElse(0) { "" } +
-                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
-                    .getOrElse(1) { "" }
-                    .let { "${Calendar.getInstance().get(Calendar.YEAR).div(YEAR_DIVIDER)}$it" },
+            getExpiryDate(),
             getInputElementValue(PrimerInputElementType.CVV).toString(),
             getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME),
         )
         PaymentMethodType.ADYEN_BANCONTACT_CARD.name -> PrimerBancontactCardData(
             getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString().removeSpaces(),
-            getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
-                .getOrElse(0) { "" } +
-                getInputElementValue(PrimerInputElementType.EXPIRY_DATE).toString().split("/")
-                    .getOrElse(1) { "" }
-                    .let { "${Calendar.getInstance().get(Calendar.YEAR).div(YEAR_DIVIDER)}$it" },
+            getExpiryDate(),
             getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME).toString(),
         )
         else -> throw UnsupportedPaymentMethodException(paymentMethodType)
     }
+
+    private fun getExpiryDate(): String {
+        return "${getExpiryMonth()}/${getExpiryYear()}"
+    }
+
+    private fun getExpiryMonth() = getInputElementValue(PrimerInputElementType.EXPIRY_DATE)
+        .toString()
+        .split("/").getOrElse(0) { "" }
+
+    private fun getExpiryYear() = getInputElementValue(PrimerInputElementType.EXPIRY_DATE)
+        .toString()
+        .split("/").getOrElse(1) { "" }
+        .let { "${Calendar.getInstance().get(Calendar.YEAR).div(YEAR_DIVIDER)}$it" }
 
     companion object {
         private const val YEAR_DIVIDER = 100

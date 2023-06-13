@@ -31,7 +31,7 @@ import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.manager.PrimerCardComponentsManagerListener
+import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManagerListener
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
@@ -225,7 +225,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.CARD_COMPONENTS)) {
                 cardManager =
                     PrimerHeadlessUniversalCheckoutCardComponentsManager.newInstance(it.paymentMethodType)
-                cardManager.setCardManagerListener(object : PrimerCardComponentsManagerListener {
+                cardManager.setCardManagerListener(object : PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
                     override fun onCardValidationChanged(isCardFormValid: Boolean) {
                         Log.d(TAG, "onCardValidChanged $isCardFormValid")
                         binding.nextButton.isEnabled = isCardFormValid
