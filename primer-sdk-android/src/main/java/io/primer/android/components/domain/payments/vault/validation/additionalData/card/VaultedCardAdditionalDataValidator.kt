@@ -19,10 +19,24 @@ internal class VaultedCardAdditionalDataValidator :
                 ).cvvLength ->
                 listOf(
                     PrimerValidationError(
-                        "invalid-cvv", "CVV length does not match."
+                        INVALID_CVV_ERROR_ID,
+                        "The length of the CVV does not match the required length."
+                    )
+                )
+            DIGITS_ONLY_REGEX.matches(additionalData.cvv).not() ->
+                listOf(
+                    PrimerValidationError(
+                        INVALID_CVV_ERROR_ID,
+                        "Ensure that the CVV field consists exclusively of numerical digits."
                     )
                 )
             else -> emptyList()
         }
+    }
+
+    companion object {
+
+        const val INVALID_CVV_ERROR_ID = "invalid-cvv"
+        val DIGITS_ONLY_REGEX = "^\\d+\$".toRegex()
     }
 }

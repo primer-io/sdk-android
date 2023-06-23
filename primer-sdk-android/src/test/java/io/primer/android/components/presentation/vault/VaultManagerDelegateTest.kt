@@ -213,7 +213,10 @@ internal class VaultManagerDelegateTest {
         runTest {
             val errors = delegate.validate(vaultedPaymentMethodId, additionalData).getOrNull()
             assertEquals("invalid-cvv", errors?.first()?.errorId)
-            assertEquals("CVV length does not match.", errors?.first()?.description)
+            assertEquals(
+                "The length of the CVV does not match the required length.",
+                errors?.first()?.description
+            )
         }
 
         coVerify { headlessVaultedPaymentMethodInteractor(any()) }

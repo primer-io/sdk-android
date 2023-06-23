@@ -32,7 +32,10 @@ internal class VaultedCardAdditionalDataValidatorTest {
         runTest {
             val errors = validator.validate(additionalData, vaultedTokenData)
             assertEquals(1, errors.size)
-            assertEquals(INVALID_CVV_ERROR_ID, errors.first().errorId)
+            assertEquals(
+                VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
+                errors.first().errorId
+            )
         }
     }
 
@@ -48,7 +51,10 @@ internal class VaultedCardAdditionalDataValidatorTest {
         runTest {
             val errors = validator.validate(additionalData, vaultedTokenData)
             assertEquals(1, errors.size)
-            assertEquals(INVALID_CVV_ERROR_ID, errors.first().errorId)
+            assertEquals(
+                VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
+                errors.first().errorId
+            )
         }
     }
 
@@ -66,7 +72,31 @@ internal class VaultedCardAdditionalDataValidatorTest {
         runTest {
             val errors = validator.validate(additionalData, vaultedTokenData)
             assertEquals(1, errors.size)
-            assertEquals(INVALID_CVV_ERROR_ID, errors.first().errorId)
+            assertEquals(
+                VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
+                errors.first().errorId
+            )
+        }
+    }
+
+    @Test
+    fun `validate() should return list of validation errors when PrimerVaultedCardAdditionalData contains invalid CVV charachters`() {
+        val additionalData = mockk<PrimerVaultedCardAdditionalData>(relaxed = true)
+        val vaultedTokenData = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
+
+        every { additionalData.cvv }.returns("123a")
+
+        every { vaultedTokenData.paymentInstrumentData.binData?.network }.returns(
+            CardNetwork.Type.AMEX.name
+        )
+
+        runTest {
+            val errors = validator.validate(additionalData, vaultedTokenData)
+            assertEquals(1, errors.size)
+            assertEquals(
+                VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
+                errors.first().errorId
+            )
         }
     }
 
@@ -85,10 +115,5 @@ internal class VaultedCardAdditionalDataValidatorTest {
             val errors = validator.validate(additionalData, vaultedTokenData)
             assertTrue(errors.isEmpty())
         }
-    }
-
-    private companion object {
-
-        const val INVALID_CVV_ERROR_ID = "invalid-cvv"
     }
 }

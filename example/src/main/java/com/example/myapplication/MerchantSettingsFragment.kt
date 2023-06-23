@@ -195,6 +195,9 @@ class MerchantSettingsFragment : Fragment() {
     }
 
     private fun configureNextButton() {
+        binding.vaultManagerButton.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_VaultManagerFragment)
+        }
         binding.headlessCheckoutButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment)
         }
