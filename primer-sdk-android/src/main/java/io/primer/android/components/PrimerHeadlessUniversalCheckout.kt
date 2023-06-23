@@ -175,6 +175,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         checkoutListener: PrimerHeadlessUniversalCheckoutListener?,
         uiListener: PrimerHeadlessUniversalCheckoutUiListener?
     ) {
+
         checkoutListener?.let { setCheckoutListener(it) }
         uiListener?.let { setCheckoutUiListener(it) }
         try {

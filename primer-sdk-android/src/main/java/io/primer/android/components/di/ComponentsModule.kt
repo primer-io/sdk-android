@@ -21,6 +21,7 @@ import io.primer.android.components.domain.payments.repository.CheckoutModuleRep
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodInteractor
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsExchangeInteractor
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsInteractor
+import io.primer.android.components.domain.payments.vault.validation.additionalData.VaultedPaymentMethodAdditionalDataValidatorRegistry
 import io.primer.android.components.domain.payments.vault.validation.resolvers.VaultManagerInitValidationRulesResolver
 import io.primer.android.components.domain.payments.vault.validation.rules.ValidClientSessionCustomerIdRule
 import io.primer.android.components.domain.tokenization.helpers.VaultPostTokenizationEventResolver
@@ -188,6 +189,7 @@ internal val componentsModule = {
                 get(),
                 get(),
                 get(),
+                get(),
                 get()
             )
         }
@@ -208,6 +210,9 @@ internal val componentsModule = {
                 get(),
                 get()
             )
+        }
+        factory {
+            VaultedPaymentMethodAdditionalDataValidatorRegistry()
         }
 
         factory {

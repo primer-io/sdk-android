@@ -23,6 +23,6 @@ internal class ValidClientSessionCustomerIdRule(
     private companion object {
 
         const val MISSING_CUSTOMER_ID_MESSAGE =
-            "You must provide a `customer.customerId` in the client sessio.n"
+            "You must provide a `customer.customerId` in the client session"
     }
 }

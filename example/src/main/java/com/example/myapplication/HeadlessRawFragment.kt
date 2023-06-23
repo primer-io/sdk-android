@@ -19,7 +19,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.databinding.FragmentThirdBinding
 import com.example.myapplication.datamodels.TransactionState
@@ -51,7 +50,6 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
-import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager
 import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
 import io.primer.android.domain.PrimerCheckoutData
@@ -62,8 +60,6 @@ import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditional
 import io.primer.android.domain.payments.additionalInfo.XenditCheckoutVoucherAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.launch
 import kotlin.math.pow
 
 class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
@@ -127,21 +123,6 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 Log.d(TAG, paymentMethods.toString())
                 setupPaymentMethod(paymentMethods)
                 hideLoading()
-
-                val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-                    throwable.printStackTrace()
-                }
-                lifecycleScope.launch(exceptionHandler) {
-                    PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
-                        .fetchVaultedPaymentMethods().map {
-                            it.firstOrNull { it.paymentMethodType == "PAYMENT_CARD" }?.let {
-                                PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
-                                    .startPaymentFlow(it.id)
-                            }
-                        }.onFailure {
-                            it.printStackTrace()
-                        }
-                }
             }
 
             override fun onTokenizationStarted(paymentMethodType: String) {

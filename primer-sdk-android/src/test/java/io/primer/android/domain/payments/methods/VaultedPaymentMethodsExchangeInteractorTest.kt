@@ -13,7 +13,7 @@ import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
-import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodExchangeRepository
 import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
@@ -33,7 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 class VaultedPaymentMethodsExchangeInteractorTest {
 
     @RelaxedMockK
-    internal lateinit var vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository
+    internal lateinit var vaultedPaymentMethodExchangeRepository:
+        VaultedPaymentMethodExchangeRepository
 
     @RelaxedMockK
     internal lateinit var paymentMethodRepository: PaymentMethodRepository
@@ -53,7 +54,7 @@ class VaultedPaymentMethodsExchangeInteractorTest {
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
         interactor = VaultedPaymentMethodsExchangeInteractor(
-            vaultedPaymentMethodsRepository,
+            vaultedPaymentMethodExchangeRepository,
             paymentMethodRepository,
             preTokenizationEventsResolver,
             postTokenizationEventResolver,
@@ -65,7 +66,12 @@ class VaultedPaymentMethodsExchangeInteractorTest {
     fun `execute() should dispatch token event when exchangeVaultedPaymentToken was success`() {
         val params = mockk<VaultTokenParams>(relaxed = true)
         val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        coEvery { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }.returns(
+        coEvery {
+            vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
+                any(),
+                any()
+            )
+        }.returns(
             flowOf(
                 paymentMethodTokenInternal
             )
@@ -76,7 +82,12 @@ class VaultedPaymentMethodsExchangeInteractorTest {
 
         val token = slot<PaymentMethodTokenInternal>()
 
-        coVerify { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }
+        coVerify {
+            vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
+                any(),
+                any()
+            )
+        }
         verify { paymentMethodRepository.setPaymentMethod(paymentMethodTokenInternal) }
         verify { postTokenizationEventResolver.resolve(capture(token)) }
 
@@ -87,7 +98,12 @@ class VaultedPaymentMethodsExchangeInteractorTest {
     fun `execute() should dispatch error event when exchangeVaultedPaymentToken was failed`() {
         val params = mockk<VaultTokenParams>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
-        coEvery { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }.returns(
+        coEvery {
+            vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
+                any(),
+                any()
+            )
+        }.returns(
             flow { throw exception }
         )
         assertThrows<Exception> {
@@ -97,7 +113,12 @@ class VaultedPaymentMethodsExchangeInteractorTest {
         }
         val event = slot<Exception>()
 
-        coVerify { vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(any()) }
+        coVerify {
+            vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
+                any(),
+                any()
+            )
+        }
         verify { errorEventResolver.resolve(capture(event), ErrorMapperType.DEFAULT) }
         assertEquals(exception.javaClass, event.captured.javaClass)
     }

@@ -6,7 +6,7 @@ import io.primer.android.data.action.repository.ActionDataRepository
 import io.primer.android.data.payments.methods.datasource.LocalVaultedPaymentMethodsDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
-import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource
+import io.primer.android.data.payments.methods.datasource.VaultedPaymentMethodExchangeDataSourceRegistry
 import io.primer.android.data.payments.methods.repository.PaymentMethodDescriptorsDataRepository
 import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodsDataRepository
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -18,10 +18,13 @@ import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMappi
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.PaymentMethodListFactory
 import io.primer.android.data.payments.methods.mapping.PaymentMethodMapping
+import io.primer.android.data.payments.methods.mapping.vault.VaultedPaymentMethodAdditionalDataMapperRegistry
+import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodExchangeDataRepository
 import io.primer.android.domain.action.repository.ActionRepository
 import io.primer.android.domain.action.validator.ActionUpdateFilter
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
+import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodExchangeRepository
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.payment.billing.DefaultBillingAddressValidator
 import io.primer.android.payment.billing.BillingAddressValidator
@@ -80,14 +83,21 @@ internal val PaymentMethodsModule = {
         single { RemoteVaultedPaymentMethodsDataSource(get()) }
         factory { LocalVaultedPaymentMethodsDataSource() }
         single { RemoteVaultedPaymentMethodDeleteDataSource(get()) }
-        single { RemoteVaultedPaymentMethodsExchangeDataSource(get()) }
+        single { VaultedPaymentMethodExchangeDataSourceRegistry(get()) }
+        single { VaultedPaymentMethodAdditionalDataMapperRegistry() }
+        single<VaultedPaymentMethodExchangeRepository> {
+            VaultedPaymentMethodExchangeDataRepository(
+                get(),
+                get(),
+                get()
+            )
+        }
         single<VaultedPaymentMethodsRepository> {
             VaultedPaymentMethodsDataRepository(
                 get(),
                 get(),
                 get(),
                 get(),
-                get()
             )
         }
 

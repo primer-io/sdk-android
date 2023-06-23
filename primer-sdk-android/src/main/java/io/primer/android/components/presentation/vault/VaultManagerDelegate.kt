@@ -1,14 +1,18 @@
 package io.primer.android.components.presentation.vault
 
+import androidx.annotation.VisibleForTesting
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.validation.ValidationResult
+import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.models.VaultPaymentMethodIdParams
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodInteractor
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsExchangeInteractor
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsInteractor
+import io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData
+import io.primer.android.components.domain.payments.vault.validation.additionalData.VaultedPaymentMethodAdditionalDataValidatorRegistry
 import io.primer.android.components.domain.payments.vault.validation.resolvers.VaultManagerInitValidationRulesResolver
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.domain.base.None
@@ -16,14 +20,13 @@ import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
-import io.primer.android.domain.payments.methods.models.VaultInstrumentParams
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.domain.payments.resume.models.ResumeParams
-import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData
+import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
-import io.primer.android.extensions.mapSuspendCatching
+import io.primer.android.extensions.flatMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -41,6 +44,8 @@ internal class VaultManagerDelegate(
     private val createPaymentInteractor: CreatePaymentInteractor,
     private val resumePaymentInteractor: ResumePaymentInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
+    private val vaultedPaymentMethodAdditionalDataValidatorRegistry:
+        VaultedPaymentMethodAdditionalDataValidatorRegistry,
     private val navigator: Navigator
 ) : EventBus.EventListener {
 
@@ -64,7 +69,7 @@ internal class VaultManagerDelegate(
             }
     }
 
-    suspend fun fetchVaultedPaymentMethods(): Result<List<PrimerVaultedPaymentMethodData>> {
+    suspend fun fetchVaultedPaymentMethods(): Result<List<PrimerVaultedPaymentMethod>> {
         addAnalyticsEvent(SdkFunctionParams(ANALYTICS_EVENT_FETCH))
         return vaultedPaymentMethodsInteractor(None())
     }
@@ -75,12 +80,30 @@ internal class VaultManagerDelegate(
             VaultPaymentMethodIdParams(
                 vaultedPaymentMethodId
             )
-        ).map { vaultedToken ->
-            vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(vaultedToken.id))
-        }.map {}
+        ).flatMap { vaultedToken ->
+            vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(vaultedToken.id)).map { }
+        }
     }
 
-    suspend fun startPaymentFlow(vaultedPaymentMethodId: String): Result<Unit> {
+    suspend fun validate(
+        vaultedPaymentMethodId: String,
+        additionalData: PrimerVaultedPaymentMethodAdditionalData
+    ): Result<List<PrimerValidationError>> {
+        addAnalyticsEvent(SdkFunctionParams(ANALYTICS_EVENT_VALIDATE))
+        return headlessVaultedPaymentMethodInteractor(
+            VaultPaymentMethodIdParams(
+                vaultedPaymentMethodId
+            )
+        ).map { vaultedToken ->
+            vaultedPaymentMethodAdditionalDataValidatorRegistry.getValidator(additionalData)
+                .validate(additionalData, vaultedToken)
+        }
+    }
+
+    suspend fun startPaymentFlow(
+        vaultedPaymentMethodId: String,
+        additionalData: PrimerVaultedPaymentMethodAdditionalData? = null
+    ): Result<Unit> {
         addAnalyticsEvent(SdkFunctionParams(ANALYTICS_EVENT_START_PAYMENT_FLOW))
         return headlessVaultedPaymentMethodInteractor(
             VaultPaymentMethodIdParams(
@@ -88,7 +111,7 @@ internal class VaultManagerDelegate(
             )
         ).map { vaultedToken ->
             vaultedPaymentMethodsExchangeInteractor(
-                with(vaultedToken) { VaultTokenParams(id, paymentMethodType) }
+                with(vaultedToken) { VaultTokenParams(id, paymentMethodType, additionalData) }
             ).collect()
         }
     }
@@ -152,11 +175,13 @@ internal class VaultManagerDelegate(
         analyticsInteractor(params).collect()
     }
 
-    private companion object {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal companion object {
 
         const val ANALYTICS_EVENT_INIT = "HeadlessVaultManager.newInstance()"
         const val ANALYTICS_EVENT_FETCH = "HeadlessVaultManager.fetchVaultedPaymentMethods()"
         const val ANALYTICS_EVENT_DELETE = "HeadlessVaultManager.deletePaymentMethod()"
         const val ANALYTICS_EVENT_START_PAYMENT_FLOW = "HeadlessVaultManager.startPaymentFlow()"
+        const val ANALYTICS_EVENT_VALIDATE = "HeadlessVaultManager.validate()"
     }
 }

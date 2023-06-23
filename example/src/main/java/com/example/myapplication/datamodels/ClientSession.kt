@@ -126,11 +126,6 @@ interface ClientSession : ExampleAppRequestBody {
                             ),
                             PAYMENT_CARD = PaymentCardOption(
                                 networks = NetworkOptionGroup(
-                                    VISA = NetworkOption(
-                                        surcharge = SurchargeOption(
-                                            amount = 100,
-                                        )
-                                    ),
                                     JCB = NetworkOption(
                                         surcharge = SurchargeOption(
                                             amount = 0,

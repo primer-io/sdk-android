@@ -5,7 +5,7 @@ import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
-import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData
+import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import org.json.JSONObject
 
 internal data class PaymentMethodVaultTokenInternal(
@@ -16,6 +16,7 @@ internal data class PaymentMethodVaultTokenInternal(
     override val vaultData: VaultDataResponse?,
     override val threeDSecureAuthentication: AuthenticationDetailsDataResponse?,
     override val isVaulted: Boolean,
+    val analyticsId: String,
 ) : BasePaymentToken() {
 
     override val token: String = id
@@ -28,6 +29,7 @@ internal data class PaymentMethodVaultTokenInternal(
         private const val VAULT_DATA_FIELD = "vaultData"
         private const val THREE_DS_AUTHENTICATION_FIELD = "threeDSecureAuthentication"
         private const val IS_VAULTED_FIELD = "isVaulted"
+        private const val ANALYTICS_ID_FIELD = "merchantAnalyticsId"
 
         @JvmField
         val deserializer = object : JSONDeserializer<PaymentMethodVaultTokenInternal> {
@@ -51,6 +53,7 @@ internal data class PaymentMethodVaultTokenInternal(
                             .deserialize(it)
                     },
                     t.getBoolean(IS_VAULTED_FIELD),
+                    t.optString(ANALYTICS_ID_FIELD)
                 )
             }
         }
@@ -101,15 +104,15 @@ internal fun PrimerPaymentMethodTokenData.toPaymentMethodVaultToken():
         paymentInstrumentData = paymentInstrumentData,
         vaultData = vaultData,
         threeDSecureAuthentication = threeDSecureAuthentication,
-        isVaulted = isVaulted
+        isVaulted = isVaulted,
+        analyticsId = analyticsId
     )
 }
 
 internal fun PaymentMethodVaultTokenInternal.toVaultedPaymentMethod() =
-    PrimerVaultedPaymentMethodData(
+    PrimerVaultedPaymentMethod(
         id = token,
-        // FIXME
-        analyticsId = "a",
+        analyticsId = analyticsId,
         paymentInstrumentType = paymentInstrumentType,
         paymentMethodType = paymentMethodType,
         paymentInstrumentData = requireNotNull(paymentInstrumentData).let { paymentInstrumentData ->
@@ -130,11 +133,12 @@ internal fun PaymentMethodVaultTokenInternal.toVaultedPaymentMethod() =
                 paymentInstrumentData.hashedIdentifier,
                 paymentInstrumentData.currencyCode,
                 paymentInstrumentData.productId,
-                paymentInstrumentData.paymentMethodType
+                paymentInstrumentData.paymentMethodType,
+                paymentInstrumentData.binData
             )
         },
         threeDSecureAuthentication = threeDSecureAuthentication?.let {
-            PrimerVaultedPaymentMethodData.AuthenticationDetails(
+            PrimerVaultedPaymentMethod.AuthenticationDetails(
                 it.responseCode,
                 it.reasonCode,
                 it.reasonText,

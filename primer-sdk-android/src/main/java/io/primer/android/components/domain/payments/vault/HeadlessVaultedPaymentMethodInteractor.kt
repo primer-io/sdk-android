@@ -5,7 +5,7 @@ import io.primer.android.components.domain.payments.models.VaultPaymentMethodIdP
 import io.primer.android.data.payments.methods.models.toVaultedPaymentMethod
 import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
-import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData
+import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,7 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class HeadlessVaultedPaymentMethodInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseSuspendInteractor<PrimerVaultedPaymentMethodData, VaultPaymentMethodIdParams>() {
+) : BaseSuspendInteractor<PrimerVaultedPaymentMethod, VaultPaymentMethodIdParams>() {
 
     override suspend fun performAction(params: VaultPaymentMethodIdParams) =
         vaultedPaymentMethodsRepository.getVaultedPaymentMethods(true)

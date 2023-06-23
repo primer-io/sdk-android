@@ -2,6 +2,7 @@ package io.primer.android.components.manager.vault
 
 import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.exception.VaultManagerInitException
+import io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData
 import io.primer.android.components.presentation.vault.VaultManagerDelegate
 import io.primer.android.di.DIAppComponent
 import org.koin.core.component.get
@@ -23,8 +24,18 @@ class PrimerHeadlessUniversalCheckoutVaultManager private constructor() :
     override suspend fun deleteVaultedPaymentMethod(vaultedPaymentMethodId: String) =
         delegate.deletePaymentMethod(vaultedPaymentMethodId)
 
+    override suspend fun validate(
+        vaultedPaymentMethodId: String,
+        additionalData: PrimerVaultedPaymentMethodAdditionalData
+    ) = delegate.validate(vaultedPaymentMethodId, additionalData)
+
     override suspend fun startPaymentFlow(vaultedPaymentMethodId: String) =
         delegate.startPaymentFlow(vaultedPaymentMethodId)
+
+    override suspend fun startPaymentFlow(
+        vaultedPaymentMethodId: String,
+        additionalData: PrimerVaultedPaymentMethodAdditionalData
+    ) = delegate.startPaymentFlow(vaultedPaymentMethodId, additionalData)
 
     companion object {
 

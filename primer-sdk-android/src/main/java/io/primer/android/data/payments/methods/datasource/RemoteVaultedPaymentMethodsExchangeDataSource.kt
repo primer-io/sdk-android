@@ -1,18 +1,35 @@
 package io.primer.android.data.payments.methods.datasource
 
-import io.primer.android.core.data.models.EmptyDataRequest
 import io.primer.android.data.base.datasource.BaseFlowDataSource
-import io.primer.android.data.base.models.BaseRemoteRequest
+import io.primer.android.data.base.models.BaseRemoteUrlRequest
+import io.primer.android.data.payments.methods.models.BasePaymentMethodVaultExchangeDataRequest
+import io.primer.android.data.payments.methods.models.card.CardVaultExchangeDataRequest
+import io.primer.android.data.payments.methods.models.empty.EmptyExchangeDataRequest
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.http.PrimerHttpClient
 
-internal class RemoteVaultedPaymentMethodsExchangeDataSource(
-    private val primerHttpClient: PrimerHttpClient,
-) : BaseFlowDataSource<PaymentMethodTokenInternal, BaseRemoteRequest<String>> {
+internal abstract class RemoteVaultedPaymentMethodsExchangeDataSource<
+    out T : BasePaymentMethodVaultExchangeDataRequest> :
+    BaseFlowDataSource<PaymentMethodTokenInternal, BaseRemoteUrlRequest<@UnsafeVariance T>>
 
-    override fun execute(input: BaseRemoteRequest<String>) =
-        primerHttpClient.post<EmptyDataRequest, PaymentMethodTokenInternal>(
-            "${input.configuration.pciUrl}/payment-instruments/${input.data}/exchange",
-            EmptyDataRequest()
+internal class RemoteVaultedCardExchangeDataSource(
+    private val primerHttpClient: PrimerHttpClient,
+) : RemoteVaultedPaymentMethodsExchangeDataSource<CardVaultExchangeDataRequest>() {
+
+    override fun execute(input: BaseRemoteUrlRequest<CardVaultExchangeDataRequest>) =
+        primerHttpClient.post<CardVaultExchangeDataRequest, PaymentMethodTokenInternal>(
+            input.url,
+            input.data
+        )
+}
+
+internal class RemoteEmptyExchangeDataSource(
+    private val primerHttpClient: PrimerHttpClient,
+) : RemoteVaultedPaymentMethodsExchangeDataSource<EmptyExchangeDataRequest>() {
+
+    override fun execute(input: BaseRemoteUrlRequest<EmptyExchangeDataRequest>) =
+        primerHttpClient.post<EmptyExchangeDataRequest, PaymentMethodTokenInternal>(
+            input.url,
+            input.data
         )
 }

@@ -10,7 +10,7 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.domain.exception.VaultManagerFetchException
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.data.payments.methods.models.toVaultedPaymentMethod
-import io.primer.android.domain.payments.methods.models.VaultInstrumentParams
+import io.primer.android.domain.base.None
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -39,7 +39,7 @@ internal class HeadlessVaultedPaymentMethodsInteractorTest {
 
     @Test
     fun `execute() should return list of PrimerVaultedPaymentMethodData when getVaultedPaymentMethods is successful`() {
-        val params = mockk<VaultInstrumentParams>(relaxed = true)
+        val params = mockk<None>(relaxed = true)
         val vaultTokenInternal = mockk<PaymentMethodVaultTokenInternal>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
             Result.success(listOf(vaultTokenInternal))
@@ -56,7 +56,7 @@ internal class HeadlessVaultedPaymentMethodsInteractorTest {
 
     @Test
     fun `execute() should return correct Exception when getVaultedPaymentMethods failed`() {
-        val params = mockk<VaultInstrumentParams>(relaxed = true)
+        val params = mockk<None>(relaxed = true)
         val mockException = mockk<VaultManagerFetchException>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
             Result.failure(mockException)

@@ -7,12 +7,10 @@ import io.primer.android.data.configuration.datasource.LocalConfigurationDataSou
 import io.primer.android.data.payments.methods.datasource.LocalVaultedPaymentMethodsDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
-import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.extensions.onError
 import io.primer.android.extensions.runSuspendCatching
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flatMapLatest
 import java.io.IOException
 
 @ExperimentalCoroutinesApi
@@ -20,7 +18,6 @@ internal class VaultedPaymentMethodsDataRepository(
     private val remoteVaultedPaymentMethodsDataSource: RemoteVaultedPaymentMethodsDataSource,
     private val localVaultedPaymentMethodsDataSource: LocalVaultedPaymentMethodsDataSource,
     private val vaultedPaymentMethodDeleteDataSource: RemoteVaultedPaymentMethodDeleteDataSource,
-    private val exchangePaymentMethodDataSource: RemoteVaultedPaymentMethodsExchangeDataSource,
     private val configurationDataSource: LocalConfigurationDataSource,
 ) : VaultedPaymentMethodsRepository {
 
@@ -39,11 +36,6 @@ internal class VaultedPaymentMethodsDataRepository(
             else -> throwable
         }
     }
-
-    override fun exchangeVaultedPaymentToken(id: String) = configurationDataSource.get()
-        .flatMapLatest { configurationData ->
-            exchangePaymentMethodDataSource.execute(BaseRemoteRequest(configurationData, id))
-        }
 
     override suspend fun deleteVaultedPaymentMethod(id: String) = runSuspendCatching {
         configurationDataSource.getConfiguration()

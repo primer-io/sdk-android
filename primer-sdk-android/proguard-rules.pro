@@ -267,6 +267,7 @@
 }
 
  #------------------------------------Vault manager------------------------------------------------#
+
 -keep class io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager {
     public *;
 }
@@ -276,6 +277,24 @@
 }
 
 -keep interface io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface {
+    public *;
+}
+
+-keep interface io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData {
+    public *;
+}
+
+-keep class io.primer.android.components.domain.payments.vault.model.** {
+    public *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod {
+    public *;
+}
+
+ #------------------------------------Vault manager exceptions-------------------------------------#
+
+-keep class io.primer.android.components.domain.exception.* {
     public *;
 }
 
