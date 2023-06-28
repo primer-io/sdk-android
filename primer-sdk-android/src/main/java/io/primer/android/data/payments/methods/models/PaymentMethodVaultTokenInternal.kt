@@ -29,7 +29,7 @@ internal data class PaymentMethodVaultTokenInternal(
         private const val VAULT_DATA_FIELD = "vaultData"
         private const val THREE_DS_AUTHENTICATION_FIELD = "threeDSecureAuthentication"
         private const val IS_VAULTED_FIELD = "isVaulted"
-        private const val ANALYTICS_ID_FIELD = "merchantAnalyticsId"
+        private const val ANALYTICS_ID_FIELD = "analyticsId"
 
         @JvmField
         val deserializer = object : JSONDeserializer<PaymentMethodVaultTokenInternal> {
