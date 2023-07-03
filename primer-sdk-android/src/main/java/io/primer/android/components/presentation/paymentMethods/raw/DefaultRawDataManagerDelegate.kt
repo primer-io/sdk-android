@@ -102,8 +102,6 @@ internal class DefaultRawDataManagerDelegate(
             is CheckoutEvent.Start3DSMock -> {
                 navigator.open3DSMockScreen()
             }
-
-
             else -> Unit
         }
     }
