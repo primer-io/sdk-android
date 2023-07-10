@@ -25,7 +25,9 @@ internal class Navigator(private val context: Context) {
             PaymentMethodMockActivity.getLaunchIntent(
                 context,
                 PaymentMethodType.PAYMENT_CARD.name
-            )
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         )
     }
 
