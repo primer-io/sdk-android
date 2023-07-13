@@ -1,10 +1,10 @@
-<resources>
+<resources translatable="false">
     <string name="app_name">Primer Sample</string>
     <string name="title_activity_main">MainActivity</string>
 
     <!-- Strings used for fragments for navigation -->
     <string name="button_primer_sdk">Primer SDK</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="tokenize">Tokenize</string>
 
     <string name="huc_ui">Headless SDK</string>

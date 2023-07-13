@@ -6,13 +6,55 @@
     android:layout_height="match_parent"
     tools:context=".MerchantSettingsFragment">
 
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/typeButtonGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:checkedButton="@id/checkout"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/scrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
+
+        <Button
+            android:id="@+id/checkout"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/checkout_intent"
+            android:gravity="center"
+            android:text="@string/checkout_intent"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/vault"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/vault_intent"
+            android:gravity="center"
+            android:text="@string/vault_intent"
+            android:textAllCaps="false" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@id/nextButton"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/typeButtonGroup">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +74,7 @@
             <LinearLayout
                 android:id="@+id/pmView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginBottom="8dp"
@@ -62,7 +104,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
-        android:id="@+id/progress_layout"
+        android:id="@+id/progressLayout"
         layout="@layout/loading_view_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

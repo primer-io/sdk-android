@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.myapplication.databinding.FragmentThirdBinding
+import com.example.myapplication.databinding.FragmentHeadlessBinding
 import com.example.myapplication.datamodels.TransactionState
 import com.example.myapplication.repositories.AppApiKeyRepository
 import com.example.myapplication.viewmodels.HeadlessManagerViewModel
@@ -72,7 +72,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     }
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 
-    private var _binding: FragmentThirdBinding? = null
+    private var _binding: FragmentHeadlessBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -80,7 +80,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         savedInstanceState: Bundle?,
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        _binding = FragmentThirdBinding.inflate(inflater, container, false)
+        _binding = FragmentHeadlessBinding.inflate(inflater, container, false)
         return binding.root
     }
 

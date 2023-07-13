@@ -21,7 +21,7 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_ThirdFragment"
-            app:destination="@id/ThirdFragment"
+            app:destination="@id/HeadlessFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -65,10 +65,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/ThirdFragment"
+        android:id="@+id/HeadlessFragment"
         android:name="com.example.myapplication.HeadlessComponentsFragment"
         android:label="HUC"
-        tools:layout="@layout/fragment_third">
+        tools:layout="@layout/fragment_headless">
 
         <action
             android:id="@+id/action_MerchantComponentsFragment_to_MerchantResultFragment"
@@ -83,7 +83,7 @@
         android:id="@+id/HeadlessRawFragment"
         android:name="com.example.myapplication.HeadlessRawFragment"
         android:label="HUC"
-        tools:layout="@layout/fragment_third" />
+        tools:layout="@layout/fragment_headless" />
 
     <fragment
         android:id="@+id/CountryPickerFragment"
