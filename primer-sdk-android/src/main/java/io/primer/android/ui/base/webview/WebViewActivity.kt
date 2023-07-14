@@ -5,9 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
-import io.primer.android.BuildConfig
 import io.primer.android.BaseCheckoutActivity
+import io.primer.android.BuildConfig
 import io.primer.android.R
 
 internal open class WebViewActivity : BaseCheckoutActivity() {
@@ -19,6 +20,7 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
         setContentView(R.layout.activity_primer_webview)
 
         setupViews()
+        setupListeners()
         setupWebView()
         setupWebViewClient()
         loadPaymentsUrl(savedInstanceState)
@@ -76,6 +78,19 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
                 webView.loadUrl(it)
             }
         }
+    }
+
+    private fun setupListeners() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (webView.canGoBack()) {
+                        webView.goBack()
+                    } else onSupportNavigateUp()
+                }
+            }
+        )
     }
 
     internal companion object {

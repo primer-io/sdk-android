@@ -24,7 +24,7 @@ internal class PaypalCheckoutConfigurationDataRepository(
                 localConfigurationDataSource.getConfiguration().paymentMethods
                     .first { it.type == PaymentMethodType.PAYPAL.name }
             val uuid = UUID.randomUUID().toString()
-            val scheme = "${metaDataSource.getApplicationId()}.primer"
+            val host = "$PRIMER_PAYPAL_PREFIX${metaDataSource.getApplicationId()}"
             emit(
                 PaypalCheckoutConfiguration(
                     requireNotNullCheck(
@@ -33,12 +33,18 @@ internal class PaypalCheckoutConfigurationDataRepository(
                     ),
                     config.settings.currentAmount,
                     config.settings.currency,
-                    Uri.Builder().scheme(scheme)
-                        .authority(uuid).appendPath(SUCCESS_PATH_SEGMENT)
+                    Uri.Builder().scheme(PRIMER_PAYPAL_SCHEMA)
+                        .authority(host)
+                        .appendPath(PRIMER_PAYPAL_PATH_PREFIX)
+                        .appendPath(uuid)
+                        .appendPath(SUCCESS_PATH_SEGMENT)
                         .build()
                         .toString(),
-                    Uri.Builder().scheme(scheme)
-                        .authority(uuid).appendPath(CANCEL_PATH_SEGMENT)
+                    Uri.Builder().scheme(PRIMER_PAYPAL_SCHEMA)
+                        .authority(host)
+                        .appendPath(PRIMER_PAYPAL_PATH_PREFIX)
+                        .appendPath(uuid)
+                        .appendPath(CANCEL_PATH_SEGMENT)
                         .build()
                         .toString()
                 )
@@ -47,6 +53,10 @@ internal class PaypalCheckoutConfigurationDataRepository(
     }
 
     private companion object {
+
+        const val PRIMER_PAYPAL_SCHEMA = "primer"
+        const val PRIMER_PAYPAL_PREFIX = "requestor."
+        const val PRIMER_PAYPAL_PATH_PREFIX = "paypal"
         const val SUCCESS_PATH_SEGMENT = "success"
         const val CANCEL_PATH_SEGMENT = "cancel"
     }

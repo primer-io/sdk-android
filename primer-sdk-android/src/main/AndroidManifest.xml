@@ -57,8 +57,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
+                    android:pathPrefix="/async"
                     android:host="requestor.${applicationId}"
-                    android:scheme="primersdk" />
+                    android:scheme="primer" />
             </intent-filter>
         </activity>
 
@@ -67,7 +68,7 @@
             android:exported="true"
             android:label=""
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent"/>
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" />
 
         <activity
             android:name=".components.ui.activity.HeadlessActivity"
@@ -76,7 +77,10 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout">
             <intent-filter>
-                <data android:scheme="${applicationId}.primer" />
+                <data
+                    android:pathPrefix="/paypal"
+                    android:host="requestor.${applicationId}"
+                    android:scheme="primer" />
 
                 <action android:name="android.intent.action.VIEW" />
 
