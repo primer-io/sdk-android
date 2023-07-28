@@ -21,7 +21,6 @@ internal data class OrderDataResponse(
 ) : JSONDeserializable {
 
     data class LineItemDataResponse(
-        val name: String? = null,
         val itemId: String? = null,
         val description: String? = null,
         val unitAmount: Int? = null,
@@ -41,7 +40,6 @@ internal data class OrderDataResponse(
         )
 
         companion object {
-            private const val NAME_FIELD = "name"
             private const val ITEM_ID_FIELD = "itemId"
             private const val DESCRIPTION_FIELD = "description"
             private const val UNIT_AMOUNT_FIELD = "amount"
@@ -55,7 +53,6 @@ internal data class OrderDataResponse(
 
                 override fun deserialize(t: JSONObject): LineItemDataResponse {
                     return LineItemDataResponse(
-                        t.optNullableString(NAME_FIELD),
                         t.optNullableString(ITEM_ID_FIELD),
                         t.optNullableString(DESCRIPTION_FIELD),
                         t.optNullableInt(UNIT_AMOUNT_FIELD),

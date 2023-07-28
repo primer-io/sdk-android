@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.flowOn
 internal class VaultedPaymentMethodsInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<List<PaymentMethodVaultTokenInternal>, VaultInstrumentParams>() {
 
     override fun execute(params: VaultInstrumentParams) =
@@ -28,7 +29,11 @@ internal class VaultedPaymentMethodsInteractor(
             }
 
     private fun getVaultedPaymentMethods(shouldFetch: Boolean) = when (shouldFetch) {
-        true -> vaultedPaymentMethodsRepository.getVaultedPaymentMethods()
+        true -> flow {
+            emit(
+                vaultedPaymentMethodsRepository.getVaultedPaymentMethods(false).getOrThrow()
+            )
+        }
         false -> flowOf(emptyList())
     }
 }

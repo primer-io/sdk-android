@@ -1,6 +1,7 @@
 package io.primer.android.analytics.di
 
 import io.primer.android.HttpClientFactory
+import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.RemoteAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.TimerDataSource
@@ -51,6 +52,7 @@ internal val analyticsModule = {
         single { RemoteAnalyticsDataSource(get(named(ANALYTICS_HTTP_CLIENT_NAME))) }
         single { TimerEventProvider() }
         single { TimerDataSource(get()) }
+        single { CheckoutSessionIdDataSource() }
         single<AnalyticsRepository> {
             AnalyticsDataRepository(
                 get(),
@@ -66,6 +68,7 @@ internal val analyticsModule = {
                 get(),
                 get(),
                 get<Interceptor>() as HttpAnalyticsInterceptor,
+                get(),
                 get(),
                 get()
             )

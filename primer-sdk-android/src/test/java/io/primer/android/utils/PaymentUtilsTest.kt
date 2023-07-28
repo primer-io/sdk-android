@@ -66,6 +66,15 @@ class PaymentUtilsTest {
     }
 
     @Test
+    fun `amountToCurrencyString should format HUF correctly`() {
+        val monetaryAmount = MonetaryAmount.create("HUF", 999999999)
+        assertEquals(
+            "HUF9${groupingSeparator}999${groupingSeparator}999${decimalSeparator}99",
+            PaymentUtils.amountToCurrencyString(monetaryAmount)
+        )
+    }
+
+    @Test
     fun `amountToCurrencyString should format huge USD correctly`() {
         val monetaryAmount = MonetaryAmount.create("USD", 999999999)
         assertEquals(

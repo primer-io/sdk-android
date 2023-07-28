@@ -2,23 +2,24 @@ package io.primer.android.payment.async
 
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.di.DIAppComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.VaultCapability
 
 internal abstract class AsyncPaymentMethodDescriptor constructor(
-    open val localConfig: PrimerConfig,
     open val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config) {
+) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
 
     companion object {
 
         const val ASYNC_METHOD_REQUEST_CODE = 1002
     }
 
-    abstract val title: String
+    open val title: String = config.name.orEmpty()
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = AsyncPaymentMethodBehaviour(this)

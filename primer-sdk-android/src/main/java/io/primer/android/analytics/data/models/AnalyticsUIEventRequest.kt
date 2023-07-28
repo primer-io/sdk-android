@@ -2,8 +2,9 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 
 internal data class AnalyticsUIEventRequest(
@@ -12,6 +13,7 @@ internal data class AnalyticsUIEventRequest(
     override val appIdentifier: String,
     override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType,
+    override val sdkPaymentHandling: PrimerPaymentHandling,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,
@@ -28,12 +30,12 @@ internal data class AnalyticsUIEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsUIEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsUIEventRequest> {
             override fun serialize(t: AnalyticsUIEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<UIProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<UIProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -53,6 +55,7 @@ internal data class AnalyticsUIEventRequest(
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
                     t.getString(CHECKOUT_SESSION_ID_FIELD),
                     t.optNullableString(CLIENT_SESSION_ID_FIELD),
                     t.optNullableString(ORDER_ID_FIELD),
@@ -82,7 +85,7 @@ internal data class UIProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = object : JSONSerializer<UIProperties> {
+        val serializer = object : JSONObjectSerializer<UIProperties> {
             override fun serialize(t: UIProperties): JSONObject {
                 return JSONObject().apply {
                     put(ACTION_FIELD, t.action.name)
@@ -92,7 +95,7 @@ internal data class UIProperties(
                     putOpt(
                         ANALYTICS_CONTEXT_FIELD,
                         t.context?.let {
-                            JSONSerializationUtils.getSerializer<AnalyticsContext>()
+                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
                                 .serialize(it)
                         }
                     )
@@ -146,6 +149,7 @@ internal enum class ObjectId {
     EXPIRY
 }
 
+@Suppress("EnumNaming")
 internal enum class Place {
     PAYMENT_METHODS_LIST, // The vaulted payment methods
     UNIVERSAL_CHECKOUT,
@@ -161,5 +165,6 @@ internal enum class Place {
     PRIMER_TEST_PAYMENT_METHOD_DECISION_SCREEN,
     WEBVIEW,
     `3DS_VIEW`,
-    DIRECT_CHECKOUT
+    DIRECT_CHECKOUT,
+    IPAY88_VIEW
 }

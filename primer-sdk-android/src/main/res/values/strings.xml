@@ -71,6 +71,7 @@
     <!-- Accessibility -->
     <string name="go_back_description">go back</string>
     <string name="success_icon_description">success</string>
+    <string name="primer_payment_method_button_content_description">Pay with %s</string>
 
     <!--  Legal  -->
     <string name="dd_mandate_legal">

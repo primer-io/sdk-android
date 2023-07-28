@@ -1,10 +1,10 @@
 package io.primer.android.domain.payments.helpers
 
 import io.primer.android.completion.ResumeHandlerFactory
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventDispatcher
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventDispatcher
 
 internal class ResumeEventResolver(
     private val config: PrimerConfig,
@@ -12,23 +12,40 @@ internal class ResumeEventResolver(
     private val eventDispatcher: EventDispatcher,
 ) {
 
-    fun resolve(paymentInstrumentType: String, resumeToken: String? = null) {
+    fun resolve(paymentInstrumentType: String, isVaulted: Boolean, resumeToken: String? = null) {
         when (config.settings.paymentHandling) {
             PrimerPaymentHandling.AUTO -> {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.ResumeSuccessInternal(
+                val resumeEvent = when (config.settings.fromHUC) {
+                    true -> when (isVaulted) {
+                        true -> CheckoutEvent.ResumeSuccessInternalVaultHUC(
+                            resumeToken.orEmpty(),
+                            resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
+                        )
+                        false -> CheckoutEvent.ResumeSuccessInternalHUC(
+                            resumeToken.orEmpty(),
+                            resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
+                        )
+                    }
+                    false -> CheckoutEvent.ResumeSuccessInternal(
                         resumeToken.orEmpty(),
                         resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
                     )
-                )
+                }
+
+                eventDispatcher.dispatchEvent(resumeEvent)
             }
             PrimerPaymentHandling.MANUAL -> {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.ResumeSuccess(
+                val resumeEvent = when (config.settings.fromHUC) {
+                    true -> CheckoutEvent.ResumeSuccessHUC(
                         resumeToken.orEmpty(),
-                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
+                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType),
                     )
-                )
+                    false -> CheckoutEvent.ResumeSuccess(
+                        resumeToken.orEmpty(),
+                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType),
+                    )
+                }
+                eventDispatcher.dispatchEvent(resumeEvent)
             }
         }
     }

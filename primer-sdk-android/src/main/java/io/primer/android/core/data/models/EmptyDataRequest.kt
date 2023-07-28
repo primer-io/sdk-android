@@ -2,15 +2,15 @@ package io.primer.android.core.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
-internal class EmptyDataRequest : JSONSerializable, JSONDeserializable {
+internal class EmptyDataRequest : JSONObjectSerializable, JSONDeserializable {
 
     companion object {
         @JvmField
-        val serializer = object : JSONSerializer<EmptyDataRequest> {
+        val serializer = object : JSONObjectSerializer<EmptyDataRequest> {
             override fun serialize(t: EmptyDataRequest): JSONObject {
                 return JSONObject()
             }

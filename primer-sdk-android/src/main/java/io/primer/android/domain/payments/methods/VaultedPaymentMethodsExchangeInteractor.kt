@@ -5,7 +5,7 @@ import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
-import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodExchangeRepository
 import io.primer.android.domain.tokenization.helpers.PostTokenizationEventResolver
 import io.primer.android.domain.tokenization.helpers.PreTokenizationEventsResolver
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
@@ -21,24 +21,25 @@ import kotlinx.coroutines.flow.onEach
 
 @ExperimentalCoroutinesApi
 internal class VaultedPaymentMethodsExchangeInteractor(
-    private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
+    private val vaultedPaymentMethodExchangeRepository: VaultedPaymentMethodExchangeRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
     private val preTokenizationEventsResolver: PreTokenizationEventsResolver,
     private val postTokenizationEventResolver: PostTokenizationEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<PaymentMethodTokenInternal, VaultTokenParams>() {
 
     override fun execute(params: VaultTokenParams): Flow<PaymentMethodTokenInternal> {
         return flow {
             emit(
                 preTokenizationEventsResolver.resolve(
-                    params.token.paymentInstrumentData?.paymentMethodType.orEmpty()
+                    params.paymentMethodType
                 )
             )
         }.flatMapLatest {
-            vaultedPaymentMethodsRepository.exchangeVaultedPaymentToken(
-                params.token.token
+            vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
+                params.vaultedPaymentMethodId,
+                params.additionalData
             ).flowOn(dispatcher)
                 .onEach {
                     paymentMethodRepository.setPaymentMethod(it)

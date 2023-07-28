@@ -25,7 +25,6 @@ internal enum class Brand(
     ),
     APAYA(R.drawable.ic_logo_apaya, R.drawable.ic_logo_apaya),
     PAYMENT_CARD(R.drawable.ic_logo_credit_card),
-    GOCARDLESS(R.drawable.ic_logo_gocardless),
     IDEAL(
         R.drawable.ic_logo_ideal,
         R.drawable.ic_logo_ideal_square,
@@ -163,10 +162,6 @@ internal enum class Brand(
     UNKNOWN(0)
 }
 
-enum class ImageType {
-    LOGO, ICON
-}
-
-enum class ImageColor {
+internal enum class ImageColor {
     COLORED, LIGHT, DARK
 }

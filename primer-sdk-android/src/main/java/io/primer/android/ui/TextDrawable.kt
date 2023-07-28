@@ -52,6 +52,7 @@ internal class TextDrawable(private val res: Resources, private val text: String
         canvas.drawCircle(rect.centerX(), rect.centerY(), rect.height() / 2, borderPaint)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int {
         return mPaint.alpha
     }

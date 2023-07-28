@@ -56,7 +56,6 @@ import org.koin.core.component.inject
 import java.util.TreeMap
 import java.util.Collections
 import kotlin.collections.HashMap
-
 /**
  * A simple [Fragment] subclass.
  * Use the [CardFormFragment.newInstance] factory method to
@@ -474,6 +473,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun toggleLoading(on: Boolean) {
         binding.btnSubmitForm.setProgress(on)
+        binding.btnSubmitForm.isEnabled = on.not()
         if (on) binding.cardFormErrorMessage.isInvisible = true
         cardInputFields.values
             .plus(binding.billingAddressForm.fields())
@@ -550,6 +550,7 @@ internal class CardFormFragment : BaseFragment() {
                         else -> binding.billingAddressForm.findNextFocus()
                     }
                 }
+                else -> Unit
             }
         }
     }
@@ -607,7 +608,7 @@ internal class CardFormFragment : BaseFragment() {
                     MessageAnalyticsParams(
                         MessageType.VALIDATION_FAILED,
                         input.error.toString(),
-                        Severity.WARN
+                        Severity.INFO
                     )
                 )
             }

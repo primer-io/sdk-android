@@ -11,6 +11,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
@@ -20,6 +21,7 @@ import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStat
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.events.EventDispatcher
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -98,7 +100,13 @@ class AsyncPaymentMethodInteractorTest {
         val resumeToken = slot<String>()
 
         coVerify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
-        verify { resumeEventResolver.resolve(capture(paymentMethodType), capture(resumeToken)) }
+        verify {
+            resumeEventResolver.resolve(
+                capture(paymentMethodType),
+                any(),
+                capture(resumeToken)
+            )
+        }
 
         assert(paymentMethodType.captured == PaymentMethodType.HOOLAH.name)
         assert(resumeToken.captured == asyncStatus.resumeToken)
@@ -107,7 +115,7 @@ class AsyncPaymentMethodInteractorTest {
     @Test
     fun `getPaymentFlowStatus() should dispatch resume error event when getAsyncStatus failed`() {
         val exception = mockk<Exception>(relaxed = true)
-        every { exception.message }.returns("Validation failed.")
+        every { exception.message }.returns("Failed to get status.")
         coEvery { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
             flow { throw exception }
         )
@@ -123,5 +131,26 @@ class AsyncPaymentMethodInteractorTest {
         verify { errorEventResolver.resolve(capture(event), ErrorMapperType.DEFAULT) }
 
         assert(event.captured.javaClass == Exception::class.java)
+    }
+
+    @Test
+    fun `getPaymentFlowStatus() should dispatch error event with PaymentMethodCancelledException when getAsyncStatus failed with CancellationException`() {
+        val exception = mockk<CancellationException>(relaxed = true)
+        every { exception.message }.returns("Job cancelled.")
+        coEvery { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
+            flow { throw exception }
+        )
+        assertThrows<CancellationException> {
+            runTest {
+                interactor(AsyncMethodParams("", PaymentMethodType.HOOLAH.name)).first()
+            }
+        }
+
+        val event = slot<Throwable>()
+
+        coVerify { asyncPaymentMethodStatusRepository.getAsyncStatus(any()) }
+        verify { errorEventResolver.resolve(capture(event), ErrorMapperType.DEFAULT) }
+
+        assert(event.captured.javaClass == PaymentMethodCancelledException::class.java)
     }
 }

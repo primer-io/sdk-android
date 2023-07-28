@@ -9,12 +9,12 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.completion.ResumeHandlerFactory
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.data.settings.PrimerPaymentHandling
-import io.primer.android.data.settings.internal.PrimerConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -54,7 +54,10 @@ internal class ResumeEventResolverTest {
         every { config.settings.paymentHandling }.returns(PrimerPaymentHandling.AUTO)
 
         runTest {
-            resumeEventResolver.resolve(paymentMethodToken.paymentInstrumentType)
+            resumeEventResolver.resolve(
+                paymentMethodToken.paymentInstrumentType,
+                paymentMethodToken.isVaulted
+            )
         }
 
         val event = slot<CheckoutEvent>()
@@ -70,7 +73,10 @@ internal class ResumeEventResolverTest {
         every { config.settings.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
 
         runTest {
-            resumeEventResolver.resolve(paymentMethodToken.paymentInstrumentType)
+            resumeEventResolver.resolve(
+                paymentMethodToken.paymentInstrumentType,
+                paymentMethodToken.isVaulted
+            )
         }
 
         val event = slot<CheckoutEvent>()

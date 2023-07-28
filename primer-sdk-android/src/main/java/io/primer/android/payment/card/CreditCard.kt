@@ -1,6 +1,11 @@
 package io.primer.android.payment.card
 
 import io.primer.android.R
+import io.primer.android.components.domain.core.mapper.PrimerPaymentMethodRawDataMapper
+import io.primer.android.components.domain.core.mapper.card.CardRawDataMapper
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
+import io.primer.android.components.domain.core.models.PrimerRawData
+import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.putFor
 import io.primer.android.components.domain.inputs.models.valueBy
@@ -8,6 +13,7 @@ import io.primer.android.data.configuration.models.PaymentMethodConfigDataRespon
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.di.DIAppComponent
 import io.primer.android.model.SyncValidationError
+import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
@@ -20,9 +26,9 @@ import io.primer.android.utils.removeSpaces
 import org.json.JSONObject
 
 internal class CreditCard(
-    private val localConfig: PrimerConfig,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config), DIAppComponent {
+) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
 
     var availableFields = mutableMapOf<PrimerInputElementType, Boolean>()
 
@@ -179,4 +185,16 @@ internal class CreditCard(
 
         return fields
     }
+
+    override val headlessDefinition: HeadlessDefinition
+        get() = HeadlessDefinition(
+            listOf(
+                PrimerPaymentMethodManagerCategory.RAW_DATA,
+                PrimerPaymentMethodManagerCategory.CARD_COMPONENTS
+            ),
+            HeadlessDefinition.RawDataDefinition(
+                PrimerCardData::class,
+                CardRawDataMapper(config) as PrimerPaymentMethodRawDataMapper<PrimerRawData>
+            )
+        )
 }

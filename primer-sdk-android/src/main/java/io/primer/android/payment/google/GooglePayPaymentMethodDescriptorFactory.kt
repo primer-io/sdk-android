@@ -6,9 +6,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.PaymentMethodDescriptorFactory
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
-internal class GooglePayPaymentMethodDescriptorFactory(
-    private val googlePayFacade: GooglePayFacade,
-) : PaymentMethodDescriptorFactory {
+internal class GooglePayPaymentMethodDescriptorFactory : PaymentMethodDescriptorFactory {
 
     override fun create(
         localConfig: PrimerConfig,
@@ -19,9 +17,6 @@ internal class GooglePayPaymentMethodDescriptorFactory(
         GooglePayDescriptor(
             localConfig = localConfig,
             options = paymentMethod as GooglePay,
-            paymentMethodChecker = paymentMethodCheckers[paymentMethod.type]
-                ?: throw Error("Missing payment method checker"),
-            googlePayFacade = googlePayFacade,
             config = paymentMethodRemoteConfig
         )
 }

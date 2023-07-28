@@ -53,6 +53,7 @@
 -keep public interface io.primer.android.PrimerCheckoutListener {
     public *;
 }
+
 -keep class io.primer.android.domain.action.models.* {
     public *;
 }
@@ -73,6 +74,14 @@
     *;
 }
 
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData {
+    *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData* {
+    *;
+}
+
 -keep class io.primer.android.data.tokenization.models.PaymentInstrumentData {
     *;
 }
@@ -89,7 +98,7 @@
     *;
 }
 
--keep  enum io.primer.android.threeds.data.models.ResponseCode
+-keep enum io.primer.android.threeds.data.models.common.ResponseCode
 
 -keep class io.primer.android.data.tokenization.models.BinData {
     *;
@@ -115,15 +124,6 @@
     *;
 }
 
--keep enum io.primer.android.data.configuration.models.PaymentMethodType {
-    public *;
-    *** Companion;
-}
-
--keep class io.primer.android.data.configuration.models.PaymentMethodType$Companion {
-    *;
-}
-
 -keep public interface io.primer.android.data.payments.configure.PrimerInitializationData {
     public *;
 }
@@ -136,7 +136,7 @@
     *;
 }
 
--keep class io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData {
+-keep class io.primer.android.components.domain.core.models.retailOutlet.PrimerRetailerData {
     *;
 }
 
@@ -150,7 +150,7 @@
     public *;
 }
 
--keep class io.primer.android.components.manager.PrimerCardManager {
+-keep class io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager {
     public *;
 }
 
@@ -158,15 +158,7 @@
     *;
 }
 
--keep class io.primer.android.components.manager.PrimerCardManager$Companion {
-    *;
-}
-
--keep class io.primer.android.components.manager.PrimerBancontactCardManager {
-    public *;
-}
-
--keep class io.primer.android.components.manager.PrimerBancontactCardManager$Companion {
+-keep class io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager$Companion {
     *;
 }
 
@@ -179,14 +171,6 @@
 }
 
 -keep class io.primer.android.components.ui.views.* {
-    *;
-}
-
--keep enum io.primer.android.components.ui.assets.ImageType {
-    *;
-}
-
--keep enum io.primer.android.components.ui.assets.ImageColor {
     *;
 }
 
@@ -214,6 +198,10 @@
     public *;
 }
 
+-keep interface io.primer.android.components.PrimerHeadlessUniversalCheckoutUiListener {
+    public *;
+}
+
  #------------------------------------HUC raw---------------------------------------------------#
 -keep class io.primer.android.components.manager.raw.* {
     public *;
@@ -222,8 +210,92 @@
 -keep class io.primer.android.components.domain.error.PrimerInputValidationError {
     *;
 }
--keep enum  io.primer.android.components.domain.inputs.models.PrimerInputElementType {
+-keep enum io.primer.android.components.domain.inputs.models.PrimerInputElementType {
     *;
+}
+
+ #------------------------------------HUC native---------------------------------------------------#
+-keep class io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager$Companion {
+    *;
+}
+
+-keep interface io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManagerInterface {
+    public *;
+}
+
+ #------------------------------------HUC assets---------------------------------------------------#
+-keep class io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager {
+    public *;
+}
+
+-keep class io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager$Companion {
+    *;
+}
+
+-keep class io.primer.android.components.ui.assets.PrimerPaymentMethodAsset {
+    public *;
+}
+
+-keep class io.primer.android.components.ui.assets.PrimerPaymentMethodLogo {
+    public *;
+}
+
+-keep class io.primer.android.components.ui.assets.PrimerPaymentMethodBackgroundColor {
+    public *;
+}
+
+ #------------------------------------HUC exceptions-----------------------------------------------#
+
+-keep class io.primer.android.components.SdkUninitializedException {
+    public *;
+}
+
+-keep class io.primer.android.components.domain.exception.UnsupportedPaymentMethodManagerException {
+    public *;
+}
+
+-keep class io.primer.android.domain.exception.UnsupportedPaymentMethodException {
+    public *;
+}
+
+-keep class io.primer.android.domain.exception.UnsupportedPaymentIntentException {
+    public *;
+}
+
+ #------------------------------------Vault manager------------------------------------------------#
+
+-keep class io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager$Companion {
+    *;
+}
+
+-keep interface io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface {
+    public *;
+}
+
+-keep interface io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData {
+    public *;
+}
+
+-keep class io.primer.android.components.domain.payments.vault.model.** {
+    public *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod {
+    public *;
+}
+
+ #------------------------------------Vault manager exceptions-------------------------------------#
+
+-keep class io.primer.android.components.domain.exception.* {
+    public *;
 }
 
 -keepclassmembers,allowoptimization enum * {

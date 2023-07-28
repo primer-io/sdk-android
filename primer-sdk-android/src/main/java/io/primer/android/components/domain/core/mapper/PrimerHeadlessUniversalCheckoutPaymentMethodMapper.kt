@@ -1,46 +1,42 @@
 package io.primer.android.components.domain.core.mapper
 
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.components.domain.core.models.bancontact.PrimerRawBancontactCardData
-import io.primer.android.components.domain.core.models.card.PrimerRawCardData
-import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeRawData
-import io.primer.android.components.domain.core.models.phoneNumber.PrimerRawPhoneNumberData
-import io.primer.android.components.domain.core.models.retailOutlet.PrimerRawRetailerData
-import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.domain.exception.UnsupportedPaymentMethodException
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
+import io.primer.android.payment.VaultCapability
 
-internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper {
+internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper(
+    private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository
+) {
 
     fun getPrimerHeadlessUniversalCheckoutPaymentMethod(
         paymentMethodType: String
     ): PrimerHeadlessUniversalCheckoutPaymentMethod {
-        return when (paymentMethodType) {
-            PaymentMethodType.ADYEN_BLIK.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
-                paymentMethodType,
-                PrimerOtpCodeRawData::class
-            )
-            PaymentMethodType.PAYMENT_CARD.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
-                paymentMethodType,
-                PrimerRawCardData::class
-            )
-            PaymentMethodType.XENDIT_OVO.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
-                paymentMethodType,
-                PrimerRawPhoneNumberData::class
-            )
-            PaymentMethodType.ADYEN_MBWAY.name -> PrimerHeadlessUniversalCheckoutPaymentMethod(
-                paymentMethodType,
-                PrimerRawPhoneNumberData::class
-            )
-            PaymentMethodType.ADYEN_BANCONTACT_CARD.name ->
+        return paymentMethodDescriptorsRepository.getPaymentMethodDescriptors()
+            .firstOrNull { descriptor -> descriptor.config.type == paymentMethodType }
+            ?.let { descriptor ->
+                val headlessDefinition =
+                    descriptor.headlessDefinition ?: throw IllegalStateException(
+                        "Missing payment method manager descriptor for $paymentMethodType"
+                    )
+
                 PrimerHeadlessUniversalCheckoutPaymentMethod(
-                    paymentMethodType,
-                    PrimerRawBancontactCardData::class
+                    descriptor.config.type,
+                    descriptor.vaultCapability.toPrimerSupportedIntents(),
+                    headlessDefinition.paymentMethodManagerCategories,
+                    headlessDefinition.rawDataDefinition?.requiredInputDataClass
                 )
-            PaymentMethodType.XENDIT_RETAIL_OUTLETS.name ->
-                PrimerHeadlessUniversalCheckoutPaymentMethod(
-                    paymentMethodType,
-                    PrimerRawRetailerData::class
-                )
-            else -> PrimerHeadlessUniversalCheckoutPaymentMethod(paymentMethodType)
-        }
+            } ?: throw UnsupportedPaymentMethodException(paymentMethodType)
     }
 }
+
+internal fun VaultCapability.toPrimerSupportedIntents() =
+    when (this) {
+        VaultCapability.VAULT_ONLY -> listOf(PrimerSessionIntent.VAULT)
+        VaultCapability.SINGLE_USE_ONLY -> listOf(PrimerSessionIntent.CHECKOUT)
+        VaultCapability.SINGLE_USE_AND_VAULT -> listOf(
+            PrimerSessionIntent.CHECKOUT,
+            PrimerSessionIntent.VAULT
+        )
+    }

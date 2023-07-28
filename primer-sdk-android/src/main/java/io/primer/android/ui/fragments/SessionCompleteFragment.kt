@@ -72,11 +72,13 @@ class SessionCompleteFragment : Fragment(), DIAppComponent {
             )
         )
 
-        binding.sessionCompleteMessage.text = arguments?.getString(
+        val completedMessage = arguments?.getString(
             SESSION_COMPLETE_CUSTOM_MESSAGE_KEY
         ) ?: arguments?.getInt(SESSION_COMPLETE_MESSAGE_KEY)?.let {
             getString(it)
         }
+
+        binding.sessionCompleteMessage.text = completedMessage
 
         val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         binding.sessionCompleteMessage.setTextColor(textColor)

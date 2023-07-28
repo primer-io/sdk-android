@@ -10,5 +10,5 @@ internal enum class ProtocolVersion(val versionNumber: String) {
     /**
      * Defines fixed "2.2.0" protocol message version number.
      */
-    V_220("2.2.0")
+    V_220("2.2.0");
 }

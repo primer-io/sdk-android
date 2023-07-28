@@ -2,20 +2,21 @@ package io.primer.android.data.payments.methods.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import org.json.JSONObject
 
 internal data class PaymentMethodVaultTokenInternal(
     private val id: String,
-    override val paymentMethodType: String?,
+    override val paymentMethodType: String,
     override val paymentInstrumentType: String,
     override val paymentInstrumentData: PaymentInstrumentData?,
     override val vaultData: VaultDataResponse?,
     override val threeDSecureAuthentication: AuthenticationDetailsDataResponse?,
     override val isVaulted: Boolean,
+    val analyticsId: String,
 ) : BasePaymentToken() {
 
     override val token: String = id
@@ -28,6 +29,7 @@ internal data class PaymentMethodVaultTokenInternal(
         private const val VAULT_DATA_FIELD = "vaultData"
         private const val THREE_DS_AUTHENTICATION_FIELD = "threeDSecureAuthentication"
         private const val IS_VAULTED_FIELD = "isVaulted"
+        private const val ANALYTICS_ID_FIELD = "analyticsId"
 
         @JvmField
         val deserializer = object : JSONDeserializer<PaymentMethodVaultTokenInternal> {
@@ -35,7 +37,7 @@ internal data class PaymentMethodVaultTokenInternal(
             override fun deserialize(t: JSONObject): PaymentMethodVaultTokenInternal {
                 return PaymentMethodVaultTokenInternal(
                     t.getString(ID_FIELD),
-                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
+                    t.getString(PAYMENT_METHOD_TYPE_FIELD),
                     t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
                     t.optJSONObject(PAYMENT_INSTRUMENT_DATA_FIELD)?.let {
                         JSONSerializationUtils.getDeserializer<PaymentInstrumentData>()
@@ -51,6 +53,7 @@ internal data class PaymentMethodVaultTokenInternal(
                             .deserialize(it)
                     },
                     t.getBoolean(IS_VAULTED_FIELD),
+                    t.optString(ANALYTICS_ID_FIELD)
                 )
             }
         }
@@ -101,6 +104,46 @@ internal fun PrimerPaymentMethodTokenData.toPaymentMethodVaultToken():
         paymentInstrumentData = paymentInstrumentData,
         vaultData = vaultData,
         threeDSecureAuthentication = threeDSecureAuthentication,
-        isVaulted = isVaulted
+        isVaulted = isVaulted,
+        analyticsId = analyticsId
     )
 }
+
+internal fun PaymentMethodVaultTokenInternal.toVaultedPaymentMethod() =
+    PrimerVaultedPaymentMethod(
+        id = token,
+        analyticsId = analyticsId,
+        paymentInstrumentType = paymentInstrumentType,
+        paymentMethodType = paymentMethodType,
+        paymentInstrumentData = requireNotNull(paymentInstrumentData).let { paymentInstrumentData ->
+            PaymentInstrumentData(
+                paymentInstrumentData.network,
+                paymentInstrumentData.cardholderName,
+                paymentInstrumentData.first6Digits,
+                paymentInstrumentData.last4Digits,
+                paymentInstrumentData.expirationMonth,
+                paymentInstrumentData.expirationYear,
+                paymentInstrumentData.gocardlessMandateId,
+                paymentInstrumentData.externalPayerInfo,
+                paymentInstrumentData.klarnaCustomerToken,
+                paymentInstrumentData.sessionData,
+                paymentInstrumentData.mx,
+                paymentInstrumentData.mnc,
+                paymentInstrumentData.mcc,
+                paymentInstrumentData.hashedIdentifier,
+                paymentInstrumentData.currencyCode,
+                paymentInstrumentData.productId,
+                paymentInstrumentData.paymentMethodType,
+                paymentInstrumentData.binData
+            )
+        },
+        threeDSecureAuthentication = threeDSecureAuthentication?.let {
+            PrimerVaultedPaymentMethod.AuthenticationDetails(
+                it.responseCode,
+                it.reasonCode,
+                it.reasonText,
+                it.protocolVersion,
+                it.challengeIssued
+            )
+        }
+    )

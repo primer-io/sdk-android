@@ -45,6 +45,7 @@ internal object EventBus {
     }
 
     fun broadcast(e: CheckoutEvent) {
-        subscribers.forEach { it.onEvent(e) }
+        val currentSubscribers = subscribers.toList()
+        currentSubscribers.forEach { it.onEvent(e) }
     }
 }

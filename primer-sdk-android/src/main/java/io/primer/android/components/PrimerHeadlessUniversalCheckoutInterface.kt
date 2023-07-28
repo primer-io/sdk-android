@@ -1,23 +1,27 @@
 package io.primer.android.components
 
 import android.content.Context
-import android.view.View
-import android.view.ViewGroup
-import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.settings.PrimerSettings
 
-@ExperimentalPrimerApi
 interface PrimerHeadlessUniversalCheckoutInterface {
     /**
      * Sets the [PrimerHeadlessUniversalCheckoutListener]
-     * Use the listener in order to receive different events from the SDK
+     * Use the listener in order to receive different events from the SDK.
      */
-    fun setListener(listener: PrimerHeadlessUniversalCheckoutListener)
+    fun setCheckoutListener(
+        listener: PrimerHeadlessUniversalCheckoutListener
+    )
+
+    /**
+     * Sets the [PrimerHeadlessUniversalCheckoutUiListener]
+     * Use the listener in order to receive different UI events from the SDK
+     */
+    fun setCheckoutUiListener(uiListener: PrimerHeadlessUniversalCheckoutUiListener)
 
     /**
      * Starts the PrimerHeadlessUniversalCheckout SDK with [Context] & [clientToken] &
-     * [PrimerSettings] & [PrimerHeadlessUniversalCheckoutListener].
+     * [PrimerSettings] & [PrimerHeadlessUniversalCheckoutListener] &
+     * [PrimerHeadlessUniversalCheckoutUiListener].
      * Calling this function will reset any old state
      * @param clientToken base64 string containing information about this Primer session.
      * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
@@ -26,27 +30,9 @@ interface PrimerHeadlessUniversalCheckoutInterface {
         context: Context,
         clientToken: String,
         settings: PrimerSettings? = null,
-        listener: PrimerHeadlessUniversalCheckoutListener? = null
+        checkoutListener: PrimerHeadlessUniversalCheckoutListener? = null,
+        uiListener: PrimerHeadlessUniversalCheckoutUiListener? = null
     )
-
-    /**
-     * Gets the [PrimerInputElementType] for a given paymentMethodType
-     */
-    fun getRequiredInputElementTypes(paymentMethodType: String):
-        List<PrimerInputElementType>?
-
-    /**
-     * Creates [View] for a given paymentMethodType
-     * @param container Optional view to be the parent of the generated hierarchy. This value may be null.
-     */
-    fun makeView(paymentMethodType: String, container: ViewGroup?): View?
-
-    /**
-     * Initialise and show specific payment method flows with PrimerHeadlessUniversalCheckout.
-     *
-     * @param paymentMethodType the payment method flow to be shown.
-     */
-    fun showPaymentMethod(context: Context, paymentMethodType: String)
 
     /**
      * This method should be called when disposing the listener in order to free

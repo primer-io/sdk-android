@@ -72,6 +72,7 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
                 TokenizationStatus.SUCCESS -> onActionContinue?.invoke()?.let { behaviour ->
                     primerViewModel.executeBehaviour(behaviour)
                 }
+                else -> Unit
             }
         }
     }

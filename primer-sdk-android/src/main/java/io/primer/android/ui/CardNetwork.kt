@@ -195,6 +195,18 @@ class CardNetwork {
                 Descriptor(Type.UNKNOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
             }
         }
+
+        fun lookupByCardNetwork(cardNetwork: String): Descriptor {
+            val matching = types.filter {
+                it.type == Type.values().firstOrNull { type -> type.name == cardNetwork }
+            }
+
+            return if (matching.isNotEmpty()) {
+                matching[0]
+            } else {
+                Descriptor(Type.UNKNOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
+            }
+        }
     }
 }
 

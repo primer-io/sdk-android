@@ -13,12 +13,12 @@ import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.domain.payments.create.repository.CreatePaymentRepository
 import io.primer.android.domain.payments.helpers.PaymentResultEventsResolver
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -60,7 +60,7 @@ internal class CreatePaymentInteractorTest {
 
         runTest {
             val result = interactor(createPaymentParams).first()
-            assertEquals(paymentResult.payment.id, result)
+            Assertions.assertEquals(paymentResult.payment.id, result)
         }
 
         verify { createPaymentRepository.createPayment(any()) }

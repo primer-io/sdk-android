@@ -6,13 +6,19 @@ internal class LocalAnalyticsDataSource private constructor() {
 
     private val events = mutableListOf<BaseAnalyticsEventRequest>()
 
-    fun addEvent(input: BaseAnalyticsEventRequest) = events.add(input)
+    fun addEvent(input: BaseAnalyticsEventRequest) = synchronized(this) {
+        events.add(input)
+    }
 
-    fun addEvents(input: List<BaseAnalyticsEventRequest>) = events.addAll(input)
+    fun addEvents(input: List<BaseAnalyticsEventRequest>) = synchronized(this) {
+        events.addAll(input)
+    }
 
-    fun get(): List<BaseAnalyticsEventRequest> = events.toList()
+    fun get(): List<BaseAnalyticsEventRequest> = synchronized(this) { events.toList() }
 
-    fun remove(events: List<BaseAnalyticsEventRequest>) = this.events.removeAll(events)
+    fun remove(events: List<BaseAnalyticsEventRequest>) = synchronized(this) {
+        this.events.removeAll(events)
+    }
 
     companion object {
 

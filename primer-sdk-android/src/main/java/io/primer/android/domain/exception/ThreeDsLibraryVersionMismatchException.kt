@@ -1,4 +1,8 @@
 package io.primer.android.domain.exception
 
-internal class ThreeDsLibraryVersionMismatchException(val validSdkVersion: String) :
-    IllegalStateException()
+import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
+
+internal class ThreeDsLibraryVersionMismatchException(
+    val validSdkVersion: String,
+    val context: ThreeDsFailureContextParams
+) : IllegalStateException()

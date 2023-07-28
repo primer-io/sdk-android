@@ -45,7 +45,8 @@ internal class FileAnalyticsDataSource(
                 JSONArray().apply {
                     input.map { analyticsEvent ->
                         put(
-                            JSONSerializationUtils.getSerializer<BaseAnalyticsEventRequest>()
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<BaseAnalyticsEventRequest>()
                                 .serialize(analyticsEvent)
                         )
                     }

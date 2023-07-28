@@ -58,6 +58,10 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
             logAnalyticsBackPressed()
             parentFragmentManager.popBackStack()
         }
+        backIcon.isVisible =
+            primerViewModel.selectedPaymentMethod.value?.localConfig
+                ?.isStandalonePaymentMethod?.not()
+                ?: false
     }
 
     protected open fun setupForm(form: Form) {

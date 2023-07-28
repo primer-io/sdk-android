@@ -1,7 +1,7 @@
 package io.primer.android.data.payments.forms.datasource
 
 import io.primer.android.R
-import io.primer.android.components.domain.payments.validation.phoneNumber.mbway.MBWayPhoneNumberValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.phoneNumber.mbway.MBWayPhoneNumberValidator
 import io.primer.android.data.base.datasource.BaseFlowCacheDataSource
 import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.data.payments.forms.models.ButtonType

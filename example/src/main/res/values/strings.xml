@@ -1,64 +1,53 @@
-<resources>
+<resources translatable="false">
     <string name="app_name">Primer Sample</string>
     <string name="title_activity_main">MainActivity</string>
 
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="loading">Loading...</string>
+    <string name="button_primer_sdk">Primer SDK</string>
+    <string name="loading">Loading…</string>
     <string name="tokenize">Tokenize</string>
 
-    <string name="huc_ui">HUC (UI)</string>
-    <string name="huc_raw">HUC (RAW)</string>
+    <string name="huc_ui">Headless SDK</string>
+    <string name="huc_raw">Headless SDK (RAW)</string>
+    <string name="huc_vault">Headless SDK (Vault)</string>
 
     <string name="previous">Previous</string>
-    <string name="test_deprecated_checkout">Test Deprecated Checkout</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="add_payment_method">Add payment method</string>
-    <string name="show_checkout">Show Checkout</string>
+    <string name="add_payment_method">Vault Manager</string>
+    <string name="show_checkout">Universal Checkout</string>
     <string name="show_payment_method">Show Payment Method</string>
-    <string name="add_klarna">Add Klarna</string>
-    <string name="add_apaya">Pay by mobile</string>
-    <string name="add_customer_id">Add customer ID</string>
     <string name="customer_id">Customer ID</string>
+    <string name="client_token">Client token</string>
     <string name="descriptor">Descriptor</string>
-    <string name="metadata">Metadata like \'TEST_CASE:SOME_APM\'</string>
+    <string name="metadata">Metadata format: \'TEST_CASE:SOME_APM\'</string>
     <string name="country">Country</string>
     <string name="amount">Amount</string>
     <string name="currency">Currency</string>
     <string name="environment">Environment</string>
-    <string name="cards">Cards</string>
-    <string name="paypal">PayPal</string>
-    <string name="klarna">Klarna</string>
     <string name="something_went_wrong">
         Something went wrong, please try a different payment method.
     </string>
-    <string name="google_pay">Google Pay</string>
-    <string name="zip_code">Zip code: %1$s</string>
-    <string name="postal_code">Postal code: %1$s</string>
 
-    <string-array name="countries">
-        <item>SE</item>
-        <item>DE</item>
-        <item>AU</item>
-    </string-array>
-
-
-    <string name="three_ds_success_message">3DS was successful</string>
-    <string name="three_ds_error_message">3DS response code %1$s, reason code: %2$s, and reason text: %3$s</string>
     <string name="payment_handling">Payment Handling</string>
     <string name="payment_handling_auto">AUTO</string>
     <string name="payment_handling_manual">MANUAL</string>
+    <string name="ui_settings_disable_init_screen">Disable init screen</string>
     <string name="env_production">Production</string>
     <string name="env_staging">Staging</string>
     <string name="env_dev">Dev</string>
     <string name="env_sandbox">Sandbox</string>
-    <string name="api_key">Put here API KEY</string>
+    <string name="api_key">API KEY</string>
+    <string name="payment_status_label">Status</string>
+    <string name="payment_callbacks_label">Logs</string>
+    <string name="payment_response_label">Response</string>
+    <string name="sdk_settings">SDK Settings</string>
+    <string name="flow_client_session">Client session</string>
+    <string name="flow_client_token">Client token</string>
+    <string name="payment_method_type">Payment method type</string>
+    <string name="checkout_intent">Checkout</string>
+    <string name="vault_intent">Vault</string>
+    <string name="universal_checkout_options">Universal Checkout Options</string>
+    <string name="vault_manager_options">Vault Manager Options</string>
 
     <string-array name="app_environments">
         <item>@string/env_sandbox</item>
@@ -66,5 +55,4 @@
         <item>@string/env_staging</item>
         <item>@string/env_production</item>
     </string-array>
-
 </resources>

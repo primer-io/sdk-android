@@ -20,10 +20,12 @@ internal class PaymentResultEventsResolver(private val eventDispatcher: EventDis
             PaymentStatus.FAILED -> {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.CheckoutPaymentError(
-                        PaymentError.PaymentFailedError,
+                        PaymentError.PaymentFailedError(
+                            paymentResult.payment.id,
+                            paymentResult.paymentStatus
+                        ),
                         PrimerCheckoutData(paymentResult.payment),
-                        object :
-                            PrimerErrorDecisionHandler {
+                        object : PrimerErrorDecisionHandler {
                             override fun showErrorMessage(errorMessage: String?) {
                                 resumeHandler.handleFailure(errorMessage)
                             }

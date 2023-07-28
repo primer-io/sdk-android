@@ -13,14 +13,10 @@ import io.primer.android.domain.payments.methods.models.VaultDeleteParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.logging.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -48,10 +44,10 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
     fun `execute() should dispatch TokenRemovedFromVault when deleteVaultedPaymentMethod was success`() {
         val params = mockk<VaultDeleteParams>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
-            flowOf(Unit)
+            Result.success(Unit)
         )
         runTest {
-            interactor(params).first()
+            interactor(params)
         }
 
         coVerify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }
@@ -61,13 +57,12 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
     fun `execute() should dispatch TokenizeError when exchangeVaultedPaymentToken was failed`() {
         val params = mockk<VaultDeleteParams>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
-            flow { throw Exception("Delete failed.") }
+            Result.failure(Exception("Delete failed."))
         )
-        assertThrows<Exception> {
-            runTest {
-                interactor(params).first()
-            }
+        runTest {
+            interactor(params)
         }
+
         val message = slot<String>()
 
         coVerify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }

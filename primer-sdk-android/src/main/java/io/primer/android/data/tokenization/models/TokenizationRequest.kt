@@ -1,18 +1,18 @@
 package io.primer.android.data.tokenization.models
 
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.core.serialization.json.JSONSerializable
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.domain.tokenization.models.TokenizationParams
 import org.json.JSONObject
 
-internal abstract class TokenizationRequest : JSONSerializable {
+internal abstract class TokenizationRequest : JSONObjectSerializable {
 
     abstract val paymentInstrument: JSONObject
 
     companion object {
         @JvmField
-        val serializer = object : JSONSerializer<TokenizationRequest> {
+        val serializer = object : JSONObjectSerializer<TokenizationRequest> {
             override fun serialize(t: TokenizationRequest): JSONObject {
                 return when (t) {
                     is TokenizationCheckoutRequest ->
@@ -50,7 +50,7 @@ internal data class TokenizationVaultRequest(
         private const val PAYMENT_FLOW_FIELD = "paymentFlow"
 
         @JvmField
-        val serializer = object : JSONSerializer<TokenizationVaultRequest> {
+        val serializer = object : JSONObjectSerializer<TokenizationVaultRequest> {
             override fun serialize(t: TokenizationVaultRequest): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_INSTRUMENT_FIELD, t.paymentInstrument)
@@ -69,7 +69,7 @@ internal data class TokenizationCheckoutRequest(
         private const val PAYMENT_INSTRUMENT_FIELD = "paymentInstrument"
 
         @JvmField
-        val serializer = object : JSONSerializer<TokenizationCheckoutRequest> {
+        val serializer = object : JSONObjectSerializer<TokenizationCheckoutRequest> {
             override fun serialize(t: TokenizationCheckoutRequest): JSONObject {
                 return JSONObject().apply {
                     put(PAYMENT_INSTRUMENT_FIELD, t.paymentInstrument)

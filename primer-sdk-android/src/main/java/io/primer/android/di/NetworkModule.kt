@@ -1,9 +1,10 @@
 package io.primer.android.di
 
 import io.primer.android.BuildConfig
+import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
+import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
-import io.primer.android.model.Model
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,8 +15,8 @@ private const val CONTENT_TYPE_HEADER = "Content-Type"
 private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 private const val SDK_VERSION_HEADER = "Primer-SDK-Version"
 private const val SDK_CLIENT_HEADER = "Primer-SDK-Client"
-private const val SDK_CLIENT_VALUE = "ANDROID_NATIVE"
 private const val CLIENT_TOKEN_HEADER = "Primer-Client-Token"
+private const val PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER = "Primer-SDK-Checkout-Session-ID"
 
 internal val NetworkModule = {
     module {
@@ -26,7 +27,11 @@ internal val NetworkModule = {
                     chain.request().newBuilder()
                         .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
                         .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
-                        .addHeader(SDK_CLIENT_HEADER, SDK_CLIENT_VALUE)
+                        .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
+                        .addHeader(
+                            PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER,
+                            get<CheckoutSessionIdDataSource>().checkoutSessionId
+                        )
                         .addHeader(
                             CLIENT_TOKEN_HEADER,
                             get<LocalClientTokenDataSource>().get().accessToken
@@ -44,18 +49,12 @@ internal val NetworkModule = {
             builder.addInterceptor(get())
                 .build()
         }
-        single {
-            Model(
-                get(),
-                get(),
-            )
-        }
     }
 }
 
 internal enum class ApiVersion(val version: String) {
-    CONFIGURATION_VERSION("2.1"),
-    PAYMENT_INSTRUMENTS_VERSION("2.1"),
-    PAYMENTS_VERSION("2021-09-27"),
-    THREE_DS_VERSION("2021-12-10")
+    CONFIGURATION_VERSION("2.2"),
+    PAYMENT_INSTRUMENTS_VERSION("2.2"),
+    PAYMENTS_VERSION("2.2"),
+    THREE_DS_VERSION("2.1")
 }

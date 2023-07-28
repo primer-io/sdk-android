@@ -296,10 +296,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
                     renderAlternativeSavedPaymentMethodView(title)
                     paymentMethodIcon.setImageResource(R.drawable.ic_paypal_card)
                 }
-                PaymentMethodType.GOCARDLESS.name -> {
-                    renderAlternativeSavedPaymentMethodView("Direct Debit")
-                    paymentMethodIcon.setImageResource(R.drawable.ic_directdebit_card)
-                }
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     val data = paymentMethod.paymentInstrumentData
                     titleLabel.text = data?.cardholderName

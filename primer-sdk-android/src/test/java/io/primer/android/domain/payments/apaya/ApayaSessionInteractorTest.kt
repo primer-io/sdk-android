@@ -16,7 +16,7 @@ import io.primer.android.domain.payments.apaya.ApayaSessionInteractor.Companion.
 import io.primer.android.domain.payments.apaya.models.ApayaSession
 import io.primer.android.domain.payments.apaya.models.ApayaSessionParams
 import io.primer.android.domain.payments.apaya.models.ApayaWebResultParams
-import io.primer.android.domain.payments.apaya.repository.ApayaRepository
+import io.primer.android.domain.payments.apaya.repository.ApayaSessionRepository
 import io.primer.android.domain.payments.apaya.validation.ApayaSessionParamsValidator
 import io.primer.android.domain.payments.apaya.validation.ApayaWebResultValidator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,7 +41,7 @@ internal class ApayaSessionInteractorTest {
     internal lateinit var apayaWebResultValidator: ApayaWebResultValidator
 
     @RelaxedMockK
-    internal lateinit var apayaRepository: ApayaRepository
+    internal lateinit var apayaSessionRepository: ApayaSessionRepository
 
     @RelaxedMockK
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
@@ -55,7 +55,7 @@ internal class ApayaSessionInteractorTest {
             ApayaSessionInteractor(
                 apayaSessionParamsValidator,
                 apayaWebResultValidator,
-                apayaRepository,
+                apayaSessionRepository,
                 errorEventResolver,
             )
     }
@@ -129,7 +129,7 @@ internal class ApayaSessionInteractorTest {
 
         val sessionParams = mockk<ApayaSessionParams>(relaxed = true)
         coEvery { apayaSessionParamsValidator.validate(any()) }.returns(flowOf(Unit))
-        coEvery { apayaRepository.createClientSession(any()) }.returns(
+        coEvery { apayaSessionRepository.createClientSession(any()) }.returns(
             flow {
                 throw exception
             }
@@ -143,7 +143,7 @@ internal class ApayaSessionInteractorTest {
         }
 
         coVerify { apayaSessionParamsValidator.validate(any()) }
-        coVerify { apayaRepository.createClientSession(any()) }
+        coVerify { apayaSessionRepository.createClientSession(any()) }
         verify { errorEventResolver.resolve(capture(event), ErrorMapperType.SESSION_CREATE) }
 
         assertEquals(exception.javaClass, event.captured.javaClass)
@@ -155,7 +155,7 @@ internal class ApayaSessionInteractorTest {
         val session = mockk<ApayaSession>(relaxed = true)
 
         coEvery { apayaSessionParamsValidator.validate(any()) }.returns(flowOf(Unit))
-        coEvery { apayaRepository.createClientSession(any()) }.returns(flowOf(session))
+        coEvery { apayaSessionRepository.createClientSession(any()) }.returns(flowOf(session))
 
         runTest {
             val result = sessionInteractor(sessionParams).first()
@@ -165,6 +165,6 @@ internal class ApayaSessionInteractorTest {
         }
 
         coVerify { apayaSessionParamsValidator.validate(any()) }
-        coVerify { apayaRepository.createClientSession(any()) }
+        coVerify { apayaSessionRepository.createClientSession(any()) }
     }
 }

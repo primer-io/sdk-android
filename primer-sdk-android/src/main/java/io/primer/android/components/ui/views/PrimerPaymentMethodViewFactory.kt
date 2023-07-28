@@ -28,9 +28,6 @@ internal class PrimerPaymentMethodViewFactory(
                 context,
                 container
             )
-            PaymentMethodType.GOCARDLESS -> GoCardlessViewCreator(
-                config.settings.uiOptions.theme
-            ).create(context, container)
             else -> when (displayMetadata.type) {
                 BaseDisplayMetadata.DisplayMetadataType.TEXT ->
                     DynamicPaymentMethodTextViewCreator(

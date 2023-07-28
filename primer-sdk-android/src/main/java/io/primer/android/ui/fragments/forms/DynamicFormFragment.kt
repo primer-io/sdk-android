@@ -143,6 +143,7 @@ internal class DynamicFormFragment : BaseFormFragment() {
         when (val prefixData = formData.inputPrefix) {
             is DialCodeCountryPrefix -> {
                 childView.prefixText = String.format(
+                    localConfig.settings.locale,
                     "%s %s",
                     prefixData.phoneCode.code.emojiFlag(),
                     prefixData.phoneCode.dialCode

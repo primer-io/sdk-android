@@ -1,10 +1,10 @@
 package io.primer.android.data.tokenization.models
 
-import io.primer.android.core.serialization.json.JSONSerializable
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import org.json.JSONObject
@@ -151,13 +151,13 @@ data class BillingAddress(
 
 data class BinData(
     val network: String? = null,
-) : JSONSerializable, JSONDeserializable {
+) : JSONObjectSerializable, JSONDeserializable {
     companion object {
         private const val NETWORK_FIELD = "network"
 
         @JvmField
         internal val serializer = object :
-            JSONSerializer<BinData> {
+            JSONObjectSerializer<BinData> {
             override fun serialize(t: BinData): JSONObject {
                 return JSONObject().apply {
                     putOpt(NETWORK_FIELD, t.network)

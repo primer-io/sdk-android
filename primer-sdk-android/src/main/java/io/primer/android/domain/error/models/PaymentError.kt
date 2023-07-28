@@ -1,10 +1,12 @@
 package io.primer.android.domain.error.models
 
+import io.primer.android.data.payments.create.models.PaymentStatus
 import java.util.UUID
 
 internal sealed class PaymentError : PrimerError() {
 
-    object PaymentFailedError : PaymentError()
+    class PaymentFailedError(val paymentId: String, val paymentStatus: PaymentStatus) :
+        PaymentError()
 
     class PaymentCreateFailedError(
         val serverDescription: String,
@@ -25,7 +27,9 @@ internal sealed class PaymentError : PrimerError() {
 
     override val description: String
         get() = when (this) {
-            is PaymentFailedError -> "Payment failed."
+            is PaymentFailedError ->
+                "The payment with id $paymentId was created but ended up in a " +
+                    "$paymentStatus status."
             is PaymentCreateFailedError -> serverDescription
             is PaymentResumeFailedError -> serverDescription
         }

@@ -7,7 +7,7 @@ internal interface AnalyticsRepository {
 
     fun initialize(): Flow<Unit>
 
-    fun addEvent(params: BaseAnalyticsParams): Unit
+    fun addEvent(params: BaseAnalyticsParams)
 
     fun send(): Flow<Unit>
 }

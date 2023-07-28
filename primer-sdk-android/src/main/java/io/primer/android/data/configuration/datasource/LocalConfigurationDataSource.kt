@@ -23,7 +23,11 @@ internal class LocalConfigurationDataSource(private val settings: PrimerSettings
         updateSettings(input)
     }
 
-    fun getConfiguration() = requireNotNull(configuration)
+    fun getConfiguration() = try {
+        requireNotNull(configuration)
+    } catch (e: IllegalArgumentException) {
+        throw MissingConfigurationException(e)
+    }
 
     fun getConfigurationNullable() = configuration
 

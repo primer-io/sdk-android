@@ -9,7 +9,7 @@ import org.json.JSONObject
 internal data class PrimerCountry(
     override val name: String,
     override val code: CountryCode
-) : PrimerBaseCountryData(), JSONDeserializable {
+) : PrimerBaseCountryData, JSONDeserializable {
     companion object {
         val default: PrimerCountry = PrimerCountry("United Kingdom", CountryCode.BG)
 

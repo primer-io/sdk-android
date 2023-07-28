@@ -26,39 +26,12 @@
             android:name=".CheckoutSheetActivity"
             android:exported="true"
             android:label=""
-            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
-            android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <data android:scheme="primer_android" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".WebBrowserInteropActivity"
-            android:exported="true"
-            android:label=""
             android:launchMode="singleTask"
-            android:theme="@android:style/Theme.NoDisplay">
-
-            <intent-filter>
-                <data android:scheme="${applicationId}.primer" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.base.webview.WebViewActivity"
-            android:exported="true"
             android:label=""
             android:theme="@style/Theme.AppCompat.WebView" />
 
@@ -84,8 +57,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
+                    android:pathPrefix="/async"
                     android:host="requestor.${applicationId}"
-                    android:scheme="primersdk" />
+                    android:scheme="primer" />
             </intent-filter>
         </activity>
 
@@ -94,25 +68,33 @@
             android:exported="true"
             android:label=""
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent">
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" />
+
+        <activity
+            android:name=".components.ui.activity.HeadlessActivity"
+            android:exported="true"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout">
             <intent-filter>
+                <data
+                    android:pathPrefix="/paypal"
+                    android:host="requestor.${applicationId}"
+                    android:scheme="primer" />
+
                 <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="requestor.${applicationId}"
-                    android:scheme="primer_android_3ds" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".components.ui.activity.HeadlessActivity"
+            android:name=".ui.mock.PaymentMethodMockActivity"
             android:exported="false"
             android:label=""
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout" />
+            android:theme="@style/Theme.AppCompat.WebView" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

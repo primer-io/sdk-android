@@ -21,7 +21,7 @@
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.MyApplication.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,16 +29,21 @@
         </activity>
 
         <activity
-            android:name="io.primer.android.WebBrowserInteropActivity"
+            android:name="io.primer.android.threeds.ui.ThreeDsActivity"
             android:exported="true"
-            android:launchMode="singleTask">
-            <intent-filter>
+            tools:node="merge">
+            <intent-filter
+                android:autoVerify="true"
+                tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="primer" />
+                <data
+                    android:host="{yourapp.com}"
+                    android:pathPrefix="/3ds"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
     </application>

@@ -129,6 +129,7 @@ internal data class PaymentMethodConfigDataResponse(
 internal enum class PaymentMethodImplementationType {
     NATIVE_SDK,
     WEB_REDIRECT,
+    IPAY88_SDK,
     UNKNOWN;
 
     companion object {

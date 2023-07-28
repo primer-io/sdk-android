@@ -15,14 +15,19 @@ import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.R
 import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
+import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextParams
+import io.primer.android.analytics.domain.models.ThreeDsRuntimeFailureContextParams
 import io.primer.android.data.configuration.models.Environment
+import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
+import io.primer.android.threeds.data.exception.ThreeDsChallengeTimedOutException
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
-import io.primer.android.threeds.data.exception.ThreeDsFailedException
+import io.primer.android.threeds.data.exception.ThreeDsRuntimeFailedException
 import io.primer.android.threeds.data.exception.ThreeDsInitException
+import io.primer.android.threeds.data.exception.ThreeDsInvalidStatusException
 import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
 import io.primer.android.threeds.data.exception.ThreeDsProtocolFailedException
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.CardNetwork
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.common.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.respository.ThreeDsServiceRepository
@@ -43,9 +48,17 @@ internal class NetceteraThreeDsServiceRepository(
     private val threeDS2Service: ThreeDS2Service,
 ) : ThreeDsServiceRepository {
 
+    override val threeDsSdkVersion: String?
+        get() = try {
+            threeDS2Service.sdkVersion
+        } catch (ignored: Exception) {
+            null
+        }
+
     override suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
+        useWeakValidation: Boolean,
         threeDsKeysParams: ThreeDsKeysParams?,
     ): Flow<Unit> =
         flow {
@@ -55,7 +68,10 @@ internal class NetceteraThreeDsServiceRepository(
                 requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
                 requireNotNull(threeDsKeysParams.licenceKey) { LICENCE_CONFIG_ERROR }
             } catch (expected: IllegalArgumentException) {
-                throw ThreeDsConfigurationException(expected.message)
+                throw ThreeDsConfigurationException(
+                    expected.message,
+                    ThreeDsFailureContextParams(null, null)
+                )
             }
 
             val configurationBuilder = ConfigurationBuilder()
@@ -79,7 +95,7 @@ internal class NetceteraThreeDsServiceRepository(
 
             threeDS2Service.initialize(
                 context,
-                configurationBuilder.build(),
+                configurationBuilder.useWeakValidation(useWeakValidation).build(),
                 locale.toString(),
                 UiCustomization()
             )
@@ -91,8 +107,8 @@ internal class NetceteraThreeDsServiceRepository(
                 emit(Unit)
             } else {
                 throw ThreeDsInitException(
-                    "3DS init failed with warnings: " +
-                        warnings.joinToString(",") { "${it.severity}  ${it.message}" }
+                    warnings.joinToString(" | ") { "${it.severity}  ${it.message}" },
+                    ThreeDsFailureContextParams(threeDsSdkVersion, null)
                 )
             }
         }
@@ -115,7 +131,8 @@ internal class NetceteraThreeDsServiceRepository(
         activity: Activity,
         transaction: Transaction,
         authResponse: BeginAuthResponse,
-        threeDSAppURL: String,
+        threeDSAppURL: String?,
+        initProtocolVersion: String
     ): Flow<ChallengeStatusData> =
         callbackFlow {
             transaction.doChallenge(
@@ -141,24 +158,46 @@ internal class NetceteraThreeDsServiceRepository(
                                     completionEvent.transactionStatus
                                 )
                             )
-                        } else cancel(ThreeDsFailedException(message = "3DS challenge failed."))
+                        } else cancel(
+                            ThreeDsInvalidStatusException(
+                                completionEvent.transactionStatus,
+                                completionEvent.sdkTransactionID,
+                                THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
+                                ThreeDsRuntimeFailureContextParams(
+                                    threeDsSdkVersion,
+                                    initProtocolVersion,
+                                    THREE_DS_CHALLENGE_INVALID_STATUS_CODE
+                                ),
+                                "3DS challenge failed."
+                            )
+                        )
                         close()
                     }
 
                     override fun cancelled() {
                         cancel(
-                            ThreeDsFailedException(
-                                errorCode = THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
-                                message = "3DS cancelled."
+                            ThreeDsChallengeCancelledException(
+                                THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
+                                ThreeDsRuntimeFailureContextParams(
+                                    threeDsSdkVersion,
+                                    initProtocolVersion = initProtocolVersion,
+                                    THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
+                                ),
+                                "3DS Challenge cancelled."
                             )
                         )
                     }
 
                     override fun timedout() {
                         cancel(
-                            ThreeDsFailedException(
-                                errorCode = THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
-                                message = "3DS timed out."
+                            ThreeDsChallengeTimedOutException(
+                                THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
+                                ThreeDsRuntimeFailureContextParams(
+                                    threeDsSdkVersion,
+                                    initProtocolVersion = initProtocolVersion,
+                                    THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
+                                ),
+                                "3DS Challenge timed out."
                             )
                         )
                     }
@@ -168,23 +207,30 @@ internal class NetceteraThreeDsServiceRepository(
                         cancel(
                             ThreeDsProtocolFailedException(
                                 errorEvent.errorMessage.errorCode,
-                                ThreeDsFailureContextParams(
+                                ThreeDsProtocolFailureContextParams(
+                                    errorMessage.errorDetails,
                                     errorMessage.errorDescription,
                                     errorMessage.errorCode,
                                     errorMessage.errorMessageType,
                                     errorMessage.errorComponent,
                                     errorMessage.transactionID,
-                                    errorMessage.messageVersionNumber
+                                    errorMessage.messageVersionNumber,
+                                    threeDsSdkVersion,
+                                    initProtocolVersion,
                                 ),
-                                errorEvent.errorMessage.errorDetails
+                                errorMessage.errorDescription
                             )
                         )
                     }
 
                     override fun runtimeError(errorEvent: RuntimeErrorEvent) {
                         cancel(
-                            ThreeDsFailedException(
-                                errorEvent.errorCode,
+                            ThreeDsRuntimeFailedException(
+                                ThreeDsRuntimeFailureContextParams(
+                                    threeDsSdkVersion,
+                                    initProtocolVersion,
+                                    errorEvent.errorCode
+                                ),
                                 errorEvent.errorMessage
                             )
                         )
@@ -209,21 +255,26 @@ internal class NetceteraThreeDsServiceRepository(
             CardNetwork.JCB -> DsRidValues.JCB
             CardNetwork.MASTERCARD -> DsRidValues.MASTERCARD
             else -> when (environment == Environment.PRODUCTION) {
-                true -> throw ThreeDsMissingDirectoryServerException(cardNetwork)
+                true -> throw ThreeDsMissingDirectoryServerException(
+                    cardNetwork,
+                    ThreeDsFailureContextParams(threeDsSdkVersion, null)
+                )
                 false -> TEST_SCHEME_ID
             }
         }
 
-    private companion object {
+    internal companion object {
 
-        const val TEST_SCHEME_NAME = "test_schema"
+        private const val TEST_SCHEME_NAME = "test_schema"
+        private const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
+
         const val TEST_SCHEME_ID = "A999999999"
 
-        const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
-        const val KEYS_CONFIG_ERROR = "3DS Config params missing."
-        const val LICENCE_CONFIG_ERROR = "3DS Config licence is missing."
+        const val KEYS_CONFIG_ERROR = "3DS Config threeDsCertificates are missing."
+        const val LICENCE_CONFIG_ERROR = "3DS Config licenceKey is missing."
 
         const val THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE = "-4"
         const val THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE = "-3"
+        const val THREE_DS_CHALLENGE_INVALID_STATUS_CODE = "-5"
     }
 }

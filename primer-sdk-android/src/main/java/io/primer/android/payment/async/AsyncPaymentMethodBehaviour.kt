@@ -30,14 +30,14 @@ internal open class AsyncPaymentMethodBehaviour(
         asyncMethod.appendTokenizableValue(
             "sessionInfo",
             "redirectionUrl",
-            tokenizationViewModel.asyncRedirectUrl.value.orEmpty()
+            tokenizationViewModel.getRedirectionUrl()
         )
 
         onPreTokenize(asyncMethod)
         tokenizationViewModel.tokenize()
     }
 
-    internal open fun onPreTokenize(asyncMethod: AsyncPaymentMethodDescriptor) {}
+    internal open fun onPreTokenize(asyncMethod: AsyncPaymentMethodDescriptor) = Unit
 }
 
 internal class CardAsyncPaymentMethodBehaviour(asyncMethod: AsyncPaymentMethodDescriptor) :
@@ -46,6 +46,7 @@ internal class CardAsyncPaymentMethodBehaviour(asyncMethod: AsyncPaymentMethodDe
     override val instrumentType = PaymentInstrumentType.CARD_OFF_SESSION_PAYMENT
 
     override fun onPreTokenize(asyncMethod: AsyncPaymentMethodDescriptor) {
+
         asyncMethod.appendTokenizableValue(
             "sessionInfo",
             "browserInfo",

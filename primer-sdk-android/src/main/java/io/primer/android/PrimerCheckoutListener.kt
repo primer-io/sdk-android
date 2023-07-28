@@ -23,7 +23,7 @@ interface PrimerCheckoutListener {
         decisionHandler: PrimerResumeDecisionHandler
     ) = Unit
 
-    fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo?) = Unit
+    fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
 
     fun onAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) = Unit
 

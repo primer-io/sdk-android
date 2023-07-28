@@ -3,6 +3,7 @@ package io.primer.android.payment.async.sofort
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.NewMiddleFragmentBehaviour
+import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
@@ -11,16 +12,16 @@ import io.primer.android.payment.dummy.DummyResultDescriptorHandler
 import io.primer.android.ui.fragments.dummy.DummyResultSelectorFragment
 
 internal class PrimerTestSofortPaymentMethodDescriptor(
-    override val localConfig: PrimerConfig,
     override val options: AsyncPaymentMethod,
+    localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse,
-) : SofortPaymentMethodDescriptor(localConfig, options, config), DummyResultDescriptorHandler {
+) : SofortPaymentMethodDescriptor(options, localConfig, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = NewMiddleFragmentBehaviour(
             DummyResultSelectorFragment::newInstance,
             onActionContinue = { super.selectedBehaviour },
-            returnToPreviousOnBack = true
+            returnToPreviousOnBack = localConfig.isStandalonePaymentMethod.not()
         )
 
     override fun setDecision(decision: DummyDecisionType) {
@@ -38,4 +39,7 @@ internal class PrimerTestSofortPaymentMethodDescriptor(
 
     override val sdkCapabilities: List<SDKCapability>
         get() = listOf(SDKCapability.DROP_IN)
+
+    override val headlessDefinition: HeadlessDefinition?
+        get() = null
 }

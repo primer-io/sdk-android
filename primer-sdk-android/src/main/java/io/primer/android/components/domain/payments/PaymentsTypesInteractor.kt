@@ -6,7 +6,6 @@ import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
-import io.primer.android.domain.payments.methods.models.PaymentModuleParams
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 
 internal class PaymentsTypesInteractor(
     private val configurationInteractor: ConfigurationInteractor,
@@ -27,30 +25,28 @@ internal class PaymentsTypesInteractor(
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<Unit, None>() {
 
     override fun execute(params: None) = configurationInteractor(
         ConfigurationParams(false)
     ).flatMapLatest {
-        paymentMethodModulesInteractor.execute(PaymentModuleParams(false))
+        paymentMethodModulesInteractor.execute(None())
             .mapLatest { it.descriptors.map { it.config } }
-    }.flowOn(dispatcher)
-        .onEach { paymentMethodType ->
-            eventDispatcher.dispatchEvent(
-                CheckoutEvent.ConfigurationSuccess(
-                    paymentMethodType.map {
-                        paymentMethodMapper.getPrimerHeadlessUniversalCheckoutPaymentMethod(
-                            it.type
-                        )
-                    }
-                )
+    }.mapLatest { configs ->
+        val paymentMethods = configs.map { config ->
+            paymentMethodMapper.getPrimerHeadlessUniversalCheckoutPaymentMethod(
+                config.type
             )
         }
-        .catch {
-            logger.error(CONFIGURATION_ERROR, it)
-            errorEventResolver.resolve(it, ErrorMapperType.HUC)
-        }
+        eventDispatcher.dispatchEvent(
+            CheckoutEvent.ConfigurationSuccess(paymentMethods)
+        )
+    }.catch {
+        logger.error(CONFIGURATION_ERROR, it)
+        errorEventResolver.resolve(it, ErrorMapperType.HUC)
+    }
+        .flowOn(dispatcher)
         .mapLatest { }
 
     private companion object {

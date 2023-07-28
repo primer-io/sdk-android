@@ -142,4 +142,5 @@
     <string name="test_mail_com">test@mail.com</string>
     <string name="twoc_2p_button">ผ่อนชำระ</string>
     <string name="uploadScreenshot">อัปโหลดภาพหน้าจอในแอปธนาคารของคุณ</string>
+    <string name="primer_payment_method_button_content_description">Pay with %s</string>
 </resources>

@@ -1,11 +1,11 @@
 package io.primer.android.domain.tokenization.helpers
 
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.data.settings.PrimerPaymentHandling
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.ui.fragments.ErrorType
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -30,6 +30,11 @@ internal class PreTokenizationEventsResolver(
                 config.settings.paymentHandling == PrimerPaymentHandling.AUTO -> {
                     val handler = object : PrimerPaymentCreationDecisionHandler {
                         override fun continuePaymentCreation() {
+                            eventDispatcher.dispatchEvent(
+                                CheckoutEvent.TokenizationStarted(
+                                    paymentMethodType
+                                )
+                            )
                             continuation.resume(Unit)
                         }
 

@@ -99,13 +99,6 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                         AlternativePaymentMethodType.PayPal,
                     )
                 }
-                PaymentMethodType.GOCARDLESS.name -> {
-                    AlternativePaymentMethodData(
-                        "Direct Debit Mandate",
-                        it.token,
-                        AlternativePaymentMethodType.DirectDebit,
-                    )
-                }
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
                     val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR

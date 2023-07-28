@@ -131,4 +131,5 @@
     <string name="card_name_on_card">Name on card</string>
     <string name="save_this_card">Save this card</string>
     <string name="card_expiry_formatted">Expiry (MM/YY)</string>
+    <string name="primer_payment_method_button_content_description">Pay with %s</string>
 </resources>

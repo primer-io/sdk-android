@@ -1,7 +1,9 @@
 package io.primer.android.events
 
+import io.primer.android.PrimerSessionIntent
 import android.net.Uri
 import io.primer.android.completion.PrimerErrorDecisionHandler
+import io.primer.android.completion.PrimerHeadlessUniversalCheckoutResumeDecisionHandler
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
@@ -18,7 +20,6 @@ import io.primer.android.model.CheckoutExitReason
 import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
-import kotlinx.coroutines.CancellationException
 
 internal sealed class CheckoutEvent(
     val type: CheckoutEventType,
@@ -29,19 +30,42 @@ internal sealed class CheckoutEvent(
         val resumeHandler: PrimerResumeDecisionHandler,
     ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
+    class TokenizationSuccessHUC(
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler,
+    ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
+
     class ResumeSuccess(
         val resumeToken: String,
         val resumeHandler: PrimerResumeDecisionHandler,
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
 
-    class ResumePending(val paymentMethodInfo: PrimerCheckoutAdditionalInfo?) :
+    class ResumeSuccessHUC(
+        val resumeToken: String,
+        val resumeHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler,
+    ) :
+        CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
+
+    class ResumePending(val paymentMethodInfo: PrimerCheckoutAdditionalInfo) :
         CheckoutEvent(CheckoutEventType.RESUME_PENDING)
 
     class OnAdditionalInfoReceived(val paymentMethodInfo: PrimerCheckoutAdditionalInfo) :
         CheckoutEvent(CheckoutEventType.ON_ADDITIONAL_INFO_RECEIVED)
 
     class ResumeSuccessInternal(
+        val resumeToken: String,
+        val resumeHandler: PrimerResumeDecisionHandler,
+    ) :
+        CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
+
+    class ResumeSuccessInternalHUC(
+        val resumeToken: String,
+        val resumeHandler: PrimerResumeDecisionHandler,
+    ) :
+        CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
+
+    class ResumeSuccessInternalVaultHUC(
         val resumeToken: String,
         val resumeHandler: PrimerResumeDecisionHandler,
     ) :
@@ -108,15 +132,37 @@ internal sealed class CheckoutEvent(
     ) :
         CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
 
+    class PaymentContinueVaultHUC(
+        val data: PrimerPaymentMethodTokenData,
+        val resumeHandler: PrimerResumeDecisionHandler
+    ) :
+        CheckoutEvent(CheckoutEventType.PAYMENT_CONTINUE_HUC)
+
     class Start3DS(
         val processor3DSData: Processor3DS? = null
     ) : CheckoutEvent(CheckoutEventType.START_3DS)
+
+    class Start3DSVault(
+        val processor3DSData: Processor3DS? = null
+    ) : CheckoutEvent(CheckoutEventType.START_3DS)
+
+    object Start3DSMock : CheckoutEvent(CheckoutEventType.START_3DS_MOCK)
 
     class StartAsyncRedirectFlow(
         val title: String,
         val paymentMethodType: String,
         val redirectUrl: String,
         val statusUrl: String,
+        val sessionIntent: PrimerSessionIntent,
+        val deeplinkUrl: String
+    ) : CheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
+
+    class StartAsyncRedirectFlowHUC(
+        val title: String,
+        val paymentMethodType: String,
+        val redirectUrl: String,
+        val statusUrl: String,
+        val sessionIntent: PrimerSessionIntent,
         val deeplinkUrl: String
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_REDIRECT_FLOW)
 
@@ -134,15 +180,18 @@ internal sealed class CheckoutEvent(
         val paymentId: String,
         val paymentMethod: Int,
         val merchantCode: String,
+        val actionType: String,
         val amount: String,
         val referenceNumber: String,
         val prodDesc: String,
         val currencyCode: String,
         val countryCode: String?,
-        val customerId: String?,
+        val customerName: String?,
         val customerEmail: String?,
+        val remark: String?,
         val backendCallbackUrl: String,
-        val deeplinkUrl: String
+        val deeplinkUrl: String,
+        val sessionIntent: PrimerSessionIntent
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 
     class StartVoucherFlow(
@@ -155,9 +204,6 @@ internal sealed class CheckoutEvent(
         CheckoutEvent(CheckoutEventType.ASYNC_FLOW_REDIRECT)
 
     object AsyncFlowPollingError : CheckoutEvent(CheckoutEventType.ASYNC_FLOW_POLLING_ERROR)
-
-    data class AsyncFlowCancelled(val exception: CancellationException? = null) :
-        CheckoutEvent(CheckoutEventType.ASYNC_FLOW_CANCELLED)
 
     // components helpers
     class ConfigurationSuccess(

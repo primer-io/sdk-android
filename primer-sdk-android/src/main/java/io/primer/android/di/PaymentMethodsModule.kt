@@ -3,24 +3,28 @@ package io.primer.android.di
 import io.primer.android.data.action.datasource.RemoteActionDataSource
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.data.action.repository.ActionDataRepository
+import io.primer.android.data.payments.methods.datasource.LocalVaultedPaymentMethodsDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsDataSource
 import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodDeleteDataSource
-import io.primer.android.data.payments.methods.datasource.RemoteVaultedPaymentMethodsExchangeDataSource
-import io.primer.android.data.payments.methods.repository.PaymentMethodsDataRepository
+import io.primer.android.data.payments.methods.datasource.VaultedPaymentMethodExchangeDataSourceRegistry
+import io.primer.android.data.payments.methods.repository.PaymentMethodDescriptorsDataRepository
 import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodsDataRepository
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.logging.DefaultLogger
 import io.primer.android.logging.Logger
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.payment.PaymentMethodListFactory
 import io.primer.android.data.payments.methods.mapping.PaymentMethodMapping
+import io.primer.android.data.payments.methods.mapping.vault.VaultedPaymentMethodAdditionalDataMapperRegistry
+import io.primer.android.data.payments.methods.repository.VaultedPaymentMethodExchangeDataRepository
 import io.primer.android.domain.action.repository.ActionRepository
 import io.primer.android.domain.action.validator.ActionUpdateFilter
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeInteractor
+import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodExchangeRepository
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
 import io.primer.android.payment.billing.DefaultBillingAddressValidator
 import io.primer.android.payment.billing.BillingAddressValidator
@@ -55,8 +59,8 @@ internal val PaymentMethodsModule = {
         single<PaymentMethodMapping> { DefaultPaymentMethodMapping(get()) }
         single<BillingAddressValidator> { DefaultBillingAddressValidator() }
 
-        single<PaymentMethodsRepository> {
-            PaymentMethodsDataRepository(
+        single<PaymentMethodDescriptorsRepository> {
+            PaymentMethodDescriptorsDataRepository(
                 get(),
                 get(),
                 get(),
@@ -72,20 +76,28 @@ internal val PaymentMethodsModule = {
                 get(),
                 get(),
                 get(),
-                get(),
                 get(named(PRIMER_VIEW_MODEL_HANDLER_LOGGER_NAME))
             )
         }
 
         single { RemoteVaultedPaymentMethodsDataSource(get()) }
+        factory { LocalVaultedPaymentMethodsDataSource() }
         single { RemoteVaultedPaymentMethodDeleteDataSource(get()) }
-        single { RemoteVaultedPaymentMethodsExchangeDataSource(get()) }
+        single { VaultedPaymentMethodExchangeDataSourceRegistry(get()) }
+        single { VaultedPaymentMethodAdditionalDataMapperRegistry() }
+        single<VaultedPaymentMethodExchangeRepository> {
+            VaultedPaymentMethodExchangeDataRepository(
+                get(),
+                get(),
+                get()
+            )
+        }
         single<VaultedPaymentMethodsRepository> {
             VaultedPaymentMethodsDataRepository(
                 get(),
                 get(),
                 get(),
-                get()
+                get(),
             )
         }
 
@@ -104,7 +116,7 @@ internal val PaymentMethodsModule = {
 
         factory { ActionUpdateFilter(get(), get()) }
 
-        factory {
+        single {
             ActionInteractor(
                 get(),
                 get(),

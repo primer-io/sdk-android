@@ -18,7 +18,7 @@ internal class ResumePaymentInteractor(
     private val resumePaymentsRepository: ResumePaymentsRepository,
     private val paymentResultEventsResolver: PaymentResultEventsResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
     BaseFlowInteractor<Unit, ResumeParams>() {
     override fun execute(params: ResumeParams): Flow<Unit> {

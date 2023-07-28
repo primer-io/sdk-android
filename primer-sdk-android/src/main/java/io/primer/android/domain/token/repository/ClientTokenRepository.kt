@@ -12,6 +12,12 @@ internal interface ClientTokenRepository {
 
     fun getTransactionId(): String?
 
+    fun getActionType(): String?
+
+    fun getPaymentMethodId(): String?
+
+    fun useThreeDsWeakValidation(): Boolean?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

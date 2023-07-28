@@ -2,8 +2,9 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 
 internal data class AnalyticsTimerEventRequest(
@@ -12,6 +13,7 @@ internal data class AnalyticsTimerEventRequest(
     override val appIdentifier: String,
     override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType,
+    override val sdkPaymentHandling: PrimerPaymentHandling,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,
@@ -28,12 +30,12 @@ internal data class AnalyticsTimerEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsTimerEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsTimerEventRequest> {
             override fun serialize(t: AnalyticsTimerEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<TimerProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<TimerProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -53,6 +55,7 @@ internal data class AnalyticsTimerEventRequest(
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
                     t.getString(CHECKOUT_SESSION_ID_FIELD),
                     t.optNullableString(CLIENT_SESSION_ID_FIELD),
                     t.optNullableString(ORDER_ID_FIELD),
@@ -77,7 +80,7 @@ internal data class TimerProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "analyticsContext"
 
         @JvmField
-        val serializer = object : JSONSerializer<TimerProperties> {
+        val serializer = object : JSONObjectSerializer<TimerProperties> {
             override fun serialize(t: TimerProperties): JSONObject {
                 return JSONObject().apply {
                     put(ID_FIELD, t.id)
@@ -85,7 +88,7 @@ internal data class TimerProperties(
                     putOpt(
                         ANALYTICS_CONTEXT_FIELD,
                         t.analyticsContext?.let {
-                            JSONSerializationUtils.getSerializer<AnalyticsContext>()
+                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
                                 .serialize(it)
                         }
                     )

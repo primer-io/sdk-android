@@ -2,8 +2,9 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 
 internal data class AnalyticsMessageEventRequest(
@@ -12,6 +13,7 @@ internal data class AnalyticsMessageEventRequest(
     override val appIdentifier: String,
     override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType,
+    override val sdkPaymentHandling: PrimerPaymentHandling,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,
@@ -28,12 +30,12 @@ internal data class AnalyticsMessageEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsMessageEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsMessageEventRequest> {
             override fun serialize(t: AnalyticsMessageEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<MessageProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<MessageProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -53,6 +55,7 @@ internal data class AnalyticsMessageEventRequest(
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
                     t.getString(CHECKOUT_SESSION_ID_FIELD),
                     t.optNullableString(CLIENT_SESSION_ID_FIELD),
                     t.optNullableString(ORDER_ID_FIELD),
@@ -74,14 +77,14 @@ internal data class MessageProperties(
 ) : BaseAnalyticsProperties() {
     companion object {
 
-        private const val MESSAGE_TYPE_FIELD = "resumeToken"
+        private const val MESSAGE_TYPE_FIELD = "messageType"
         private const val MESSAGE_FIELD = "message"
         private const val SEVERITY_FIELD = "severity"
         private const val DIAGNOSTICS_ID_FIELD = "diagnosticsId"
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = object : JSONSerializer<MessageProperties> {
+        val serializer = object : JSONObjectSerializer<MessageProperties> {
             override fun serialize(t: MessageProperties): JSONObject {
                 return JSONObject().apply {
                     put(MESSAGE_TYPE_FIELD, t.messageType.name)
@@ -91,7 +94,7 @@ internal data class MessageProperties(
                     putOpt(
                         ANALYTICS_CONTEXT_FIELD,
                         t.context?.let {
-                            JSONSerializationUtils.getSerializer<AnalyticsContext>()
+                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
                                 .serialize(it)
                         }
                     )

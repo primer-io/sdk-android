@@ -2,7 +2,7 @@ package io.primer.android.threeds.domain.models
 
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.threeds.data.models.ChallengePreference
+import io.primer.android.threeds.data.models.auth.ChallengePreference
 import io.primer.android.threeds.helpers.ProtocolVersion
 
 internal sealed class BaseThreeDsParams(

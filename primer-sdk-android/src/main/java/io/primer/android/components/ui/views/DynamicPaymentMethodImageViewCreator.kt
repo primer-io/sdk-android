@@ -6,15 +6,13 @@ import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import io.primer.android.components.ui.assets.PrimerAssetManager
-import io.primer.android.components.ui.views.PaymentMethodViewCreator.Companion.DEFAULT_EXPORTED_ICON_SCALE
+import io.primer.android.R
+import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
+import io.primer.android.components.ui.extensions.get
 import io.primer.android.databinding.PrimerPaymentMethodImageButtonBinding
 import io.primer.android.payment.config.ImageDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
-import io.primer.android.ui.extensions.scaleImage
 import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.utils.dPtoPx
-import io.primer.android.utils.toResourcesScale
 
 internal class DynamicPaymentMethodImageViewCreator(
     private val theme: PrimerTheme,
@@ -28,11 +26,10 @@ internal class DynamicPaymentMethodImageViewCreator(
             false
         )
         val paymentMethodAsset = displayMetadata.imageColor?.let {
-            PrimerAssetManager.getAsset(
+            PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
                 context,
                 displayMetadata.paymentMethodType,
-                it
-            )
+            ).paymentMethodLogo.get(it)
         }
         binding.apply {
             val content = ButtonViewHelper.generateButtonContent(context, theme, displayMetadata)
@@ -42,16 +39,11 @@ internal class DynamicPaymentMethodImageViewCreator(
                 paymentMethodParent.background = RippleDrawable(rippleColor, content, null)
             }
 
-            paymentMethodParent.contentDescription = displayMetadata.name
-            paymentMethodIcon.setImageDrawable(
-                paymentMethodAsset?.scaleImage(
-                    context,
-                    context.resources.displayMetrics.toResourcesScale() /
-                        DEFAULT_EXPORTED_ICON_SCALE,
-                    maxHeight = PaymentMethodViewCreator.DEFAULT_EXPORTED_ICON_MAX_HEIGHT
-                        .dPtoPx(context)
-                )
+            paymentMethodParent.contentDescription = context.getString(
+                R.string.primer_payment_method_button_content_description,
+                displayMetadata.name
             )
+            paymentMethodIcon.setImageDrawable(paymentMethodAsset)
         }
         return binding.root
     }

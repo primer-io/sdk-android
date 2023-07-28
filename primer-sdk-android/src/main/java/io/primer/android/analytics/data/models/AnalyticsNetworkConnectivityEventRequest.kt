@@ -2,8 +2,9 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.JSONSerializer
+import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 
 internal data class AnalyticsNetworkConnectivityEventRequest(
@@ -12,6 +13,7 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
     override val appIdentifier: String,
     override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType,
+    override val sdkPaymentHandling: PrimerPaymentHandling,
     override val checkoutSessionId: String,
     override val clientSessionId: String?,
     override val orderId: String?,
@@ -28,12 +30,12 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONSerializer<AnalyticsNetworkConnectivityEventRequest> {
+        val serializer = object : JSONObjectSerializer<AnalyticsNetworkConnectivityEventRequest> {
             override fun serialize(t: AnalyticsNetworkConnectivityEventRequest): JSONObject {
                 return baseSerializer.serialize(t).apply {
                     put(
                         PROPERTIES_FIELD,
-                        JSONSerializationUtils.getSerializer<NetworkTypeProperties>()
+                        JSONSerializationUtils.getJsonObjectSerializer<NetworkTypeProperties>()
                             .serialize(t.properties)
                     )
                 }
@@ -53,6 +55,7 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
                     t.getString(CHECKOUT_SESSION_ID_FIELD),
                     t.optNullableString(CLIENT_SESSION_ID_FIELD),
                     t.optNullableString(ORDER_ID_FIELD),
@@ -74,7 +77,7 @@ internal data class NetworkTypeProperties(
         private const val NETWORK_TYPE_FIELD = "networkType"
 
         @JvmField
-        val serializer = object : JSONSerializer<NetworkTypeProperties> {
+        val serializer = object : JSONObjectSerializer<NetworkTypeProperties> {
             override fun serialize(t: NetworkTypeProperties): JSONObject {
                 return JSONObject().apply {
                     put(NETWORK_TYPE_FIELD, t.networkType.name)

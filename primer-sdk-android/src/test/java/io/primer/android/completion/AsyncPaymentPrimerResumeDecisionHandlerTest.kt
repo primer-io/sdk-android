@@ -17,7 +17,7 @@ import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeep
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
-import io.primer.android.domain.payments.methods.repository.PaymentMethodsRepository
+import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
@@ -50,7 +50,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
     internal lateinit var paymentMethodRepository: PaymentMethodRepository
 
     @RelaxedMockK
-    internal lateinit var paymentMethodsRepository: PaymentMethodsRepository
+    internal lateinit var paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository
 
     @RelaxedMockK
     internal lateinit var paymentResultRepository: PaymentResultRepository
@@ -95,7 +95,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
                 eventDispatcher,
                 logger,
                 config,
-                paymentMethodsRepository,
+                paymentMethodDescriptorsRepository,
                 retailOutletRepository,
                 asyncPaymentMethodDeeplinkRepository,
                 instantExecutorExtension.dispatcher
@@ -124,8 +124,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
 
         verify { eventDispatcher.dispatchEvents(capture(events)) }
 
-        assertEquals(CheckoutEventType.PAYMENT_METHOD_PRESENTED, events.captured[0].type)
-        assertEquals(CheckoutEventType.START_ASYNC_REDIRECT_FLOW, events.captured[1].type)
+        assertEquals(CheckoutEventType.START_ASYNC_REDIRECT_FLOW, events.captured[0].type)
     }
 
     @Test
@@ -150,8 +149,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
 
         verify { eventDispatcher.dispatchEvents(capture(events)) }
 
-        assertEquals(CheckoutEventType.PAYMENT_METHOD_PRESENTED, events.captured[0].type)
-        assertEquals(CheckoutEventType.START_ASYNC_REDIRECT_FLOW, events.captured[1].type)
+        assertEquals(CheckoutEventType.START_ASYNC_REDIRECT_FLOW, events.captured[0].type)
     }
 
     @Test

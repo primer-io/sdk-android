@@ -1,8 +1,7 @@
 package io.primer.android.data.error
 
-import io.primer.android.http.exception.HttpException
-import io.primer.android.http.exception.JsonDecodingException
-import io.primer.android.http.exception.JsonEncodingException
+import io.primer.android.data.base.exceptions.IllegalClientSessionValueException
+import io.primer.android.data.base.exceptions.IllegalValueException
 import io.primer.android.data.configuration.exception.MissingConfigurationException
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.token.exception.ExpiredClientTokenException
@@ -10,12 +9,15 @@ import io.primer.android.data.token.exception.InvalidClientTokenException
 import io.primer.android.domain.error.ErrorMapper
 import io.primer.android.domain.error.models.ClientError
 import io.primer.android.domain.error.models.ClientTokenError
-import io.primer.android.domain.error.models.GeneralError
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.error.models.ConnectivityError
+import io.primer.android.domain.error.models.GeneralError
 import io.primer.android.domain.error.models.HttpError
 import io.primer.android.domain.error.models.ParserError
 import io.primer.android.domain.error.models.PaymentMethodError
+import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.http.exception.HttpException
+import io.primer.android.http.exception.JsonDecodingException
+import io.primer.android.http.exception.JsonEncodingException
 import java.io.IOException
 
 internal open class DefaultErrorMapper : ErrorMapper {
@@ -53,6 +55,16 @@ internal open class DefaultErrorMapper : ErrorMapper {
             is InvalidClientTokenException -> ClientTokenError.InvalidClientTokenError
             is ExpiredClientTokenException -> ClientTokenError.ExpiredClientTokenError
             is MissingConfigurationException -> GeneralError.MissingConfigurationError
+            is IllegalValueException -> GeneralError.InvalidValueError(
+                throwable.key,
+                throwable.message
+            )
+            is IllegalClientSessionValueException -> GeneralError.InvalidClientSessionValueError(
+                throwable.key,
+                throwable.value,
+                throwable.allowedValue,
+                throwable.message
+            )
             else -> GeneralError.UnknownError(throwable.message.orEmpty())
         }
     }

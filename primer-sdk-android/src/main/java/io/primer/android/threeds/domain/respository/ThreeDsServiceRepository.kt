@@ -2,10 +2,11 @@ package io.primer.android.threeds.domain.respository
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.threeds.data.exception.ThreeDsMissingDirectoryServerException
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.CardNetwork
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.common.CardNetwork
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.helpers.ProtocolVersion
@@ -14,9 +15,13 @@ import java.util.Locale
 
 internal interface ThreeDsServiceRepository {
 
+    val threeDsSdkVersion: String?
+
+    @Throws(ThreeDsConfigurationException::class)
     suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
+        useWeakValidation: Boolean,
         threeDsKeysParams: ThreeDsKeysParams?,
     ): Flow<Unit>
 
@@ -31,7 +36,8 @@ internal interface ThreeDsServiceRepository {
         activity: Activity,
         transaction: Transaction,
         authResponse: BeginAuthResponse,
-        threeDSAppURL: String,
+        threeDSAppURL: String?,
+        initProtocolVersion: String
     ): Flow<ChallengeStatusData>
 
     fun performCleanup()

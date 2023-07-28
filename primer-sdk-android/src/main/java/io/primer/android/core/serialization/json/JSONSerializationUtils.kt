@@ -11,12 +11,31 @@ internal object JSONSerializationUtils {
         NoSuchFieldException::class,
         IllegalAccessException::class
     )
-    inline fun <reified T : JSONSerializable> getSerializer(): JSONSerializer<T> {
+    inline fun <reified T : JSONSerializable> getJsonSerializer(): JSONSerializer<T> {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
-        if (field.type.equals(JSONSerializer::class.java).not()) {
+
+        if (field.type.equals(JSONObjectSerializer::class.java).not() && field.type.equals(
+                JSONArraySerializer::class.java
+            ).not()
+        ) {
             throw IllegalStateException("Serializer is not of the type JSONSerializer")
         }
         return field[null] as JSONSerializer<T>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Throws(
+        IllegalStateException::class,
+        NoSuchFieldException::class,
+        IllegalAccessException::class
+    )
+    inline fun <reified T : JSONObjectSerializable> getJsonObjectSerializer():
+        JSONObjectSerializer<T> {
+        val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
+        if (field.type.equals(JSONObjectSerializer::class.java).not()) {
+            throw IllegalStateException("Serializer is not of the type JSONObjectSerializable")
+        }
+        return field[null] as JSONObjectSerializer<T>
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -1,11 +1,10 @@
 package io.primer.android.domain.payments.async
 
-import io.primer.android.data.payments.async.exception.AsyncFlowIncompleteException
+import io.primer.android.data.payments.status.exception.AsyncFlowIncompleteException
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.domain.payments.async.exception.AsyncFlowIgnoredCancellationException
 import io.primer.android.domain.payments.async.models.AsyncMethodParams
 import io.primer.android.domain.payments.async.models.AsyncStatus
 import io.primer.android.domain.payments.async.repository.AsyncPaymentMethodStatusRepository
@@ -28,7 +27,7 @@ internal class AsyncPaymentMethodInteractor(
     private val resumeEventResolver: ResumeEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<AsyncStatus, AsyncMethodParams>() {
 
     override fun execute(params: AsyncMethodParams) = paymentMethodStatusRepository.getAsyncStatus(
@@ -41,12 +40,12 @@ internal class AsyncPaymentMethodInteractor(
         .onEach {
             resumeEventResolver.resolve(
                 paymentMethodRepository.getPaymentMethod().paymentInstrumentType,
+                paymentMethodRepository.getPaymentMethod().isVaulted,
                 it.resumeToken
             )
         }.doOnError {
             eventDispatcher.dispatchEvent(CheckoutEvent.AsyncFlowPollingError)
             when (it) {
-                is AsyncFlowIgnoredCancellationException -> Unit
                 is CancellationException -> baseErrorEventResolver.resolve(
                     PaymentMethodCancelledException(
                         params.paymentMethodType

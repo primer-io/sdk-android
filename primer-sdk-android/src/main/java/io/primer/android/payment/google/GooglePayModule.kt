@@ -21,7 +21,8 @@ internal class GooglePayModule(
         } else {
             GooglePayFacade.Environment.TEST
         }
-        googlePayFacade = googlePayFacadeFactory.create(applicationContext, googlePayEnvironment)
+        googlePayFacade =
+            googlePayFacadeFactory.create(applicationContext, googlePayEnvironment)
     }
 
     override fun registerPaymentMethodCheckers(
@@ -39,7 +40,7 @@ internal class GooglePayModule(
         paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     ) {
         val paymentMethodDescriptorFactory =
-            GooglePayPaymentMethodDescriptorFactory(googlePayFacade)
+            GooglePayPaymentMethodDescriptorFactory()
 
         paymentMethodDescriptorFactoryRegistry.register(
             PaymentMethodType.GOOGLE_PAY.name,

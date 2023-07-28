@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
+import io.primer.android.BaseCheckoutActivity
+import io.primer.android.BuildConfig
 import io.primer.android.R
 
-internal open class WebViewActivity : AppCompatActivity() {
+internal open class WebViewActivity : BaseCheckoutActivity() {
 
     private val webView by lazy { findViewById<WebView>(R.id.webView) }
 
@@ -18,9 +20,15 @@ internal open class WebViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_primer_webview)
 
         setupViews()
+        setupListeners()
         setupWebView()
         setupWebViewClient()
-        loadPaymentsUrl()
+        loadPaymentsUrl(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        webView.saveState(outState)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -48,22 +56,41 @@ internal open class WebViewActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
         webView.apply {
             settings.apply {
                 setSupportZoom(false)
                 loadsImagesAutomatically = true
                 javaScriptEnabled = true
                 useWideViewPort = true
+                loadWithOverviewMode = true
                 domStorageEnabled = true
             }
         }
     }
 
-    private fun loadPaymentsUrl() {
-        val url = intent.extras?.getString(PAYMENT_URL_KEY)
-        url?.let {
-            webView.loadUrl(it)
+    private fun loadPaymentsUrl(savedInstanceState: Bundle?) {
+        savedInstanceState?.let { bundle ->
+            webView.restoreState(bundle)
+        } ?: run {
+            val url = intent.extras?.getString(PAYMENT_URL_KEY)
+            url?.let {
+                webView.loadUrl(it)
+            }
         }
+    }
+
+    private fun setupListeners() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (webView.canGoBack()) {
+                        webView.goBack()
+                    } else onSupportNavigateUp()
+                }
+            }
+        )
     }
 
     internal companion object {

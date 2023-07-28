@@ -1,12 +1,12 @@
 package io.primer.android.threeds.presentation
 
 import android.app.Activity
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import com.netcetera.threeds.sdk.api.transaction.Transaction
-import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
@@ -14,9 +14,9 @@ import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.presentation.base.BaseViewModel
-import io.primer.android.threeds.data.models.BeginAuthResponse
-import io.primer.android.threeds.data.models.ChallengePreference
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.auth.BeginAuthResponse
+import io.primer.android.threeds.data.models.auth.ChallengePreference
+import io.primer.android.threeds.data.models.common.ResponseCode
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsCheckoutParams
@@ -34,8 +34,11 @@ internal class ThreeDsViewModel(
     private val _threeDsInitEvent = MutableLiveData<Unit>()
     val threeDsInitEvent: LiveData<Unit> = _threeDsInitEvent
 
-    private val _challengeStatusChangedEvent = MutableLiveData<ChallengeStatusData>()
-    val challengeStatusChangedEvent: LiveData<ChallengeStatusData> = _challengeStatusChangedEvent
+    private val _threeDsStatusChangedEvent = MutableLiveData<ChallengeStatusData>()
+    val threeDsStatusChangedEvent: LiveData<ChallengeStatusData> = _threeDsStatusChangedEvent
+
+    private val _threeDsErrorEvent = MutableLiveData<Throwable>()
+    val threeDsErrorEvent: LiveData<Throwable> = _threeDsErrorEvent
 
     private val _challengeRequiredEvent = MutableLiveData<ThreeDsEventData.ChallengeRequiredData>()
     val challengeRequiredEvent: LiveData<ThreeDsEventData.ChallengeRequiredData> =
@@ -48,12 +51,11 @@ internal class ThreeDsViewModel(
         viewModelScope.launch {
             threeDsInteractor.initialize(
                 ThreeDsInitParams(
-                    config.settings.debugOptions.is3DSSanityCheckEnabled
-                        ?: BuildConfig.DEBUG.not(),
+                    config.settings.debugOptions.is3DSSanityCheckEnabled,
                     config.settings.locale
                 )
-            ).catch {
-                _threeDsFinishedEvent.postValue(Unit)
+            ).catch { throwable ->
+                _threeDsErrorEvent.postValue(throwable)
             }.collect {
                 _threeDsInitEvent.postValue(it)
             }
@@ -63,16 +65,14 @@ internal class ThreeDsViewModel(
     fun performAuthorization() {
         viewModelScope.launch {
             threeDsInteractor.authenticateSdk()
-                .catch {
-                    _threeDsFinishedEvent.postValue(Unit)
+                .catch { throwable ->
+                    _threeDsErrorEvent.postValue(throwable)
                 }.collect { transaction ->
                     threeDsInteractor.beginRemoteAuth(
-                        getThreeDsParams(
-                            transaction.authenticationRequestParameters,
-                        )
+                        getThreeDsParams(transaction.authenticationRequestParameters)
                     )
-                        .catch {
-                            _threeDsFinishedEvent.postValue(Unit)
+                        .catch { throwable ->
+                            _threeDsErrorEvent.postValue(throwable)
                             transaction.close()
                         }
                         .collect { result ->
@@ -104,22 +104,22 @@ internal class ThreeDsViewModel(
                 activity,
                 transaction,
                 authData,
-            ).catch {
+            ).catch { throwable ->
                 logThreeDsScreenDismissed()
-                _threeDsFinishedEvent.postValue(Unit)
+                _threeDsErrorEvent.postValue(throwable)
                 transaction.close()
             }.collect {
                 logThreeDsScreenDismissed()
-                _challengeStatusChangedEvent.postValue(it)
+                _threeDsStatusChangedEvent.postValue(it)
             }
         }
     }
 
     fun continueRemoteAuth(
-        token: String,
+        challengeStatusData: ChallengeStatusData,
     ) {
         viewModelScope.launch {
-            threeDsInteractor.continueRemoteAuth(token)
+            threeDsInteractor.continueRemoteAuth(challengeStatusData)
                 .catch {
                     _threeDsFinishedEvent.postValue(Unit)
                 }
@@ -129,7 +129,22 @@ internal class ThreeDsViewModel(
         }
     }
 
-    override fun onCleared() {
+    fun continueRemoteAuthWithException(
+        throwable: Throwable,
+    ) {
+        viewModelScope.launch {
+            threeDsInteractor.continueRemoteAuthWithException(throwable)
+                .catch {
+                    _threeDsFinishedEvent.postValue(Unit)
+                }
+                .collect {
+                    _threeDsFinishedEvent.postValue(Unit)
+                }
+        }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onCleared() {
         super.onCleared()
         threeDsInteractor.cleanup()
     }
@@ -146,7 +161,7 @@ internal class ThreeDsViewModel(
             when (config.intent.paymentMethodIntent.isCheckout) {
                 true -> ThreeDsCheckoutParams(
                     authenticationRequestParameters,
-                    ChallengePreference.REQUESTED_DUE_TO_MANDATE
+                    ChallengePreference.NO_PREFERENCE
                 )
                 false -> ThreeDsVaultParams(
                     authenticationRequestParameters,

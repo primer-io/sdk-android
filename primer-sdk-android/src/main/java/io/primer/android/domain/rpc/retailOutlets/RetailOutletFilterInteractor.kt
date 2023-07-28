@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.mapLatest
 
 internal class RetailOutletFilterInteractor(
     private val retailOutletRepository: RetailOutletRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<List<RetailOutlet>, RetailOutletFilterParams>() {
 
     override fun execute(params: RetailOutletFilterParams) =

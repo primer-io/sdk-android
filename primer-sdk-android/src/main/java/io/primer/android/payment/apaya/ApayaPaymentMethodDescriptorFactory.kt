@@ -16,8 +16,8 @@ internal class ApayaPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
         paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor =
         ApayaDescriptor(
-            localConfig,
             paymentMethod as Apaya,
+            localConfig,
             paymentMethodRemoteConfig
         )
 }

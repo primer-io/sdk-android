@@ -60,6 +60,7 @@ internal class MultibancoConditionsFragment : Fragment(), OnActionContinueCallba
             when (status) {
                 TokenizationStatus.LOADING -> binding.btnConfirmPay.showProgress()
                 TokenizationStatus.ERROR -> binding.btnConfirmPay.hideProgress()
+                else -> Unit
             }
         }
     }

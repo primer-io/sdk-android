@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flowOn
 internal class AnalyticsInteractor(
     private val analyticsRepository: AnalyticsRepository,
     private val logger: Logger,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<Unit, BaseAnalyticsParams>() {
 
     fun initialize() = analyticsRepository.initialize().flowOn(dispatcher)

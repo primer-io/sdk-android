@@ -16,7 +16,7 @@ internal class ConfigurationInteractor(
     private val configurationRepository: ConfigurationRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<Configuration, ConfigurationParams>() {
 
     override fun execute(params: ConfigurationParams) =

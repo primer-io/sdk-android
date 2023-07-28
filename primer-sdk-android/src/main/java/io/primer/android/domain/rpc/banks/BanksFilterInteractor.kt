@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.mapLatest
 
 internal class BanksFilterInteractor(
     private val issuingBankRepository: IssuingBankRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<List<IssuingBank>, IssuingBankFilterParams>() {
 
     override fun execute(params: IssuingBankFilterParams) =

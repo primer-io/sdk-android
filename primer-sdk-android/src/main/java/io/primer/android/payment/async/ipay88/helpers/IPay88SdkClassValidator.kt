@@ -15,10 +15,10 @@ internal class IPay88SdkClassValidator {
 
         const val I_PAY_CLASS_NOT_LOADED_ERROR =
             "WARNING!\n" +
-                "iPay88 card configuration has been found but dependency " +
-                "'io.primer:ipay88-android' is missing. " +
-                "Add `io.primer:ipa88-android' in your project so you can perform " +
-                "payments with iPay88."
+                "%s configuration has been found but dependency " +
+                "'io.primer:ipay88-%s-android' is missing. " +
+                "Add `io.primer:ipay88-%s-android' in your project so you can perform " +
+                "payments with %s."
         private const val I_PAY_CLASS_NAME = "io.primer.ipay88.api.ui.NativeIPay88Activity"
     }
 }

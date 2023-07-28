@@ -15,7 +15,7 @@ internal class PaymentInputTypesInteractor(
     private val logger: Logger,
 ) {
     // MOVE TO FACTORY
-    fun execute(paymentMethodType: String): List<PrimerInputElementType>? {
+    fun execute(paymentMethodType: String): List<PrimerInputElementType> {
         try {
             return when (paymentMethodType) {
                 PaymentMethodType.PAYMENT_CARD.name -> {
@@ -84,20 +84,23 @@ internal class PaymentInputTypesInteractor(
                 }
                 PaymentMethodType.ADYEN_MBWAY.name,
                 PaymentMethodType.XENDIT_OVO.name -> listOf(PrimerInputElementType.PHONE_NUMBER)
+                PaymentMethodType.ADYEN_BLIK.name -> listOf(PrimerInputElementType.OTP_CODE)
                 else -> emptyList()
             }
         } catch (e: IllegalArgumentException) {
             logger.error(CONFIGURATION_ERROR, e)
             errorEventResolver.resolve(e, ErrorMapperType.HUC)
-            return null
+            return emptyList()
         }
     }
 
     private companion object {
         const val CONFIGURATION_ERROR =
-            "Failed to initialise due to a configuration missing. Please ensure" +
-                "that you have called PrimerHeadlessUniversalCheckout start method" +
-                " and you have received onClientSessionSetupSuccessfully callback before" +
-                " calling this method."
+            """
+                Failed to initialise due to a configuration missing. Please ensure 
+                that you have called PrimerHeadlessUniversalCheckout start method
+                and you have received onAvailablePaymentMethodsLoaded callback before
+                calling this method.
+            """
     }
 }

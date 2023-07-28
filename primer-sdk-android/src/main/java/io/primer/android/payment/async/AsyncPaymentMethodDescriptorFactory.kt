@@ -12,7 +12,7 @@ import io.primer.android.payment.async.blik.AdyenBlikPaymentMethodDescriptor
 import io.primer.android.payment.async.dotpay.AdyenDotpayPaymentMethodDescriptor
 import io.primer.android.payment.async.fastbanktransfer.RapydFastPaymentMethodDescriptor
 import io.primer.android.payment.async.ideal.AdyenIdealPaymentMethodDescriptor
-import io.primer.android.payment.async.ipay88.IPay88CardPaymentMethodDescriptor
+import io.primer.android.payment.async.ipay88.IPay88PaymentMethodDescriptor
 import io.primer.android.payment.async.mbway.AdyenMbWayPaymentMethodDescriptor
 import io.primer.android.payment.async.multibanco.AdyenMultibancoPaymentMethodDescriptor
 import io.primer.android.payment.async.ovo.XenditOvoPaymentMethodDescriptor
@@ -39,81 +39,75 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
             ) {
                 PaymentMethodType.PRIMER_TEST_SOFORT ->
                     PrimerTestSofortPaymentMethodDescriptor(
-                        localConfig,
                         paymentMethod as AsyncPaymentMethod,
+                        localConfig,
                         paymentMethodRemoteConfig
                     )
                 PaymentMethodType.ADYEN_IDEAL -> AdyenIdealPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_DOTPAY -> AdyenDotpayPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_BLIK -> AdyenBlikPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_MBWAY -> AdyenMbWayPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_BANK_TRANSFER -> AdyenSepaPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.XFERS_PAYNOW -> XfersPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.RAPYD_FAST -> RapydFastPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.RAPYD_PROMPTPAY -> RapydPromptPayPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.OMISE_PROMPTPAY -> OmisePromptPayPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.XENDIT_OVO -> XenditOvoPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_MULTIBANCO -> AdyenMultibancoPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
                 PaymentMethodType.ADYEN_BANCONTACT_CARD ->
                     AdyenBancontactCardPaymentMethodDescriptor(
-                        localConfig,
                         paymentMethod as AsyncPaymentMethod,
+                        localConfig,
                         paymentMethodRemoteConfig
                     )
                 PaymentMethodType.XENDIT_RETAIL_OUTLETS ->
                     XenditRetailOutletPaymentMethodDescriptor(
-                        localConfig,
                         paymentMethod as AsyncPaymentMethod,
-                        paymentMethodRemoteConfig
-                    )
-                PaymentMethodType.IPAY88_CARD ->
-                    IPay88CardPaymentMethodDescriptor(
                         localConfig,
-                        paymentMethod as AsyncPaymentMethod,
                         paymentMethodRemoteConfig
                     )
                 else -> throw IllegalStateException(
@@ -122,8 +116,14 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
             }
             PaymentMethodImplementationType.WEB_REDIRECT ->
                 return WebRedirectPaymentMethodDescriptor(
-                    localConfig,
                     paymentMethod as AsyncPaymentMethod,
+                    localConfig,
+                    paymentMethodRemoteConfig
+                )
+            PaymentMethodImplementationType.IPAY88_SDK ->
+                return IPay88PaymentMethodDescriptor(
+                    paymentMethod as AsyncPaymentMethod,
+                    localConfig,
                     paymentMethodRemoteConfig
                 )
             PaymentMethodImplementationType.UNKNOWN -> throw IllegalStateException(

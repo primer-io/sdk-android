@@ -5,7 +5,7 @@ import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableBoolean
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
-import io.primer.android.threeds.data.models.ResponseCode
+import io.primer.android.threeds.data.models.common.ResponseCode
 import org.json.JSONObject
 
 internal abstract class BasePaymentToken : JSONDeserializable {
