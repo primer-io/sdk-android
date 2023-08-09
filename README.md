@@ -173,6 +173,9 @@ node server.js
 ## Debugging
 Logcat has a habit of misbehaving, so you might need to attach the debugger and set breakpoints to find out what's really going on.
 
+# Releasing
+
+The releasing of the SDK is handled via a manually triggered github action, a full explanation of this process can be found on this [runbook](https://www.notion.so/primerio/Automating-Version-Bumping-and-Changelog-Creation-c13e32fea11447069dea76f966f4b0fb?pvs=4).
 
 # Contributing guidelines:
 
