@@ -18,7 +18,7 @@ internal abstract class TokenizationRequest : JSONObjectSerializable {
                     is TokenizationCheckoutRequest ->
                         TokenizationCheckoutRequest.serializer.serialize(t)
                     is TokenizationVaultRequest -> TokenizationVaultRequest.serializer.serialize(t)
-                    else -> throw IllegalStateException("Unsupported instance of $t")
+                    else -> error("Unsupported instance of $t")
                 }
             }
         }

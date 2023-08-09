@@ -1,11 +1,11 @@
 package io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.repository
 
-import io.primer.android.data.base.models.BaseRemoteRequest
-import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.datasource.RemoteApayaDataSource
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.models.toApayaSession
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.models.toCreateSessionRequest
+import io.primer.android.data.base.models.BaseRemoteRequest
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.SessionCreateException
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.payments.apaya.models.ApayaSession
@@ -39,7 +39,11 @@ internal class ApayaSessionDataRepository(
         }.doOnError {
             when {
                 it is HttpException && it.isClientError() ->
-                    throw SessionCreateException(PaymentMethodType.APAYA, it.error.diagnosticsId)
+                    throw SessionCreateException(
+                        PaymentMethodType.APAYA,
+                        it.error.diagnosticsId,
+                        it.error.description
+                    )
                 else -> throw it
             }
         }

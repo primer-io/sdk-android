@@ -20,12 +20,15 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.payp
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.repository.PaypalCreateOrderRepository
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.repository.PaypalInfoRepository
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.repository.PaypalVaultConfigurationRepository
-import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalCheckoutValidationRulesResolver
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalCheckoutOrderInfoValidationRulesResolver
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalValidBillingAgreementTokenRule
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalValidOrderTokenRule
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalVaultValidationRulesResolver
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.datasource.RemotePaypalOrderInfoDataSource
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.repository.PaypalOrderInfoDataRepository
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalCheckoutOrderValidationRulesResolver
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalValidOrderAmountRule
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalValidOrderCurrencyRule
 import org.koin.dsl.module
 
 internal val paypalModule = {
@@ -104,7 +107,7 @@ internal val paypalModule = {
 
         single { PaypalValidOrderTokenRule() }
         single {
-            PaypalCheckoutValidationRulesResolver(
+            PaypalCheckoutOrderInfoValidationRulesResolver(
                 get()
             )
         }
@@ -112,6 +115,15 @@ internal val paypalModule = {
         single { PaypalValidBillingAgreementTokenRule() }
         single {
             PaypalVaultValidationRulesResolver(
+                get()
+            )
+        }
+
+        single { PaypalValidOrderAmountRule() }
+        single { PaypalValidOrderCurrencyRule() }
+        single {
+            PaypalCheckoutOrderValidationRulesResolver(
+                get(),
                 get()
             )
         }

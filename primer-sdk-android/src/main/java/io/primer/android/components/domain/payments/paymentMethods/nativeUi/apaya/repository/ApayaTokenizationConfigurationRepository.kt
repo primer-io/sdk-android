@@ -3,7 +3,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nativeUi.apa
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.apaya.models.ApayaTokenizationConfiguration
 import kotlinx.coroutines.flow.Flow
 
-internal interface ApayaTokenizationConfigurationRepository {
+internal fun interface ApayaTokenizationConfigurationRepository {
 
     fun getConfiguration(): Flow<ApayaTokenizationConfiguration>
 }

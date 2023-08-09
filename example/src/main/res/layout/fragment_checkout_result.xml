@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:padding="@dimen/large_padding"
-    tools:context=".MerchantResultFragment">
+    tools:context="io.primer.sample.MerchantResultFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

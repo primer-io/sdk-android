@@ -8,6 +8,6 @@ import org.json.JSONObject
  * @return Deserialized object T.
  */
 
-internal interface JSONDeserializer<T : JSONDeserializable> {
+internal fun interface JSONDeserializer<T : JSONDeserializable> {
     fun deserialize(t: JSONObject): T
 }

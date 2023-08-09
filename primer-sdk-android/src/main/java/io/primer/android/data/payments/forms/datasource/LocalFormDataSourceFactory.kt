@@ -29,6 +29,6 @@ internal class LocalFormDataSourceFactory(
             PaymentMethodType.ADYEN_BANCONTACT_CARD -> BancontactCardLocalFormDataSource(
                 primerTheme
             )
-            else -> throw IllegalStateException("Invalid paymentMethodType $paymentMethodType")
+            else -> error("Invalid paymentMethodType $paymentMethodType")
         }
 }

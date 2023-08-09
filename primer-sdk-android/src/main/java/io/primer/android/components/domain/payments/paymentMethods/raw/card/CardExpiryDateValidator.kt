@@ -13,15 +13,15 @@ internal class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
         return when {
             input.isNullOrBlank() -> {
                 PrimerInputValidationError(
-                    "invalid-expiry-date",
-                    "[invalid-expiry-date] Card expiry date cannot be blank.",
+                    EXPIRY_DATE_INVALID_ERROR_ID,
+                    "$EXPIRY_DATE_INVALID_ERROR_ID Card expiry date cannot be blank.",
                     PrimerInputElementType.EXPIRY_DATE
                 )
             }
             VALID_EXPIRY_DATE_PATTERN.matches(paddedInput.orEmpty()).not() -> {
                 PrimerInputValidationError(
-                    "invalid-expiry-date",
-                    "[invalid-expiry-date] Card expiry date is not valid. " +
+                    EXPIRY_DATE_INVALID_ERROR_ID,
+                    "$EXPIRY_DATE_INVALID_ERROR_ID Card expiry date is not valid. " +
                         "Valid expiry date format is MM/YYYY.",
                     PrimerInputElementType.EXPIRY_DATE
                 )
@@ -34,7 +34,7 @@ internal class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
                     add(Calendar.YEAR, -1)
                 }
             } == true -> PrimerInputValidationError(
-                "invalid-expiry-date",
+                EXPIRY_DATE_INVALID_ERROR_ID,
                 "Card expiry date is not valid. " +
                     "Expiry date should not be less than a year in the past",
                 PrimerInputElementType.EXPIRY_DATE
@@ -45,6 +45,7 @@ internal class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
 
     private companion object {
         const val EXPIRY_DATE_LENGTH = 7
+        const val EXPIRY_DATE_INVALID_ERROR_ID = "invalid-expiry-date"
         val VALID_EXPIRY_DATE_PATTERN = "(0[1-9]|1[0-2])/(\\d{4})\$".toRegex()
     }
 }

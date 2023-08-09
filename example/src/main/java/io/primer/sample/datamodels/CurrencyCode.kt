@@ -1,0 +1,24 @@
+package io.primer.sample.datamodels
+
+enum class CurrencyCode(val symbol: String) {
+    GBP("£"),
+    EUR("€"),
+    SEK("kr"),
+    AUD("A$"),
+    TL("₺"),
+    GEL("₾"),
+    JPY("¥"),
+    KRW("₩"),
+    SGD("$"),
+    CHF("fr"),
+    CNY("¥"),
+    DKK("kr"),
+    NOK("kr"),
+    PLN("zł"),
+    CAD("$"),
+    USD("$"),
+    PHP("₱"),
+    IDR("Rp"),
+    THB("฿"),
+    MYR("Rg"),
+}

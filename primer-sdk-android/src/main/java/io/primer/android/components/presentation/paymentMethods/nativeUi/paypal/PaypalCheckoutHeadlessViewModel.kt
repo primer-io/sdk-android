@@ -20,7 +20,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.payp
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalCreateOrderParams
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalOrderInfo
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalOrderInfoParams
-import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalCheckoutValidationRulesResolver
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalCheckoutOrderInfoValidationRulesResolver
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.validation.PaypalCheckoutOrderValidationRulesResolver
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.BrowserLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
@@ -44,7 +45,8 @@ internal class PaypalCheckoutHeadlessViewModel(
     private val createOrderInteractor: PaypalCreateOrderInteractor,
     private val paypalOrderInfoInteractor: PaypalOrderInfoInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
-    private val validationRulesResolver: PaypalCheckoutValidationRulesResolver,
+    private val orderInfoValidationRulesResolver: PaypalCheckoutOrderInfoValidationRulesResolver,
+    private val orderValidationRulesResolver: PaypalCheckoutOrderValidationRulesResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     savedStateHandle: SavedStateHandle
 ) : NativeUIHeadlessViewModel(savedStateHandle), DIAppComponent {
@@ -106,15 +108,24 @@ internal class PaypalCheckoutHeadlessViewModel(
 
     private fun createOrder(configuration: PaypalCheckoutConfiguration) =
         viewModelScope.launch {
-            createOrderInteractor(
-                PaypalCreateOrderParams(
-                    configuration.paymentMethodConfigId,
-                    configuration.amount,
-                    configuration.currencyCode,
-                    configuration.successUrl,
-                    configuration.cancelUrl
-                )
-            ).catch { onEvent(PaypalEvent.OnError) }
+            val orderParams = PaypalCreateOrderParams(
+                configuration.paymentMethodConfigId,
+                configuration.amount,
+                configuration.currencyCode,
+                configuration.successUrl,
+                configuration.cancelUrl
+            )
+            combine(
+                orderValidationRulesResolver.resolve().rules.map {
+                    flowOf(it.validate(orderParams))
+                }
+            ) { validationResults ->
+                validationResults.forEach { result ->
+                    if (result is ValidationResult.Failure) throw result.exception
+                }
+            }.catch { baseErrorEventResolver.resolve(it, ErrorMapperType.DEFAULT) }.flatMapLatest {
+                createOrderInteractor(orderParams)
+            }.catch { onEvent(PaypalEvent.OnError) }
                 .collect {
                     onEvent(
                         PaypalEvent.OnOrderCreated(
@@ -153,7 +164,7 @@ internal class PaypalCheckoutHeadlessViewModel(
     private fun getPaypalOrderInfo(paymentMethodConfigId: String, orderId: String?) =
         viewModelScope.launch {
             combine(
-                validationRulesResolver.resolve().rules.map {
+                orderInfoValidationRulesResolver.resolve().rules.map {
                     flowOf(it.validate(orderId))
                 }
             ) { validationResults ->
@@ -199,6 +210,7 @@ internal class PaypalCheckoutHeadlessViewModel(
                 // Create a SavedStateHandle for this ViewModel from extras
 
                 return PaypalCheckoutHeadlessViewModel(
+                    get(),
                     get(),
                     get(),
                     get(),

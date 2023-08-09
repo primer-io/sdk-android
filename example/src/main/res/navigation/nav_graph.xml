@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/MerchantSettingsFragment"
-        android:name="com.example.myapplication.MerchantSettingsFragment"
+        android:name="io.primer.sample.MerchantSettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings">
 
@@ -51,7 +51,7 @@
 
     <fragment
         android:id="@+id/MerchantCheckoutFragment"
-        android:name="com.example.myapplication.MerchantCheckoutFragment"
+        android:name="io.primer.sample.MerchantCheckoutFragment"
         android:label="Wallet"
         tools:layout="@layout/fragment_universal_checkout">
 
@@ -66,7 +66,7 @@
 
     <fragment
         android:id="@+id/HeadlessFragment"
-        android:name="com.example.myapplication.HeadlessComponentsFragment"
+        android:name="io.primer.sample.HeadlessComponentsFragment"
         android:label="HUC"
         tools:layout="@layout/fragment_headless">
 
@@ -81,13 +81,13 @@
 
     <fragment
         android:id="@+id/HeadlessRawFragment"
-        android:name="com.example.myapplication.HeadlessRawFragment"
+        android:name="io.primer.sample.HeadlessRawFragment"
         android:label="HUC"
         tools:layout="@layout/fragment_headless" />
 
     <fragment
         android:id="@+id/CountryPickerFragment"
-        android:name="com.example.myapplication.ui.CountryPickerFragment"
+        android:name="io.primer.sample.ui.CountryPickerFragment"
         android:label="Pick country"
         tools:layout="@layout/fragment_country_picker">
 
@@ -98,7 +98,7 @@
 
     <fragment
         android:id="@+id/VaultManagerFragment"
-        android:name="com.example.myapplication.HeadlessVaultManagerFragment"
+        android:name="io.primer.sample.HeadlessVaultManagerFragment"
         android:label="Vault Manager"
         tools:layout="@layout/fragment_vault_manager">
 
@@ -114,7 +114,7 @@
 
     <fragment
         android:id="@+id/MerchantResultFragment"
-        android:name="com.example.myapplication.MerchantResultFragment"
+        android:name="io.primer.sample.MerchantResultFragment"
         android:label="Result"
         tools:layout="@layout/fragment_checkout_result" />
 </navigation>

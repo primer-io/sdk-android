@@ -22,7 +22,7 @@ internal abstract class NativeUIHeadlessViewModel(private val savedStateHandle: 
     protected abstract val initialState: State
 
     protected var currentState: State
-        get() = savedStateHandle.get<State>(SAVED_CURRENT_STATE_KEY) ?: initialState
+        get() = savedStateHandle[SAVED_CURRENT_STATE_KEY] ?: initialState
         set(value) {
             savedStateHandle[SAVED_CURRENT_STATE_KEY] = value
         }

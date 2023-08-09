@@ -9,7 +9,11 @@ internal class SessionCreateErrorMapper : DefaultErrorMapper() {
 
     override fun getPrimerError(throwable: Throwable): PrimerError {
         if (throwable is SessionCreateException) {
-            return SessionCreateError(throwable.paymentMethodType, throwable.diagnosticsId)
+            return SessionCreateError(
+                throwable.paymentMethodType,
+                throwable.diagnosticsId,
+                throwable.description
+            )
         }
         return super.getPrimerError(throwable)
     }

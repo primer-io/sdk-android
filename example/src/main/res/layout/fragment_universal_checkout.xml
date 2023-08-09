@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/large_vertical_margin"
-    tools:context=".MerchantCheckoutFragment">
+    tools:context="io.primer.sample.MerchantCheckoutFragment">
 
     <TextView
         android:id="@+id/show_payment_method_options"

@@ -48,7 +48,8 @@ internal class KlarnaCustomerTokenDataRepository(
                 it is HttpException && it.isClientError() ->
                     throw SessionCreateException(
                         PaymentMethodType.KLARNA,
-                        it.error.diagnosticsId
+                        it.error.diagnosticsId,
+                        it.error.description
                     )
                 else -> throw it
             }

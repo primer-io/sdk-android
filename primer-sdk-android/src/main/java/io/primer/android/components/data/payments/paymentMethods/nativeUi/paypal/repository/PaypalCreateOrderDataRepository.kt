@@ -37,7 +37,8 @@ internal class PaypalCreateOrderDataRepository(
                     it is HttpException && it.isClientError() ->
                         throw SessionCreateException(
                             PaymentMethodType.PAYPAL,
-                            it.error.diagnosticsId
+                            it.error.diagnosticsId,
+                            it.error.description
                         )
                     else -> throw it
                 }

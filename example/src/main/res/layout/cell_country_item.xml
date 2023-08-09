@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.example.myapplication.ui.SettingsItem
+    <io.primer.sample.ui.SettingsItem
         android:id="@+id/countryItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

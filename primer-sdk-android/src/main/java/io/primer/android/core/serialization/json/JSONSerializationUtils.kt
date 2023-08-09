@@ -14,11 +14,12 @@ internal object JSONSerializationUtils {
     inline fun <reified T : JSONSerializable> getJsonSerializer(): JSONSerializer<T> {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
 
-        if (field.type.equals(JSONObjectSerializer::class.java).not() && field.type.equals(
+        check(
+            field.type.equals(JSONObjectSerializer::class.java) || field.type.equals(
                 JSONArraySerializer::class.java
-            ).not()
+            )
         ) {
-            throw IllegalStateException("Serializer is not of the type JSONSerializer")
+            "Serializer is not of the type JSONSerializer"
         }
         return field[null] as JSONSerializer<T>
     }
@@ -32,8 +33,8 @@ internal object JSONSerializationUtils {
     inline fun <reified T : JSONObjectSerializable> getJsonObjectSerializer():
         JSONObjectSerializer<T> {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
-        if (field.type.equals(JSONObjectSerializer::class.java).not()) {
-            throw IllegalStateException("Serializer is not of the type JSONObjectSerializable")
+        check(field.type.equals(JSONObjectSerializer::class.java)) {
+            "Serializer is not of the type JSONObjectSerializable"
         }
         return field[null] as JSONObjectSerializer<T>
     }
@@ -46,8 +47,8 @@ internal object JSONSerializationUtils {
     )
     inline fun <reified T : JSONDeserializable> getDeserializer(): JSONDeserializer<T> {
         val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
-        if (field.type.equals(JSONDeserializer::class.java).not()) {
-            throw IllegalStateException("Deserializer is not of the type JSONDeserializer")
+        check(field.type.equals(JSONDeserializer::class.java)) {
+            "Deserializer is not of the type JSONDeserializer"
         }
         return field[null] as JSONDeserializer<T>
     }

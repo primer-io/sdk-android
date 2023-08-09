@@ -110,7 +110,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                         localConfig,
                         paymentMethodRemoteConfig
                     )
-                else -> throw IllegalStateException(
+                else -> error(
                     "Unknown payment type ${paymentMethodRemoteConfig.type}"
                 )
             }
@@ -126,7 +126,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
                     localConfig,
                     paymentMethodRemoteConfig
                 )
-            PaymentMethodImplementationType.UNKNOWN -> throw IllegalStateException(
+            PaymentMethodImplementationType.UNKNOWN -> error(
                 "Unknown payment type ${paymentMethodRemoteConfig.type}"
             )
         }

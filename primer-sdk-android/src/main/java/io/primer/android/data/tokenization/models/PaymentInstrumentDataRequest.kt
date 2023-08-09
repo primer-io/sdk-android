@@ -43,7 +43,7 @@ internal open class PaymentInstrumentDataRequest : JSONObjectSerializable {
                         )
                     is CardPaymentInstrumentDataRequest ->
                         CardPaymentInstrumentDataRequest.serializer.serialize(t)
-                    else -> throw IllegalStateException("Missing serializer mapping for $t")
+                    else -> error("Missing serializer mapping for $t")
                 }
             }
         }
