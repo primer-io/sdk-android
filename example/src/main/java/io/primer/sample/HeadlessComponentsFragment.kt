@@ -296,6 +296,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 )
             } else if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.NATIVE_UI)) {
                 addPaymentMethodView(it.paymentMethodType)
+            } else if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.NOL_PAY)) {
+                addPaymentMethodView(it.paymentMethodType)
             }
         }
     }
@@ -353,7 +355,11 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             contentDescription = "Pay with ${paymentMethodAsset?.paymentMethodName}"
 
             setOnClickListener {
-                onPaymentMethodSelected(paymentMethodType)
+                when (paymentMethodType) {
+                    "NOL_PAY" ->
+                        findNavController().navigate(R.id.action_MerchantComponentsFragment_to_NolPayFragment)
+                    else -> onPaymentMethodSelected(paymentMethodType)
+                }
             }
         })
     }
@@ -391,11 +397,12 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         checkoutDataWithError = null
         try {
             val nativeUiManager =
-                PrimerHeadlessUniversalCheckoutNativeUiManager.newInstance(paymentMethodType).also {
-                    headlessManagerViewModel.addCloseable {
-                        it.cleanup()
+                PrimerHeadlessUniversalCheckoutNativeUiManager.newInstance(paymentMethodType)
+                    .also {
+                        headlessManagerViewModel.addCloseable {
+                            it.cleanup()
+                        }
                     }
-                }
             nativeUiManager.showPaymentMethod(requireContext(), sessionIntent)
         } catch (e: SdkUninitializedException) {
             AlertDialog.Builder(context).setMessage(e.message).setNegativeButton(

@@ -13,5 +13,6 @@ data class PrimerHeadlessUniversalCheckoutPaymentMethod(
 enum class PrimerPaymentMethodManagerCategory {
     NATIVE_UI,
     RAW_DATA,
-    CARD_COMPONENTS
+    CARD_COMPONENTS,
+    NOL_PAY
 }

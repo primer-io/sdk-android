@@ -18,6 +18,9 @@ ext {
             ],
             iPay88    : [
                     primeriPay88: "io.primer:ipay88-my-android:${Versions.primeriPay88}"
+            ],
+            nolPay    : [
+                    primerNolPay: "io.primer:nol-pay-android:${Versions.primerNolPay}"
             ]
     ]
 }

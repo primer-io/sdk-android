@@ -140,6 +140,7 @@ internal enum class PaymentMethodImplementationType {
 internal data class PaymentMethodRemoteConfigOptions(
     val merchantId: String?,
     val merchantAccountId: String?,
+    val merchantAppId: String?,
     val threeDSecureEnabled: Boolean?,
 ) : JSONDeserializable {
 
@@ -147,17 +148,16 @@ internal data class PaymentMethodRemoteConfigOptions(
         private const val MERCHANT_ID_FIELD = "merchantId"
         private const val MERCHANT_ACCOUNT_ID_FIELD = "merchantAccountId"
         private const val THREE_DS_SECURE_ENABLED_FIELD = "threeDSecureEnabled"
+        private const val MERCHANT_APP_ID_FIELD = "merchantAppId"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentMethodRemoteConfigOptions> {
-
-            override fun deserialize(t: JSONObject): PaymentMethodRemoteConfigOptions {
-                return PaymentMethodRemoteConfigOptions(
-                    t.optNullableString(MERCHANT_ID_FIELD),
-                    t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
-                    t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD)
-                )
-            }
+        val deserializer = JSONDeserializer { t ->
+            PaymentMethodRemoteConfigOptions(
+                t.optNullableString(MERCHANT_ID_FIELD),
+                t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
+                t.optNullableString(MERCHANT_APP_ID_FIELD),
+                t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD)
+            )
         }
     }
 }

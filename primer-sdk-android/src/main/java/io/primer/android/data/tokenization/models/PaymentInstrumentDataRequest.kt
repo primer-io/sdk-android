@@ -7,6 +7,7 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.banco
 import io.primer.android.data.tokenization.models.paymentInstruments.card.CardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentDataRequest
 import org.json.JSONObject
@@ -43,6 +44,8 @@ internal open class PaymentInstrumentDataRequest : JSONObjectSerializable {
                         )
                     is CardPaymentInstrumentDataRequest ->
                         CardPaymentInstrumentDataRequest.serializer.serialize(t)
+                    is NolPayPaymentInstrumentDataRequest ->
+                        NolPayPaymentInstrumentDataRequest.serializer.serialize(t)
                     else -> error("Missing serializer mapping for $t")
                 }
             }

@@ -17,6 +17,7 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.webRe
 import io.primer.android.data.tokenization.models.paymentInstruments.card.CardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.ExternalPayerInfoRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentDataRequest
@@ -32,6 +33,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.bancontac
 import io.primer.android.domain.tokenization.models.paymentInstruments.card.CardPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentParams
+import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentParams
 import org.json.JSONObject
@@ -149,6 +151,11 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
             paymentMethodConfigId,
             RetailOutletsSessionInfoDataRequest(retailOutlet, locale, redirectionUrl),
             type
+        )
+        is NolPayPaymentInstrumentParams -> NolPayPaymentInstrumentDataRequest(
+            mobileNumber,
+            skdId,
+            cardNumber
         )
         else -> throw IllegalArgumentException("Missing PaymentInstrumentParams mapping for $this")
     }

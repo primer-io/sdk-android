@@ -6,6 +6,12 @@
     app:startDestination="@id/MerchantSettingsFragment">
 
     <fragment
+        android:id="@+id/NolFragment"
+        android:name="io.primer.sample.NolFragment"
+        android:label="Nol pay"
+        tools:layout="@layout/fragment_nol_pay" />
+
+    <fragment
         android:id="@+id/MerchantSettingsFragment"
         android:name="io.primer.sample.MerchantSettingsFragment"
         android:label="Settings"
@@ -77,6 +83,14 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_MerchantComponentsFragment_to_NolPayFragment"
+            app:destination="@id/NolFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -110,7 +124,6 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
-
 
     <fragment
         android:id="@+id/MerchantResultFragment"

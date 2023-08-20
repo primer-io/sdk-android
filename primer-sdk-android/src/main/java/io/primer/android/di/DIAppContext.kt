@@ -41,6 +41,7 @@ internal object DIAppContext {
                 paymentMethodMockModule(),
                 analyticsModule(),
                 componentsModule(),
+                nolPayModule(),
                 errorResolverModule()
             )
         }

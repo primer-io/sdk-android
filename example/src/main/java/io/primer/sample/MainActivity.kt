@@ -1,5 +1,6 @@
 package io.primer.sample
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -7,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.snowballtech.transit.rta.Transit
 import io.primer.sample.databinding.ActivityMainBinding
 import io.primer.sample.datamodels.AppCountryCode
 import io.primer.sample.datasources.CountryDataSource
@@ -59,5 +61,12 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         return navController.navigateUp(appBarConfiguration)
             || super.onSupportNavigateUp()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Transit.getPaymentInstance().getAvailableTag(intent)?.let { tag ->
+             mainViewModel.setTag(tag)
+        }
     }
 }

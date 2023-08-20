@@ -1,6 +1,7 @@
 package io.primer.sample.viewmodels
 
 import android.content.Context
+import android.nfc.Tag
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
@@ -146,6 +147,7 @@ class MainViewModel(
 
     private val _uiOptions: MutableLiveData<PrimerUIOptions> =
         MutableLiveData(PrimerUIOptions(theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration)))
+
     fun setInitScreenUiOptions(enabled: Boolean): Unit = _uiOptions.postValue(
         _uiOptions.value?.copy(isInitScreenEnabled = enabled)
     )
@@ -174,6 +176,10 @@ class MainViewModel(
             uiOptions = _uiOptions.value ?: PrimerUIOptions(),
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
         )
+
+    private val _collectedTag: MutableLiveData<Tag?> = MutableLiveData()
+    val collectedTag: LiveData<Tag?> = _collectedTag
+    fun setTag(tag: Tag?) = _collectedTag.postValue(tag)
 
     fun configure(
         listener: PrimerCheckoutListener,
