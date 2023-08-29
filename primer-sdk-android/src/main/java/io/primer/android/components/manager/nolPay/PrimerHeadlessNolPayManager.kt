@@ -11,11 +11,8 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.snowballtech.transit.rta.Transit
-import com.snowballtech.transit.rta.TransitException
 import com.snowballtech.transit.rta.configuration.TransitAppSecretKeyHandler
 import com.snowballtech.transit.rta.configuration.TransitConfiguration
-import com.snowballtech.transit.rta.module.payment.TransitUnlinkPaymentCardOTPRequest
-import com.snowballtech.transit.rta.module.payment.TransitUnlinkPaymentCardRequest
 import com.snowballtech.transit.rta.module.transit.TransitPhysicalCard
 import io.primer.android.BuildConfig
 import io.primer.android.PrimerSessionIntent
@@ -41,15 +38,13 @@ import io.primer.android.components.manager.nolPay.composable.Stepable
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DIAppComponent
+import io.primer.android.di.NOL_PAY_ERROR_RESOLVER_NAME
+import io.primer.android.domain.base.BaseErrorFlowResolver
 import io.primer.android.domain.base.None
-import io.primer.android.domain.error.models.GeneralError
-import io.primer.android.domain.error.models.NolPayError
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
 import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
-import io.primer.android.extensions.runSuspendCatching
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -57,6 +52,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.get
+import org.koin.core.qualifier.named
 
 enum class NolPayStep {
 
@@ -80,6 +76,7 @@ class PrimerHeadlessNolPayManager internal constructor(
     private val nolPayLinkPaymentCardInteractor: NolPayLinkPaymentCardInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
     private val nolPayDataValidatorRegistry: NolPayDataValidatorRegistry,
+    private val errorFlowResolver: BaseErrorFlowResolver,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     PrimerHeadlessManager,
@@ -106,9 +103,8 @@ class PrimerHeadlessNolPayManager internal constructor(
 
     private val handler = object : TransitAppSecretKeyHandler {
         override fun getAppSecretKeyFromServer(sdkId: String): String {
-            // until our API is done, generate secret locally and replace in getOrElse block
             return runBlocking {
-                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "93f9324ef6424dbaaabf47290a567db7" }
+                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "e57ba94ef11c4a07becb322eaec1bdd0" }
             }
         }
     }
@@ -144,16 +140,7 @@ class PrimerHeadlessNolPayManager internal constructor(
                             savedStateHandle[LINKED_TOKEN_KEY] = linkToken
                             _stepFlow.emit(NolPayStep.COLLECT_PHONE_DATA)
                         }.onFailure { throwable ->
-                            // todo move to error mappers
-                            _errorFlow.emit(
-                                when (throwable) {
-                                    is TransitException -> NolPayError(
-                                        throwable.code,
-                                        throwable.message
-                                    )
-                                    else -> GeneralError.UnknownError(throwable.message.orEmpty())
-                                }
-                            )
+                           errorFlowResolver.resolve(throwable, _errorFlow)
                         }
 
 
@@ -175,7 +162,8 @@ class PrimerHeadlessNolPayManager internal constructor(
 //                            }
 //                        }
 //                    }
-               }
+                }
+
                 is NolPayData.NolPayPhoneData -> {
                     nolPayGetLinkPaymentCardOTPInteractor(
                         NolPayCardOTPParams(
@@ -188,17 +176,10 @@ class PrimerHeadlessNolPayManager internal constructor(
                         savedStateHandle[MOBILE_NUMBER_KEY] = collectedData.mobileNumber
                         _stepFlow.emit(NolPayStep.COLLECT_OTP_DATA)
                     }.onFailure { throwable ->
-                        _errorFlow.emit(
-                            when (throwable) {
-                                is TransitException -> NolPayError(
-                                    throwable.code,
-                                    throwable.message
-                                )
-                                else -> GeneralError.UnknownError(throwable.message.orEmpty())
-                            }
-                        )
+                        errorFlowResolver.resolve(throwable, _errorFlow)
                     }
                 }
+
                 is NolPayData.NolPayOtpData -> {
                     nolPayLinkPaymentCardInteractor(
                         NolPayLinkCardParams(
@@ -208,15 +189,7 @@ class PrimerHeadlessNolPayManager internal constructor(
                     ).onSuccess {
                         tokenize()
                     }.onFailure { throwable ->
-                        _errorFlow.emit(
-                            when (throwable) {
-                                is TransitException -> NolPayError(
-                                    throwable.code,
-                                    throwable.message
-                                )
-                                else -> GeneralError.UnknownError(throwable.message.orEmpty())
-                            }
-                        )
+                        errorFlowResolver.resolve(throwable, _errorFlow)
                     }
                 }
             }
@@ -294,6 +267,7 @@ class PrimerHeadlessNolPayManager internal constructor(
                             get(),
                             get(),
                             get(),
+                            get(named(NOL_PAY_ERROR_RESOLVER_NAME)),
                             extras.createSavedStateHandle()
                         ) as T
                     }

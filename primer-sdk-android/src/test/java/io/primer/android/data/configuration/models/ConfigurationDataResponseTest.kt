@@ -57,7 +57,8 @@ internal class ConfigurationDataResponseTest {
             PaymentMethodRemoteConfigOptions(
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
-                null
+                null,
+                false
             )
         )
         assertEquals(

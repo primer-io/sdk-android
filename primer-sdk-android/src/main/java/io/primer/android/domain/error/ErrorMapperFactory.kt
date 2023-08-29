@@ -12,6 +12,7 @@ internal enum class ErrorMapperType {
     APAYA,
     I_PAY88,
     THREE_DS,
+    NOL_PAY,
     DEFAULT
 }
 
