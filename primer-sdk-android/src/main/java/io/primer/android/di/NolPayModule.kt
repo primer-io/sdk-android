@@ -1,6 +1,8 @@
 package io.primer.android.di
 
 import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPaySecretDataSource
+import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
+import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorFlowResolver
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
@@ -11,7 +13,11 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
+import io.primer.android.domain.base.BaseErrorFlowResolver
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+
+internal const val NOL_PAY_ERROR_RESOLVER_NAME = "nolPayErrorResolver"
 
 internal val nolPayModule = {
     module {
@@ -29,5 +35,23 @@ internal val nolPayModule = {
         factory { NolPayLinkPaymentCardInteractor() }
 
         factory { NolPayDataValidatorRegistry() }
+
+        factory<BaseErrorFlowResolver>(named(NOL_PAY_ERROR_RESOLVER_NAME)) {
+            NolPayErrorFlowResolver(
+                get(),
+                get()
+            )
+        }
+
+        factory {
+            NolPayLinkPaymentCardDelegate(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(named(NOL_PAY_ERROR_RESOLVER_NAME))
+            )
+        }
     }
 }
