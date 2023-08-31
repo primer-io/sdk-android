@@ -44,6 +44,7 @@ internal class NolPayLinkPaymentCardDelegate(
         when (collectedData) {
             is NolPayTagData -> {
                 // comment out when unlinking card
+                getLinkedPaymentCard(collectedData, savedStateHandle)
                 getPaymentCardToken(collectedData, stepFlow, errorFlow, savedStateHandle)
 
                 // comment out when linking card
