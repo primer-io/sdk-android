@@ -10,6 +10,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
@@ -33,6 +34,7 @@ internal val nolPayModule = {
         factory { NolPayGetLinkPaymentCardTokenInteractor() }
         factory { NolPayGetLinkPaymentCardOTPInteractor() }
         factory { NolPayLinkPaymentCardInteractor() }
+        factory { NolPayUnlinkPaymentCardInteractor() }
 
         factory { NolPayDataValidatorRegistry() }
 
