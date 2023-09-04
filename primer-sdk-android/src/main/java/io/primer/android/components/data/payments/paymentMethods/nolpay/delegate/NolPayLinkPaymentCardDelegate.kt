@@ -61,6 +61,17 @@ internal class NolPayLinkPaymentCardDelegate(
         }
     }
 
+    private fun getLinkedPaymentCard(
+        collectedData: NolPayTagData,
+        savedStateHandle: SavedStateHandle
+    ) {
+        savedStateHandle[PHYSICAL_CARD_KEY] =
+            Transit.getTransitInstance().getPhysicalCard(
+                TransitGetPhysicalCardRequest.Builder().setTag(collectedData.tag)
+                    .build()
+            )
+    }
+
     private suspend fun getPaymentCardToken(
         collectedData: NolPayTagData,
         stepFlow: MutableSharedFlow<NolPayStep>,
@@ -141,17 +152,6 @@ internal class NolPayLinkPaymentCardDelegate(
         }.collect {
             stepFlow.emit(NolPayStep.PAYMENT_TOKENIZED)
         }
-    }
-
-    private fun getLinkedPaymentCard(
-        collectedData: NolPayTagData,
-        savedStateHandle: SavedStateHandle
-    ) {
-        savedStateHandle[PHYSICAL_CARD_KEY] =
-            Transit.getTransitInstance().getPhysicalCard(
-                TransitGetPhysicalCardRequest.Builder().setTag(collectedData.tag)
-                    .build()
-            )
     }
 
     private suspend fun unlinkPaymentCard() {
