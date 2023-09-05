@@ -90,15 +90,6 @@ internal class DefaultRawDataManagerDelegate(
             }
             is CheckoutEvent.HucMetadataChanged ->
                 listener?.onMetadataChanged(e.metadata)
-            is CheckoutEvent.Start3DS -> {
-                if (e.processor3DSData == null) navigator.openThreeDsScreen()
-                else navigator.openProcessor3dsViewScreen(
-                    e.processor3DSData.title,
-                    e.processor3DSData.paymentMethodType,
-                    e.processor3DSData.redirectUrl,
-                    e.processor3DSData.statusUrl
-                )
-            }
             is CheckoutEvent.Start3DSMock -> {
                 navigator.open3DSMockScreen()
             }

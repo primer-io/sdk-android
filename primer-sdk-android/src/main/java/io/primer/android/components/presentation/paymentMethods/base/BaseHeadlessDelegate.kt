@@ -177,6 +177,15 @@ internal class DefaultHeadlessManagerDelegate(
                     )
                 )
             }
+            is CheckoutEvent.Start3DS -> {
+                if (e.processor3DSData == null) navigator.openThreeDsScreen()
+                else navigator.openProcessor3dsViewScreen(
+                    e.processor3DSData.title,
+                    e.processor3DSData.paymentMethodType,
+                    e.processor3DSData.redirectUrl,
+                    e.processor3DSData.statusUrl
+                )
+            }
             else -> Unit
         }
     }
