@@ -13,6 +13,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.snowballtech.transit.rta.Transit
 import com.snowballtech.transit.rta.configuration.TransitAppSecretKeyHandler
 import com.snowballtech.transit.rta.configuration.TransitConfiguration
+import com.snowballtech.transit.rta.module.payment.TransitPayRequest
+import com.snowballtech.transit.rta.module.payment.TransitPaymentCardListRequest
+import com.snowballtech.transit.rta.module.payment.TransitPaymentCardListResponse
 import io.primer.android.BuildConfig
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
@@ -33,6 +36,8 @@ import io.primer.android.data.configuration.models.Environment
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.extensions.runSuspendCatching
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -87,7 +92,7 @@ class PrimerHeadlessNolPayManager internal constructor(
     private val handler = object : TransitAppSecretKeyHandler {
         override fun getAppSecretKeyFromServer(sdkId: String): String {
             return runBlocking {
-                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "e57ba94ef11c4a07becb322eaec1bdd0" }
+                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "93f9324ef6424dbaaabf47290a567db7" }
             }
         }
     }
@@ -97,21 +102,6 @@ class PrimerHeadlessNolPayManager internal constructor(
             nolPayConfigurationInteractor(None()).collectLatest { configuration ->
                 initSDK(configuration)
             }
-        }
-    }
-
-    private fun initSDK(configuration: NolPayConfiguration) {
-        TransitConfiguration.Builder()
-            .enableSandbox(configuration.environment != Environment.PRODUCTION)
-            .enableDebug(BuildConfig.DEBUG)
-            .setAppID(configuration.merchantAppId)
-            .setAppSecretKeyHandler(handler)
-            .build().apply {
-                Transit.initSDK(this)
-            }
-
-        viewModelScope.launch {
-            _stepFlow.emit(NolPayStep.COLLECT_TAG_DATA)
         }
     }
 
@@ -144,6 +134,38 @@ class PrimerHeadlessNolPayManager internal constructor(
 
     override fun getAvailableTag(intent: Intent?): Tag? {
         return Transit.getPaymentInstance().getAvailableTag(intent)
+    }
+
+    suspend fun getLinkedCards(phoneData: NolPayData.NolPayPhoneData) = viewModelScope.launch(Dispatchers.IO) {
+        runSuspendCatching {
+            val cards = Transit.getPaymentInstance()
+                .getPaymentCardList(
+                    TransitPaymentCardListRequest.Builder().setMobile(phoneData.mobileNumber)
+                        .setRegionCode(phoneData.phoneCountryCode).build()
+                )
+        }
+    }
+
+    fun createPayment(t: NolPayData.NolPayTagData) = viewModelScope.launch(Dispatchers.IO) {
+        Transit.getPaymentInstance().requestPayment(
+            TransitPayRequest.Builder().setTransactionNo("1698959181543133186").setTag(t.tag)
+                .build()
+        )
+    }
+
+    private fun initSDK(configuration: NolPayConfiguration) {
+        TransitConfiguration.Builder()
+            .enableSandbox(configuration.environment != Environment.PRODUCTION)
+            .enableDebug(BuildConfig.DEBUG)
+            .setAppID(configuration.merchantAppId)
+            .setAppSecretKeyHandler(handler)
+            .build().apply {
+                Transit.initSDK(this)
+            }
+
+        viewModelScope.launch {
+            _stepFlow.emit(NolPayStep.COLLECT_TAG_DATA)
+        }
     }
 
     companion object : DIAppComponent {
