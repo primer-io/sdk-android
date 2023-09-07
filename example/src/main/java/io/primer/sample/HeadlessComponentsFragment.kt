@@ -68,8 +68,6 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         }
     }
 
-    private var sessionIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT
-
     private lateinit var binding: FragmentHeadlessBinding
 
     override fun onCreateView(
@@ -87,6 +85,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         observeClientToken()
         observePaymentMethodsLoaded()
         observeUiState()
+        configureTypeToggleViews()
 
         if (savedInstanceState == null) {
             viewModel.fetchClientSession()
@@ -99,7 +98,6 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             if (::cardManager.isInitialized && cardManager.isCardFormValid()) cardManager.submit()
         }
 
-        configureTypeToggleViews()
     }
 
     private fun initViewModel() {
@@ -126,6 +124,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private fun observePaymentMethodsLoaded() {
         headlessManagerViewModel.paymentMethodsLoaded.observe(viewLifecycleOwner) {
+            binding.typeButtonGroup.isVisible = true
             setupPaymentMethod(it)
             hideLoading()
         }
@@ -140,21 +139,29 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                     callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
                     showLoading("Tokenization started ${state.paymentMethodType}")
                 }
-
                 is UiState.PreparationStarted -> {
                     callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
                     showLoading("Preparation started ${state.paymentMethodType}")
                 }
 
-                is UiState.PaymentMethodShowed -> showLoading("Presented ${state.paymentMethodType}")
+                is UiState.PaymentMethodShowed -> {
+                    callbacks.add(PrimerHeadlessCallbacks.ON_PAYMENT_METHOD_SHOWED)
+                    showLoading("Presented ${state.paymentMethodType}")
+                }
                 is UiState.TokenizationSuccessReceived -> {
-                    showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
-                    headlessManagerViewModel.createPayment(
-                        state.paymentMethodTokenData,
-                        requireNotNull(viewModel.environment.value),
-                        viewModel.descriptor.value.orEmpty(),
-                        state.decisionHandler
-                    )
+                    callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZE_SUCCESS)
+                    if (state.paymentMethodTokenData.isVaulted) {
+                        hideLoading()
+                        navigateToResultScreen()
+                    } else {
+                        showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
+                        headlessManagerViewModel.createPayment(
+                            state.paymentMethodTokenData,
+                            requireNotNull(viewModel.environment.value),
+                            viewModel.descriptor.value.orEmpty(),
+                            state.decisionHandler
+                        )
+                    }
                 }
 
                 is UiState.ResumePaymentReceived -> {
@@ -239,21 +246,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
     }
 
     private fun configureTypeToggleViews() {
-        binding.typeButtonGroup.apply {
-            addOnButtonCheckedListener { _, checkedId, _ ->
-                sessionIntent = when (checkedId) {
-                    binding.checkout.id -> {
-                        PrimerSessionIntent.CHECKOUT
-                    }
-                    binding.vault.id -> {
-                        PrimerSessionIntent.VAULT
-                    }
-                    else -> throw IllegalStateException()
-                }
-            }
-        }
+        binding.typeButtonGroup.check(binding.checkout.id)
     }
-
 
     override fun inputElementValueChanged(inputElement: PrimerInputElement) {
         Log.d(TAG, "inputElementValueChanged ${inputElement.getType()}")
@@ -360,11 +354,11 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private fun showLoading(message: String? = null) {
         binding.progressLayout.progressText.text = message
-        binding.progressLayout.root.isVisible = true
+        binding.progressLayout.progressLayoutRoot.isVisible = true
     }
 
     private fun hideLoading() {
-        binding.progressLayout.root.isVisible = false
+        binding.progressLayout.progressLayoutRoot.isVisible = false
     }
 
     private fun getHint(inputElementType: PrimerInputElementType): Int {
@@ -396,7 +390,12 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                         it.cleanup()
                     }
                 }
-            nativeUiManager.showPaymentMethod(requireContext(), sessionIntent)
+            nativeUiManager.showPaymentMethod(
+                requireContext(), when (binding.typeButtonGroup.checkedButtonId) {
+                    binding.checkout.id -> PrimerSessionIntent.CHECKOUT
+                    else -> PrimerSessionIntent.VAULT
+                }
+            )
         } catch (e: SdkUninitializedException) {
             AlertDialog.Builder(context).setMessage(e.message).setNegativeButton(
                 android.R.string.cancel

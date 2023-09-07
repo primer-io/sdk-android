@@ -1,5 +1,6 @@
 package io.primer.android.domain.tokenization.helpers
 
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -15,10 +16,14 @@ internal class PreTokenizationEventsResolver(
     private val eventDispatcher: EventDispatcher,
 ) {
 
-    suspend fun resolve(paymentMethodType: String) {
-        suspendCancellableCoroutine<Unit> { continuation ->
+    suspend fun resolve(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT
+    ) {
+        suspendCancellableCoroutine { continuation ->
             when {
                 config.intent.paymentMethodIntent.isVault ||
+                    sessionIntent == PrimerSessionIntent.VAULT ||
                     config.settings.paymentHandling == PrimerPaymentHandling.MANUAL -> {
                     eventDispatcher.dispatchEvent(
                         CheckoutEvent.TokenizationStarted(
@@ -27,6 +32,7 @@ internal class PreTokenizationEventsResolver(
                     )
                     continuation.resume(Unit)
                 }
+
                 config.settings.paymentHandling == PrimerPaymentHandling.AUTO -> {
                     val handler = object : PrimerPaymentCreationDecisionHandler {
                         override fun continuePaymentCreation() {

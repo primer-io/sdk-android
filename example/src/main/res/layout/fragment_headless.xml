@@ -16,6 +16,7 @@
         android:layout_marginBottom="16dp"
         android:checkedButton="@id/checkout"
         android:orientation="horizontal"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -31,7 +31,6 @@ import io.primer.sample.datamodels.toTransactionState
 import io.primer.sample.datasources.ApiKeyDataSource
 import io.primer.sample.repositories.ClientSessionRepository
 import io.primer.sample.repositories.CountryRepository
-import io.primer.sample.repositories.PaymentInstrumentsRepository
 import io.primer.sample.repositories.PaymentsRepository
 import io.primer.sample.repositories.ResumeRepository
 import io.primer.sample.utils.CombinedLiveData
@@ -51,7 +50,6 @@ class MainViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val paymentInstrumentsRepository = PaymentInstrumentsRepository()
     private val clientSessionRepository = ClientSessionRepository(apiKeyDataSource)
     private val paymentsRepository = PaymentsRepository(apiKeyDataSource)
     private val resumeRepository = ResumeRepository(apiKeyDataSource)
@@ -132,9 +130,6 @@ class MainViewModel(
 
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
 
-    val paymentInstruments: MutableLiveData<List<PrimerPaymentMethodTokenData>> =
-        MutableLiveData<List<PrimerPaymentMethodTokenData>>()
-
     private val _transactionState: MutableLiveData<TransactionState> =
         MutableLiveData(TransactionState.IDLE)
     val transactionState: LiveData<TransactionState> = _transactionState
@@ -196,15 +191,6 @@ class MainViewModel(
                 savedStateHandle["token"] = t
             }
         }
-    }
-
-    fun fetchPaymentInstruments() {
-        paymentInstruments.postValue(listOf())
-        paymentInstrumentsRepository.fetch(
-            customerId.value.orEmpty(),
-            environment.value?.environment ?: throw Error("no environment set!"),
-            client
-        ) { t -> paymentInstruments.postValue(t) }
     }
 
     fun createPayment(
