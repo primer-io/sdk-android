@@ -69,6 +69,8 @@ internal class NolPayLinkPaymentCardDelegate(
         savedStateHandle: SavedStateHandle
     ) = nolPayGetCardDetailsInteractor(NolPayTagParams(collectedData.tag)).onSuccess {
         savedStateHandle[PHYSICAL_CARD_KEY] = it
+    }.onFailure {throwable ->
+        throwable.printStackTrace()
     }
 
     private suspend fun getPaymentCardToken(

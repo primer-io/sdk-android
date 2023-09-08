@@ -148,7 +148,7 @@ internal data class PaymentMethodRemoteConfigOptions(
         private const val MERCHANT_ID_FIELD = "merchantId"
         private const val MERCHANT_ACCOUNT_ID_FIELD = "merchantAccountId"
         private const val THREE_DS_SECURE_ENABLED_FIELD = "threeDSecureEnabled"
-        private const val MERCHANT_APP_ID_FIELD = "merchantAppId"
+        private const val MERCHANT_APP_ID_FIELD = "appId"
 
         @JvmField
         val deserializer = JSONDeserializer { t ->
