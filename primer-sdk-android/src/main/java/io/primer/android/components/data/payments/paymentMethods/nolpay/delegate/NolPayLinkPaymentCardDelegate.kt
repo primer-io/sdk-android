@@ -24,7 +24,7 @@ import io.primer.android.domain.tokenization.models.TokenizationParamsV2
 import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
 import io.primer.android.extensions.flatMap
 import io.primer.nolpay.PrimerNolPay
-import io.primer.nolpay.models.NolPaymentCard
+import io.primer.nolpay.models.PrimerNolPaymentCard
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 
@@ -138,7 +138,7 @@ internal class NolPayLinkPaymentCardDelegate(
                     requireNotNull(savedStateHandle[REGION_CODE_KEY]),
                     requireNotNull(savedStateHandle[MOBILE_NUMBER_KEY]),
                     requireNotNull(
-                        savedStateHandle.get<NolPaymentCard>(PHYSICAL_CARD_KEY)?.cardNumber
+                        savedStateHandle.get<PrimerNolPaymentCard>(PHYSICAL_CARD_KEY)?.cardNumber
                     )
                 ),
                 PrimerSessionIntent.VAULT

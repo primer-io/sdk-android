@@ -163,11 +163,11 @@ class NolFragment : Fragment() {
 
         lifecycleScope.launch {
             manager.resultFlow.collectLatest {nolPayResult ->
-                when(nolPayResult) {
-                    is NolPayResult.PaymentCardLinked -> // display message to user and navigate
-                    is NolPayResult.PaymentCardUnlinked -> // display message to user and navigate
-                    is NolPayResult.PaymentFlowStarted -> // listen to PrimerHeadlessUniversalCheckoutListener
-                }
+//                when(nolPayResult) {
+//                    is NolPayResult.PaymentCardLinked -> // display message to user and navigate
+//                    is NolPayResult.PaymentCardUnlinked -> // display message to user and navigate
+//                    is NolPayResult.PaymentFlowStarted -> // listen to PrimerHeadlessUniversalCheckoutListener
+//                }
             }
         }
 
