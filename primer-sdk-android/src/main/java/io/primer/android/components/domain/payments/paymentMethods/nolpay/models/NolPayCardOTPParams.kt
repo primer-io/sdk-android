@@ -4,6 +4,6 @@ import io.primer.android.domain.base.Params
 
 internal data class NolPayCardOTPParams(
     val mobileNumber: String,
-    val phoneCountryCode: String,
+    val countryCallingCode: String,
     val linkToken: String
 ) : Params

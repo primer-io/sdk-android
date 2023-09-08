@@ -1,10 +1,8 @@
 package io.primer.android.components.data.payments.paymentMethods.nolpay.delegate
 
 import androidx.lifecycle.SavedStateHandle
-import com.snowballtech.transit.rta.Transit
-import com.snowballtech.transit.rta.module.transit.TransitGetPhysicalCardRequest
-import com.snowballtech.transit.rta.module.transit.TransitPhysicalCard
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
@@ -17,13 +15,16 @@ import io.primer.android.components.manager.nolPay.NolPayData
 import io.primer.android.components.manager.nolPay.NolPayData.NolPayOtpData
 import io.primer.android.components.manager.nolPay.NolPayData.NolPayPhoneData
 import io.primer.android.components.manager.nolPay.NolPayData.NolPayTagData
-import io.primer.android.components.manager.nolPay.NolPayStep
+import io.primer.android.components.manager.nolPay.NolPayCollectDataStep
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorFlowResolver
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
 import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
+import io.primer.android.extensions.flatMap
+import io.primer.nolpay.PrimerNolPay
+import io.primer.nolpay.models.NolPaymentCard
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 
@@ -32,20 +33,22 @@ internal class NolPayLinkPaymentCardDelegate(
     private val nolPayGetLinkPaymentCardOTPInteractor: NolPayGetLinkPaymentCardOTPInteractor,
     private val nolPayLinkPaymentCardInteractor: NolPayLinkPaymentCardInteractor,
     private val nolPayUnlinkPaymentCardInteractor: NolPayUnlinkPaymentCardInteractor,
+    private val nolPayGetCardDetailsInteractor: NolPayGetCardDetailsInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
     private val errorFlowResolver: BaseErrorFlowResolver
 ) {
     suspend fun handleCollectedCardData(
         collectedData: NolPayData,
-        stepFlow: MutableSharedFlow<NolPayStep>,
+        stepFlow: MutableSharedFlow<NolPayCollectDataStep>,
         errorFlow: MutableSharedFlow<PrimerError>,
         savedStateHandle: SavedStateHandle
     ) {
         when (collectedData) {
             is NolPayTagData -> {
                 // comment out when unlinking card
-                getLinkedPaymentCard(collectedData, savedStateHandle)
-                getPaymentCardToken(collectedData, stepFlow, errorFlow, savedStateHandle)
+                getLinkedPaymentCard(collectedData, savedStateHandle).flatMap {
+                    getPaymentCardToken(collectedData, stepFlow, errorFlow, savedStateHandle)
+                }
 
                 // comment out when linking card
                 // unlinkPaymentCard()
@@ -61,51 +64,44 @@ internal class NolPayLinkPaymentCardDelegate(
         }
     }
 
-    private fun getLinkedPaymentCard(
+    private suspend fun getLinkedPaymentCard(
         collectedData: NolPayTagData,
         savedStateHandle: SavedStateHandle
-    ) {
-        savedStateHandle[PHYSICAL_CARD_KEY] =
-            Transit.getTransitInstance().getPhysicalCard(
-                TransitGetPhysicalCardRequest.Builder().setTag(collectedData.tag)
-                    .build()
-            )
+    ) = nolPayGetCardDetailsInteractor(NolPayTagParams(collectedData.tag)).onSuccess {
+        savedStateHandle[PHYSICAL_CARD_KEY] = it
     }
 
     private suspend fun getPaymentCardToken(
         collectedData: NolPayTagData,
-        stepFlow: MutableSharedFlow<NolPayStep>,
+        stepFlow: MutableSharedFlow<NolPayCollectDataStep>,
         errorFlow: MutableSharedFlow<PrimerError>,
         savedStateHandle: SavedStateHandle
-
-    ) {
-        nolPayGetLinkPaymentCardTokenInteractor(NolPayTagParams(collectedData.tag))
-            .onSuccess { linkToken ->
-                savedStateHandle[LINKED_TOKEN_KEY] = linkToken
-                stepFlow.emit(NolPayStep.COLLECT_PHONE_DATA)
-            }.onFailure { throwable ->
-                errorFlowResolver.resolve(throwable, errorFlow)
-            }
-    }
+    ) = nolPayGetLinkPaymentCardTokenInteractor(NolPayTagParams(collectedData.tag))
+        .onSuccess { linkToken ->
+            savedStateHandle[LINKED_TOKEN_KEY] = linkToken
+            stepFlow.emit(NolPayCollectDataStep.COLLECT_PHONE_DATA)
+        }.onFailure { throwable ->
+            errorFlowResolver.resolve(throwable, errorFlow)
+        }
 
     private suspend fun getPaymentCardOTP(
         collectedData: NolPayPhoneData,
-        stepFlow: MutableSharedFlow<NolPayStep>,
+        stepFlow: MutableSharedFlow<NolPayCollectDataStep>,
         errorFlow: MutableSharedFlow<PrimerError>,
         savedStateHandle: SavedStateHandle
     ) {
         nolPayGetLinkPaymentCardOTPInteractor(
             NolPayCardOTPParams(
                 collectedData.mobileNumber,
-                collectedData.phoneCountryCode,
+                collectedData.phoneCountryDiallingCode,
                 requireNotNull(savedStateHandle[LINKED_TOKEN_KEY])
             )
         ).onSuccess {
             savedStateHandle[REGION_CODE_KEY] =
-                collectedData.phoneCountryCode
+                collectedData.phoneCountryDiallingCode
             savedStateHandle[MOBILE_NUMBER_KEY] =
                 collectedData.mobileNumber
-            stepFlow.emit(NolPayStep.COLLECT_OTP_DATA)
+            stepFlow.emit(NolPayCollectDataStep.COLLECT_OTP_DATA)
         }.onFailure { throwable ->
             errorFlowResolver.resolve(throwable, errorFlow)
         }
@@ -113,7 +109,7 @@ internal class NolPayLinkPaymentCardDelegate(
 
     private suspend fun linkPaymentCard(
         collectedData: NolPayOtpData,
-        stepFlow: MutableSharedFlow<NolPayStep>,
+        stepFlow: MutableSharedFlow<NolPayCollectDataStep>,
         errorFlow: MutableSharedFlow<PrimerError>,
         savedStateHandle: SavedStateHandle
     ) {
@@ -131,18 +127,18 @@ internal class NolPayLinkPaymentCardDelegate(
 
     private suspend fun tokenize(
         savedStateHandle: SavedStateHandle,
-        stepFlow: MutableSharedFlow<NolPayStep>,
+        stepFlow: MutableSharedFlow<NolPayCollectDataStep>,
         errorFlow: MutableSharedFlow<PrimerError>
     ) {
         tokenizationInteractor.executeV2(
             TokenizationParamsV2(
                 NolPayPaymentInstrumentParams(
                     PaymentMethodType.NOL_PAY.name,
-                    Transit.getId(),
+                    PrimerNolPay.instance.getSdkId(),
                     requireNotNull(savedStateHandle[REGION_CODE_KEY]),
                     requireNotNull(savedStateHandle[MOBILE_NUMBER_KEY]),
                     requireNotNull(
-                        savedStateHandle.get<TransitPhysicalCard>(PHYSICAL_CARD_KEY)?.cardNumber
+                        savedStateHandle.get<NolPaymentCard>(PHYSICAL_CARD_KEY)?.cardNumber
                     )
                 ),
                 PrimerSessionIntent.VAULT
@@ -150,7 +146,6 @@ internal class NolPayLinkPaymentCardDelegate(
         ).catch {
             errorFlowResolver.resolve(it, errorFlow)
         }.collect {
-            stepFlow.emit(NolPayStep.PAYMENT_TOKENIZED)
         }
     }
 

@@ -4,15 +4,18 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.models
 import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.PrimerNolPay
+import io.primer.nolpay.models.NolPaymentCard
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-internal class NolPayGetLinkPaymentCardTokenInteractor(
+internal class NolPayGetCardDetailsInteractor(
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseSuspendInteractor<String, NolPayTagParams>() {
+) : BaseSuspendInteractor<NolPaymentCard, NolPayTagParams>() {
 
-    override suspend fun performAction(params: NolPayTagParams): Result<String> =
+    override suspend fun performAction(params: NolPayTagParams): Result<NolPaymentCard> =
         runSuspendCatching {
-            PrimerNolPay.instance.getLinkPaymentCardToken(params.tag)
+            PrimerNolPay.instance.getPaymentCardDetails(
+                params.tag
+            )
         }
 }

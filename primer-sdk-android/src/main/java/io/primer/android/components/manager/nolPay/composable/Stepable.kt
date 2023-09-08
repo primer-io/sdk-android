@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface Stepable<T> {
 
-    val stepFlow: Flow<T>
+    val collectDataStepFlow: Flow<T>
 }

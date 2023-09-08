@@ -4,5 +4,4 @@ import io.primer.android.PrimerSessionIntent
 
 internal interface PrimerHeadlessManager {
 
-    fun start(sessionIntent: PrimerSessionIntent)
 }

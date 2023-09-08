@@ -8,7 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.snowballtech.transit.rta.Transit
+import io.primer.nolpay.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.ActivityMainBinding
 import io.primer.sample.datamodels.AppCountryCode
 import io.primer.sample.datasources.CountryDataSource
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Transit.getPaymentInstance().getAvailableTag(intent)?.let { tag ->
+        PrimerNolPayNfcUtils.getAvailableTag(intent)?.let { tag ->
              mainViewModel.setTag(tag)
         }
     }
