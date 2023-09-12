@@ -87,9 +87,6 @@ internal class IPay88ResumeDecisionHandler(
 
         eventDispatcher.dispatchEvents(
             listOf(
-                CheckoutEvent.PaymentMethodPresented(
-                    paymentMethodType
-                ),
                 CheckoutEvent.StartIPay88Flow(
                     clientTokenRepository.getClientTokenIntent(),
                     clientTokenRepository.getStatusUrl().orEmpty(),

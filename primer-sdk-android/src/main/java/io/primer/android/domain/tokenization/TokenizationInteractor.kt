@@ -30,7 +30,12 @@ internal class TokenizationInteractor(
 
     override fun execute(params: TokenizationParams): Flow<String> {
         return flow {
-            emit(preTokenizationEventsResolver.resolve(params.paymentMethodDescriptor.config.type))
+            emit(
+                preTokenizationEventsResolver.resolve(
+                    params.paymentMethodDescriptor.config.type,
+                    params.paymentMethodIntent
+                )
+            )
         }.flatMapLatest {
             tokenizationRepository.tokenize(params)
                 .onEach {
@@ -49,7 +54,8 @@ internal class TokenizationInteractor(
         return flow {
             emit(
                 preTokenizationEventsResolver.resolve(
-                    params.paymentInstrumentParams.paymentMethodType
+                    params.paymentInstrumentParams.paymentMethodType,
+                    params.paymentMethodIntent,
                 )
             )
         }.flatMapLatest {

@@ -10,5 +10,6 @@ internal object PrimerHeadlessCallbacks {
     const val ON_BEFORE_CLIENT_SESSION_UPDATED = "onBeforeClientSessionUpdated()"
     const val ON_CLIENT_SESSION_UPDATED = "onClientSessionUpdated(clientSession)"
     const val ON_PREPARATION_STARTED = "onPreparationStarted(paymentMethodType)"
+    const val ON_PAYMENT_METHOD_SHOWED = "onPaymentMethodShowed(paymentMethodType)"
     const val ON_TOKENIZATION_STARTED = "onTokenizationStarted(paymentMethodType)"
 }
