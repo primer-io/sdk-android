@@ -73,7 +73,7 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
             SdkFunctionParams(
                 object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
                 mapOf(
-                    "paymentMethodType" to paymentMethodType,
+                    "paymentMethodTyp" to paymentMethodType,
                     "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
                 )
             )
