@@ -2,6 +2,7 @@ package io.primer.android.di
 
 import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPaySecretDataSource
 import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
+import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorFlowResolver
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
@@ -10,6 +11,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
@@ -35,6 +37,7 @@ internal val nolPayModule = {
         factory { NolPayGetLinkPaymentCardTokenInteractor() }
         factory { NolPayGetLinkPaymentCardOTPInteractor() }
         factory { NolPayLinkPaymentCardInteractor() }
+        factory { NolPayGetUnlinkPaymentCardOTPInteractor() }
         factory { NolPayUnlinkPaymentCardInteractor() }
         factory { NolPayGetCardDetailsInteractor() }
 
@@ -52,10 +55,13 @@ internal val nolPayModule = {
                 get(),
                 get(),
                 get(),
+            )
+        }
+
+        factory {
+            NolPayUnlinkPaymentCardDelegate(
                 get(),
                 get(),
-                get(),
-                get(named(NOL_PAY_ERROR_RESOLVER_NAME))
             )
         }
     }

@@ -4,7 +4,6 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.BasePayme
 
 internal class NolPayPaymentInstrumentParams(
     override val paymentMethodType: String,
-    val skdId: String,
     val regionCode: String,
     val mobileNumber: String,
     val cardNumber: String,

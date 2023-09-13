@@ -1,9 +1,9 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolpay.validation
 
 import io.primer.android.components.domain.error.PrimerValidationError
-import io.primer.android.components.manager.nolPay.NolPayData
+import io.primer.android.components.manager.nolPay.NolPayCollectableData
 
-internal fun interface NolPayDataValidator<out T : NolPayData> {
+internal fun interface NolPayDataValidator<out T : NolPayCollectableData> {
 
     suspend fun validate(
         t: @UnsafeVariance T,

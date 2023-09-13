@@ -1,22 +1,25 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolpay
 
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardOTPParams
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardOTPParams
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
 import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.PrimerNolPay
+import io.primer.nolpay.models.PrimerLinkCardMetadata
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-internal class NolPayGetLinkPaymentCardOTPInteractor(
+internal class NolPayGetUnlinkPaymentCardOTPInteractor(
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseSuspendInteractor<Boolean, NolPayLinkCardOTPParams>() {
+) : BaseSuspendInteractor<PrimerLinkCardMetadata, NolPayUnlinkCardOTPParams>() {
 
-    override suspend fun performAction(params: NolPayLinkCardOTPParams): Result<Boolean> =
+    override suspend fun performAction(params: NolPayUnlinkCardOTPParams): Result<PrimerLinkCardMetadata> =
         runSuspendCatching {
-            PrimerNolPay.instance.getLinkPaymentCardOTP(
+            PrimerNolPay.instance.getUnlinkPaymentCardOTP(
                 params.mobileNumber,
                 params.countryCallingCode,
-                params.linkToken
+                params.cardNumber
             )
         }
 }

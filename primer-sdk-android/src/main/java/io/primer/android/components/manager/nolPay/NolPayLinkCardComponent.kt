@@ -17,19 +17,17 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayConfiguration
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPaySecretParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
-import io.primer.android.components.manager.core.composable.Collectable
-import io.primer.android.components.manager.core.composable.Errorable
-import io.primer.android.components.manager.core.composable.PrimerHeadlessManager
-import io.primer.android.components.manager.core.composable.Submitable
-import io.primer.android.components.manager.core.composable.Validatable
-import io.primer.android.components.manager.nolPay.composable.Stepable
+import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.components.manager.core.composable.PrimerCollectableData
+import io.primer.android.components.manager.core.PrimerHeadlessCollectDataComponent
+import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
+import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
-import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.PrimerNolPay
-import io.primer.nolpay.models.PrimerNolPaymentCard
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -37,52 +35,37 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.get
 
-sealed interface NolPayIntent {
-    object LinkPaymentCard : NolPayIntent
-    data class UnlinkPaymentCard(val nolPaymentCard: PrimerNolPaymentCard) : NolPayIntent
-
-    data class StartPaymentFlow(val nolPaymentCard: PrimerNolPaymentCard) : NolPayIntent
-}
-
-enum class NolPayCollectDataStep {
-
-    COLLECT_PHONE_DATA,
-    COLLECT_OTP_DATA,
-    COLLECT_TAG_DATA
-}
-
-sealed interface NolPayResult {
-
-    data class PaymentCardLinked(val nolPaymentCard: PrimerNolPaymentCard) : NolPayResult
-    data class PaymentCardUnlinked(val nolPaymentCard: PrimerNolPaymentCard) : NolPayResult
-    data class PaymentFlowStarted(val nolPaymentCard: PrimerNolPaymentCard) : NolPayResult
-}
-
-sealed interface NolPayData {
+interface NolPayCollectableData : PrimerCollectableData
+sealed interface NolPayLinkCollectableData : NolPayCollectableData {
 
     data class NolPayPhoneData(val mobileNumber: String, val phoneCountryDiallingCode: String) :
-        NolPayData
+        NolPayLinkCollectableData
 
-    data class NolPayOtpData(val otpCode: String) : NolPayData
-    data class NolPayTagData(val tag: Tag) : NolPayData
+    data class NolPayOtpData(val otpCode: String) : NolPayLinkCollectableData
+    data class NolPayTagData(val tag: Tag) : NolPayLinkCollectableData
 }
 
-class PrimerHeadlessUniveralCheckoutNolPayManager internal constructor(
-    private val nolPayConfigurationInteractor: NolPayConfigurationInteractor,
+class NolPayLinkCardComponent internal constructor(
     private val nolPayAppSecretInteractor: NolPayAppSecretInteractor,
-    private val nolPayDataValidatorRegistry: NolPayDataValidatorRegistry,
+    private val nolPayConfigurationInteractor: NolPayConfigurationInteractor,
     private val nolPayLinkPaymentCardDelegate: NolPayLinkPaymentCardDelegate,
+    private val nolPayDataValidatorRegistry: NolPayDataValidatorRegistry,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
-    PrimerHeadlessManager,
-    Collectable<NolPayData>,
-    Stepable<NolPayCollectDataStep>,
-    Errorable,
-    Validatable,
-    Submitable {
+    PrimerHeadlessCollectDataComponent<NolPayLinkCollectableData>,
+    PrimerHeadlessStepable<NolPayLinkDataStep>,
+    PrimerHeadlessStartable {
 
-    private val _stepFlow: MutableSharedFlow<NolPayCollectDataStep> = MutableSharedFlow()
-    override val collectDataStepFlow: SharedFlow<NolPayCollectDataStep> = _stepFlow
+    private val handler = object : TransitAppSecretKeyHandler {
+        override fun getAppSecretKeyFromServer(sdkId: String): String {
+            return runBlocking {
+                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "2675dcb9cc034bddbd1ad48908840542" }
+            }
+        }
+    }
+
+    private val _stepFlow: MutableSharedFlow<NolPayLinkDataStep> = MutableSharedFlow()
+    override val stepFlow: Flow<NolPayLinkDataStep> = _stepFlow
 
     private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val errorFlow: SharedFlow<PrimerError> = _errorFlow
@@ -91,29 +74,10 @@ class PrimerHeadlessUniveralCheckoutNolPayManager internal constructor(
         MutableSharedFlow()
     override val validationFlow: SharedFlow<List<PrimerValidationError>> = _validationFlow
 
-    private val _collectedData: MutableSharedFlow<NolPayData> =
+    private val _collectedData: MutableSharedFlow<NolPayLinkCollectableData> =
         MutableSharedFlow(replay = 1)
-    override val collectedData: SharedFlow<NolPayData> = _collectedData
 
-    val resultFlow: SharedFlow<NolPayResult> = MutableSharedFlow<NolPayResult>()
-
-    private val handler = object : TransitAppSecretKeyHandler {
-        override fun getAppSecretKeyFromServer(sdkId: String): String {
-            return runBlocking {
-                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "32893fc5f6be4a5b95cbd7bbcceffd56" }
-            }
-        }
-    }
-
-    fun start(nolPayIntent: NolPayIntent) {
-        viewModelScope.launch {
-            nolPayConfigurationInteractor(None()).collectLatest { configuration ->
-                initSDK(configuration)
-            }
-        }
-    }
-
-    override fun updateCollectedData(t: NolPayData) {
+    override fun updateCollectedData(t: NolPayLinkCollectableData) {
         viewModelScope.launch { _collectedData.emit(t) }
         viewModelScope.launch {
             _validationFlow.emit(nolPayDataValidatorRegistry.getValidator(t).validate(t))
@@ -123,31 +87,41 @@ class PrimerHeadlessUniveralCheckoutNolPayManager internal constructor(
     override fun submit() {
         viewModelScope.launch {
             nolPayLinkPaymentCardDelegate.handleCollectedCardData(
-                collectedData.replayCache.last(),
-                _stepFlow,
-                _errorFlow,
+                _collectedData.replayCache.last(),
                 savedStateHandle
-            )
+            ).onSuccess { step ->
+                _stepFlow.emit(step)
+            }.onFailure {
+                it.printStackTrace()
+            }
         }
     }
 
-    fun createPayment(t: NolPayData.NolPayTagData) = viewModelScope.launch(Dispatchers.IO) {
-        PrimerNolPay.instance.createPayment(t.tag, "d")
+    override fun start() {
+        viewModelScope.launch {
+            nolPayConfigurationInteractor(None()).collectLatest { configuration ->
+                initSDK(configuration)
+            }
+        }
     }
 
-    private fun initSDK(configuration: NolPayConfiguration) {
+    private suspend fun initSDK(configuration: NolPayConfiguration) = runSuspendCatching {
         PrimerNolPay.instance.initSDK(
             configuration.environment != Environment.PRODUCTION,
-            BuildConfig.DEBUG, configuration.merchantAppId, handler
+            BuildConfig.DEBUG,
+            configuration.merchantAppId,
+            handler
         )
-
+    }.onSuccess {
         viewModelScope.launch {
-            _stepFlow.emit(NolPayCollectDataStep.COLLECT_TAG_DATA)
+            _stepFlow.emit(NolPayLinkDataStep.COLLECT_TAG_DATA)
         }
+    }.onFailure {
+        it.printStackTrace()
     }
 
     companion object : DIAppComponent {
-        fun getInstance(owner: ViewModelStoreOwner): PrimerHeadlessUniveralCheckoutNolPayManager {
+        fun getInstance(owner: ViewModelStoreOwner): NolPayLinkCardComponent {
             return ViewModelProvider(
                 owner,
                 object : ViewModelProvider.Factory {
@@ -156,7 +130,7 @@ class PrimerHeadlessUniveralCheckoutNolPayManager internal constructor(
                         modelClass: Class<T>,
                         extras: CreationExtras
                     ): T {
-                        return PrimerHeadlessUniveralCheckoutNolPayManager(
+                        return NolPayLinkCardComponent(
                             get(),
                             get(),
                             get(),
@@ -165,7 +139,7 @@ class PrimerHeadlessUniveralCheckoutNolPayManager internal constructor(
                         ) as T
                     }
                 }
-            )[PrimerHeadlessUniveralCheckoutNolPayManager::class.java]
+            )[NolPayLinkCardComponent::class.java]
         }
     }
 }

@@ -11,11 +11,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import io.primer.android.components.domain.error.PrimerValidationError
-import io.primer.android.components.manager.nolPay.NolPayData
-import io.primer.android.components.manager.nolPay.NolPayCollectDataStep
-import io.primer.android.components.manager.nolPay.NolPayIntent
-import io.primer.android.components.manager.nolPay.NolPayResult
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniveralCheckoutNolPayManager
+import io.primer.android.components.manager.nolPay.NolPayLinkDataStep
+import io.primer.android.components.manager.nolPay.NolPayLinkCardComponent
+import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
+import io.primer.android.components.manager.nolPay.NolPayUnlinkCardComponent
+import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
+import io.primer.android.components.manager.nolPay.NolPayUnlinkDataStep
+import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.PrimerNolPayNfcUtils
 import io.primer.nolpay.models.PrimerNolPaymentCard
 import io.primer.sample.databinding.FragmentNolPayBinding
@@ -27,7 +29,9 @@ import kotlinx.coroutines.launch
 class NolFragment : Fragment() {
 
     private lateinit var binding: FragmentNolPayBinding
-    private lateinit var manager: PrimerHeadlessUniveralCheckoutNolPayManager
+    private lateinit var manager: PrimerHeadlessUniversalCheckoutNolPayManager
+    private lateinit var linkCardComponent: NolPayLinkCardComponent
+    private lateinit var unlinkCardComponent: NolPayUnlinkCardComponent
     private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -41,79 +45,134 @@ class NolFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        manager = PrimerHeadlessUniveralCheckoutNolPayManager.getInstance(requireActivity())
+        manager = PrimerHeadlessUniversalCheckoutNolPayManager()
+        linkCardComponent = manager.provideNolPayLinkCardComponent(requireActivity())
+        unlinkCardComponent = manager.provideNolPayUnlinkCardComponent(requireActivity())
 
+        lifecycleScope.launch {
+            manager.provideNolPayLinkedCardsComponent().getLinkedCards("62250843", "387")
+                .onSuccess {
+                    println(it)
+                }
+        }
         mainViewModel.collectedTag.observe(viewLifecycleOwner) { tag ->
-            tag?.let { manager.updateCollectedData(NolPayData.NolPayTagData(it)) }
+            tag?.let {
+                linkCardComponent.updateCollectedData(
+                    NolPayLinkCollectableData.NolPayTagData(
+                        it
+                    )
+                )
+            }
         }
         binding.mobileNumber.doAfterTextChanged {
-            manager.updateCollectedData(
-                NolPayData.NolPayPhoneData(
-                    it.toString().trim(),
-                    binding.mobileCountryCode.text.toString().trim()
+            linkCardComponent.updateCollectedData(
+                NolPayLinkCollectableData.NolPayPhoneData(
+                    it.toString().trim(), binding.mobileCountryCode.text.toString().trim()
                 )
             )
         }
 
         binding.otpCode.doAfterTextChanged {
-            manager.updateCollectedData(NolPayData.NolPayOtpData(it.toString().trim()))
+            linkCardComponent.updateCollectedData(
+                NolPayLinkCollectableData.NolPayOtpData(
+                    it.toString().trim()
+                )
+            )
         }
 
         binding.nextButton.setOnClickListener {
             binding.progressIndicator.isVisible = true
             it.isEnabled = false
-            manager.submit()
+            linkCardComponent.submit()
         }
         // we are just simulating navigation here
         lifecycleScope.launch {
             combine(
-                manager.collectDataStepFlow,
-                manager.validationFlow
-            ) { nolPayCollectDataStep: NolPayCollectDataStep, primerValidationErrors: List<PrimerValidationError> ->
+                linkCardComponent.stepFlow, linkCardComponent.validationFlow
+            ) { nolPayCollectDataStep: NolPayLinkDataStep, primerValidationErrors: List<PrimerValidationError> ->
                 Pair(nolPayCollectDataStep, primerValidationErrors)
             }.collectLatest { pair ->
                 when (pair.first) {
-                    NolPayCollectDataStep.COLLECT_TAG_DATA -> {
+                    NolPayLinkDataStep.COLLECT_TAG_DATA -> {
                         //  display UI to scan tag
                         binding.tagGroup.isVisible = true
                         binding.nextButton.isEnabled = pair.second.isEmpty()
                     }
 
-                    NolPayCollectDataStep.COLLECT_PHONE_DATA -> {
+                    NolPayLinkDataStep.COLLECT_PHONE_DATA -> {
                         //  display UI to enter mobile number
                         binding.tagGroup.isVisible = false
                         binding.linkCardGroup.isVisible = true
-                        binding.nextButton.isEnabled = pair.second.isEmpty() &&
-                            binding.mobileNumber.text.toString().isNotBlank()
+                        binding.nextButton.isEnabled =
+                            pair.second.isEmpty() && binding.mobileNumber.text.toString()
+                                .isNotBlank()
 
                         pair.second.find { it.errorId == "invalid-phone-number" }?.let {
                             binding.mobileNumber.error = it.description
                         } ?: kotlin.run { binding.mobileNumber.error = null }
                     }
 
-                    NolPayCollectDataStep.COLLECT_OTP_DATA -> {
+                    NolPayLinkDataStep.COLLECT_OTP_DATA -> {
                         // display UI to enter OTP
                         binding.progressIndicator.isVisible = false
                         binding.nextButton.isEnabled = pair.second.isEmpty()
                         binding.linkCardGroup.isVisible = false
                         binding.otpGroup.isVisible = true
-                        binding.nextButton.isEnabled = pair.second.isEmpty() &&
-                            binding.otpCode.text.toString().isNotBlank()
+                        binding.nextButton.isEnabled =
+                            pair.second.isEmpty() && binding.otpCode.text.toString().isNotBlank()
                         pair.second.find { it.errorId == "invalid-otp-code" }?.let {
                             binding.otpCode.error = it.description
                         } ?: kotlin.run { binding.otpCode.error = null }
                     }
+
+                    NolPayLinkDataStep.CARD_LINKED -> TODO()
                 }
             }
         }
 
         lifecycleScope.launch {
-            manager.errorFlow.collectLatest {
+            linkCardComponent.errorFlow.collectLatest {
                 Snackbar.make(requireView(), it.description, Snackbar.LENGTH_LONG).show()
             }
         }
 
-        manager.start(NolPayIntent.LinkPaymentCard)
+        linkCardComponent.start()
+
+        lifecycleScope.launch {
+            unlinkCardComponent.stepFlow.collectLatest {
+                when (it) {
+                    NolPayUnlinkDataStep.COLLECT_CARD_DATA -> unlinkCardComponent.updateCollectedData(
+                        NolPayUnlinkCollectableData.NolPayCardData(
+                            PrimerNolPaymentCard("0313971137")
+                        )
+                    ).also {
+                        unlinkCardComponent.submit()
+                    }
+
+                    NolPayUnlinkDataStep.COLLECT_PHONE_DATA -> unlinkCardComponent.updateCollectedData(
+                        NolPayUnlinkCollectableData.NolPayPhoneData(
+                            "62250843", "387"
+                        )
+                    ).also {
+                        unlinkCardComponent.submit()
+                    }
+
+                    NolPayUnlinkDataStep.COLLECT_OTP_DATA -> unlinkCardComponent.updateCollectedData(
+                        NolPayUnlinkCollectableData.NolPayOtpData(
+                            "987123"
+                        )
+                    ).also {
+                        unlinkCardComponent.submit()
+                    }
+
+                    NolPayUnlinkDataStep.CARD_UNLINKED -> Snackbar.make(
+                        requireView(), "Yes!", Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        // unlinkCardComponent.start()
     }
 
     override fun onResume() {
@@ -124,63 +183,5 @@ class NolFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         PrimerNolPayNfcUtils.disableForegroundDispatch(requireActivity())
-    }
-
-    fun implementation() {
-        // developer can observe different types of events and combine them if needed
-        // NolPayHeadlessManager will instruct developer for steps needed to complete initiated flow
-        // this saves us from having to define each flow and developer can implement navigation handling only once
-        lifecycleScope.launch {
-            combine(
-                manager.collectDataStepFlow,
-                manager.validationFlow
-            ) { nolPayCollectDataStep: NolPayCollectDataStep, primerValidationErrors: List<PrimerValidationError> ->
-                Pair(nolPayCollectDataStep, primerValidationErrors)
-            }.collectLatest { pair ->
-                when (pair.first) {
-                    NolPayCollectDataStep.COLLECT_TAG_DATA -> {
-                        //  display UI to scan tag
-                    }
-
-                    NolPayCollectDataStep.COLLECT_PHONE_DATA -> {
-                        //  display UI to enter mobile number and validate the phone number
-                    }
-
-                    NolPayCollectDataStep.COLLECT_OTP_DATA -> {
-                        // display UI to enter OTP and listen to specific OTP validation errors
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            manager.errorFlow.collectLatest {
-                // in case we encounter errors during the flow that are not tokenization or payment related
-                // developer can display errors to the user, as in most cases user can recover or take further actions
-                // for example scanning tag went wrong, network error etc
-            }
-        }
-
-        lifecycleScope.launch {
-            manager.resultFlow.collectLatest {nolPayResult ->
-//                when(nolPayResult) {
-//                    is NolPayResult.PaymentCardLinked -> // display message to user and navigate
-//                    is NolPayResult.PaymentCardUnlinked -> // display message to user and navigate
-//                    is NolPayResult.PaymentFlowStarted -> // listen to PrimerHeadlessUniversalCheckoutListener
-//                }
-            }
-        }
-
-
-        // developer calls NolPayHeadlessManager with specific intent
-
-        // 1. card linking
-        manager.start(NolPayIntent.LinkPaymentCard)
-
-        // 2. card unlinking, "List<NolPaymentCard>" are current linked cards
-        manager.start(NolPayIntent.UnlinkPaymentCard(PrimerNolPaymentCard("33333")))
-
-        // 3. creating payment, "List<NolPaymentCard>" are current linked cards
-        manager.start(NolPayIntent.StartPaymentFlow(PrimerNolPaymentCard("33333")))
     }
 }

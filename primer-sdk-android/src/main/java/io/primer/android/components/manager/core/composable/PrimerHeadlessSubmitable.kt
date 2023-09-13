@@ -1,6 +1,6 @@
 package io.primer.android.components.manager.core.composable
 
-internal interface Submitable {
+interface PrimerHeadlessSubmitable {
 
     fun submit()
 }

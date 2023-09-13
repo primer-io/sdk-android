@@ -1,21 +1,27 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolpay.validation
 
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayCardNumberValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayMobileNumberDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayOtpDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayTagDataValidator
-import io.primer.android.components.manager.nolPay.NolPayData
+import io.primer.android.components.manager.nolPay.NolPayCollectableData
+import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
+import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
 import kotlin.reflect.KClass
 
 internal class NolPayDataValidatorRegistry {
 
-    private val registry: Map<KClass<out NolPayData>, NolPayDataValidator<NolPayData>> =
+    private val registry: Map<KClass<out NolPayCollectableData>, NolPayDataValidator<NolPayCollectableData>> =
         mapOf(
-            NolPayData.NolPayOtpData::class to NolPayOtpDataValidator(),
-            NolPayData.NolPayPhoneData::class to NolPayMobileNumberDataValidator(),
-            NolPayData.NolPayTagData::class to NolPayTagDataValidator()
+            NolPayLinkCollectableData.NolPayOtpData::class to NolPayOtpDataValidator(),
+            NolPayLinkCollectableData.NolPayPhoneData::class to NolPayMobileNumberDataValidator(),
+            NolPayLinkCollectableData.NolPayTagData::class to NolPayTagDataValidator(),
+            NolPayUnlinkCollectableData.NolPayOtpData::class to NolPayOtpDataValidator(),
+            NolPayUnlinkCollectableData.NolPayPhoneData::class to NolPayMobileNumberDataValidator(),
+            NolPayUnlinkCollectableData.NolPayCardData::class to NolPayCardNumberValidator()
         )
 
-    fun getValidator(data: NolPayData): NolPayDataValidator<NolPayData> =
+    fun getValidator(data: NolPayCollectableData): NolPayDataValidator<NolPayCollectableData> =
         registry[data::class] ?: throw IllegalArgumentException(
             NOL_DATA_VALIDATOR_NOT_SUPPORTED_MESSAGE
         )

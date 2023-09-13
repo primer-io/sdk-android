@@ -10,7 +10,6 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
 import io.primer.android.components.manager.nolPay.NolPayData
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniveralCheckoutNolPayManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.test.runTest
@@ -36,12 +35,12 @@ class PrimerHeadlessUniveralCheckoutNolPayManagerTest {
     @RelaxedMockK
     internal lateinit var savedStateHandle: SavedStateHandle
 
-    private lateinit var manager: PrimerHeadlessUniveralCheckoutNolPayManager
+    private lateinit var manager: PrimerHeadlessUniversalCheckoutNolPayManager
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        manager = PrimerHeadlessUniveralCheckoutNolPayManager(
+        manager = PrimerHeadlessUniversalCheckoutNolPayManager(
             nolPayConfigInteractor,
             nolPayAppSecretInteractor,
             nolPayDataValidatorRegistry,

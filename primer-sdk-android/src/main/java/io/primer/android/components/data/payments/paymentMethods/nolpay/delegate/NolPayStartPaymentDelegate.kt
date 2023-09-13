@@ -4,41 +4,46 @@ import androidx.lifecycle.SavedStateHandle
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardOTPParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardParams
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayTagParams
-import io.primer.android.components.manager.nolPay.NolPayLinkDataStep
 import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
+import io.primer.android.components.manager.nolPay.NolPayLinkDataStep
+import io.primer.android.components.manager.nolPay.NolPayStartPaymentCollectableData
+import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.domain.tokenization.TokenizationInteractor
+import io.primer.android.domain.tokenization.models.TokenizationParamsV2
+import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
 import io.primer.android.extensions.mapSuspendCatching
 
-internal class NolPayLinkPaymentCardDelegate(
-    private val nolPayGetLinkPaymentCardTokenInteractor: NolPayGetLinkPaymentCardTokenInteractor,
-    private val nolPayGetLinkPaymentCardOTPInteractor: NolPayGetLinkPaymentCardOTPInteractor,
-    private val nolPayLinkPaymentCardInteractor: NolPayLinkPaymentCardInteractor,
+internal class NolPayStartPaymentDelegate(
+    private val tokenizationInteractor: TokenizationInteractor,
+    private val requestPaymentInteractor: NolPayRequestPaymentInteractor
 ) {
     suspend fun handleCollectedCardData(
-        collectedData: NolPayLinkCollectableData,
+        collectedData: NolPayStartPaymentCollectableData,
         savedStateHandle: SavedStateHandle
     ): Result<NolPayLinkDataStep> {
         return when (collectedData) {
-            is NolPayLinkCollectableData.NolPayTagData -> {
-                getPaymentCardLinkToken(collectedData, savedStateHandle)
+            is NolPayStartPaymentCollectableData.NolPayTagData -> {
+                tokenizationInteractor.executeV2(TokenizationParamsV2(NolPayPaymentInstrumentParams(
+                    PaymentMethodType.NOL_PAY,
+
+                )))
             }
 
-            is NolPayLinkCollectableData.NolPayPhoneData -> {
+            is NolPayStartPaymentCollectableData.NolPayCardData -> {
                 getPaymentCardOTP(collectedData, savedStateHandle)
-            }
-
-            is NolPayLinkCollectableData.NolPayOtpData -> {
-                linkPaymentCard(collectedData, savedStateHandle)
             }
         }
     }
 
-    private suspend fun getPaymentCardLinkToken(
+    private suspend fun requestPayment(
         collectedData: NolPayLinkCollectableData.NolPayTagData,
         savedStateHandle: SavedStateHandle
-    ) = nolPayGetLinkPaymentCardTokenInteractor(NolPayTagParams(collectedData.tag))
+    ) = requestPaymentInteractor(NolPayRequestPaymentParams(collectedData.tag))
         .onSuccess { linkToken ->
             savedStateHandle[PHYSICAL_CARD_KEY] = linkToken.cardNumber
             savedStateHandle[LINKED_TOKEN_KEY] = linkToken.linkToken
