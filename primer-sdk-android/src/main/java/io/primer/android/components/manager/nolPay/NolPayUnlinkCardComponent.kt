@@ -9,8 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.snowballtech.transit.rta.configuration.TransitAppSecretKeyHandler
 import io.primer.android.BuildConfig
-import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
-import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
+import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor

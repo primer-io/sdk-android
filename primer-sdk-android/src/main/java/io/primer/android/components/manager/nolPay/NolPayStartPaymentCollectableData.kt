@@ -4,6 +4,10 @@ import android.nfc.Tag
 import io.primer.nolpay.models.PrimerNolPaymentCard
 
 sealed interface NolPayStartPaymentCollectableData : NolPayCollectableData {
+
+    data class NolPayPhoneData(val mobileNumber: String, val phoneCountryDiallingCode: String) :
+        NolPayStartPaymentCollectableData
+
     data class NolPayCardData(val nolPaymentCard: PrimerNolPaymentCard) :
         NolPayStartPaymentCollectableData
 

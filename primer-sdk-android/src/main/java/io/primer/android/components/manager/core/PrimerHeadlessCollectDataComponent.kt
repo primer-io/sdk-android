@@ -11,6 +11,9 @@ import io.primer.android.components.manager.core.composable.PrimerHeadlessValida
 
 // TODO move to package
 
-interface PrimerHeadlessCollectDataComponent<T : PrimerCollectableData> : PrimerHeadlessComponent,
+interface PrimerHeadlessCollectDataComponent<T : PrimerCollectableData> :
+    PrimerHeadlessComponent,
     PrimerHeadlessErrorable,
-    PrimerHeadlessValidatable, PrimerHeadlessDataCollectable<T>, PrimerHeadlessSubmitable
+    PrimerHeadlessValidatable,
+    PrimerHeadlessDataCollectable<T>,
+    PrimerHeadlessSubmitable

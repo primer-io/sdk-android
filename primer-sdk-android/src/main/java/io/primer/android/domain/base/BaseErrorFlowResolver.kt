@@ -14,7 +14,10 @@ internal abstract class BaseErrorFlowResolver(
     private val errorMapperFactory: ErrorMapperFactory,
     private val analyticsRepository: AnalyticsRepository
 ) {
-    protected abstract suspend fun dispatch(error: PrimerError, errorFlow: MutableSharedFlow<PrimerError>)
+    protected abstract suspend fun dispatch(
+        error: PrimerError,
+        errorFlow: MutableSharedFlow<PrimerError>
+    )
 
     suspend fun resolve(
         throwable: Throwable,

@@ -7,16 +7,15 @@ import io.primer.android.components.manager.core.composable.PrimerHeadlessStarta
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
 import kotlinx.coroutines.flow.Flow
 
-
 class NolPayStartPaymentComponent :
     PrimerHeadlessCollectDataComponent<NolPayStartPaymentCollectableData>,
-    PrimerHeadlessStepable<NolPayCollectPaymentDataStep>,
+    PrimerHeadlessStepable<NolPayStartPaymentStep>,
     PrimerHeadlessStartable {
 
     override fun updateCollectedData(t: NolPayStartPaymentCollectableData) {
     }
 
-    override val stepFlow: Flow<NolPayCollectPaymentDataStep>
+    override val stepFlow: Flow<NolPayStartPaymentStep>
         get() = TODO("Not yet implemented")
     override val errorFlow: Flow<PrimerError>
         get() = TODO("Not yet implemented")
@@ -30,5 +29,4 @@ class NolPayStartPaymentComponent :
     override fun start() {
         TODO("Not yet implemented")
     }
-
 }

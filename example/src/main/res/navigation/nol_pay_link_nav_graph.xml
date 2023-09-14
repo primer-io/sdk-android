@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nol_pay_nav_graph"
+    app:startDestination="@id/NolLinkCardScanTagFragment">
+
+    <fragment
+        android:id="@+id/NolLinkCardScanTagFragment"
+        android:name="io.primer.sample.nolpay.NolLinkCardScanTagFragment"
+        android:label="Scan NFC tag"
+        tools:layout="@layout/fragment_nol_card_link_scan_tag">
+
+        <action
+            android:id="@+id/action_NolLinkCardScanTagFragment_to_NolPayPhoneInputFragment"
+            app:destination="@id/NolPayPhoneInputFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NolPayPhoneInputFragment"
+        android:name="io.primer.sample.nolpay.NolPayLinkPhoneInputFragment"
+        android:label="Enter your phone number"
+        tools:layout="@layout/fragment_nol_pay_phone_fragment">
+
+        <action
+            android:id="@+id/action_NolPayPhoneInputFragment_to_NolPayLinkOtpFragment"
+            app:destination="@id/NolPayLinkOtpFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NolPayLinkOtpFragment"
+        android:name="io.primer.sample.nolpay.NolPayLinkOtpFragment"
+        android:label="Enter OTP code"
+        tools:layout="@layout/fragment_nol_pay_phone_fragment" />
+</navigation>

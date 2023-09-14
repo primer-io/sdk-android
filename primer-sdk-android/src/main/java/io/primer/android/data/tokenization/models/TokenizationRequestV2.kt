@@ -154,7 +154,6 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
         )
         is NolPayPaymentInstrumentParams -> NolPayPaymentInstrumentDataRequest(
             mobileNumber,
-            sdkId,
             cardNumber
         )
         else -> throw IllegalArgumentException("Missing PaymentInstrumentParams mapping for $this")

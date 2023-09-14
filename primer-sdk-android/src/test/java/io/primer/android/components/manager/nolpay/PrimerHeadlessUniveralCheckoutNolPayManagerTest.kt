@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.RelaxedMockK
-import io.primer.android.components.data.payments.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
+import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
@@ -68,17 +68,13 @@ class PrimerHeadlessUniveralCheckoutNolPayManagerTest {
 
     @Test
     fun `should return tag when getAvailableTag() is called`() {
-
     }
 
     @Test
     fun `should emit collect card data step once sdk is initialised`() {
-
     }
 
     @Test
     fun `should handle collected card data when submit() is called`() {
-
     }
-
 }

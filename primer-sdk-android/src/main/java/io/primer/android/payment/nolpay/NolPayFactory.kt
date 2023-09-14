@@ -11,12 +11,11 @@ import io.primer.nolpay.PrimerNolPayNfcUtils
 internal class NolPayFactory : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
-//        return when (PrimerNolPayNfcUtils.getNfcStatus()) {
-//            TransitNfcStatus.NFC_UNSUPPORTED -> Failure(
-//                IllegalStateException("NFC is not supported on the current device.")
-//            )
-//            else -> Success(NolPay())
-//        }
-        return Success(NolPay())
+        return when (PrimerNolPayNfcUtils.getNfcStatus()) {
+            TransitNfcStatus.NFC_UNSUPPORTED -> Failure(
+                IllegalStateException("NFC is not supported on the current device.")
+            )
+            else -> Success(NolPay())
+        }
     }
 }

@@ -11,7 +11,8 @@ import kotlin.reflect.KClass
 
 internal class NolPayDataValidatorRegistry {
 
-    private val registry: Map<KClass<out NolPayCollectableData>, NolPayDataValidator<NolPayCollectableData>> =
+    private val registry:
+        Map<KClass<out NolPayCollectableData>, NolPayDataValidator<NolPayCollectableData>> =
         mapOf(
             NolPayLinkCollectableData.NolPayOtpData::class to NolPayOtpDataValidator(),
             NolPayLinkCollectableData.NolPayPhoneData::class to NolPayMobileNumberDataValidator(),

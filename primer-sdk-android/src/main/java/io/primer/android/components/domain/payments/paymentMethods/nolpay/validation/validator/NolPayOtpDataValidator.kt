@@ -4,8 +4,10 @@ import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidator
 import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
 
-internal class NolPayOtpDataValidator : NolPayDataValidator<NolPayLinkCollectableData.NolPayOtpData> {
-    override suspend fun validate(t: NolPayLinkCollectableData.NolPayOtpData): List<PrimerValidationError> {
+internal class NolPayOtpDataValidator :
+    NolPayDataValidator<NolPayLinkCollectableData.NolPayOtpData> {
+    override suspend fun validate(t: NolPayLinkCollectableData.NolPayOtpData):
+        List<PrimerValidationError> {
         return when {
             t.otpCode.isBlank() -> {
                 return listOf(
@@ -15,6 +17,7 @@ internal class NolPayOtpDataValidator : NolPayDataValidator<NolPayLinkCollectabl
                     )
                 )
             }
+
             OTP_CODE_REGEX.matches(t.otpCode).not() -> {
                 listOf(
                     PrimerValidationError(
@@ -23,6 +26,7 @@ internal class NolPayOtpDataValidator : NolPayDataValidator<NolPayLinkCollectabl
                     )
                 )
             }
+
             else -> emptyList()
         }
     }

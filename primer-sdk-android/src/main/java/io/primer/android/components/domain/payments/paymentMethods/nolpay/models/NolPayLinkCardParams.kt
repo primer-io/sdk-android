@@ -2,4 +2,4 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.model
 
 import io.primer.android.domain.base.Params
 
-internal data class NolPayLinkCardParams(val otpCode: String, val linkToken: String) : Params
+internal data class NolPayLinkCardParams(val linkToken: String, val otpCode: String) : Params

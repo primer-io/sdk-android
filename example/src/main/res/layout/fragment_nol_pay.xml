@@ -5,84 +5,43 @@
     android:layout_height="match_parent"
     android:padding="@dimen/large_vertical_margin">
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/tagGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="scanCard" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/linkCardGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="mobileCountryCode, mobileNumber" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/otpGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="otpCode" />
-
     <TextView
-        android:id="@+id/scanCard"
+        android:id="@+id/cardsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Linked cards:"
         android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/linkedCards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_fast_bank_transfer_code_description"
-        android:padding="8dp"
-        android:text="Scan Nol card"
-        app:layout_constraintBottom_toTopOf="@id/guideline" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
-
-    <EditText
-        android:id="@+id/mobileCountryCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        android:hint="Dialing country code"
-        app:layout_constraintTop_toBottomOf="@id/guideline" />
-
-    <EditText
-        android:id="@+id/mobileNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/mobileCountryCode"
-        android:hint="Mobile number"
-        app:layout_constraintTop_toBottomOf="@id/guideline" />
-
-    <EditText
-        android:id="@+id/otpCode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="OTP code"
-        app:layout_constraintBottom_toBottomOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="@id/guideline" />
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/cardsTitle" />
 
     <Button
-        android:id="@+id/nextButton"
+        android:id="@+id/unlinkNolCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="@string/next"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/progressIndicator"
-        android:layout_width="30dp"
-        app:indicatorColor="@android:color/white"
-        android:layout_height="30dp"
+        android:text="Unlink Nol card"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintEnd_toEndOf="@id/nextButton" />
+        app:layout_constraintTop_toBottomOf="@id/linkedCards" />
+
+    <Button
+        android:id="@+id/payWithNolCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pay with Nol card"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/unlinkNolCard" />
+
+    <Button
+        android:id="@+id/addNewNolCardButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add new card"
+        app:layout_constraintTop_toBottomOf="@id/payWithNolCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

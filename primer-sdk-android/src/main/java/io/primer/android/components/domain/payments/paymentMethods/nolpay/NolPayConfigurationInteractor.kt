@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.flowOn
 internal class NolPayConfigurationInteractor(
     private val configurationRepository: NolPayConfigurationRepository,
     override val dispatcher: CoroutineDispatcher = Dispatchers.Default
-) :
-    BaseFlowInteractor<NolPayConfiguration, None>() {
+) : BaseFlowInteractor<NolPayConfiguration, None>() {
     override fun execute(params: None): Flow<NolPayConfiguration> {
         return configurationRepository.getConfiguration().flowOn(dispatcher)
     }

@@ -12,6 +12,7 @@ class NolPayLinkedCardsComponent : PrimerHeadlessComponent {
         mobileNumber: String,
         phoneCountryDiallingCode: String
     ) = runSuspendCatching {
+        // TODO
         withContext(Dispatchers.IO) {
             PrimerNolPay.instance.getLinkedPaymentCards(mobileNumber, phoneCountryDiallingCode)
         }

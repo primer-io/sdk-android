@@ -1,4 +1,4 @@
-package io.primer.android.components.data.payments.paymentMethods.nolpay.delegate
+package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import androidx.lifecycle.SavedStateHandle
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
@@ -44,7 +44,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
         )
     ).onSuccess {
         savedStateHandle[PHYSICAL_CARD_KEY] = it.cardNumber
-        savedStateHandle[LINKED_TOKEN_KEY] = it.linkToken
+        savedStateHandle[UNLINKED_TOKEN_KEY] = it.linkToken
     }.mapSuspendCatching { NolPayUnlinkDataStep.COLLECT_OTP_DATA }
 
     private suspend fun unlinkPaymentCard(
@@ -52,9 +52,9 @@ internal class NolPayUnlinkPaymentCardDelegate(
         savedStateHandle: SavedStateHandle
     ) = unlinkPaymentCardInteractor(
         NolPayUnlinkCardParams(
-            requireNotNull(savedStateHandle[LINKED_TOKEN_KEY]),
             requireNotNull(savedStateHandle[PHYSICAL_CARD_KEY]),
             collectedData.otpCode,
+            requireNotNull(savedStateHandle[UNLINKED_TOKEN_KEY]),
         )
     ).mapSuspendCatching {
         NolPayUnlinkDataStep.CARD_UNLINKED
@@ -62,6 +62,6 @@ internal class NolPayUnlinkPaymentCardDelegate(
 
     companion object {
         private const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
-        private const val LINKED_TOKEN_KEY = "LINKED_TOKEN"
+        private const val UNLINKED_TOKEN_KEY = "UNLINKED_TOKEN"
     }
 }
