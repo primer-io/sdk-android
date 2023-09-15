@@ -44,7 +44,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
         )
     ).onSuccess {
         savedStateHandle[PHYSICAL_CARD_KEY] = it.cardNumber
-        savedStateHandle[UNLINKED_TOKEN_KEY] = it.linkToken
+        savedStateHandle[UNLINKED_TOKEN_KEY] = it.unlinkToken
     }.mapSuspendCatching { NolPayUnlinkDataStep.COLLECT_OTP_DATA }
 
     private suspend fun unlinkPaymentCard(

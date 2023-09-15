@@ -5,12 +5,13 @@ import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.PrimerNolPay
 import io.primer.nolpay.models.PrimerLinkCardMetadata
+import io.primer.nolpay.models.PrimerUnlinkCardMetadata
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 internal class NolPayGetUnlinkPaymentCardOTPInteractor(
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseSuspendInteractor<PrimerLinkCardMetadata, NolPayUnlinkCardOTPParams>() {
+) : BaseSuspendInteractor<PrimerUnlinkCardMetadata, NolPayUnlinkCardOTPParams>() {
 
     override suspend fun performAction(params: NolPayUnlinkCardOTPParams) =
         runSuspendCatching {
