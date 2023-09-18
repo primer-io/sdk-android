@@ -38,34 +38,35 @@ import org.koin.core.component.get
 interface NolPayCollectableData : PrimerCollectableData
 sealed interface NolPayLinkCollectableData : NolPayCollectableData {
 
+    data class NolPayTagData(val tag: Tag) : NolPayLinkCollectableData
+
     data class NolPayPhoneData(val mobileNumber: String, val phoneCountryDiallingCode: String) :
         NolPayLinkCollectableData
 
     data class NolPayOtpData(val otpCode: String) : NolPayLinkCollectableData
-    data class NolPayTagData(val tag: Tag) : NolPayLinkCollectableData
 }
 
 class NolPayLinkCardComponent internal constructor(
-    private val nolPayAppSecretInteractor: NolPayAppSecretInteractor,
-    private val nolPayConfigurationInteractor: NolPayConfigurationInteractor,
-    private val nolPayLinkPaymentCardDelegate: NolPayLinkPaymentCardDelegate,
-    private val nolPayDataValidatorRegistry: NolPayDataValidatorRegistry,
+    private val appSecretInteractor: NolPayAppSecretInteractor,
+    private val configurationInteractor: NolPayConfigurationInteractor,
+    private val linkPaymentCardDelegate: NolPayLinkPaymentCardDelegate,
+    private val dataValidatorRegistry: NolPayDataValidatorRegistry,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     PrimerHeadlessCollectDataComponent<NolPayLinkCollectableData>,
-    PrimerHeadlessStepable<NolPayLinkDataStep>,
+    PrimerHeadlessStepable<NolPayLinkCardStep>,
     PrimerHeadlessStartable {
 
     private val handler = object : TransitAppSecretKeyHandler {
         override fun getAppSecretKeyFromServer(sdkId: String): String {
             return runBlocking {
-                nolPayAppSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "2675dcb9cc034bddbd1ad48908840542" }
+                appSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "2675dcb9cc034bddbd1ad48908840542" }
             }
         }
     }
 
-    private val _stepFlow: MutableSharedFlow<NolPayLinkDataStep> = MutableSharedFlow()
-    override val stepFlow: Flow<NolPayLinkDataStep> = _stepFlow
+    private val _stepFlow: MutableSharedFlow<NolPayLinkCardStep> = MutableSharedFlow()
+    override val stepFlow: Flow<NolPayLinkCardStep> = _stepFlow
 
     private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val errorFlow: SharedFlow<PrimerError> = _errorFlow
@@ -80,13 +81,13 @@ class NolPayLinkCardComponent internal constructor(
     override fun updateCollectedData(t: NolPayLinkCollectableData) {
         viewModelScope.launch { _collectedData.emit(t) }
         viewModelScope.launch {
-            _validationFlow.emit(nolPayDataValidatorRegistry.getValidator(t).validate(t))
+            _validationFlow.emit(dataValidatorRegistry.getValidator(t).validate(t))
         }
     }
 
     override fun submit() {
         viewModelScope.launch {
-            nolPayLinkPaymentCardDelegate.handleCollectedCardData(
+            linkPaymentCardDelegate.handleCollectedCardData(
                 _collectedData.replayCache.last(),
                 savedStateHandle
             ).onSuccess { step ->
@@ -99,7 +100,7 @@ class NolPayLinkCardComponent internal constructor(
 
     override fun start() {
         viewModelScope.launch {
-            nolPayConfigurationInteractor(None()).collectLatest { configuration ->
+            configurationInteractor(None()).collectLatest { configuration ->
                 initSDK(configuration)
             }
         }
@@ -114,7 +115,7 @@ class NolPayLinkCardComponent internal constructor(
         )
     }.onSuccess {
         viewModelScope.launch {
-            _stepFlow.emit(NolPayLinkDataStep.COLLECT_TAG_DATA)
+            _stepFlow.emit(NolPayLinkCardStep.CollectTagData)
         }
     }.onFailure {
         it.printStackTrace()

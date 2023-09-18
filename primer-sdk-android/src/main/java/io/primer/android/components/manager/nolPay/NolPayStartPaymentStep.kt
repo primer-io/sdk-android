@@ -1,11 +1,11 @@
 package io.primer.android.components.manager.nolPay
 
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStep
+import io.primer.nolpay.models.PrimerNolPaymentCard
 
-enum class NolPayStartPaymentStep : PrimerHeadlessStep {
+sealed interface NolPayStartPaymentStep : PrimerHeadlessStep {
 
-    COLLECT_PHONE_DATA,
-    COLLECT_CARD_DATA,
-    COLLECT_TAG_DATA,
-    PAYMENT_REQUESTED
+    object CollectStartPaymentData : NolPayStartPaymentStep
+
+    object CollectTagData : NolPayStartPaymentStep
 }

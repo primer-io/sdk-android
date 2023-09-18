@@ -40,6 +40,10 @@ class NolFragment : Fragment() {
         binding.addNewNolCardButton.setOnClickListener {
             findNavController().navigate(R.id.action_NolFragment_to_NolLinkFragment)
         }
+
+        binding.payWithNolCard.setOnClickListener {
+            findNavController().navigate(R.id.action_NolFragment_to_NolPayPaymentFragment)
+        }
     }
 
     override fun onResume() {

@@ -10,7 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.primer.android.components.manager.nolPay.NolPayLinkCardComponent
-import io.primer.android.components.manager.nolPay.NolPayLinkDataStep
+import io.primer.android.components.manager.nolPay.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayLinkBinding
@@ -42,17 +42,17 @@ class NolPayLinkFragment : Fragment() {
             )
 
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.stepFlow.collectLatest {
-                when (it) {
-                    NolPayLinkDataStep.COLLECT_PHONE_DATA ->
+            linkCardComponent.stepFlow.collectLatest { nolPayLinkStep ->
+                when (nolPayLinkStep) {
+                    is NolPayLinkCardStep.CollectPhoneData ->
                         navHostFragment.findNavController()
                             .navigate(R.id.action_NolLinkCardScanTagFragment_to_NolPayPhoneInputFragment)
 
-                    NolPayLinkDataStep.COLLECT_OTP_DATA -> navHostFragment.findNavController()
+                    is NolPayLinkCardStep.CollectOtpData -> navHostFragment.findNavController()
                         .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayLinkOtpFragment)
 
-                    NolPayLinkDataStep.COLLECT_TAG_DATA -> Unit
-                    NolPayLinkDataStep.CARD_LINKED -> {
+                    is NolPayLinkCardStep.CollectTagData -> Unit
+                    is NolPayLinkCardStep.CardLinked -> {
                         Snackbar.make(requireView(), "Successfully linked!", Snackbar.LENGTH_SHORT)
                             .show()
                         findNavController().navigate(R.id.action_NolLinkFragment_to_NolFragment)

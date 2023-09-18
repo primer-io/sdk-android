@@ -23,43 +23,34 @@ internal class NolPayStartPaymentDelegate(
         savedStateHandle: SavedStateHandle
     ): Result<NolPayStartPaymentStep> {
         return when (collectedData) {
-            is NolPayStartPaymentCollectableData.NolPayPhoneData ->
-                tokenizationInteractor.executeV2(
-                    TokenizationParamsV2(
-                        NolPayPaymentInstrumentParams(
-                            PaymentMethodType.NOL_PAY.name,
-                            collectedData.phoneCountryDiallingCode,
-                            collectedData.mobileNumber,
-                            requireNotNull(savedStateHandle.get<String>(PHYSICAL_CARD_KEY))
-                        ),
-                        PrimerSessionIntent.CHECKOUT
-                    )
-                ).mapLatest { Result.success(NolPayStartPaymentStep.COLLECT_TAG_DATA) }.first()
+            is NolPayStartPaymentCollectableData.NolPayStartPaymentData ->
+                tokenize(collectedData)
 
             is NolPayStartPaymentCollectableData.NolPayTagData -> requestPayment(
                 collectedData,
+                // TODO get the transactionNo
                 ""
             )
-
-            is NolPayStartPaymentCollectableData.NolPayCardData -> {
-                savedStateHandle[PHYSICAL_CARD_KEY] = collectedData.nolPaymentCard
-                Result.success(NolPayStartPaymentStep.COLLECT_PHONE_DATA)
-            }
         }
     }
+
+    private suspend fun tokenize(collectedData: NolPayStartPaymentCollectableData.NolPayStartPaymentData) = tokenizationInteractor.executeV2(
+        TokenizationParamsV2(
+            NolPayPaymentInstrumentParams(
+                PaymentMethodType.NOL_PAY.name,
+                collectedData.phoneCountryDiallingCode,
+                collectedData.mobileNumber,
+                collectedData.nolPaymentCard.cardNumber
+            ),
+            PrimerSessionIntent.CHECKOUT
+        )
+    ).mapLatest { Result.success(NolPayStartPaymentStep.CollectTagData) }.first()
 
     private suspend fun requestPayment(
         collectedData: NolPayStartPaymentCollectableData.NolPayTagData,
         transactionNo: String
     ) = requestPaymentInteractor(NolPayRequestPaymentParams(collectedData.tag, transactionNo))
         .mapSuspendCatching {
-            NolPayStartPaymentStep.COLLECT_TAG_DATA
+            NolPayStartPaymentStep.CollectTagData
         }
-
-    companion object {
-        private const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
-        private const val LINKED_TOKEN_KEY = "LINKED_TOKEN"
-        private const val REGION_CODE_KEY = "REGION_CODE"
-        private const val MOBILE_NUMBER_KEY = "MOBILE_NUMBER"
-    }
 }

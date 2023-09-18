@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.primer.android.components.manager.nolPay.NolPayUnlinkCardComponent
 import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
-import io.primer.android.components.manager.nolPay.NolPayUnlinkDataStep
+import io.primer.android.components.manager.nolPay.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.models.PrimerNolPaymentCard
 import io.primer.sample.R
@@ -46,17 +46,17 @@ class NolPayUnlinkFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             unlinkCardComponent.stepFlow.collectLatest {
                 when (it) {
-                    NolPayUnlinkDataStep.COLLECT_CARD_DATA -> unlinkCardComponent.updateCollectedData(
+                    is NolPayUnlinkCardStep.CollectCardData -> unlinkCardComponent.updateCollectedData(
                         NolPayUnlinkCollectableData.NolPayCardData(PrimerNolPaymentCard("0313971137"))
                     ).also {
                         unlinkCardComponent.submit()
                     }
 
-                    NolPayUnlinkDataStep.COLLECT_PHONE_DATA -> Unit
-                    NolPayUnlinkDataStep.COLLECT_OTP_DATA -> navHostFragment.findNavController()
+                    is NolPayUnlinkCardStep.CollectPhoneData -> Unit
+                    is NolPayUnlinkCardStep.CollectOtpData -> navHostFragment.findNavController()
                         .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayUnlinkOtpFragment)
 
-                    NolPayUnlinkDataStep.CARD_UNLINKED -> {
+                    is NolPayUnlinkCardStep.CardUnlinked -> {
                         Snackbar.make(requireView(), "Successfully unlinked!", Snackbar.LENGTH_SHORT)
                             .show()
                         findNavController().navigate(R.id.action_NolUnlinkFragment_to_NolFragment)

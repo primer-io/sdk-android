@@ -7,20 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import io.primer.android.components.manager.nolPay.NolPayLinkCardComponent
-import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
-import io.primer.android.components.manager.nolPay.NolPayLinkCardStep
+import io.primer.android.components.manager.nolPay.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.NolPayStartPaymentComponent
+import io.primer.android.components.manager.nolPay.NolPayStartPaymentStep
 import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 
-class NolLinkCardScanTagFragment : Fragment() {
+class NolPayPaymentScanTagFragment : Fragment() {
 
     private lateinit var binding: FragmentNolCardLinkScanTagBinding
-    private lateinit var linkCardComponent: NolPayLinkCardComponent
+    private lateinit var startPaymentComponent: NolPayStartPaymentComponent
 
     private val mainViewModel: MainViewModel by activityViewModels()
 
@@ -35,24 +34,24 @@ class NolLinkCardScanTagFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        linkCardComponent =
-            PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayLinkCardComponent(
+        startPaymentComponent =
+            PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayStartPaymentComponent(
                 requireParentFragment().requireParentFragment()
             )
 
         lifecycleScope.launchWhenCreated {
-            combine(linkCardComponent.validationFlow, linkCardComponent.stepFlow) { a, b ->
-                Pair(a, b)
-            }.collectLatest {
-                if (it.first.isEmpty() && it.second == NolPayLinkCardStep.CollectTagData)
-                    linkCardComponent.submit()
+            startPaymentComponent.stepFlow.collectLatest { step: NolPayStartPaymentStep ->
+                when(step) {
+                    NolPayStartPaymentStep.CollectStartPaymentData -> Unit
+                    NolPayStartPaymentStep.CollectTagData -> Unit
+                }
             }
         }
 
         mainViewModel.collectedTag.observe(viewLifecycleOwner) { tag ->
             tag?.let {
-                linkCardComponent.updateCollectedData(
-                    NolPayLinkCollectableData.NolPayTagData(
+                startPaymentComponent.updateCollectedData(
+                    NolPayStartPaymentCollectableData.NolPayTagData(
                         it
                     )
                 )

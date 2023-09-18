@@ -6,8 +6,9 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardOTPParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
 import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
-import io.primer.android.components.manager.nolPay.NolPayUnlinkDataStep
+import io.primer.android.components.manager.nolPay.NolPayUnlinkCardStep
 import io.primer.android.extensions.mapSuspendCatching
+import io.primer.nolpay.models.PrimerNolPaymentCard
 
 internal class NolPayUnlinkPaymentCardDelegate(
     private val unlinkPaymentCardOTPInteractor: NolPayGetUnlinkPaymentCardOTPInteractor,
@@ -16,7 +17,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
     suspend fun handleCollectedCardData(
         collectedData: NolPayUnlinkCollectableData,
         savedStateHandle: SavedStateHandle
-    ): Result<NolPayUnlinkDataStep> {
+    ): Result<NolPayUnlinkCardStep> {
         return when (collectedData) {
             is NolPayUnlinkCollectableData.NolPayPhoneData -> {
                 getPaymentCardOTP(collectedData, savedStateHandle)
@@ -28,7 +29,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
 
             is NolPayUnlinkCollectableData.NolPayCardData -> {
                 savedStateHandle[PHYSICAL_CARD_KEY] = collectedData.nolPaymentCard.cardNumber
-                Result.success(NolPayUnlinkDataStep.COLLECT_PHONE_DATA)
+                Result.success(NolPayUnlinkCardStep.CollectPhoneData)
             }
         }
     }
@@ -45,7 +46,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
     ).onSuccess {
         savedStateHandle[PHYSICAL_CARD_KEY] = it.cardNumber
         savedStateHandle[UNLINKED_TOKEN_KEY] = it.unlinkToken
-    }.mapSuspendCatching { NolPayUnlinkDataStep.COLLECT_OTP_DATA }
+    }.mapSuspendCatching { NolPayUnlinkCardStep.CollectOtpData }
 
     private suspend fun unlinkPaymentCard(
         collectedData: NolPayUnlinkCollectableData.NolPayOtpData,
@@ -57,7 +58,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
             requireNotNull(savedStateHandle[UNLINKED_TOKEN_KEY]),
         )
     ).mapSuspendCatching {
-        NolPayUnlinkDataStep.CARD_UNLINKED
+        NolPayUnlinkCardStep.CardUnlinked(PrimerNolPaymentCard(requireNotNull(savedStateHandle[PHYSICAL_CARD_KEY])))
     }
 
     companion object {

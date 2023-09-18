@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nol_pay_nav_graph"
+    app:startDestination="@id/NolPayPaymentScanTagFragment">
+
+    <fragment
+        android:id="@+id/NolPayPaymentScanTagFragment"
+        android:name="io.primer.sample.nolpay.NolPayPaymentScanTagFragment"
+        android:label="Enter phone number"
+        tools:layout="@layout/fragment_nol_card_link_scan_tag" />
+
+</navigation>

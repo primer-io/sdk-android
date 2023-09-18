@@ -7,9 +7,10 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardOTPParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayTagParams
-import io.primer.android.components.manager.nolPay.NolPayLinkDataStep
+import io.primer.android.components.manager.nolPay.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
 import io.primer.android.extensions.mapSuspendCatching
+import io.primer.nolpay.models.PrimerNolPaymentCard
 
 internal class NolPayLinkPaymentCardDelegate(
     private val nolPayGetLinkPaymentCardTokenInteractor: NolPayGetLinkPaymentCardTokenInteractor,
@@ -19,7 +20,7 @@ internal class NolPayLinkPaymentCardDelegate(
     suspend fun handleCollectedCardData(
         collectedData: NolPayLinkCollectableData,
         savedStateHandle: SavedStateHandle
-    ): Result<NolPayLinkDataStep> {
+    ): Result<NolPayLinkCardStep> {
         return when (collectedData) {
             is NolPayLinkCollectableData.NolPayTagData -> {
                 getPaymentCardLinkToken(collectedData, savedStateHandle)
@@ -42,8 +43,8 @@ internal class NolPayLinkPaymentCardDelegate(
         .onSuccess { linkToken ->
             savedStateHandle[PHYSICAL_CARD_KEY] = linkToken.cardNumber
             savedStateHandle[LINKED_TOKEN_KEY] = linkToken.linkToken
-        }.mapSuspendCatching {
-            NolPayLinkDataStep.COLLECT_PHONE_DATA
+        }.mapSuspendCatching { metadata ->
+            NolPayLinkCardStep.CollectPhoneData(metadata.cardNumber)
         }
 
     private suspend fun getPaymentCardOTP(
@@ -60,7 +61,7 @@ internal class NolPayLinkPaymentCardDelegate(
             collectedData.phoneCountryDiallingCode
         savedStateHandle[MOBILE_NUMBER_KEY] =
             collectedData.mobileNumber
-    }.mapSuspendCatching { NolPayLinkDataStep.COLLECT_OTP_DATA }
+    }.mapSuspendCatching { NolPayLinkCardStep.CollectOtpData }
 
     private suspend fun linkPaymentCard(
         collectedData: NolPayLinkCollectableData.NolPayOtpData,
@@ -70,7 +71,15 @@ internal class NolPayLinkPaymentCardDelegate(
             requireNotNull(savedStateHandle[LINKED_TOKEN_KEY]),
             collectedData.otpCode,
         )
-    ).mapSuspendCatching { NolPayLinkDataStep.CARD_LINKED }
+    ).mapSuspendCatching {
+        NolPayLinkCardStep.CardLinked(
+            PrimerNolPaymentCard(
+                savedStateHandle.get<String>(
+                    PHYSICAL_CARD_KEY
+                ).orEmpty()
+            )
+        )
+    }
 
     companion object {
         private const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"

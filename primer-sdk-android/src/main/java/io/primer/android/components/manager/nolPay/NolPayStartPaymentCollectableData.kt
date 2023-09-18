@@ -5,11 +5,11 @@ import io.primer.nolpay.models.PrimerNolPaymentCard
 
 sealed interface NolPayStartPaymentCollectableData : NolPayCollectableData {
 
-    data class NolPayPhoneData(val mobileNumber: String, val phoneCountryDiallingCode: String) :
-        NolPayStartPaymentCollectableData
-
-    data class NolPayCardData(val nolPaymentCard: PrimerNolPaymentCard) :
-        NolPayStartPaymentCollectableData
+    data class NolPayStartPaymentData(
+        val nolPaymentCard: PrimerNolPaymentCard,
+        val mobileNumber: String,
+        val phoneCountryDiallingCode: String
+    ) : NolPayStartPaymentCollectableData
 
     data class NolPayTagData(val tag: Tag) : NolPayStartPaymentCollectableData
 }

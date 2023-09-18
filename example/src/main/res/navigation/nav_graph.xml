@@ -25,6 +25,14 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_NolFragment_to_NolPayPaymentFragment"
+            app:destination="@+id/NolPayPaymentFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -32,7 +40,6 @@
         android:name="io.primer.sample.nolpay.NolPayLinkFragment"
         android:label="Nol Pay link"
         tools:layout="@layout/fragment_nol_pay_link">
-
 
         <action
             android:id="@+id/action_NolLinkFragment_to_NolFragment"
@@ -50,6 +57,20 @@
 
         <action
             android:id="@+id/action_NolUnlinkFragment_to_NolFragment"
+            app:destination="@id/NolFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NolPayPaymentFragment"
+        android:name="io.primer.sample.nolpay.NolPayPaymentFragment"
+        android:label="Nol Pay payment"
+        tools:layout="@layout/fragment_nol_pay_payment">
+
+        <action
+            android:id="@+id/action_NolPayPaymentFragment_to_NolFragment"
             app:destination="@id/NolFragment"
             app:launchSingleTop="true"
             app:popUpTo="@+id/nav_graph"

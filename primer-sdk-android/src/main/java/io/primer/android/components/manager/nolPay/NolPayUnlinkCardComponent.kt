@@ -53,7 +53,7 @@ class NolPayUnlinkCardComponent internal constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     PrimerHeadlessCollectDataComponent<NolPayUnlinkCollectableData>,
-    PrimerHeadlessStepable<NolPayUnlinkDataStep>,
+    PrimerHeadlessStepable<NolPayUnlinkCardStep>,
     PrimerHeadlessStartable {
 
     private val handler = object : TransitAppSecretKeyHandler {
@@ -64,8 +64,8 @@ class NolPayUnlinkCardComponent internal constructor(
         }
     }
 
-    private val _stepFlow: MutableSharedFlow<NolPayUnlinkDataStep> = MutableSharedFlow()
-    override val stepFlow: Flow<NolPayUnlinkDataStep> = _stepFlow
+    private val _stepFlow: MutableSharedFlow<NolPayUnlinkCardStep> = MutableSharedFlow()
+    override val stepFlow: Flow<NolPayUnlinkCardStep> = _stepFlow
 
     private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val errorFlow: SharedFlow<PrimerError> = _errorFlow
@@ -114,7 +114,7 @@ class NolPayUnlinkCardComponent internal constructor(
         )
     }.onSuccess {
         viewModelScope.launch {
-            _stepFlow.emit(NolPayUnlinkDataStep.COLLECT_CARD_DATA)
+            _stepFlow.emit(NolPayUnlinkCardStep.CollectCardData)
         }
     }.onFailure {
         it.printStackTrace()
