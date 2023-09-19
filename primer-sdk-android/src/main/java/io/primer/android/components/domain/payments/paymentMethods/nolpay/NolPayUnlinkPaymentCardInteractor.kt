@@ -13,7 +13,7 @@ internal class NolPayUnlinkPaymentCardInteractor(
 
     override suspend fun performAction(params: NolPayUnlinkCardParams): Result<Boolean> =
         runSuspendCatching {
-            PrimerNolPay.instance.unlinkPaymentCard(
+            PrimerNolPay.unlinkPaymentCard(
                 params.cardNumber,
                 params.otpCode,
                 params.unlinkToken

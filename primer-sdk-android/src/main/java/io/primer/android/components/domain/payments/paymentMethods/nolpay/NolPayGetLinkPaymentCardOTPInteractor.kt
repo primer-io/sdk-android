@@ -13,7 +13,7 @@ internal class NolPayGetLinkPaymentCardOTPInteractor(
 
     override suspend fun performAction(params: NolPayLinkCardOTPParams): Result<Boolean> =
         runSuspendCatching {
-            PrimerNolPay.instance.getLinkPaymentCardOTP(
+            PrimerNolPay.getLinkPaymentCardOTP(
                 params.mobileNumber,
                 params.countryCallingCode,
                 params.linkToken

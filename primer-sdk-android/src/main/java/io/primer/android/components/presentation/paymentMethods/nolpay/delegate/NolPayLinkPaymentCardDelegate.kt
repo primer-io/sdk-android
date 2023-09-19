@@ -7,8 +7,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardOTPParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayTagParams
-import io.primer.android.components.manager.nolPay.NolPayLinkCardStep
-import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
+import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
+import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.extensions.mapSuspendCatching
 import io.primer.nolpay.models.PrimerNolPaymentCard
 

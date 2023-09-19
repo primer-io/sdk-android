@@ -1,4 +1,4 @@
-package io.primer.android.components.manager.core
+package io.primer.android.components.manager.core.component
 
 import io.primer.android.components.manager.core.composable.PrimerCollectableData
 import io.primer.android.components.manager.core.composable.PrimerHeadlessComponent

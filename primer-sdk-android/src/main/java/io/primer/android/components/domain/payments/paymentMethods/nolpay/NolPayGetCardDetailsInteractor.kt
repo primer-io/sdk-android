@@ -14,8 +14,6 @@ internal class NolPayGetCardDetailsInteractor(
 
     override suspend fun performAction(params: NolPayTagParams): Result<PrimerNolPaymentCard> =
         runSuspendCatching {
-            PrimerNolPay.instance.getPaymentCardDetails(
-                params.tag
-            )
+            PrimerNolPay.getPaymentCardDetails(params.tag)
         }
 }

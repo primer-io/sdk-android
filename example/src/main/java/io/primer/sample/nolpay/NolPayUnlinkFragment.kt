@@ -9,10 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCardComponent
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCardStep
-import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
+import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayUnlinkBinding

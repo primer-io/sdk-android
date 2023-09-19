@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayBinding
 import kotlinx.coroutines.launch
@@ -31,7 +31,6 @@ class NolFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         manager = PrimerHeadlessUniversalCheckoutNolPayManager()
-        manager.provideNolPayLinkCardComponent(this).start()
 
         binding.unlinkNolCard.setOnClickListener {
             findNavController().navigate(R.id.action_NolFragment_to_NolUnlinkFragment)

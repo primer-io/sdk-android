@@ -2,7 +2,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.valid
 
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidator
-import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
+import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 
 internal class NolPayMobileNumberDataValidator : NolPayDataValidator<NolPayLinkCollectableData.NolPayPhoneData> {
     override suspend fun validate(t: NolPayLinkCollectableData.NolPayPhoneData): List<PrimerValidationError> {

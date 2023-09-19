@@ -13,6 +13,6 @@ internal class NolPayLinkPaymentCardInteractor(
 
     override suspend fun performAction(params: NolPayLinkCardParams): Result<Boolean> =
         runSuspendCatching {
-            PrimerNolPay.instance.linkPaymentCard(params.linkToken, params.otpCode)
+            PrimerNolPay.linkPaymentCard(params.linkToken, params.otpCode)
         }
 }

@@ -4,9 +4,9 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayMobileNumberDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayOtpDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayTagDataValidator
-import io.primer.android.components.manager.nolPay.NolPayCollectableData
-import io.primer.android.components.manager.nolPay.NolPayLinkCollectableData
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
+import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
 import kotlin.reflect.KClass
 
 internal class NolPayDataValidatorRegistry {

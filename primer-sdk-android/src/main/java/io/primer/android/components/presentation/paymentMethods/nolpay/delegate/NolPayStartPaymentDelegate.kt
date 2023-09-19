@@ -34,7 +34,9 @@ internal class NolPayStartPaymentDelegate(
         }
     }
 
-    private suspend fun tokenize(collectedData: NolPayStartPaymentCollectableData.NolPayStartPaymentData) = tokenizationInteractor.executeV2(
+    private suspend fun tokenize(
+        collectedData: NolPayStartPaymentCollectableData.NolPayStartPaymentData
+    ) = tokenizationInteractor.executeV2(
         TokenizationParamsV2(
             NolPayPaymentInstrumentParams(
                 PaymentMethodType.NOL_PAY.name,

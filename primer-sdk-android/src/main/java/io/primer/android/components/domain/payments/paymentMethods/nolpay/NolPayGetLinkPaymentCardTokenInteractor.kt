@@ -14,6 +14,6 @@ internal class NolPayGetLinkPaymentCardTokenInteractor(
 
     override suspend fun performAction(params: NolPayTagParams): Result<PrimerLinkCardMetadata> =
         runSuspendCatching {
-            PrimerNolPay.instance.getLinkPaymentCardToken(params.tag)
+            PrimerNolPay.getLinkPaymentCardToken(params.tag)
         }
 }

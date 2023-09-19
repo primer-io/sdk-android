@@ -1,9 +1,9 @@
 package io.primer.android.di
 
 import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPaySecretDataSource
+import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
-import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorFlowResolver
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
@@ -11,6 +11,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkedCardsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
@@ -19,7 +20,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.reposi
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
-import io.primer.android.domain.base.BaseErrorFlowResolver
+import io.primer.android.domain.error.ErrorMapper
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -43,14 +44,12 @@ internal val nolPayModule = {
         factory { NolPayUnlinkPaymentCardInteractor() }
         factory { NolPayGetCardDetailsInteractor() }
         factory { NolPayRequestPaymentInteractor() }
+        factory { NolPayGetLinkedCardsInteractor() }
 
         factory { NolPayDataValidatorRegistry() }
 
-        factory<BaseErrorFlowResolver>(named(NOL_PAY_ERROR_RESOLVER_NAME)) {
-            NolPayErrorFlowResolver(
-                get(),
-                get()
-            )
+        factory<ErrorMapper>(named(NOL_PAY_ERROR_RESOLVER_NAME)) {
+            NolPayErrorMapper()
         }
 
         factory {

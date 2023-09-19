@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCardComponent
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
-import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.sample.databinding.FragmentNolPayPhoneFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
 

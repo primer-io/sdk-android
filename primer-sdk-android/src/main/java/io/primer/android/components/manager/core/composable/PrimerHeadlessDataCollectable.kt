@@ -4,5 +4,5 @@ interface PrimerCollectableData
 
 interface PrimerHeadlessDataCollectable<T : PrimerCollectableData> {
 
-    fun updateCollectedData(t: T)
+    fun updateCollectedData(collectedData: T)
 }

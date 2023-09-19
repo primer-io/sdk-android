@@ -5,8 +5,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardOTPParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCollectableData
-import io.primer.android.components.manager.nolPay.NolPayUnlinkCardStep
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.extensions.mapSuspendCatching
 import io.primer.nolpay.models.PrimerNolPaymentCard
 
@@ -58,7 +58,9 @@ internal class NolPayUnlinkPaymentCardDelegate(
             requireNotNull(savedStateHandle[UNLINKED_TOKEN_KEY]),
         )
     ).mapSuspendCatching {
-        NolPayUnlinkCardStep.CardUnlinked(PrimerNolPaymentCard(requireNotNull(savedStateHandle[PHYSICAL_CARD_KEY])))
+        NolPayUnlinkCardStep.CardUnlinked(
+            PrimerNolPaymentCard(requireNotNull(savedStateHandle[PHYSICAL_CARD_KEY]))
+        )
     }
 
     companion object {

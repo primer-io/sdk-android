@@ -6,7 +6,6 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
-import io.primer.android.domain.base.BaseErrorFlowResolver
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

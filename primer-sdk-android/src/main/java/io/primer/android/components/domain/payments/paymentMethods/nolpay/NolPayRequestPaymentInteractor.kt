@@ -13,7 +13,7 @@ internal class NolPayRequestPaymentInteractor(
 
     override suspend fun performAction(params: NolPayRequestPaymentParams): Result<Boolean> =
         runSuspendCatching {
-            PrimerNolPay.instance.createPayment(
+            PrimerNolPay.createPayment(
                 params.tag,
                 params.transactionNo,
             )

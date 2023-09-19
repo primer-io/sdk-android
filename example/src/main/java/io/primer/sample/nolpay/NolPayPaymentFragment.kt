@@ -10,11 +10,10 @@ import androidx.navigation.fragment.NavHostFragment
 import io.primer.android.components.manager.nolPay.NolPayStartPaymentCollectableData
 import io.primer.android.components.manager.nolPay.NolPayStartPaymentComponent
 import io.primer.android.components.manager.nolPay.NolPayStartPaymentStep
-import io.primer.android.components.manager.nolPay.composable.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayPaymentBinding
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 class NolPayPaymentFragment : Fragment() {

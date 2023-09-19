@@ -15,7 +15,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayConfiguration
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPaySecretParams
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.components.manager.core.PrimerHeadlessCollectDataComponent
+import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
@@ -41,7 +41,6 @@ class NolPayStartPaymentComponent internal constructor(
     PrimerHeadlessCollectDataComponent<NolPayStartPaymentCollectableData>,
     PrimerHeadlessStepable<NolPayStartPaymentStep>,
     PrimerHeadlessStartable {
-
 
     private val handler = object : TransitAppSecretKeyHandler {
         override fun getAppSecretKeyFromServer(sdkId: String): String {
@@ -72,8 +71,8 @@ class NolPayStartPaymentComponent internal constructor(
         }
     }
 
-    override fun updateCollectedData(t: NolPayStartPaymentCollectableData) {
-        viewModelScope.launch { _collectedData.emit(t) }
+    override fun updateCollectedData(collectedData: NolPayStartPaymentCollectableData) {
+        viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
             //   _validationFlow.emit(nolPayDataValidatorRegistry.getValidator(t).validate(t))
         }
@@ -93,7 +92,7 @@ class NolPayStartPaymentComponent internal constructor(
     }
 
     private suspend fun initSDK(configuration: NolPayConfiguration) = runSuspendCatching {
-        PrimerNolPay.instance.initSDK(
+        PrimerNolPay.initSDK(
             configuration.environment != Environment.PRODUCTION,
             BuildConfig.DEBUG,
             configuration.merchantAppId,

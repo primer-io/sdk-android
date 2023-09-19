@@ -7,6 +7,6 @@ internal class NolPayError(errorCode: String, errorMessage: String?) : PrimerErr
     override val errorId = "nol-pay-sdk-error"
     override val description = "Nol SDK encountered an error $errorCode. $errorMessage"
     override val diagnosticsId = UUID.randomUUID().toString()
-    override val exposedError = BadNetworkError(diagnosticsId)
+    override val exposedError = this
     override val recoverySuggestion: String? = null
 }
