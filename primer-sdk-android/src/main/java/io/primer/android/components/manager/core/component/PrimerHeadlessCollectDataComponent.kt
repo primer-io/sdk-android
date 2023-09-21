@@ -7,10 +7,6 @@ import io.primer.android.components.manager.core.composable.PrimerHeadlessErrora
 import io.primer.android.components.manager.core.composable.PrimerHeadlessSubmitable
 import io.primer.android.components.manager.core.composable.PrimerHeadlessValidatable
 
-// session, flow
-
-// TODO move to package
-
 interface PrimerHeadlessCollectDataComponent<T : PrimerCollectableData> :
     PrimerHeadlessComponent,
     PrimerHeadlessErrorable,

@@ -1,11 +1,10 @@
 package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
-import androidx.lifecycle.SavedStateHandle
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
-import io.primer.android.components.manager.nolPay.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentStep
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
@@ -20,7 +19,6 @@ internal class NolPayStartPaymentDelegate(
 ) {
     suspend fun handleCollectedCardData(
         collectedData: NolPayStartPaymentCollectableData,
-        savedStateHandle: SavedStateHandle
     ): Result<NolPayStartPaymentStep> {
         return when (collectedData) {
             is NolPayStartPaymentCollectableData.NolPayStartPaymentData ->

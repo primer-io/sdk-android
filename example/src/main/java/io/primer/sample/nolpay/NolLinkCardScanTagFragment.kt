@@ -11,7 +11,7 @@ import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLink
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
-import io.primer.nolpay.PrimerNolPayNfcUtils
+import io.primer.nolpay.api.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collectLatest

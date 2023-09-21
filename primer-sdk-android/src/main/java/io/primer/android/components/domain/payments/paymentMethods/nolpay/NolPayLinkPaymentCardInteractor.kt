@@ -3,7 +3,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayLinkCardParams
 import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.extensions.runSuspendCatching
-import io.primer.nolpay.PrimerNolPay
+import io.primer.nolpay.api.PrimerNolPay
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

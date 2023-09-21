@@ -1,10 +1,8 @@
-package io.primer.android.components.manager.nolPay
+package io.primer.android.components.manager.nolPay.startPayment.composable
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.snowballtech.transit.rta.configuration.TransitAppSecretKeyHandler
@@ -18,12 +16,14 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentStep
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.base.None
 import io.primer.android.extensions.runSuspendCatching
-import io.primer.nolpay.PrimerNolPay
+import io.primer.nolpay.api.PrimerNolPay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,7 +36,6 @@ class NolPayStartPaymentComponent internal constructor(
     private val appSecretInteractor: NolPayAppSecretInteractor,
     private val configurationInteractor: NolPayConfigurationInteractor,
     private val startPaymentDelegate: NolPayStartPaymentDelegate,
-    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     PrimerHeadlessCollectDataComponent<NolPayStartPaymentCollectableData>,
     PrimerHeadlessStepable<NolPayStartPaymentStep>,
@@ -45,7 +44,8 @@ class NolPayStartPaymentComponent internal constructor(
     private val handler = object : TransitAppSecretKeyHandler {
         override fun getAppSecretKeyFromServer(sdkId: String): String {
             return runBlocking {
-                appSecretInteractor(NolPaySecretParams(sdkId)).getOrElse { "32893fc5f6be4a5b95cbd7bbcceffd56" }
+                appSecretInteractor(NolPaySecretParams(sdkId))
+                    .getOrElse { "32893fc5f6be4a5b95cbd7bbcceffd56" }
             }
         }
     }
@@ -82,7 +82,6 @@ class NolPayStartPaymentComponent internal constructor(
         viewModelScope.launch {
             startPaymentDelegate.handleCollectedCardData(
                 _collectedData.replayCache.last(),
-                savedStateHandle
             ).onSuccess {
                 _stepFlow.emit(it)
             }.onFailure {
@@ -106,7 +105,7 @@ class NolPayStartPaymentComponent internal constructor(
         it.printStackTrace()
     }
 
-    companion object : DIAppComponent {
+    internal companion object : DIAppComponent {
         fun getInstance(owner: ViewModelStoreOwner): NolPayStartPaymentComponent {
             return ViewModelProvider(
                 owner,
@@ -120,7 +119,7 @@ class NolPayStartPaymentComponent internal constructor(
                             get(),
                             get(),
                             get(),
-                            extras.createSavedStateHandle()
+                            // extras.createSavedStateHandle()
                         ) as T
                     }
                 }

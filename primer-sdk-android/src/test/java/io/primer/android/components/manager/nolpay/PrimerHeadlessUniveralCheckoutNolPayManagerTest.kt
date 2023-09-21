@@ -8,7 +8,7 @@ import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
 import io.primer.android.components.manager.nolPay.NolPayData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
@@ -27,7 +27,7 @@ class PrimerHeadlessUniveralCheckoutNolPayManagerTest {
     internal lateinit var nolPayAppSecretInteractor: NolPayAppSecretInteractor
 
     @RelaxedMockK
-    internal lateinit var nolPayDataValidatorRegistry: NolPayDataValidatorRegistry
+    internal lateinit var nolPayLinkDataValidatorRegistry: NolPayLinkDataValidatorRegistry
 
     @RelaxedMockK
     internal lateinit var nolPayLinkPaymentCardDelegate: NolPayLinkPaymentCardDelegate
@@ -43,7 +43,7 @@ class PrimerHeadlessUniveralCheckoutNolPayManagerTest {
         manager = PrimerHeadlessUniversalCheckoutNolPayManager(
             nolPayConfigInteractor,
             nolPayAppSecretInteractor,
-            nolPayDataValidatorRegistry,
+            nolPayLinkDataValidatorRegistry,
             nolPayLinkPaymentCardDelegate,
             savedStateHandle
         )
@@ -54,7 +54,7 @@ class PrimerHeadlessUniveralCheckoutNolPayManagerTest {
         val collectedData = NolPayData.NolPayPhoneData("", "")
         val expectedValidationError = PrimerValidationError("test", "test")
 
-        coEvery { nolPayDataValidatorRegistry.getValidator(any()).validate(any()) }.returns(
+        coEvery { nolPayLinkDataValidatorRegistry.getValidator(any()).validate(any()) }.returns(
             listOf(
                 expectedValidationError
             )

@@ -8,7 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import io.primer.nolpay.PrimerNolPayNfcUtils
+import io.primer.nolpay.api.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.ActivityMainBinding
 import io.primer.sample.datamodels.AppCountryCode
 import io.primer.sample.datasources.CountryDataSource

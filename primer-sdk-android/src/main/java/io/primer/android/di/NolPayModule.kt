@@ -18,7 +18,9 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidatorRegistry
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
+import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.domain.error.ErrorMapper
 import org.koin.core.qualifier.named
@@ -28,15 +30,13 @@ internal const val NOL_PAY_ERROR_RESOLVER_NAME = "nolPayErrorResolver"
 
 internal val nolPayModule = {
     module {
-        factory {
-            NolPayConfigurationInteractor(get())
-        }
+        factory { NolPayConfigurationInteractor(get()) }
 
         factory<NolPayConfigurationRepository> { NolPayConfigurationDataRepository(get()) }
 
         factory { RemoteNolPaySecretDataSource(get()) }
-        factory<NolPayAppSecretRepository> { NolPayAppSecretDataRepository(get()) }
-        factory { NolPayAppSecretInteractor(get()) }
+        factory<NolPayAppSecretRepository> { NolPayAppSecretDataRepository(get(), get()) }
+        factory { NolPayAppSecretInteractor(get(), get()) }
         factory { NolPayGetLinkPaymentCardTokenInteractor() }
         factory { NolPayGetLinkPaymentCardOTPInteractor() }
         factory { NolPayLinkPaymentCardInteractor() }
@@ -46,7 +46,8 @@ internal val nolPayModule = {
         factory { NolPayRequestPaymentInteractor() }
         factory { NolPayGetLinkedCardsInteractor() }
 
-        factory { NolPayDataValidatorRegistry() }
+        factory { NolPayLinkDataValidatorRegistry() }
+        factory { NolPayUnlinkDataValidatorRegistry() }
 
         factory<ErrorMapper>(named(NOL_PAY_ERROR_RESOLVER_NAME)) {
             NolPayErrorMapper()
@@ -57,6 +58,9 @@ internal val nolPayModule = {
                 get(),
                 get(),
                 get(),
+                get(),
+                get(),
+                get(),
             )
         }
 
@@ -64,6 +68,18 @@ internal val nolPayModule = {
             NolPayUnlinkPaymentCardDelegate(
                 get(),
                 get(),
+                get(),
+                get(),
+                get()
+            )
+        }
+
+        factory {
+            NolPayGetLinkedCardsDelegate(
+                get(),
+                get(),
+                get(),
+                get()
             )
         }
 

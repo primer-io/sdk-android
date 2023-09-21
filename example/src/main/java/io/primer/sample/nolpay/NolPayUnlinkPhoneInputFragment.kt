@@ -50,7 +50,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
 
         lifecycleScope.launchWhenCreated {
             unlinkCardComponent.validationFlow.collectLatest {
-                binding.nextButton.isEnabled = it.isEmpty() && binding.mobileNumber.text.length > 7
+                binding.nextButton.isEnabled = it.isEmpty()
             }
         }
     }

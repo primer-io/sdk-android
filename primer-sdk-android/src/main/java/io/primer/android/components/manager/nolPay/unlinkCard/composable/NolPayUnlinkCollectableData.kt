@@ -1,7 +1,7 @@
 package io.primer.android.components.manager.nolPay.unlinkCard.composable
 
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
-import io.primer.nolpay.models.PrimerNolPaymentCard
+import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
 sealed interface NolPayUnlinkCollectableData : NolPayCollectableData {
 

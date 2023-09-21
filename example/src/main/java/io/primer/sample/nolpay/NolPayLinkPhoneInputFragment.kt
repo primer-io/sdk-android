@@ -13,7 +13,6 @@ import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalChecko
 import io.primer.sample.databinding.FragmentNolPayPhoneFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
 
-
 class NolPayLinkPhoneInputFragment : Fragment() {
 
     private lateinit var binding: FragmentNolPayPhoneFragmentBinding
@@ -51,7 +50,7 @@ class NolPayLinkPhoneInputFragment : Fragment() {
 
         lifecycleScope.launchWhenCreated {
             linkCardComponent.validationFlow.collectLatest {
-                binding.nextButton.isEnabled = it.isEmpty() && binding.mobileNumber.text.length > 7
+                binding.nextButton.isEnabled = it.isEmpty()
             }
         }
     }

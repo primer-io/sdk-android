@@ -61,6 +61,8 @@ class NolFragment : Fragment() {
                             }
                         }
                     }
+                }.onFailure {
+                    it.printStackTrace()
                 }
         }
     }

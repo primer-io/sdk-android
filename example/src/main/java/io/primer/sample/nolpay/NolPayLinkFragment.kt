@@ -61,6 +61,12 @@ class NolPayLinkFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launchWhenResumed {
+            linkCardComponent.errorFlow.collectLatest {
+                Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
         linkCardComponent.start()
     }
 }

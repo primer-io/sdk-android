@@ -2,5 +2,5 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.repos
 
 internal interface NolPayAppSecretRepository {
 
-    suspend fun getAppSecret(sdkId: String): Result<String>
+    suspend fun getAppSecret(sdkId: String, appId: String): Result<String>
 }

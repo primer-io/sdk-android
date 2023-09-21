@@ -1,8 +1,8 @@
-package io.primer.android.components.manager.nolPay
+package io.primer.android.components.manager.nolPay.startPayment.component
 
 import android.nfc.Tag
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
-import io.primer.nolpay.models.PrimerNolPaymentCard
+import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
 sealed interface NolPayStartPaymentCollectableData : NolPayCollectableData {
 

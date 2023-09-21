@@ -13,7 +13,7 @@ import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUn
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
-import io.primer.nolpay.models.PrimerNolPaymentCard
+import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayUnlinkBinding
 import kotlinx.coroutines.flow.collectLatest
