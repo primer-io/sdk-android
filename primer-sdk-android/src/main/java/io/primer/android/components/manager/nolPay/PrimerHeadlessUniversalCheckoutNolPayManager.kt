@@ -3,6 +3,7 @@ package io.primer.android.components.manager.nolPay
 import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
 import io.primer.android.components.manager.nolPay.listCards.component.NolPayLinkedCardsComponent
+import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
 import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentComponent
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 
@@ -18,4 +19,6 @@ class PrimerHeadlessUniversalCheckoutNolPayManager {
         NolPayStartPaymentComponent = NolPayStartPaymentComponent.getInstance(owner)
 
     fun provideNolPayLinkedCardsComponent() = NolPayLinkedCardsComponent.getInstance()
+
+    fun provideNolPayNfcComponent() = NolPayNfcComponent.provideInstance()
 }

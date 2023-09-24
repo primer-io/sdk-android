@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
+import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
+@ExperimentalPrimerApi
 class NolPayLinkCardComponent internal constructor(
     private val linkPaymentCardDelegate: NolPayLinkPaymentCardDelegate,
     private val dataValidatorRegistry: NolPayLinkDataValidatorRegistry,
@@ -52,13 +54,8 @@ class NolPayLinkCardComponent internal constructor(
                 viewModelScope.launch {
                     _stepFlow.emit(NolPayLinkCardStep.CollectTagData)
                 }
-            }.onFailure {
-                it.printStackTrace()
-                errorMapper.getPrimerError(it).also { error ->
-                    _errorFlow.emit(error)
-                }.also { error ->
-                    logSdkErrors(error)
-                }
+            }.onFailure { throwable ->
+                handleError(throwable)
             }
         }
     }
@@ -80,15 +77,12 @@ class NolPayLinkCardComponent internal constructor(
         logSdkFunctionCalls(NolPayAnalyticsConstants.LINK_CARD_SUBMIT_DATA_METHOD)
         viewModelScope.launch {
             linkPaymentCardDelegate.handleCollectedCardData(
-                _collectedData.replayCache.last(), savedStateHandle
+                _collectedData.replayCache.lastOrNull(),
+                savedStateHandle
             ).onSuccess { step ->
                 _stepFlow.emit(step)
-            }.onFailure {
-                errorMapper.getPrimerError(it).also { error ->
-                    _errorFlow.emit(error)
-                }.also { error ->
-                    logSdkErrors(error)
-                }
+            }.onFailure { throwable ->
+                handleError(throwable)
             }
         }
     }
@@ -100,10 +94,15 @@ class NolPayLinkCardComponent internal constructor(
         linkPaymentCardDelegate.logSdkAnalyticsEvent(methodName, context)
     }
 
-    private fun logSdkErrors(
-        error: PrimerError,
+    private fun handleError(
+        throwable: Throwable,
     ) = viewModelScope.launch {
-        linkPaymentCardDelegate.logSdkAnalyticsErrors(error)
+        errorMapper.getPrimerError(throwable)
+            .also { error ->
+                _errorFlow.emit(error)
+            }.also { error ->
+                linkPaymentCardDelegate.logSdkAnalyticsErrors(error)
+            }
     }
 
     internal companion object : DIAppComponent {

@@ -11,7 +11,7 @@ import io.primer.android.components.manager.nolPay.startPayment.component.NolPay
 import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentComponent
 import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
-import io.primer.nolpay.api.PrimerNolPayNfcUtils
+import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -20,6 +20,7 @@ class NolPayPaymentScanTagFragment : Fragment() {
 
     private lateinit var binding: FragmentNolCardLinkScanTagBinding
     private lateinit var startPaymentComponent: NolPayStartPaymentComponent
+    private lateinit var nfcComponent: NolPayNfcComponent
 
     private val mainViewModel: MainViewModel by activityViewModels()
 
@@ -38,18 +39,19 @@ class NolPayPaymentScanTagFragment : Fragment() {
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayStartPaymentComponent(
                 requireParentFragment().requireParentFragment()
             )
+        nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
         lifecycleScope.launchWhenCreated {
             startPaymentComponent.stepFlow.collectLatest { step: NolPayStartPaymentStep ->
-                when(step) {
+                when (step) {
                     NolPayStartPaymentStep.CollectStartPaymentData -> Unit
                     NolPayStartPaymentStep.CollectTagData -> Unit
                 }
             }
         }
 
-        mainViewModel.collectedTag.observe(viewLifecycleOwner) { tag ->
-            tag?.let {
+        mainViewModel.collectedTag.observe(viewLifecycleOwner) { intent ->
+            nfcComponent.getAvailableTag(intent)?.let {
                 startPaymentComponent.updateCollectedData(
                     NolPayStartPaymentCollectableData.NolPayTagData(
                         it
@@ -61,11 +63,11 @@ class NolPayPaymentScanTagFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        PrimerNolPayNfcUtils.enableForegroundDispatch(requireActivity(), 1)
+        nfcComponent.enableForegroundDispatch(requireActivity(), 1)
     }
 
     override fun onPause() {
         super.onPause()
-        PrimerNolPayNfcUtils.disableForegroundDispatch(requireActivity())
+        nfcComponent.disableForegroundDispatch(requireActivity())
     }
 }

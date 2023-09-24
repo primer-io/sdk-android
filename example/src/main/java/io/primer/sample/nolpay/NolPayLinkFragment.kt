@@ -40,6 +40,11 @@ class NolPayLinkFragment : Fragment() {
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayLinkCardComponent(
                this
             )
+        lifecycleScope.launchWhenCreated {
+            linkCardComponent.errorFlow.collectLatest {
+                Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
+            }
+        }
 
         lifecycleScope.launchWhenCreated {
             linkCardComponent.stepFlow.collectLatest { nolPayLinkStep ->
@@ -61,12 +66,10 @@ class NolPayLinkFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launchWhenResumed {
-            linkCardComponent.errorFlow.collectLatest {
-                Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
-            }
-        }
 
         linkCardComponent.start()
+
+        linkCardComponent.submit()
+
     }
 }

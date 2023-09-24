@@ -58,7 +58,7 @@ internal class ConfigurationDataResponseTest {
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
                 null,
-                false
+                null
             )
         )
         assertEquals(

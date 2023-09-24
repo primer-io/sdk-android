@@ -2,6 +2,7 @@ package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import androidx.lifecycle.SavedStateHandle
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
@@ -10,6 +11,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.models
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
+import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.extensions.mapSuspendCatching
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
@@ -21,20 +23,24 @@ internal class NolPayUnlinkPaymentCardDelegate(
     configurationInteractor: NolPayConfigurationInteractor
 ) : BaseNolPayDelegate(appSecretInteractor, configurationInteractor, analyticsInteractor) {
     suspend fun handleCollectedCardData(
-        collectedData: NolPayUnlinkCollectableData,
+        collectedData: NolPayUnlinkCollectableData?,
         savedStateHandle: SavedStateHandle
     ): Result<NolPayUnlinkCardStep> {
-        return when (collectedData) {
+        return when (
+            val collectedDataUnwrapped =
+                requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
+        ) {
             is NolPayUnlinkCollectableData.NolPayPhoneData -> {
-                getPaymentCardOTP(collectedData, savedStateHandle)
+                getPaymentCardOTP(collectedDataUnwrapped, savedStateHandle)
             }
 
             is NolPayUnlinkCollectableData.NolPayOtpData -> {
-                unlinkPaymentCard(collectedData, savedStateHandle)
+                unlinkPaymentCard(collectedDataUnwrapped, savedStateHandle)
             }
 
             is NolPayUnlinkCollectableData.NolPayCardData -> {
-                savedStateHandle[PHYSICAL_CARD_KEY] = collectedData.nolPaymentCard.cardNumber
+                savedStateHandle[PHYSICAL_CARD_KEY] =
+                    collectedDataUnwrapped.nolPaymentCard.cardNumber
                 Result.success(NolPayUnlinkCardStep.CollectPhoneData)
             }
         }
@@ -70,7 +76,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
     }
 
     companion object {
-        private const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
-        private const val UNLINKED_TOKEN_KEY = "UNLINKED_TOKEN"
+        internal const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
+        internal const val UNLINKED_TOKEN_KEY = "UNLINKED_TOKEN"
     }
 }

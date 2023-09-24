@@ -2,6 +2,7 @@ package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import androidx.lifecycle.SavedStateHandle
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
@@ -12,7 +13,9 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.models
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayTagParams
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
+import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.extensions.mapSuspendCatching
+import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
 internal class NolPayLinkPaymentCardDelegate(
@@ -25,20 +28,23 @@ internal class NolPayLinkPaymentCardDelegate(
 ) : BaseNolPayDelegate(appSecretInteractor, configurationInteractor, analyticsInteractor) {
 
     suspend fun handleCollectedCardData(
-        collectedData: NolPayLinkCollectableData,
+        collectedData: NolPayLinkCollectableData?,
         savedStateHandle: SavedStateHandle
-    ): Result<NolPayLinkCardStep> {
-        return when (collectedData) {
+    ): Result<NolPayLinkCardStep> = runSuspendCatching {
+        return when (
+            val collectedDataUnwrapped =
+                requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
+        ) {
             is NolPayLinkCollectableData.NolPayTagData -> {
-                getPaymentCardLinkToken(collectedData, savedStateHandle)
+                getPaymentCardLinkToken(collectedDataUnwrapped, savedStateHandle)
             }
 
             is NolPayLinkCollectableData.NolPayPhoneData -> {
-                getPaymentCardOTP(collectedData, savedStateHandle)
+                getPaymentCardOTP(collectedDataUnwrapped, savedStateHandle)
             }
 
             is NolPayLinkCollectableData.NolPayOtpData -> {
-                linkPaymentCard(collectedData, savedStateHandle)
+                linkPaymentCard(collectedDataUnwrapped, savedStateHandle)
             }
         }
     }
@@ -61,7 +67,10 @@ internal class NolPayLinkPaymentCardDelegate(
         NolPayLinkCardOTPParams(
             collectedData.mobileNumber,
             collectedData.phoneCountryDiallingCode,
-            requireNotNull(savedStateHandle[LINKED_TOKEN_KEY])
+            requireNotNullCheck(
+                savedStateHandle[LINKED_TOKEN_KEY],
+                NolPayIllegalValueKey.SAVED_DATA_LINK_TOKEN
+            )
         )
     ).onSuccess {
         savedStateHandle[REGION_CODE_KEY] =
@@ -75,7 +84,10 @@ internal class NolPayLinkPaymentCardDelegate(
         savedStateHandle: SavedStateHandle
     ) = linkPaymentCardInteractor(
         NolPayLinkCardParams(
-            requireNotNull(savedStateHandle[LINKED_TOKEN_KEY]),
+            requireNotNullCheck(
+                savedStateHandle[LINKED_TOKEN_KEY],
+                NolPayIllegalValueKey.SAVED_DATA_LINK_TOKEN
+            ),
             collectedData.otpCode,
         )
     ).mapSuspendCatching {
@@ -90,9 +102,9 @@ internal class NolPayLinkPaymentCardDelegate(
 
     companion object {
 
-        private const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
-        private const val LINKED_TOKEN_KEY = "LINKED_TOKEN"
-        private const val REGION_CODE_KEY = "REGION_CODE"
-        private const val MOBILE_NUMBER_KEY = "MOBILE_NUMBER"
+        internal const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
+        internal const val LINKED_TOKEN_KEY = "LINKED_TOKEN"
+        internal const val REGION_CODE_KEY = "REGION_CODE"
+        internal const val MOBILE_NUMBER_KEY = "MOBILE_NUMBER"
     }
 }

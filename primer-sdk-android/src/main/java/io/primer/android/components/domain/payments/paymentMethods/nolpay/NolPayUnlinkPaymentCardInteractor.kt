@@ -1,5 +1,6 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolpay
 
+import android.util.Log
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
 import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.extensions.runSuspendCatching
@@ -13,6 +14,7 @@ internal class NolPayUnlinkPaymentCardInteractor(
 
     override suspend fun performAction(params: NolPayUnlinkCardParams): Result<Boolean> =
         runSuspendCatching {
+            Log.d("semirz", params.toString())
             PrimerNolPay.unlinkPaymentCard(
                 params.cardNumber,
                 params.otpCode,

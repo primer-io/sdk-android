@@ -1,5 +1,6 @@
 package io.primer.android.components.manager.nolPay.listCards.component
 
+import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
@@ -11,6 +12,7 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import kotlinx.coroutines.flow.collect
 import org.koin.core.component.get
 
+@ExperimentalPrimerApi
 class NolPayLinkedCardsComponent internal constructor(
     private val linkedCardsDelegate: NolPayGetLinkedCardsDelegate,
     private val analyticsInteractor: AnalyticsInteractor

@@ -1,7 +1,7 @@
 package io.primer.sample.viewmodels
 
 import android.content.Context
-import android.nfc.Tag
+import android.content.Intent
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
@@ -172,9 +172,9 @@ class MainViewModel(
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
         )
 
-    private val _collectedTag: MutableLiveData<Tag?> = MutableLiveData()
-    val collectedTag: LiveData<Tag?> = _collectedTag
-    fun setTag(tag: Tag?) = _collectedTag.postValue(tag)
+    private val _collectedTag: MutableLiveData<Intent?> = MutableLiveData()
+    val collectedTag: LiveData<Intent?> = _collectedTag
+    fun setTag(intent: Intent?) = _collectedTag.postValue(intent)
 
     fun configure(
         listener: PrimerCheckoutListener,

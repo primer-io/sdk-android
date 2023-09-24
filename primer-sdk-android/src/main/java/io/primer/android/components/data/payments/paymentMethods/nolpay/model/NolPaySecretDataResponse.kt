@@ -7,7 +7,7 @@ internal data class NolPaySecretDataResponse(val sdkSecret: String) : JSONDeseri
 
     companion object {
 
-        private const val SDK_SECRET_FIELD = "sdSecret"
+        private const val SDK_SECRET_FIELD = "sdkSecret"
 
         @JvmField
         val deserializer =

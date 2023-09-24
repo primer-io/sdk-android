@@ -8,7 +8,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import io.primer.nolpay.api.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.ActivityMainBinding
 import io.primer.sample.datamodels.AppCountryCode
 import io.primer.sample.datasources.CountryDataSource
@@ -65,8 +64,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        PrimerNolPayNfcUtils.getAvailableTag(intent)?.let { tag ->
-            mainViewModel.setTag(tag)
-        }
+        mainViewModel.setTag(intent)
     }
 }

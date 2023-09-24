@@ -69,7 +69,6 @@ internal enum class PaymentMethodType(
     OMISE_PROMPTPAY(ClientTokenIntent.OMISE_PROMPTPAY_REDIRECTION, Brand.PROMPTPAY),
     XENDIT_RETAIL_OUTLETS(ClientTokenIntent.PAYMENT_METHOD_VOUCHER, Brand.RETAIL_OUTLETS),
     IPAY88_CARD(ClientTokenIntent.IPAY88_CARD_REDIRECTION, Brand.IPAY_88),
-    // TODO fix brand
     NOL_PAY(brand = Brand.UNKNOWN),
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);

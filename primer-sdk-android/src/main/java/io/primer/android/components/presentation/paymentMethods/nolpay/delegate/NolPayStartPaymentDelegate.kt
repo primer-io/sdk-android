@@ -1,6 +1,9 @@
 package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
 import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
@@ -15,8 +18,11 @@ import kotlinx.coroutines.flow.mapLatest
 
 internal class NolPayStartPaymentDelegate(
     private val tokenizationInteractor: TokenizationInteractor,
-    private val requestPaymentInteractor: NolPayRequestPaymentInteractor
-) {
+    private val requestPaymentInteractor: NolPayRequestPaymentInteractor,
+    appSecretInteractor: NolPayAppSecretInteractor,
+    configurationInteractor: NolPayConfigurationInteractor,
+    analyticsInteractor: AnalyticsInteractor
+) : BaseNolPayDelegate(appSecretInteractor, configurationInteractor, analyticsInteractor) {
     suspend fun handleCollectedCardData(
         collectedData: NolPayStartPaymentCollectableData,
     ): Result<NolPayStartPaymentStep> {

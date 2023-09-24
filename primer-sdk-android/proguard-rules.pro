@@ -298,6 +298,41 @@
     public *;
 }
 
+ #------------------------------------Headless components------------------------------------------------#
+
+-keep class io.primer.android.components.manager.core.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.core.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.linkCard.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.linkCard.composable.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.unlinkCard.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.unlinkCard.composable.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.nfc.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
+    *;
+}
+
+
 -keepclassmembers,allowoptimization enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);

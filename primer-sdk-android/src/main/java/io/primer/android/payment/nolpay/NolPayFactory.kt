@@ -1,6 +1,5 @@
 package io.primer.android.payment.nolpay
 
-import com.snowballtech.transit.rta.TransitNfcStatus
 import io.primer.android.PaymentMethod
 import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
 import io.primer.android.payment.nolpay.helpers.NolPaySdkClassValidator
@@ -8,6 +7,7 @@ import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
 import io.primer.android.utils.Success
 import io.primer.nolpay.api.PrimerNolPayNfcUtils
+import io.primer.nolpay.api.models.NfcStatus
 
 internal class NolPayFactory : PaymentMethodFactory {
 
@@ -20,7 +20,7 @@ internal class NolPayFactory : PaymentMethodFactory {
                     )
                 )
 
-            PrimerNolPayNfcUtils.getNfcStatus() == TransitNfcStatus.NFC_UNSUPPORTED ->
+            PrimerNolPayNfcUtils.getNfcStatus() == NfcStatus.NFC_UNSUPPORTED ->
                 Failure(
                     IllegalStateException("NFC is not supported on the current device.")
                 )

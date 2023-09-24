@@ -11,6 +11,7 @@ import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLink
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
 import io.primer.nolpay.api.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
@@ -21,6 +22,7 @@ class NolLinkCardScanTagFragment : Fragment() {
 
     private lateinit var binding: FragmentNolCardLinkScanTagBinding
     private lateinit var linkCardComponent: NolPayLinkCardComponent
+    private lateinit var nfcComponent: NolPayNfcComponent
 
     private val mainViewModel: MainViewModel by activityViewModels()
 
@@ -39,6 +41,7 @@ class NolLinkCardScanTagFragment : Fragment() {
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayLinkCardComponent(
                 requireParentFragment().requireParentFragment()
             )
+        nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
         lifecycleScope.launchWhenCreated {
             combine(linkCardComponent.validationFlow, linkCardComponent.stepFlow) { a, b ->
@@ -49,12 +52,10 @@ class NolLinkCardScanTagFragment : Fragment() {
             }
         }
 
-        mainViewModel.collectedTag.observe(viewLifecycleOwner) { tag ->
-            tag?.let {
+        mainViewModel.collectedTag.observe(viewLifecycleOwner) { intent ->
+            nfcComponent.getAvailableTag(intent)?.let { tag ->
                 linkCardComponent.updateCollectedData(
-                    NolPayLinkCollectableData.NolPayTagData(
-                        it
-                    )
+                    NolPayLinkCollectableData.NolPayTagData(tag)
                 )
             }
         }
@@ -62,11 +63,11 @@ class NolLinkCardScanTagFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        PrimerNolPayNfcUtils.enableForegroundDispatch(requireActivity(), 1)
+        nfcComponent.enableForegroundDispatch(requireActivity(), 1)
     }
 
     override fun onPause() {
         super.onPause()
-        PrimerNolPayNfcUtils.disableForegroundDispatch(requireActivity())
+        nfcComponent.disableForegroundDispatch(requireActivity())
     }
 }

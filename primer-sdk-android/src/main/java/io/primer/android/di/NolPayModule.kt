@@ -87,6 +87,9 @@ internal val nolPayModule = {
             NolPayStartPaymentDelegate(
                 get(),
                 get(),
+                get(),
+                get(),
+                get(),
             )
         }
     }
