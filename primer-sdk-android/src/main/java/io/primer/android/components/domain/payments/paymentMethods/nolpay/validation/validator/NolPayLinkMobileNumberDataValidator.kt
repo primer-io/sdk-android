@@ -37,7 +37,7 @@ internal class NolPayLinkMobileNumberDataValidator :
         else -> emptyList()
     }
 
-    private companion object {
+    internal companion object {
 
         const val INVALID_DIALLING_CODE_ERROR_ID = "invalid-phone-country-dialling-code"
         const val INVALID_MOBILE_NUMBER_ERROR_ID = "invalid-mobile-number"

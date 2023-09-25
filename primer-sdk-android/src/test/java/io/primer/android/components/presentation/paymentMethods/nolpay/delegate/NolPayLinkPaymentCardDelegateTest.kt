@@ -95,7 +95,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
         coEvery {
             getLinkPaymentCardTokenInteractor(any())
-        } returns Result.success(PrimerLinkCardMetadata(LINK_TOKEN, CARD_NUMBER))
+        } returns (Result.success(PrimerLinkCardMetadata(LINK_TOKEN, CARD_NUMBER)))
 
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
@@ -118,7 +118,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         val expectedException = mockk<NolPaySdkException>(relaxed = true)
         coEvery {
             getLinkPaymentCardTokenInteractor(any())
-        } returns Result.failure(expectedException)
+        } returns (Result.failure(expectedException))
 
         val exception = assertThrows<NolPaySdkException> {
             runTest {
@@ -142,7 +142,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         every { savedStateHandle.get<String>(LINKED_TOKEN_KEY) }.returns(LINK_TOKEN)
         coEvery {
             linkPaymentCardOTPInteractor(any())
-        } returns Result.success(true)
+        } returns (Result.success(true))
 
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
@@ -171,7 +171,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         val expectedException = mockk<NolPaySdkException>(relaxed = true)
         coEvery {
             linkPaymentCardOTPInteractor(any())
-        } returns Result.failure(expectedException)
+        } returns (Result.failure(expectedException))
 
         val exception = assertThrows<NolPaySdkException> {
             runTest {
@@ -203,7 +203,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
 
         coEvery {
             linkPaymentCardOTPInteractor(any())
-        } returns Result.success(true)
+        } returns (Result.success(true))
 
         val exception = assertThrows<IllegalValueException> {
             runTest {
@@ -227,7 +227,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) } returns CARD_NUMBER
         coEvery {
             linkPaymentCardInteractor(any())
-        } returns Result.success(true)
+        } returns (Result.success(true))
 
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
@@ -260,7 +260,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         val expectedException = mockk<NolPaySdkException>(relaxed = true)
         coEvery {
             linkPaymentCardInteractor(any())
-        } returns Result.failure(expectedException)
+        }.returns(Result.failure(expectedException))
 
         val exception = assertThrows<NolPaySdkException> {
             runTest {
