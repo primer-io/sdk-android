@@ -1,7 +1,6 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolPay
 
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
