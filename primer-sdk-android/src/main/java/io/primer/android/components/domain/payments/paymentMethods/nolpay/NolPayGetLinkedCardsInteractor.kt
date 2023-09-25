@@ -9,13 +9,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 internal class NolPayGetLinkedCardsInteractor(
+    private val nolPay: PrimerNolPay,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseSuspendInteractor<List<PrimerNolPaymentCard>, NolPayGetLinkedCardsParams>() {
 
     override suspend fun performAction(params: NolPayGetLinkedCardsParams):
         Result<List<PrimerNolPaymentCard>> =
         runSuspendCatching {
-            PrimerNolPay.getLinkedPaymentCards(
+            nolPay.getLinkedPaymentCards(
                 params.mobileNumber,
                 params.countryCallingCode
             )

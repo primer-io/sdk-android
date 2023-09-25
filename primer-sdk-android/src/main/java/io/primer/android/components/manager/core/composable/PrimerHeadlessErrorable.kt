@@ -13,5 +13,5 @@ interface PrimerHeadlessErrorable {
      *
      * @return A Flow of [PrimerError] objects representing errors emitted by this component.
      */
-    val errorFlow: Flow<PrimerError>
+    val error: Flow<PrimerError>
 }

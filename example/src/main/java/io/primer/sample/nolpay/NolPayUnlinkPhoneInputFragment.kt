@@ -49,7 +49,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
         }
 
         lifecycleScope.launchWhenCreated {
-            unlinkCardComponent.validationFlow.collectLatest {
+            unlinkCardComponent.validationErrors.collectLatest {
                 binding.nextButton.isEnabled = it.isEmpty()
             }
         }

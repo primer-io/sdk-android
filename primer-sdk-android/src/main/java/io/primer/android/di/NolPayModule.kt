@@ -23,6 +23,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.domain.error.ErrorMapper
+import io.primer.nolpay.api.PrimerNolPay
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -34,17 +35,19 @@ internal val nolPayModule = {
 
         factory<NolPayConfigurationRepository> { NolPayConfigurationDataRepository(get()) }
 
+        factory { PrimerNolPay }
+
         factory { RemoteNolPaySecretDataSource(get()) }
         factory<NolPayAppSecretRepository> { NolPayAppSecretDataRepository(get(), get()) }
         factory { NolPayAppSecretInteractor(get(), get()) }
-        factory { NolPayGetLinkPaymentCardTokenInteractor() }
-        factory { NolPayGetLinkPaymentCardOTPInteractor() }
-        factory { NolPayLinkPaymentCardInteractor() }
-        factory { NolPayGetUnlinkPaymentCardOTPInteractor() }
-        factory { NolPayUnlinkPaymentCardInteractor() }
-        factory { NolPayGetCardDetailsInteractor() }
-        factory { NolPayRequestPaymentInteractor() }
-        factory { NolPayGetLinkedCardsInteractor() }
+        factory { NolPayGetLinkPaymentCardTokenInteractor(get()) }
+        factory { NolPayGetLinkPaymentCardOTPInteractor(get()) }
+        factory { NolPayLinkPaymentCardInteractor(get()) }
+        factory { NolPayGetUnlinkPaymentCardOTPInteractor(get()) }
+        factory { NolPayUnlinkPaymentCardInteractor(get()) }
+        factory { NolPayGetCardDetailsInteractor(get()) }
+        factory { NolPayRequestPaymentInteractor(get()) }
+        factory { NolPayGetLinkedCardsInteractor(get()) }
 
         factory { NolPayLinkDataValidatorRegistry() }
         factory { NolPayUnlinkDataValidatorRegistry() }

@@ -8,12 +8,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 internal class NolPayRequestPaymentInteractor(
+    private val nolPay: PrimerNolPay,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseSuspendInteractor<Boolean, NolPayRequestPaymentParams>() {
 
     override suspend fun performAction(params: NolPayRequestPaymentParams): Result<Boolean> =
         runSuspendCatching {
-            PrimerNolPay.createPayment(
+            nolPay.createPayment(
                 params.tag,
                 params.transactionNo,
             )

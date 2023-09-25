@@ -16,5 +16,5 @@ interface PrimerHeadlessValidatable {
      * @return A Flow of lists of [PrimerValidationError] objects representing validation results
      * emitted by this component.
      */
-    val validationFlow: Flow<List<PrimerValidationError?>?>?
+    val validationErrors: Flow<List<PrimerValidationError>>
 }

@@ -12,7 +12,6 @@ import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLin
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
-import io.primer.nolpay.api.PrimerNolPayNfcUtils
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +43,7 @@ class NolLinkCardScanTagFragment : Fragment() {
         nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
         lifecycleScope.launchWhenCreated {
-            combine(linkCardComponent.validationFlow, linkCardComponent.stepFlow) { a, b ->
+            combine(linkCardComponent.validationErrors, linkCardComponent.stepFlow) { a, b ->
                 Pair(a, b)
             }.collectLatest {
                 if (it.first.isEmpty() && it.second == NolPayLinkCardStep.CollectTagData)

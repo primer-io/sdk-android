@@ -41,7 +41,7 @@ class NolPayLinkFragment : Fragment() {
                this
             )
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.errorFlow.collectLatest {
+            linkCardComponent.error.collectLatest {
                 Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
             }
         }

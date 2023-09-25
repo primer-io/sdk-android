@@ -48,7 +48,7 @@ class NolPayLinkOtpFragment : Fragment() {
         }
 
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.validationFlow.collectLatest {
+            linkCardComponent.validationErrors.collectLatest {
                 binding.nextButton.isEnabled = it.isEmpty()
             }
         }

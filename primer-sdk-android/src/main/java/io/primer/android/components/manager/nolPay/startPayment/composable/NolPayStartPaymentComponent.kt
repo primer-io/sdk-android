@@ -33,11 +33,11 @@ class NolPayStartPaymentComponent internal constructor(
     override val stepFlow: Flow<NolPayStartPaymentStep> = _stepFlow
 
     private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
-    override val errorFlow: SharedFlow<PrimerError> = _errorFlow
+    override val error: SharedFlow<PrimerError> = _errorFlow
 
     private val _validationFlow: MutableSharedFlow<List<PrimerValidationError>> =
         MutableSharedFlow()
-    override val validationFlow: SharedFlow<List<PrimerValidationError>> = _validationFlow
+    override val validationErrors: SharedFlow<List<PrimerValidationError>> = _validationFlow
 
     private val _collectedData: MutableSharedFlow<NolPayStartPaymentCollectableData> =
         MutableSharedFlow(replay = 1)
