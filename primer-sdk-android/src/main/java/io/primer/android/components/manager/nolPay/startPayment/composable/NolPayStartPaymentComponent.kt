@@ -29,15 +29,16 @@ class NolPayStartPaymentComponent internal constructor(
     PrimerHeadlessStepable<NolPayStartPaymentStep>,
     PrimerHeadlessStartable {
 
-    private val _stepFlow: MutableSharedFlow<NolPayStartPaymentStep> = MutableSharedFlow()
-    override val step: Flow<NolPayStartPaymentStep> = _stepFlow
+    private val _componentStep: MutableSharedFlow<NolPayStartPaymentStep> = MutableSharedFlow()
+    override val componentStep: Flow<NolPayStartPaymentStep> = _componentStep
 
-    private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
-    override val error: SharedFlow<PrimerError> = _errorFlow
+    private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
+    override val componentError: SharedFlow<PrimerError> = _componentError
 
-    private val _validationFlow: MutableSharedFlow<List<PrimerValidationError>> =
+    private val _componentValidationErrors: MutableSharedFlow<List<PrimerValidationError>> =
         MutableSharedFlow()
-    override val validationErrors: SharedFlow<List<PrimerValidationError>> = _validationFlow
+    override val componentValidationErrors: SharedFlow<List<PrimerValidationError>> =
+        _componentValidationErrors
 
     private val _collectedData: MutableSharedFlow<NolPayStartPaymentCollectableData> =
         MutableSharedFlow(replay = 1)
@@ -45,7 +46,7 @@ class NolPayStartPaymentComponent internal constructor(
     override fun start() {
         viewModelScope.launch {
             startPaymentDelegate.start().onSuccess {
-                _stepFlow.emit(NolPayStartPaymentStep.CollectStartPaymentData)
+                _componentStep.emit(NolPayStartPaymentStep.CollectStartPaymentData)
             }.onFailure {
             }
         }
@@ -63,7 +64,7 @@ class NolPayStartPaymentComponent internal constructor(
             startPaymentDelegate.handleCollectedCardData(
                 _collectedData.replayCache.last(),
             ).onSuccess {
-                _stepFlow.emit(it)
+                _componentStep.emit(it)
             }.onFailure {
                 it.printStackTrace()
             }

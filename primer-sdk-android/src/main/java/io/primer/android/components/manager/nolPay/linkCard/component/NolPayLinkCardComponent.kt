@@ -34,15 +34,16 @@ class NolPayLinkCardComponent internal constructor(
     PrimerHeadlessCollectDataComponent<NolPayLinkCollectableData>,
     PrimerHeadlessStepable<NolPayLinkCardStep> {
 
-    private val _stepFlow: MutableSharedFlow<NolPayLinkCardStep> = MutableSharedFlow()
-    override val step: Flow<NolPayLinkCardStep> = _stepFlow
+    private val _componentStep: MutableSharedFlow<NolPayLinkCardStep> = MutableSharedFlow()
+    override val componentStep: Flow<NolPayLinkCardStep> = _componentStep
 
-    private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
-    override val error: SharedFlow<PrimerError> = _errorFlow
+    private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
+    override val componentError: SharedFlow<PrimerError> = _componentError
 
-    private val _validationFlow: MutableSharedFlow<List<PrimerValidationError>> =
+    private val _componentValidationErrors: MutableSharedFlow<List<PrimerValidationError>> =
         MutableSharedFlow()
-    override val validationErrors: SharedFlow<List<PrimerValidationError>> = _validationFlow
+    override val componentValidationErrors: SharedFlow<List<PrimerValidationError>> =
+        _componentValidationErrors
 
     private val _collectedData: MutableSharedFlow<NolPayLinkCollectableData> =
         MutableSharedFlow(replay = 1)
@@ -50,13 +51,12 @@ class NolPayLinkCardComponent internal constructor(
     override fun start() {
         logSdkFunctionCalls(NolPayAnalyticsConstants.LINK_CARD_START_METHOD)
         viewModelScope.launch {
-            linkPaymentCardDelegate.start().onSuccess {
-                viewModelScope.launch {
-                    _stepFlow.emit(NolPayLinkCardStep.CollectTagData)
+            linkPaymentCardDelegate.start()
+                .onSuccess {
+                    _componentStep.emit(NolPayLinkCardStep.CollectTagData)
+                }.onFailure { throwable ->
+                    handleError(throwable)
                 }
-            }.onFailure { throwable ->
-                handleError(throwable)
-            }
         }
     }
 
@@ -67,7 +67,7 @@ class NolPayLinkCardComponent internal constructor(
         )
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
-            _validationFlow.emit(
+            _componentValidationErrors.emit(
                 dataValidatorRegistry.getValidator(collectedData).validate(collectedData)
             )
         }
@@ -80,7 +80,7 @@ class NolPayLinkCardComponent internal constructor(
                 _collectedData.replayCache.lastOrNull(),
                 savedStateHandle
             ).onSuccess { step ->
-                _stepFlow.emit(step)
+                _componentStep.emit(step)
             }.onFailure { throwable ->
                 handleError(throwable)
             }
@@ -99,7 +99,7 @@ class NolPayLinkCardComponent internal constructor(
     ) = viewModelScope.launch {
         errorMapper.getPrimerError(throwable)
             .also { error ->
-                _errorFlow.emit(error)
+                _componentError.emit(error)
             }.also { error ->
                 linkPaymentCardDelegate.logSdkAnalyticsErrors(error)
             }

@@ -42,7 +42,7 @@ class NolPayPaymentFragment : Fragment() {
             )
 
         lifecycleScope.launchWhenCreated {
-            startPaymentComponent.step.collectLatest { nolPayLinkStep ->
+            startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
                 when (nolPayLinkStep) {
                     NolPayStartPaymentStep.CollectStartPaymentData -> startPaymentComponent.updateCollectedData(
                         NolPayStartPaymentCollectableData.NolPayStartPaymentData(

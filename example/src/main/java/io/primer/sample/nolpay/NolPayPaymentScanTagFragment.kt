@@ -42,7 +42,7 @@ class NolPayPaymentScanTagFragment : Fragment() {
         nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
         lifecycleScope.launchWhenCreated {
-            startPaymentComponent.step.collectLatest { step: NolPayStartPaymentStep ->
+            startPaymentComponent.componentStep.collectLatest { step: NolPayStartPaymentStep ->
                 when (step) {
                     NolPayStartPaymentStep.CollectStartPaymentData -> Unit
                     NolPayStartPaymentStep.CollectTagData -> Unit

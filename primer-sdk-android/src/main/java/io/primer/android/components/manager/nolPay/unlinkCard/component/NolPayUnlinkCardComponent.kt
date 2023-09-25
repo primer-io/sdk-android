@@ -34,15 +34,16 @@ class NolPayUnlinkCardComponent internal constructor(
     PrimerHeadlessCollectDataComponent<NolPayUnlinkCollectableData>,
     PrimerHeadlessStepable<NolPayUnlinkCardStep> {
 
-    private val _stepFlow: MutableSharedFlow<NolPayUnlinkCardStep> = MutableSharedFlow()
-    override val step: Flow<NolPayUnlinkCardStep> = _stepFlow
+    private val _componentStep: MutableSharedFlow<NolPayUnlinkCardStep> = MutableSharedFlow()
+    override val componentStep: Flow<NolPayUnlinkCardStep> = _componentStep
 
-    private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
-    override val error: SharedFlow<PrimerError> = _errorFlow
+    private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
+    override val componentError: SharedFlow<PrimerError> = _componentError
 
-    private val _validationFlow: MutableSharedFlow<List<PrimerValidationError>> =
+    private val _componentValidationErrors: MutableSharedFlow<List<PrimerValidationError>> =
         MutableSharedFlow()
-    override val validationErrors: SharedFlow<List<PrimerValidationError>> = _validationFlow
+    override val componentValidationErrors: SharedFlow<List<PrimerValidationError>> =
+        _componentValidationErrors
 
     private val _collectedData: MutableSharedFlow<NolPayUnlinkCollectableData> =
         MutableSharedFlow(replay = 1)
@@ -50,15 +51,17 @@ class NolPayUnlinkCardComponent internal constructor(
     override fun start() {
         logSdkFunctionCalls(NolPayAnalyticsConstants.UNLINK_CARD_START_METHOD)
         viewModelScope.launch {
-            unlinkPaymentCardDelegate.start().onSuccess {
-                viewModelScope.launch {
-                    _stepFlow.emit(NolPayUnlinkCardStep.CollectCardData)
+            unlinkPaymentCardDelegate.start()
+                .onSuccess {
+                    viewModelScope.launch {
+                        _componentStep.emit(NolPayUnlinkCardStep.CollectCardData)
+                    }
+                }.onFailure { throwable ->
+                    handleError(throwable)
                 }
-            }.onFailure { throwable ->
-                handleError(throwable)
-            }
         }
     }
+
     override fun updateCollectedData(collectedData: NolPayUnlinkCollectableData) {
         logSdkFunctionCalls(
             NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
@@ -66,7 +69,7 @@ class NolPayUnlinkCardComponent internal constructor(
         )
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
-            _validationFlow.emit(
+            _componentValidationErrors.emit(
                 validatorRegistry.getValidator(collectedData).validate(collectedData)
             )
         }
@@ -79,7 +82,7 @@ class NolPayUnlinkCardComponent internal constructor(
                 _collectedData.replayCache.lastOrNull(),
                 savedStateHandle
             ).onSuccess {
-                _stepFlow.emit(it)
+                _componentStep.emit(it)
             }.onFailure { throwable ->
                 handleError(throwable)
             }
@@ -98,7 +101,7 @@ class NolPayUnlinkCardComponent internal constructor(
     ) = viewModelScope.launch {
         errorMapper.getPrimerError(throwable)
             .also { error ->
-                _errorFlow.emit(error)
+                _componentError.emit(error)
             }.also { error ->
                 unlinkPaymentCardDelegate.logSdkAnalyticsErrors(error)
             }

@@ -41,13 +41,13 @@ class NolPayLinkFragment : Fragment() {
                this
             )
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.error.collectLatest {
+            linkCardComponent.componentError.collectLatest {
                 Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
             }
         }
 
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.step.collectLatest { nolPayLinkStep ->
+            linkCardComponent.componentStep.collectLatest { nolPayLinkStep ->
                 when (nolPayLinkStep) {
                     is NolPayLinkCardStep.CollectPhoneData ->
                         navHostFragment.findNavController()

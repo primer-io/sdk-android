@@ -49,7 +49,7 @@ class NolPayLinkPhoneInputFragment : Fragment() {
         }
 
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.validationErrors.collectLatest {
+            linkCardComponent.componentValidationErrors.collectLatest {
                 binding.nextButton.isEnabled = it.isEmpty()
             }
         }
