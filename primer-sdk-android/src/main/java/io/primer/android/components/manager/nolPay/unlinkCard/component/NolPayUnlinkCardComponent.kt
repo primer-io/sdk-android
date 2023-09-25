@@ -35,7 +35,7 @@ class NolPayUnlinkCardComponent internal constructor(
     PrimerHeadlessStepable<NolPayUnlinkCardStep> {
 
     private val _stepFlow: MutableSharedFlow<NolPayUnlinkCardStep> = MutableSharedFlow()
-    override val stepFlow: Flow<NolPayUnlinkCardStep> = _stepFlow
+    override val step: Flow<NolPayUnlinkCardStep> = _stepFlow
 
     private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val error: SharedFlow<PrimerError> = _errorFlow

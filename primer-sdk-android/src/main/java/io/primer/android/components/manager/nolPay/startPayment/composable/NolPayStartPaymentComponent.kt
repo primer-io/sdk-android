@@ -30,7 +30,7 @@ class NolPayStartPaymentComponent internal constructor(
     PrimerHeadlessStartable {
 
     private val _stepFlow: MutableSharedFlow<NolPayStartPaymentStep> = MutableSharedFlow()
-    override val stepFlow: Flow<NolPayStartPaymentStep> = _stepFlow
+    override val step: Flow<NolPayStartPaymentStep> = _stepFlow
 
     private val _errorFlow: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val error: SharedFlow<PrimerError> = _errorFlow

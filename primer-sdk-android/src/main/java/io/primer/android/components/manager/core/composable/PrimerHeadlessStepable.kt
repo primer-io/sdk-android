@@ -6,5 +6,5 @@ interface PrimerHeadlessStep
 
 internal interface PrimerHeadlessStepable<T : PrimerHeadlessStep> {
 
-    val stepFlow: Flow<T>
+    val step: Flow<T>
 }

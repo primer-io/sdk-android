@@ -44,7 +44,7 @@ class NolPayUnlinkFragment : Fragment() {
             )
 
         lifecycleScope.launchWhenCreated {
-            unlinkCardComponent.stepFlow.collectLatest {
+            unlinkCardComponent.step.collectLatest {
                 when (it) {
                     is NolPayUnlinkCardStep.CollectCardData -> unlinkCardComponent.updateCollectedData(
                         NolPayUnlinkCollectableData.NolPayCardData(PrimerNolPaymentCard("0313971137"))

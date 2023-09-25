@@ -43,7 +43,7 @@ class NolLinkCardScanTagFragment : Fragment() {
         nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
         lifecycleScope.launchWhenCreated {
-            combine(linkCardComponent.validationErrors, linkCardComponent.stepFlow) { a, b ->
+            combine(linkCardComponent.validationErrors, linkCardComponent.step) { a, b ->
                 Pair(a, b)
             }.collectLatest {
                 if (it.first.isEmpty() && it.second == NolPayLinkCardStep.CollectTagData)

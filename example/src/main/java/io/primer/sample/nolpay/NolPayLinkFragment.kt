@@ -47,7 +47,7 @@ class NolPayLinkFragment : Fragment() {
         }
 
         lifecycleScope.launchWhenCreated {
-            linkCardComponent.stepFlow.collectLatest { nolPayLinkStep ->
+            linkCardComponent.step.collectLatest { nolPayLinkStep ->
                 when (nolPayLinkStep) {
                     is NolPayLinkCardStep.CollectPhoneData ->
                         navHostFragment.findNavController()
