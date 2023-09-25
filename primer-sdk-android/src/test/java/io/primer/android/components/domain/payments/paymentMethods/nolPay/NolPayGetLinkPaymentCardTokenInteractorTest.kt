@@ -1,5 +1,6 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolPay
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
@@ -34,7 +35,7 @@ internal class NolPayGetLinkPaymentCardTokenInteractorTest {
     fun `execute should return success when PrimerNolPay getLinkPaymentCardToken is successful`() {
         val params = mockk<NolPayTagParams>(relaxed = true)
         val linkCardMetadata = mockk<PrimerLinkCardMetadata>(relaxed = true)
-        every { nolPay.getLinkPaymentCardToken(any()) }.returns(linkCardMetadata)
+        coEvery { nolPay.getLinkPaymentCardToken(any()) }.returns(linkCardMetadata)
 
         runTest {
             val result = interactor(params)
@@ -47,7 +48,7 @@ internal class NolPayGetLinkPaymentCardTokenInteractorTest {
     fun `execute should return exception when PrimerNolPay getLinkPaymentCardToken failed`() {
         val params = mockk<NolPayTagParams>(relaxed = true)
         val expectedException = mockk<NolPaySdkException>(relaxed = true)
-        every { nolPay.getLinkPaymentCardToken(any()) } throws expectedException
+        coEvery { nolPay.getLinkPaymentCardToken(any()) } throws expectedException
 
         val exception = assertThrows<NolPaySdkException> {
             runTest {
