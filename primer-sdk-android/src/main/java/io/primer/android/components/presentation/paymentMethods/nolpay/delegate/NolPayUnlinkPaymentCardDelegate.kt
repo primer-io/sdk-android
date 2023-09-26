@@ -13,6 +13,7 @@ import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayU
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.extensions.mapSuspendCatching
+import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
 internal class NolPayUnlinkPaymentCardDelegate(
@@ -25,7 +26,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
     suspend fun handleCollectedCardData(
         collectedData: NolPayUnlinkCollectableData?,
         savedStateHandle: SavedStateHandle
-    ): Result<NolPayUnlinkCardStep> {
+    ): Result<NolPayUnlinkCardStep> = runSuspendCatching {
         return when (
             val collectedDataUnwrapped =
                 requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)

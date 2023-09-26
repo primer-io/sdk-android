@@ -68,8 +68,5 @@ class NolPayLinkFragment : Fragment() {
 
 
         linkCardComponent.start()
-
-        linkCardComponent.submit()
-
     }
 }

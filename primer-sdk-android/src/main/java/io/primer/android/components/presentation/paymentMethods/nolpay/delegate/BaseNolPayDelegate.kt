@@ -30,7 +30,6 @@ internal open class BaseNolPayDelegate(
         override fun getAppSecretKeyFromServer(sdkId: String): String {
             return runBlocking {
                 appSecretInteractor(NolPaySecretParams(sdkId)).getOrThrow()
-                // .getOrElse { "dc0c17c205d740469d5a4e1e38233ba2" }
             }
         }
     }
@@ -39,7 +38,7 @@ internal open class BaseNolPayDelegate(
         configurationInteractor(None()).collectLatest { configuration ->
             PrimerNolPay.initSDK(
                 configuration.environment != Environment.PRODUCTION,
-                BuildConfig.DEBUG,
+                true,
                 configuration.merchantAppId,
                 handler
             )
