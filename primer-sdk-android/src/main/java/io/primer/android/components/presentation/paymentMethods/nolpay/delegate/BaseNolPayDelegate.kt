@@ -1,7 +1,6 @@
 package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import com.snowballtech.transit.rta.configuration.TransitAppSecretKeyHandler
-import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.AnalyticsInteractor

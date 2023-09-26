@@ -324,7 +324,7 @@
     *;
 }
 
--keep class io.primer.android.components.manager.nolPay.nfc.* {
+-keep class io.primer.android.components.manager.nolPay.nfc.** {
     *;
 }
 

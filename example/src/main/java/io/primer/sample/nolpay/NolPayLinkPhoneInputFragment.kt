@@ -41,7 +41,6 @@ class NolPayLinkPhoneInputFragment : Fragment() {
                     binding.mobileCountryCode.text.toString()
                 )
             )
-            binding.nextButton.isEnabled = it?.length!! > 7
         }
 
         binding.nextButton.setOnClickListener {
