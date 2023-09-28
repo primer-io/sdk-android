@@ -34,7 +34,8 @@ internal data class ClientToken(
     val supportedCurrencyCode: String?,
     val supportedCountry: String?,
     val useThreeDsWeakValidation: Boolean?,
-    val supportedThreeDsProtocolVersions: List<String>?
+    val supportedThreeDsProtocolVersions: List<String>?,
+    val nolPayTransactionNo: String?
 ) : JSONDeserializable {
 
     companion object {
@@ -90,36 +91,36 @@ internal data class ClientToken(
         private const val USE_THREE_DS_WEAK_VALIDATION = "useThreeDsWeakValidation"
         private const val SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD =
             "supportedThreeDsProtocolVersions"
+        private const val NOL_PAY_TRANSACTION_NO = "nolPayTransactionNo"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ClientToken> {
-            override fun deserialize(t: JSONObject): ClientToken {
-                return ClientToken(
-                    t.optNullableString(CONFIGURATION_URL_FIELD),
-                    t.optNullableString(ANALYTICS_URL_V2_FIELD),
-                    t.getString(INTENT_FIELD),
-                    t.getString(ACCESS_TOKEN_FIELD),
-                    t.getInt(EXP_FIELD),
-                    t.optNullableString(STATUS_URL_FIELD),
-                    t.optNullableString(REDIRECT_URL_FIELD),
-                    t.optNullableString(QR_CODE_FIELD),
-                    t.optNullableString(ACCOUNT_NUMBER_FIELD),
-                    t.optNullableString(EXPIRATION_FIELD),
-                    t.optNullableString(QR_CODE_URL_FIELD),
-                    t.optNullableString(EXPIRES_AT_FIELD),
-                    t.optNullableString(REFERENCE_FIELD),
-                    t.optNullableString(ENTITY_FIELD),
-                    t.optNullableString(BACKEND_CALLBACK_URL_FIELD),
-                    t.optNullableString(PRIMER_TRANSACTION_ID_FIELD),
-                    t.optNullableString(IPAY88_PAYMENT_METHOD_ID_FIELD),
-                    t.optNullableString(IPAY88_ACTION_TYPE_FIELD),
-                    t.optNullableString(SUPPORTED_CURRENCY_CODE_FIELD),
-                    t.optNullableString(SUPPORTED_COUNTRY_FIELD),
-                    t.optNullableBoolean(USE_THREE_DS_WEAK_VALIDATION),
-                    t.optJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)?.sequence<String>()
-                        ?.toList()
-                )
-            }
+        val deserializer = JSONDeserializer { t ->
+            ClientToken(
+                t.optNullableString(CONFIGURATION_URL_FIELD),
+                t.optNullableString(ANALYTICS_URL_V2_FIELD),
+                t.getString(INTENT_FIELD),
+                t.getString(ACCESS_TOKEN_FIELD),
+                t.getInt(EXP_FIELD),
+                t.optNullableString(STATUS_URL_FIELD),
+                t.optNullableString(REDIRECT_URL_FIELD),
+                t.optNullableString(QR_CODE_FIELD),
+                t.optNullableString(ACCOUNT_NUMBER_FIELD),
+                t.optNullableString(EXPIRATION_FIELD),
+                t.optNullableString(QR_CODE_URL_FIELD),
+                t.optNullableString(EXPIRES_AT_FIELD),
+                t.optNullableString(REFERENCE_FIELD),
+                t.optNullableString(ENTITY_FIELD),
+                t.optNullableString(BACKEND_CALLBACK_URL_FIELD),
+                t.optNullableString(PRIMER_TRANSACTION_ID_FIELD),
+                t.optNullableString(IPAY88_PAYMENT_METHOD_ID_FIELD),
+                t.optNullableString(IPAY88_ACTION_TYPE_FIELD),
+                t.optNullableString(SUPPORTED_CURRENCY_CODE_FIELD),
+                t.optNullableString(SUPPORTED_COUNTRY_FIELD),
+                t.optNullableBoolean(USE_THREE_DS_WEAK_VALIDATION),
+                t.optJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)?.sequence<String>()
+                    ?.toList(),
+                t.optNullableString(NOL_PAY_TRANSACTION_NO)
+            )
         }
     }
 }

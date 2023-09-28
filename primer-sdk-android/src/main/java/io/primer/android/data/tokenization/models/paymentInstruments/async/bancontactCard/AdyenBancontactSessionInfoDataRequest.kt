@@ -7,11 +7,10 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseS
 import org.json.JSONObject
 
 internal data class AdyenBancontactSessionInfoDataRequest(
-    val userAgent: String,
     override val locale: String,
-    override val redirectionUrl: String,
-    override val platform: String = "ANDROID"
-) : BaseSessionInfoDataRequest(locale, redirectionUrl, platform) {
+    val redirectionUrl: String,
+    val userAgent: String,
+) : BaseSessionInfoDataRequest(locale) {
 
     internal data class BrowserInfoDataRequest(private val userAgent: String) :
         JSONObjectSerializable {

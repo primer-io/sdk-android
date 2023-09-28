@@ -13,7 +13,6 @@ import org.json.JSONObject
 
 internal open class BaseSessionInfoDataRequest(
     open val locale: String,
-    open val redirectionUrl: String,
     open val platform: String = "ANDROID",
 ) : JSONObjectSerializable {
     companion object {

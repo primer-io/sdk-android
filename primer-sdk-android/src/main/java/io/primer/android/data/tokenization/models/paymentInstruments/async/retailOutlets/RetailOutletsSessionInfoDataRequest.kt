@@ -5,11 +5,10 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.BaseS
 import org.json.JSONObject
 
 internal data class RetailOutletsSessionInfoDataRequest(
-    val retailOutlet: String,
     override val locale: String,
-    override val redirectionUrl: String,
-    override val platform: String = "ANDROID"
-) : BaseSessionInfoDataRequest(locale, redirectionUrl, platform) {
+    val redirectionUrl: String,
+    val retailOutlet: String,
+) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 
         private const val RETAIL_OUTLET_FIELD = "retailOutlet"

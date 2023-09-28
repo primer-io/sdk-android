@@ -51,4 +51,5 @@ internal enum class ClientTokenIntent {
     PAYMENT_METHOD_VOUCHER,
     OMISE_PROMPTPAY_REDIRECTION,
     IPAY88_CARD_REDIRECTION,
+    USE_NOL_PAY_SDK
 }

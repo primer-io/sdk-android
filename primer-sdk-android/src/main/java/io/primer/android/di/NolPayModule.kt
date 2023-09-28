@@ -20,6 +20,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.reposi
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayStartPaymentDataValidator
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.domain.error.ErrorMapper
@@ -51,6 +52,7 @@ internal val nolPayModule = {
 
         factory { NolPayLinkDataValidatorRegistry() }
         factory { NolPayUnlinkDataValidatorRegistry() }
+        factory { NolPayStartPaymentDataValidator() }
 
         factory<ErrorMapper>(named(NOL_PAY_ERROR_RESOLVER_NAME)) {
             NolPayErrorMapper()
@@ -88,6 +90,8 @@ internal val nolPayModule = {
 
         factory {
             NolPayStartPaymentDelegate(
+                get(),
+                get(),
                 get(),
                 get(),
                 get(),

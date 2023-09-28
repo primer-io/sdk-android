@@ -7,7 +7,7 @@ internal class AdyenBancontactCardPaymentInstrumentParams(
     override val paymentMethodType: String,
     override val paymentMethodConfigId: String,
     override val locale: String,
-    override val redirectionUrl: String,
+    val redirectionUrl: String,
     val number: String,
     val expirationMonth: String,
     val expirationYear: String,
@@ -17,6 +17,5 @@ internal class AdyenBancontactCardPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,
     locale,
-    PaymentInstrumentType.CARD_OFF_SESSION_PAYMENT,
-    redirectionUrl
+    PaymentInstrumentType.CARD_OFF_SESSION_PAYMENT
 )

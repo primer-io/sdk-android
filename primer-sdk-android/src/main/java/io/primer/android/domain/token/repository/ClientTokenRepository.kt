@@ -18,6 +18,8 @@ internal interface ClientTokenRepository {
 
     fun useThreeDsWeakValidation(): Boolean?
 
+    fun getTransactionNo(): String?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }

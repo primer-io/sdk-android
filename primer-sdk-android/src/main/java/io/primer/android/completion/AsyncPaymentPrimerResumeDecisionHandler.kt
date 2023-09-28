@@ -87,6 +87,15 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                     )
                 )
             }
+            ClientTokenIntent.USE_NOL_PAY_SDK.name -> {
+                eventDispatcher.dispatchEvent(
+                    CheckoutEvent.StartNolPayFlow(
+                        clientTokenRepository.getStatusUrl().orEmpty(),
+                        clientTokenRepository.getTransactionNo().orEmpty(),
+                        paymentMethodType
+                    )
+                )
+            }
             else -> {
                 when (config.settings.fromHUC) {
                     true -> eventDispatcher.dispatchEvents(

@@ -16,6 +16,12 @@ internal object NolPayAnalyticsConstants {
         "NolPayUnlinkCardComponent.updateCollectedData()"
     const val UNLINK_CARD_SUBMIT_DATA_METHOD = "NolPayUnlinkCardComponent.submit()"
 
+    // payment component
+    const val PAYMENT_START_METHOD = "NolPayStartPaymentComponent.start()"
+    const val PAYMENT_UPDATE_COLLECTED_DATA_METHOD =
+        "NolPayStartPaymentComponent.updateCollectedData()"
+    const val PAYMENT_SUBMIT_DATA_METHOD = "NolPayStartPaymentComponent.submit()"
+
     // list cards component
     const val LINKED_CARDS_GET_CARDS_METHOD = "NolPayLinkedCardsComponent.getLinkedCards()"
 }
