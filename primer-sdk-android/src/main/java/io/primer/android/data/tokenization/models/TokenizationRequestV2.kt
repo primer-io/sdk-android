@@ -1,5 +1,6 @@
 package io.primer.android.data.tokenization.models
 
+import android.os.Build
 import android.util.Base64
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.serialization.json.JSONObjectSerializable
@@ -174,6 +175,8 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
                 mobileCountryCode,
                 mobileNumber,
                 nolPayCardNumber,
+                Build.MANUFACTURER,
+                Build.MODEL,
                 locale
             ),
             type
