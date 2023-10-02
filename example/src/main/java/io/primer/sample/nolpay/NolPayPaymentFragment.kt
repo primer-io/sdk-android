@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentComponent
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
@@ -44,10 +44,16 @@ class NolPayPaymentFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
                 when (nolPayLinkStep) {
-                    NolPayStartPaymentStep.CollectStartPaymentData -> startPaymentComponent.updateCollectedData(
-                        NolPayStartPaymentCollectableData.NolPayStartPaymentData(
-                            PrimerNolPaymentCard("0313871137"), "62250843", "387"
-                        )).also {
+                    NolPayStartPaymentStep.CollectStartPaymentData ->
+                        startPaymentComponent.updateCollectedData(
+                            NolPayStartPaymentCollectableData.NolPayStartPaymentData(
+                                requireArguments().getSerializable(
+                                    NolFragment.NOL_CARD_KEY
+                                ) as PrimerNolPaymentCard,
+                                "62250843",
+                                "387"
+                            )
+                        ).also {
                             startPaymentComponent.submit()
                         }
 

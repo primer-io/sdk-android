@@ -9,6 +9,7 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.dummy
 import io.primer.android.data.tokenization.models.paymentInstruments.async.phone.PhoneNumberSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.retailOutlets.RetailOutletsSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.webRedirect.WebRedirectSessionInfoDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolPaySessionInfoDataRequest
 import org.json.JSONObject
 
 internal open class BaseSessionInfoDataRequest(
@@ -39,6 +40,8 @@ internal open class BaseSessionInfoDataRequest(
                         RetailOutletsSessionInfoDataRequest.serializer.serialize(t)
                     is AdyenBancontactSessionInfoDataRequest ->
                         AdyenBancontactSessionInfoDataRequest.serializer.serialize(t)
+                    is NolPaySessionInfoDataRequest ->
+                        NolPaySessionInfoDataRequest.serializer.serialize(t)
                     else -> throw IllegalArgumentException("Missing serializer declaration for $t")
                 }
             }

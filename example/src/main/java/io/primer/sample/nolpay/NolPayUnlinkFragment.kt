@@ -47,7 +47,11 @@ class NolPayUnlinkFragment : Fragment() {
             unlinkCardComponent.componentStep.collectLatest {
                 when (it) {
                     is NolPayUnlinkCardStep.CollectCardData -> unlinkCardComponent.updateCollectedData(
-                        NolPayUnlinkCollectableData.NolPayCardData(PrimerNolPaymentCard("0313971137"))
+                        NolPayUnlinkCollectableData.NolPayCardData(
+                            requireArguments().getSerializable(
+                                NolFragment.NOL_CARD_KEY
+                            ) as PrimerNolPaymentCard
+                        )
                     ).also {
                         unlinkCardComponent.submit()
                     }
@@ -57,7 +61,11 @@ class NolPayUnlinkFragment : Fragment() {
                         .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayUnlinkOtpFragment)
 
                     is NolPayUnlinkCardStep.CardUnlinked -> {
-                        Snackbar.make(requireView(), "Successfully unlinked!", Snackbar.LENGTH_SHORT)
+                        Snackbar.make(
+                            requireView(),
+                            "Successfully unlinked!",
+                            Snackbar.LENGTH_SHORT
+                        )
                             .show()
                         findNavController().navigate(R.id.action_NolUnlinkFragment_to_NolFragment)
                     }

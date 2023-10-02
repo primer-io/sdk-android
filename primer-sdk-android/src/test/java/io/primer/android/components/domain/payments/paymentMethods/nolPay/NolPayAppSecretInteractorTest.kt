@@ -88,6 +88,36 @@ internal class NolPayAppSecretInteractorTest {
     }
 
     @Test
+    fun `execute should return NolPay secret when NolPayConfigurationRepository getConfiguration fails and getAppSecret fails`() {
+        val params = mockk<NolPaySecretParams>(relaxed = true)
+        val expectedAppSecretException = mockk<Exception>(relaxed = true)
+        val expectedException = mockk<IllegalValueException>(relaxed = true)
+
+        coEvery { secretRepository.getAppSecret(any(), any()) }.returns(
+            Result.failure(expectedAppSecretException)
+        )
+
+        coEvery { configurationRepository.getConfiguration() }.returns(
+            flow {
+                throw expectedException
+            }
+        )
+
+        val exception = assertThrows<IllegalValueException> {
+            runTest {
+                val result = interactor(params)
+                assert(result.isFailure)
+                result.getOrThrow()
+            }
+        }
+
+        assertEquals(expectedException, exception)
+
+        coVerify(exactly = 0) { secretRepository.getAppSecret(any(), any()) }
+        coVerify { configurationRepository.getConfiguration() }
+    }
+
+    @Test
     fun `execute should return NolPay secret when NolPayConfigurationRepository getConfiguration fails`() {
         val params = mockk<NolPaySecretParams>(relaxed = true)
         val expectedException = mockk<IllegalValueException>(relaxed = true)
@@ -112,6 +142,7 @@ internal class NolPayAppSecretInteractorTest {
 
         assertEquals(expectedException, exception)
 
+        coVerify(exactly = 0) { secretRepository.getAppSecret(any(), any()) }
         coVerify { configurationRepository.getConfiguration() }
     }
 }

@@ -3,7 +3,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.valid
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayPaymentTagDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayStartPaymentDataValidator
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
 import kotlin.reflect.KClass
 
 internal class NolPayPaymentDataValidatorRegistry {

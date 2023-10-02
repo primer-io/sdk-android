@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayBinding
 import kotlinx.coroutines.launch
@@ -33,7 +35,16 @@ class NolFragment : Fragment() {
         manager = PrimerHeadlessUniversalCheckoutNolPayManager()
 
         binding.unlinkNolCard.setOnClickListener {
-            findNavController().navigate(R.id.action_NolFragment_to_NolUnlinkFragment)
+            findNavController().navigate(R.id.action_NolFragment_to_NolUnlinkFragment,
+                Bundle().apply {
+                    putSerializable(
+                        NOL_CARD_KEY,
+                        binding.linkedCards.children.find { view ->
+                            view.id ==
+                                binding.linkedCards.checkedRadioButtonId
+                        }?.tag as PrimerNolPaymentCard
+                    )
+                })
         }
 
         binding.addNewNolCardButton.setOnClickListener {
@@ -41,7 +52,16 @@ class NolFragment : Fragment() {
         }
 
         binding.payWithNolCard.setOnClickListener {
-            findNavController().navigate(R.id.action_NolFragment_to_NolPayPaymentFragment)
+            findNavController().navigate(R.id.action_NolFragment_to_NolPayPaymentFragment,
+                Bundle().apply {
+                    putSerializable(
+                        NOL_CARD_KEY,
+                        binding.linkedCards.children.find { view ->
+                            view.id ==
+                                binding.linkedCards.checkedRadioButtonId
+                        }?.tag as PrimerNolPaymentCard
+                    )
+                })
         }
     }
 
@@ -55,8 +75,10 @@ class NolFragment : Fragment() {
                             addView(RadioButton(requireContext()).apply {
                                 text = card.cardNumber
                                 id = card.cardNumber.toInt()
+                                tag = card
                             })
-                            setOnCheckedChangeListener { group, checkedId ->
+                            setOnCheckedChangeListener { _, _ ->
+                                binding.payWithNolCard.isVisible = true
                                 binding.unlinkNolCard.isVisible = true
                             }
                         }
@@ -65,5 +87,10 @@ class NolFragment : Fragment() {
                     it.printStackTrace()
                 }
         }
+    }
+
+    companion object {
+
+        const val NOL_CARD_KEY = "NOL_CARD"
     }
 }

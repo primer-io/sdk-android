@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentComponent
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding

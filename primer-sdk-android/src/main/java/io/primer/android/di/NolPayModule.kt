@@ -15,12 +15,13 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayTransactionNumberInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayStartPaymentDataValidator
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.domain.error.ErrorMapper
@@ -49,10 +50,11 @@ internal val nolPayModule = {
         factory { NolPayGetCardDetailsInteractor(get()) }
         factory { NolPayRequestPaymentInteractor(get()) }
         factory { NolPayGetLinkedCardsInteractor(get()) }
+        factory { NolPayTransactionNumberInteractor(get(), get()) }
 
         factory { NolPayLinkDataValidatorRegistry() }
         factory { NolPayUnlinkDataValidatorRegistry() }
-        factory { NolPayStartPaymentDataValidator() }
+        factory { NolPayPaymentDataValidatorRegistry() }
 
         factory<ErrorMapper>(named(NOL_PAY_ERROR_RESOLVER_NAME)) {
             NolPayErrorMapper()

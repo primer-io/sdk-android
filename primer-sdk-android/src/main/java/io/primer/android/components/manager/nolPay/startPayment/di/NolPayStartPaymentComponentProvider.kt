@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentComponent
+import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
 import io.primer.android.di.DIAppComponent
 import io.primer.android.di.NOL_PAY_ERROR_RESOLVER_NAME
 import org.koin.core.component.get

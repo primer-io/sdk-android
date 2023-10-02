@@ -1,4 +1,4 @@
-package io.primer.android.components.manager.nolPay.startPayment.component
+package io.primer.android.components.manager.nolPay.startPayment.composable
 
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStep
 

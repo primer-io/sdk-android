@@ -1,4 +1,4 @@
-package io.primer.android.components.manager.nolPay.startPayment.composable
+package io.primer.android.components.manager.nolPay.startPayment.component
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,8 +12,8 @@ import io.primer.android.components.manager.core.component.PrimerHeadlessCollect
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
+import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
 import io.primer.android.components.manager.nolPay.startPayment.di.NolPayStartPaymentComponentProvider
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.di.DIAppComponent
@@ -63,7 +63,10 @@ class NolPayStartPaymentComponent internal constructor(
     }
 
     override fun updateCollectedData(collectedData: NolPayStartPaymentCollectableData) {
-        logSdkFunctionCalls(NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD)
+        logSdkFunctionCalls(
+            NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD,
+            mapOf(NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectedData.toString())
+        )
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
             _componentValidationErrors.emit(
