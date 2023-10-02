@@ -207,7 +207,7 @@
     public *;
 }
 
--keep class io.primer.android.components.domain.error.PrimerInputValidationError {
+-keep class io.primer.android.components.domain.error.* {
     *;
 }
 -keep enum io.primer.android.components.domain.inputs.models.PrimerInputElementType {
