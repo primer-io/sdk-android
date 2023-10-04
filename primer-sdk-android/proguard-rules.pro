@@ -328,10 +328,13 @@
     *;
 }
 
--keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
+-keep class io.primer.android.components.manager.nolPay.listCards.** {
     *;
 }
 
+-keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
+    *;
+}
 
 -keepclassmembers,allowoptimization enum * {
     public static **[] values();
