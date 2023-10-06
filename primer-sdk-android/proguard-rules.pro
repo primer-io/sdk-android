@@ -207,7 +207,7 @@
     public *;
 }
 
--keep class io.primer.android.components.domain.error.PrimerInputValidationError {
+-keep class io.primer.android.components.domain.error.* {
     *;
 }
 -keep enum io.primer.android.components.domain.inputs.models.PrimerInputElementType {
@@ -328,10 +328,13 @@
     *;
 }
 
--keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
+-keep class io.primer.android.components.manager.nolPay.listCards.** {
     *;
 }
 
+-keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
+    *;
+}
 
 -keepclassmembers,allowoptimization enum * {
     public static **[] values();
