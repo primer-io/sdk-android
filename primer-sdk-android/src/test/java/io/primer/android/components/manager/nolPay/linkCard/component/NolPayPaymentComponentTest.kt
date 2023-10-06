@@ -1,6 +1,5 @@
 package io.primer.android.components.manager.nolPay.linkCard.component
 
-import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
@@ -38,9 +37,6 @@ internal class NolPayPaymentComponentTest {
     @RelaxedMockK
     lateinit var errorMapper: NolPayErrorMapper
 
-    @RelaxedMockK
-    lateinit var savedStateHandle: SavedStateHandle
-
     private lateinit var component: NolPayPaymentComponent
 
     @BeforeEach
@@ -49,7 +45,6 @@ internal class NolPayPaymentComponentTest {
             startPaymentDelegate,
             dataValidatorRegistry,
             errorMapper,
-            savedStateHandle
         )
     }
 
