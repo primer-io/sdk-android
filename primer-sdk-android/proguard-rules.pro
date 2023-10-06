@@ -324,6 +324,14 @@
     *;
 }
 
+-keep class io.primer.android.components.manager.nolPay.payment.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.payment.composable.* {
+    *;
+}
+
 -keep class io.primer.android.components.manager.nolPay.nfc.** {
     *;
 }

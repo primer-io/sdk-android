@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
+import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 class NolPayPaymentScanTagFragment : Fragment() {
 
     private lateinit var binding: FragmentNolCardLinkScanTagBinding
-    private lateinit var startPaymentComponent: NolPayStartPaymentComponent
+    private lateinit var startPaymentComponent: NolPayPaymentComponent
     private lateinit var nfcComponent: NolPayNfcComponent
 
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -36,16 +36,16 @@ class NolPayPaymentScanTagFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startPaymentComponent =
-            PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayStartPaymentComponent(
+            PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayPaymentComponent(
                 requireParentFragment().requireParentFragment()
             )
         nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
         lifecycleScope.launchWhenCreated {
-            startPaymentComponent.componentStep.collectLatest { step: NolPayStartPaymentStep ->
+            startPaymentComponent.componentStep.collectLatest { step: NolPayPaymentStep ->
                 when (step) {
-                    NolPayStartPaymentStep.CollectStartPaymentData -> Unit
-                    NolPayStartPaymentStep.CollectTagData -> Unit
+                    NolPayPaymentStep.CollectPaymentData -> Unit
+                    NolPayPaymentStep.CollectTagData -> Unit
                 }
             }
         }
@@ -53,7 +53,7 @@ class NolPayPaymentScanTagFragment : Fragment() {
         mainViewModel.collectedTag.observe(viewLifecycleOwner) { intent ->
             nfcComponent.getAvailableTag(intent)?.let {
                 startPaymentComponent.updateCollectedData(
-                    NolPayStartPaymentCollectableData.NolPayTagData(
+                    NolPayPaymentCollectableData.NolPayTagData(
                         it
                     )
                 )

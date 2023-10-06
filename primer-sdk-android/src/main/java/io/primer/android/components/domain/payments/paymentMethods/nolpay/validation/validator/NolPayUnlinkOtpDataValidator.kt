@@ -2,6 +2,8 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.valid
 
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_OTP_CODE_ERROR_ID
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.OTP_CODE_REGEX
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 
 internal class NolPayUnlinkOtpDataValidator :
@@ -29,11 +31,5 @@ internal class NolPayUnlinkOtpDataValidator :
 
             else -> emptyList()
         }
-    }
-
-    internal companion object {
-
-        const val INVALID_OTP_CODE_ERROR_ID = "invalid-otp-code"
-        val OTP_CODE_REGEX = Regex("^(\\d){6}$")
     }
 }

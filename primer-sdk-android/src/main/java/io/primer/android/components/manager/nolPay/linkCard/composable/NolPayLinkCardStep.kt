@@ -9,7 +9,7 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
 sealed interface NolPayLinkCardStep : PrimerHeadlessStep {
 
     /**
-     * A sealed class representing the step of collecting tag data for Nol Pay card linking.
+     * Object representing the step of collecting tag data for Nol Pay card linking.
      */
     object CollectTagData : NolPayLinkCardStep
 
@@ -21,7 +21,7 @@ sealed interface NolPayLinkCardStep : PrimerHeadlessStep {
     data class CollectPhoneData(val cardNumber: String) : NolPayLinkCardStep
 
     /**
-     * A sealed class representing the step of collecting OTP (One-Time Password) data
+     * Object representing the step of collecting OTP (One-Time Password) data
      * for Nol Pay card linking.
      */
     object CollectOtpData : NolPayLinkCardStep

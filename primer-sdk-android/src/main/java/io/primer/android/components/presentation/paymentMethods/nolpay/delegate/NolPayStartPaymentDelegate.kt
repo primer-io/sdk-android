@@ -10,8 +10,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayTransactionNumberInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.None
@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+@Suppress("LongParameterList")
 internal class NolPayStartPaymentDelegate(
     private val asyncPaymentMethodConfigInteractor: AsyncPaymentMethodConfigInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
@@ -37,11 +38,11 @@ internal class NolPayStartPaymentDelegate(
 ) : BaseNolPayDelegate(appSecretInteractor, configurationInteractor, analyticsInteractor) {
 
     suspend fun startListeningForEvents() =
-        suspendCancellableCoroutine<NolPayStartPaymentStep> { cancellableContinuation ->
+        suspendCancellableCoroutine<NolPayPaymentStep> { cancellableContinuation ->
             var subscription: EventBus.SubscriptionHandle? = EventBus.subscribe { checkoutEvent ->
                 when (checkoutEvent) {
                     is CheckoutEvent.StartNolPayFlow -> {
-                        cancellableContinuation.resume(NolPayStartPaymentStep.CollectTagData)
+                        cancellableContinuation.resume(NolPayPaymentStep.CollectTagData)
                     }
 
                     else -> Unit
@@ -54,16 +55,16 @@ internal class NolPayStartPaymentDelegate(
         }
 
     suspend fun handleCollectedCardData(
-        collectedData: NolPayStartPaymentCollectableData?,
+        collectedData: NolPayPaymentCollectableData?,
     ): Result<*> = runSuspendCatching {
         return when (
             val collectedDataUnwrapped =
                 requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
         ) {
-            is NolPayStartPaymentCollectableData.NolPayStartPaymentData ->
+            is NolPayPaymentCollectableData.NolPayStartPaymentData ->
                 tokenize(collectedDataUnwrapped)
 
-            is NolPayStartPaymentCollectableData.NolPayTagData ->
+            is NolPayPaymentCollectableData.NolPayTagData ->
                 transactionNumberInteractor(None()).onSuccess { transactionNumber ->
                     requestPayment(
                         collectedDataUnwrapped,
@@ -74,7 +75,7 @@ internal class NolPayStartPaymentDelegate(
     }
 
     private suspend fun tokenize(
-        collectedData: NolPayStartPaymentCollectableData.NolPayStartPaymentData
+        collectedData: NolPayPaymentCollectableData.NolPayStartPaymentData
     ) = runSuspendCatching {
         asyncPaymentMethodConfigInteractor(
             AsyncPaymentMethodParams(PaymentMethodType.NOL_PAY.name)
@@ -96,7 +97,7 @@ internal class NolPayStartPaymentDelegate(
     }
 
     private suspend fun requestPayment(
-        collectedData: NolPayStartPaymentCollectableData.NolPayTagData,
+        collectedData: NolPayPaymentCollectableData.NolPayTagData,
         transactionNo: String
     ) = requestPaymentInteractor(NolPayRequestPaymentParams(collectedData.tag, transactionNo))
 }

@@ -2,6 +2,10 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.valid
 
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.DIALLING_CODE_REGEX
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_DIALLING_CODE_ERROR_ID
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_MOBILE_NUMBER_ERROR_ID
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.MOBILE_PHONE_REGEX
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 
 internal class NolPayLinkMobileNumberDataValidator :
@@ -35,13 +39,5 @@ internal class NolPayLinkMobileNumberDataValidator :
         }
 
         else -> emptyList()
-    }
-
-    internal companion object {
-
-        const val INVALID_DIALLING_CODE_ERROR_ID = "invalid-phone-country-dialling-code"
-        const val INVALID_MOBILE_NUMBER_ERROR_ID = "invalid-mobile-number"
-        val DIALLING_CODE_REGEX = Regex("^\\+?\\d{1,3}(-\\d{1,4})?\$")
-        val MOBILE_PHONE_REGEX = Regex("^\\d{7,15}\$")
     }
 }

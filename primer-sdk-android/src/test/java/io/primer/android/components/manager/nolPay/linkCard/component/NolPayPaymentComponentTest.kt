@@ -11,9 +11,9 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
+import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
@@ -41,11 +41,11 @@ internal class NolPayPaymentComponentTest {
     @RelaxedMockK
     lateinit var savedStateHandle: SavedStateHandle
 
-    private lateinit var component: NolPayStartPaymentComponent
+    private lateinit var component: NolPayPaymentComponent
 
     @BeforeEach
     fun setUp() {
-        component = NolPayStartPaymentComponent(
+        component = NolPayPaymentComponent(
             startPaymentDelegate,
             dataValidatorRegistry,
             errorMapper,
@@ -77,7 +77,7 @@ internal class NolPayPaymentComponentTest {
         runTest {
             component.start()
             assertEquals(
-                NolPayStartPaymentStep.CollectStartPaymentData,
+                NolPayPaymentStep.CollectPaymentData,
                 component.componentStep.first()
             )
         }
@@ -107,7 +107,7 @@ internal class NolPayPaymentComponentTest {
 
     @Test
     fun `updateCollectedData should log correct sdk analytics event`() {
-        val collectableData = mockk<NolPayStartPaymentCollectableData>(relaxed = true)
+        val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
         runTest {
             component.updateCollectedData(collectableData)
         }
@@ -124,7 +124,7 @@ internal class NolPayPaymentComponentTest {
 
     @Test
     fun `updateCollectedData should emit validation errors when NolPayPaymentDataValidatorRegistry validate was successful`() {
-        val collectableData = mockk<NolPayStartPaymentCollectableData>(relaxed = true)
+        val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
         coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }.returns(listOf())
         runTest {
             component.updateCollectedData(collectableData)

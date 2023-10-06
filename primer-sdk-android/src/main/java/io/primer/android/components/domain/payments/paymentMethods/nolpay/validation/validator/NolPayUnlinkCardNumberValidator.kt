@@ -2,6 +2,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.valid
 
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_CARD_NUMBER_ERROR_ID
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 
 internal class NolPayUnlinkCardNumberValidator :
@@ -20,10 +21,5 @@ internal class NolPayUnlinkCardNumberValidator :
 
             else -> emptyList()
         }
-    }
-
-    private companion object {
-
-        const val INVALID_CARD_NUMBER_ERROR_ID = "invalid-card-number"
     }
 }

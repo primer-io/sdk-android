@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
 import io.primer.android.components.manager.nolPay.listCards.component.NolPayLinkedCardsComponent
 import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
+import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 
 class PrimerHeadlessUniversalCheckoutNolPayManager {
@@ -15,8 +15,8 @@ class PrimerHeadlessUniversalCheckoutNolPayManager {
     fun provideNolPayUnlinkCardComponent(owner: ViewModelStoreOwner): NolPayUnlinkCardComponent =
         NolPayUnlinkCardComponent.provideInstance(owner)
 
-    fun provideNolPayStartPaymentComponent(owner: ViewModelStoreOwner):
-        NolPayStartPaymentComponent = NolPayStartPaymentComponent.getInstance(owner)
+    fun provideNolPayPaymentComponent(owner: ViewModelStoreOwner):
+        NolPayPaymentComponent = NolPayPaymentComponent.getInstance(owner)
 
     fun provideNolPayLinkedCardsComponent() = NolPayLinkedCardsComponent.getInstance()
 

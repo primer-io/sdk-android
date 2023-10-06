@@ -3,6 +3,8 @@ package io.primer.android.components.domain.payments.paymentMethods.nolPay.valid
 import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkMobileNumberDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_DIALLING_CODE_ERROR_ID
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_MOBILE_NUMBER_ERROR_ID
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,7 +27,7 @@ internal class NolPayUnlinkMobileNumberDataValidatorTest {
 
             assertEquals(1, errors.size)
             assertEquals(
-                NolPayUnlinkMobileNumberDataValidator.INVALID_MOBILE_NUMBER_ERROR_ID,
+                INVALID_MOBILE_NUMBER_ERROR_ID,
                 errors[0].errorId
             )
             assertEquals("Mobile number cannot be blank.", errors[0].description)
@@ -45,7 +47,7 @@ internal class NolPayUnlinkMobileNumberDataValidatorTest {
 
             assertEquals(1, errors.size)
             assertEquals(
-                NolPayUnlinkMobileNumberDataValidator.INVALID_DIALLING_CODE_ERROR_ID,
+                INVALID_DIALLING_CODE_ERROR_ID,
                 errors[0].errorId
             )
             assertEquals(
@@ -67,7 +69,7 @@ internal class NolPayUnlinkMobileNumberDataValidatorTest {
 
             assertEquals(1, errors.size)
             assertEquals(
-                NolPayUnlinkMobileNumberDataValidator.INVALID_MOBILE_NUMBER_ERROR_ID,
+                INVALID_MOBILE_NUMBER_ERROR_ID,
                 errors[0].errorId
             )
             assertEquals("Mobile number is not valid.", errors[0].description)

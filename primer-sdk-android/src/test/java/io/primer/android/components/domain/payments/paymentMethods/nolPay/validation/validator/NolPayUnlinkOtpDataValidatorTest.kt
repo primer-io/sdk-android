@@ -3,6 +3,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nolPay.valid
 import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkOtpDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_OTP_CODE_ERROR_ID
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -23,7 +24,7 @@ internal class NolPayUnlinkOtpDataValidatorTest {
             val errors = validator.validate(data)
 
             assertEquals(1, errors.size)
-            assertEquals(NolPayUnlinkOtpDataValidator.INVALID_OTP_CODE_ERROR_ID, errors[0].errorId)
+            assertEquals(INVALID_OTP_CODE_ERROR_ID, errors[0].errorId)
             assertEquals("OTP code cannot be blank.", errors[0].description)
         }
     }
@@ -39,7 +40,7 @@ internal class NolPayUnlinkOtpDataValidatorTest {
             val errors = validator.validate(data)
 
             assertEquals(1, errors.size)
-            assertEquals(NolPayUnlinkOtpDataValidator.INVALID_OTP_CODE_ERROR_ID, errors[0].errorId)
+            assertEquals(INVALID_OTP_CODE_ERROR_ID, errors[0].errorId)
             assertEquals("OTP code is not valid.", errors[0].description)
         }
     }

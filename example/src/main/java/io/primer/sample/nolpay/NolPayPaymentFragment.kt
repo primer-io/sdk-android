@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentCollectableData
-import io.primer.android.components.manager.nolPay.startPayment.component.NolPayStartPaymentComponent
-import io.primer.android.components.manager.nolPay.startPayment.composable.NolPayStartPaymentStep
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
+import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
+import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 class NolPayPaymentFragment : Fragment() {
 
     private lateinit var binding: FragmentNolPayPaymentBinding
-    private lateinit var startPaymentComponent: NolPayStartPaymentComponent
+    private lateinit var startPaymentComponent: NolPayPaymentComponent
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,16 +37,16 @@ class NolPayPaymentFragment : Fragment() {
             childFragmentManager.findFragmentById(R.id.parentNavFragment) as NavHostFragment
 
         startPaymentComponent =
-            PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayStartPaymentComponent(
+            PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayPaymentComponent(
                 this
             )
 
         lifecycleScope.launchWhenCreated {
             startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
                 when (nolPayLinkStep) {
-                    NolPayStartPaymentStep.CollectStartPaymentData ->
+                    NolPayPaymentStep.CollectPaymentData ->
                         startPaymentComponent.updateCollectedData(
-                            NolPayStartPaymentCollectableData.NolPayStartPaymentData(
+                            NolPayPaymentCollectableData.NolPayStartPaymentData(
                                 requireArguments().getSerializable(
                                     NolFragment.NOL_CARD_KEY
                                 ) as PrimerNolPaymentCard,
@@ -57,7 +57,7 @@ class NolPayPaymentFragment : Fragment() {
                             startPaymentComponent.submit()
                         }
 
-                    NolPayStartPaymentStep.CollectTagData -> Unit
+                    NolPayPaymentStep.CollectTagData -> Unit
                 }
             }
         }
