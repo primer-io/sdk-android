@@ -79,24 +79,13 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
     }
 
     @Test
-    fun `handleCollectedCardData with NolPayCardData should return CollectPhoneData`() {
+    fun `handleCollectedCardData with NolPayCardAndPhoneData should return CollectOtpData step when NolPayGetUnlinkPaymentCardOTPInteractor execute was successful`() {
         val collectedData =
-            NolPayUnlinkCollectableData.NolPayCardData(PrimerNolPaymentCard(CARD_NUMBER))
-        val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
-
-        runTest {
-            val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
-            assert(result.isSuccess)
-            assert(result.getOrThrow() is NolPayUnlinkCardStep.CollectPhoneData)
-        }
-
-        verify { savedStateHandle[PHYSICAL_CARD_KEY] = CARD_NUMBER }
-    }
-
-    @Test
-    fun `handleCollectedCardData with NolPayPhoneData should return CollectOtpData step when NolPayGetUnlinkPaymentCardOTPInteractor execute was successful`() {
-        val collectedData =
-            NolPayUnlinkCollectableData.NolPayPhoneData(MOBILE_NUMBER, DIALLING_CODE)
+            NolPayUnlinkCollectableData.NolPayCardAndPhoneData(
+                PrimerNolPaymentCard(CARD_NUMBER),
+                MOBILE_NUMBER,
+                DIALLING_CODE
+            )
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
         every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) }
             .returns(CARD_NUMBER)
@@ -123,9 +112,13 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
     }
 
     @Test
-    fun `handleCollectedCardData with NolPayPhoneData should return NolPaySdkException when NolPayGetUnlinkPaymentCardOTPInteractor execute fails`() {
+    fun `handleCollectedCardData with NolPayCardAndPhoneData should return NolPaySdkException when NolPayGetUnlinkPaymentCardOTPInteractor execute fails`() {
         val collectedData =
-            NolPayUnlinkCollectableData.NolPayPhoneData(MOBILE_NUMBER, DIALLING_CODE)
+            NolPayUnlinkCollectableData.NolPayCardAndPhoneData(
+                PrimerNolPaymentCard(CARD_NUMBER),
+                MOBILE_NUMBER,
+                DIALLING_CODE
+            )
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
         every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) }
             .returns(CARD_NUMBER)

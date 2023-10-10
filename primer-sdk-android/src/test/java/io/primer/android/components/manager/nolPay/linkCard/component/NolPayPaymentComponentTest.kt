@@ -72,7 +72,7 @@ internal class NolPayPaymentComponentTest {
         runTest {
             component.start()
             assertEquals(
-                NolPayPaymentStep.CollectPaymentData,
+                NolPayPaymentStep.CollectCardAndPhoneData,
                 component.componentStep.first()
             )
         }

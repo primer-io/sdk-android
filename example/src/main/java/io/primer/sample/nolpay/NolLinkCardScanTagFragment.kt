@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
@@ -16,6 +18,7 @@ import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 class NolLinkCardScanTagFragment : Fragment() {
 
@@ -42,12 +45,17 @@ class NolLinkCardScanTagFragment : Fragment() {
             )
         nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
-        lifecycleScope.launchWhenCreated {
-            combine(linkCardComponent.componentValidationErrors, linkCardComponent.componentStep) { a, b ->
-                Pair(a, b)
-            }.collectLatest {
-                if (it.first.isEmpty() && it.second == NolPayLinkCardStep.CollectTagData)
-                    linkCardComponent.submit()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(
+                    linkCardComponent.componentValidationErrors,
+                    linkCardComponent.componentStep
+                ) { a, b ->
+                    Pair(a, b)
+                }.collectLatest {
+                    if (it.first.isEmpty() && it.second == NolPayLinkCardStep.CollectTagData)
+                        linkCardComponent.submit()
+                }
             }
         }
 

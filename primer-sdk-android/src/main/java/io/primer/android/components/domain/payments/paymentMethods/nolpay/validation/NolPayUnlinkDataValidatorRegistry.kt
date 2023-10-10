@@ -1,7 +1,6 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolpay.validation
 
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkCardNumberValidator
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkMobileNumberDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkCardAndMobileNumberDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkOtpDataValidator
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
@@ -13,9 +12,8 @@ internal class NolPayUnlinkDataValidatorRegistry {
         NolPayDataValidator<NolPayUnlinkCollectableData>> =
         mapOf(
             NolPayUnlinkCollectableData.NolPayOtpData::class to NolPayUnlinkOtpDataValidator(),
-            NolPayUnlinkCollectableData.NolPayPhoneData::class to
-                NolPayUnlinkMobileNumberDataValidator(),
-            NolPayUnlinkCollectableData.NolPayCardData::class to NolPayUnlinkCardNumberValidator()
+            NolPayUnlinkCollectableData.NolPayCardAndPhoneData::class to
+                NolPayUnlinkCardAndMobileNumberDataValidator()
         )
 
     fun getValidator(data: NolPayCollectableData): NolPayDataValidator<NolPayCollectableData> =

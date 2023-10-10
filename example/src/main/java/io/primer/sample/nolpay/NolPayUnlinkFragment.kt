@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -17,6 +19,7 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayUnlinkBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class NolPayUnlinkFragment : Fragment() {
 
@@ -43,31 +46,23 @@ class NolPayUnlinkFragment : Fragment() {
                 this
             )
 
-        lifecycleScope.launchWhenCreated {
-            unlinkCardComponent.componentStep.collectLatest {
-                when (it) {
-                    is NolPayUnlinkCardStep.CollectCardData -> unlinkCardComponent.updateCollectedData(
-                        NolPayUnlinkCollectableData.NolPayCardData(
-                            requireArguments().getSerializable(
-                                NolFragment.NOL_CARD_KEY
-                            ) as PrimerNolPaymentCard
-                        )
-                    ).also {
-                        unlinkCardComponent.submit()
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                unlinkCardComponent.componentStep.collectLatest {
+                    when (it) {
+                        is NolPayUnlinkCardStep.CollectCardAndPhoneData -> Unit
+                        is NolPayUnlinkCardStep.CollectOtpData -> navHostFragment.findNavController()
+                            .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayUnlinkOtpFragment)
 
-                    is NolPayUnlinkCardStep.CollectPhoneData -> Unit
-                    is NolPayUnlinkCardStep.CollectOtpData -> navHostFragment.findNavController()
-                        .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayUnlinkOtpFragment)
-
-                    is NolPayUnlinkCardStep.CardUnlinked -> {
-                        Snackbar.make(
-                            requireView(),
-                            "Successfully unlinked!",
-                            Snackbar.LENGTH_SHORT
-                        )
-                            .show()
-                        findNavController().navigate(R.id.action_NolUnlinkFragment_to_NolFragment)
+                        is NolPayUnlinkCardStep.CardUnlinked -> {
+                            Snackbar.make(
+                                requireView(),
+                                "Successfully unlinked!",
+                                Snackbar.LENGTH_SHORT
+                            )
+                                .show()
+                            findNavController().navigate(R.id.action_NolUnlinkFragment_to_NolFragment)
+                        }
                     }
                 }
             }

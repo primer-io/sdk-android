@@ -20,7 +20,6 @@ import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.ErrorMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @ExperimentalPrimerApi
@@ -38,11 +37,11 @@ class NolPayLinkCardComponent internal constructor(
     override val componentStep: Flow<NolPayLinkCardStep> = _componentStep
 
     private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
-    override val componentError: SharedFlow<PrimerError> = _componentError
+    override val componentError: Flow<PrimerError> = _componentError
 
     private val _componentValidationErrors: MutableSharedFlow<List<PrimerValidationError>> =
         MutableSharedFlow()
-    override val componentValidationErrors: SharedFlow<List<PrimerValidationError>> =
+    override val componentValidationErrors: Flow<List<PrimerValidationError>> =
         _componentValidationErrors
 
     private val _collectedData: MutableSharedFlow<NolPayLinkCollectableData> =

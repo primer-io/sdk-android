@@ -67,6 +67,7 @@ internal class TokenizationInteractor(
                 .map { it.token }
         }
             .doOnError {
+                it.printStackTrace()
                 errorEventResolver.resolve(it, ErrorMapperType.DEFAULT)
             }
             .flowOn(dispatcher)

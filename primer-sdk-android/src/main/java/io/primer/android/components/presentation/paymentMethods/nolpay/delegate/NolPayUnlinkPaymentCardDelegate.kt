@@ -31,24 +31,20 @@ internal class NolPayUnlinkPaymentCardDelegate(
             val collectedDataUnwrapped =
                 requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
         ) {
-            is NolPayUnlinkCollectableData.NolPayPhoneData -> {
-                getPaymentCardOTP(collectedDataUnwrapped, savedStateHandle)
-            }
-
             is NolPayUnlinkCollectableData.NolPayOtpData -> {
                 unlinkPaymentCard(collectedDataUnwrapped, savedStateHandle)
             }
 
-            is NolPayUnlinkCollectableData.NolPayCardData -> {
+            is NolPayUnlinkCollectableData.NolPayCardAndPhoneData -> {
                 savedStateHandle[PHYSICAL_CARD_KEY] =
                     collectedDataUnwrapped.nolPaymentCard.cardNumber
-                Result.success(NolPayUnlinkCardStep.CollectPhoneData)
+                getPaymentCardOTP(collectedDataUnwrapped, savedStateHandle)
             }
         }
     }
 
     private suspend fun getPaymentCardOTP(
-        collectedData: NolPayUnlinkCollectableData.NolPayPhoneData,
+        collectedData: NolPayUnlinkCollectableData.NolPayCardAndPhoneData,
         savedStateHandle: SavedStateHandle
     ) = unlinkPaymentCardOTPInteractor(
         NolPayUnlinkCardOTPParams(

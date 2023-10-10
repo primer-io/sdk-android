@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.sample.databinding.FragmentNolPayUnlinkOtpBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class NolPayUnlinkOtpFragment : Fragment() {
 
@@ -40,16 +43,17 @@ class NolPayUnlinkOtpFragment : Fragment() {
                     it.toString(),
                 )
             )
-            binding.nextButton.isEnabled = it?.length == 6
         }
 
         binding.nextButton.setOnClickListener {
             unlinkCardComponent.submit()
         }
 
-        lifecycleScope.launchWhenCreated {
-            unlinkCardComponent.componentValidationErrors.collectLatest {
-                binding.nextButton.isEnabled = it.isEmpty()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                unlinkCardComponent.componentValidationErrors.collectLatest {
+                    binding.nextButton.isEnabled = it.isEmpty()
+                }
             }
         }
     }

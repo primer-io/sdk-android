@@ -23,7 +23,7 @@ class NolPayLinkedCardsComponent internal constructor(
      * phone country dialing code.
      *
      * @param mobileNumber The mobile number for which linked cards are to be retrieved.
-     * @param phoneCountryDiallingCode The country dialing code for the specified mobile number.
+     * @param phoneCountryDiallingCode The country dialing code for the specified mobile number in E.164 format.
      *
      * @return A [Result] containing either a list of linked [PrimerNolPaymentCard] objects on
      * success or an error on failure.

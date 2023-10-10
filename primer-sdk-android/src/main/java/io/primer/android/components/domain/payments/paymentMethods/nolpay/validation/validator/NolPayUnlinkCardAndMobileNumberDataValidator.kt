@@ -8,14 +8,14 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.MOBILE_PHONE_REGEX
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 
-internal class NolPayUnlinkMobileNumberDataValidator :
-    NolPayDataValidator<NolPayUnlinkCollectableData.NolPayPhoneData> {
-    override suspend fun validate(t: NolPayUnlinkCollectableData.NolPayPhoneData) = when {
-        t.mobileNumber.isBlank() -> {
+internal class NolPayUnlinkCardAndMobileNumberDataValidator :
+    NolPayDataValidator<NolPayUnlinkCollectableData.NolPayCardAndPhoneData> {
+    override suspend fun validate(t: NolPayUnlinkCollectableData.NolPayCardAndPhoneData) = when {
+        t.nolPaymentCard.cardNumber.isBlank() -> {
             listOf(
                 PrimerValidationError(
-                    INVALID_MOBILE_NUMBER_ERROR_ID,
-                    "Mobile number cannot be blank.",
+                    NolPayValidations.INVALID_CARD_NUMBER_ERROR_ID,
+                    "Card number cannot be blank.",
                 )
             )
         }

@@ -54,7 +54,7 @@ class NolPayUnlinkCardComponent internal constructor(
             unlinkPaymentCardDelegate.start()
                 .onSuccess {
                     viewModelScope.launch {
-                        _componentStep.emit(NolPayUnlinkCardStep.CollectCardData)
+                        _componentStep.emit(NolPayUnlinkCardStep.CollectCardAndPhoneData)
                     }
                 }.onFailure { throwable ->
                     handleError(throwable)

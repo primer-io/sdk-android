@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
@@ -41,11 +43,13 @@ class NolPayPaymentScanTagFragment : Fragment() {
             )
         nfcComponent = PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayNfcComponent()
 
-        lifecycleScope.launchWhenCreated {
-            startPaymentComponent.componentStep.collectLatest { step: NolPayPaymentStep ->
-                when (step) {
-                    NolPayPaymentStep.CollectPaymentData -> Unit
-                    NolPayPaymentStep.CollectTagData -> Unit
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                startPaymentComponent.componentStep.collectLatest { step: NolPayPaymentStep ->
+                    when (step) {
+                        NolPayPaymentStep.CollectCardAndPhoneData -> Unit
+                        NolPayPaymentStep.CollectTagData -> Unit
+                    }
                 }
             }
         }

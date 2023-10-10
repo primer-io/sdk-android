@@ -52,7 +52,7 @@ class NolPayPaymentComponent internal constructor(
         }
         viewModelScope.launch {
             startPaymentDelegate.start().onSuccess {
-                _componentStep.emit(NolPayPaymentStep.CollectPaymentData)
+                _componentStep.emit(NolPayPaymentStep.CollectCardAndPhoneData)
             }.onFailure { throwable ->
                 handleError(throwable)
             }

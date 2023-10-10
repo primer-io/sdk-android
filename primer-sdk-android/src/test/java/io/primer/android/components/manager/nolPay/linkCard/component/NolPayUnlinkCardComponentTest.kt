@@ -71,7 +71,10 @@ internal class NolPayUnlinkCardComponentTest {
         coEvery { unlinkPaymentCardDelegate.start() }.returns(Result.success(Unit))
         runTest {
             component.start()
-            assertEquals(NolPayUnlinkCardStep.CollectCardData, component.componentStep.first())
+            assertEquals(
+                NolPayUnlinkCardStep.CollectCardAndPhoneData,
+                component.componentStep.first()
+            )
         }
 
         coVerify { unlinkPaymentCardDelegate.start() }

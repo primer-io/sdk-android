@@ -44,7 +44,7 @@ internal val analyticsModule = {
         single { BatteryStatusDataSource(get()) }
         single { DeviceIdDataSource(get()) }
         single { NetworkTypeDataSource(get()) }
-        single { UncaughtHandlerDataSource() }
+        single { UncaughtHandlerDataSource(Thread.getDefaultUncaughtExceptionHandler()) }
         single { AnalyticsDataSender(get(), get(), get()) }
         single { LocalAnalyticsDataSource.instance }
         single { FileAnalyticsDataSource(get()) }

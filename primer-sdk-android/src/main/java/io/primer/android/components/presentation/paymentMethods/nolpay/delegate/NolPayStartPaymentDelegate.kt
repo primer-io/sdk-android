@@ -21,7 +21,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.No
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.extensions.runSuspendCatching
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -61,7 +61,7 @@ internal class NolPayStartPaymentDelegate(
             val collectedDataUnwrapped =
                 requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
         ) {
-            is NolPayPaymentCollectableData.NolPayStartPaymentData ->
+            is NolPayPaymentCollectableData.NolPayCardAndPhoneData ->
                 tokenize(collectedDataUnwrapped)
 
             is NolPayPaymentCollectableData.NolPayTagData ->
@@ -75,7 +75,7 @@ internal class NolPayStartPaymentDelegate(
     }
 
     private suspend fun tokenize(
-        collectedData: NolPayPaymentCollectableData.NolPayStartPaymentData
+        collectedData: NolPayPaymentCollectableData.NolPayCardAndPhoneData
     ) = runSuspendCatching {
         asyncPaymentMethodConfigInteractor(
             AsyncPaymentMethodParams(PaymentMethodType.NOL_PAY.name)
@@ -93,7 +93,7 @@ internal class NolPayStartPaymentDelegate(
                     PrimerSessionIntent.CHECKOUT
                 )
             )
-        }.first()
+        }.collect()
     }
 
     private suspend fun requestPayment(

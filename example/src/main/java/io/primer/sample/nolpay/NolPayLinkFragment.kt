@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -15,6 +17,7 @@ import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalChecko
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayLinkBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class NolPayLinkFragment : Fragment() {
 
@@ -40,27 +43,35 @@ class NolPayLinkFragment : Fragment() {
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayLinkCardComponent(
                this
             )
-        lifecycleScope.launchWhenCreated {
-            linkCardComponent.componentError.collectLatest {
-                Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                linkCardComponent.componentError.collectLatest {
+                    Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
 
-        lifecycleScope.launchWhenCreated {
-            linkCardComponent.componentStep.collectLatest { nolPayLinkStep ->
-                when (nolPayLinkStep) {
-                    is NolPayLinkCardStep.CollectPhoneData ->
-                        navHostFragment.findNavController()
-                            .navigate(R.id.action_NolLinkCardScanTagFragment_to_NolPayPhoneInputFragment)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                linkCardComponent.componentStep.collectLatest { nolPayLinkStep ->
+                    when (nolPayLinkStep) {
+                        is NolPayLinkCardStep.CollectPhoneData ->
+                            navHostFragment.findNavController()
+                                .navigate(R.id.action_NolLinkCardScanTagFragment_to_NolPayPhoneInputFragment)
 
-                    is NolPayLinkCardStep.CollectOtpData -> navHostFragment.findNavController()
-                        .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayLinkOtpFragment)
+                        is NolPayLinkCardStep.CollectOtpData -> navHostFragment.findNavController()
+                            .navigate(R.id.action_NolPayPhoneInputFragment_to_NolPayLinkOtpFragment)
 
-                    is NolPayLinkCardStep.CollectTagData -> Unit
-                    is NolPayLinkCardStep.CardLinked -> {
-                        Snackbar.make(requireView(), "Successfully linked!", Snackbar.LENGTH_SHORT)
-                            .show()
-                        findNavController().navigate(R.id.action_NolLinkFragment_to_NolFragment)
+                        is NolPayLinkCardStep.CollectTagData -> Unit
+                        is NolPayLinkCardStep.CardLinked -> {
+                            Snackbar.make(
+                                requireView(),
+                                "Successfully linked!",
+                                Snackbar.LENGTH_SHORT
+                            )
+                                .show()
+                            findNavController().navigate(R.id.action_NolLinkFragment_to_NolFragment)
+                        }
                     }
                 }
             }

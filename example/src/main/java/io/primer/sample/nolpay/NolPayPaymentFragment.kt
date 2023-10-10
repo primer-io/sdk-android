@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
@@ -33,31 +35,30 @@ class NolPayPaymentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.parentNavFragment) as NavHostFragment
-
         startPaymentComponent =
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayPaymentComponent(
                 this
             )
 
-        lifecycleScope.launchWhenCreated {
-            startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
-                when (nolPayLinkStep) {
-                    NolPayPaymentStep.CollectPaymentData ->
-                        startPaymentComponent.updateCollectedData(
-                            NolPayPaymentCollectableData.NolPayStartPaymentData(
-                                requireArguments().getSerializable(
-                                    NolFragment.NOL_CARD_KEY
-                                ) as PrimerNolPaymentCard,
-                                "62250843",
-                                "387"
-                            )
-                        ).also {
-                            startPaymentComponent.submit()
-                        }
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
+                    when (nolPayLinkStep) {
+                        NolPayPaymentStep.CollectCardAndPhoneData ->
+                            startPaymentComponent.updateCollectedData(
+                                NolPayPaymentCollectableData.NolPayCardAndPhoneData(
+                                    requireArguments().getSerializable(
+                                        NolFragment.NOL_CARD_KEY
+                                    ) as PrimerNolPaymentCard,
+                                    "62250843",
+                                    "387"
+                                )
+                            ).also {
+                                startPaymentComponent.submit()
+                            }
 
-                    NolPayPaymentStep.CollectTagData -> Unit
+                        NolPayPaymentStep.CollectTagData -> Unit
+                    }
                 }
             }
         }

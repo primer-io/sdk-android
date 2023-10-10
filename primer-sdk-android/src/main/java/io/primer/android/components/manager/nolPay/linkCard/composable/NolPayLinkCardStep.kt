@@ -27,7 +27,7 @@ sealed interface NolPayLinkCardStep : PrimerHeadlessStep {
     object CollectOtpData : NolPayLinkCardStep
 
     /**
-     * A data class representing the step of successfully linking a NOL payment card.
+     * A data class representing the step of successfully linking a Nol Pay card.
      *
      * @property nolPaymentCard The linked Nol Pay card.
      */

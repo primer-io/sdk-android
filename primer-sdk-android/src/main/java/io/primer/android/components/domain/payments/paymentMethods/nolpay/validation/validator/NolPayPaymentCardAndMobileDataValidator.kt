@@ -9,9 +9,9 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.MOBILE_PHONE_REGEX
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 
-internal class NolPayStartPaymentDataValidator :
-    NolPayDataValidator<NolPayPaymentCollectableData.NolPayStartPaymentData> {
-    override suspend fun validate(t: NolPayPaymentCollectableData.NolPayStartPaymentData):
+internal class NolPayPaymentCardAndMobileDataValidator :
+    NolPayDataValidator<NolPayPaymentCollectableData.NolPayCardAndPhoneData> {
+    override suspend fun validate(t: NolPayPaymentCollectableData.NolPayCardAndPhoneData):
         List<PrimerValidationError> {
         return when {
             t.nolPaymentCard.cardNumber.isBlank() -> {

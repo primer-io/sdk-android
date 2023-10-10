@@ -8,9 +8,9 @@ import io.primer.android.components.manager.core.composable.PrimerHeadlessStep
 sealed interface NolPayPaymentStep : PrimerHeadlessStep {
 
     /**
-     * Object representing the step of collecting initial data for Nol Pay payment.
+     * Object representing the step of collecting card and phone data for Nol Pay payment.
      */
-    object CollectPaymentData : NolPayPaymentStep
+    object CollectCardAndPhoneData : NolPayPaymentStep
 
     /**
      * Object representing the step of collecting tag data for Nol Pay payment.

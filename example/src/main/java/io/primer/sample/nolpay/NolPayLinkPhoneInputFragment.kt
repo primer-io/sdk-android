@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.sample.databinding.FragmentNolPayPhoneFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class NolPayLinkPhoneInputFragment : Fragment() {
 
@@ -47,9 +50,11 @@ class NolPayLinkPhoneInputFragment : Fragment() {
             linkCardComponent.submit()
         }
 
-        lifecycleScope.launchWhenCreated {
-            linkCardComponent.componentValidationErrors.collectLatest {
-                binding.nextButton.isEnabled = it.isEmpty()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                linkCardComponent.componentValidationErrors.collectLatest {
+                    binding.nextButton.isEnabled = it.isEmpty()
+                }
             }
         }
     }

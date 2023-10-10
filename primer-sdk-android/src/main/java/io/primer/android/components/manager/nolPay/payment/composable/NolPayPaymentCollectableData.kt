@@ -11,14 +11,14 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
 sealed interface NolPayPaymentCollectableData : NolPayCollectableData {
 
     /**
-     * Data class representing Nol Pay data used in payment process.
+     * Data class representing Nol Pay card and phone data used in payment process.
      *
      * @property nolPaymentCard The NolPay payment card to unlink.
      * @property mobileNumber The mobile number associated with the NolPay account.
      * @property phoneCountryDiallingCode The country dialing code for the associated phone number
      * in E.164 format.
      * */
-    data class NolPayStartPaymentData(
+    data class NolPayCardAndPhoneData(
         val nolPaymentCard: PrimerNolPaymentCard,
         val mobileNumber: String,
         val phoneCountryDiallingCode: String
