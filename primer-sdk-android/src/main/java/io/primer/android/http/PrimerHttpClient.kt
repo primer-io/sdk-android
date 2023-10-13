@@ -26,7 +26,7 @@ import kotlin.coroutines.resume
 private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 
 internal class PrimerHttpClient(
-    private val okHttpClient: OkHttpClient,
+    private val okHttpClient: OkHttpClient
 ) {
 
     inline fun <reified R : JSONDeserializable> get(
@@ -60,7 +60,7 @@ internal class PrimerHttpClient(
     inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> post(
         url: String,
         request: T,
-        headers: Map<String, String> = hashMapOf(),
+        headers: Map<String, String> = hashMapOf()
     ): Flow<R> =
         flow {
             emit(

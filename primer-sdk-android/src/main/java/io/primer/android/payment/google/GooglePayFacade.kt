@@ -18,7 +18,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 internal class GooglePayFacade constructor(
-    private val paymentsClient: PaymentsClient,
+    private val paymentsClient: PaymentsClient
 ) {
 
     companion object {
@@ -34,7 +34,7 @@ internal class GooglePayFacade constructor(
     suspend fun checkIfIsReadyToPay(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean,
+        billingAddressRequired: Boolean
     ): Boolean = checkIfIsReadyToPay(
         buildIsReadyToGooglePayRequest(
             allowedCardNetworks = allowedCardNetworks,
@@ -46,7 +46,7 @@ internal class GooglePayFacade constructor(
     private fun buildIsReadyToGooglePayRequest(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean,
+        billingAddressRequired: Boolean
     ): JSONObject {
         val baseCardPaymentMethods = baseCardPaymentMethod(
             allowedCardNetworks,
@@ -62,7 +62,7 @@ internal class GooglePayFacade constructor(
     private fun baseCardPaymentMethod(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean,
+        billingAddressRequired: Boolean
     ): JSONObject {
         return JSONObject().apply {
             val parameters = JSONObject().apply {
@@ -86,8 +86,9 @@ internal class GooglePayFacade constructor(
 
     private suspend fun checkIfIsReadyToPay(request: JSONObject): Boolean =
         suspendCoroutine { continuation: Continuation<Boolean> ->
-            if (isGooglePlayServicesAvailable().not()) continuation.resume(false)
-            else {
+            if (isGooglePlayServicesAvailable().not()) {
+                continuation.resume(false)
+            } else {
                 val isReadyToPayRequest = IsReadyToPayRequest.fromJson(request.toString())
                 paymentsClient
                     .isReadyToPay(isReadyToPayRequest)
@@ -120,7 +121,7 @@ internal class GooglePayFacade constructor(
         currencyCode: String,
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean,
+        billingAddressRequired: Boolean
     ) {
         val request = buildPaymentRequest(
             gatewayMerchantId = gatewayMerchantId,
@@ -143,7 +144,7 @@ internal class GooglePayFacade constructor(
         currencyCode: String,
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean,
+        billingAddressRequired: Boolean
     ): JSONObject {
         val gatewayParams = JSONObject(
             mapOf(
@@ -201,11 +202,12 @@ internal class GooglePayFacadeFactory {
 
     fun create(
         applicationContext: Context,
-        environment: GooglePayFacade.Environment,
+        environment: GooglePayFacade.Environment
     ): GooglePayFacade {
         val walletEnvironment =
-            if (environment == GooglePayFacade.Environment.TEST) WalletConstants.ENVIRONMENT_TEST
-            else WalletConstants.ENVIRONMENT_PRODUCTION
+            if (environment == GooglePayFacade.Environment.TEST) {
+                WalletConstants.ENVIRONMENT_TEST
+            } else { WalletConstants.ENVIRONMENT_PRODUCTION }
         val walletOptions = Wallet.WalletOptions.Builder()
             .setEnvironment(walletEnvironment)
             .build()

@@ -8,6 +8,7 @@ import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeData
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.NewFragmentBehaviour
@@ -19,12 +20,11 @@ import io.primer.android.payment.async.AsyncPaymentMethodBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.fragments.forms.DynamicFormFragment
 import io.primer.android.ui.payment.LoadingState
-import org.koin.core.component.inject
 
 internal class AdyenBlikPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository by inject()
@@ -54,7 +54,7 @@ internal class AdyenBlikPaymentMethodDescriptor(
             HeadlessDefinition.RawDataDefinition(
                 PrimerOtpCodeData::class,
                 OtpRawDataMapper(deeplinkRepository, config, localConfig.settings)
-                    as PrimerPaymentMethodRawDataMapper<PrimerRawData>,
+                    as PrimerPaymentMethodRawDataMapper<PrimerRawData>
             )
         )
 }

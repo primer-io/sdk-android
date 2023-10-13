@@ -17,8 +17,9 @@ internal class FastBankTransferLocalFormDataSource(
     override fun get(): Flow<FormDataResponse> = flowOf(
         FormDataResponse(
             R.string.completeYourPayment,
-            if (theme.isDarkMode == true) R.drawable.ic_logo_fast_dark
-            else R.drawable.ic_logo_fast_light,
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_fast_dark
+            } else { R.drawable.ic_logo_fast_light },
             ButtonType.CONFIRM,
             description = R.string.pleaseTransferFunds,
             qrCode = clientToken.qrCode,

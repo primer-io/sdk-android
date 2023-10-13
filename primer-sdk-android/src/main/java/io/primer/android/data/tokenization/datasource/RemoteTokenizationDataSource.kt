@@ -6,7 +6,7 @@ import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.data.tokenization.models.TokenizationRequest
 import io.primer.android.data.tokenization.models.TokenizationRequestV2
 import io.primer.android.di.ApiVersion
-import io.primer.android.di.SDK_API_VERSION_HEADER
+import io.primer.android.di.NetworkContainer.Companion.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
 

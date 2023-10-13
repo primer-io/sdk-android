@@ -108,7 +108,7 @@ internal class DefaultRawDataManagerDelegate(
                 tokenizationInteractor.executeV2(
                     TokenizationParamsV2(
                         it,
-                        PrimerSessionIntent.CHECKOUT,
+                        PrimerSessionIntent.CHECKOUT
                     )
                 )
             }.catch { }.collect { }
@@ -123,7 +123,7 @@ internal class DefaultRawDataManagerDelegate(
             paymentRawDataTypeValidateInteractor(
                 PaymentRawDataParams(
                     paymentMethodType,
-                    rawData,
+                    rawData
                 )
             ).flatMapLatest {
                 paymentRawDataChangedInteractor(
@@ -142,7 +142,7 @@ internal class DefaultRawDataManagerDelegate(
                 paymentRawDataValidationInteractor.execute(
                     PaymentTokenizationDescriptorParams(
                         paymentMethodType,
-                        rawData,
+                        rawData
                     )
                 ).onStart {
                     eventDispatcher.dispatchEvent(

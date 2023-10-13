@@ -13,7 +13,7 @@ import kotlin.coroutines.resume
 
 internal class PreTokenizationEventsResolver(
     private val config: PrimerConfig,
-    private val eventDispatcher: EventDispatcher,
+    private val eventDispatcher: EventDispatcher
 ) {
 
     suspend fun resolve(

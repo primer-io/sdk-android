@@ -6,7 +6,7 @@ import io.primer.android.PrimerSessionIntent
 
 internal data class PrimerIntent(
     val paymentMethodIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT,
-    val paymentMethodType: String? = null,
+    val paymentMethodType: String? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(

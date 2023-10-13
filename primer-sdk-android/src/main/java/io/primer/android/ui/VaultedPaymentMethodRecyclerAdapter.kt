@@ -25,7 +25,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     internal fun configureCheckIcon(
         binding: PaymentMethodItemVaultBinding,
         status: PaymentItemStatus,
-        theme: PrimerTheme,
+        theme: PrimerTheme
     ) {
         val checkIcon: ImageView = binding.checkIcon
         checkIcon.apply {
@@ -136,7 +136,7 @@ interface PaymentMethodItemData
 internal data class AlternativePaymentMethodData(
     val title: String,
     val tokenId: String,
-    val type: AlternativePaymentMethodType,
+    val type: AlternativePaymentMethodType
 ) : PaymentMethodItemData
 
 internal data class CardData(
@@ -145,7 +145,7 @@ internal data class CardData(
     val expiryMonth: Int,
     val expiryYear: Int,
     val network: String?,
-    val tokenId: String,
+    val tokenId: String
 ) : PaymentMethodItemData
 
 private const val VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD = 1
@@ -157,7 +157,7 @@ internal enum class VaultViewAction {
 
 internal class VaultedPaymentMethodRecyclerAdapter(
     private val onClickWith: (id: String, action: VaultViewAction) -> Unit,
-    private val theme: PrimerTheme,
+    private val theme: PrimerTheme
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     var selectedPaymentMethodId: String? = null

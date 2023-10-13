@@ -10,16 +10,16 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.LayoutButtonPrimaryBinding
-import io.primer.android.di.DIAppComponent
-import org.koin.core.component.inject
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
+import io.primer.android.ui.settings.PrimerTheme
 
 internal class ButtonPrimary(
     ctx: Context,
-    attrs: AttributeSet,
-) : LinearLayout(ctx, attrs), DIAppComponent {
+    attrs: AttributeSet
+) : LinearLayout(ctx, attrs), DISdkComponent {
 
     private val binding = LayoutButtonPrimaryBinding.inflate(LayoutInflater.from(context), this)
     private val theme: PrimerTheme by inject()
@@ -57,7 +57,7 @@ internal class ButtonPrimary(
                 ),
                 intArrayOf(
                     theme.mainButton.defaultColor.getColor(context, theme.isDarkMode),
-                    theme.mainButton.disabledColor.getColor(context, theme.isDarkMode),
+                    theme.mainButton.disabledColor.getColor(context, theme.isDarkMode)
                 )
             )
         }

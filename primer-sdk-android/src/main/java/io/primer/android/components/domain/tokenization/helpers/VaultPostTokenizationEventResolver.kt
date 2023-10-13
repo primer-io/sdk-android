@@ -22,11 +22,11 @@ internal class VaultPostTokenizationEventResolver(
                 val tokenizationEvent = when (config.settings.fromHUC) {
                     true -> CheckoutEvent.TokenizationSuccessHUC(
                         externalToken,
-                        resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType),
+                        resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType)
                     )
                     false -> CheckoutEvent.TokenizationSuccess(
                         externalToken,
-                        resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType),
+                        resumeHandlerFactory.getResumeHandler(token.paymentInstrumentType)
                     )
                 }
                 events.add(tokenizationEvent)
@@ -39,7 +39,7 @@ internal class VaultPostTokenizationEventResolver(
                         externalToken,
                         resumeHandlerFactory.getResumeHandler(
                             token.paymentInstrumentType
-                        ),
+                        )
                     )
                 )
                 eventDispatcher.dispatchEvents(events)

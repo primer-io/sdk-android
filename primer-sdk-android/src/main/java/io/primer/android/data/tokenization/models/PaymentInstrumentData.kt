@@ -30,7 +30,7 @@ data class PaymentInstrumentData(
     // async
     val paymentMethodType: String? = null,
     // bin
-    val binData: BinData? = null,
+    val binData: BinData? = null
 ) : JSONDeserializable {
 
     companion object {
@@ -84,7 +84,7 @@ data class PaymentInstrumentData(
                     t.optJSONObject(BIN_DATA_FIELD)?.let {
                         JSONSerializationUtils.getDeserializer<BinData>()
                             .deserialize(it)
-                    },
+                    }
                 )
             }
         }
@@ -92,7 +92,7 @@ data class PaymentInstrumentData(
 }
 
 data class ExternalPayerInfo(
-    val email: String,
+    val email: String
 ) : JSONDeserializable {
     companion object {
         private const val EMAIL_FIELD = "email"
@@ -109,7 +109,7 @@ data class ExternalPayerInfo(
 
 data class SessionData(
     val recurringDescription: String? = null,
-    val billingAddress: BillingAddress? = null,
+    val billingAddress: BillingAddress? = null
 ) : JSONDeserializable {
     companion object {
         private const val RECURRING_DESCRIPTION_FIELD = "recurringDescription"
@@ -132,7 +132,7 @@ data class SessionData(
 }
 
 data class BillingAddress(
-    val email: String,
+    val email: String
 ) : JSONDeserializable {
     companion object {
         private const val EMAIL_FIELD = "email"
@@ -142,7 +142,7 @@ data class BillingAddress(
 
             override fun deserialize(t: JSONObject): BillingAddress {
                 return BillingAddress(
-                    t.getString(EMAIL_FIELD),
+                    t.getString(EMAIL_FIELD)
                 )
             }
         }
@@ -150,7 +150,7 @@ data class BillingAddress(
 }
 
 data class BinData(
-    val network: String? = null,
+    val network: String? = null
 ) : JSONObjectSerializable, JSONDeserializable {
     companion object {
         private const val NETWORK_FIELD = "network"
@@ -169,7 +169,7 @@ data class BinData(
         internal val deserializer = object : JSONDeserializer<BinData> {
 
             override fun deserialize(t: JSONObject): BinData {
-                return BinData(t.optNullableString(NETWORK_FIELD),)
+                return BinData(t.optNullableString(NETWORK_FIELD))
             }
         }
     }

@@ -13,7 +13,7 @@ internal class CardPaymentMethodDescriptorFactory : PaymentMethodDescriptorFacto
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor =
         CreditCard(localConfig, paymentMethodRemoteConfig)
 }

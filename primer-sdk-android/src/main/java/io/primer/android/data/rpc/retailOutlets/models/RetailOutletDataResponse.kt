@@ -7,7 +7,7 @@ import io.primer.android.core.serialization.json.extensions.sequence
 import org.json.JSONObject
 
 internal data class RetailOutletResultDataResponse(
-    val result: List<RetailOutletDataResponse>,
+    val result: List<RetailOutletDataResponse>
 ) : JSONDeserializable {
 
     companion object {
@@ -33,7 +33,7 @@ internal data class RetailOutletDataResponse(
     val id: String,
     val name: String,
     val disabled: Boolean,
-    val iconUrl: String,
+    val iconUrl: String
 ) : JSONDeserializable {
     companion object {
         private const val ID_FIELD = "id"
@@ -49,7 +49,7 @@ internal data class RetailOutletDataResponse(
                     t.getString(ID_FIELD),
                     t.getString(NAME_FIELD),
                     t.getBoolean(DISABLED_FIELD),
-                    t.getString(ICON_URL_FIELD),
+                    t.getString(ICON_URL_FIELD)
                 )
             }
         }

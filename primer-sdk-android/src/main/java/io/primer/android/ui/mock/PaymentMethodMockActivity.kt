@@ -8,11 +8,12 @@ import androidx.appcompat.widget.Toolbar
 import io.primer.android.BaseCheckoutActivity
 import io.primer.android.R
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.presentation.mock.PaymentMethodMockViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
+import io.primer.android.presentation.mock.PaymentMethodMockViewModelFactory
 import java.util.UUID
 
 /**
@@ -22,7 +23,8 @@ import java.util.UUID
 internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
 
     private val eventResolver: ResumeEventResolver by inject()
-    private val viewModel: PaymentMethodMockViewModel by viewModel()
+    private val viewModel: PaymentMethodMockViewModel
+        by viewModel<PaymentMethodMockViewModel, PaymentMethodMockViewModelFactory>()
 
     private val paymentMethodType by lazy {
         intent.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
@@ -31,12 +33,10 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_primer_payment_method_mock)
-
         setupViews()
         setupListeners()
         setupObservers()
     }
-
     private fun setupViews() {
         val toolbar = findViewById<Toolbar>(R.id.primerWebviewToolbar)
         toolbar.title = paymentMethodType
@@ -55,6 +55,7 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
                         putExtra(NativeKlarnaActivity.AUTH_TOKEN_KEY, UUID.randomUUID().toString())
                     }
                 ).also { finish() }
+
                 PaymentMethodType.IPAY88_CARD.name -> viewModel.finaliseMockedFlow()
                 PaymentMethodType.PAYMENT_CARD.name ->
                     eventResolver.resolve(

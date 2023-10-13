@@ -58,7 +58,7 @@ class VaultedPaymentMethodsExchangeInteractorTest {
             paymentMethodRepository,
             preTokenizationEventsResolver,
             postTokenizationEventResolver,
-            errorEventResolver,
+            errorEventResolver
         )
     }
 

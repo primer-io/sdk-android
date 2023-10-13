@@ -59,12 +59,12 @@ internal interface HeadlessDelegate {
         type: String,
         rawData: PrimerRawData,
         submit: Boolean,
-        completion: ((Error?) -> Unit) = {},
+        completion: ((Error?) -> Unit) = {}
     )
 
     fun dispatchAction(
         type: String,
-        completion: ((Error?) -> Unit) = {},
+        completion: ((Error?) -> Unit) = {}
     )
 
     fun startAsyncFlow(url: String, paymentMethodType: String)
@@ -89,7 +89,7 @@ internal class DefaultHeadlessManagerDelegate(
     private val resumePaymentInteractor: ResumePaymentInteractor,
     private val initValidationRulesResolver: PaymentMethodManagerInitValidationRulesResolver,
     private val navigator: Navigator,
-    private val eventDispatcher: EventDispatcher,
+    private val eventDispatcher: EventDispatcher
 ) : HeadlessDelegate, EventBus.EventListener {
 
     private val scope = CoroutineScope(SupervisorJob())
@@ -131,10 +131,12 @@ internal class DefaultHeadlessManagerDelegate(
                 e.paymentMethodType
             )
             is CheckoutEvent.ResumeSuccessInternalHUC -> resumePayment(
-                e.resumeToken, e.resumeHandler
+                e.resumeToken,
+                e.resumeHandler
             )
             is CheckoutEvent.PaymentContinueHUC -> createPayment(
-                e.data.token, e.resumeHandler
+                e.data.token,
+                e.resumeHandler
             )
             is CheckoutEvent.StartAsyncRedirectFlowHUC -> {
                 navigator.openHeadlessScreen(
@@ -172,19 +174,22 @@ internal class DefaultHeadlessManagerDelegate(
                             e.customerEmail,
                             e.remark,
                             e.backendCallbackUrl,
-                            e.deeplinkUrl,
+                            e.deeplinkUrl
                         )
                     )
                 )
             }
             is CheckoutEvent.Start3DS -> {
-                if (e.processor3DSData == null) navigator.openThreeDsScreen()
-                else navigator.openProcessor3dsViewScreen(
-                    e.processor3DSData.title,
-                    e.processor3DSData.paymentMethodType,
-                    e.processor3DSData.redirectUrl,
-                    e.processor3DSData.statusUrl
-                )
+                if (e.processor3DSData == null) {
+                    navigator.openThreeDsScreen()
+                } else {
+                    navigator.openProcessor3dsViewScreen(
+                        e.processor3DSData.title,
+                        e.processor3DSData.paymentMethodType,
+                        e.processor3DSData.redirectUrl,
+                        e.processor3DSData.statusUrl
+                    )
+                }
             }
             else -> Unit
         }
@@ -194,14 +199,14 @@ internal class DefaultHeadlessManagerDelegate(
         type: String,
         rawData: PrimerRawData,
         submit: Boolean,
-        completion: ((Error?) -> Unit),
+        completion: ((Error?) -> Unit)
     ) {
         scope.launch {
             prepareAdditionalInfo(rawData)
             paymentRawDataTypeValidateInteractor(
                 PaymentRawDataParams(
                     type,
-                    rawData,
+                    rawData
                 )
             )
                 .flatMapLatest {

@@ -15,7 +15,7 @@ import io.primer.android.utils.SurchargeFormatter
 
 internal class PaymentMethodButtonGroupFactory(
     private var surcharges: Map<String, Int>,
-    private val formatter: SurchargeFormatter,
+    private val formatter: SurchargeFormatter
 ) {
 
     fun build(
@@ -23,9 +23,8 @@ internal class PaymentMethodButtonGroupFactory(
         viewFactory: PrimerPaymentMethodViewFactory,
         displayMetadata: List<BaseDisplayMetadata>,
         descriptors: List<PaymentMethodDescriptor>,
-        onClick: (paymentMethod: PaymentMethodDescriptor) -> Unit,
+        onClick: (paymentMethod: PaymentMethodDescriptor) -> Unit
     ): List<PaymentMethodButtonGroupBox> {
-
         val surchargeMapping = mutableMapOf<Int, PaymentMethodButtonGroupBox>()
         descriptors.filter { displayMetadata.map { it.paymentMethodType }.contains(it.config.type) }
             .forEach { d ->

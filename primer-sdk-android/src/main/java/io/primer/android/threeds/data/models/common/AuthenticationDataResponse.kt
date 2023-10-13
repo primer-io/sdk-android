@@ -21,7 +21,7 @@ internal data class AuthenticationDataResponse(
     val skippedReasonText: String? = null,
     // declined
     val declinedReasonCode: DeclinedReasonCode? = null,
-    val declinedReasonText: String? = null,
+    val declinedReasonText: String? = null
 ) : JSONDeserializable {
 
     companion object {
@@ -59,7 +59,7 @@ internal data class AuthenticationDataResponse(
                     t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
                     t.optNullableString(DECLINED_REASON_CODE_FIELD)
                         ?.let { DeclinedReasonCode.valueOf(it) },
-                    t.optNullableString(DECLINED_REASON_TEXT_FIELD),
+                    t.optNullableString(DECLINED_REASON_TEXT_FIELD)
                 )
             }
         }

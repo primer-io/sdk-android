@@ -7,7 +7,7 @@ import org.json.JSONObject
 
 internal data class CreateSessionDataResponse(
     val url: String,
-    val token: String,
+    val token: String
 ) : JSONDeserializable {
 
     companion object {

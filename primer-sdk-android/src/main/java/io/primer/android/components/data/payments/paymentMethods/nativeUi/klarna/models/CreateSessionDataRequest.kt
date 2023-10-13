@@ -9,7 +9,7 @@ internal data class CreateSessionDataRequest(
     val paymentMethodConfigId: String,
     val sessionType: String,
     val description: String?,
-    val localeData: LocaleDataRequest,
+    val localeData: LocaleDataRequest
 ) : JSONObjectSerializable {
     companion object {
 

@@ -14,10 +14,11 @@ internal class PayPalPaymentMethodDescriptorFactory : PaymentMethodDescriptorFac
         config: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor = when (paymentMethodRemoteConfig.type) {
         PaymentMethodType.PRIMER_TEST_PAYPAL.name -> PrimerTestPayPalDescriptor(
-            config, paymentMethodRemoteConfig
+            config,
+            paymentMethodRemoteConfig
         )
         else -> PayPalDescriptor(config, paymentMethodRemoteConfig)
     }

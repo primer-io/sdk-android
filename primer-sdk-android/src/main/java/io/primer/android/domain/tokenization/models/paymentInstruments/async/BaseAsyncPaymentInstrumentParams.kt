@@ -8,5 +8,5 @@ internal open class BaseAsyncPaymentInstrumentParams(
     open val paymentMethodConfigId: String?,
     open val locale: String,
     open val type: PaymentInstrumentType,
-    open val redirectionUrl: String,
+    open val redirectionUrl: String
 ) : BasePaymentInstrumentParams(paymentMethodType)

@@ -10,19 +10,22 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import io.primer.android.R
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.ui.extensions.NO_COLOR
 import io.primer.android.ui.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
 import io.primer.android.ui.settings.PrimerTheme
-import org.koin.core.component.inject
 
 @SuppressLint("ClickableViewAccessibility")
 internal class SearchViewWidgetV2(
     context: Context,
-    attrs: AttributeSet? = null,
-) : AppCompatEditText(context, attrs), DIAppComponent {
+    attrs: AttributeSet? = null
+) : AppCompatEditText(context, attrs), DISdkComponent {
 
-    private val theme: PrimerTheme by if (isInEditMode) lazy { PrimerTheme.build() } else inject()
+    private val theme: PrimerTheme by
+    if (isInEditMode) {
+        lazy { PrimerTheme.build() }
+    } else { inject() }
 
     init {
         setHintTextColor(

@@ -6,7 +6,7 @@ import java.util.UUID
 internal sealed class GooglePayError : PrimerError() {
 
     class GooglePayInternalError(
-        val status: Status,
+        val status: Status
     ) : GooglePayError()
 
     override val errorId: String

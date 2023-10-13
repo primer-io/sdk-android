@@ -7,7 +7,7 @@ internal data class KlarnaPaymentModel(
     val redirectUrl: String,
     val sessionId: String,
     val clientToken: String,
-    val paymentCategory: String,
+    val paymentCategory: String
 ) : Serializable {
 
     companion object {

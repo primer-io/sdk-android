@@ -19,13 +19,13 @@ internal class PayPal(override val type: String = PaymentMethodType.PAYPAL.name)
         }
 
         override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
         ) {
             // no-op
         }
 
         override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
         ) {
             paymentMethodDescriptorFactoryRegistry.register(
                 type,

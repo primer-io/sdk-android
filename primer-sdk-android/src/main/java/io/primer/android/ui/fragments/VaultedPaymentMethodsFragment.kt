@@ -9,9 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
@@ -22,7 +20,9 @@ import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.databinding.FragmentVaultedPaymentMethodsBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.activityViewModel
+import io.primer.android.di.extension.inject
 import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.AlternativePaymentMethodType
 import io.primer.android.ui.CardData
@@ -30,21 +30,23 @@ import io.primer.android.ui.PaymentMethodItemData
 import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.inject
 
 const val DEFAULT_LAST_FOUR: Int = 1234
 const val DEFAULT_MONTH: Int = 1
 const val DEFAULT_YEAR: Int = 2021
 
 @ExperimentalCoroutinesApi
-class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
+class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
 
     private val theme: PrimerTheme by inject()
     private var binding: FragmentVaultedPaymentMethodsBinding by autoCleaned()
 
-    private val viewModel: PrimerViewModel by activityViewModels()
+    private val viewModel: PrimerViewModel by
+    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     private var paymentMethods: List<BasePaymentToken> = listOf()
 
@@ -56,8 +58,9 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
             adapter.notifyDataSetChanged()
 
             binding.vaultTitleLabel.text =
-                if (isEditing) getString(R.string.edit_saved_payment_methods)
-                else getString(R.string.other_ways_to_pay)
+                if (isEditing) {
+                    getString(R.string.edit_saved_payment_methods)
+                } else { getString(R.string.other_ways_to_pay) }
 
             binding.editVaultedPaymentMethods.text =
                 if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
@@ -79,7 +82,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
     }
 
     private fun generateItemDataFromPaymentMethods(
-        paymentMethods: List<BasePaymentToken>,
+        paymentMethods: List<BasePaymentToken>
     ): List<PaymentMethodItemData> =
         paymentMethods.map {
             when (it.paymentMethodType) {
@@ -88,17 +91,19 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                     AlternativePaymentMethodData(
                         email ?: "Klarna Payment Method",
                         it.token,
-                        AlternativePaymentMethodType.Klarna,
+                        AlternativePaymentMethodType.Klarna
                     )
                 }
+
                 PaymentMethodType.PAYPAL.name -> {
                     val title = it.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
                     AlternativePaymentMethodData(
                         title,
                         it.token,
-                        AlternativePaymentMethodType.PayPal,
+                        AlternativePaymentMethodType.PayPal
                     )
                 }
+
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     val title = it.paymentInstrumentData?.cardholderName ?: "unknown"
                     val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
@@ -107,18 +112,20 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                     val network = it.paymentInstrumentData?.network ?: "unknown"
                     CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
                 }
+
                 PaymentMethodType.APAYA.name -> {
                     AlternativePaymentMethodData(
                         it.paymentInstrumentData?.hashedIdentifier ?: "unknown",
                         it.token,
-                        AlternativePaymentMethodType.Apaya,
+                        AlternativePaymentMethodType.Apaya
                     )
                 }
+
                 else -> {
                     AlternativePaymentMethodData(
                         "saved payment method",
                         it.token,
-                        AlternativePaymentMethodType.Generic,
+                        AlternativePaymentMethodType.Generic
                     )
                 }
             }
@@ -127,7 +134,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentVaultedPaymentMethodsBinding.inflate(inflater, container, false)
         return binding.root
@@ -139,6 +146,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
                 logSelectedPaymentMethodId(id)
                 viewModel.setSelectedPaymentMethodId(id)
             }
+
             VaultViewAction.DELETE -> {
                 onDeleteSelectedWith(id)
             }
@@ -170,7 +178,6 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.vaultTitleLabel.setTextColor(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
@@ -212,7 +219,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DIAppComponent {
         )
         setTextSize(
             TypedValue.COMPLEX_UNIT_PX,
-            theme.systemText.fontSize.getDimension(requireContext()),
+            theme.systemText.fontSize.getDimension(requireContext())
         )
     }
 

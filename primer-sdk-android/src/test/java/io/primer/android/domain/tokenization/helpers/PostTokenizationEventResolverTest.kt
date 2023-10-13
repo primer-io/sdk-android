@@ -47,7 +47,7 @@ internal class PostTokenizationEventResolverTest {
             PostTokenizationEventResolver(
                 config,
                 resumeHandlerFactory,
-                eventDispatcher,
+                eventDispatcher
             )
     }
 

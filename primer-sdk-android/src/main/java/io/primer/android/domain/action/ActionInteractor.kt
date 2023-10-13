@@ -27,7 +27,7 @@ internal class ActionInteractor(
     private val localConfigurationDataSource: LocalConfigurationDataSource,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<Unit, BaseActionUpdateParams>() {
 
     val surcharges: Map<String, Int>

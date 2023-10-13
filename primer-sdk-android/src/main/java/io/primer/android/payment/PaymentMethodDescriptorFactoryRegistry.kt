@@ -15,7 +15,7 @@ import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
  * @see
  */
 internal class PaymentMethodDescriptorFactoryRegistry(
-    private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
+    private val paymentMethodCheckers: PaymentMethodCheckerRegistry
 ) {
 
     private val factories: MutableMap<String, PaymentMethodDescriptorFactory> =
@@ -24,7 +24,7 @@ internal class PaymentMethodDescriptorFactoryRegistry(
     fun create(
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
-        paymentMethod: PaymentMethod,
+        paymentMethod: PaymentMethod
     ): PaymentMethodDescriptor? =
         factories[paymentMethodRemoteConfig.type]?.create(
             localConfig = localConfig,

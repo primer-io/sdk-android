@@ -16,7 +16,7 @@ import io.primer.android.ui.settings.PrimerTheme
 
 internal class DynamicPaymentMethodImageViewCreator(
     private val theme: PrimerTheme,
-    private val displayMetadata: ImageDisplayMetadata,
+    private val displayMetadata: ImageDisplayMetadata
 ) : PaymentMethodViewCreator {
 
     override fun create(context: Context, container: ViewGroup?): View {
@@ -28,7 +28,7 @@ internal class DynamicPaymentMethodImageViewCreator(
         val paymentMethodAsset = displayMetadata.imageColor?.let {
             PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
                 context,
-                displayMetadata.paymentMethodType,
+                displayMetadata.paymentMethodType
             ).paymentMethodLogo.get(it)
         }
         binding.apply {

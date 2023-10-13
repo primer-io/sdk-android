@@ -33,7 +33,7 @@ internal class HeadlessVaultedPaymentMethodsInteractorTest {
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
         interactor = HeadlessVaultedPaymentMethodsInteractor(
-            vaultedPaymentMethodsRepository,
+            vaultedPaymentMethodsRepository
         )
     }
 

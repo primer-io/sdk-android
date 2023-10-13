@@ -8,6 +8,7 @@ import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.NewFragmentBehaviour
@@ -19,12 +20,11 @@ import io.primer.android.payment.async.CardAsyncPaymentMethodBehaviour
 import io.primer.android.ui.fragments.PaymentMethodLoadingFragment
 import io.primer.android.ui.fragments.bancontact.BancontactCardFragment
 import io.primer.android.ui.payment.LoadingState
-import org.koin.core.component.inject
 
 internal class AdyenBancontactCardPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository by inject()
@@ -44,8 +44,9 @@ internal class AdyenBancontactCardPaymentMethodDescriptor(
         )
 
     override fun getLoadingState() = LoadingState(
-        if (localConfig.settings.uiOptions.theme.isDarkMode == true)
-            R.drawable.ic_logo_bancontact_dark else R.drawable.ic_logo_bancontact
+        if (localConfig.settings.uiOptions.theme.isDarkMode == true) {
+            R.drawable.ic_logo_bancontact_dark
+        } else { R.drawable.ic_logo_bancontact }
     )
 
     override val headlessDefinition: HeadlessDefinition

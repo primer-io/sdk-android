@@ -5,5 +5,5 @@ import io.primer.android.domain.base.Params
 
 internal class PaymentRawDataParams(
     val paymentMethodType: String,
-    val inputData: PrimerRawData,
+    val inputData: PrimerRawData
 ) : Params

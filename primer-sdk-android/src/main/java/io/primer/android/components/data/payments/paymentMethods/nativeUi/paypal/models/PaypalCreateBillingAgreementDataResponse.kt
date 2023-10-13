@@ -21,7 +21,7 @@ internal data class PaypalCreateBillingAgreementDataResponse(
             override fun deserialize(t: JSONObject): PaypalCreateBillingAgreementDataResponse {
                 return PaypalCreateBillingAgreementDataResponse(
                     t.getString(TOKEN_ID_FIELD),
-                    t.getString(APPROVAL_URL_FIELD),
+                    t.getString(APPROVAL_URL_FIELD)
                 )
             }
         }

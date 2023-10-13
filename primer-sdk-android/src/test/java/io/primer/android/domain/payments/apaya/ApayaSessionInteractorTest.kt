@@ -56,7 +56,7 @@ internal class ApayaSessionInteractorTest {
                 apayaSessionParamsValidator,
                 apayaWebResultValidator,
                 apayaSessionRepository,
-                errorEventResolver,
+                errorEventResolver
             )
     }
 

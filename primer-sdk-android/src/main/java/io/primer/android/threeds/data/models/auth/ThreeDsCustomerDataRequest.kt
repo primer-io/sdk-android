@@ -9,7 +9,7 @@ internal data class ThreeDsCustomerDataRequest(
     val email: String? = null,
     val homePhone: String? = null,
     val mobilePhone: String? = null,
-    val workPhone: String? = null,
+    val workPhone: String? = null
 ) : JSONObjectSerializable {
 
     companion object {

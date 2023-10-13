@@ -15,7 +15,7 @@ import io.primer.android.ui.fragments.bank.DotPayBankSelectionFragment
 internal class AdyenDotpayPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override val selectedBehaviour =

@@ -12,7 +12,7 @@ internal sealed class BaseThreeDsParams(
     open val sdkTransactionId: String,
     open val sdkEncData: String,
     open val sdkEphemPubKey: String,
-    open val sdkReferenceNumber: String,
+    open val sdkReferenceNumber: String
 )
 
 internal data class ThreeDsCheckoutParams(
@@ -22,7 +22,7 @@ internal data class ThreeDsCheckoutParams(
     override val sdkTransactionId: String,
     override val sdkEncData: String,
     override val sdkEphemPubKey: String,
-    override val sdkReferenceNumber: String,
+    override val sdkReferenceNumber: String
 ) : BaseThreeDsParams(
     maxProtocolVersion,
     challengePreference,
@@ -35,7 +35,7 @@ internal data class ThreeDsCheckoutParams(
 
     constructor(
         authenticationRequestParameters: AuthenticationRequestParameters,
-        challengePreference: ChallengePreference,
+        challengePreference: ChallengePreference
     ) : this(
         ProtocolVersion.values()
             .first { authenticationRequestParameters.messageVersion == it.versionNumber },
@@ -44,7 +44,7 @@ internal data class ThreeDsCheckoutParams(
         authenticationRequestParameters.sdkTransactionID.orEmpty(),
         authenticationRequestParameters.deviceData.orEmpty(),
         authenticationRequestParameters.sdkEphemeralPublicKey.orEmpty(),
-        authenticationRequestParameters.sdkReferenceNumber.orEmpty(),
+        authenticationRequestParameters.sdkReferenceNumber.orEmpty()
     )
 }
 
@@ -64,7 +64,7 @@ internal data class ThreeDsVaultParams(
     val addressLine1: String,
     val city: String,
     val postalCode: String,
-    val countryCode: String,
+    val countryCode: String
 ) : BaseThreeDsParams(
     maxProtocolVersion,
     challengePreference,
@@ -78,7 +78,7 @@ internal data class ThreeDsVaultParams(
     constructor(
         authenticationRequestParameters: AuthenticationRequestParameters,
         config: PrimerConfig,
-        challengePreference: ChallengePreference,
+        challengePreference: ChallengePreference
     ) : this(
         ProtocolVersion.values()
             .first { authenticationRequestParameters.messageVersion == it.versionNumber },
@@ -96,6 +96,6 @@ internal data class ThreeDsVaultParams(
         config.settings.customer.billingAddress?.addressLine1.orEmpty(),
         config.settings.customer.billingAddress?.city.orEmpty(),
         config.settings.customer.billingAddress?.postalCode.orEmpty(),
-        config.settings.customer.billingAddress?.countryCode?.name.orEmpty(),
+        config.settings.customer.billingAddress?.countryCode?.name.orEmpty()
     )
 }

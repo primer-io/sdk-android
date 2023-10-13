@@ -8,10 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.activityViewModels
 import io.primer.android.R
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentFormBancontactCardBinding
+import io.primer.android.di.extension.activityViewModel
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.PayAmountText
@@ -24,9 +26,8 @@ import io.primer.android.utils.hideKeyboard
 import io.primer.android.utils.sanitized
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.TokenizationViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
 import kotlin.reflect.KFunction1
 
 @ExperimentalCoroutinesApi
@@ -34,8 +35,10 @@ internal class BancontactCardFragment : BaseFragment() {
 
     private val localConfig: PrimerConfig by inject()
 
-    private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
-    private val viewModel: BancontactCardViewModel by viewModel()
+    private val tokenizationViewModel: TokenizationViewModel by
+    activityViewModel<TokenizationViewModel, TokenizationViewModelFactory>()
+    private val viewModel: BancontactCardViewModel by
+    viewModel<BancontactCardViewModel, BancontactCardViewModelFactory>()
 
     private var binding: FragmentFormBancontactCardBinding by autoCleaned()
 
@@ -193,10 +196,14 @@ internal class BancontactCardFragment : BaseFragment() {
         inputNameResId: Int
     ) {
         onValidateAndSave.invoke(content.toString().sanitized()).let { invalidMsgId ->
-            val errorMsg = if (invalidMsgId == null) null else getString(
-                invalidMsgId,
-                getString(inputNameResId)
-            )
+            val errorMsg = if (invalidMsgId == null) {
+                null
+            } else {
+                getString(
+                    invalidMsgId,
+                    getString(inputNameResId)
+                )
+            }
             inputWidget.error = errorMsg
             inputWidget.isErrorEnabled = errorMsg != null
         }

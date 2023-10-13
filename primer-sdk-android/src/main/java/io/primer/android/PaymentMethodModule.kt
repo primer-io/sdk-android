@@ -22,7 +22,7 @@ internal interface PaymentMethodModule {
      */
     fun initialize(
         applicationContext: Context,
-        configuration: ConfigurationData,
+        configuration: ConfigurationData
     )
 
     /**
@@ -35,7 +35,7 @@ internal interface PaymentMethodModule {
      * @see [PaymentMethodCheckerRegistry]
      */
     fun registerPaymentMethodCheckers(
-        paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+        paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
     )
 
     /**
@@ -48,6 +48,6 @@ internal interface PaymentMethodModule {
      * @see [PaymentMethodDescriptorFactoryRegistry]
      */
     fun registerPaymentMethodDescriptorFactory(
-        paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+        paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
     )
 }

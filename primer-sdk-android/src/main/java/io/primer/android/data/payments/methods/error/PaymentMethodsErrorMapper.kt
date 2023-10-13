@@ -22,7 +22,7 @@ internal class PaymentMethodsErrorMapper : DefaultErrorMapper() {
                 )
             is UnsupportedPaymentMethodException ->
                 PaymentMethodError.UnsupportedPaymentMethodError(
-                    throwable.paymentMethodType,
+                    throwable.paymentMethodType
                 )
             else -> return super.getPrimerError(throwable)
         }

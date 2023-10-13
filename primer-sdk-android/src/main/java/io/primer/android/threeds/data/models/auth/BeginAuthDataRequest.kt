@@ -18,7 +18,7 @@ internal data class BeginAuthDataRequest(
     val customer: ThreeDsCustomerDataRequest? = null,
     val device: SDKAuthDataRequest,
     val billingAddress: Address? = null,
-    val shippingAddress: Address? = null,
+    val shippingAddress: Address? = null
 ) : JSONObjectSerializable {
 
     companion object {
@@ -86,7 +86,7 @@ internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
                 sdkEncData,
                 sdkEphemPubKey,
                 sdkReferenceNumber
-            ),
+            )
         )
         is ThreeDsVaultParams -> BeginAuthDataRequest(
             maxProtocolVersion.versionNumber,
@@ -107,7 +107,7 @@ internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
                 city = city,
                 postalCode = postalCode,
                 countryCode = countryCode
-            ),
+            )
         )
     }
 }

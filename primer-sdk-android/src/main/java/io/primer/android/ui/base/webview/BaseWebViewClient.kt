@@ -19,7 +19,7 @@ import androidx.core.net.toUri
 internal abstract class BaseWebViewClient(
     private val activity: WebViewActivity,
     private val url: String?,
-    private val returnUrl: String?,
+    private val returnUrl: String?
 ) : WebViewClient() {
 
     private val browserApps by lazy {
@@ -57,7 +57,7 @@ internal abstract class BaseWebViewClient(
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
-        error: WebResourceError?,
+        error: WebResourceError?
     ) {
         super.onReceivedError(view, request, error)
         handleError(request?.url?.toString(), error?.errorCode)
@@ -195,7 +195,7 @@ internal abstract class BaseWebViewClient(
         CANCELLED,
         ERROR,
         PROCESSING,
-        SUCCESS,
+        SUCCESS
     }
 
     protected companion object {

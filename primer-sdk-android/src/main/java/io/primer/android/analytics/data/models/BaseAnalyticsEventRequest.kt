@@ -266,7 +266,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
     clientSessionId: String?,
     orderId: String?,
     primerAccountId: String?,
-    analyticsUrl: String?,
+    analyticsUrl: String?
 ) = when (this) {
     is UIAnalyticsParams -> AnalyticsUIEventRequest(
         DeviceData(
@@ -387,6 +387,7 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
         initProtocolVersion
     )
     is ThreeDsFailureContextParams -> ThreeDsFailureAnalyticsContext(
-        threeDsSdkVersion, initProtocolVersion
+        threeDsSdkVersion,
+        initProtocolVersion
     )
 }

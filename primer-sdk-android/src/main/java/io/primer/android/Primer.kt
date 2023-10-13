@@ -11,21 +11,20 @@ import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
 import io.primer.android.data.error.DefaultErrorMapper
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.EventBus
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.settings.internal.PrimerIntent
 import io.primer.android.data.token.model.ClientToken
-import io.primer.android.di.DIAppComponent
-import io.primer.android.di.DIAppContext
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.DISdkContext
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
 import io.primer.android.events.EventDispatcher
 import io.primer.android.model.CheckoutExitReason
-import org.koin.core.component.get
 
-class Primer private constructor() : PrimerInterface, DIAppComponent {
+class Primer private constructor() : PrimerInterface, DISdkComponent {
 
     private var listener: PrimerCheckoutListener? = null
     private var config: PrimerConfig = PrimerConfig()
@@ -78,7 +77,7 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
     @Throws(IllegalArgumentException::class)
     override fun configure(
         settings: PrimerSettings?,
-        listener: PrimerCheckoutListener?,
+        listener: PrimerCheckoutListener?
     ) {
         listener?.let { l -> setListener(l) }
         settings?.let {
@@ -115,7 +114,7 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
         context: Context,
         clientToken: String,
         paymentMethod: String,
-        intent: PrimerSessionIntent,
+        intent: PrimerSessionIntent
     ) {
         addAnalyticsEvent(
             SdkFunctionParams(
@@ -144,9 +143,9 @@ class Primer private constructor() : PrimerInterface, DIAppComponent {
     private fun show(context: Context, clientToken: String) {
         try {
             setupAndVerifyClientToken(clientToken)
-            DIAppContext.app?.let {
-                get<DefaultHeadlessManagerDelegate>().reset()
-                get<DefaultRawDataManagerDelegate>().reset()
+            DISdkContext.sdkContainer?.let {
+                it.resolve<DefaultHeadlessManagerDelegate>().reset()
+                it.resolve<DefaultRawDataManagerDelegate>().reset()
             }
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {

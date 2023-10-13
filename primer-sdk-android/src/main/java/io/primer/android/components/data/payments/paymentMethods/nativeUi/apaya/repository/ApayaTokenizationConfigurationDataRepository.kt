@@ -25,7 +25,7 @@ internal class ApayaTokenizationConfigurationDataRepository(
                         paymentMethodConfig.options?.merchantId,
                         ApayaIllegalValueKey.MERCHANT_ID
                     ),
-                    settings.currency,
+                    settings.currency
                 )
             )
         }

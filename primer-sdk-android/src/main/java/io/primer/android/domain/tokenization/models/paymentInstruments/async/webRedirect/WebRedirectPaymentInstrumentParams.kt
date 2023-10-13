@@ -7,11 +7,11 @@ internal class WebRedirectPaymentInstrumentParams(
     override val paymentMethodType: String,
     override val paymentMethodConfigId: String,
     override val locale: String,
-    override val redirectionUrl: String,
+    override val redirectionUrl: String
 ) : BaseAsyncPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,
     locale,
     PaymentInstrumentType.OFF_SESSION_PAYMENT,
-    redirectionUrl,
+    redirectionUrl
 )

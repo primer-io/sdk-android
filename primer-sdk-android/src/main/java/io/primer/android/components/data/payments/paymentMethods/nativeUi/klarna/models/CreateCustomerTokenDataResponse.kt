@@ -177,7 +177,7 @@ internal data class CreateCustomerTokenDataResponse(
                         t.optNullableString(PHONE_NUMBER_FIELD),
                         t.optNullableString(POSTAL_CODE_FIELD),
                         t.optNullableString(STATE_FIELD),
-                        t.optNullableString(TITLE_FIELD),
+                        t.optNullableString(TITLE_FIELD)
                     )
                 }
             }
@@ -226,7 +226,7 @@ internal data class CreateCustomerTokenDataResponse(
                         t.optNullableInt(QUANTITY_FIELD),
                         t.optNullableInt(UNIT_PRICE_FIELD),
                         t.optNullableInt(TOTAL_AMOUNT_FIELD),
-                        t.optNullableInt(TOTAL_DISCOUNT_AMOUNT_FIELD),
+                        t.optNullableInt(TOTAL_DISCOUNT_AMOUNT_FIELD)
                     )
                 }
             }
@@ -267,7 +267,7 @@ internal data class CreateCustomerTokenDataResponse(
                         t.optNullableString(BRAND_FIELD),
                         t.optNullableString(MASKED_NUMBER_FIELD),
                         t.getString(TYPE_FIELD),
-                        t.optNullableString(EXPIRY_DATE_FIELD),
+                        t.optNullableString(EXPIRY_DATE_FIELD)
                     )
                 }
             }

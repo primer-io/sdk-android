@@ -8,7 +8,7 @@ internal data class ApayaWebResultParams(
     val mnc: String,
     val hashedIdentifier: String,
     val success: String,
-    val status: String,
+    val status: String
 ) {
 
     constructor(uri: Uri) : this(
@@ -17,7 +17,7 @@ internal data class ApayaWebResultParams(
         uri.getQueryParameter(MNC_QUERY_PARAM).orEmpty(),
         uri.getQueryParameter(HASHED_ID_QUERY_PARAM).orEmpty(),
         uri.getQueryParameter(SUCCESS_QUERY_PARAM).orEmpty(),
-        uri.getQueryParameter(STATUS_QUERY_PARAM).orEmpty(),
+        uri.getQueryParameter(STATUS_QUERY_PARAM).orEmpty()
     )
 
     private companion object {

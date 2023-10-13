@@ -10,18 +10,20 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
+import io.primer.android.di.extension.viewModel
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
+import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModelFactory
 import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 internal class AsyncPaymentMethodWebViewActivity : WebViewActivity() {
 
     private var subscription: EventBus.SubscriptionHandle? = null
 
-    private val asyncPaymentMethodViewModel: AsyncPaymentMethodViewModel by viewModel()
+    private val asyncPaymentMethodViewModel: AsyncPaymentMethodViewModel
+        by viewModel<AsyncPaymentMethodViewModel, AsyncPaymentMethodViewModelFactory>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,10 +62,12 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity() {
                     }
                     finish()
                 }
+
                 is CheckoutEvent.AsyncFlowPollingError -> {
                     setResult(RESULT_ERROR)
                     finish()
                 }
+
                 else -> Unit
             }
         }
@@ -99,7 +103,7 @@ internal class AsyncPaymentMethodWebViewActivity : WebViewActivity() {
             deeplinkUrl: String,
             title: String,
             paymentMethodType: String,
-            webViewClientType: WebViewClientType,
+            webViewClientType: WebViewClientType
         ): Intent {
             return Intent(context, AsyncPaymentMethodWebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)

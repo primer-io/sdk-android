@@ -10,7 +10,7 @@ internal data class CreateSessionDataRequest(
     val language: String,
     val currencyCode: String,
     val phoneNumber: String,
-    val reference: String,
+    val reference: String
 ) : JSONObjectSerializable {
     companion object {
 

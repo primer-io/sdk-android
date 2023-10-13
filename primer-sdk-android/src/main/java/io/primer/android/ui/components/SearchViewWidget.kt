@@ -1,23 +1,22 @@
 package io.primer.android.ui.components
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.AppCompatEditText
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.di.DIAppComponent
-import org.koin.core.component.inject
-
 import androidx.core.widget.doAfterTextChanged
 import io.primer.android.R
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.ui.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
-import android.graphics.drawable.GradientDrawable
+import io.primer.android.ui.settings.PrimerTheme
 
 internal class SearchViewWidget(
     context: Context,
-    attrs: AttributeSet? = null,
-) : AppCompatEditText(context, attrs), DIAppComponent {
+    attrs: AttributeSet? = null
+) : AppCompatEditText(context, attrs), DISdkComponent {
 
     private val theme: PrimerTheme by inject()
 

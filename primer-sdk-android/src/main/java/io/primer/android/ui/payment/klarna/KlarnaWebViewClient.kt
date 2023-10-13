@@ -10,7 +10,7 @@ import io.primer.android.ui.base.webview.BaseWebViewClient
 internal class KlarnaWebViewClient(
     activity: WebViewActivity,
     val url: String?,
-    val returnUrl: String?,
+    val returnUrl: String?
 ) : BaseWebViewClient(activity, url, returnUrl) {
 
     override fun getUrlState(url: String): UrlState {
@@ -34,7 +34,9 @@ internal class KlarnaWebViewClient(
                     }
                 )
                 return true
-            } else super.handleDeepLink(uri)
+            } else {
+                super.handleDeepLink(uri)
+            }
         }
 
         return true

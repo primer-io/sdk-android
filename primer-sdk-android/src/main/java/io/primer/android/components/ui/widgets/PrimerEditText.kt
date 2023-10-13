@@ -12,7 +12,7 @@ import io.primer.android.ui.TextInputMask
 
 abstract class PrimerEditText(
     context: Context,
-    attrs: AttributeSet? = null,
+    attrs: AttributeSet? = null
 ) : AppCompatEditText(context, attrs), PrimerInputElement {
 
     private val textWatcher = object : TextWatcher {
@@ -35,8 +35,9 @@ abstract class PrimerEditText(
 
     override fun getText(): Editable? {
         val text = super.getText()
-        return if (isCalledFromSuperMethod()) text
-        else SpannableStringBuilder(MASKING_CHARACTER.repeat(text?.length ?: 0))
+        return if (isCalledFromSuperMethod()) {
+            text
+        } else { SpannableStringBuilder(MASKING_CHARACTER.repeat(text?.length ?: 0)) }
     }
 
     override fun isSuggestionsEnabled() = false

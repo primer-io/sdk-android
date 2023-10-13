@@ -46,7 +46,7 @@ internal class ResumePaymentInteractorTest {
             ResumePaymentInteractor(
                 resumePaymentsRepository,
                 paymentResultEventsResolver,
-                errorEventResolver,
+                errorEventResolver
             )
     }
 

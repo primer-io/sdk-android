@@ -7,7 +7,7 @@ internal class SdkTypeResolver {
     fun resolve(): SdkType {
         return if (ReactNativeClassValidator().isReactNativeAvailableOnClassPath()) {
             SdkType.RN_ANDROID
-        } else SdkType.ANDROID_NATIVE
+        } else { SdkType.ANDROID_NATIVE }
     }
 }
 

@@ -17,8 +17,11 @@ internal class MultibancoLocalFormDataSource(
     override fun get(): Flow<FormDataResponse> = flowOf(
         FormDataResponse(
             R.string.completeYourPayment,
-            if (theme.isDarkMode == true) R.drawable.ic_logo_multibanco_dark
-            else R.drawable.ic_logo_multibanco_light,
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_multibanco_dark
+            } else {
+                R.drawable.ic_logo_multibanco_light
+            },
             ButtonType.CONFIRM,
             description = R.string.multibancoCompleteDescription,
             expiresAt = clientToken.expiresAt,

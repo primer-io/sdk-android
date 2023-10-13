@@ -7,10 +7,10 @@ import io.primer.android.payment.PaymentMethodDescriptor
 
 internal data class TokenizationParams(
     val paymentMethodDescriptor: PaymentMethodDescriptor,
-    val paymentMethodIntent: PrimerSessionIntent,
+    val paymentMethodIntent: PrimerSessionIntent
 ) : Params
 
 internal data class TokenizationParamsV2(
     val paymentInstrumentParams: BasePaymentInstrumentParams,
-    val paymentMethodIntent: PrimerSessionIntent,
+    val paymentMethodIntent: PrimerSessionIntent
 ) : Params

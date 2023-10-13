@@ -9,9 +9,9 @@ internal data class SuccessContinueAuthDataRequest(
     val threeDsSdkVersion: String?,
     val initProtocolVersion: String,
     val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
-    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA,
+    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 ) : BaseContinueAuthDataRequest(
-    ThreeDsAuthStatus.SUCCESS,
+    ThreeDsAuthStatus.SUCCESS
 ) {
 
     companion object {
@@ -34,5 +34,5 @@ internal data class SuccessContinueAuthDataRequest(
 internal fun SuccessThreeDsContinueAuthParams.toContinueAuthDataRequest() =
     SuccessContinueAuthDataRequest(
         threeDsSdkVersion,
-        initProtocolVersion,
+        initProtocolVersion
     )

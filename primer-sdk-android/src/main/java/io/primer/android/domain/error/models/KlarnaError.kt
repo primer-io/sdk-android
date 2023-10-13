@@ -7,7 +7,7 @@ internal sealed class KlarnaError : PrimerError() {
     object UserUnapprovedError : KlarnaError()
 
     class KlarnaSdkError(
-        val message: String,
+        val message: String
     ) : KlarnaError()
 
     override val errorId: String

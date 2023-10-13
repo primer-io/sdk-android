@@ -2,5 +2,5 @@ package io.primer.android.components.domain.payments.paymentMethods.nativeUi.apa
 
 internal data class ApayaTokenizationConfiguration(
     val merchantId: String,
-    val currencyCode: String,
+    val currencyCode: String
 )

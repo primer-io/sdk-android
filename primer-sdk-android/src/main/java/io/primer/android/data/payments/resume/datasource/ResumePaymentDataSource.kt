@@ -5,7 +5,7 @@ import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.payments.create.models.PaymentDataResponse
 import io.primer.android.data.payments.resume.models.ResumePaymentDataRequest
 import io.primer.android.di.ApiVersion
-import io.primer.android.di.SDK_API_VERSION_HEADER
+import io.primer.android.di.NetworkContainer.Companion.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
 
@@ -19,7 +19,7 @@ internal class ResumePaymentDataSource(private val primerHttpClient: PrimerHttpC
             "${input.configuration.pciUrl}/payments/${input.data.first}/resume",
             input.data.second,
             mapOf(
-                SDK_API_VERSION_HEADER to ApiVersion.PAYMENTS_VERSION.version,
+                SDK_API_VERSION_HEADER to ApiVersion.PAYMENTS_VERSION.version
             )
         )
     }

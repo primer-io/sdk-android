@@ -9,7 +9,7 @@ internal class HttpException(val errorCode: Int, val error: APIError) :
             "Error code: $errorCode",
             "Description: ${error.description}",
             "DiagnosticsId: ${error.diagnosticsId.orEmpty()}",
-            "Validation errors: ${error.validationErrors.map { it.model + it.errors }}",
+            "Validation errors: ${error.validationErrors.map { it.model + it.errors }}"
         ).joinToString(", ")
     ) {
 

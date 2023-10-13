@@ -28,7 +28,7 @@ class CardNetwork {
         val lengths: List<Int>,
         lower: String,
         upper: String?,
-        val cvvLength: Int = CVV_LEN_3,
+        val cvvLength: Int = CVV_LEN_3
     ) : Comparable<Descriptor> {
 
         private val weight: Int = lower.length
@@ -217,7 +217,7 @@ private const val CARD_NUM_GAP_12 = 12
 
 private val CARD_GAPS_4_10 = listOf(
     CARD_NUM_GAP_4,
-    CARD_NUM_GAP_10,
+    CARD_NUM_GAP_10
 )
 private val CARD_GAPS_4_8_12 = listOf(
     CARD_NUM_GAP_4,
@@ -235,14 +235,14 @@ private const val CARD_NUM_LEN_18 = 18
 private const val CARD_NUM_LEN_19 = 19
 
 private val CARD_LENS_15 = listOf(
-    CARD_NUM_LEN_15,
+    CARD_NUM_LEN_15
 )
 private val CARD_LENS_16 = listOf(
-    CARD_NUM_LEN_16,
+    CARD_NUM_LEN_16
 )
 private val CARD_LENS_16_19 = listOf(
     CARD_NUM_LEN_16,
-    CARD_NUM_LEN_19,
+    CARD_NUM_LEN_19
 )
 private val CARD_LENS_14_16_19 = listOf(
     CARD_NUM_LEN_14,

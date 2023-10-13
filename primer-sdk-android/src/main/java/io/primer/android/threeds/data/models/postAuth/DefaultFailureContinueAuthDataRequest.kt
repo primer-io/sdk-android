@@ -10,7 +10,7 @@ internal class DefaultFailureContinueAuthDataRequest(
     val initProtocolVersion: String?,
     override val error: BaseContinueAuthErrorDataRequest,
     val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
-    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA,
+    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 ) : BaseFailureContinueAuthDataRequest(error) {
 
     companion object {

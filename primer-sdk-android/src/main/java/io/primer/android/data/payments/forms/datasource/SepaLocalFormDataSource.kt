@@ -15,8 +15,9 @@ internal class SepaLocalFormDataSource(private val theme: PrimerTheme) :
     override fun get() = flowOf(
         FormDataResponse(
             R.string.input_title_bank_details,
-            if (theme.isDarkMode == true) R.drawable.ic_logo_sepa_dark
-            else R.drawable.ic_logo_sepa_light,
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_sepa_dark
+            } else { R.drawable.ic_logo_sepa_light },
             ButtonType.CONFIRM,
             null,
             listOf(
@@ -87,7 +88,7 @@ internal class SepaLocalFormDataSource(private val theme: PrimerTheme) :
             "SE\\d{22}", // Sweden
             "SI\\d{17}", // Slovenia
             "SK\\d{22}", // Slovak Republic
-            "SM\\d{2}[A-Z]{1}\\d{10}[A-Z0-9]{12}", // San Marino
+            "SM\\d{2}[A-Z]{1}\\d{10}[A-Z0-9]{12}" // San Marino
         ).joinToString("|")
     }
 }

@@ -11,23 +11,24 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.activityViewModel
+import io.primer.android.di.extension.inject
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.CheckoutExitReason
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.android.ext.android.inject
 
 @ExperimentalCoroutinesApi
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),
-    DIAppComponent {
+    DISdkComponent {
 
     companion object {
 
@@ -36,7 +37,8 @@ internal class CheckoutSheetFragment :
     }
 
     private val theme: PrimerTheme by inject()
-    private val viewModel: PrimerViewModel by activityViewModels()
+    private val viewModel: PrimerViewModel by
+    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
@@ -47,7 +49,7 @@ internal class CheckoutSheetFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View = inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

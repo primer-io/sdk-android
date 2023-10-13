@@ -6,25 +6,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import io.primer.android.R
 import io.primer.android.databinding.FragmentMultibancoConditionsBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.activityViewModel
+import io.primer.android.di.extension.inject
 import io.primer.android.payment.OnActionContinueCallback
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.TokenizationViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
-import org.koin.core.component.inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-internal class MultibancoConditionsFragment : Fragment(), OnActionContinueCallback, DIAppComponent {
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class MultibancoConditionsFragment : Fragment(), OnActionContinueCallback, DISdkComponent {
 
     private val theme: PrimerTheme by inject()
-    private val primerViewModel: PrimerViewModel by activityViewModels()
-    private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
+    private val primerViewModel: PrimerViewModel
+        by activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+    private val tokenizationViewModel: TokenizationViewModel by
+    activityViewModel<TokenizationViewModel, TokenizationViewModelFactory>()
 
     private var binding: FragmentMultibancoConditionsBinding by autoCleaned()
 
@@ -113,8 +119,9 @@ internal class MultibancoConditionsFragment : Fragment(), OnActionContinueCallba
             )
         )
         binding.ivPaymentMethodIcon.setImageResource(
-            if (theme.isDarkMode == true) R.drawable.ic_logo_multibanco_dark
-            else R.drawable.ic_logo_multibanco_light
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_multibanco_dark
+            } else { R.drawable.ic_logo_multibanco_light }
         )
         val imageColorStates = ColorStateList.valueOf(
             theme.titleText.defaultColor.getColor(

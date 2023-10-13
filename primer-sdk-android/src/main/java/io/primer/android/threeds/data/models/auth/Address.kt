@@ -15,7 +15,7 @@ internal data class Address(
     val city: String,
     val state: String? = null,
     val countryCode: String,
-    val postalCode: String,
+    val postalCode: String
 ) : JSONObjectSerializable {
 
     companion object {

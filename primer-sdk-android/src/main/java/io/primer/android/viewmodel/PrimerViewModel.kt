@@ -69,6 +69,7 @@ import java.util.Collections
 import java.util.Currency
 
 @ExperimentalCoroutinesApi
+@Suppress("LongParameterList", "TooManyFunctions")
 internal class PrimerViewModel(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
@@ -238,7 +239,7 @@ internal class PrimerViewModel(
     fun dispatchAction(
         actionUpdateParams: BaseActionUpdateParams,
         resetState: Boolean = true,
-        completion: ((Error?) -> Unit) = {},
+        completion: ((Error?) -> Unit) = {}
     ) {
         viewModelScope.launch {
             actionInteractor(actionUpdateParams)
@@ -477,6 +478,7 @@ internal class PrimerViewModel(
     }
 
     fun validateBillingAddress(): List<SyncValidationError> = billingAddressValidator.validate(
-        billingAddressFields.value.orEmpty(), showBillingFields.value.orEmpty()
+        billingAddressFields.value.orEmpty(),
+        showBillingFields.value.orEmpty()
     )
 }

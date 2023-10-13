@@ -31,7 +31,7 @@ internal class AsyncPaymentMethodDescriptorFactory : PaymentMethodDescriptorFact
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor {
         return when (paymentMethodRemoteConfig.implementationType) {
             PaymentMethodImplementationType.NATIVE_SDK -> when (

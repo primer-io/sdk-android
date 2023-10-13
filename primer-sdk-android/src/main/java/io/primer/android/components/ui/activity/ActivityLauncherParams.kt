@@ -8,7 +8,7 @@ import java.io.Serializable
 
 internal sealed class ActivityLauncherParams(
     open val paymentMethodType: String,
-    open val sessionIntent: PrimerSessionIntent,
+    open val sessionIntent: PrimerSessionIntent
 ) : Serializable
 
 internal sealed class PaymentMethodRedirectLauncherParams(
@@ -25,7 +25,7 @@ internal data class KlarnaActivityLauncherParams(
     override val sessionIntent: PrimerSessionIntent
 ) : PaymentMethodRedirectLauncherParams(
     PaymentMethodType.KLARNA.name,
-    sessionIntent,
+    sessionIntent
 )
 
 internal data class KlarnaMockActivityLauncherParams(
@@ -33,7 +33,7 @@ internal data class KlarnaMockActivityLauncherParams(
     override val sessionIntent: PrimerSessionIntent
 ) : PaymentMethodRedirectLauncherParams(
     PaymentMethodType.KLARNA.name,
-    sessionIntent,
+    sessionIntent
 )
 
 internal data class WebRedirectActivityLauncherParams(
@@ -42,10 +42,10 @@ internal data class WebRedirectActivityLauncherParams(
     val title: String,
     override val paymentMethodType: String,
     val returnUrl: String,
-    val webViewClientType: WebViewClientType,
+    val webViewClientType: WebViewClientType
 ) : PaymentMethodRedirectLauncherParams(
     paymentMethodType,
-    PrimerSessionIntent.CHECKOUT,
+    PrimerSessionIntent.CHECKOUT
 )
 
 internal data class ApayaActivityLauncherParams(
@@ -55,7 +55,7 @@ internal data class ApayaActivityLauncherParams(
     override val sessionIntent: PrimerSessionIntent
 ) : PaymentMethodRedirectLauncherParams(
     PaymentMethodType.APAYA.name,
-    sessionIntent,
+    sessionIntent
 )
 
 internal data class BrowserLauncherParams(
@@ -65,12 +65,12 @@ internal data class BrowserLauncherParams(
     override val sessionIntent: PrimerSessionIntent
 ) : PaymentMethodRedirectLauncherParams(
     paymentMethodType,
-    sessionIntent,
+    sessionIntent
 )
 
 internal class GooglePayActivityLauncherParams : PaymentMethodRedirectLauncherParams(
     PaymentMethodType.GOOGLE_PAY.name,
-    PrimerSessionIntent.CHECKOUT,
+    PrimerSessionIntent.CHECKOUT
 )
 
 internal class PaymentMethodLauncherParams(
@@ -79,7 +79,7 @@ internal class PaymentMethodLauncherParams(
     val initialState: State? = null
 ) : ActivityLauncherParams(
     paymentMethodType,
-    sessionIntent,
+    sessionIntent
 )
 
 internal class IPay88ActivityLauncherParams(
@@ -107,5 +107,5 @@ internal data class IPay88MockActivityLauncherParams(
     override val sessionIntent: PrimerSessionIntent
 ) : PaymentMethodRedirectLauncherParams(
     PaymentMethodType.IPAY88_CARD.name,
-    sessionIntent,
+    sessionIntent
 )

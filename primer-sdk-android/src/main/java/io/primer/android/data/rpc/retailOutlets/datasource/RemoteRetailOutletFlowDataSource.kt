@@ -7,7 +7,7 @@ import io.primer.android.data.rpc.retailOutlets.models.RetailOutletResultDataRes
 import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteRetailOutletFlowDataSource(
-    private val primerHttpClient: PrimerHttpClient,
+    private val primerHttpClient: PrimerHttpClient
 ) : BaseFlowDataSource<RetailOutletResultDataResponse, BaseRemoteRequest<RetailOutletDataRequest>> {
 
     override fun execute(input: BaseRemoteRequest<RetailOutletDataRequest>) =

@@ -4,18 +4,18 @@ import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.exception.VaultManagerInitException
 import io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData
 import io.primer.android.components.presentation.vault.VaultManagerDelegate
-import io.primer.android.di.DIAppComponent
-import org.koin.core.component.get
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import kotlin.properties.Delegates
 
 class PrimerHeadlessUniversalCheckoutVaultManager private constructor() :
     PrimerHeadlessUniversalCheckoutVaultManagerInterface,
-    DIAppComponent {
+    DISdkComponent {
 
     private var delegate: VaultManagerDelegate by Delegates.notNull()
 
     init {
-        delegate = get()
+        delegate = resolve()
         delegate.init()
     }
 

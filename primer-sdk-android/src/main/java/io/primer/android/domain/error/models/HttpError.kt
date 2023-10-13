@@ -11,7 +11,7 @@ internal sealed class HttpError : PrimerError() {
 
     class HttpUnauthorizedError(
         override val code: Int,
-        serverDiagnosticsId: String?,
+        serverDiagnosticsId: String?
     ) : HttpError() {
 
         override val description = "Server error [$code]"
@@ -22,7 +22,7 @@ internal sealed class HttpError : PrimerError() {
     class HttpServerError(
         override val code: Int,
         serverDiagnosticsId: String?,
-        apiError: String,
+        apiError: String
     ) : HttpError() {
 
         override val description = "Server error [$code] Response: $apiError"
@@ -34,7 +34,7 @@ internal sealed class HttpError : PrimerError() {
         override val code: Int,
         serverDiagnosticsId: String?,
         apiError: String,
-        override val exposedError: PrimerError,
+        override val exposedError: PrimerError
     ) : HttpError() {
 
         override val description = "Server error [$code] Response: $apiError"

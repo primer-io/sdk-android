@@ -4,7 +4,7 @@ import java.util.Currency
 
 internal class MonetaryAmount private constructor(
     val value: Int,
-    val currency: String,
+    val currency: String
 ) {
 
     companion object {

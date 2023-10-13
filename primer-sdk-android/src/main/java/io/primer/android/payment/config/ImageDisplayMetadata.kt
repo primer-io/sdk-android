@@ -10,7 +10,7 @@ internal data class ImageDisplayMetadata(
     override val borderColor: String?,
     override val borderWidth: Float?,
     override val cornerRadius: Float?,
-    val imageColor: ImageColor?,
+    val imageColor: ImageColor?
 ) : BaseDisplayMetadata(
     DisplayMetadataType.IMAGE,
     name,

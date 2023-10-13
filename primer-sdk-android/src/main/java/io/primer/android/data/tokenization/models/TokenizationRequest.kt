@@ -41,7 +41,7 @@ internal fun TokenizationParams.toTokenizationRequest(): TokenizationRequest {
 internal data class TokenizationVaultRequest(
     override val paymentInstrument: JSONObject,
     private val tokenType: String,
-    private val paymentFlow: String,
+    private val paymentFlow: String
 ) : TokenizationRequest() {
 
     companion object {
@@ -63,7 +63,7 @@ internal data class TokenizationVaultRequest(
 }
 
 internal data class TokenizationCheckoutRequest(
-    override val paymentInstrument: JSONObject,
+    override val paymentInstrument: JSONObject
 ) : TokenizationRequest() {
     companion object {
         private const val PAYMENT_INSTRUMENT_FIELD = "paymentInstrument"

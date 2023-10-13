@@ -11,7 +11,7 @@ abstract class BaseDisplayMetadata(
     open val backgroundColor: String?,
     open val borderColor: String?,
     open val borderWidth: Float?,
-    open val cornerRadius: Float?,
+    open val cornerRadius: Float?
 ) {
     enum class DisplayMetadataType {
         IMAGE,

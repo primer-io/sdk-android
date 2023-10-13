@@ -47,7 +47,7 @@ internal class CreatePaymentInteractorTest {
             CreatePaymentInteractor(
                 createPaymentRepository,
                 paymentResultEventsResolver,
-                errorEventResolver,
+                errorEventResolver
             )
     }
 

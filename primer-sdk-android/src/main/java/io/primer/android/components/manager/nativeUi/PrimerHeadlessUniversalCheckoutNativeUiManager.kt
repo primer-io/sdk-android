@@ -13,13 +13,13 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.vali
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.ui.activity.HeadlessActivity
 import io.primer.android.components.ui.activity.PaymentMethodLauncherParams
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
-import org.koin.core.component.inject
 
 class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
     private val paymentMethodType: String
-) : PrimerHeadlessUniversalCheckoutNativeUiManagerInterface, DIAppComponent {
+) : PrimerHeadlessUniversalCheckoutNativeUiManagerInterface, DISdkComponent {
 
     private val delegate: DefaultHeadlessManagerDelegate by inject()
 
@@ -34,7 +34,6 @@ class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
         context: Context,
         sessionIntent: PrimerSessionIntent
     ) {
-
         PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
             SdkFunctionParams(
                 object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),

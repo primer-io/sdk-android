@@ -42,7 +42,7 @@ internal class PaypalVaultConfigurationDataRepository(
                         .appendPath(uuid)
                         .appendPath(CANCEL_PATH_SEGMENT)
                         .build()
-                        .toString(),
+                        .toString()
                 )
             )
         }

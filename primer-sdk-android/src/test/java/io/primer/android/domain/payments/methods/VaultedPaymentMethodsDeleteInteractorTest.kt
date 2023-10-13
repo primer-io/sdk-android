@@ -36,7 +36,7 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
         MockKAnnotations.init(this, relaxed = true)
         interactor = VaultedPaymentMethodsDeleteInteractor(
             vaultedPaymentMethodsRepository,
-            logger,
+            logger
         )
     }
 

@@ -13,7 +13,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.async.bli
 internal class OtpRawDataMapper(
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
     private val config: PaymentMethodConfigDataResponse,
-    private val settings: PrimerSettings,
+    private val settings: PrimerSettings
 ) :
     PrimerPaymentMethodRawDataMapper<PrimerOtpCodeData> {
     override fun getInstrumentParams(

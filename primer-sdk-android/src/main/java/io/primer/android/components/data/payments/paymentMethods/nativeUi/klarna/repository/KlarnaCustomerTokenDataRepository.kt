@@ -39,7 +39,7 @@ internal class KlarnaCustomerTokenDataRepository(
                     LocaleDataRequest(
                         config.settings.order.countryCode,
                         config.settings.currency,
-                        config.settings.locale.toLanguageTag(),
+                        config.settings.locale.toLanguageTag()
                     )
                 )
             )

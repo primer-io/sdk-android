@@ -26,12 +26,13 @@ internal class PaymentRawDataTypeValidateInteractor(
             )
         ).map {
             val requiredInputDataClass = it.requiredInputDataClass?.java
-            if (requiredInputDataClass != params.inputData::class.java)
+            if (requiredInputDataClass != params.inputData::class.java) {
                 throw InvalidTokenizationDataException(
                     params.paymentMethodType,
                     params.inputData::class,
                     requiredInputDataClass?.kotlin
                 )
+            }
 
             Unit
         }.doOnError {

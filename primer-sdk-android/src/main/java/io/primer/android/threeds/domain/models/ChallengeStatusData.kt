@@ -5,7 +5,7 @@ package io.primer.android.threeds.domain.models
  */
 internal class ChallengeStatusData constructor(
     val paymentMethodToken: String,
-    val transactionStatus: String,
+    val transactionStatus: String
 ) {
 
     companion object {

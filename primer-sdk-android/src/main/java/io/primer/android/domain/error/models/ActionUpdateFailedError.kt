@@ -4,7 +4,7 @@ import java.util.UUID
 
 internal class ActionUpdateFailedError(
     serverDescription: String,
-    serverDiagnosticsId: String?,
+    serverDiagnosticsId: String?
 ) : PrimerError() {
 
     override val errorId = "failed-to-update-client-session"

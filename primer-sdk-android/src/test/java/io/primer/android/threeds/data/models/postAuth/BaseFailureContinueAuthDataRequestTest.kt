@@ -36,7 +36,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 MissingDependencyFailureContinueAuthDataRequest::class.java,
-                continueAuthDataRequest.javaClass,
+                continueAuthDataRequest.javaClass
             )
         }
     }
@@ -51,7 +51,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 DefaultFailureContinueAuthDataRequest::class.java,
-                continueAuthDataRequest.javaClass,
+                continueAuthDataRequest.javaClass
             )
         }
     }
@@ -66,7 +66,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -81,7 +81,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 ChallengeRuntimeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -96,7 +96,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 ChallengeRuntimeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -111,7 +111,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 ChallengeRuntimeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -126,7 +126,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 ChallengeProtocolContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -141,7 +141,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -156,7 +156,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -171,7 +171,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -186,7 +186,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -201,7 +201,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }
@@ -216,7 +216,7 @@ internal class BaseFailureContinueAuthDataRequestTest {
             val continueAuthDataRequest = params.toContinueAuthDataRequest()
             assertEquals<Class<*>>(
                 PreChallengeContinueAuthErrorDataRequest::class.java,
-                continueAuthDataRequest.error.javaClass,
+                continueAuthDataRequest.error.javaClass
             )
         }
     }

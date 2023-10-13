@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flowOn
 internal class VaultedPaymentMethodsInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<List<PaymentMethodVaultTokenInternal>, VaultInstrumentParams>() {
 
     override fun execute(params: VaultInstrumentParams) =

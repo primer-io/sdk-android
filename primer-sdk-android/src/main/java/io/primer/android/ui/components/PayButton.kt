@@ -19,7 +19,7 @@ private const val BUTTON_PROGRESS_ALPHA = 0.5f
 internal class PayButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding = PayButtonBinding.inflate(LayoutInflater.from(context), this, true)

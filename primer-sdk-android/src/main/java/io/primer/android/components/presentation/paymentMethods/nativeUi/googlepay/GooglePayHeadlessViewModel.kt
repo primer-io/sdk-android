@@ -21,7 +21,8 @@ import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.GooglePayActivityLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 
 internal class GooglePayHeadlessViewModel(
     private val configurationInteractor: GooglePayConfigurationInteractor,
@@ -159,7 +159,7 @@ internal class GooglePayHeadlessViewModel(
                                         requireNotNull(paymentData),
                                         GooglePayFlow.GATEWAY
                                     ),
-                                    PrimerSessionIntent.CHECKOUT,
+                                    PrimerSessionIntent.CHECKOUT
                                 )
                             )
                         }
@@ -179,7 +179,7 @@ internal class GooglePayHeadlessViewModel(
         } ?: flowOf(Unit)
     }
 
-    companion object : DIAppComponent {
+    companion object : DISdkComponent {
         class Factory : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -187,11 +187,11 @@ internal class GooglePayHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return GooglePayHeadlessViewModel(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
                     extras.createSavedStateHandle()
                 ) as T
             }

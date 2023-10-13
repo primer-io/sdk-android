@@ -5,13 +5,15 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.ui.fragments.CheckoutSheetFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
-import org.koin.core.component.inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-internal abstract class BaseFragment : Fragment(), DIAppComponent {
+@OptIn(ExperimentalCoroutinesApi::class)
+internal abstract class BaseFragment : Fragment(), DISdkComponent {
 
     protected val primerViewModel by activityViewModels<PrimerViewModel>()
 

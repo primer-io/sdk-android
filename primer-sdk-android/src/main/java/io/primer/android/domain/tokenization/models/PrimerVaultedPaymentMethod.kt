@@ -9,7 +9,7 @@ data class PrimerVaultedPaymentMethod(
     val paymentInstrumentType: String,
     val paymentMethodType: String,
     val paymentInstrumentData: PaymentInstrumentData,
-    val threeDSecureAuthentication: AuthenticationDetails? = null,
+    val threeDSecureAuthentication: AuthenticationDetails? = null
 ) {
 
     data class AuthenticationDetails(
@@ -17,6 +17,6 @@ data class PrimerVaultedPaymentMethod(
         val reasonCode: String?,
         val reasonText: String?,
         val protocolVersion: String?,
-        val challengeIssued: Boolean?,
+        val challengeIssued: Boolean?
     )
 }

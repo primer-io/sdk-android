@@ -14,7 +14,7 @@ import io.primer.android.utils.removeSpaces
 internal class BancontactRawCardDataMapper(
     private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
     private val config: PaymentMethodConfigDataResponse,
-    private val settings: PrimerSettings,
+    private val settings: PrimerSettings
 ) : PrimerPaymentMethodRawDataMapper<PrimerBancontactCardData> {
     override fun getInstrumentParams(
         rawData: PrimerBancontactCardData

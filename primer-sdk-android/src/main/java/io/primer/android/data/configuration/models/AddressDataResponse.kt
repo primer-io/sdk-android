@@ -14,7 +14,7 @@ internal data class AddressDataResponse(
     val postalCode: String?,
     val city: String?,
     val state: String?,
-    val countryCode: CountryCode?,
+    val countryCode: CountryCode?
 ) : JSONDeserializable {
     fun toAddress() = PrimerAddress(
         firstName,
@@ -50,7 +50,7 @@ internal data class AddressDataResponse(
                     t.optNullableString(POSTAL_CODE_FIELD),
                     t.optNullableString(CITY_FIELD),
                     t.optNullableString(STATE_FIELD),
-                    t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
+                    t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) }
                 )
             }
         }

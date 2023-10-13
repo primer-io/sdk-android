@@ -17,7 +17,7 @@ internal class ValidRemarkRule :
             false -> ValidationResult.Failure(
                 IllegalClientSessionValueException(
                     IPay88IllegalValueKey.ILLEGAL_CUSTOMER_ID,
-                    remark,
+                    remark
                 )
             )
         }

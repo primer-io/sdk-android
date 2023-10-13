@@ -106,7 +106,7 @@ internal class DefaultAssetsHeadlessDelegate(
     }
 
     override fun getCardNetworkImage(
-        cardNetwork: CardNetwork.Type,
+        cardNetwork: CardNetwork.Type
     ): Int {
         checkIfInitialized()
         return when (cardNetwork) {

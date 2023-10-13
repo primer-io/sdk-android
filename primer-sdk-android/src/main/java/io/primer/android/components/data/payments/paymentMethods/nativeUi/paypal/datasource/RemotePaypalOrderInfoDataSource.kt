@@ -7,7 +7,7 @@ import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal
 import io.primer.android.http.PrimerHttpClient
 
 internal class RemotePaypalOrderInfoDataSource(
-    private val primerHttpClient: PrimerHttpClient,
+    private val primerHttpClient: PrimerHttpClient
 ) : BaseFlowDataSource<PaypalOrderInfoResponse, BaseRemoteRequest<PaypalOrderInfoDataRequest>> {
 
     override fun execute(input: BaseRemoteRequest<PaypalOrderInfoDataRequest>) =

@@ -16,7 +16,7 @@ import io.primer.android.ui.payment.LoadingState
 internal class GooglePayDescriptor constructor(
     val options: GooglePay,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : PaymentMethodDescriptor(config, localConfig) {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour =

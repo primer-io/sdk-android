@@ -11,12 +11,12 @@ internal enum class Brand(
 ) {
     PAYPAL(
         R.drawable.ic_logo_paypal,
-        R.drawable.ic_logo_paypal_square,
+        R.drawable.ic_logo_paypal_square
     ),
     GOOGLE_PAY(
         R.drawable.ic_logo_googlepay,
         R.drawable.ic_logo_google_pay_square,
-        R.drawable.ic_logo_googlepay_light,
+        R.drawable.ic_logo_googlepay_light
     ),
     KLARNA(
         R.drawable.ic_logo_klarna,
@@ -27,12 +27,12 @@ internal enum class Brand(
     PAYMENT_CARD(R.drawable.ic_logo_credit_card),
     IDEAL(
         R.drawable.ic_logo_ideal,
-        R.drawable.ic_logo_ideal_square,
+        R.drawable.ic_logo_ideal_square
     ),
     PAYQONIC(
         R.drawable.ic_logo_payconiq,
         R.drawable.ic_logo_payconiq_square,
-        R.drawable.ic_logo_payconiq_light,
+        R.drawable.ic_logo_payconiq_light
     ),
     GIROPAY(R.drawable.ic_logo_giropay, R.drawable.ic_logo_giropay_square),
     P24(R.drawable.ic_logo_p24, R.drawable.ic_logo_p24_square, R.drawable.ic_logo_p24_light),

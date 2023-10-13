@@ -21,7 +21,7 @@ sealed class DimensionData {
 }
 
 class ResourceDimension private constructor(
-    @DimenRes val default: Int,
+    @DimenRes val default: Int
 ) : DimensionData() {
 
     companion object {
@@ -33,7 +33,7 @@ class ResourceDimension private constructor(
 }
 
 class DynamicDimension private constructor(
-    val default: Float,
+    val default: Float
 ) : DimensionData() {
 
     companion object {

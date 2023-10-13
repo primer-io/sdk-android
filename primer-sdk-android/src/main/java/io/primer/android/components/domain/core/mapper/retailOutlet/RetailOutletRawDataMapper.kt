@@ -13,7 +13,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.async.ret
 internal class RetailOutletRawDataMapper(
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
     private val config: PaymentMethodConfigDataResponse,
-    private val settings: PrimerSettings,
+    private val settings: PrimerSettings
 ) : PrimerPaymentMethodRawDataMapper<PrimerRetailerData> {
     override fun getInstrumentParams(
         rawData: PrimerRetailerData

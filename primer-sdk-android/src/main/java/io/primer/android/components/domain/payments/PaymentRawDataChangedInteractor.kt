@@ -24,9 +24,9 @@ internal class PaymentRawDataChangedInteractor(
     private var errors by
     Delegates.observable<List<PrimerInputValidationError>?>(null) { _, oldValue, newValue ->
         run {
-            if (oldValue != newValue) eventDispatcher.dispatchEvent(
-                CheckoutEvent.HucValidationError(newValue.orEmpty())
-            )
+            if (oldValue != newValue) {
+                eventDispatcher.dispatchEvent(CheckoutEvent.HucValidationError(newValue.orEmpty()))
+            }
         }
     }
 
@@ -35,9 +35,9 @@ internal class PaymentRawDataChangedInteractor(
         null
     ) { _, oldValue, newValue ->
         run {
-            if (oldValue != newValue && newValue != null) eventDispatcher.dispatchEvent(
-                CheckoutEvent.HucMetadataChanged(newValue)
-            )
+            if (oldValue != newValue && newValue != null) {
+                eventDispatcher.dispatchEvent(CheckoutEvent.HucMetadataChanged(newValue))
+            }
         }
     }
 

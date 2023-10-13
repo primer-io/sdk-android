@@ -13,6 +13,6 @@ internal abstract class BaseFlowInteractor<out T, in P : Params> where T : Any {
     abstract fun execute(params: P): Flow<T>
 
     operator fun invoke(
-        params: P,
+        params: P
     ) = execute(params)
 }

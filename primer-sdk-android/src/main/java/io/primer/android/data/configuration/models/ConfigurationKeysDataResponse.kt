@@ -9,7 +9,7 @@ import org.json.JSONObject
 
 internal data class ConfigurationKeysDataResponse(
     internal val threeDSecureIoCertificates: List<ThreeDsSecureCertificateDataResponse>?,
-    internal val netceteraLicenseKey: String?,
+    internal val netceteraLicenseKey: String?
 ) : JSONDeserializable {
     companion object {
         private const val THREE_DS_CERTIFICATES_FIELD = "threeDSecureIoCertificates"
@@ -26,7 +26,7 @@ internal data class ConfigurationKeysDataResponse(
                             .getDeserializer<ThreeDsSecureCertificateDataResponse>()
                             .deserialize(it)
                     }?.toList(),
-                    t.optNullableString(NETCETERA_LICENCE_KEY),
+                    t.optNullableString(NETCETERA_LICENCE_KEY)
                 )
             }
         }
@@ -36,7 +36,7 @@ internal data class ConfigurationKeysDataResponse(
 internal data class ThreeDsSecureCertificateDataResponse(
     val cardNetwork: String,
     val rootCertificate: String,
-    val encryptionKey: String,
+    val encryptionKey: String
 ) : JSONDeserializable {
 
     companion object {
@@ -51,7 +51,7 @@ internal data class ThreeDsSecureCertificateDataResponse(
                 return ThreeDsSecureCertificateDataResponse(
                     t.getString(CARD_NETWORK_FIELD),
                     t.getString(ROOT_CERTIFICATE_FIELD),
-                    t.getString(ENCRYPTION_KEY_FIELD),
+                    t.getString(ENCRYPTION_KEY_FIELD)
                 )
             }
         }

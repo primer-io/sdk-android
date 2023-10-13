@@ -5,7 +5,7 @@ import java.util.UUID
 internal sealed class ApayaError : PrimerError() {
 
     class ApayaInternalError(
-        val status: String?,
+        val status: String?
     ) : ApayaError()
 
     override val errorId: String

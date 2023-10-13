@@ -44,7 +44,7 @@ internal class AnalyticsDataRepository(
     private val networkCallDataSource: NetworkCallDataSource,
     private val timerDataSource: TimerDataSource,
     private val checkoutSessionIdDataSource: CheckoutSessionIdDataSource,
-    private val settings: PrimerSettings,
+    private val settings: PrimerSettings
 ) : AnalyticsRepository {
 
     private val sdkSessionId by lazy { SdkSessionDataSource.getSessionId() }

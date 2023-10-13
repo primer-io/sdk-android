@@ -6,5 +6,5 @@ enum class ResponseCode {
     AUTH_SUCCESS,
     AUTH_FAILED,
     CHALLENGE,
-    METHOD,
+    METHOD
 }

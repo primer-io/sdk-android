@@ -131,7 +131,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     @Test
     fun `handleNewClientToken() should dispatch Start3DS event when ClientTokenIntent is 3DS_AUTHENTICATION and threeDsSdkClassValidator is3dsSdkIncluded is true and isValidVersion is true`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
         every { paymentMethodToken.paymentInstrumentType }.returns(PAYMENT_CARD_IDENTIFIER)
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
@@ -157,7 +159,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     @Test
     fun `handleNewClientToken() should dispatch Start3DSMock event when ClientTokenIntent is 3DS_AUTHENTICATION and threeDsSdkClassValidator is3dsSdkIncluded is true and isValidVersion is true and isMockedFlow is true`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
         every { paymentMethodToken.paymentInstrumentType }.returns(PAYMENT_CARD_IDENTIFIER)
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
@@ -203,7 +207,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     @Test
     fun `handleNewClientToken() should continueAuthWithException when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is PAYMENT_CARD and is3dsSdkIncluded is false and isValidVersion is true`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { paymentMethodToken.paymentInstrumentType }.returns(PAYMENT_CARD_IDENTIFIER)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(false)
@@ -222,7 +228,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     @Test
     fun `handleNewClientToken() should continueAuthWithException when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is PAYMENT_CARD and is3dsSdkIncluded is true and isValidVersion is false`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { paymentMethodToken.paymentInstrumentType }.returns(PAYMENT_CARD_IDENTIFIER)
         every { threeDsSdkClassValidator.is3dsSdkIncluded() }.returns(true)
@@ -295,7 +303,9 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     @Test
     fun `handleNewClientToken() should dispatch resume error event when ClientTokenIntent is 3DS_AUTHENTICATION and paymentMethodInstrumentType is not PAYMENT_CARD`() {
         val paymentMethodToken = mockk<PaymentMethodTokenInternal>(relaxed = true)
-        every { clientTokenRepository.getClientTokenIntent() }.returns(ClientTokenIntent.`3DS_AUTHENTICATION`.name)
+        every { clientTokenRepository.getClientTokenIntent() }.returns(
+            ClientTokenIntent.`3DS_AUTHENTICATION`.name
+        )
         every { paymentMethodRepository.getPaymentMethod() }.returns(paymentMethodToken)
         every { verificationTokenRepository.validate(any()) }.returns(
             flowOf(true)

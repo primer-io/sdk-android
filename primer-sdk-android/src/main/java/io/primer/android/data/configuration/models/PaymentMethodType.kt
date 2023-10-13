@@ -7,12 +7,12 @@ import io.primer.android.data.token.model.ClientTokenIntent
 
 internal enum class PaymentMethodType(
     internal val intents: Array<ClientTokenIntent>? = null,
-    internal val brand: Brand,
+    internal val brand: Brand
 ) {
     PAYMENT_CARD(
         arrayOf(
             ClientTokenIntent.`3DS_AUTHENTICATION`,
-            ClientTokenIntent.PROCESSOR_3DS,
+            ClientTokenIntent.PROCESSOR_3DS
         ),
         Brand.PAYMENT_CARD
     ),

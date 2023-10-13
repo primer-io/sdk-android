@@ -16,10 +16,10 @@ import io.primer.android.components.ui.widgets.PrimerInputElementCardNumberListe
 import io.primer.android.components.ui.widgets.PrimerTextChangedListener
 import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.utils.removeSpaces
-import org.koin.core.component.inject
 import java.util.Calendar
 
 interface PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface {
@@ -32,7 +32,7 @@ interface PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface {
     )
 }
 
-interface PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
+fun interface PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
     fun onCardValidationChanged(isCardFormValid: Boolean)
 }
 
@@ -40,7 +40,7 @@ class PrimerHeadlessUniversalCheckoutCardComponentsManager
 private constructor(private val paymentMethodType: String) :
     PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface,
     PrimerTextChangedListener,
-    DIAppComponent {
+    DISdkComponent {
 
     private val delegate: DefaultRawDataManagerDelegate by inject()
     private val headlessManagerDelegate: DefaultHeadlessManagerDelegate by inject()
@@ -151,12 +151,12 @@ private constructor(private val paymentMethodType: String) :
             getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString().removeSpaces(),
             getExpiryDate(),
             getInputElementValue(PrimerInputElementType.CVV).toString(),
-            getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME),
+            getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME)
         )
         PaymentMethodType.ADYEN_BANCONTACT_CARD.name -> PrimerBancontactCardData(
             getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString().removeSpaces(),
             getExpiryDate(),
-            getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME).toString(),
+            getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME).toString()
         )
         else -> throw UnsupportedPaymentMethodException(paymentMethodType)
     }

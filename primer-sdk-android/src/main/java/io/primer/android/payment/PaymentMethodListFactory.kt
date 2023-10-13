@@ -14,7 +14,6 @@ internal class PaymentMethodListFactory(
 ) {
 
     fun buildWith(configList: List<PaymentMethodConfigDataResponse>): MutableList<PaymentMethod> {
-
         val paymentMethods = mutableListOf<PaymentMethod>()
 
         configList.forEach { config ->

@@ -17,7 +17,7 @@ import io.primer.android.ui.settings.PrimerTheme
 
 internal class DynamicPaymentMethodTextViewCreator(
     private val theme: PrimerTheme,
-    private val displayMetadata: TextDisplayMetadata,
+    private val displayMetadata: TextDisplayMetadata
 ) : PaymentMethodViewCreator {
 
     override fun create(context: Context, container: ViewGroup?): View {
@@ -39,7 +39,7 @@ internal class DynamicPaymentMethodTextViewCreator(
             val paymentMethodAsset = displayMetadata.imageColor?.let {
                 PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
                     context,
-                    displayMetadata.paymentMethodType,
+                    displayMetadata.paymentMethodType
                 ).paymentMethodLogo.get(it)
             }
             displayMetadata.iconPosition?.apply {
@@ -47,7 +47,7 @@ internal class DynamicPaymentMethodTextViewCreator(
                     if (this == IconPosition.START) paymentMethodAsset else null,
                     if (this == IconPosition.ABOVE) paymentMethodAsset else null,
                     if (this == IconPosition.END) paymentMethodAsset else null,
-                    if (this == IconPosition.BELOW) paymentMethodAsset else null,
+                    if (this == IconPosition.BELOW) paymentMethodAsset else null
                 )
             }
         }

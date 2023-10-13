@@ -23,7 +23,7 @@ sealed class ColorData {
 
 class ResourceColor private constructor(
     @ColorRes val default: Int,
-    @ColorRes val dark: Int,
+    @ColorRes val dark: Int
 ) : ColorData() {
 
     companion object {
@@ -36,7 +36,7 @@ class ResourceColor private constructor(
 
 class DynamicColor private constructor(
     @ColorInt val default: Int,
-    @ColorInt val dark: Int,
+    @ColorInt val dark: Int
 ) : ColorData() {
 
     companion object {
@@ -52,7 +52,6 @@ class DynamicColor private constructor(
         }
 
         fun valueOf(default: String, dark: String? = null): DynamicColor {
-
             val mainColor = hexToColorInt(default)
             val darkColor = hexToColorInt(dark ?: default)
 

@@ -7,7 +7,7 @@ import io.primer.android.data.rpc.banks.models.IssuingBankResultDataResponse
 import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteIssuingBankFlowDataSource(
-    private val primerHttpClient: PrimerHttpClient,
+    private val primerHttpClient: PrimerHttpClient
 ) : BaseFlowDataSource<IssuingBankResultDataResponse, BaseRemoteRequest<IssuingBankDataRequest>> {
 
     override fun execute(input: BaseRemoteRequest<IssuingBankDataRequest>) =

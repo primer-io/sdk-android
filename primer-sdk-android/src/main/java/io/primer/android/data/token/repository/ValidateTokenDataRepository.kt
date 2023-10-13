@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.single
 
 internal class ValidateTokenDataRepository(
     private val configurationDataSource: LocalConfigurationDataSource,
-    private val validateDataSource: ValidationTokenDataSource,
+    private val validateDataSource: ValidationTokenDataSource
 ) : ValidateTokenRepository {
 
     override fun validate(clientToken: String): Flow<Boolean> {

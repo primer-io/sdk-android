@@ -12,7 +12,7 @@ import io.primer.android.logging.Logger
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
     private val errorEventResolver: BaseErrorEventResolver,
-    private val logger: Logger,
+    private val logger: Logger
 ) {
     // MOVE TO FACTORY
     fun execute(paymentMethodType: String): List<PrimerInputElementType> {
@@ -62,8 +62,9 @@ internal class PaymentInputTypesInteractor(
                                 configs?.via(PrimerInputElementType.ALL) ?: configs?.via(
                                     PrimerInputElementType.CARDHOLDER_NAME
                                 )
-                            if (containsCardholders == null || containsCardholders)
-                                PrimerInputElementType.CARDHOLDER_NAME else null
+                            if (containsCardholders == null || containsCardholders) {
+                                PrimerInputElementType.CARDHOLDER_NAME
+                            } else { null }
                         }
 
                     listOf(

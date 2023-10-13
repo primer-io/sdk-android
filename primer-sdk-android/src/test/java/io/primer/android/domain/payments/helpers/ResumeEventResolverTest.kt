@@ -44,7 +44,7 @@ internal class ResumeEventResolverTest {
             ResumeEventResolver(
                 config,
                 resumeHandlerFactory,
-                eventDispatcher,
+                eventDispatcher
             )
     }
 

@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 internal data class PaypalConfirmBillingAgreementDataRequest(
     val paymentMethodConfigId: String,
-    val tokenId: String,
+    val tokenId: String
 ) : JSONObjectSerializable {
 
     companion object {

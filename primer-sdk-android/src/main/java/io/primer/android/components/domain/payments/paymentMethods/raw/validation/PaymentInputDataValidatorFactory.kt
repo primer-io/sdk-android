@@ -27,7 +27,7 @@ internal class PaymentInputDataValidatorFactory(
     ): PaymentInputDataValidator<PrimerRawData> {
         return when (inputData) {
             is PrimerCardData -> CardInputDataValidator(
-                checkoutModuleRepository,
+                checkoutModuleRepository
             )
             is PrimerBancontactCardData -> BancontactCardInputDataValidator()
             is PrimerPhoneNumberData -> {

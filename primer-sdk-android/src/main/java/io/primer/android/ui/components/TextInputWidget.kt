@@ -8,27 +8,30 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputLayout
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.ui.settings.PrimerTheme
-import org.koin.core.component.inject
 
 internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     TextInputLayout(ctx, attrs),
-    DIAppComponent {
+    DISdkComponent {
 
     internal var onValueChanged: (CharSequence?) -> Unit = {}
 
-    private val theme: PrimerTheme by if (isInEditMode) lazy { PrimerTheme.build() } else inject()
+    private val theme: PrimerTheme by
+    if (isInEditMode) {
+        lazy { PrimerTheme.build() }
+    } else { inject() }
 
     init {
         val colors = intArrayOf(
             theme.input.border.defaultColor.getColor(context, theme.isDarkMode),
-            theme.input.border.selectedColor.getColor(context, theme.isDarkMode),
+            theme.input.border.selectedColor.getColor(context, theme.isDarkMode)
         )
 
         val states = arrayOf(
             intArrayOf(-android.R.attr.state_focused),
-            intArrayOf(android.R.attr.state_focused),
+            intArrayOf(android.R.attr.state_focused)
         )
 
         val colorStateList = ColorStateList(states, colors)
@@ -37,12 +40,12 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
 
         val hintColors = intArrayOf(
             theme.input.hintText.defaultColor.getColor(context, theme.isDarkMode),
-            theme.input.border.selectedColor.getColor(context, theme.isDarkMode),
+            theme.input.border.selectedColor.getColor(context, theme.isDarkMode)
         )
 
         val hintTextStates = arrayOf(
             intArrayOf(-android.R.attr.state_focused),
-            intArrayOf(android.R.attr.state_focused),
+            intArrayOf(android.R.attr.state_focused)
         )
 
         hintTextColor = ColorStateList(hintTextStates, hintColors)
@@ -108,8 +111,9 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                     ): CharSequence? {
                         val replacedText = dest?.subSequence(dstart, dend)
                         for (i in start until end) {
-                            if (source != null && it.contains(source[i].toString()).not())
+                            if (source != null && it.contains(source[i].toString()).not()) {
                                 return replacedText
+                            }
                         }
                         return null
                     }

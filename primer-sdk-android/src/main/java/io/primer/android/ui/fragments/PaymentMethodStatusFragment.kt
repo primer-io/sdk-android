@@ -3,12 +3,16 @@ package io.primer.android.ui.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import io.primer.android.di.extension.viewModel
 import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import io.primer.android.presentation.payment.async.AsyncPaymentMethodViewModelFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class PaymentMethodStatusFragment : PaymentMethodLoadingFragment() {
 
-    private val asyncPaymentMethodViewModel: AsyncPaymentMethodViewModel by viewModel()
+    private val asyncPaymentMethodViewModel: AsyncPaymentMethodViewModel
+        by viewModel<AsyncPaymentMethodViewModel, AsyncPaymentMethodViewModelFactory>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

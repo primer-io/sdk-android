@@ -3,7 +3,7 @@ package io.primer.android
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.CLASS,
-    AnnotationTarget.FUNCTION,
+    AnnotationTarget.FUNCTION
 )
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,

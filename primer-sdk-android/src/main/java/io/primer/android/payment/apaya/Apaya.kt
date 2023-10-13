@@ -9,7 +9,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 internal data class Apaya(
-    val webViewTitle: String = "Pay by mobile",
+    val webViewTitle: String = "Pay by mobile"
 ) :
     PaymentMethod {
 
@@ -23,13 +23,13 @@ internal data class Apaya(
         }
 
         override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
         ) {
             // no-op
         }
 
         override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
         ) {
             paymentMethodDescriptorFactoryRegistry.register(
                 type,

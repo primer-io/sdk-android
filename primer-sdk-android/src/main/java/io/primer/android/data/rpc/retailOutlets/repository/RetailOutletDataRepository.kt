@@ -24,7 +24,7 @@ internal class RetailOutletDataRepository(
     private val remoteRetailOutletBankDataSource: RemoteRetailOutletFlowDataSource,
     private val localRetailOutletDataSource: LocalRetailOutletDataSource,
     private val localConfigurationDataSource: LocalConfigurationDataSource,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : RetailOutletRepository {
 
     private var selectedRetailOutlet: RetailOutlet? = null

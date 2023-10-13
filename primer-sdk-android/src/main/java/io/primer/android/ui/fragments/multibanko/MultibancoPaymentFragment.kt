@@ -12,7 +12,8 @@ import androidx.core.os.bundleOf
 import io.primer.android.R
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentMultibancoPaymentBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.extensions.autoCleaned
@@ -21,11 +22,10 @@ import io.primer.android.ui.fragments.forms.BaseFormFragment
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import io.primer.android.viewmodel.ViewStatus
-import org.koin.core.component.inject
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-internal class MultibancoPaymentFragment : BaseFormFragment(), DIAppComponent {
+internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
 
     private var binding: FragmentMultibancoPaymentBinding by autoCleaned()
 
@@ -149,7 +149,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DIAppComponent {
                     binding.tvValueDueDate.text = this
                 }
             }
-        } else null
+        } else { null }
     }
 
     private fun setupReferences(entity: String?, reference: String?) {

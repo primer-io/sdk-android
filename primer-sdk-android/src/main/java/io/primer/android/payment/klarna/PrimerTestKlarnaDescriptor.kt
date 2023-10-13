@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class PrimerTestKlarnaDescriptor constructor(
     options: Klarna,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : KlarnaDescriptor(options, localConfig, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour

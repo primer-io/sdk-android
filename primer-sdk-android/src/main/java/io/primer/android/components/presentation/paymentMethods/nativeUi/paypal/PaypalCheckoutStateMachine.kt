@@ -17,7 +17,8 @@ internal object PaypalCheckoutStateMachine {
             state<PaypalCheckoutState.Idle> {
                 on<PaypalEvent.OnLoadConfiguration> {
                     transitionTo(
-                        PaypalCheckoutState.LoadConfiguration, PaypalSideEffect.LoadConfiguration
+                        PaypalCheckoutState.LoadConfiguration,
+                        PaypalSideEffect.LoadConfiguration
                     )
                 }
                 on<PaypalEvent.OnError> {

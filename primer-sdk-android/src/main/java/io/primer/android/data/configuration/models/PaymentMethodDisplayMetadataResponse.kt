@@ -38,7 +38,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
                         return IconUrlDataResponse(
                             t.optNullableString(COLORED_FIELD),
                             t.optNullableString(LIGHT_FIELD),
-                            t.optNullableString(DARK_FIELD),
+                            t.optNullableString(DARK_FIELD)
                         )
                     }
                 }
@@ -62,7 +62,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
                         return ColorDataResponse(
                             t.optNullableString(COLORED_FIELD),
                             t.optNullableString(LIGHT_FIELD),
-                            t.optNullableString(DARK_FIELD),
+                            t.optNullableString(DARK_FIELD)
                         )
                     }
                 }
@@ -86,7 +86,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
                         return BorderWidthDataResponse(
                             t.optNullableFloat(COLORED_FIELD),
                             t.optNullableFloat(LIGHT_FIELD),
-                            t.optNullableFloat(DARK_FIELD),
+                            t.optNullableFloat(DARK_FIELD)
                         )
                     }
                 }

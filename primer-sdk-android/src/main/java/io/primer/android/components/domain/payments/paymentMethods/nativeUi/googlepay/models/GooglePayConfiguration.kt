@@ -11,5 +11,5 @@ internal data class GooglePayConfiguration(
     val currencyCode: String,
     val allowedCardNetworks: List<String>,
     val allowedCardAuthMethods: List<String>,
-    val billingAddressRequired: Boolean,
+    val billingAddressRequired: Boolean
 )

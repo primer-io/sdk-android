@@ -48,7 +48,7 @@ android {
     }
 
     kotlinOptions {
-        freeCompilerArgs += '-Xjvm-default=all'
+        freeCompilerArgs += ['-Xjvm-default=all', '-Xcontext-receivers']
     }
 
     testOptions {
@@ -57,8 +57,6 @@ android {
 }
 
 dependencies {
-    // mut be added for Java interop, as it is required on compile classpath
-    api "io.insert-koin:koin-android:$koinVersion"
 
     implementation Dependencies.Networking.okhttp
     implementation Dependencies.Networking.okhttpLoggingInterceptor
@@ -89,10 +87,10 @@ dependencies {
     compileOnly Dependencies.iPay88.primeriPay88
     testImplementation Dependencies.iPay88.primeriPay88
 
+    testImplementation TestDependencies.Kotlin.test
     testImplementation TestDependencies.Kotlin.coroutines
     testImplementation TestDependencies.Android.archCore
     testImplementation TestDependencies.Android.liveData
-    testImplementation TestDependencies.Koin.test
     testImplementation TestDependencies.Serialization.json
 
     androidTestImplementation TestDependencies.Android.Espresso.core

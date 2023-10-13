@@ -30,7 +30,7 @@ internal class ApayaSessionConfigurationDataRepository(
                     requireNotNullCheck(
                         settings.customer.mobileNumber,
                         ApayaIllegalValueKey.CUSTOMER_MOBILE_NUMBER
-                    ),
+                    )
                 )
             )
         }

@@ -42,7 +42,7 @@ internal fun IssuingBankParams.toIssuingBankRequest() = IssuingBankDataRequest(
     RpcFunction.FETCH_BANK_ISSUERS.name,
     IssuingBankDataParameters(
         toIssuingBankParam(paymentMethod).orEmpty(),
-        locale.toLanguageTag(),
+        locale.toLanguageTag()
     )
 )
 

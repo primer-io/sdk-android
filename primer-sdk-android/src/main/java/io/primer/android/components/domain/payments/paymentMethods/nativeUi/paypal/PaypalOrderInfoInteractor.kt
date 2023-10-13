@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOn
 
 internal class PaypalOrderInfoInteractor(
     private val paypalInfoRepository: PaypalInfoRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<PaypalOrderInfo, PaypalOrderInfoParams>() {
 
     override fun execute(params: PaypalOrderInfoParams): Flow<PaypalOrderInfo> {

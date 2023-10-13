@@ -15,7 +15,7 @@ internal class ValidCustomerLastNameRule :
             false -> ValidationResult.Failure(
                 IllegalClientSessionValueException(
                     IPay88IllegalValueKey.ILLEGAL_CUSTOMER_LAST_NAME,
-                    lastName,
+                    lastName
                 )
             )
         }

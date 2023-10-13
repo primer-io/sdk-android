@@ -127,7 +127,7 @@ internal data class UrlAnalyticsContext(val url: String?, val paymentMethodType:
             override fun deserialize(t: JSONObject): UrlAnalyticsContext {
                 return UrlAnalyticsContext(
                     t.optNullableString(URL_FIELD),
-                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
+                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD)
                 )
             }
         }
@@ -155,7 +155,7 @@ internal data class PaymentMethodAnalyticsContext(val paymentMethodType: String)
         val deserializer = object : JSONDeserializer<PaymentMethodAnalyticsContext> {
             override fun deserialize(t: JSONObject): PaymentMethodAnalyticsContext {
                 return PaymentMethodAnalyticsContext(
-                    t.optString(PAYMENT_METHOD_TYPE_FIELD),
+                    t.optString(PAYMENT_METHOD_TYPE_FIELD)
                 )
             }
         }
@@ -183,7 +183,7 @@ internal data class BankIssuerAnalyticsContext(val issuerId: String) :
         val deserializer = object : JSONDeserializer<BankIssuerAnalyticsContext> {
             override fun deserialize(t: JSONObject): BankIssuerAnalyticsContext {
                 return BankIssuerAnalyticsContext(
-                    t.optString(ISSUER_ID_FIELD),
+                    t.optString(ISSUER_ID_FIELD)
                 )
             }
         }
@@ -276,7 +276,7 @@ internal data class IPay88AnalyticsContext(
                 return IPay88AnalyticsContext(
                     t.getString(PAYMENT_METHOD_TYPE_FIELD),
                     t.getString(IPAY88_PAYMENT_METHOD_ID_FIELD),
-                    t.getString(IPAY88_ACTION_TYPE_FIELD),
+                    t.getString(IPAY88_ACTION_TYPE_FIELD)
                 )
             }
         }
@@ -317,7 +317,7 @@ internal data class ThreeDsFailureAnalyticsContext(
                 return ThreeDsFailureAnalyticsContext(
                     t.optNullableString(SDK_VERSION_FIELD),
                     t.optNullableString(INIT_PROTOCOL_VERSION_FIELD),
-                    t.optString(SDK_WRAPPER_VERSION_FIELD),
+                    t.optString(SDK_WRAPPER_VERSION_FIELD)
                 )
             }
         }
@@ -362,7 +362,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
                     t.optNullableString(SDK_VERSION_FIELD),
                     t.optString(INIT_PROTOCOL_VERSION_FIELD),
                     t.optNullableString(ERROR_CODE_FIELD),
-                    t.optString(SDK_WRAPPER_VERSION_FIELD),
+                    t.optString(SDK_WRAPPER_VERSION_FIELD)
                 )
             }
         }
@@ -431,7 +431,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
                     t.optString(VERSION_FIELD),
                     t.optNullableString(SDK_VERSION_FIELD),
                     t.optString(INIT_PROTOCOL_VERSION_FIELD),
-                    t.optString(SDK_WRAPPER_VERSION_FIELD),
+                    t.optString(SDK_WRAPPER_VERSION_FIELD)
                 )
             }
         }

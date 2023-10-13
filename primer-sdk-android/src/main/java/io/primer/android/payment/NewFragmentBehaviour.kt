@@ -5,7 +5,7 @@ import io.primer.android.R
 
 internal open class NewFragmentBehaviour(
     private val factory: (() -> Fragment),
-    private val returnToPreviousOnBack: Boolean = false,
+    private val returnToPreviousOnBack: Boolean = false
 ) : SelectedPaymentMethodBehaviour() {
 
     fun execute(parent: Fragment) {

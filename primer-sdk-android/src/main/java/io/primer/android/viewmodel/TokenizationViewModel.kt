@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
 import io.primer.android.domain.base.None
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -23,7 +23,7 @@ internal class TokenizationViewModel(
     private val config: PrimerConfig,
     private val tokenizationInteractor: TokenizationInteractor,
     private val asyncPaymentMethodDeeplinkInteractor: AsyncPaymentMethodDeeplinkInteractor
-) : ViewModel(), DIAppComponent {
+) : ViewModel(), DISdkComponent {
 
     private var paymentMethod: PaymentMethodDescriptor? = null
 
@@ -62,7 +62,7 @@ internal class TokenizationViewModel(
             tokenizationInteractor(
                 TokenizationParams(
                     paymentMethod ?: return@launch,
-                    config.paymentMethodIntent,
+                    config.paymentMethodIntent
                 )
             )
                 .onStart { tokenizationStatus.postValue(TokenizationStatus.LOADING) }

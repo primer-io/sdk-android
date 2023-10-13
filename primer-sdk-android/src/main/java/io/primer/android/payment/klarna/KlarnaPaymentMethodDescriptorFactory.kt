@@ -14,7 +14,7 @@ internal class KlarnaPaymentMethodDescriptorFactory : PaymentMethodDescriptorFac
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor = when (paymentMethodRemoteConfig.type) {
         PaymentMethodType.PRIMER_TEST_KLARNA.name -> PrimerTestKlarnaDescriptor(
             paymentMethod as Klarna,

@@ -9,14 +9,14 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
 import io.primer.android.data.payments.configure.PrimerInitializationData
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
-import org.koin.core.component.inject
 
 class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
     private val paymentMethodType: String
-) : PrimerHeadlessUniversalCheckoutRawDataManagerInterface, DIAppComponent {
+) : PrimerHeadlessUniversalCheckoutRawDataManagerInterface, DISdkComponent {
 
     private val rawDelegate: DefaultRawDataManagerDelegate by inject()
     private val headlessManagerDelegate: DefaultHeadlessManagerDelegate by inject()

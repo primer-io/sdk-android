@@ -10,7 +10,7 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
 import io.primer.android.domain.rpc.banks.BanksInteractor
 import io.primer.android.domain.rpc.banks.models.IssuingBankParams
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 internal open class BankSelectionViewModel(
     private val interactor: BanksInteractor,
     analyticsInteractor: AnalyticsInteractor
-) : BaseViewModel(analyticsInteractor), DIAppComponent {
+) : BaseViewModel(analyticsInteractor), DISdkComponent {
 
     protected val _itemsLiveData = MutableLiveData<List<BaseBankItem>>()
     val itemsLiveData: LiveData<List<BaseBankItem>> = _itemsLiveData
@@ -56,8 +56,9 @@ internal open class BankSelectionViewModel(
     fun onBankSelected(issuerId: String) {
         val currentItems = _itemsLiveData.value.orEmpty()
         val newItems = currentItems.filterIsInstance<BankItem>().map { bankItem ->
-            if (bankItem.id == issuerId) bankItem.toLoadingBankItem()
-            else bankItem.toDisabledBankItem()
+            if (bankItem.id == issuerId) {
+                bankItem.toLoadingBankItem()
+            } else { bankItem.toDisabledBankItem() }
         }
         _itemsLiveData.postValue(newItems)
         logAnalyticsBankSelected(issuerId)
@@ -70,7 +71,7 @@ internal open class BankSelectionViewModel(
                 ObjectType.LIST_ITEM,
                 Place.BANK_SELECTION_LIST,
                 ObjectId.SELECT,
-                BankIssuerContextParams(issuerId),
+                BankIssuerContextParams(issuerId)
             )
         )
 }

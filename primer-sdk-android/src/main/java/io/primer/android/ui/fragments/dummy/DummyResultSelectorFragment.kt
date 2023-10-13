@@ -15,7 +15,9 @@ import io.primer.android.analytics.domain.models.DummyApmDecisionParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentDummyResultSelectorBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.payment.OnActionContinueCallback
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.dummy.DummyDecisionType
@@ -27,17 +29,16 @@ import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
-internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallback, DIAppComponent {
+internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallback, DISdkComponent {
 
     private val localConfig: PrimerConfig by inject()
     private val theme: PrimerTheme by inject()
     private val tokenizationViewModel: TokenizationViewModel by activityViewModels()
     private val primerViewModel: PrimerViewModel by activityViewModels()
-    private val viewModel: DummyResultSelectorViewModel by viewModel()
+    private val viewModel: DummyResultSelectorViewModel
+        by viewModel<DummyResultSelectorViewModel, DummyResultSelectorViewModelFactory>()
 
     private var binding: FragmentDummyResultSelectorBinding by autoCleaned()
 
@@ -72,6 +73,7 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
                 TokenizationStatus.SUCCESS -> onActionContinue?.invoke()?.let { behaviour ->
                     primerViewModel.executeBehaviour(behaviour)
                 }
+
                 else -> Unit
             }
         }
@@ -84,8 +86,9 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
     private fun setupCurrentPaymentMethod() {
         val descriptor = primerViewModel.selectedPaymentMethod.value ?: return
         binding.ivPaymentMethodIcon.setImageResource(
-            if (theme.isDarkMode == true) descriptor.brand.iconDarkResId
-            else descriptor.brand.iconLightResId
+            if (theme.isDarkMode == true) {
+                descriptor.brand.iconDarkResId
+            } else { descriptor.brand.iconLightResId }
         )
     }
 
@@ -133,6 +136,7 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
                 is DummyResultDescriptorHandler -> {
                     descriptor.setDecision(selectedDecision)
                 }
+
                 else -> throw IllegalStateException(
                     "Your selected payment method, not support dummy result for $descriptor"
                 )

@@ -17,7 +17,7 @@ internal data class OrderDataResponse(
     val totalOrderAmount: Int? = null,
     var countryCode: CountryCode? = null,
     var lineItems: List<LineItemDataResponse> = emptyList(),
-    val fees: List<FeeDataResponse> = listOf(),
+    val fees: List<FeeDataResponse> = listOf()
 ) : JSONDeserializable {
 
     data class LineItemDataResponse(
@@ -27,7 +27,7 @@ internal data class OrderDataResponse(
         val quantity: Int,
         val discountAmount: Int? = null,
         val taxAmount: Int? = null,
-        val taxCode: String? = null,
+        val taxCode: String? = null
     ) : JSONDeserializable {
         fun toLineItem() = PrimerLineItem(
             itemId,
@@ -59,7 +59,7 @@ internal data class OrderDataResponse(
                         t.getInt(QUANTITY_FIELD),
                         t.optNullableInt(DISCOUNT_AMOUNT_FIELD),
                         t.optNullableInt(TAX_AMOUNT_FIELD),
-                        t.optNullableString(TAX_CODE_FIELD),
+                        t.optNullableString(TAX_CODE_FIELD)
                     )
                 }
             }
@@ -68,7 +68,7 @@ internal data class OrderDataResponse(
 
     data class FeeDataResponse(
         val type: String,
-        val amount: Int,
+        val amount: Int
     ) : JSONDeserializable {
 
         companion object {
@@ -81,7 +81,7 @@ internal data class OrderDataResponse(
                 override fun deserialize(t: JSONObject): FeeDataResponse {
                     return FeeDataResponse(
                         t.getString(TYPE_FIELD),
-                        t.getInt(AMOUNT_FIELD),
+                        t.getInt(AMOUNT_FIELD)
                     )
                 }
             }

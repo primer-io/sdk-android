@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 
 internal fun <T> Flow<T>.doOnError(
     dispatcher: CoroutineDispatcher = Dispatchers.Main,
-    onError: (Throwable) -> Unit,
+    onError: (Throwable) -> Unit
 ): Flow<T> {
     return flow {
         try {

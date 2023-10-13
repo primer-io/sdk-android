@@ -40,7 +40,7 @@ internal class PaymentMethodsImplementationInteractorTest {
         MockKAnnotations.init(this, relaxed = true)
         interactor = PaymentMethodsImplementationInteractor(
             implementationRepository,
-            analyticsRepository,
+            analyticsRepository
         )
     }
 

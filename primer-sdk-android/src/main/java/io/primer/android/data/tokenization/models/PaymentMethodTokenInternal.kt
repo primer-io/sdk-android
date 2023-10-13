@@ -16,7 +16,7 @@ internal data class PaymentMethodTokenInternal(
     override val threeDSecureAuthentication: AuthenticationDetailsDataResponse?,
     override val isVaulted: Boolean,
     val analyticsId: String,
-    val tokenType: TokenType,
+    val tokenType: TokenType
 ) : BasePaymentToken() {
 
     companion object {

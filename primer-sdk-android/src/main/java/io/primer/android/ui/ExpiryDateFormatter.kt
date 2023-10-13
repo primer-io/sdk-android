@@ -15,7 +15,7 @@ private const val MAXIMUM_YEAR_LENGTH = 4
 internal class ExpiryDateFormatter(
     private var month: String = "",
     private var year: String = "",
-    private var separator: Boolean = false,
+    private var separator: Boolean = false
 ) {
 
     override fun toString(): String {

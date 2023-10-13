@@ -16,21 +16,36 @@ internal class BaseFormBinding(
 )
 
 internal fun FragmentDynamicFormBinding.toBaseFormBinding() = BaseFormBinding(
-    formBackIcon, formIcon, formTitle, formDescription
+    formBackIcon,
+    formIcon,
+    formTitle,
+    formDescription
 )
 
 internal fun FragmentQrCodeBinding.toBaseFormBinding() = BaseFormBinding(
-    formBackIcon, formIcon, formTitle, formDescription
+    formBackIcon,
+    formIcon,
+    formTitle,
+    formDescription
 )
 
 internal fun FragmentFastBankTransferBinding.toBaseFormBinding() = BaseFormBinding(
-    ivBack, ivPaymentMethodIcon, tvTitleComplete, tvTransferDescription
+    ivBack,
+    ivPaymentMethodIcon,
+    tvTitleComplete,
+    tvTransferDescription
 )
 
 internal fun FragmentPromptPayBinding.toBaseFormBinding() = BaseFormBinding(
-    ivBack, ivPaymentMethodIcon, tvTitleComplete, tvDescription
+    ivBack,
+    ivPaymentMethodIcon,
+    tvTitleComplete,
+    tvDescription
 )
 
 internal fun FragmentMultibancoPaymentBinding.toBaseFormBinding() = BaseFormBinding(
-    ivBack, ivPaymentMethodIcon, tvTitleComplete, tvDescription
+    ivBack,
+    ivPaymentMethodIcon,
+    tvTitleComplete,
+    tvDescription
 )
