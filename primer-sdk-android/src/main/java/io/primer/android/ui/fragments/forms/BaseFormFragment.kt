@@ -11,19 +11,20 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.presentation.payment.forms.FormsViewModel
+import io.primer.android.presentation.payment.forms.FormsViewModelFactory
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.TokenizationViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
-internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
+internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
 
     protected val theme: PrimerTheme by inject()
     protected abstract val baseFormBinding: BaseFormBinding
@@ -31,7 +32,7 @@ internal abstract class BaseFormFragment : Fragment(), DIAppComponent {
     protected val primerViewModel: PrimerViewModel by activityViewModels()
     protected val tokenizationViewModel: TokenizationViewModel by activityViewModels()
 
-    protected val viewModel: FormsViewModel by viewModel()
+    protected val viewModel: FormsViewModel by viewModel<FormsViewModel, FormsViewModelFactory>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

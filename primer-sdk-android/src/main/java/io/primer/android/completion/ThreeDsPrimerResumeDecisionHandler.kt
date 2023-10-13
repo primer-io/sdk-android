@@ -100,15 +100,15 @@ internal class ThreeDsPrimerResumeDecisionHandler(
             threeDsSdkClassValidator.is3dsSdkIncluded().not() ->
                 continueAuthWithException(
                     ThreeDsLibraryNotFoundException(
-                        ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR,
-                    ),
+                        ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
+                    )
                 )
             threeDsLibraryVersionValidator.isValidVersion().not() -> {
                 continueAuthWithException(
                     ThreeDsLibraryVersionMismatchException(
                         BuildConfig.SDK_VERSION_STRING,
                         ThreeDsFailureContextParams(null, null)
-                    ),
+                    )
                 )
             }
             else -> when (mockConfigurationRepository.isMockedFlow()) {

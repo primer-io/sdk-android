@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 
 internal class PaypalCreateOrderDataRepository(
     private val createOrderDataSource: RemotePaypalCreateOrderDataSource,
-    private val localConfigurationDataSource: LocalConfigurationDataSource,
+    private val localConfigurationDataSource: LocalConfigurationDataSource
 ) : PaypalCreateOrderRepository {
     override fun createOrder(params: PaypalCreateOrderParams): Flow<PaypalOrder> {
         return createOrderDataSource.execute(
@@ -28,7 +28,7 @@ internal class PaypalCreateOrderDataRepository(
                     params.amount,
                     params.currencyCode,
                     params.successUrl,
-                    params.cancelUrl,
+                    params.cancelUrl
                 )
             )
         ).map { it.toPaypalOrder(params.successUrl, params.cancelUrl) }

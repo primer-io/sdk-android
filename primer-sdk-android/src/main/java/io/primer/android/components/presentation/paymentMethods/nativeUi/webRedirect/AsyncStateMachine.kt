@@ -99,7 +99,7 @@ internal sealed class AsyncState : State {
         val paymentMethodType: String,
         val redirectUrl: String,
         val statusUrl: String,
-        val returnUrl: String,
+        val returnUrl: String
     ) : AsyncState()
 
     data class Redirect(val statusUrl: String, val paymentMethodType: String) : AsyncState()
@@ -112,7 +112,7 @@ internal sealed class AsyncEvent : Event {
     data class OnConfigurationLoaded(
         val paymentMethodType: String,
         val paymentMethodConfigId: String,
-        val locale: String,
+        val locale: String
     ) : AsyncEvent()
 
     object OnTokenized : AsyncEvent()
@@ -121,12 +121,12 @@ internal sealed class AsyncEvent : Event {
         val paymentMethodType: String,
         val redirectUrl: String,
         val statusUrl: String,
-        val returnUrl: String,
+        val returnUrl: String
     ) : AsyncEvent()
 
     data class OnStartPolling(
         val statusUrl: String,
-        val paymentMethodType: String,
+        val paymentMethodType: String
     ) : AsyncEvent()
 
     object OnCancel : AsyncEvent()

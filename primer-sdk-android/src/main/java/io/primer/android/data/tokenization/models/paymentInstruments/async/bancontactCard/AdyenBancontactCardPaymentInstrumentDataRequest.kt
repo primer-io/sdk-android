@@ -20,7 +20,7 @@ internal data class AdyenBancontactCardPaymentInstrumentDataRequest(
     paymentMethodType,
     paymentMethodConfigId,
     sessionInfo,
-    type,
+    type
 ) {
 
     companion object {

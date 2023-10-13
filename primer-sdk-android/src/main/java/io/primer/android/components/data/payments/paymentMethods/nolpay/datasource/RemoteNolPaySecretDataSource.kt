@@ -12,6 +12,6 @@ internal class RemoteNolPaySecretDataSource(private val primerHttpClient: Primer
     override suspend fun execute(input: BaseRemoteRequest<NolPaySecretDataRequest>) =
         primerHttpClient.postSuspend<NolPaySecretDataRequest, NolPaySecretDataResponse>(
             "${input.configuration.coreUrl}/nol-pay/sdk-secrets",
-            input.data,
+            input.data
         )
 }

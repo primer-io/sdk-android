@@ -22,28 +22,28 @@ import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
 internal sealed class CheckoutEvent(
-    val type: CheckoutEventType,
+    val type: CheckoutEventType
 ) {
 
     class TokenizationSuccess(
         val data: PrimerPaymentMethodTokenData,
-        val resumeHandler: PrimerResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
     class TokenizationSuccessHUC(
         val data: PrimerPaymentMethodTokenData,
-        val resumeHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler,
+        val resumeHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
     ) : CheckoutEvent(CheckoutEventType.TOKENIZE_SUCCESS)
 
     class ResumeSuccess(
         val resumeToken: String,
-        val resumeHandler: PrimerResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
 
     class ResumeSuccessHUC(
         val resumeToken: String,
-        val resumeHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler,
+        val resumeHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS)
 
@@ -55,19 +55,19 @@ internal sealed class CheckoutEvent(
 
     class ResumeSuccessInternal(
         val resumeToken: String,
-        val resumeHandler: PrimerResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
 
     class ResumeSuccessInternalHUC(
         val resumeToken: String,
-        val resumeHandler: PrimerResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
 
     class ResumeSuccessInternalVaultHUC(
         val resumeToken: String,
-        val resumeHandler: PrimerResumeDecisionHandler,
+        val resumeHandler: PrimerResumeDecisionHandler
     ) :
         CheckoutEvent(CheckoutEventType.RESUME_SUCCESS_INTERNAL)
 
@@ -169,7 +169,7 @@ internal sealed class CheckoutEvent(
     class StartAsyncFlow(
         val clientTokenIntent: String,
         val statusUrl: String,
-        val paymentMethodType: String,
+        val paymentMethodType: String
     ) : CheckoutEvent(CheckoutEventType.START_ASYNC_FLOW)
 
     @Suppress("LongParameterList")
@@ -197,13 +197,13 @@ internal sealed class CheckoutEvent(
     class StartVoucherFlow(
         val clientTokenIntent: String,
         val statusUrl: String,
-        val paymentMethodType: String,
+        val paymentMethodType: String
     ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
 
     class StartNolPayFlow(
         val statusUrl: String,
         val transactionNo: String?,
-        val paymentMethodType: String,
+        val paymentMethodType: String
     ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
 
     data class AsyncFlowRedirect(val uri: Uri?) :

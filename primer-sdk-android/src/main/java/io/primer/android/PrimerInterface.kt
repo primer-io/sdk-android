@@ -10,7 +10,7 @@ interface PrimerInterface {
      */
     fun configure(
         settings: PrimerSettings? = null,
-        listener: PrimerCheckoutListener? = null,
+        listener: PrimerCheckoutListener? = null
     )
 
     /**
@@ -49,7 +49,7 @@ interface PrimerInterface {
         context: Context,
         clientToken: String,
         paymentMethod: String,
-        intent: PrimerSessionIntent,
+        intent: PrimerSessionIntent
     )
 
     /**

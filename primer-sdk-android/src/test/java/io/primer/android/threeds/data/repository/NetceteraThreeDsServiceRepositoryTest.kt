@@ -57,7 +57,10 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         ) {
             runTest {
                 repository.initializeProvider(
-                    false, Locale.getDefault(), true, null
+                    false,
+                    Locale.getDefault(),
+                    true,
+                    null
                 ).first()
             }
         }
@@ -73,7 +76,10 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         ) {
             runTest {
                 repository.initializeProvider(
-                    false, Locale.getDefault(), true, keysParams
+                    false,
+                    Locale.getDefault(),
+                    true,
+                    keysParams
                 ).first()
             }
         }
@@ -85,7 +91,10 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         runTest {
             val result = repository.initializeProvider(
-                false, Locale.getDefault(), true, keysParams
+                false,
+                Locale.getDefault(),
+                true,
+                keysParams
             ).first()
             assertEquals(Unit, result)
         }
@@ -98,7 +107,10 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         runTest {
             val result = repository.initializeProvider(
-                true, Locale.getDefault(), true, keysParams
+                true,
+                Locale.getDefault(),
+                true,
+                keysParams
             ).first()
             assertEquals(Unit, result)
         }
@@ -118,7 +130,10 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         val exception = assertThrows<ThreeDsInitException> {
             runTest {
                 repository.initializeProvider(
-                    true, Locale.getDefault(), true, keysParams
+                    true,
+                    Locale.getDefault(),
+                    true,
+                    keysParams
                 ).first()
             }
         }

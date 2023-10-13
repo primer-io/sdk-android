@@ -5,7 +5,7 @@ import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.payments.create.models.CreatePaymentDataRequest
 import io.primer.android.data.payments.create.models.PaymentDataResponse
 import io.primer.android.di.ApiVersion
-import io.primer.android.di.SDK_API_VERSION_HEADER
+import io.primer.android.di.NetworkContainer.Companion.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
 
@@ -21,7 +21,7 @@ internal class CreatePaymentDataSource(private val primerHttpClient: PrimerHttpC
             input.data,
             mapOf(
                 SDK_API_VERSION_HEADER to ApiVersion.PAYMENTS_VERSION.version,
-                HEADER_ACCEPT to "*/*",
+                HEADER_ACCEPT to "*/*"
             )
         )
     }

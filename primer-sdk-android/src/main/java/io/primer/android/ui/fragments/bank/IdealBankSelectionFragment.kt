@@ -6,21 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.databinding.FragmentIdealBankSelectionBinding
-import io.primer.android.di.DIAppComponent
-
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.viewModel
 import io.primer.android.ui.BankSelectionAdapterListener
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.ui.fragments.bank.binding.toBaseBankSelectionBinding
 import io.primer.android.viewmodel.bank.BankSelectionViewModel
+import io.primer.android.viewmodel.bank.BankSelectionViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
 internal class IdealBankSelectionFragment :
     BaseBankSelectionFragment(),
     BankSelectionAdapterListener,
-    DIAppComponent {
+    DISdkComponent {
 
     private var binding: FragmentIdealBankSelectionBinding by autoCleaned()
 
@@ -28,7 +28,7 @@ internal class IdealBankSelectionFragment :
         binding.toBaseBankSelectionBinding()
     }
 
-    override val viewModel by viewModel<BankSelectionViewModel>()
+    override val viewModel by viewModel<BankSelectionViewModel, BankSelectionViewModelFactory>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,13 +42,13 @@ internal class IdealBankSelectionFragment :
     override fun setupViews() {
         super.setupViews()
         binding.paymentMethodIcon.setImageResource(
-            if (theme.isDarkMode == true) R.drawable.ic_logo_ideal_dark
-            else R.drawable.ic_logo_ideal_light
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_ideal_dark
+            } else { R.drawable.ic_logo_ideal_light }
         )
     }
 
     companion object {
-
         fun newInstance() = IdealBankSelectionFragment()
     }
 }

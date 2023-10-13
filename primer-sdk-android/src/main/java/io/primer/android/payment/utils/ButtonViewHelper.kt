@@ -12,7 +12,7 @@ internal object ButtonViewHelper {
 
     private val buttonStates = arrayOf(
         intArrayOf(-android.R.attr.state_selected),
-        intArrayOf(android.R.attr.state_selected),
+        intArrayOf(android.R.attr.state_selected)
     )
 
     fun generateButtonContent(context: Context, theme: PrimerTheme): GradientDrawable {

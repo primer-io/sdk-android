@@ -16,7 +16,6 @@ import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsCons
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.linkCard.di.NolPayLinkCardComponentProvider
-import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.ErrorMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -94,7 +93,7 @@ class NolPayLinkCardComponent internal constructor(
     }
 
     private fun handleError(
-        throwable: Throwable,
+        throwable: Throwable
     ) = viewModelScope.launch {
         errorMapper.getPrimerError(throwable)
             .also { error ->
@@ -104,7 +103,7 @@ class NolPayLinkCardComponent internal constructor(
             }
     }
 
-    internal companion object : DIAppComponent {
+    internal companion object {
         fun provideInstance(owner: ViewModelStoreOwner) =
             NolPayLinkCardComponentProvider().provideInstance(owner)
     }

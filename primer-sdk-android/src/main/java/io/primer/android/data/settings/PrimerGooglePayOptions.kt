@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 enum class GooglePayButtonStyle {
     WHITE,
-    BLACK,
+    BLACK
 }
 
 data class PrimerGooglePayOptions @JvmOverloads constructor(

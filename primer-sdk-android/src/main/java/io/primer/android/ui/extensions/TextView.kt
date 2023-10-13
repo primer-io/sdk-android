@@ -16,30 +16,37 @@ internal fun TextView.setCompoundDrawablesWithIntrinsicBoundsTinted(
     @ColorInt tintColorRight: Int = tintColor,
     @ColorInt tintColorBottom: Int = tintColor
 ) {
+    val drawableLeft = if (left != 0) {
+        ResourcesCompat.getDrawable(
+            resources,
+            left,
+            null
+        )?.updateTint(tintColorLeft)
+    } else { null }
 
-    val drawableLeft = if (left != 0) ResourcesCompat.getDrawable(
-        resources,
-        left,
-        null
-    )?.updateTint(tintColorLeft) else null
+    val drawableTop = if (top != 0) {
+        ResourcesCompat.getDrawable(
+            resources,
+            top,
+            null
+        )?.updateTint(tintColorTop)
+    } else { null }
 
-    val drawableTop = if (top != 0) ResourcesCompat.getDrawable(
-        resources,
-        top,
-        null
-    )?.updateTint(tintColorTop) else null
+    val drawableRight = if (right != 0) {
+        ResourcesCompat.getDrawable(
+            resources,
+            right,
+            null
+        )?.updateTint(tintColorRight)
+    } else { null }
 
-    val drawableRight = if (right != 0) ResourcesCompat.getDrawable(
-        resources,
-        right,
-        null
-    )?.updateTint(tintColorRight) else null
-
-    val drawableBottom = if (bottom != 0) ResourcesCompat.getDrawable(
-        resources,
-        bottom,
-        null
-    )?.updateTint(tintColorBottom) else null
+    val drawableBottom = if (bottom != 0) {
+        ResourcesCompat.getDrawable(
+            resources,
+            bottom,
+            null
+        )?.updateTint(tintColorBottom)
+    } else { null }
 
     setCompoundDrawablesWithIntrinsicBounds(
         drawableLeft,

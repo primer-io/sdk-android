@@ -13,7 +13,7 @@ internal abstract class RemoteVaultedPaymentMethodsExchangeDataSource<
     BaseFlowDataSource<PaymentMethodTokenInternal, BaseRemoteUrlRequest<@UnsafeVariance T>>
 
 internal class RemoteVaultedCardExchangeDataSource(
-    private val primerHttpClient: PrimerHttpClient,
+    private val primerHttpClient: PrimerHttpClient
 ) : RemoteVaultedPaymentMethodsExchangeDataSource<CardVaultExchangeDataRequest>() {
 
     override fun execute(input: BaseRemoteUrlRequest<CardVaultExchangeDataRequest>) =
@@ -24,7 +24,7 @@ internal class RemoteVaultedCardExchangeDataSource(
 }
 
 internal class RemoteEmptyExchangeDataSource(
-    private val primerHttpClient: PrimerHttpClient,
+    private val primerHttpClient: PrimerHttpClient
 ) : RemoteVaultedPaymentMethodsExchangeDataSource<EmptyExchangeDataRequest>() {
 
     override fun execute(input: BaseRemoteUrlRequest<EmptyExchangeDataRequest>) =

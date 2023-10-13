@@ -19,7 +19,7 @@ internal class ValidProductDescriptionRule :
             false -> ValidationResult.Failure(
                 IllegalClientSessionValueException(
                     IPay88IllegalValueKey.ILLEGAL_PRODUCT_DESCRIPTION,
-                    lineItemsDescriptionJoined,
+                    lineItemsDescriptionJoined
                 )
             )
         }

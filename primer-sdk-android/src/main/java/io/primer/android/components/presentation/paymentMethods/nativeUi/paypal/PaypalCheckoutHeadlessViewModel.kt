@@ -26,7 +26,8 @@ import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.BrowserLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 
 internal class PaypalCheckoutHeadlessViewModel(
     private val configurationInteractor: PaypalCheckoutConfigurationInteractor,
@@ -49,7 +49,7 @@ internal class PaypalCheckoutHeadlessViewModel(
     private val orderValidationRulesResolver: PaypalCheckoutOrderValidationRulesResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     savedStateHandle: SavedStateHandle
-) : NativeUIHeadlessViewModel(savedStateHandle), DIAppComponent {
+) : NativeUIHeadlessViewModel(savedStateHandle), DISdkComponent {
 
     override val initialState: State = PaypalCheckoutState.Idle
 
@@ -192,12 +192,12 @@ internal class PaypalCheckoutHeadlessViewModel(
                         paypalOrderInfo.orderId,
                         paypalOrderInfo.email
                     ),
-                    sessionIntent,
+                    sessionIntent
                 )
             ).catch { onEvent(PaypalEvent.OnError) }.collect { onEvent(PaypalEvent.OnTokenized) }
         }
 
-    companion object : DIAppComponent {
+    companion object : DISdkComponent {
         private const val TOKEN_QUERY_PARAM = "token"
 
         class Factory : ViewModelProvider.Factory {
@@ -210,13 +210,13 @@ internal class PaypalCheckoutHeadlessViewModel(
                 // Create a SavedStateHandle for this ViewModel from extras
 
                 return PaypalCheckoutHeadlessViewModel(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
                     extras.createSavedStateHandle()
                 ) as T
             }

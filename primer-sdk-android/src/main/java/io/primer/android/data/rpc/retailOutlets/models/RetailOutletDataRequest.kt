@@ -7,7 +7,7 @@ import io.primer.android.domain.rpc.retailOutlets.models.RetailOutletParams
 import org.json.JSONObject
 
 internal data class RetailOutletDataRequest(
-    val paymentMethodConfigId: String,
+    val paymentMethodConfigId: String
 ) : JSONObjectSerializable {
     companion object {
 
@@ -25,7 +25,7 @@ internal data class RetailOutletDataRequest(
 }
 
 internal fun RetailOutletParams.toRetailOutletRequest() = RetailOutletDataRequest(
-    paymentMethodConfigId,
+    paymentMethodConfigId
 )
 
 internal fun RetailOutletDataResponse.toRetailOutlet() = RetailOutlet(id, name, disabled, iconUrl)

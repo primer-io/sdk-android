@@ -105,7 +105,7 @@ internal class ThreeDsInteractorTest {
             checkoutErrorEventResolver,
             errorMapperFactory,
             analyticsRepository,
-            logger,
+            logger
         )
 
         every {

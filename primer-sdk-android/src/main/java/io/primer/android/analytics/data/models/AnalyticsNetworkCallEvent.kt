@@ -75,7 +75,7 @@ internal data class NetworkCallProperties(
     val url: String,
     val method: String,
     val responseCode: Int? = null,
-    val errorBody: String? = null,
+    val errorBody: String? = null
 ) : BaseAnalyticsProperties() {
 
     companion object {

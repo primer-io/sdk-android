@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
@@ -17,18 +16,21 @@ import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.components.ui.extensions.get
 import io.primer.android.databinding.FragmentPaymentMethodLoadingBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.activityViewModel
+import io.primer.android.di.extension.inject
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
-internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
+internal open class PaymentMethodLoadingFragment : Fragment(), DISdkComponent {
 
-    private val viewModel: PrimerViewModel by activityViewModels()
+    private val viewModel: PrimerViewModel by
+    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
     private val theme: PrimerTheme by inject()
 
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
@@ -68,7 +70,7 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentPaymentMethodLoadingBinding.inflate(inflater, container, false)
         return binding.root
@@ -76,7 +78,6 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel.selectedPaymentMethod.observe(viewLifecycleOwner, selectedPaymentMethodObserver)
     }
 

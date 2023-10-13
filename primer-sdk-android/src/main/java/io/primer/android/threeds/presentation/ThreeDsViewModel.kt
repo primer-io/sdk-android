@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
     analyticsInteractor: AnalyticsInteractor,
-    private val config: PrimerConfig,
+    private val config: PrimerConfig
 ) : BaseViewModel(analyticsInteractor) {
 
     private val _threeDsInitEvent = MutableLiveData<Unit>()
@@ -96,14 +96,14 @@ internal class ThreeDsViewModel(
     fun performChallenge(
         activity: Activity,
         transaction: Transaction,
-        authData: BeginAuthResponse,
+        authData: BeginAuthResponse
     ) {
         logThreeDsScreenPresented()
         viewModelScope.launch {
             threeDsInteractor.performChallenge(
                 activity,
                 transaction,
-                authData,
+                authData
             ).catch { throwable ->
                 logThreeDsScreenDismissed()
                 _threeDsErrorEvent.postValue(throwable)
@@ -116,7 +116,7 @@ internal class ThreeDsViewModel(
     }
 
     fun continueRemoteAuth(
-        challengeStatusData: ChallengeStatusData,
+        challengeStatusData: ChallengeStatusData
     ) {
         viewModelScope.launch {
             threeDsInteractor.continueRemoteAuth(challengeStatusData)
@@ -130,7 +130,7 @@ internal class ThreeDsViewModel(
     }
 
     fun continueRemoteAuthWithException(
-        throwable: Throwable,
+        throwable: Throwable
     ) {
         viewModelScope.launch {
             threeDsInteractor.continueRemoteAuthWithException(throwable)
@@ -152,7 +152,7 @@ internal class ThreeDsViewModel(
     sealed class ThreeDsEventData {
         class ChallengeRequiredData(
             val transaction: Transaction,
-            val authData: BeginAuthResponse,
+            val authData: BeginAuthResponse
         )
     }
 
@@ -175,7 +175,7 @@ internal class ThreeDsViewModel(
         UIAnalyticsParams(
             AnalyticsAction.PRESENT,
             ObjectType.`3RD_PARTY_VIEW`,
-            Place.`3DS_VIEW`,
+            Place.`3DS_VIEW`
         )
     )
 
@@ -183,7 +183,7 @@ internal class ThreeDsViewModel(
         UIAnalyticsParams(
             AnalyticsAction.DISMISS,
             ObjectType.`3RD_PARTY_VIEW`,
-            Place.`3DS_VIEW`,
+            Place.`3DS_VIEW`
         )
     )
 }

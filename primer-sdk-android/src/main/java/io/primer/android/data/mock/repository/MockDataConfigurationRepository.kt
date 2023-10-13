@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 
 internal class MockDataConfigurationRepository(
     private val localConfigurationDataSource: LocalConfigurationDataSource,
-    private val remoteFinalizeMockedFlowDataSource: RemoteFinalizeMockedFlowDataSource,
+    private val remoteFinalizeMockedFlowDataSource: RemoteFinalizeMockedFlowDataSource
 ) : MockConfigurationRepository {
 
     override fun isMockedFlow() =

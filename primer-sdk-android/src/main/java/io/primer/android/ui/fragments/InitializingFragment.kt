@@ -5,24 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.di.DIAppComponent
-import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.databinding.FragmentInitializingBinding
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
+import io.primer.android.presentation.base.BaseViewModel
+import io.primer.android.presentation.base.BaseViewModelFactory
 import io.primer.android.ui.extensions.autoCleaned
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
+import io.primer.android.ui.settings.PrimerTheme
 
-internal class InitializingFragment : Fragment(), DIAppComponent {
+internal class InitializingFragment : Fragment(), DISdkComponent {
 
     private val theme: PrimerTheme by inject()
     private var binding: FragmentInitializingBinding by autoCleaned()
 
-    private val viewModel: BaseViewModel by viewModel()
+    private val viewModel: BaseViewModel by viewModel<BaseViewModel, BaseViewModelFactory>()
 
     companion object {
 
@@ -33,7 +34,7 @@ internal class InitializingFragment : Fragment(), DIAppComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentInitializingBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,7 +42,6 @@ internal class InitializingFragment : Fragment(), DIAppComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.progressBar.indeterminateDrawable.setTint(
             theme.primaryColor.getColor(
                 requireContext(),

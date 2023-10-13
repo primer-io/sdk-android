@@ -14,7 +14,7 @@ import io.primer.android.ui.fragments.dummy.DummyResultSelectorFragment
 internal class PrimerTestSofortPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : SofortPaymentMethodDescriptor(options, localConfig, config), DummyResultDescriptorHandler {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour

@@ -15,16 +15,17 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.R
 import io.primer.android.data.configuration.models.CountryCode
 import io.primer.android.databinding.FragmentSelectCountryBinding
+import io.primer.android.di.extension.viewModel
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 internal abstract class BaseCountryChooserFragment : BaseFragment() {
 
     protected var binding: FragmentSelectCountryBinding by autoCleaned()
 
-    protected val viewModel by viewModel<SelectCountryViewModel>()
+    protected val viewModel: SelectCountryViewModel
+        by viewModel<SelectCountryViewModel, SelectCountryViewModelFactory>()
 
     protected var adapter: CountriesSelectionAdapter by autoCleaned()
 

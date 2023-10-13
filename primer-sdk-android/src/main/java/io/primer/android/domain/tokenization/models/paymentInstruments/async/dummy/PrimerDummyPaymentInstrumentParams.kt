@@ -9,7 +9,7 @@ internal data class PrimerDummyPaymentInstrumentParams(
     override val paymentMethodConfigId: String,
     override val locale: String,
     val redirectionUrl: String,
-    val flowDecisionType: DummyDecisionType,
+    val flowDecisionType: DummyDecisionType
 ) : BaseAsyncPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,

@@ -119,19 +119,24 @@ internal class VaultManagerDelegate(
     override fun onEvent(e: CheckoutEvent) {
         when (e) {
             is CheckoutEvent.PaymentContinueVaultHUC -> createPayment(
-                e.data.token, e.resumeHandler
+                e.data.token,
+                e.resumeHandler
             )
             is CheckoutEvent.ResumeSuccessInternalVaultHUC -> resumePayment(
-                e.resumeToken, e.resumeHandler
+                e.resumeToken,
+                e.resumeHandler
             )
             is CheckoutEvent.Start3DSVault -> {
-                if (e.processor3DSData == null) navigator.openThreeDsScreen()
-                else navigator.openProcessor3dsViewScreen(
-                    e.processor3DSData.title,
-                    e.processor3DSData.paymentMethodType,
-                    e.processor3DSData.redirectUrl,
-                    e.processor3DSData.statusUrl
-                )
+                if (e.processor3DSData == null) {
+                    navigator.openThreeDsScreen()
+                } else {
+                    navigator.openProcessor3dsViewScreen(
+                        e.processor3DSData.title,
+                        e.processor3DSData.paymentMethodType,
+                        e.processor3DSData.redirectUrl,
+                        e.processor3DSData.statusUrl
+                    )
+                }
             }
             else -> Unit
         }

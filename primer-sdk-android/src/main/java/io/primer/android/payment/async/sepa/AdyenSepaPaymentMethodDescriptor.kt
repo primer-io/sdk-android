@@ -18,7 +18,7 @@ import io.primer.android.ui.payment.LoadingState
 internal class AdyenSepaPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
@@ -33,7 +33,7 @@ internal class AdyenSepaPaymentMethodDescriptor(
         get() = listOf(SDKCapability.DROP_IN)
 
     override fun getLoadingState() = LoadingState(
-        R.drawable.ic_logo_sepa_square,
+        R.drawable.ic_logo_sepa_square
     )
 
     override val behaviours: List<SelectedPaymentMethodBehaviour>

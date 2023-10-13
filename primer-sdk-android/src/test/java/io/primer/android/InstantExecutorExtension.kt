@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 @ExperimentalCoroutinesApi
 class InstantExecutorExtension(
     private val scheduler: TestCoroutineScheduler = TestCoroutineScheduler(),
-    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler),
+    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler)
 ) : BeforeEachCallback, AfterEachCallback, AfterTestExecutionCallback {
 
     override fun afterTestExecution(context: ExtensionContext?) {

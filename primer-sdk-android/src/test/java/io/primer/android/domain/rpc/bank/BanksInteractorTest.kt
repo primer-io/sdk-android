@@ -32,10 +32,7 @@ class BanksInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor =
-            BanksInteractor(
-                repository,
-            )
+        interactor = BanksInteractor(repository)
     }
 
     @Test
@@ -55,7 +52,7 @@ class BanksInteractorTest {
         val banks = listOf(
             IssuingBank("1", "bunq", false, ""),
             IssuingBank("2", "Revolut", false, ""),
-            IssuingBank("3", "Abn amro", false, ""),
+            IssuingBank("3", "Abn amro", false, "")
         )
     }
 }

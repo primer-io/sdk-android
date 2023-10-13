@@ -41,7 +41,7 @@ internal class PreTokenizationEventsResolverTest {
         tokenizationEventsResolver =
             PreTokenizationEventsResolver(
                 config,
-                eventDispatcher,
+                eventDispatcher
             )
     }
 

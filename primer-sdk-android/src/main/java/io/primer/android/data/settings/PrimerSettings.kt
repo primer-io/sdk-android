@@ -15,7 +15,7 @@ data class PrimerSettings @JvmOverloads constructor(
     var locale: Locale = Locale.getDefault(),
     var paymentMethodOptions: PrimerPaymentMethodOptions = PrimerPaymentMethodOptions(),
     var uiOptions: PrimerUIOptions = PrimerUIOptions(),
-    var debugOptions: PrimerDebugOptions = PrimerDebugOptions(),
+    var debugOptions: PrimerDebugOptions = PrimerDebugOptions()
 ) : Parcelable {
 
     internal var fromHUC: Boolean = false
@@ -46,7 +46,7 @@ data class PrimerSettings @JvmOverloads constructor(
         parcel.readParcelable<PrimerPaymentMethodOptions>()
             ?: PrimerPaymentMethodOptions(),
         parcel.readParcelable<PrimerUIOptions>() ?: PrimerUIOptions(),
-        parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions(),
+        parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions()
     ) {
         fromHUC = parcel.readByte() != 0.toByte()
     }

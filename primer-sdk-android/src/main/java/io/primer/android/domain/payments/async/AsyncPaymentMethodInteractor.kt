@@ -27,11 +27,11 @@ internal class AsyncPaymentMethodInteractor(
     private val resumeEventResolver: ResumeEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<AsyncStatus, AsyncMethodParams>() {
 
     override fun execute(params: AsyncMethodParams) = paymentMethodStatusRepository.getAsyncStatus(
-        params.url,
+        params.url
     ).retry {
         (it is AsyncFlowIncompleteException).also { retrying ->
             if (retrying) delay(POLL_DELAY)

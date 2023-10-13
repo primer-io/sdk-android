@@ -4,5 +4,5 @@ import io.primer.android.domain.base.Params
 
 internal data class NolPayGetLinkedCardsParams(
     val mobileNumber: String,
-    val countryCallingCode: String,
+    val countryCallingCode: String
 ) : Params

@@ -16,7 +16,7 @@ internal data class PaymentMethodVaultTokenInternal(
     override val vaultData: VaultDataResponse?,
     override val threeDSecureAuthentication: AuthenticationDetailsDataResponse?,
     override val isVaulted: Boolean,
-    val analyticsId: String,
+    val analyticsId: String
 ) : BasePaymentToken() {
 
     override val token: String = id
@@ -63,29 +63,33 @@ internal data class PaymentMethodVaultTokenInternal(
 internal fun PrimerPaymentMethodTokenData.toPaymentMethodVaultToken():
     PaymentMethodVaultTokenInternal {
     val paymentInstrumentData =
-        if (paymentInstrumentData == null) null
-        else PaymentInstrumentData(
-            paymentInstrumentData.network,
-            paymentInstrumentData.cardholderName,
-            paymentInstrumentData.first6Digits,
-            paymentInstrumentData.last4Digits,
-            paymentInstrumentData.expirationMonth,
-            paymentInstrumentData.expirationYear,
-            paymentInstrumentData.gocardlessMandateId,
-            paymentInstrumentData.externalPayerInfo,
-            paymentInstrumentData.klarnaCustomerToken,
-            paymentInstrumentData.sessionData,
-            paymentInstrumentData.mx,
-            paymentInstrumentData.mnc,
-            paymentInstrumentData.mcc,
-            paymentInstrumentData.hashedIdentifier,
-            paymentInstrumentData.currencyCode,
-            paymentInstrumentData.productId,
-            paymentInstrumentData.paymentMethodType
-        )
+        if (paymentInstrumentData == null) {
+            null
+        } else {
+            PaymentInstrumentData(
+                paymentInstrumentData.network,
+                paymentInstrumentData.cardholderName,
+                paymentInstrumentData.first6Digits,
+                paymentInstrumentData.last4Digits,
+                paymentInstrumentData.expirationMonth,
+                paymentInstrumentData.expirationYear,
+                paymentInstrumentData.gocardlessMandateId,
+                paymentInstrumentData.externalPayerInfo,
+                paymentInstrumentData.klarnaCustomerToken,
+                paymentInstrumentData.sessionData,
+                paymentInstrumentData.mx,
+                paymentInstrumentData.mnc,
+                paymentInstrumentData.mcc,
+                paymentInstrumentData.hashedIdentifier,
+                paymentInstrumentData.currencyCode,
+                paymentInstrumentData.productId,
+                paymentInstrumentData.paymentMethodType
+            )
+        }
     val vaultData =
-        if (vaultData == null) null
-        else BasePaymentToken.VaultDataResponse(customerId = vaultData.customerId)
+        if (vaultData == null) {
+            null
+        } else { BasePaymentToken.VaultDataResponse(customerId = vaultData.customerId) }
 
     val threeDSecureAuthentication = threeDSecureAuthentication?.let {
         BasePaymentToken.AuthenticationDetailsDataResponse(

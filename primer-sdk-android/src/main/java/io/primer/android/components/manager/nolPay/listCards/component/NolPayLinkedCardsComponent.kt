@@ -7,10 +7,10 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.components.manager.core.composable.PrimerHeadlessComponent
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import kotlinx.coroutines.flow.collect
-import org.koin.core.component.get
 
 @ExperimentalPrimerApi
 class NolPayLinkedCardsComponent internal constructor(
@@ -50,8 +50,8 @@ class NolPayLinkedCardsComponent internal constructor(
         )
     ).collect()
 
-    internal companion object : DIAppComponent {
+    internal companion object : DISdkComponent {
 
-        fun getInstance() = NolPayLinkedCardsComponent(get(), get())
+        fun getInstance() = NolPayLinkedCardsComponent(resolve(), resolve())
     }
 }

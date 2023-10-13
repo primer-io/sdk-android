@@ -8,14 +8,15 @@ import io.primer.android.ui.settings.PrimerTheme
 import kotlinx.coroutines.flow.flowOf
 
 internal class BancontactCardLocalFormDataSource(
-    private val theme: PrimerTheme,
+    private val theme: PrimerTheme
 ) : BaseFlowCacheDataSource<FormDataResponse, String> {
 
     override fun get() = flowOf(
         FormDataResponse(
             null,
-            if (theme.isDarkMode == true) R.drawable.ic_logo_bancontact_dark
-            else R.drawable.ic_logo_bancontact,
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_bancontact_dark
+            } else { R.drawable.ic_logo_bancontact },
             ButtonType.PAY,
             null
         )

@@ -22,7 +22,7 @@ internal class ApayaSessionInteractor(
     private val apayaWebResultValidator: ApayaWebResultValidator,
     private val apayaSessionRepository: ApayaSessionRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<ApayaPaymentModel, ApayaSessionParams>() {
 
     override fun execute(params: ApayaSessionParams) =

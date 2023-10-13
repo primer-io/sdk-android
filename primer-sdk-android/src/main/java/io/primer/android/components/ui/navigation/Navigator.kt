@@ -48,7 +48,7 @@ internal class Navigator(private val context: Context) {
                 WebViewClientType.PROCESSOR_3DS
             ).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            },
+            }
         )
     }
 

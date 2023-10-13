@@ -45,7 +45,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : PrimerHeadlessUniversalCheckoutResumeDecisionHandler, PrimerResumeDecisionHandler {
 
     private var handlerUsed = false

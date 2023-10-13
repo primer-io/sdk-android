@@ -21,7 +21,7 @@ internal data class AsyncPaymentMethodStatusDataResponse(
                 return AsyncPaymentMethodStatusDataResponse(
                     t.getString(ID_FIELD),
                     AsyncMethodStatus.valueOf(t.getString(STATUS_FIELD)),
-                    t.getString(SOURCE_FIELD),
+                    t.getString(SOURCE_FIELD)
                 )
             }
         }

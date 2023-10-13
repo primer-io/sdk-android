@@ -21,8 +21,9 @@ internal class MbWayLocalFormDataSource(
     override fun get() = flowOf(
         FormDataResponse(
             null,
-            if (theme.isDarkMode == true) R.drawable.ic_logo_mbway_dark
-            else R.drawable.ic_logo_mbway_light,
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_mbway_dark
+            } else { R.drawable.ic_logo_mbway_light },
             ButtonType.PAY,
             null,
             listOf(

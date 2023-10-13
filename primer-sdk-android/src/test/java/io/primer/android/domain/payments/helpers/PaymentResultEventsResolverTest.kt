@@ -33,10 +33,7 @@ internal class PaymentResultEventsResolverTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        paymentResultEventsResolver =
-            PaymentResultEventsResolver(
-                eventDispatcher,
-            )
+        paymentResultEventsResolver = PaymentResultEventsResolver(eventDispatcher)
     }
 
     @Test

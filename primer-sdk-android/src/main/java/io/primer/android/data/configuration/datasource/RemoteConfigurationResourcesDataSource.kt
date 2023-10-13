@@ -41,7 +41,7 @@ internal class RemoteConfigurationResourcesDataSource(
                 listOfNotNull(
                     iconUrl?.colored?.to(ImageColor.COLORED),
                     iconUrl?.dark?.to(ImageColor.DARK),
-                    iconUrl?.light?.to(ImageColor.LIGHT),
+                    iconUrl?.light?.to(ImageColor.LIGHT)
                 ).map { urlColor ->
                     async(Dispatchers.IO) {
                         withTimeoutOrNull(DEFAULT_REQUEST_TIMEOUT_MILLIS) {
@@ -121,7 +121,7 @@ internal class RemoteConfigurationResourcesDataSource(
                                 ImageColor.LIGHT,
                                 iconResId = brand.getImageAsset(ImageColor.LIGHT)
                             )
-                        ),
+                        )
                     ).map { it.second }.map {
                         coroutineScope {
                             async { it }
@@ -153,11 +153,11 @@ internal class RemoteConfigurationResourcesDataSource(
     )
 
     private fun logAnalyticsAllImageDurationTimerEvent(
-        timerType: TimerType,
+        timerType: TimerType
     ) = timerEventProvider.getTimerEventProvider().tryEmit(
         TimerProperties(
             TimerId.PM_ALL_IMAGES_LOADING_DURATION,
-            timerType,
+            timerType
         )
     )
 

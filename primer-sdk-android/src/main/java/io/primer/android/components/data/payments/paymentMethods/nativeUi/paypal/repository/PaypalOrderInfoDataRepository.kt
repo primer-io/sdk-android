@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.mapLatest
 
 internal class PaypalOrderInfoDataRepository(
     private val remotePaypalOrderInfoDataSource: RemotePaypalOrderInfoDataSource,
-    private var configurationDataSource: LocalConfigurationDataSource,
+    private var configurationDataSource: LocalConfigurationDataSource
 ) : PaypalInfoRepository {
 
     override fun getPaypalOrderInfo(params: PaypalOrderInfoParams) = configurationDataSource.get()

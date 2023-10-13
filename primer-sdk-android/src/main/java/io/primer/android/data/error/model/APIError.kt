@@ -14,12 +14,12 @@ internal data class APIError(
     val description: String,
     val errorId: String?,
     val diagnosticsId: String?,
-    val validationErrors: List<ValidationError>,
+    val validationErrors: List<ValidationError>
 ) : JSONDeserializable {
 
     data class ValidationErrorDetail(
         val path: String,
-        val description: String,
+        val description: String
     ) : JSONDeserializable {
         companion object {
 
@@ -31,7 +31,7 @@ internal data class APIError(
                 override fun deserialize(t: JSONObject): ValidationErrorDetail {
                     return ValidationErrorDetail(
                         t.getString(PATH_FIELD),
-                        t.getString(DESCRIPTION_FIELD),
+                        t.getString(DESCRIPTION_FIELD)
                     )
                 }
             }
@@ -40,7 +40,7 @@ internal data class APIError(
 
     data class ValidationError(
         val model: String,
-        val errors: List<ValidationErrorDetail>,
+        val errors: List<ValidationErrorDetail>
     ) : JSONDeserializable {
         companion object {
 
@@ -55,7 +55,7 @@ internal data class APIError(
                         t.getJSONArray(ERRORS_FIELD).sequence<JSONObject>().map {
                             JSONSerializationUtils.getDeserializer<ValidationErrorDetail>()
                                 .deserialize(it)
-                        }.toList(),
+                        }.toList()
                     )
                 }
             }
@@ -109,7 +109,7 @@ internal data class APIError(
                     t.optJSONArray(VALIDATION_ERRORS_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils.getDeserializer<ValidationError>()
                             .deserialize(it)
-                    }?.toList().orEmpty(),
+                    }?.toList().orEmpty()
                 )
             }
         }

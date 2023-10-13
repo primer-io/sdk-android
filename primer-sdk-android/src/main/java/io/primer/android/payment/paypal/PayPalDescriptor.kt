@@ -4,7 +4,7 @@ import io.primer.android.R
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.PaymentMethodUiType
@@ -17,8 +17,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 internal open class PayPalDescriptor constructor(
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
+    config: PaymentMethodConfigDataResponse
+) : PaymentMethodDescriptor(config, localConfig), DISdkComponent {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() =

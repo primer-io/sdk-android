@@ -141,7 +141,7 @@ internal class VaultManagerDelegateTest {
         runTest {
             assertEquals(
                 Result.success(Unit),
-                delegate.deletePaymentMethod(vaultedPaymentMethodId),
+                delegate.deletePaymentMethod(vaultedPaymentMethodId)
             )
         }
 
@@ -163,7 +163,7 @@ internal class VaultManagerDelegateTest {
         runTest {
             assertEquals(
                 Result.failure(exception),
-                delegate.deletePaymentMethod(vaultedPaymentMethodId),
+                delegate.deletePaymentMethod(vaultedPaymentMethodId)
             )
         }
 
@@ -236,7 +236,7 @@ internal class VaultManagerDelegateTest {
         runTest {
             assertEquals(
                 Result.failure(exception),
-                delegate.validate(vaultedPaymentMethodId, additionalData),
+                delegate.validate(vaultedPaymentMethodId, additionalData)
             )
         }
 
@@ -306,7 +306,7 @@ internal class VaultManagerDelegateTest {
         runTest {
             assertEquals(
                 Result.failure(exception),
-                delegate.validate(vaultedPaymentMethodId, additionalData),
+                delegate.validate(vaultedPaymentMethodId, additionalData)
             )
         }
 

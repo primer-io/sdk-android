@@ -12,10 +12,11 @@ internal class ValidPaymentMethodRule(
         return paymentMethodRepository.getPaymentMethodDescriptors()
             .find { it.config.type == t.paymentMethodType }
             .let {
-                if (it != null) ValidationResult.Success
-                else ValidationResult.Failure(
-                    UnsupportedPaymentMethodException(t.paymentMethodType)
-                )
+                if (it != null) {
+                    ValidationResult.Success
+                } else {
+                    ValidationResult.Failure(UnsupportedPaymentMethodException(t.paymentMethodType))
+                }
             }
     }
 }

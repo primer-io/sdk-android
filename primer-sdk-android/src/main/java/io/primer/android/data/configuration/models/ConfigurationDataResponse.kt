@@ -18,7 +18,7 @@ internal data class ConfigurationDataResponse(
     val keys: ConfigurationKeysDataResponse?,
     val clientSession: ClientSessionDataResponse?,
     val environment: Environment,
-    val primerAccountId: String?,
+    val primerAccountId: String?
 ) : JSONDeserializable {
 
     fun toConfigurationData(iconDisplayMetaData: List<Map<String, List<IconDisplayMetadata>>>) =
@@ -141,7 +141,7 @@ internal data class PaymentMethodRemoteConfigOptions(
     val merchantId: String?,
     val merchantAccountId: String?,
     val merchantAppId: String?,
-    val threeDSecureEnabled: Boolean?,
+    val threeDSecureEnabled: Boolean?
 ) : JSONDeserializable {
 
     companion object {
@@ -167,5 +167,5 @@ internal enum class Environment(val environment: String) {
     DEV("dev"),
     SANDBOX("sandbox"),
     STAGING("staging"),
-    PRODUCTION("production"),
+    PRODUCTION("production")
 }

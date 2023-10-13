@@ -15,7 +15,7 @@ internal class ValidCustomerEmailRule :
             false -> ValidationResult.Failure(
                 IllegalClientSessionValueException(
                     IPay88IllegalValueKey.ILLEGAL_CUSTOMER_EMAIL,
-                    emailAddress,
+                    emailAddress
                 )
             )
         }

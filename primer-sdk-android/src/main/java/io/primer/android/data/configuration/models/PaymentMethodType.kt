@@ -7,12 +7,12 @@ import io.primer.android.data.token.model.ClientTokenIntent
 
 internal enum class PaymentMethodType(
     internal val intents: Array<ClientTokenIntent>? = null,
-    internal val brand: Brand,
+    internal val brand: Brand
 ) {
     PAYMENT_CARD(
         arrayOf(
             ClientTokenIntent.`3DS_AUTHENTICATION`,
-            ClientTokenIntent.PROCESSOR_3DS,
+            ClientTokenIntent.PROCESSOR_3DS
         ),
         Brand.PAYMENT_CARD
     ),
@@ -70,6 +70,7 @@ internal enum class PaymentMethodType(
     XENDIT_RETAIL_OUTLETS(ClientTokenIntent.PAYMENT_METHOD_VOUCHER, Brand.RETAIL_OUTLETS),
     IPAY88_CARD(ClientTokenIntent.IPAY88_CARD_REDIRECTION, Brand.IPAY_88),
     NOL_PAY(brand = Brand.UNKNOWN),
+
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);
 

@@ -3,14 +3,12 @@ buildscript {
         projectJvmTarget = JavaVersion.VERSION_1_8
         kotlinVersion = '1.7.20'
 
-        koinVersion = '3.3.3'
-
         projectDependencies = [
                 androidGradlePlugin: 'com.android.tools.build:gradle:7.3.1',
                 kotlinGradlePlugin : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
                 androidJunit5      : 'de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1',
                 staticAnalysis     : [
-                        ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:10.3.0',
+                        ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:11.6.1',
                 ],
                 mavenPublish       : 'com.github.dcendents:android-maven-gradle-plugin:2.1',
                 jacoco             : 'org.jacoco:org.jacoco.core:0.8.9',

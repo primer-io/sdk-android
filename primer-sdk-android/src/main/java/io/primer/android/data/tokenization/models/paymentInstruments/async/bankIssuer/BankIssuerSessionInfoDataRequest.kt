@@ -7,7 +7,7 @@ import org.json.JSONObject
 internal data class BankIssuerSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
-    val issuer: String,
+    val issuer: String
 ) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 

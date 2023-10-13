@@ -13,7 +13,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.async.pho
 internal class PhoneNumberRawDataMapper(
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
     private val config: PaymentMethodConfigDataResponse,
-    private val settings: PrimerSettings,
+    private val settings: PrimerSettings
 ) : PrimerPaymentMethodRawDataMapper<PrimerPhoneNumberData> {
     override fun getInstrumentParams(
         rawData: PrimerPhoneNumberData

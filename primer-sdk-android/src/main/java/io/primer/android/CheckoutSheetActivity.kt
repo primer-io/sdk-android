@@ -13,7 +13,9 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
-import io.primer.android.di.DIAppContext
+import io.primer.android.di.DISdkContext
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -46,19 +48,24 @@ import io.primer.android.ui.fragments.multibanko.MultibancoPaymentFragment
 import io.primer.android.ui.mock.PaymentMethodMockActivity
 import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.TokenizationViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class CheckoutSheetActivity : BaseCheckoutActivity() {
 
     private var subscription: EventBus.SubscriptionHandle? = null
     private var exited = false
     private var initFinished = false
 
-    private val primerViewModel: PrimerViewModel by viewModel()
-    private val tokenizationViewModel: TokenizationViewModel by viewModel()
+    private val primerViewModel: PrimerViewModel
+        by viewModel<PrimerViewModel, PrimerViewModelFactory>()
+    private val tokenizationViewModel: TokenizationViewModel
+        by viewModel<TokenizationViewModel, TokenizationViewModelFactory>()
+
     private val errorEventResolver: BaseErrorEventResolver by inject()
     private val config: PrimerConfig by inject()
 
@@ -70,12 +77,15 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 config.settings.uiOptions.isInitScreenEnabled -> {
                 InitializingFragment.newInstance()
             }
+
             viewStatus == ViewStatus.SELECT_PAYMENT_METHOD -> {
                 SelectPaymentMethodFragment.newInstance()
             }
+
             viewStatus == ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> {
                 VaultedPaymentMethodsFragment.newInstance()
             }
+
             else -> null
         }
 
@@ -98,30 +108,33 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
             is CheckoutEvent.DismissInternal -> {
                 onExit(it.data)
             }
+
             is CheckoutEvent.ShowSuccess -> {
                 if (config.settings.uiOptions.isSuccessScreenEnabled) {
                     openFragment(
                         SessionCompleteFragment.newInstance(
                             it.delay,
-                            SessionCompleteViewType.Success(it.successType),
+                            SessionCompleteViewType.Success(it.successType)
                         )
                     )
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
                 }
             }
+
             is CheckoutEvent.ShowError -> {
                 if (config.settings.uiOptions.isErrorScreenEnabled) {
                     openFragment(
                         SessionCompleteFragment.newInstance(
                             it.delay,
-                            SessionCompleteViewType.Error(it.errorType, it.message),
+                            SessionCompleteViewType.Error(it.errorType, it.message)
                         )
                     )
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
                 }
             }
+
             is CheckoutEvent.Start3DSMock -> {
                 startActivity(
                     PaymentMethodMockActivity.getLaunchIntent(
@@ -130,6 +143,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                     )
                 )
             }
+
             is CheckoutEvent.Start3DS -> {
                 it.processor3DSData?.let { data ->
                     startActivityForResult(
@@ -148,6 +162,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                     startActivity(ThreeDsActivity.getLaunchIntent(this))
                 }
             }
+
             is CheckoutEvent.StartAsyncRedirectFlow -> {
                 // this will be removed when Drop-In starts using Raw Data Managers
                 startActivity(
@@ -167,6 +182,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                     )
                 )
             }
+
             is CheckoutEvent.StartAsyncFlow -> {
                 when (it.clientTokenIntent) {
                     ClientTokenIntent.ADYEN_BLIK_REDIRECTION.name -> {
@@ -179,6 +195,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                             true
                         )
                     }
+
                     ClientTokenIntent.XFERS_PAYNOW_REDIRECTION.name -> openFragment(
                         QrCodeFragment.newInstance(
                             it.statusUrl,
@@ -186,6 +203,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                         ),
                         true
                     )
+
                     ClientTokenIntent.RAPYD_FAST_REDIRECTION.name -> openFragment(
                         FastBankTransferFragment.newInstance(
                             it.statusUrl,
@@ -193,6 +211,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                         ),
                         true
                     )
+
                     ClientTokenIntent.OMISE_PROMPTPAY_REDIRECTION.name,
                     ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION.name -> openFragment(
                         PromptPayFragment.newInstance(
@@ -203,6 +222,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                     )
                 }
             }
+
             is CheckoutEvent.StartVoucherFlow -> {
                 when (it.paymentMethodType) {
                     PaymentMethodType.ADYEN_MULTIBANCO.name -> {
@@ -216,6 +236,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                     }
                 }
             }
+
             else -> Unit
         }
     }
@@ -243,15 +264,16 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         val type = descriptor.config.type
 
         val actionParams =
-            if (type == PaymentMethodType.PAYMENT_CARD.name) ActionUpdateUnselectPaymentMethodParams
-            else ActionUpdateSelectPaymentMethodParams(type)
+            if (type == PaymentMethodType.PAYMENT_CARD.name) {
+                ActionUpdateUnselectPaymentMethodParams
+            } else { ActionUpdateSelectPaymentMethodParams(type) }
 
         primerViewModel.dispatchAction(actionParams, false) { error: Error? ->
             runOnUiThread {
                 if (error == null) {
                     presentFragment(descriptor.selectedBehaviour)
                     primerViewModel.setState(SessionState.AWAITING_USER)
-                } else emitError(error)
+                } else { emitError(error) }
             }
         }
     }
@@ -263,9 +285,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         intent.getParcelable<PrimerConfig>(PRIMER_CONFIG_KEY)?.let { config ->
-            DIAppContext.init(
-                applicationContext,
-                config
+            DISdkContext.init(
+                config,
+                applicationContext
             )
             intent.removeExtra(PRIMER_CONFIG_KEY)
         } ?: run { finish() }
@@ -312,8 +334,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 is CheckoutEvent.Start3DSMock,
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
-                is CheckoutEvent.ShowError,
+                is CheckoutEvent.ShowError
                 -> primerViewModel.setCheckoutEvent(it)
+
                 else -> Unit
             }
         }

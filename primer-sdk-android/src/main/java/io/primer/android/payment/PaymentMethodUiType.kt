@@ -10,5 +10,5 @@ enum class PaymentMethodUiType {
      * The SIMPLE_BUTTON type represents a payment method where the customer only has to press
      * the button. Everything else is handled by some third party native library
      */
-    SIMPLE_BUTTON,
+    SIMPLE_BUTTON
 }

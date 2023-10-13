@@ -15,7 +15,6 @@ import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsCons
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.di.NolPayUnlinkCardComponentProvider
-import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.ErrorMapper
 import io.primer.android.domain.error.models.PrimerError
 import kotlinx.coroutines.flow.Flow
@@ -97,7 +96,7 @@ class NolPayUnlinkCardComponent internal constructor(
     }
 
     private fun handleError(
-        throwable: Throwable,
+        throwable: Throwable
     ) = viewModelScope.launch {
         errorMapper.getPrimerError(throwable)
             .also { error ->
@@ -107,7 +106,7 @@ class NolPayUnlinkCardComponent internal constructor(
             }
     }
 
-    companion object : DIAppComponent {
+    internal companion object {
         fun provideInstance(owner: ViewModelStoreOwner) =
             NolPayUnlinkCardComponentProvider().provideInstance(owner)
     }

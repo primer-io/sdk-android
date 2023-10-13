@@ -73,7 +73,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
 
 internal data class FunctionProperties(
     val name: String,
-    val params: Map<String, String>,
+    val params: Map<String, String>
 ) : BaseAnalyticsProperties() {
     companion object {
 

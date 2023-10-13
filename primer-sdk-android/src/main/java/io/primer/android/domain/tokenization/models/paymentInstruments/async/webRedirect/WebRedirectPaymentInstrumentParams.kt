@@ -7,7 +7,7 @@ internal class WebRedirectPaymentInstrumentParams(
     override val paymentMethodType: String,
     override val paymentMethodConfigId: String,
     override val locale: String,
-    val redirectionUrl: String,
+    val redirectionUrl: String
 ) : BaseAsyncPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,

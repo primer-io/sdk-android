@@ -118,14 +118,14 @@ internal sealed class IPay88State : State {
         val customerEmail: String?,
         val remark: String?,
         val backendCallbackUrl: String,
-        val deeplinkUrl: String,
+        val deeplinkUrl: String
     ) : IPay88State()
 
     data class Redirect(
         val statusUrl: String,
         val paymentMethodType: String,
         val iPay88PaymentMethodId: String,
-        val iPay88ActionType: String,
+        val iPay88ActionType: String
     ) : IPay88State()
 
     object HandlingResult : IPay88State()
@@ -137,7 +137,7 @@ internal sealed class IPay88Event : Event {
     data class OnConfigurationLoaded(
         val paymentMethodType: String,
         val paymentMethodConfigId: String,
-        val locale: String,
+        val locale: String
     ) : IPay88Event()
 
     object OnTokenized : IPay88Event()
@@ -157,12 +157,12 @@ internal sealed class IPay88Event : Event {
         val customerEmail: String?,
         val remark: String?,
         val backendCallbackUrl: String,
-        val deeplinkUrl: String,
+        val deeplinkUrl: String
     ) : IPay88Event()
 
     data class OnStartPolling(
         val statusUrl: String,
-        val paymentMethodType: String,
+        val paymentMethodType: String
     ) : IPay88Event()
 
     object OnCancel : IPay88Event()

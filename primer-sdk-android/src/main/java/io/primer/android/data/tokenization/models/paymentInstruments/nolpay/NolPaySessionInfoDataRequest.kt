@@ -10,7 +10,7 @@ internal class NolPaySessionInfoDataRequest(
     private val nolPayCardNumber: String,
     val deviceVendor: String,
     val deviceModel: String,
-    override val locale: String,
+    override val locale: String
 ) : BaseSessionInfoDataRequest(locale) {
     companion object {
 

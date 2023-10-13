@@ -68,7 +68,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                         CheckoutEvent.StartAsyncFlow(
                             clientTokenRepository.getClientTokenIntent(),
                             clientTokenRepository.getStatusUrl().orEmpty(),
-                            paymentMethodType,
+                            paymentMethodType
                         )
                     )
                 )

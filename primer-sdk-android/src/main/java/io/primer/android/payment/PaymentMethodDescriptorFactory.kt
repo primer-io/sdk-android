@@ -18,6 +18,6 @@ internal interface PaymentMethodDescriptorFactory {
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor
 }

@@ -31,7 +31,7 @@ internal class PaymentMethodModulesInteractor(
     private val config: PrimerConfig,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val logger: Logger,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<
     PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
     None>() {
@@ -64,9 +64,7 @@ internal class PaymentMethodModulesInteractor(
                             it.config.type == paymentMethod
                         }
                     ) {
-                        throw UnsupportedPaymentMethodException(
-                            paymentMethod,
-                        )
+                        throw UnsupportedPaymentMethodException(paymentMethod)
                     }
                 }
                 descriptors.filter {
@@ -118,6 +116,6 @@ internal class PaymentMethodModulesInteractor(
 
     data class PaymentDescriptorsHolder(
         val descriptors: List<PaymentMethodDescriptor>,
-        val selectedPaymentMethodDescriptor: PaymentMethodDescriptor? = null,
+        val selectedPaymentMethodDescriptor: PaymentMethodDescriptor? = null
     )
 }

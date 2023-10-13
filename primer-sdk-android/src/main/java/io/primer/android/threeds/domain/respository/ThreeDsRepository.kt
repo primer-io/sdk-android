@@ -10,7 +10,7 @@ internal interface ThreeDsRepository {
 
     fun begin3DSAuth(
         token: String,
-        threeDsParams: BaseThreeDsParams,
+        threeDsParams: BaseThreeDsParams
     ): Flow<BeginAuthResponse>
 
     fun continue3DSAuth(

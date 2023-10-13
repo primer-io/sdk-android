@@ -17,7 +17,7 @@ internal data class CustomerDataResponse(
     val workPhone: String? = null,
     val nationalDocumentId: String? = null,
     val billingAddress: AddressDataResponse? = null,
-    val shippingAddress: AddressDataResponse? = null,
+    val shippingAddress: AddressDataResponse? = null
 ) : JSONDeserializable {
 
     fun toCustomer() = PrimerCustomer(

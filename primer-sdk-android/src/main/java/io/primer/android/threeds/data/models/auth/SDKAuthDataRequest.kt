@@ -10,7 +10,7 @@ internal data class SDKAuthDataRequest(
     val sdkTimeout: Int,
     val sdkEncData: String,
     val sdkEphemPubKey: String,
-    val sdkReferenceNumber: String,
+    val sdkReferenceNumber: String
 ) : JSONObjectSerializable {
 
     companion object {

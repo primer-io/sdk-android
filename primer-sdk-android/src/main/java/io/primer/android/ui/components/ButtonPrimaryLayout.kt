@@ -7,13 +7,13 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.di.DIAppComponent
-import org.koin.core.component.inject
 
 class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(ctx, attrs),
-    DIAppComponent {
+    DISdkComponent {
 
     private val theme: PrimerTheme by inject()
 
@@ -25,7 +25,7 @@ class ButtonPrimaryLayout(ctx: Context, attrs: AttributeSet? = null) :
                         android.R.attr.state_pressed
                     }
                 ),
-                IntArray(1) { Color.parseColor("#FFFFFFFF") },
+                IntArray(1) { Color.parseColor("#FFFFFFFF") }
             ),
             GradientDrawable().apply {
                 cornerRadius = theme.defaultCornerRadius.getDimension(context)

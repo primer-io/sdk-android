@@ -45,7 +45,7 @@ import kotlin.coroutines.coroutineContext
 @ExperimentalCoroutinesApi
 internal class NetceteraThreeDsServiceRepository(
     private val context: Context,
-    private val threeDS2Service: ThreeDS2Service,
+    private val threeDS2Service: ThreeDS2Service
 ) : ThreeDsServiceRepository {
 
     override val threeDsSdkVersion: String?
@@ -59,7 +59,7 @@ internal class NetceteraThreeDsServiceRepository(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
         useWeakValidation: Boolean,
-        threeDsKeysParams: ThreeDsKeysParams?,
+        threeDsKeysParams: ThreeDsKeysParams?
     ): Flow<Unit> =
         flow {
             coroutineContext.ensureActive()
@@ -158,19 +158,21 @@ internal class NetceteraThreeDsServiceRepository(
                                     completionEvent.transactionStatus
                                 )
                             )
-                        } else cancel(
-                            ThreeDsInvalidStatusException(
-                                completionEvent.transactionStatus,
-                                completionEvent.sdkTransactionID,
-                                THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
-                                ThreeDsRuntimeFailureContextParams(
-                                    threeDsSdkVersion,
-                                    initProtocolVersion,
-                                    THREE_DS_CHALLENGE_INVALID_STATUS_CODE
-                                ),
-                                "3DS challenge failed."
+                        } else {
+                            cancel(
+                                ThreeDsInvalidStatusException(
+                                    completionEvent.transactionStatus,
+                                    completionEvent.sdkTransactionID,
+                                    THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
+                                    ThreeDsRuntimeFailureContextParams(
+                                        threeDsSdkVersion,
+                                        initProtocolVersion,
+                                        THREE_DS_CHALLENGE_INVALID_STATUS_CODE
+                                    ),
+                                    "3DS challenge failed."
+                                )
                             )
-                        )
+                        }
                         close()
                     }
 
@@ -181,7 +183,7 @@ internal class NetceteraThreeDsServiceRepository(
                                 ThreeDsRuntimeFailureContextParams(
                                     threeDsSdkVersion,
                                     initProtocolVersion = initProtocolVersion,
-                                    THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
+                                    THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE
                                 ),
                                 "3DS Challenge cancelled."
                             )
@@ -195,7 +197,7 @@ internal class NetceteraThreeDsServiceRepository(
                                 ThreeDsRuntimeFailureContextParams(
                                     threeDsSdkVersion,
                                     initProtocolVersion = initProtocolVersion,
-                                    THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
+                                    THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE
                                 ),
                                 "3DS Challenge timed out."
                             )
@@ -216,7 +218,7 @@ internal class NetceteraThreeDsServiceRepository(
                                     errorMessage.transactionID,
                                     errorMessage.messageVersionNumber,
                                     threeDsSdkVersion,
-                                    initProtocolVersion,
+                                    initProtocolVersion
                                 ),
                                 errorMessage.errorDescription
                             )

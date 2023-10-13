@@ -8,7 +8,7 @@ internal data class XenditRetailOutletPaymentInstrumentParams(
     override val paymentMethodConfigId: String,
     override val locale: String,
     val redirectionUrl: String,
-    val retailOutlet: String,
+    val retailOutlet: String
 ) : BaseAsyncPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,

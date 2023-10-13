@@ -8,7 +8,7 @@ import org.json.JSONObject
 internal data class PrimerDummySessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
-    val flowDecision: DummyDecisionType,
+    val flowDecision: DummyDecisionType
 ) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 

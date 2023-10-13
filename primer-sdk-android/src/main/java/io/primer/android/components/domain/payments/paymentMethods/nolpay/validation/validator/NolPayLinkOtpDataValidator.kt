@@ -15,7 +15,7 @@ internal class NolPayLinkOtpDataValidator :
                 return listOf(
                     PrimerValidationError(
                         INVALID_OTP_CODE_ERROR_ID,
-                        "OTP code cannot be blank.",
+                        "OTP code cannot be blank."
                     )
                 )
             }
@@ -24,7 +24,7 @@ internal class NolPayLinkOtpDataValidator :
                 listOf(
                     PrimerValidationError(
                         INVALID_OTP_CODE_ERROR_ID,
-                        "OTP code is not valid.",
+                        "OTP code is not valid."
                     )
                 )
             }

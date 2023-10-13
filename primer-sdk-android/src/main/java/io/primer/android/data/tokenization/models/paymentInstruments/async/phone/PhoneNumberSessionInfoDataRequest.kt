@@ -7,7 +7,7 @@ import org.json.JSONObject
 internal data class PhoneNumberSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
-    val phoneNumber: String,
+    val phoneNumber: String
 ) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 

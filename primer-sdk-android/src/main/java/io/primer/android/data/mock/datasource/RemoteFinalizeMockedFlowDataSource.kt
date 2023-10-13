@@ -12,7 +12,7 @@ internal class RemoteFinalizeMockedFlowDataSource(private val httpClient: Primer
     override fun execute(input: BaseRemoteRequest<EmptyDataRequest>): Flow<EmptyDataRequest> {
         return httpClient.post(
             "${input.configuration.coreUrl}/finalize-polling",
-            input.data,
+            input.data
         )
     }
 }

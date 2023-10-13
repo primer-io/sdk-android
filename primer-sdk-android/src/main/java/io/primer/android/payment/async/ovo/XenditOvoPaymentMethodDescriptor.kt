@@ -7,18 +7,18 @@ import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerPhoneNumberData
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SDKCapability
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
-import org.koin.core.component.inject
 
 internal class XenditOvoPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     private val deeplinkRepository: AsyncPaymentMethodDeeplinkRepository by inject()

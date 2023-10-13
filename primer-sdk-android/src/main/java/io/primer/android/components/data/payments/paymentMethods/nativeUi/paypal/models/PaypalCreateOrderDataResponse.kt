@@ -21,7 +21,7 @@ internal data class PaypalCreateOrderDataResponse(
             override fun deserialize(t: JSONObject): PaypalCreateOrderDataResponse {
                 return PaypalCreateOrderDataResponse(
                     t.getString(ORDER_ID_FIELD),
-                    t.getString(APPROVAL_URL_FIELD),
+                    t.getString(APPROVAL_URL_FIELD)
                 )
             }
         }

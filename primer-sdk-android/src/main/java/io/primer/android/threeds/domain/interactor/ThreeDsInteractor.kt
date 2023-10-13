@@ -41,19 +41,19 @@ import kotlinx.coroutines.flow.onEach
 internal interface ThreeDsInteractor {
 
     suspend fun initialize(
-        threeDsInitParams: ThreeDsInitParams,
+        threeDsInitParams: ThreeDsInitParams
     ): Flow<Unit>
 
     fun authenticateSdk(): Flow<Transaction>
 
     fun beginRemoteAuth(
-        threeDsParams: BaseThreeDsParams,
+        threeDsParams: BaseThreeDsParams
     ): Flow<BeginAuthResponse>
 
     fun performChallenge(
         activity: Activity,
         transaction: Transaction,
-        authResponse: BeginAuthResponse,
+        authResponse: BeginAuthResponse
     ): Flow<ChallengeStatusData>
 
     fun continueRemoteAuth(
@@ -79,11 +79,11 @@ internal class DefaultThreeDsInteractor(
     private val errorMapperFactory: ErrorMapperFactory,
     private val analyticsRepository: AnalyticsRepository,
     private val logger: DefaultLogger,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ThreeDsInteractor {
 
     override suspend fun initialize(
-        threeDsInitParams: ThreeDsInitParams,
+        threeDsInitParams: ThreeDsInitParams
     ) =
         threeDsConfigurationRepository.getConfiguration().flatMapLatest { keys ->
             threeDsServiceRepository.initializeProvider(
@@ -107,7 +107,7 @@ internal class DefaultThreeDsInteractor(
         }.flowOn(dispatcher)
 
     override fun beginRemoteAuth(
-        threeDsParams: BaseThreeDsParams,
+        threeDsParams: BaseThreeDsParams
     ) =
         threeDsRepository.begin3DSAuth(
             paymentMethodRepository.getPaymentMethod().token,
@@ -122,7 +122,7 @@ internal class DefaultThreeDsInteractor(
     override fun performChallenge(
         activity: Activity,
         transaction: Transaction,
-        authResponse: BeginAuthResponse,
+        authResponse: BeginAuthResponse
     ) =
         threeDsServiceRepository.performChallenge(
             activity,
@@ -147,7 +147,7 @@ internal class DefaultThreeDsInteractor(
                 challengeStatusData.paymentMethodToken,
                 SuccessThreeDsContinueAuthParams(
                     threeDsServiceRepository.threeDsSdkVersion,
-                    params.protocolVersions.max().versionNumber,
+                    params.protocolVersions.max().versionNumber
                 )
             )
         }
@@ -186,8 +186,9 @@ internal class DefaultThreeDsInteractor(
         when (clientTokenRepository.getClientTokenIntent()) {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name -> resumeEventResolver.resolve(
                 token.paymentInstrumentType,
-                if (paymentMethodRepository.getPaymentMethod().token == token.token)
-                    paymentMethodRepository.getPaymentMethod().isVaulted else token.isVaulted,
+                if (paymentMethodRepository.getPaymentMethod().token == token.token) {
+                    paymentMethodRepository.getPaymentMethod().isVaulted
+                } else { token.isVaulted },
                 resumeToken
             )
             else -> Unit

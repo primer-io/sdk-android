@@ -5,15 +5,15 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.widget.LinearLayout
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
-import org.koin.core.component.inject
+import io.primer.android.ui.settings.PrimerTheme
 
 class ButtonDefaultLayout(
     ctx: Context,
-    attrs: AttributeSet? = null,
-) : LinearLayout(ctx, attrs), DIAppComponent {
+    attrs: AttributeSet? = null
+) : LinearLayout(ctx, attrs), DISdkComponent {
 
     private val theme: PrimerTheme by inject()
 

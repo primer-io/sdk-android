@@ -48,8 +48,9 @@ internal class GooglePayConfigurationDataRepository(
     }
 
     private fun getGooglePayEnvironment(environment: Environment) =
-        if (environment == Environment.PRODUCTION) GooglePayFacade.Environment.PRODUCTION
-        else GooglePayFacade.Environment.TEST
+        if (environment == Environment.PRODUCTION) {
+            GooglePayFacade.Environment.PRODUCTION
+        } else { GooglePayFacade.Environment.TEST }
 
     private companion object {
         val allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")

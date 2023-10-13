@@ -8,12 +8,13 @@ import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.R
 import io.primer.android.databinding.FragmentDotpayBankSelectionBinding
+import io.primer.android.di.extension.viewModel
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.ui.fragments.bank.binding.toBaseBankSelectionBinding
 import io.primer.android.viewmodel.bank.DotPayBankSelectionViewModel
+import io.primer.android.viewmodel.bank.DotPayBankSelectionViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
 internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
@@ -24,7 +25,8 @@ internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
         binding.toBaseBankSelectionBinding()
     }
 
-    override val viewModel by viewModel<DotPayBankSelectionViewModel>()
+    override val viewModel by viewModel<DotPayBankSelectionViewModel,
+        DotPayBankSelectionViewModelFactory>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +45,9 @@ internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
     override fun setupViews() {
         super.setupViews()
         binding.paymentMethodIcon.setImageResource(
-            if (theme.isDarkMode == true) R.drawable.ic_logo_dotpay_dark
-            else R.drawable.ic_logo_dotpay_light
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_dotpay_dark
+            } else { R.drawable.ic_logo_dotpay_light }
         )
         binding.searchBar.setTextColor(
             theme.input.text.defaultColor.getColor(
@@ -54,7 +57,7 @@ internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
         )
 
         binding.searchBar.doAfterTextChanged { newText ->
-            viewModel.onFilterChanged(
+            (viewModel as DotPayBankSelectionViewModel).onFilterChanged(
                 newText.toString()
             )
             binding.chooseBankDividerBottom.visibility =

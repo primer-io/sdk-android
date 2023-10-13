@@ -9,5 +9,5 @@ internal data class ApayaPaymentInstrumentParams(
     val mcc: String,
     val hashedIdentifier: String,
     val productId: String,
-    val currencyCode: String,
+    val currencyCode: String
 ) : BasePaymentInstrumentParams(PaymentMethodType.APAYA.name)

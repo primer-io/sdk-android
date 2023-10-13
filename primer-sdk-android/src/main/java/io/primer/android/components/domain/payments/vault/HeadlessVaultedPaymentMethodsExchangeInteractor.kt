@@ -26,7 +26,7 @@ internal class HeadlessVaultedPaymentMethodsExchangeInteractor(
     private val preTokenizationEventsResolver: PreTokenizationEventsResolver,
     private val postTokenizationEventResolver: VaultPostTokenizationEventResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<PaymentMethodTokenInternal, VaultTokenParams>() {
 
     override fun execute(params: VaultTokenParams): Flow<PaymentMethodTokenInternal> {

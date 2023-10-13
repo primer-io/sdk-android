@@ -15,8 +15,9 @@ internal class BlikLocalFormDataSource(private val theme: PrimerTheme) :
     override fun get() = flowOf(
         FormDataResponse(
             null,
-            if (theme.isDarkMode == true) R.drawable.ic_logo_blik
-            else R.drawable.ic_logo_blik_light,
+            if (theme.isDarkMode == true) {
+                R.drawable.ic_logo_blik
+            } else { R.drawable.ic_logo_blik_light },
             ButtonType.CONFIRM,
             R.string.input_description_otp,
             listOf(

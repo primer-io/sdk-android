@@ -11,7 +11,8 @@ class PaymentUtilsTest {
     fun `amountToCurrencyString should format 0 USD correctly`() {
         val monetaryAmount = MonetaryAmount.create("USD", 0)
         assertEquals(
-            "$0${decimalSeparator}00", PaymentUtils.amountToCurrencyString(monetaryAmount)
+            "$0${decimalSeparator}00",
+            PaymentUtils.amountToCurrencyString(monetaryAmount)
         )
     }
 
@@ -19,20 +20,27 @@ class PaymentUtilsTest {
     fun `amountToCurrencyString should format USD correctly`() {
         val monetaryAmount = MonetaryAmount.create("USD", AMOUNT)
         assertEquals(
-            "$1${decimalSeparator}00", PaymentUtils.amountToCurrencyString(monetaryAmount)
+            "$1${decimalSeparator}00",
+            PaymentUtils.amountToCurrencyString(monetaryAmount)
         )
     }
 
     @Test
     fun `amountToCurrencyString should format GBP correctly`() {
         val monetaryAmount = MonetaryAmount.create("GBP", AMOUNT)
-        assertEquals("£1${decimalSeparator}00", PaymentUtils.amountToCurrencyString(monetaryAmount))
+        assertEquals(
+            "£1${decimalSeparator}00",
+            PaymentUtils.amountToCurrencyString(monetaryAmount)
+        )
     }
 
     @Test
     fun `amountToCurrencyString should format EUR correctly`() {
         val monetaryAmount = MonetaryAmount.create("EUR", AMOUNT)
-        assertEquals("€1${decimalSeparator}00", PaymentUtils.amountToCurrencyString(monetaryAmount))
+        assertEquals(
+            "€1${decimalSeparator}00",
+            PaymentUtils.amountToCurrencyString(monetaryAmount)
+        )
     }
 
     @Test

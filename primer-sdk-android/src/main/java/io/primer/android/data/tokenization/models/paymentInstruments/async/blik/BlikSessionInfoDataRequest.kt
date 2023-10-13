@@ -7,7 +7,7 @@ import org.json.JSONObject
 internal data class BlikSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
-    val blikCode: String,
+    val blikCode: String
 ) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 

@@ -18,7 +18,7 @@ internal data class PaymentDataResponse(
     val amount: Int,
     val customerId: String?,
     val paymentFailureReason: String?,
-    val requiredAction: RequiredActionData?,
+    val requiredAction: RequiredActionData?
 ) : JSONDeserializable {
 
     companion object {
@@ -65,7 +65,7 @@ internal enum class PaymentStatus {
 internal data class RequiredActionData(
     val name: RequiredActionName,
     val description: String,
-    val clientToken: String?,
+    val clientToken: String?
 ) : JSONDeserializable {
 
     companion object {
@@ -80,7 +80,7 @@ internal data class RequiredActionData(
                 return RequiredActionData(
                     RequiredActionName.valueOf(t.getString(REQUIRED_ACTION_NAME_FIELD)),
                     t.getString(DESCRIPTION_FIELD),
-                    t.optNullableString(CLIENT_TOKEN_FIELD),
+                    t.optNullableString(CLIENT_TOKEN_FIELD)
                 )
             }
         }

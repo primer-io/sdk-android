@@ -9,7 +9,7 @@ import io.primer.android.events.EventDispatcher
 internal class ResumeEventResolver(
     private val config: PrimerConfig,
     private val resumeHandlerFactory: ResumeHandlerFactory,
-    private val eventDispatcher: EventDispatcher,
+    private val eventDispatcher: EventDispatcher
 ) {
 
     fun resolve(paymentInstrumentType: String, isVaulted: Boolean, resumeToken: String? = null) {
@@ -38,11 +38,11 @@ internal class ResumeEventResolver(
                 val resumeEvent = when (config.settings.fromHUC) {
                     true -> CheckoutEvent.ResumeSuccessHUC(
                         resumeToken.orEmpty(),
-                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType),
+                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
                     )
                     false -> CheckoutEvent.ResumeSuccess(
                         resumeToken.orEmpty(),
-                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType),
+                        resumeHandlerFactory.getResumeHandler(paymentInstrumentType)
                     )
                 }
                 eventDispatcher.dispatchEvent(resumeEvent)

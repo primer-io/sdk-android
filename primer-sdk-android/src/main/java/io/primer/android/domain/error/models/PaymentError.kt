@@ -10,12 +10,12 @@ internal sealed class PaymentError : PrimerError() {
 
     class PaymentCreateFailedError(
         val serverDescription: String,
-        val serverDiagnosticsId: String?,
+        val serverDiagnosticsId: String?
     ) : PaymentError()
 
     class PaymentResumeFailedError(
         val serverDescription: String,
-        val serverDiagnosticsId: String?,
+        val serverDiagnosticsId: String?
     ) : PaymentError()
 
     override val errorId: String

@@ -46,7 +46,6 @@ internal class CardAsyncPaymentMethodBehaviour(asyncMethod: AsyncPaymentMethodDe
     override val instrumentType = PaymentInstrumentType.CARD_OFF_SESSION_PAYMENT
 
     override fun onPreTokenize(asyncMethod: AsyncPaymentMethodDescriptor) {
-
         asyncMethod.appendTokenizableValue(
             "sessionInfo",
             "browserInfo",

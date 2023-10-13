@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.mapLatest
 
 internal class ActionDataRepository(
     private val localConfigurationDataSource: LocalConfigurationDataSource,
-    private val remoteActionDataSource: RemoteActionDataSource,
+    private val remoteActionDataSource: RemoteActionDataSource
 ) : ActionRepository {
 
     override fun updateClientActions(params: BaseActionUpdateParams) =

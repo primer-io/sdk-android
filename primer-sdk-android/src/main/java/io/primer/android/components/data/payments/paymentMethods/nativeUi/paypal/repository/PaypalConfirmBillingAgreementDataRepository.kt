@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 
 internal class PaypalConfirmBillingAgreementDataRepository(
     private val confirmBillingAgreementDataSource: RemotePaypalConfirmBillingAgreementDataSource,
-    private val localConfigurationDataSource: LocalConfigurationDataSource,
+    private val localConfigurationDataSource: LocalConfigurationDataSource
 ) : PaypalConfirmBillingAgreementRepository {
 
     override fun confirmBillingAgreement(params: PaypalConfirmBillingAgreementParams):
@@ -27,7 +27,7 @@ internal class PaypalConfirmBillingAgreementDataRepository(
                 localConfigurationDataSource.getConfiguration(),
                 PaypalConfirmBillingAgreementDataRequest(
                     params.paymentMethodConfigId,
-                    params.tokenId,
+                    params.tokenId
                 )
             )
         ).map { it.toPaypalConfirmBillingAgreement() }

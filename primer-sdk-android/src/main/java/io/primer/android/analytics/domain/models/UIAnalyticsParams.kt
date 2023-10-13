@@ -35,13 +35,13 @@ internal data class IPay88PaymentMethodContextParams(
 
 internal open class ThreeDsFailureContextParams(
     open val threeDsSdkVersion: String?,
-    open val initProtocolVersion: String?,
+    open val initProtocolVersion: String?
 ) : BaseContextParams()
 
 internal open class ThreeDsRuntimeFailureContextParams(
     override val threeDsSdkVersion: String?,
     override val initProtocolVersion: String,
-    open val errorCode: String,
+    open val errorCode: String
 ) : ThreeDsFailureContextParams(threeDsSdkVersion, initProtocolVersion)
 
 internal data class ThreeDsProtocolFailureContextParams(
@@ -53,7 +53,7 @@ internal data class ThreeDsProtocolFailureContextParams(
     val transactionId: String,
     val version: String,
     override val threeDsSdkVersion: String?,
-    override val initProtocolVersion: String,
+    override val initProtocolVersion: String
 ) : ThreeDsFailureContextParams(
     threeDsSdkVersion,
     initProtocolVersion

@@ -18,7 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class AdyenIdealPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override val selectedBehaviour =

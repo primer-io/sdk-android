@@ -14,7 +14,7 @@ internal class NolPayPaymentDataValidatorRegistry {
             NolPayPaymentCollectableData.NolPayCardAndPhoneData::class
                 to NolPayPaymentCardAndMobileDataValidator(),
             NolPayPaymentCollectableData.NolPayTagData::class to
-                NolPayPaymentTagDataValidator(),
+                NolPayPaymentTagDataValidator()
         )
 
     fun getValidator(data: NolPayCollectableData):

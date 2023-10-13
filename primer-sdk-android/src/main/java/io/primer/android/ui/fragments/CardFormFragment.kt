@@ -31,6 +31,8 @@ import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentCardFormBinding
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.model.MonetaryAmount
@@ -50,12 +52,10 @@ import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.TokenizationViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
-import java.util.TreeMap
 import java.util.Collections
-import kotlin.collections.HashMap
+import java.util.TreeMap
 /**
  * A simple [Fragment] subclass.
  * Use the [CardFormFragment.newInstance] factory method to
@@ -68,7 +68,8 @@ internal class CardFormFragment : BaseFragment() {
     private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
-    private val tokenizationViewModel: TokenizationViewModel by viewModel()
+    private val tokenizationViewModel: TokenizationViewModel
+        by viewModel<TokenizationViewModel, TokenizationViewModelFactory>()
     private val localConfig: PrimerConfig by inject()
     private val dirtyMap: MutableMap<String, Boolean> = HashMap()
     private var firstMount: Boolean = true
@@ -79,7 +80,7 @@ internal class CardFormFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentCardFormBinding.inflate(inflater, container, false)
         return binding.root
@@ -174,7 +175,7 @@ internal class CardFormFragment : BaseFragment() {
                 PrimerInputElementType.CARD_NUMBER to binding.cardFormCardNumber,
                 PrimerInputElementType.EXPIRY_DATE to binding.cardFormCardExpiry,
                 PrimerInputElementType.CVV to binding.cardFormCardCvv,
-                PrimerInputElementType.CARDHOLDER_NAME to binding.cardFormCardholderName,
+                PrimerInputElementType.CARDHOLDER_NAME to binding.cardFormCardholderName
             )
         )
     }
@@ -562,9 +563,9 @@ internal class CardFormFragment : BaseFragment() {
                     PrimerInputElementType.CARDHOLDER_NAME
                 )
             }
-        if (containsCardholderName == null || containsCardholderName) FieldFocuser.focus(
-            cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]
-        )
+        if (containsCardholderName == null || containsCardholderName) {
+            FieldFocuser.focus(cardInputFields[PrimerInputElementType.CARDHOLDER_NAME])
+        }
     }
 
     private fun setValidationErrors() {
@@ -584,7 +585,7 @@ internal class CardFormFragment : BaseFragment() {
                 setValidationErrorState(
                     it.value,
                     if (focused) null else errors.find { err -> err.name == it.key.field },
-                    it.key,
+                    it.key
                 )
             }
         }
@@ -593,31 +594,34 @@ internal class CardFormFragment : BaseFragment() {
     private fun setValidationErrorState(
         input: TextInputWidget,
         error: SyncValidationError?,
-        type: PrimerInputElementType,
+        type: PrimerInputElementType
     ) {
         val isEnableError = error != null
         input.isErrorEnabled = isEnableError
         if (!isLastInSection(input)) input.setMarginBottomForError(isEnableError)
-        if (error == null) input.error = error
-        else requireContext()
-            .let { context ->
-                input.error = error.errorFormatId?.let {
-                    context.getString(error.errorFormatId, context.getString(error.fieldId))
-                } ?: error.errorId?.let { context.getString(it) }
-                primerViewModel.addAnalyticsEvent(
-                    MessageAnalyticsParams(
-                        MessageType.VALIDATION_FAILED,
-                        input.error.toString(),
-                        Severity.INFO
+        if (error == null) {
+            input.error = error
+        } else {
+            requireContext()
+                .let { context ->
+                    input.error = error.errorFormatId?.let {
+                        context.getString(error.errorFormatId, context.getString(error.fieldId))
+                    } ?: error.errorId?.let { context.getString(it) }
+                    primerViewModel.addAnalyticsEvent(
+                        MessageAnalyticsParams(
+                            MessageType.VALIDATION_FAILED,
+                            input.error.toString(),
+                            Severity.INFO
+                        )
                     )
-                )
-            }
-            .run {
-                if (type == PrimerInputElementType.CARD_NUMBER) {
-                    val inputFrame = binding.cardFormCardNumber
-                    inputFrame.suffixText = ""
                 }
-            }
+                .run {
+                    if (type == PrimerInputElementType.CARD_NUMBER) {
+                        val inputFrame = binding.cardFormCardNumber
+                        inputFrame.suffixText = ""
+                    }
+                }
+        }
     }
 
     /**

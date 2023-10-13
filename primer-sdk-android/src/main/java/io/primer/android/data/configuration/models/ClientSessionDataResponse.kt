@@ -21,12 +21,12 @@ internal data class ClientSessionDataResponse(
     val currencyCode: String?,
     val customer: CustomerDataResponse?,
     val order: OrderDataResponse?,
-    val paymentMethod: PaymentMethodDataResponse?,
+    val paymentMethod: PaymentMethodDataResponse?
 ) : JSONDeserializable {
 
     data class PaymentMethodDataResponse(
         val vaultOnSuccess: Boolean?,
-        val options: List<PaymentMethodOptionDataResponse>,
+        val options: List<PaymentMethodOptionDataResponse>
     ) : JSONDeserializable {
 
         val surcharges: Map<String, Int>
@@ -69,7 +69,7 @@ internal data class ClientSessionDataResponse(
     data class PaymentMethodOptionDataResponse(
         val type: String,
         val surcharge: Int?,
-        val networks: List<NetworkOptionDataResponse>?,
+        val networks: List<NetworkOptionDataResponse>?
     ) : JSONDeserializable {
         companion object {
             private const val TYPE_FIELD = "type"
@@ -95,7 +95,7 @@ internal data class ClientSessionDataResponse(
 
     data class NetworkOptionDataResponse(
         val type: String,
-        val surcharge: Int,
+        val surcharge: Int
     ) : JSONDeserializable {
         companion object {
             private const val TYPE_FIELD = "type"
@@ -107,7 +107,7 @@ internal data class ClientSessionDataResponse(
                 override fun deserialize(t: JSONObject): NetworkOptionDataResponse {
                     return NetworkOptionDataResponse(
                         t.getString(TYPE_FIELD),
-                        t.getInt(SURCHARGE_FIELD),
+                        t.getInt(SURCHARGE_FIELD)
                     )
                 }
             }
@@ -122,7 +122,7 @@ internal data class ClientSessionDataResponse(
             order?.totalOrderAmount ?: amount,
             order?.lineItems?.map { it.toLineItem() },
             order?.toOrder(),
-            customer?.toCustomer(),
+            customer?.toCustomer()
         )
     )
 

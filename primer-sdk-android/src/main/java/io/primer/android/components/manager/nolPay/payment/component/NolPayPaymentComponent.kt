@@ -16,7 +16,6 @@ import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaym
 import io.primer.android.components.manager.nolPay.payment.di.NolPayStartPaymentComponentProvider
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
-import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.ErrorMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -76,7 +75,7 @@ class NolPayPaymentComponent internal constructor(
         logSdkFunctionCalls(NolPayAnalyticsConstants.PAYMENT_SUBMIT_DATA_METHOD)
         viewModelScope.launch {
             startPaymentDelegate.handleCollectedCardData(
-                _collectedData.replayCache.lastOrNull(),
+                _collectedData.replayCache.lastOrNull()
             ).onSuccess { step -> _componentStep.emit(step) }
                 .onFailure { throwable ->
                     handleError(throwable)
@@ -92,7 +91,7 @@ class NolPayPaymentComponent internal constructor(
     }
 
     private fun handleError(
-        throwable: Throwable,
+        throwable: Throwable
     ) = viewModelScope.launch {
         errorMapper.getPrimerError(throwable)
             .also { error ->
@@ -102,7 +101,7 @@ class NolPayPaymentComponent internal constructor(
             }
     }
 
-    internal companion object : DIAppComponent {
+    internal companion object {
         fun getInstance(owner: ViewModelStoreOwner) =
             NolPayStartPaymentComponentProvider().provideInstance(owner)
     }

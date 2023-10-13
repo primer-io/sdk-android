@@ -55,7 +55,7 @@ internal class TokenizationInteractor(
             emit(
                 preTokenizationEventsResolver.resolve(
                     params.paymentInstrumentParams.paymentMethodType,
-                    params.paymentMethodIntent,
+                    params.paymentMethodIntent
                 )
             )
         }.flatMapLatest {

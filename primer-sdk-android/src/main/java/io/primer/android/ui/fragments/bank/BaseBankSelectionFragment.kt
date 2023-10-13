@@ -17,7 +17,10 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.di.BANK_SELECTOR_SCOPE
+import io.primer.android.di.DISdkContext
+import io.primer.android.di.RpcContainer
+import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.viewModel
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.BankSelectionAdapter
 import io.primer.android.ui.BankSelectionAdapterListener
@@ -27,18 +30,17 @@ import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.utils.ImageLoader
 import io.primer.android.viewmodel.TokenizationViewModel
+import io.primer.android.viewmodel.TokenizationViewModelFactory
 import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.inject
-import org.koin.core.qualifier.named
 
 @ExperimentalCoroutinesApi
 internal abstract class BaseBankSelectionFragment :
     BaseFragment(),
     BankSelectionAdapterListener {
 
-    protected val tokenizationViewModel by viewModel<TokenizationViewModel>()
+    protected val tokenizationViewModel by viewModel<TokenizationViewModel,
+        TokenizationViewModelFactory>()
 
     private val imageLoader: ImageLoader by inject()
 
@@ -55,7 +57,9 @@ internal abstract class BaseBankSelectionFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getKoin().getOrCreateScope(BANK_SELECTOR_SCOPE, named(BANK_SELECTOR_SCOPE))
+        DISdkContext.sdkContainer?.let {
+            it.registerContainer(RpcContainer(it))
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,6 +67,7 @@ internal abstract class BaseBankSelectionFragment :
         logAnalyticsViewed()
         setupViews()
         setupListeners()
+
         setupObservers()
         loadData()
     }
@@ -70,8 +75,7 @@ internal abstract class BaseBankSelectionFragment :
     override fun onDestroyView() {
         imageLoader.clearAll()
         super.onDestroyView()
-        getKoin().getOrCreateScope(BANK_SELECTOR_SCOPE, named(BANK_SELECTOR_SCOPE))
-            .close()
+        DISdkContext.sdkContainer?.unregisterContainer<RpcContainer>()
     }
 
     override fun onBankSelected(issuerId: String) {

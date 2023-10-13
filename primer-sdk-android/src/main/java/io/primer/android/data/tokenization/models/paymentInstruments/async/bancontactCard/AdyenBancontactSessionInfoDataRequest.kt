@@ -9,7 +9,7 @@ import org.json.JSONObject
 internal data class AdyenBancontactSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
-    val userAgent: String,
+    val userAgent: String
 ) : BaseSessionInfoDataRequest(locale) {
 
     internal data class BrowserInfoDataRequest(private val userAgent: String) :

@@ -24,7 +24,7 @@ internal data class PrimerPhoneCode(
                 return PrimerPhoneCode(
                     t.getString(NAME_FIELD),
                     CountryCode.valueOf(t.getString(CODE_FIELD)),
-                    t.getString(DIAL_CODE_FIELD),
+                    t.getString(DIAL_CODE_FIELD)
                 )
             }
         }

@@ -18,7 +18,7 @@ internal abstract class BasePaymentToken : JSONDeserializable {
     abstract val isVaulted: Boolean
 
     data class VaultDataResponse(
-        val customerId: String,
+        val customerId: String
     ) : JSONDeserializable {
         companion object {
             private const val CUSTOMER_ID_FIELD = "customerId"
@@ -38,7 +38,7 @@ internal abstract class BasePaymentToken : JSONDeserializable {
         val reasonCode: String? = null,
         val reasonText: String? = null,
         val protocolVersion: String? = null,
-        val challengeIssued: Boolean? = null,
+        val challengeIssued: Boolean? = null
     ) : JSONDeserializable {
         companion object {
             private const val RESPONSE_CODE_FIELD = "responseCode"

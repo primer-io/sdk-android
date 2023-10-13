@@ -23,7 +23,7 @@ internal class PaymentMethodMappingTest {
         order = OrderDataResponse(
             merchantAmount = 50,
             currencyCode = "USD",
-            countryCode = CountryCode.US,
+            countryCode = CountryCode.US
         )
     }
 

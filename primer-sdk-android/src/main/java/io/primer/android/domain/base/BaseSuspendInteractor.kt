@@ -8,7 +8,7 @@ internal abstract class BaseSuspendInteractor<out T, in P : Params> where T : An
     internal abstract val dispatcher: CoroutineDispatcher
 
     suspend operator fun invoke(
-        params: P,
+        params: P
     ) = execute(params)
 
     protected abstract suspend fun performAction(params: P): Result<T>

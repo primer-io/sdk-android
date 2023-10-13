@@ -10,7 +10,7 @@ internal open class AsyncPaymentInstrumentDataRequest(
     open val paymentMethodType: String,
     open val paymentMethodConfigId: String,
     open val sessionInfo: BaseSessionInfoDataRequest,
-    open val type: PaymentInstrumentType,
+    open val type: PaymentInstrumentType
 ) : PaymentInstrumentDataRequest() {
     companion object {
 

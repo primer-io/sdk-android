@@ -5,17 +5,17 @@ import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.di.extension.resolve
 import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
 import io.primer.android.payment.SelectedPaymentMethodManagerBehaviour
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
-import org.koin.core.component.get
 
 internal class IPay88PaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     internal val paymentMethod = IPayIH.PAY_METHOD_CREDIT_CARD
@@ -26,7 +26,7 @@ internal class IPay88PaymentMethodDescriptor(
         get() = HeadlessDefinition(listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI))
 
     override val resumeHandler: PrimerResumeDecisionHandler
-        get() = get()
+        get() = resolve()
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = SelectedPaymentMethodManagerBehaviour(options.type, localConfig.paymentMethodIntent)

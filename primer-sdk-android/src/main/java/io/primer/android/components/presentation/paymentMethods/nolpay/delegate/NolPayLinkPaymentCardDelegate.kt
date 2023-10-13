@@ -86,7 +86,7 @@ internal class NolPayLinkPaymentCardDelegate(
                 savedStateHandle[LINKED_TOKEN_KEY],
                 NolPayIllegalValueKey.SAVED_DATA_LINK_TOKEN
             ),
-            collectedData.otpCode,
+            collectedData.otpCode
         )
     ).mapSuspendCatching {
         NolPayLinkCardStep.CardLinked(

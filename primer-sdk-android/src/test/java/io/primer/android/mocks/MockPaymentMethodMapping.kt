@@ -8,7 +8,7 @@ import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
 
 internal class MockPaymentMethodMapping(
-    private val throwError: Boolean = false,
+    private val throwError: Boolean = false
 ) : PaymentMethodMapping {
 
     var getPaymentMethodForCalled: Boolean = false

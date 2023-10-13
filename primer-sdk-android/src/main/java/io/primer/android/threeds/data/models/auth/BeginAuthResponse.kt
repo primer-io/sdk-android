@@ -10,7 +10,7 @@ import org.json.JSONObject
 internal data class BeginAuthResponse(
     val token: PaymentMethodTokenInternal,
     val authentication: AuthenticationDataResponse,
-    val resumeToken: String,
+    val resumeToken: String
 ) : JSONDeserializable {
 
     companion object {

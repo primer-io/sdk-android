@@ -16,7 +16,7 @@ internal class NolPayRequestPaymentInteractor(
         runSuspendCatching {
             nolPay.createPayment(
                 params.tag,
-                params.transactionNo,
+                params.transactionNo
             )
         }
 }

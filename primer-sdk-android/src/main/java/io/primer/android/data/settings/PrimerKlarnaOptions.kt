@@ -6,7 +6,7 @@ import android.os.Parcelable
 data class PrimerKlarnaOptions @JvmOverloads constructor(
     var recurringPaymentDescription: String? = null,
     @Deprecated("This property is deprecated and will be removed in future release.")
-    var webViewTitle: String? = null,
+    var webViewTitle: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),

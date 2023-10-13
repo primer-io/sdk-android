@@ -11,7 +11,6 @@ import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.SessionState
@@ -19,7 +18,9 @@ import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.activityViewModel
+import io.primer.android.di.extension.inject
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.config.BaseDisplayMetadata
@@ -27,12 +28,12 @@ import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.core.component.inject
 
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions")
-internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
+internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
 
     companion object {
 
@@ -45,14 +46,15 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
     private val theme: PrimerTheme by inject()
     private val methodViewFactory: PrimerPaymentMethodViewFactory by inject()
 
-    private val primerViewModel: PrimerViewModel by activityViewModels()
+    private val primerViewModel: PrimerViewModel by
+    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     private var binding: FragmentSelectPaymentMethodBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentSelectPaymentMethodBinding.inflate(inflater, container, false)
         return binding.root
@@ -187,15 +189,17 @@ internal class SelectPaymentMethodFragment : Fragment(), DIAppComponent {
 
         // add listener for displaying selected saved payment method
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) {
-            if (primerViewModel.shouldDisplaySavedPaymentMethod) renderSelectedPaymentMethod()
-            else binding.primerSavedPaymentSection.isVisible = false
+            if (primerViewModel.shouldDisplaySavedPaymentMethod) {
+                renderSelectedPaymentMethod()
+            } else { binding.primerSavedPaymentSection.isVisible = false }
         }
     }
 
     private fun renderVaultedItemSurchargeLabel() {
         val text = primerViewModel.savedPaymentMethodSurchargeLabel(requireContext())
-        if (primerViewModel.surchargeDisabled) binding.savedPaymentMethodBox.hideSurchargeFrame()
-        else binding.savedPaymentMethodBox.showSurchargeLabel(text)
+        if (primerViewModel.surchargeDisabled) {
+            binding.savedPaymentMethodBox.hideSurchargeFrame()
+        } else { binding.savedPaymentMethodBox.showSurchargeLabel(text) }
     }
 
     private fun setBusy(isBusy: Boolean) {

@@ -19,7 +19,8 @@ import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.WebRedirectActivityLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
@@ -32,7 +33,6 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.async.web
 import io.primer.android.ui.base.webview.WebViewClientType
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 
 internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
     private val asyncPaymentMethodConfigInteractor: AsyncPaymentMethodConfigInteractor,
@@ -150,7 +150,7 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
                     AsyncEvent.OnConfigurationLoaded(
                         paymentMethodType,
                         it.paymentMethodConfigId,
-                        it.locale,
+                        it.locale
                     )
                 )
             }
@@ -159,7 +159,7 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
     private fun tokenize(
         paymentMethodType: String,
         paymentMethodConfigId: String,
-        locale: String,
+        locale: String
     ) = viewModelScope.launch {
         tokenizationInteractor.executeV2(
             TokenizationParamsV2(
@@ -169,7 +169,7 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
                     locale,
                     asyncPaymentMethodDeeplinkInteractor(None())
                 ),
-                sessionIntent,
+                sessionIntent
             )
         )
             .catch { onEvent(AsyncEvent.OnError) }
@@ -197,7 +197,7 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
         )
     }
 
-    companion object : DIAppComponent {
+    companion object : DISdkComponent {
 
         class Factory : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -206,11 +206,11 @@ internal class AsyncPaymentMethodNativeUiHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return AsyncPaymentMethodNativeUiHeadlessViewModel(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
                     extras.createSavedStateHandle()
                 ) as T
             }

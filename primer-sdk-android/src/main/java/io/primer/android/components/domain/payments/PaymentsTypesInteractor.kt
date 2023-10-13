@@ -25,7 +25,7 @@ internal class PaymentsTypesInteractor(
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logger: Logger,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<Unit, None>() {
 
     override fun execute(params: None) = configurationInteractor(

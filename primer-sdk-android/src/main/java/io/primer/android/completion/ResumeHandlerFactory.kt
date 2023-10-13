@@ -36,11 +36,11 @@ internal class ResumeHandlerFactory(
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
-    private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
+    private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository
 ) {
 
     fun getResumeHandler(
-        paymentInstrumentType: String,
+        paymentInstrumentType: String
     ): PrimerResumeDecisionHandler {
         return paymentMethodDescriptorsRepository.getPaymentMethodDescriptors()
             .firstOrNull { descriptor
@@ -83,7 +83,7 @@ internal class ResumeHandlerFactory(
                     config,
                     paymentMethodDescriptorsRepository,
                     retailerOutletRepository,
-                    asyncPaymentMethodDeeplinkRepository,
+                    asyncPaymentMethodDeeplinkRepository
                 )
                 else -> DefaultPrimerResumeDecisionHandler(
                     validationTokenRepository,

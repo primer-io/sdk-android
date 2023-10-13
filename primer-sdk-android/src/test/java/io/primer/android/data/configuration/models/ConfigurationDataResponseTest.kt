@@ -24,7 +24,7 @@ internal class ConfigurationDataResponseTest {
                 clientSession,
                 environment,
                 primerAccountId,
-                listOf(),
+                listOf()
             )
         }
 
@@ -318,7 +318,7 @@ internal class ConfigurationDataResponseTest {
                         50,
                         null
                     )
-                ),
+                )
             ),
             configurationDataResponse.clientSession?.paymentMethod
         )

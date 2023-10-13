@@ -40,7 +40,7 @@ internal class NolPayStartPaymentDelegate(
     private var subscription: EventBus.SubscriptionHandle? = null
 
     suspend fun handleCollectedCardData(
-        collectedData: NolPayPaymentCollectableData?,
+        collectedData: NolPayPaymentCollectableData?
     ): Result<NolPayPaymentStep> = runSuspendCatching {
         return when (
             val collectedDataUnwrapped =

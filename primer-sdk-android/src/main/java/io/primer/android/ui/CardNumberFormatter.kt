@@ -4,7 +4,7 @@ private val INVALID_CHARACTER = Regex("[^0-9]")
 
 internal class CardNumberFormatter private constructor(
     private val value: String,
-    private val autoInsert: Boolean,
+    private val autoInsert: Boolean
 ) {
 
     private val meta = CardNetwork.lookup(value)

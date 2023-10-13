@@ -12,7 +12,7 @@ import org.json.JSONObject
 import java.io.FileOutputStream
 
 internal class FileAnalyticsDataSource(
-    private val fileProvider: AnalyticsFileProvider,
+    private val fileProvider: AnalyticsFileProvider
 ) : BaseFlowCacheDataSource<List<BaseAnalyticsEventRequest>, List<BaseAnalyticsEventRequest>> {
 
     override fun get(): Flow<List<BaseAnalyticsEventRequest>> = flow {

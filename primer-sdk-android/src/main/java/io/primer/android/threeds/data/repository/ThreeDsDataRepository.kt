@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 
 internal class ThreeDsDataRepository(
     private val dataSource: Remote3DSAuthDataSource,
-    private var configurationDataSource: LocalConfigurationDataSource,
+    private var configurationDataSource: LocalConfigurationDataSource
 ) : ThreeDsRepository {
 
     override fun begin3DSAuth(
         token: String,
-        threeDsParams: BaseThreeDsParams,
+        threeDsParams: BaseThreeDsParams
     ) = configurationDataSource.get().flatMapLatest { configuration ->
         dataSource.get3dsAuthToken(
             configuration,

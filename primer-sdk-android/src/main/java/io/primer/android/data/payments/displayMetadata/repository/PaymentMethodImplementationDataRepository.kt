@@ -5,7 +5,7 @@ import io.primer.android.domain.payments.displayMetadata.models.PaymentMethodImp
 import io.primer.android.domain.payments.displayMetadata.repository.PaymentMethodImplementationRepository
 
 internal class PaymentMethodImplementationDataRepository(
-    private val localConfigurationDataSource: LocalConfigurationDataSource,
+    private val localConfigurationDataSource: LocalConfigurationDataSource
 ) : PaymentMethodImplementationRepository {
     override fun getPaymentMethodsImplementation(): List<PaymentMethodImplementation> {
         val configurationData = localConfigurationDataSource.getConfiguration()
@@ -22,14 +22,14 @@ internal class PaymentMethodImplementationDataRepository(
                             PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
                                 it.colored?.trim(),
                                 it.light?.trim(),
-                                it.dark?.trim(),
+                                it.dark?.trim()
                             )
                         },
                         buttonData.borderColorData?.let {
                             PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
                                 it.colored?.trim(),
                                 it.light?.trim(),
-                                it.dark?.trim(),
+                                it.dark?.trim()
                             )
                         },
 
@@ -37,7 +37,7 @@ internal class PaymentMethodImplementationDataRepository(
                             PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
                                 it.colored,
                                 it.light,
-                                it.dark,
+                                it.dark
                             )
                         },
                         buttonData.cornerRadius,
@@ -46,7 +46,7 @@ internal class PaymentMethodImplementationDataRepository(
                             PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
                                 it.colored?.trim(),
                                 it.light?.trim(),
-                                it.dark?.trim(),
+                                it.dark?.trim()
                             )
                         },
                         buttonData.iconPositionRelativeToText

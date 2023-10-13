@@ -16,7 +16,7 @@ internal data class Form(
     val inputPrefix: FormInputPrefix? = null,
     val expiresAt: String? = null,
     val reference: String? = null,
-    val entity: String? = null,
+    val entity: String? = null
 )
 
 internal data class FormInput(

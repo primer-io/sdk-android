@@ -2,7 +2,7 @@ package io.primer.android.threeds.data.datasource
 
 import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.di.ApiVersion
-import io.primer.android.di.SDK_API_VERSION_HEADER
+import io.primer.android.di.NetworkContainer.Companion.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import io.primer.android.threeds.data.models.auth.BeginAuthDataRequest
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
@@ -14,7 +14,7 @@ internal class Remote3DSAuthDataSource(private val httpClient: PrimerHttpClient)
     fun get3dsAuthToken(
         configuration: ConfigurationData,
         paymentMethodToken: String,
-        beginAuthRequest: BeginAuthDataRequest,
+        beginAuthRequest: BeginAuthDataRequest
     ) = httpClient.post<BeginAuthDataRequest, BeginAuthResponse>(
         "${configuration.pciUrl}/3ds/$paymentMethodToken/auth",
         beginAuthRequest,

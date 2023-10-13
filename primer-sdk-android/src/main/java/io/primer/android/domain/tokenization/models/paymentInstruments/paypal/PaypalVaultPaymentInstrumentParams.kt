@@ -8,5 +8,5 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.BasePayme
 internal class PaypalVaultPaymentInstrumentParams(
     val paypalBillingAgreementId: String,
     val externalPayerInfo: PaypalExternalPayerInfo,
-    val shippingAddress: PaypalShippingAddressDataResponse?,
+    val shippingAddress: PaypalShippingAddressDataResponse?
 ) : BasePaymentInstrumentParams(PaymentMethodType.PAYPAL.name)

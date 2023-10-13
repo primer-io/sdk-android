@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.presentation.assets.DefaultAssetsHeadlessDelegate
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.ui.CardNetwork
-import org.koin.core.component.get
 
-class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIAppComponent {
+class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdkComponent {
 
     @Throws(SdkUninitializedException::class)
     internal fun getPaymentMethodAssets(context: Context): List<PrimerPaymentMethodAsset> {
@@ -41,24 +41,24 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
                     context,
                     paymentMethodType,
                     ImageColor.DARK
-                ),
+                )
             ),
             PrimerPaymentMethodBackgroundColor(
                 delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.COLORED),
                 delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.LIGHT),
-                delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.DARK),
-            ),
+                delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.DARK)
+            )
         )
     }
 
     @DrawableRes
     internal fun getCardNetworkImage(
-        cardNetwork: CardNetwork.Type,
+        cardNetwork: CardNetwork.Type
     ): Int {
         return getAssetsDelegate().getCardNetworkImage(cardNetwork)
     }
 
-    private fun getAssetsDelegate(): DefaultAssetsHeadlessDelegate = get()
+    private fun getAssetsDelegate(): DefaultAssetsHeadlessDelegate = resolve()
 
     companion object {
 
@@ -89,7 +89,7 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DIApp
         @Throws(SdkUninitializedException::class)
         @JvmStatic
         fun getCardNetworkImage(
-            cardNetwork: CardNetwork.Type,
+            cardNetwork: CardNetwork.Type
         ): Int = assetManager.getCardNetworkImage(cardNetwork)
     }
 }

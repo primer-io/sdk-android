@@ -19,7 +19,7 @@ internal data class DeviceData(
     val memoryFootprint: Long = Runtime.getRuntime().getMemoryUsage(),
     val modelIdentifier: String = Build.MANUFACTURER,
     val modelName: String = Build.MODEL,
-    val platformVersion: String = Build.VERSION.SDK_INT.toString(),
+    val platformVersion: String = Build.VERSION.SDK_INT.toString()
 ) : JSONObjectSerializable, JSONDeserializable {
     companion object {
 
@@ -69,7 +69,7 @@ internal data class DeviceData(
                     t.getLong(MEMORY_FOOTPRINT_FIELD),
                     t.getString(MODEL_IDENTIFIER_FIELD),
                     t.getString(MODEL_NAME_FIELD),
-                    t.getString(PLATFORM_VERSION_FIELD),
+                    t.getString(PLATFORM_VERSION_FIELD)
                 )
             }
         }

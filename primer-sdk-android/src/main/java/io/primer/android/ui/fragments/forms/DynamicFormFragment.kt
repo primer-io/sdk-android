@@ -23,6 +23,7 @@ import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.data.payments.forms.models.helper.DialCodeCountryPrefix
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentDynamicFormBinding
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.domain.payments.forms.models.FormInput
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
@@ -34,7 +35,6 @@ import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import io.primer.android.viewmodel.TokenizationStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combineTransform
-import org.koin.android.ext.android.inject
 
 @ExperimentalCoroutinesApi
 internal class DynamicFormFragment : BaseFormFragment() {

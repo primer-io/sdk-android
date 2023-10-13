@@ -18,7 +18,7 @@ internal class OvoPhoneNumberValidator : PaymentInputTypeValidator<String> {
                 "[invalid-phone-number] Phone number is not valid.",
                 PrimerInputElementType.PHONE_NUMBER
             )
-        } else null
+        } else { null }
     }
 
     private companion object {

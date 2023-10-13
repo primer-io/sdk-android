@@ -20,25 +20,29 @@ import io.primer.android.ui.payment.LoadingState
 internal class AdyenMultibancoPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = if (localConfig.settings.fromHUC) super.selectedBehaviour
-        else NewMiddleFragmentBehaviour(
-            MultibancoConditionsFragment::newInstance,
-            onActionContinue = { super.selectedBehaviour },
-            returnToPreviousOnBack = true
-        )
+        get() = if (localConfig.settings.fromHUC) {
+            super.selectedBehaviour
+        } else {
+            NewMiddleFragmentBehaviour(
+                MultibancoConditionsFragment::newInstance,
+                onActionContinue = { super.selectedBehaviour },
+                returnToPreviousOnBack = true
+            )
+        }
 
     override val behaviours: List<SelectedPaymentMethodBehaviour> =
         listOf(NewFragmentBehaviour(PaymentMethodLoadingFragment::newInstance, true))
 
     override fun getLoadingState() = LoadingState(
-        if (localConfig.settings.uiOptions.theme.isDarkMode == true)
-            R.drawable.ic_logo_multibanco_dark else R.drawable.ic_logo_multibanco_light
+        if (localConfig.settings.uiOptions.theme.isDarkMode == true) {
+            R.drawable.ic_logo_multibanco_dark
+        } else { R.drawable.ic_logo_multibanco_light }
     )
 
     override val additionalInfoResolver: PrimerCheckoutAdditionalInfoResolver

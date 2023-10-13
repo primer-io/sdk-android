@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.collect
 
 internal open class BaseNolPayDelegate(
     private val sdkInitInteractor: NolPaySdkInitInteractor,
-    private val analyticsInteractor: AnalyticsInteractor,
+    private val analyticsInteractor: AnalyticsInteractor
 ) {
     suspend fun start() = sdkInitInteractor(None())
 
@@ -32,7 +32,7 @@ internal open class BaseNolPayDelegate(
     }
 
     suspend fun logSdkAnalyticsErrors(
-        error: PrimerError,
+        error: PrimerError
     ) = analyticsInteractor(
         MessageAnalyticsParams(
             MessageType.ERROR,

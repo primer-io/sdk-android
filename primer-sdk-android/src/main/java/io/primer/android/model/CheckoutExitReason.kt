@@ -4,5 +4,5 @@ internal enum class CheckoutExitReason {
     DISMISSED_BY_CLIENT,
     DISMISSED_BY_USER,
     ERROR,
-    EXIT_SUCCESS,
+    EXIT_SUCCESS
 }

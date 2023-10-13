@@ -8,7 +8,7 @@ internal data class AdyenBlikPaymentInstrumentParams(
     override val paymentMethodConfigId: String,
     override val locale: String,
     val redirectionUrl: String,
-    val blikCode: String,
+    val blikCode: String
 ) : BaseAsyncPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,

@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
-import io.primer.android.di.DIAppComponent
-import io.primer.android.di.NOL_PAY_ERROR_RESOLVER_NAME
-import org.koin.core.component.get
-import org.koin.core.qualifier.named
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.NolPayContainer.Companion.NOL_PAY_ERROR_RESOLVER_NAME
+import io.primer.android.di.extension.resolve
 
-internal class NolPayLinkCardComponentProvider : DIAppComponent {
+internal class NolPayLinkCardComponentProvider : DISdkComponent {
 
     fun provideInstance(owner: ViewModelStoreOwner): NolPayLinkCardComponent {
         return ViewModelProvider(
@@ -23,9 +22,9 @@ internal class NolPayLinkCardComponentProvider : DIAppComponent {
                     extras: CreationExtras
                 ): T {
                     return NolPayLinkCardComponent(
-                        get(),
-                        get(),
-                        get(named(NOL_PAY_ERROR_RESOLVER_NAME)),
+                        resolve(),
+                        resolve(),
+                        resolve(NOL_PAY_ERROR_RESOLVER_NAME),
                         extras.createSavedStateHandle()
                     ) as T
                 }

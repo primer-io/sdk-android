@@ -18,7 +18,7 @@ internal class VaultedPaymentMethodsDataRepository(
     private val remoteVaultedPaymentMethodsDataSource: RemoteVaultedPaymentMethodsDataSource,
     private val localVaultedPaymentMethodsDataSource: LocalVaultedPaymentMethodsDataSource,
     private val vaultedPaymentMethodDeleteDataSource: RemoteVaultedPaymentMethodDeleteDataSource,
-    private val configurationDataSource: LocalConfigurationDataSource,
+    private val configurationDataSource: LocalConfigurationDataSource
 ) : VaultedPaymentMethodsRepository {
 
     override suspend fun getVaultedPaymentMethods(fromCache: Boolean) = runSuspendCatching {

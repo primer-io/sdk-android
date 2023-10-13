@@ -15,7 +15,7 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidator :
             listOf(
                 PrimerValidationError(
                     NolPayValidations.INVALID_CARD_NUMBER_ERROR_ID,
-                    "Card number cannot be blank.",
+                    "Card number cannot be blank."
                 )
             )
         }
@@ -24,7 +24,7 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidator :
             listOf(
                 PrimerValidationError(
                     INVALID_DIALLING_CODE_ERROR_ID,
-                    "Mobile number dialling code is not valid.",
+                    "Mobile number dialling code is not valid."
                 )
             )
         }
@@ -33,7 +33,7 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidator :
             listOf(
                 PrimerValidationError(
                     INVALID_MOBILE_NUMBER_ERROR_ID,
-                    "Mobile number is not valid.",
+                    "Mobile number is not valid."
                 )
             )
         }

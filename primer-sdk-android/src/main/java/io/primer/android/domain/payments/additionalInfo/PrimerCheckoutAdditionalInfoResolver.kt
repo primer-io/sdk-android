@@ -50,7 +50,7 @@ internal class RetailOutletsCheckoutAdditionalInfoResolver : PrimerCheckoutAddit
                 }
             } ?: "",
             clientToken.reference.orEmpty(),
-            retailerName,
+            retailerName
         )
     }
 }

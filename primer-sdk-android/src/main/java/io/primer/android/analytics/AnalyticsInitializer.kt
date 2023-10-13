@@ -19,9 +19,7 @@ internal class AnalyticsInitializer : Initializer<AnalyticsInitDataRepository> {
         val fileAnalyticsDataSource =
             FileAnalyticsDataSource(AnalyticsFileProvider(context))
         val remoteAnalyticsFlowDataSource = RemoteAnalyticsDataSource(
-            PrimerHttpClient(
-                HttpClientFactory().build(),
-            )
+            PrimerHttpClient(HttpClientFactory().build())
         )
         return AnalyticsInitDataRepository(
             AnalyticsDataSender(

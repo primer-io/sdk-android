@@ -10,7 +10,7 @@ import org.json.JSONObject
 internal data class CheckoutModuleDataResponse(
     val type: CheckoutModuleType,
     val requestUrl: String?,
-    val options: Map<String, Boolean>?,
+    val options: Map<String, Boolean>?
 ) : JSONDeserializable {
 
     fun toCheckoutModule() = CheckoutModule(type, options)
@@ -28,7 +28,7 @@ internal data class CheckoutModuleDataResponse(
                 return CheckoutModuleDataResponse(
                     CheckoutModuleType.safeValueOf(t.optNullableString(TYPE_FIELD)),
                     t.optNullableString(REQUEST_URL_FIELD),
-                    t.optJSONObject(OPTIONS_FIELD)?.toBooleanMap(),
+                    t.optJSONObject(OPTIONS_FIELD)?.toBooleanMap()
                 )
             }
         }

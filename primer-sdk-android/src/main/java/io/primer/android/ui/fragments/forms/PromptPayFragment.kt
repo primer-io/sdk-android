@@ -11,7 +11,8 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import io.primer.android.R
 import io.primer.android.databinding.FragmentPromptPayBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
@@ -21,9 +22,8 @@ import io.primer.android.utils.ImageLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.core.component.inject
 
-internal class PromptPayFragment : BaseFormFragment(), DIAppComponent {
+internal class PromptPayFragment : BaseFormFragment(), DISdkComponent {
 
     private var binding: FragmentPromptPayBinding by autoCleaned()
 

@@ -19,13 +19,13 @@ internal class AsyncPaymentMethod(paymentMethodType: String) :
         }
 
         override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry,
+            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
         ) {
             // no-op
         }
 
         override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
         ) {
             paymentMethodDescriptorFactoryRegistry.register(
                 type,

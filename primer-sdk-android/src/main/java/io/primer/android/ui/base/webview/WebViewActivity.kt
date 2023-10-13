@@ -43,7 +43,10 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
         val type = intent.extras?.getSerializable(WEB_VIEW_CLIENT_TYPE) as WebViewClientType
         webView.webViewClient = WebViewClientFactory.getWebViewClient(
-            this, url, captureUrl, type
+            this,
+            url,
+            captureUrl,
+            type
         )
     }
 
@@ -87,7 +90,9 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
                 override fun handleOnBackPressed() {
                     if (webView.canGoBack()) {
                         webView.goBack()
-                    } else onSupportNavigateUp()
+                    } else {
+                        onSupportNavigateUp()
+                    }
                 }
             }
         )
@@ -100,7 +105,7 @@ internal open class WebViewActivity : BaseCheckoutActivity() {
             paymentUrl: String,
             redirectUrl: String,
             title: String,
-            webViewClientType: WebViewClientType,
+            webViewClientType: WebViewClientType
         ): Intent {
             return Intent(context, WebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)

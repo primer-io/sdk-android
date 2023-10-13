@@ -91,8 +91,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'io.github.pilgr:paperdb:2.7.2'
 
-    implementation "io.insert-koin:koin-android:3.2.0"
-
     implementation 'io.primer:klarna-android:1.0.1'
     implementation 'io.primer:ipay88-my-android:1.0.1'
     implementation 'io.primer:nol-pay-android:0.1.0'

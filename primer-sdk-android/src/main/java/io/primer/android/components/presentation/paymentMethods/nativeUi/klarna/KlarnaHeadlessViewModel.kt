@@ -23,7 +23,8 @@ import io.primer.android.components.ui.activity.KlarnaActivityLauncherParams
 import io.primer.android.components.ui.activity.KlarnaMockActivityLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
 import io.primer.android.domain.deeplink.klarna.KlarnaDeeplinkInteractor
@@ -37,7 +38,6 @@ import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 
 internal class KlarnaHeadlessViewModel(
     private val klarnaSessionInteractor: KlarnaSessionInteractor,
@@ -47,7 +47,7 @@ internal class KlarnaHeadlessViewModel(
     private val mockConfigurationInteractor: MockConfigurationInteractor,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     savedStateHandle: SavedStateHandle
-) : NativeUIHeadlessViewModel(savedStateHandle), DIAppComponent {
+) : NativeUIHeadlessViewModel(savedStateHandle), DISdkComponent {
 
     override val initialState: State = KlarnaState.Idle
 
@@ -158,7 +158,7 @@ internal class KlarnaHeadlessViewModel(
                     customerTokenId,
                     sessionData
                 ),
-                sessionIntent,
+                sessionIntent
             )
         ).catch { onEvent(KlarnaEvent.OnError) }
             .collect { onEvent(KlarnaEvent.OnTokenized) }
@@ -179,7 +179,7 @@ internal class KlarnaHeadlessViewModel(
             }
     }
 
-    internal companion object : DIAppComponent {
+    internal companion object : DISdkComponent {
 
         class Factory : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -188,12 +188,12 @@ internal class KlarnaHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return KlarnaHeadlessViewModel(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
                     extras.createSavedStateHandle()
                 ) as T
             }

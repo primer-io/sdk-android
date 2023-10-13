@@ -18,7 +18,7 @@ internal data class FormDataResponse(
     val inputPrefix: FormInputPrefix? = null,
     val expiresAt: String? = null,
     val reference: String? = null,
-    val entity: String? = null,
+    val entity: String? = null
 )
 
 internal data class FormInputDataResponse(
@@ -45,7 +45,7 @@ internal enum class ButtonType {
 
     CONFIRM,
     PAY,
-    NEXT,
+    NEXT
 }
 
 internal fun FormType.toInputType() = when (this) {
@@ -68,7 +68,7 @@ internal fun FormDataResponse.toForm() = Form(
     inputPrefix,
     expiresAt,
     reference,
-    entity,
+    entity
 )
 
 private fun FormInputDataResponse.toFormInput() = FormInput(

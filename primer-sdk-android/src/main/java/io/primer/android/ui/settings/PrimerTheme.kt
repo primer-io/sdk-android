@@ -22,7 +22,7 @@ data class PrimerTheme internal constructor(
     internal val input: InputTheme,
     internal val searchInput: SearchInputTheme,
     internal val windowMode: WindowMode,
-    internal val inputMode: InputMode,
+    internal val inputMode: InputMode
 ) {
 
     enum class WindowMode { BOTTOM_SHEET, FULL_HEIGHT }
@@ -54,9 +54,8 @@ data class PrimerTheme internal constructor(
             errorText: TextThemeData? = null,
             input: InputThemeData? = null,
             searchInput: SearchInputThemeData? = null,
-            inputMode: InputMode = InputMode.OUTLINED,
+            inputMode: InputMode = InputMode.OUTLINED
         ): PrimerTheme {
-
             val styledPrimaryColor = ResourceColor.valueOf(
                 default = primaryColor ?: R.color.primer_primary
             )
@@ -72,7 +71,7 @@ data class PrimerTheme internal constructor(
             )
 
             val styledBottomSheetCornerRadius = ResourceDimension.valueOf(
-                default = bottomSheetCornerRadius ?: R.dimen.primer_bottom_sheet_corner_radius,
+                default = bottomSheetCornerRadius ?: R.dimen.primer_bottom_sheet_corner_radius
             )
 
             val styledTitleText = TextTheme(
@@ -81,8 +80,8 @@ data class PrimerTheme internal constructor(
                         ?: R.color.primer_title
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = titleText?.fontsize ?: R.dimen.primer_title_fontsize,
-                ),
+                    default = titleText?.fontsize ?: R.dimen.primer_title_fontsize
+                )
             )
 
             val styledAmountLabelText = TextTheme(
@@ -91,8 +90,8 @@ data class PrimerTheme internal constructor(
                         ?: R.color.primer_amount
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = amountLabelText?.fontsize ?: R.dimen.primer_amount_label_fontsize,
-                ),
+                    default = amountLabelText?.fontsize ?: R.dimen.primer_amount_label_fontsize
+                )
             )
 
             val styledSubtitleText = TextTheme(
@@ -100,8 +99,8 @@ data class PrimerTheme internal constructor(
                     default = subtitleText?.defaultColor ?: R.color.primer_subtitle
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = subtitleText?.fontsize ?: R.dimen.primer_subtitle_fontsize,
-                ),
+                    default = subtitleText?.fontsize ?: R.dimen.primer_subtitle_fontsize
+                )
             )
 
             val styledPaymentMethodButtonBorder = BorderTheme(
@@ -119,8 +118,8 @@ data class PrimerTheme internal constructor(
                 ),
                 width = ResourceDimension.valueOf(
                     default = paymentMethodButton?.border?.width ?: defaultBorder?.width
-                        ?: R.dimen.primer_payment_method_button_border_width,
-                ),
+                        ?: R.dimen.primer_payment_method_button_border_width
+                )
             )
 
             val styledPaymentMethodButtonText = TextTheme(
@@ -130,8 +129,8 @@ data class PrimerTheme internal constructor(
                 ),
                 fontSize = ResourceDimension.valueOf(
                     default = paymentMethodButton?.text?.fontsize
-                        ?: R.dimen.primer_payment_method_button_fontsize,
-                ),
+                        ?: R.dimen.primer_payment_method_button_fontsize
+                )
             )
 
             val styledPaymentMethodButton = ButtonTheme(
@@ -151,8 +150,8 @@ data class PrimerTheme internal constructor(
                 text = styledPaymentMethodButtonText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = paymentMethodButton?.cornerRadius ?: defaultCornerRadius
-                        ?: R.dimen.primer_payment_method_button_corner_radius,
-                ),
+                        ?: R.dimen.primer_payment_method_button_corner_radius
+                )
             )
 
             val styledMainButtonBorder = BorderTheme(
@@ -169,8 +168,8 @@ data class PrimerTheme internal constructor(
                         ?: R.color.primer_error
                 ),
                 width = ResourceDimension.valueOf(
-                    default = mainButton?.border?.width ?: R.dimen.primer_main_button_border_width,
-                ),
+                    default = mainButton?.border?.width ?: R.dimen.primer_main_button_border_width
+                )
             )
 
             val styledMainButtonText = TextTheme(
@@ -178,8 +177,8 @@ data class PrimerTheme internal constructor(
                     default = mainButton?.text?.defaultColor ?: R.color.primer_main_button_text
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = mainButton?.text?.fontsize ?: R.dimen.primer_subtitle_fontsize,
-                ),
+                    default = mainButton?.text?.fontsize ?: R.dimen.primer_subtitle_fontsize
+                )
             )
 
             val styledMainButton = ButtonTheme(
@@ -197,7 +196,7 @@ data class PrimerTheme internal constructor(
                 text = styledMainButtonText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = mainButton?.cornerRadius ?: defaultCornerRadius
-                        ?: R.dimen.primer_main_button_corner_radius,
+                        ?: R.dimen.primer_main_button_corner_radius
                 )
             )
 
@@ -207,8 +206,8 @@ data class PrimerTheme internal constructor(
                         ?: R.color.primer_system_text
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = systemButton?.fontsize ?: R.dimen.primer_subtitle_fontsize,
-                ),
+                    default = systemButton?.fontsize ?: R.dimen.primer_subtitle_fontsize
+                )
             )
 
             val styledDefaultText = TextTheme(
@@ -216,8 +215,8 @@ data class PrimerTheme internal constructor(
                     default = defaultText?.defaultColor ?: R.color.primer_default_text
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = defaultText?.fontsize ?: R.dimen.primer_default_fontsize,
-                ),
+                    default = defaultText?.fontsize ?: R.dimen.primer_default_fontsize
+                )
             )
 
             val styledErrorText = TextTheme(
@@ -225,8 +224,8 @@ data class PrimerTheme internal constructor(
                     default = errorText?.defaultColor ?: R.color.primer_error
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = errorText?.fontsize ?: R.dimen.primer_text_size_sm,
-                ),
+                    default = errorText?.fontsize ?: R.dimen.primer_text_size_sm
+                )
             )
 
             val styledInputBorder = BorderTheme(
@@ -244,8 +243,8 @@ data class PrimerTheme internal constructor(
                 ),
                 width = ResourceDimension.valueOf(
                     default = input?.border?.width ?: defaultBorder?.width
-                        ?: R.dimen.primer_input_border_width,
-                ),
+                        ?: R.dimen.primer_input_border_width
+                )
             )
 
             val styledInputText = TextTheme(
@@ -253,8 +252,8 @@ data class PrimerTheme internal constructor(
                     default = input?.text?.defaultColor ?: R.color.primer_input_text
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = input?.text?.fontsize ?: R.dimen.primer_input_fontsize,
-                ),
+                    default = input?.text?.fontsize ?: R.dimen.primer_input_fontsize
+                )
             )
 
             val styledHintInputText = TextTheme(
@@ -262,8 +261,8 @@ data class PrimerTheme internal constructor(
                     default = input?.hintText?.defaultColor ?: R.color.primer_subtitle
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = input?.hintText?.fontsize ?: R.dimen.primer_input_fontsize,
-                ),
+                    default = input?.hintText?.fontsize ?: R.dimen.primer_input_fontsize
+                )
             )
 
             val styledInput = InputTheme(
@@ -276,8 +275,8 @@ data class PrimerTheme internal constructor(
                 hintText = styledHintInputText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = input?.cornerRadius ?: defaultCornerRadius
-                        ?: R.dimen.primer_default_corner_radius,
-                ),
+                        ?: R.dimen.primer_default_corner_radius
+                )
             )
 
             val styledSearchInputText = TextTheme(
@@ -285,8 +284,8 @@ data class PrimerTheme internal constructor(
                     default = searchInput?.text?.defaultColor ?: R.color.primer_search_input_text
                 ),
                 fontSize = ResourceDimension.valueOf(
-                    default = searchInput?.text?.fontsize ?: R.dimen.primer_search_input_fontsize,
-                ),
+                    default = searchInput?.text?.fontsize ?: R.dimen.primer_search_input_fontsize
+                )
             )
 
             val styledSearchHintInputText = TextTheme(
@@ -295,8 +294,8 @@ data class PrimerTheme internal constructor(
                 ),
                 fontSize = ResourceDimension.valueOf(
                     default = searchInput?.hintText?.fontsize
-                        ?: R.dimen.primer_search_input_fontsize,
-                ),
+                        ?: R.dimen.primer_search_input_fontsize
+                )
             )
 
             val searchInput = SearchInputTheme(
@@ -308,8 +307,8 @@ data class PrimerTheme internal constructor(
                 hintText = styledSearchHintInputText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = searchInput?.cornerRadius ?: defaultCornerRadius
-                        ?: R.dimen.primer_default_corner_radius,
-                ),
+                        ?: R.dimen.primer_default_corner_radius
+                )
             )
 
             return PrimerTheme(
@@ -330,7 +329,7 @@ data class PrimerTheme internal constructor(
                 input = styledInput,
                 searchInput = searchInput,
                 windowMode = WindowMode.BOTTOM_SHEET,
-                inputMode = inputMode,
+                inputMode = inputMode
             )
         }
     }
@@ -344,19 +343,19 @@ data class ButtonThemeData(
     @ColorRes val errorColor: Int? = null,
     val text: TextThemeData? = null,
     val border: BorderThemeData? = null,
-    @DimenRes val cornerRadius: Int? = null,
+    @DimenRes val cornerRadius: Int? = null
 )
 
 data class TextThemeData(
     @ColorRes val defaultColor: Int? = null,
-    @DimenRes val fontsize: Int? = null,
+    @DimenRes val fontsize: Int? = null
 )
 
 data class BorderThemeData(
     @ColorRes val defaultColor: Int? = null,
     @ColorRes val selectedColor: Int? = null,
     @ColorRes val errorColor: Int? = null,
-    @DimenRes val width: Int? = null,
+    @DimenRes val width: Int? = null
 )
 
 data class InputThemeData(
@@ -364,14 +363,14 @@ data class InputThemeData(
     val text: TextThemeData? = null,
     val hintText: TextThemeData? = null,
     val border: BorderThemeData? = null,
-    @DimenRes val cornerRadius: Int? = null,
+    @DimenRes val cornerRadius: Int? = null
 )
 
 data class SearchInputThemeData(
     @ColorRes val backgroundColor: Int? = null,
     val text: TextThemeData? = null,
     val hintText: TextThemeData? = null,
-    @DimenRes val cornerRadius: Int? = null,
+    @DimenRes val cornerRadius: Int? = null
 )
 
 // Internal models
@@ -382,19 +381,19 @@ internal data class ButtonTheme constructor(
     val errorColor: ColorData,
     val text: TextTheme,
     val border: BorderTheme,
-    val cornerRadius: DimensionData,
+    val cornerRadius: DimensionData
 )
 
 internal data class TextTheme(
     val defaultColor: ColorData,
-    val fontSize: DimensionData,
+    val fontSize: DimensionData
 )
 
 internal data class BorderTheme(
     val defaultColor: ColorData,
     val selectedColor: ColorData,
     val errorColor: ColorData,
-    val width: DimensionData,
+    val width: DimensionData
 )
 
 internal data class InputTheme(
@@ -402,12 +401,12 @@ internal data class InputTheme(
     val cornerRadius: DimensionData,
     val text: TextTheme,
     val hintText: TextTheme,
-    val border: BorderTheme,
+    val border: BorderTheme
 )
 
 internal data class SearchInputTheme(
     val backgroundColor: ColorData,
     val cornerRadius: DimensionData,
     val text: TextTheme,
-    val hintText: TextTheme,
+    val hintText: TextTheme
 )

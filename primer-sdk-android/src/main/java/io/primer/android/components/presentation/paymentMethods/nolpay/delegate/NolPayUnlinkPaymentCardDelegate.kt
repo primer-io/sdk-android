@@ -62,7 +62,7 @@ internal class NolPayUnlinkPaymentCardDelegate(
         NolPayUnlinkCardParams(
             requireNotNull(savedStateHandle[PHYSICAL_CARD_KEY]),
             collectedData.otpCode,
-            requireNotNull(savedStateHandle[UNLINKED_TOKEN_KEY]),
+            requireNotNull(savedStateHandle[UNLINKED_TOKEN_KEY])
         )
     ).mapSuspendCatching {
         NolPayUnlinkCardStep.CardUnlinked(

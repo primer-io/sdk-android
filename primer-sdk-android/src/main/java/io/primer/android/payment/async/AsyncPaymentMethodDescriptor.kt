@@ -2,7 +2,7 @@ package io.primer.android.payment.async
 
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
@@ -11,8 +11,8 @@ import io.primer.android.payment.VaultCapability
 internal abstract class AsyncPaymentMethodDescriptor constructor(
     open val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
+    config: PaymentMethodConfigDataResponse
+) : PaymentMethodDescriptor(config, localConfig), DISdkComponent {
 
     companion object {
 

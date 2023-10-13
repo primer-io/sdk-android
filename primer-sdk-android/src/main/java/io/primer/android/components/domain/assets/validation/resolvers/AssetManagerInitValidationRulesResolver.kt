@@ -5,7 +5,7 @@ import io.primer.android.components.domain.core.validation.ValidationRulesResolv
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.validation.rules.SdkInitializedRule
 
 internal class AssetManagerInitValidationRulesResolver(
-    private val sdkInitializedRule: SdkInitializedRule,
+    private val sdkInitializedRule: SdkInitializedRule
 ) : ValidationRulesResolver<Any> {
     override fun resolve() = ValidationRulesChain<Any>()
         .addRule(sdkInitializedRule)

@@ -16,20 +16,23 @@ import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.data.configuration.models.emojiFlag
 import io.primer.android.databinding.LayoutBillingAddressFormBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.hideKeyboard
-import org.koin.core.component.inject
 
 internal class BillingAddressFormView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : FrameLayout(context, attrs, defStyle), DIAppComponent {
+) : FrameLayout(context, attrs, defStyle), DISdkComponent {
 
-    private val theme: PrimerTheme by if (isInEditMode) lazy { PrimerTheme.build() } else inject()
+    private val theme: PrimerTheme by
+    if (isInEditMode) {
+        lazy { PrimerTheme.build() }
+    } else { inject() }
 
     private val binding = LayoutBillingAddressFormBinding.inflate(
         LayoutInflater.from(context),

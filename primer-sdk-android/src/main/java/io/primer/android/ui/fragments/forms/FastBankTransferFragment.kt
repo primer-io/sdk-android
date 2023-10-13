@@ -9,7 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.postDelayed
 import io.primer.android.R
 import io.primer.android.databinding.FragmentFastBankTransferBinding
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.extensions.autoCleaned
@@ -20,7 +20,7 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
+internal class FastBankTransferFragment : BaseFormFragment(), DISdkComponent {
 
     private var binding: FragmentFastBankTransferBinding by autoCleaned()
 
@@ -68,8 +68,9 @@ internal class FastBankTransferFragment : BaseFormFragment(), DIAppComponent {
                 null,
                 ContextCompat.getDrawable(
                     requireContext(),
-                    if (success) R.drawable.ic_copy_clipboard_success
-                    else R.drawable.ic_copy_clipboard_failed
+                    if (success) {
+                        R.drawable.ic_copy_clipboard_success
+                    } else { R.drawable.ic_copy_clipboard_failed }
                 ),
                 null
             )

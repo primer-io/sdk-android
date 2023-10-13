@@ -7,7 +7,7 @@ import io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.
 import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteApayaDataSource(
-    private val primerHttpClient: PrimerHttpClient,
+    private val primerHttpClient: PrimerHttpClient
 ) : BaseFlowDataSource<CreateSessionDataResponse, BaseRemoteRequest<CreateSessionDataRequest>> {
 
     override fun execute(input: BaseRemoteRequest<CreateSessionDataRequest>) =

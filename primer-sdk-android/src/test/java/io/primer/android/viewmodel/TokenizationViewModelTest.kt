@@ -25,11 +25,10 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.koin.test.KoinTest
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
-class TokenizationViewModelTest : KoinTest {
+class TokenizationViewModelTest {
 
     private lateinit var viewModel: TokenizationViewModel
 
@@ -66,7 +65,8 @@ class TokenizationViewModelTest : KoinTest {
         val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true)
         every { paymentMethodConfig.type }.returns(PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
-            config, paymentMethodConfig,
+            config,
+            paymentMethodConfig
         )
         paymentMethodDescriptor.pushValues(mockJson)
         val statusObserver = viewModel.tokenizationStatus.test()
@@ -80,7 +80,6 @@ class TokenizationViewModelTest : KoinTest {
 
     @Test
     fun `payment method is invalid after being reset`() {
-
         runTest {
             viewModel.resetPaymentMethod()
         }
@@ -101,7 +100,8 @@ class TokenizationViewModelTest : KoinTest {
         val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true)
         every { paymentMethodConfig.type }.returns(PaymentMethodType.PAYMENT_CARD.name)
         val paymentMethodDescriptor = CreditCard(
-            config, paymentMethodConfig,
+            config,
+            paymentMethodConfig
         )
         runTest {
             viewModel.resetPaymentMethod(paymentMethodDescriptor)

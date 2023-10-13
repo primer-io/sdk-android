@@ -14,7 +14,7 @@ internal class IPay88PaymentMethodFactory(private val type: String, val settings
 
     override fun build(): Either<PaymentMethod, Exception> {
         val iPay88 = AsyncPaymentMethod(
-            type,
+            type
         )
 
         if (IPay88SdkClassValidator().isIPaySdkIncluded().not()) {

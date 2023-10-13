@@ -39,8 +39,9 @@ internal abstract class PaymentMethodDescriptor(
     open val behaviours: List<SelectedPaymentMethodBehaviour>
         get() = if (localConfig.settings.uiOptions.isInitScreenEnabled.not() &&
             localConfig.isStandalonePaymentMethod
-        ) listOf() else
-            listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() }))
+        ) {
+            listOf()
+        } else { listOf(NewFragmentBehaviour({ PaymentMethodLoadingFragment.newInstance() })) }
 
     open val sdkCapabilities = listOf(SDKCapability.HEADLESS, SDKCapability.DROP_IN)
 
@@ -93,8 +94,9 @@ internal abstract class PaymentMethodDescriptor(
     // remove
     fun hasFieldValue(type: PrimerInputElementType): Boolean {
         val data = if (values.has(type.field)) values.get(type.field) else null
-        return if (data is String) data.isNotBlank()
-        else data != null
+        return if (data is String) {
+            data.isNotBlank()
+        } else { data != null }
     }
 
     // remove

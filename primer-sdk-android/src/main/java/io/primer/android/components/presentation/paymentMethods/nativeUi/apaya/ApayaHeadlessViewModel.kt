@@ -20,7 +20,8 @@ import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.ApayaActivityLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
@@ -35,7 +36,6 @@ import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 
 internal class ApayaHeadlessViewModel(
     private val apayaSessionConfigurationInteractor: ApayaSessionConfigurationInteractor,
@@ -141,7 +141,7 @@ internal class ApayaHeadlessViewModel(
                                 configuration.merchantId,
                                 configuration.currencyCode
                             ),
-                            sessionIntent,
+                            sessionIntent
                         )
                     )
                 }
@@ -164,7 +164,7 @@ internal class ApayaHeadlessViewModel(
                 }
         }
 
-    internal companion object : DIAppComponent {
+    internal companion object : DISdkComponent {
 
         private const val STATUS_QUERY_KEY = "status"
 
@@ -175,11 +175,11 @@ internal class ApayaHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return ApayaHeadlessViewModel(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
                     extras.createSavedStateHandle()
                 ) as T
             }

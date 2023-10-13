@@ -12,7 +12,7 @@ internal class GooglePayPaymentMethodDescriptorFactory : PaymentMethodDescriptor
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): GooglePayDescriptor =
         GooglePayDescriptor(
             localConfig = localConfig,

@@ -18,7 +18,7 @@ internal class MBWayPhoneNumberValidator : PaymentInputTypeValidator<String> {
                 "[invalid-phone-number] Phone number is not valid.",
                 PrimerInputElementType.PHONE_NUMBER
             )
-        } else null
+        } else { null }
     }
 
     internal companion object {

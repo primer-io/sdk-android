@@ -9,6 +9,6 @@ import io.primer.android.PaymentMethod
 internal interface PaymentMethodChecker {
 
     suspend fun shouldPaymentMethodBeAvailable(
-        paymentMethod: PaymentMethod,
+        paymentMethod: PaymentMethod
     ): Boolean
 }

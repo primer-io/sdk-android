@@ -11,7 +11,7 @@ import io.primer.android.components.domain.inputs.models.putFor
 import io.primer.android.components.domain.inputs.models.valueBy
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.HeadlessDefinition
 import io.primer.android.payment.NewFragmentBehaviour
@@ -27,8 +27,8 @@ import org.json.JSONObject
 
 internal class CreditCard(
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
-) : PaymentMethodDescriptor(config, localConfig), DIAppComponent {
+    config: PaymentMethodConfigDataResponse
+) : PaymentMethodDescriptor(config, localConfig), DISdkComponent {
 
     var availableFields = mutableMapOf<PrimerInputElementType, Boolean>()
 
@@ -181,7 +181,9 @@ internal class CreditCard(
                 availableFields[PrimerInputElementType.CARDHOLDER_NAME] == true
         if (containsCardholderName &&
             values.valueBy(PrimerInputElementType.CARDHOLDER_NAME).isNotBlank()
-        ) fields.add(PrimerInputElementType.CARDHOLDER_NAME.field)
+        ) {
+            fields.add(PrimerInputElementType.CARDHOLDER_NAME.field)
+        }
 
         return fields
     }

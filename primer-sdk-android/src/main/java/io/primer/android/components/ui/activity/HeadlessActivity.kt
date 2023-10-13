@@ -12,6 +12,7 @@ import io.primer.android.components.presentation.HeadlessViewModelFactory
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.googlepay.GooglePayEvent
 import io.primer.android.components.ui.extensions.toIPay88LauncherParams
+import io.primer.android.di.extension.inject
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
@@ -21,7 +22,6 @@ import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.mock.PaymentMethodMockActivity
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
 import io.primer.ipay88.api.ui.NativeIPay88Activity
-import org.koin.android.ext.android.inject
 
 internal class HeadlessActivity : BaseCheckoutActivity() {
 
@@ -104,7 +104,7 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
 
     private fun getLauncherParams() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         intent.getSerializableExtra(PARAMS_KEY, PaymentMethodLauncherParams::class.java)
-    } else intent.getSerializableExtra(PARAMS_KEY) as PaymentMethodLauncherParams
+    } else { intent.getSerializableExtra(PARAMS_KEY) as PaymentMethodLauncherParams }
 
     private fun startRedirect(params: PaymentMethodRedirectLauncherParams) {
         when (params) {
@@ -165,7 +165,8 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
             params: PaymentMethodLauncherParams
         ): Intent {
             return Intent(context, HeadlessActivity::class.java).putExtra(
-                PARAMS_KEY, params
+                PARAMS_KEY,
+                params
             )
         }
     }

@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 internal sealed class HUCError : PrimerError() {
 
     class InitializationError(
-        val message: String,
+        val message: String
     ) : HUCError()
 
     object MissingConfigurationError : HUCError()

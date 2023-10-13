@@ -69,7 +69,7 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
 }
 
 internal data class NetworkTypeProperties(
-    val networkType: NetworkType,
+    val networkType: NetworkType
 ) : BaseAnalyticsProperties() {
 
     companion object {

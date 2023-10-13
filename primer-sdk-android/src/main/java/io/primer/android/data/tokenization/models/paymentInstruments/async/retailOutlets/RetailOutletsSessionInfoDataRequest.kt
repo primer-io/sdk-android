@@ -7,7 +7,7 @@ import org.json.JSONObject
 internal data class RetailOutletsSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
-    val retailOutlet: String,
+    val retailOutlet: String
 ) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 

@@ -22,7 +22,7 @@ internal interface ThreeDsServiceRepository {
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
         useWeakValidation: Boolean,
-        threeDsKeysParams: ThreeDsKeysParams?,
+        threeDsKeysParams: ThreeDsKeysParams?
     ): Flow<Unit>
 
     @Throws(ThreeDsMissingDirectoryServerException::class)

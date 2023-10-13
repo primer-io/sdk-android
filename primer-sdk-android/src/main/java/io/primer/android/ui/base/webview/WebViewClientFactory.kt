@@ -13,7 +13,7 @@ internal interface WebViewClientFactory {
             activity: WebViewActivity,
             url: String?,
             captureUrl: String?,
-            type: WebViewClientType,
+            type: WebViewClientType
         ): BaseWebViewClient {
             return when (type) {
                 WebViewClientType.KLARNA -> KlarnaWebViewClient(activity, url, captureUrl)

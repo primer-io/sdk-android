@@ -6,6 +6,6 @@ import io.primer.android.components.manager.nolPay.core.composable.NolPayCollect
 internal fun interface NolPayDataValidator<out T : NolPayCollectableData> {
 
     suspend fun validate(
-        t: @UnsafeVariance T,
+        t: @UnsafeVariance T
     ): List<PrimerValidationError>
 }

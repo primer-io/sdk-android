@@ -13,7 +13,7 @@ internal class NolPayDescriptorFactory : PaymentMethodDescriptorFactory {
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
         paymentMethod: PaymentMethod,
-        paymentMethodCheckers: PaymentMethodCheckerRegistry,
+        paymentMethodCheckers: PaymentMethodCheckerRegistry
     ): PaymentMethodDescriptor = NolPayDescriptor(
         localConfig,
         paymentMethodRemoteConfig

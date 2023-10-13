@@ -11,8 +11,9 @@ internal class PrimerPostalCodeEditText(context: Context, attrs: AttributeSet? =
 
     override fun getText(): Editable? {
         val text = super.getText()
-        return if (isCalledFromSuperMethod()) text
-        else SpannableStringBuilder(getSanitizedText())
+        return if (isCalledFromSuperMethod()) {
+            text
+        } else { SpannableStringBuilder(getSanitizedText()) }
     }
 
     override fun getType() = PrimerInputElementType.POSTAL_CODE

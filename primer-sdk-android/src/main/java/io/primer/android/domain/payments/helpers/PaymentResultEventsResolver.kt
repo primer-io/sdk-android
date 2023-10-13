@@ -43,7 +43,7 @@ internal class PaymentResultEventsResolver(private val eventDispatcher: EventDis
     ) {
         eventDispatcher.dispatchEvent(
             CheckoutEvent.PaymentSuccess(
-                paymentResult.toPrimerCheckoutData(),
+                paymentResult.toPrimerCheckoutData()
             )
         )
         resumeHandler.handleSuccess()

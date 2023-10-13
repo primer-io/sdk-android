@@ -11,7 +11,7 @@ internal sealed class PaymentMethodError : PrimerError() {
     }
 
     class PaymentMethodCancelledError(
-        val paymentMethodType: String,
+        val paymentMethodType: String
     ) : PaymentMethodError() {
         override val exposedError = this
     }

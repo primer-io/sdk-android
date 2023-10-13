@@ -60,6 +60,7 @@ class HeadlessVaultManagerFragment : Fragment() {
             this,
             HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
+
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
             if (headlessManagerViewModel.isLaunched != true) {
                 token?.let {

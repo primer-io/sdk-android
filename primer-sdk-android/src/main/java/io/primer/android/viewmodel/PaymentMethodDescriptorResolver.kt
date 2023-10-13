@@ -16,7 +16,7 @@ internal class PrimerPaymentMethodDescriptorResolver(
     private val localConfig: PrimerConfig,
     private val localPaymentMethods: List<PaymentMethod>,
     private val paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
-    private val availabilityCheckers: PaymentMethodCheckerRegistry,
+    private val availabilityCheckers: PaymentMethodCheckerRegistry
 ) : PaymentMethodDescriptorResolver {
 
     override suspend fun resolve(remotePaymentMethods: List<PaymentMethodConfigDataResponse>):
@@ -31,7 +31,7 @@ internal class PrimerPaymentMethodDescriptorResolver(
                         .create(
                             localConfig = localConfig,
                             paymentMethodRemoteConfig = paymentMethodRemoteConfig,
-                            paymentMethod = it,
+                            paymentMethod = it
                         )
                 }
                 ?.let { list.add(it) }
@@ -44,7 +44,7 @@ internal class PrimerPaymentMethodDescriptorResolver(
         takeUnless {
             val checker = availabilityCheckers[it.type]
             checker != null && !checker.shouldPaymentMethodBeAvailable(
-                this,
+                this
             )
         }
 }

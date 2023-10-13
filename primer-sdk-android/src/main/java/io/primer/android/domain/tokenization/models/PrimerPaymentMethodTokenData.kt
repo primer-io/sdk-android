@@ -17,7 +17,7 @@ data class PrimerPaymentMethodTokenData(
 ) {
 
     data class VaultData(
-        val customerId: String,
+        val customerId: String
     )
 
     data class AuthenticationDetails(
@@ -25,6 +25,6 @@ data class PrimerPaymentMethodTokenData(
         val reasonCode: String?,
         val reasonText: String?,
         val protocolVersion: String?,
-        val challengeIssued: Boolean?,
+        val challengeIssued: Boolean?
     )
 }

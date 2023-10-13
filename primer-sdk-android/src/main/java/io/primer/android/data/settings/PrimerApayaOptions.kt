@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 @Deprecated("This class is deprecated and will be removed in future release.")
 data class PrimerApayaOptions(
-    var webViewTitle: String? = null,
+    var webViewTitle: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(parcel.readString())
 

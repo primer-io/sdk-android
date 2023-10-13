@@ -14,12 +14,13 @@ import io.primer.android.ui.payment.LoadingState
 internal class OmisePromptPayPaymentMethodDescriptor(
     override val options: AsyncPaymentMethod,
     localConfig: PrimerConfig,
-    config: PaymentMethodConfigDataResponse,
+    config: PaymentMethodConfigDataResponse
 ) : AsyncPaymentMethodDescriptor(options, localConfig, config) {
 
     override fun getLoadingState() = LoadingState(
-        if (localConfig.settings.uiOptions.theme.isDarkMode == true)
-            R.drawable.ic_logo_promptpay_dark else R.drawable.ic_logo_promptpay_light
+        if (localConfig.settings.uiOptions.theme.isDarkMode == true) {
+            R.drawable.ic_logo_promptpay_dark
+        } else { R.drawable.ic_logo_promptpay_light }
     )
 
     override val additionalInfoResolver: PrimerCheckoutAdditionalInfoResolver

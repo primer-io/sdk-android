@@ -13,7 +13,7 @@ import org.json.JSONObject
 internal sealed class BaseFailureContinueAuthDataRequest(
     open val error: BaseContinueAuthErrorDataRequest
 ) : BaseContinueAuthDataRequest(
-    ThreeDsAuthStatus.FAILURE,
+    ThreeDsAuthStatus.FAILURE
 ) {
 
     companion object {
@@ -98,7 +98,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                 is ThreeDsError.ThreeDsInitError -> PreChallengeContinueAuthErrorDataRequest(
                     ThreeDsSdkErrorReasonCode.`3DS_SDK_INIT_FAILED`,
                     error.description,
-                    error.recoverySuggestion,
+                    error.recoverySuggestion
                 )
                 is ThreeDsError.ThreeDsLibraryVersionError ->
                     PreChallengeContinueAuthErrorDataRequest(

@@ -6,5 +6,5 @@ data class PrimerCardData(
     val cardNumber: String,
     val expiryDate: String,
     val cvv: String,
-    val cardHolderName: String? = null,
+    val cardHolderName: String? = null
 ) : PrimerRawData

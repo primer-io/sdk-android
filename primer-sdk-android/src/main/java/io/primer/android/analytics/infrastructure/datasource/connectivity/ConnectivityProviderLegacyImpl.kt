@@ -55,7 +55,7 @@ internal class ConnectivityProviderLegacyImpl(
                     val state = networkInfo ?: fallbackNetworkInfo
                     if (state != null) {
                         ConnectivityProvider.NetworkState.ConnectedState.ConnectedLegacy(state)
-                    } else ConnectivityProvider.NetworkState.NotConnectedState
+                    } else { ConnectivityProvider.NetworkState.NotConnectedState }
                 }
             dispatchChange(state)
         }

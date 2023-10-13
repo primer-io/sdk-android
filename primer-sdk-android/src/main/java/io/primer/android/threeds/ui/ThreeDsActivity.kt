@@ -10,19 +10,20 @@ import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
-import io.primer.android.di.DIAppContext
-import io.primer.android.threeds.di.threeDsModule
+import io.primer.android.di.DISdkContext
+import io.primer.android.di.extension.viewModel
+import io.primer.android.threeds.di.ThreeDsContainer
 import io.primer.android.threeds.presentation.ThreeDsViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import io.primer.android.threeds.presentation.ThreeDsViewModelFactory
 
 internal class ThreeDsActivity : BaseCheckoutActivity() {
 
-    private val viewModel: ThreeDsViewModel by viewModel()
-
+    private val viewModel: ThreeDsViewModel
+        by viewModel<ThreeDsViewModel, ThreeDsViewModelFactory>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DIAppContext.app?.modules(threeDsModule)
         setContentView(R.layout.activity_primer_progress)
+        DISdkContext.sdkContainer?.let { it.registerContainer(ThreeDsContainer(it)) }
         setupViews()
         setupObservers()
         logAnalyticsViewed()
@@ -65,18 +66,18 @@ internal class ThreeDsActivity : BaseCheckoutActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        getKoin().unloadModules(listOf(threeDsModule))
-    }
-
     private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
         UIAnalyticsParams(
             AnalyticsAction.VIEW,
             ObjectType.VIEW,
-            Place.`3DS_VIEW`,
+            Place.`3DS_VIEW`
         )
     )
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DISdkContext.sdkContainer?.unregisterContainer<ThreeDsContainer>()
+    }
 
     companion object {
 

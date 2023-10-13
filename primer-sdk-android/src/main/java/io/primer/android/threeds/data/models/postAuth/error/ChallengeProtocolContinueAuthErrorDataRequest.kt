@@ -12,7 +12,7 @@ internal data class ChallengeProtocolContinueAuthErrorDataRequest(
     val threeDsErrorComponent: String,
     val threeDsErrorDetails: String,
     val threeDsSdkTransactionId: String,
-    val protocolVersion: String,
+    val protocolVersion: String
 ) : BaseContinueAuthErrorDataRequest(reasonCode, reasonText) {
 
     companion object {

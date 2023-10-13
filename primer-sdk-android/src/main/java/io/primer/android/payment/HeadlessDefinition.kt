@@ -11,6 +11,6 @@ internal class HeadlessDefinition(
 ) {
     class RawDataDefinition(
         val requiredInputDataClass: KClass<out PrimerRawData>,
-        val rawDataMapper: PrimerPaymentMethodRawDataMapper<PrimerRawData>,
+        val rawDataMapper: PrimerPaymentMethodRawDataMapper<PrimerRawData>
     )
 }

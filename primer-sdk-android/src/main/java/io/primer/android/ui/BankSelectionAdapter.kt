@@ -77,7 +77,7 @@ internal fun ItemBankSelectLoadingBinding.toBaseBankBinding() = BaseBankBinding(
 internal open class BaseBankViewHolder(
     private val binding: BaseBankBinding,
     private val imageLoader: ImageLoader,
-    protected val theme: PrimerTheme,
+    protected val theme: PrimerTheme
 ) : BaseViewHolder<BaseBankItem>(binding.root) {
 
     override fun bind(item: BaseBankItem) {
@@ -128,7 +128,7 @@ internal class BankViewHolder(
 internal class BankViewDisabledHolder(
     private val binding: ItemBankSelectDisabledBinding,
     imageLoader: ImageLoader,
-    theme: PrimerTheme,
+    theme: PrimerTheme
 ) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
 
     override fun bind(item: BaseBankItem) {
@@ -146,7 +146,7 @@ internal class BankViewDisabledHolder(
 internal class BankViewLoadingHolder(
     private val binding: ItemBankSelectLoadingBinding,
     imageLoader: ImageLoader,
-    theme: PrimerTheme,
+    theme: PrimerTheme
 ) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
     override fun bind(item: BaseBankItem) {
         super.bind(item)
@@ -169,7 +169,8 @@ internal class BankSelectionAdapter(
         BankItemType.BANK_ITEM_ENABLED.ordinal -> BankViewHolder(
             ItemBankSelectBinding.inflate(
                 LayoutInflater.from(parent.context),
-                parent, false,
+                parent,
+                false
             ),
             imageLoader,
             theme,
@@ -178,7 +179,8 @@ internal class BankSelectionAdapter(
         BankItemType.BANK_ITEM_DISABLED.ordinal -> BankViewDisabledHolder(
             ItemBankSelectDisabledBinding.inflate(
                 LayoutInflater.from(parent.context),
-                parent, false,
+                parent,
+                false
             ),
             imageLoader,
             theme
@@ -186,10 +188,11 @@ internal class BankSelectionAdapter(
         BankItemType.BANK_ITEM_LOADING.ordinal -> BankViewLoadingHolder(
             ItemBankSelectLoadingBinding.inflate(
                 LayoutInflater.from(parent.context),
-                parent, false,
+                parent,
+                false
             ),
             imageLoader,
-            theme,
+            theme
         )
         else -> throw IllegalStateException("Invalid $viewType.")
     }

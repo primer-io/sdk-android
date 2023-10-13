@@ -9,7 +9,7 @@ import io.primer.android.extensions.readParcelable
 import io.primer.android.model.MonetaryAmount
 
 internal data class PrimerConfig(
-    var settings: PrimerSettings = PrimerSettings(),
+    var settings: PrimerSettings = PrimerSettings()
 ) : Parcelable {
 
     internal var clientTokenBase64: String? = null
@@ -43,8 +43,9 @@ internal data class PrimerConfig(
     }
 
     internal fun toPlace() =
-        if (intent.paymentMethodIntent == PrimerSessionIntent.CHECKOUT)
-            Place.UNIVERSAL_CHECKOUT else Place.VAULT_MANAGER
+        if (intent.paymentMethodIntent == PrimerSessionIntent.CHECKOUT) {
+            Place.UNIVERSAL_CHECKOUT
+        } else { Place.VAULT_MANAGER }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(settings, flags)

@@ -9,7 +9,7 @@ data class PrimerClientSession(
     val totalAmount: Int?,
     val lineItems: List<PrimerLineItem>?,
     val orderDetails: PrimerOrder?,
-    val customer: PrimerCustomer?,
+    val customer: PrimerCustomer?
 )
 
 data class PrimerCustomer(
@@ -18,11 +18,11 @@ data class PrimerCustomer(
     val firstName: String?,
     val lastName: String?,
     val billingAddress: PrimerAddress?,
-    val shippingAddress: PrimerAddress?,
+    val shippingAddress: PrimerAddress?
 )
 
 data class PrimerOrder(
-    val countryCode: CountryCode?,
+    val countryCode: CountryCode?
 )
 
 data class PrimerLineItem(
@@ -43,7 +43,7 @@ data class PrimerAddress(
     val postalCode: String? = null,
     val city: String? = null,
     val state: String? = null,
-    val countryCode: CountryCode? = null,
+    val countryCode: CountryCode? = null
 ) {
     val country: String?
         get() = countryCode?.name

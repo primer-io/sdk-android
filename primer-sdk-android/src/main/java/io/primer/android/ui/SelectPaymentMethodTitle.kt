@@ -4,17 +4,17 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.di.DIAppComponent
+import io.primer.android.R
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.inject
 import io.primer.android.model.MonetaryAmount
-import org.koin.core.component.inject
+import io.primer.android.ui.settings.PrimerTheme
 
 internal class SelectPaymentMethodTitle(
     context: Context,
-    attrs: AttributeSet? = null,
-) : LinearLayout(context, attrs), DIAppComponent {
+    attrs: AttributeSet? = null
+) : LinearLayout(context, attrs), DISdkComponent {
 
     private val theme: PrimerTheme by inject()
 

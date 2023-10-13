@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 internal class CardInputDataValidator(
-    private val checkoutModuleRepository: CheckoutModuleRepository,
+    private val checkoutModuleRepository: CheckoutModuleRepository
 ) : PaymentInputDataValidator<PrimerCardData> {
 
     override fun validate(rawData: PrimerCardData): Flow<List<PrimerInputValidationError>> {

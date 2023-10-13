@@ -48,7 +48,7 @@ internal class NolPayPaymentComponentTest {
             startPaymentDelegate,
             headlessManagerDelegate,
             dataValidatorRegistry,
-            errorMapper,
+            errorMapper
         )
     }
 

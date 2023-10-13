@@ -5,5 +5,5 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.BasePayme
 
 internal class PaypalCheckoutPaymentInstrumentParams(
     val paypalOrderId: String?,
-    val externalPayerInfoEmail: String?,
+    val externalPayerInfoEmail: String?
 ) : BasePaymentInstrumentParams(PaymentMethodType.PAYPAL.name)

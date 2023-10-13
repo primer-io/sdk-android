@@ -25,7 +25,8 @@ import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.BrowserLauncherParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
-import io.primer.android.di.DIAppComponent
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
 import io.primer.android.domain.error.ErrorMapperType
@@ -37,7 +38,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import org.koin.core.component.get
 
 internal class PaypalVaultHeadlessViewModel(
     private val configurationInteractor: PaypalVaultConfigurationInteractor,
@@ -47,7 +47,7 @@ internal class PaypalVaultHeadlessViewModel(
     private val validationRulesResolver: PaypalVaultValidationRulesResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
     savedStateHandle: SavedStateHandle
-) : NativeUIHeadlessViewModel(savedStateHandle), DIAppComponent {
+) : NativeUIHeadlessViewModel(savedStateHandle), DISdkComponent {
 
     override val initialState: State = PaypalVaultState.Idle
 
@@ -174,7 +174,7 @@ internal class PaypalVaultHeadlessViewModel(
     }
 
     private fun tokenize(
-        billingAgreement: PaypalConfirmBillingAgreement,
+        billingAgreement: PaypalConfirmBillingAgreement
     ) = viewModelScope.launch {
         tokenizationInteractor.executeV2(
             TokenizationParamsV2(
@@ -183,13 +183,13 @@ internal class PaypalVaultHeadlessViewModel(
                     billingAgreement.externalPayerInfo,
                     billingAgreement.shippingAddress
                 ),
-                sessionIntent,
+                sessionIntent
             )
         ).catch { onEvent(PaypalVaultEvent.OnError) }
             .collect { onEvent(PaypalVaultEvent.OnTokenized) }
     }
 
-    internal companion object : DIAppComponent {
+    internal companion object : DISdkComponent {
         private const val TOKEN_QUERY_PARAM = "ba_token"
 
         class Factory : ViewModelProvider.Factory {
@@ -199,12 +199,12 @@ internal class PaypalVaultHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return PaypalVaultHeadlessViewModel(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
+                    resolve(),
                     extras.createSavedStateHandle()
                 ) as T
             }

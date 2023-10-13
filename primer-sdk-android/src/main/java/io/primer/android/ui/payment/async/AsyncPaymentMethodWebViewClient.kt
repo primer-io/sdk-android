@@ -9,7 +9,7 @@ import io.primer.android.ui.base.webview.WebViewActivity
 internal class AsyncPaymentMethodWebViewClient(
     private val activity: WebViewActivity,
     url: String?,
-    returnUrl: String?,
+    returnUrl: String?
 ) : BaseWebViewClient(activity, url, returnUrl) {
 
     override fun getUrlState(url: String) = when {

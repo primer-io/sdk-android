@@ -5,12 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
-import io.primer.android.di.DIAppComponent
-import io.primer.android.di.NOL_PAY_ERROR_RESOLVER_NAME
-import org.koin.core.component.get
-import org.koin.core.qualifier.named
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.NolPayContainer.Companion.NOL_PAY_ERROR_RESOLVER_NAME
+import io.primer.android.di.extension.resolve
 
-internal class NolPayStartPaymentComponentProvider : DIAppComponent {
+internal class NolPayStartPaymentComponentProvider : DISdkComponent {
 
     fun provideInstance(owner: ViewModelStoreOwner): NolPayPaymentComponent {
         return ViewModelProvider(
@@ -22,10 +21,10 @@ internal class NolPayStartPaymentComponentProvider : DIAppComponent {
                     extras: CreationExtras
                 ): T {
                     return NolPayPaymentComponent(
-                        get(),
-                        get(),
-                        get(),
-                        get(named(NOL_PAY_ERROR_RESOLVER_NAME)),
+                        resolve(),
+                        resolve(),
+                        resolve(),
+                        resolve(NOL_PAY_ERROR_RESOLVER_NAME)
                     ) as T
                 }
             }
