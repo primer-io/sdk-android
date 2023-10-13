@@ -11,9 +11,8 @@ import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardOTPParams
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
@@ -46,10 +45,7 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
     lateinit var analyticsInteractor: AnalyticsInteractor
 
     @RelaxedMockK
-    lateinit var appSecretInteractor: NolPayAppSecretInteractor
-
-    @RelaxedMockK
-    lateinit var configurationInteractor: NolPayConfigurationInteractor
+    lateinit var initSdkInitInteractor: NolPaySdkInitInteractor
 
     private lateinit var delegate: NolPayUnlinkPaymentCardDelegate
 
@@ -59,8 +55,7 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
             unlinkPaymentCardOTPInteractor,
             unlinkPaymentCardInteractor,
             analyticsInteractor,
-            appSecretInteractor,
-            configurationInteractor
+            initSdkInitInteractor
         )
     }
 

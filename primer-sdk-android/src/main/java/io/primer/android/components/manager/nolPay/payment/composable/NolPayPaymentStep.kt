@@ -16,4 +16,9 @@ sealed interface NolPayPaymentStep : PrimerHeadlessStep {
      * Object representing the step of collecting tag data for Nol Pay payment.
      */
     object CollectTagData : NolPayPaymentStep
+
+    /**
+     * Object representing the step of successfully completed payment inside the SDK.
+     */
+    object PaymentRequested : NolPayPaymentStep
 }

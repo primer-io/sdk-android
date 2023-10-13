@@ -87,11 +87,11 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                     )
                 )
             }
-            ClientTokenIntent.USE_NOL_PAY_SDK.name -> {
+            ClientTokenIntent.NOL_PAY_REDIRECTION.name -> {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.StartNolPayFlow(
                         clientTokenRepository.getStatusUrl().orEmpty(),
-                        clientTokenRepository.getTransactionNo().orEmpty(),
+                        clientTokenRepository.getTransactionNo(),
                         paymentMethodType
                     )
                 )

@@ -14,6 +14,7 @@ import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsCons
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.manager.nolPay.payment.di.NolPayStartPaymentComponentProvider
+import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.android.di.DIAppComponent
 import io.primer.android.domain.error.ErrorMapper
@@ -24,6 +25,8 @@ import kotlinx.coroutines.launch
 @ExperimentalPrimerApi
 class NolPayPaymentComponent internal constructor(
     private val startPaymentDelegate: NolPayStartPaymentDelegate,
+    @Suppress("UnusedPrivateMember")
+    private val headlessManagerDelegate: DefaultHeadlessManagerDelegate,
     private val dataValidatorRegistry: NolPayPaymentDataValidatorRegistry,
     private val errorMapper: ErrorMapper
 ) : ViewModel(),
@@ -47,9 +50,6 @@ class NolPayPaymentComponent internal constructor(
 
     override fun start() {
         logSdkFunctionCalls(NolPayAnalyticsConstants.PAYMENT_START_METHOD)
-        viewModelScope.launch {
-            _componentStep.emit(startPaymentDelegate.startListeningForEvents())
-        }
         viewModelScope.launch {
             startPaymentDelegate.start().onSuccess {
                 _componentStep.emit(NolPayPaymentStep.CollectCardAndPhoneData)
@@ -77,9 +77,10 @@ class NolPayPaymentComponent internal constructor(
         viewModelScope.launch {
             startPaymentDelegate.handleCollectedCardData(
                 _collectedData.replayCache.lastOrNull(),
-            ).onFailure { throwable ->
-                handleError(throwable)
-            }
+            ).onSuccess { step -> _componentStep.emit(step) }
+                .onFailure { throwable ->
+                    handleError(throwable)
+                }
         }
     }
 

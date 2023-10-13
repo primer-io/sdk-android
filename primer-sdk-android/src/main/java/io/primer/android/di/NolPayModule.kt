@@ -6,8 +6,6 @@ import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayAppSecretInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayConfigurationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
@@ -15,6 +13,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayTransactionNumberInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
@@ -33,15 +32,14 @@ internal const val NOL_PAY_ERROR_RESOLVER_NAME = "nolPayErrorResolver"
 
 internal val nolPayModule = {
     module {
-        factory { NolPayConfigurationInteractor(get()) }
-
         factory<NolPayConfigurationRepository> { NolPayConfigurationDataRepository(get()) }
 
         factory { PrimerNolPay }
 
         factory { RemoteNolPaySecretDataSource(get()) }
         factory<NolPayAppSecretRepository> { NolPayAppSecretDataRepository(get(), get()) }
-        factory { NolPayAppSecretInteractor(get(), get()) }
+        single { NolPaySdkInitInteractor(get(), get(), get()) }
+
         factory { NolPayGetLinkPaymentCardTokenInteractor(get()) }
         factory { NolPayGetLinkPaymentCardOTPInteractor(get()) }
         factory { NolPayLinkPaymentCardInteractor(get()) }
@@ -67,7 +65,6 @@ internal val nolPayModule = {
                 get(),
                 get(),
                 get(),
-                get(),
             )
         }
 
@@ -77,7 +74,6 @@ internal val nolPayModule = {
                 get(),
                 get(),
                 get(),
-                get()
             )
         }
 
@@ -86,13 +82,11 @@ internal val nolPayModule = {
                 get(),
                 get(),
                 get(),
-                get()
             )
         }
 
         factory {
             NolPayStartPaymentDelegate(
-                get(),
                 get(),
                 get(),
                 get(),

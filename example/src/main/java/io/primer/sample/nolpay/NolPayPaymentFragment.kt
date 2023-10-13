@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
@@ -57,7 +58,23 @@ class NolPayPaymentFragment : Fragment() {
                                 startPaymentComponent.submit()
                             }
 
-                        NolPayPaymentStep.CollectTagData -> Unit
+                        NolPayPaymentStep.CollectTagData -> Snackbar.make(
+                            requireView(),
+                            "Scan Nol card!",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+
+                        NolPayPaymentStep.PaymentRequested -> {
+                            Snackbar.make(
+                                requireView(),
+                                "Completed payment inside SDK!",
+                                Snackbar.LENGTH_SHORT
+                            )
+                                .show()
+                            findNavController().navigate(
+                                R.id.action_NolPayPaymentFragment_to_NolFragment
+                            )
+                        }
                     }
                 }
             }

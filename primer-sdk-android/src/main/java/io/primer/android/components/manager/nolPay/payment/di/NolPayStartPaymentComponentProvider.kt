@@ -24,6 +24,7 @@ internal class NolPayStartPaymentComponentProvider : DIAppComponent {
                     return NolPayPaymentComponent(
                         get(),
                         get(),
+                        get(),
                         get(named(NOL_PAY_ERROR_RESOLVER_NAME)),
                     ) as T
                 }

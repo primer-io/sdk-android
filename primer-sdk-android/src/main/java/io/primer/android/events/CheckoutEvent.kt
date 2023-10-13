@@ -202,7 +202,7 @@ internal sealed class CheckoutEvent(
 
     class StartNolPayFlow(
         val statusUrl: String,
-        val transactionNo: String,
+        val transactionNo: String?,
         val paymentMethodType: String,
     ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
 

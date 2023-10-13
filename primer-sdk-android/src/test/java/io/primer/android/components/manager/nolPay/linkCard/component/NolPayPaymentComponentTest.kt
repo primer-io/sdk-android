@@ -13,10 +13,10 @@ import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsCons
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
+import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,6 +32,9 @@ internal class NolPayPaymentComponentTest {
     lateinit var startPaymentDelegate: NolPayStartPaymentDelegate
 
     @RelaxedMockK
+    lateinit var headlessManagerDelegate: DefaultHeadlessManagerDelegate
+
+    @RelaxedMockK
     lateinit var dataValidatorRegistry: NolPayPaymentDataValidatorRegistry
 
     @RelaxedMockK
@@ -43,6 +46,7 @@ internal class NolPayPaymentComponentTest {
     fun setUp() {
         component = NolPayPaymentComponent(
             startPaymentDelegate,
+            headlessManagerDelegate,
             dataValidatorRegistry,
             errorMapper,
         )
@@ -65,10 +69,6 @@ internal class NolPayPaymentComponentTest {
     @Test
     fun `start should emit CollectStartPaymentData step when NolPayStartPaymentDelegate start was successful`() {
         coEvery { startPaymentDelegate.start() }.returns(Result.success(Unit))
-        coEvery { startPaymentDelegate.startListeningForEvents() }.coAnswers {
-            suspendCancellableCoroutine {
-            }
-        }
         runTest {
             component.start()
             assertEquals(
@@ -145,11 +145,12 @@ internal class NolPayPaymentComponentTest {
 
     @Test
     fun `submit should emit next step when NolPayPaymentDataValidatorRegistry handleCollectedCardData was successful`() {
+        val paymentStep = mockk<NolPayPaymentStep>(relaxed = true)
         coEvery {
             startPaymentDelegate.handleCollectedCardData(
                 any()
             )
-        }.returns(Result.success(Unit))
+        }.returns(Result.success(paymentStep))
         runTest {
             component.submit()
         }
@@ -172,7 +173,7 @@ internal class NolPayPaymentComponentTest {
             startPaymentDelegate.handleCollectedCardData(
                 any()
             )
-        }.returns(Result.failure<Exception>(exception))
+        }.returns(Result.failure(exception))
         runTest {
             component.submit()
             assertNotNull(component.componentError.first())
