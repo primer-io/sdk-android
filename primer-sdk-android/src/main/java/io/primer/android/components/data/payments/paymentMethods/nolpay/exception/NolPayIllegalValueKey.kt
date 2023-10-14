@@ -6,5 +6,6 @@ internal enum class NolPayIllegalValueKey(override val key: String) : IllegalVal
     MERCHANT_APP_ID("configuration.merchantAppId"),
     COLLECTED_DATA("collectedData"),
     TRANSACTION_NUMBER("resumeToken.transactionNo"),
+    COMPLETE_URL("resumeToken.completeUrl"),
     SAVED_DATA_LINK_TOKEN("linkToken");
 }

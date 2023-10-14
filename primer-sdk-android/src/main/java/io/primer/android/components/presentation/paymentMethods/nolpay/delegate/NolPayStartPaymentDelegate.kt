@@ -7,8 +7,9 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.asyn
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.models.AsyncPaymentMethodParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayTransactionNumberInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequiredActionInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequiredAction
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.data.base.util.requireNotNullCheck
@@ -32,7 +33,7 @@ internal class NolPayStartPaymentDelegate(
     private val asyncPaymentMethodConfigInteractor: AsyncPaymentMethodConfigInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
     private val requestPaymentInteractor: NolPayRequestPaymentInteractor,
-    private val transactionNumberInteractor: NolPayTransactionNumberInteractor,
+    private val requiredActionInteractor: NolPayRequiredActionInteractor,
     sdkInitInteractor: NolPaySdkInitInteractor,
     analyticsInteractor: AnalyticsInteractor
 ) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
@@ -50,10 +51,10 @@ internal class NolPayStartPaymentDelegate(
                 tokenize(collectedDataUnwrapped)
 
             is NolPayPaymentCollectableData.NolPayTagData ->
-                transactionNumberInteractor(None()).flatMap { transactionNumber ->
+                requiredActionInteractor(None()).flatMap { requiredAction ->
                     requestPayment(
                         collectedDataUnwrapped,
-                        transactionNumber
+                        requiredAction
                     )
                 }
         }
@@ -85,9 +86,13 @@ internal class NolPayStartPaymentDelegate(
 
     private suspend fun requestPayment(
         collectedData: NolPayPaymentCollectableData.NolPayTagData,
-        transactionNo: String
-    ) = requestPaymentInteractor(NolPayRequestPaymentParams(collectedData.tag, transactionNo))
-        .mapSuspendCatching { NolPayPaymentStep.PaymentRequested }
+        requiredAction: NolPayRequiredAction
+    ) = requestPaymentInteractor(
+        NolPayRequestPaymentParams(
+            collectedData.tag,
+            requiredAction.transactionNumber
+        )
+    ).mapSuspendCatching { NolPayPaymentStep.PaymentRequested }
 
     private suspend fun startListeningForPendingEvents() =
         suspendCancellableCoroutine<NolPayPaymentStep> { cancellableContinuation ->

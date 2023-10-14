@@ -12,7 +12,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayTransactionNumberInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequiredActionInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
@@ -51,7 +51,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory { NolPayGetCardDetailsInteractor(resolve()) }
         registerFactory { NolPayRequestPaymentInteractor(resolve()) }
         registerFactory { NolPayGetLinkedCardsInteractor(resolve()) }
-        registerFactory { NolPayTransactionNumberInteractor(sdk.resolve(), sdk.resolve()) }
+        registerFactory { NolPayRequiredActionInteractor(sdk.resolve(), sdk.resolve()) }
 
         registerFactory { NolPayLinkDataValidatorRegistry() }
         registerFactory { NolPayUnlinkDataValidatorRegistry() }

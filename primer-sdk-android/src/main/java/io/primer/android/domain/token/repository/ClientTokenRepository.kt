@@ -20,6 +20,8 @@ internal interface ClientTokenRepository {
 
     fun getTransactionNo(): String?
 
+    fun getCompleteUrl(): String?
+
     @Throws(IllegalArgumentException::class)
     fun setClientToken(clientToken: String)
 }
