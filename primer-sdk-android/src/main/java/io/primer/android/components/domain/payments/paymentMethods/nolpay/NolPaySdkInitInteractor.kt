@@ -18,6 +18,7 @@ internal class NolPaySdkInitInteractor(
     private val secretRepository: NolPayAppSecretRepository,
     private val nolPayConfigurationRepository: NolPayConfigurationRepository,
     private val nolPay: PrimerNolPay,
+    private val nolSdkInitDispatcher: CoroutineDispatcher = Dispatchers.Main,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseSuspendInteractor<Unit, None>() {
 
@@ -38,7 +39,7 @@ internal class NolPaySdkInitInteractor(
         nolSdkStatus.takeIf { status -> status == NolSdkStatus.NOT_INITIALIZED }?.let {
             nolSdkStatus = NolSdkStatus.INITIALIZING
             val configuration = nolPayConfigurationRepository.getConfiguration().getOrThrow()
-            withContext(Dispatchers.Main) {
+            withContext(nolSdkInitDispatcher) {
                 nolPay.initSDK(
                     configuration.environment != Environment.PRODUCTION,
                     true,

@@ -3,4 +3,4 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.model
 import android.nfc.Tag
 import io.primer.android.domain.base.Params
 
-data class NolPayRequestPaymentParams(val tag: Tag, val transactionNo: String) : Params
+internal data class NolPayRequestPaymentParams(val tag: Tag, val transactionNo: String) : Params

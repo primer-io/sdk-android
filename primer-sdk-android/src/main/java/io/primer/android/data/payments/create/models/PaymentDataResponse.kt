@@ -89,6 +89,7 @@ internal data class RequiredActionData(
 
 internal enum class RequiredActionName {
 
+    @Suppress("EnumNaming")
     `3DS_AUTHENTICATION`,
     USE_PRIMER_SDK,
     PROCESSOR_3DS,

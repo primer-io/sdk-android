@@ -222,7 +222,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) } returns CARD_NUMBER
         coEvery {
             linkPaymentCardInteractor(any())
-        } returns (Result.success(true))
+        } returns(Result.success(true))
 
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
@@ -265,6 +265,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
                 result.getOrThrow()
             }
         }
+
         assertEquals(expectedException, exception)
 
         coVerify {

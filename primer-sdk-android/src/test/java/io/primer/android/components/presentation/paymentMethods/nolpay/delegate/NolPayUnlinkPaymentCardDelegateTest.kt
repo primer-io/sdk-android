@@ -15,6 +15,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardOTPParams
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate.Companion.PHYSICAL_CARD_KEY
@@ -147,11 +148,11 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
     fun `handleCollectedCardData with NolPayOtpData should return CardUnlinked step when NolPayUnlinkPaymentCardInteractor execute was successful`() {
         val collectedData = NolPayUnlinkCollectableData.NolPayOtpData(OTP_CODE)
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
-        every { savedStateHandle.get<String>(UNLINKED_TOKEN_KEY) } returns UNLINK_TOKEN
-        every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) } returns CARD_NUMBER
+        every { savedStateHandle.get<String>(UNLINKED_TOKEN_KEY) } returns(UNLINK_TOKEN)
+        every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) } returns(CARD_NUMBER)
         coEvery {
             unlinkPaymentCardInteractor(any())
-        } returns Result.success(true)
+        } returns(Result.success(true))
 
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
@@ -162,15 +163,15 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
             assertEquals(PrimerNolPaymentCard(CARD_NUMBER), cardLinkedStep.nolPaymentCard)
         }
 
-//        coVerify {
-//            unlinkPaymentCardInteractor(
-//                NolPayUnlinkCardParams(
-//                    CARD_NUMBER,
-//                    OTP_CODE,
-//                    UNLINK_TOKEN,
-//                )
-//            )
-//        }
+        coVerify {
+            unlinkPaymentCardInteractor(
+                NolPayUnlinkCardParams(
+                    CARD_NUMBER,
+                    OTP_CODE,
+                    UNLINK_TOKEN
+                )
+            )
+        }
 
         verify {
             savedStateHandle.get<String>(UNLINKED_TOKEN_KEY)
@@ -204,15 +205,15 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
 
         assertEquals(expectedException, exception)
 
-//        coVerify {
-//            unlinkPaymentCardInteractor(
-//                NolPayUnlinkCardParams(
-//                    CARD_NUMBER,
-//                    OTP_CODE,
-//                    UNLINK_TOKEN,
-//                )
-//            )
-//        }
+        coVerify {
+            unlinkPaymentCardInteractor(
+                NolPayUnlinkCardParams(
+                    CARD_NUMBER,
+                    OTP_CODE,
+                    UNLINK_TOKEN
+                )
+            )
+        }
 
         verify {
             savedStateHandle.get<String>(UNLINKED_TOKEN_KEY).equals(UNLINK_TOKEN)

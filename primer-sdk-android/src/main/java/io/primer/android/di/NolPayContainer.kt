@@ -51,7 +51,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory { NolPayGetCardDetailsInteractor(resolve()) }
         registerFactory { NolPayRequestPaymentInteractor(resolve()) }
         registerFactory { NolPayGetLinkedCardsInteractor(resolve()) }
-        registerFactory { NolPayTransactionNumberInteractor(resolve(), resolve()) }
+        registerFactory { NolPayTransactionNumberInteractor(sdk.resolve(), sdk.resolve()) }
 
         registerFactory { NolPayLinkDataValidatorRegistry() }
         registerFactory { NolPayUnlinkDataValidatorRegistry() }
@@ -90,8 +90,8 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
 
         registerFactory {
             NolPayStartPaymentDelegate(
-                resolve(),
-                resolve(),
+                sdk.resolve(),
+                sdk.resolve(),
                 resolve(),
                 resolve(),
                 resolve(),

@@ -194,7 +194,8 @@ class MainViewModel(
     ) { t ->
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
-                savedStateHandle["token"] = t
+                savedStateHandle["token"] =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6ImNsaWVudC10b2tlbi1zaWduaW5nLWtleSJ9.eyJleHAiOjE2OTczMTY5MjAsImFjY2Vzc1Rva2VuIjoiZWIyZjE3ODMtZjk3YS00NTI0LWE0NDUtNzA0ZjYyYTdhMmE2IiwiYW5hbHl0aWNzVXJsIjoiaHR0cHM6Ly9hbmFseXRpY3MuYXBpLnN0YWdpbmcuY29yZS5wcmltZXIuaW8vbWl4cGFuZWwiLCJhbmFseXRpY3NVcmxWMiI6Imh0dHBzOi8vYW5hbHl0aWNzLnN0YWdpbmcuZGF0YS5wcmltZXIuaW8vY2hlY2tvdXQvdHJhY2siLCJpbnRlbnQiOiJDSEVDS09VVCIsImNvbmZpZ3VyYXRpb25VcmwiOiJodHRwczovL2FwaS5zdGFnaW5nLnByaW1lci5pby9jbGllbnQtc2RrL2NvbmZpZ3VyYXRpb24iLCJjb3JlVXJsIjoiaHR0cHM6Ly9hcGkuc3RhZ2luZy5wcmltZXIuaW8iLCJwY2lVcmwiOiJodHRwczovL3Nkay5hcGkuc3RhZ2luZy5wcmltZXIuaW8iLCJlbnYiOiJTVEFHSU5HIiwicGF5bWVudEZsb3ciOiJERUZBVUxUIn0.Wejl0iltIaj03WEo2s3vkVkFHf-d8WiL24Jmvm_vSYQ"
+
             }
         }
     }

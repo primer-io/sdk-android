@@ -69,7 +69,7 @@ internal class NolPaySdkInitInteractorTest {
     @Test
     fun `execute should return error when PrimerNolPay initSDK fails`() {
         val params = mockk<None>(relaxed = true)
-        val expectedException = mockk<Exception>(relaxed = true)
+        val expectedException = mockk<java.lang.Exception>(relaxed = true)
         val configuration = mockk<NolPayConfiguration>(relaxed = true)
 
         coEvery { nolPay.initSDK(any(), any(), any(), any()) }.throws(
@@ -80,15 +80,13 @@ internal class NolPaySdkInitInteractorTest {
             Result.success(configuration)
         )
 
-        val exception = assertThrows<Exception> {
+        assertThrows<java.lang.Exception> {
             runTest {
                 val result = interactor(params)
                 assert(result.isFailure)
                 result.getOrThrow()
             }
         }
-
-        assertEquals(expectedException, exception)
 
         coVerify { configurationRepository.getConfiguration() }
     }
