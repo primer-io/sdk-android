@@ -26,7 +26,7 @@ internal class NolPayRequiredActionInteractor(
             requireNotNullCheck(
                 clientTokenRepository.getCompleteUrl(),
                 NolPayIllegalValueKey.COMPLETE_URL
-            ),
+            )
         )
     }.onFailure { throwable ->
         errorEventResolver.resolve(throwable, ErrorMapperType.NOL_PAY)

@@ -1,9 +1,12 @@
 package io.primer.android.di
 
+import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPayCompletePaymentDataSource
 import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPaySecretDataSource
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
+import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayCompletePaymentDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
@@ -15,6 +18,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequiredActionInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayCompletePaymentRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
@@ -35,12 +39,21 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory { PrimerNolPay }
 
         registerFactory { RemoteNolPaySecretDataSource(sdk.resolve()) }
+        registerFactory { RemoteNolPayCompletePaymentDataSource(sdk.resolve()) }
+
         registerFactory<NolPayAppSecretRepository> {
             NolPayAppSecretDataRepository(
                 sdk.resolve(),
                 resolve()
             )
         }
+
+        registerFactory<NolPayCompletePaymentRepository> {
+            NolPayCompletePaymentDataRepository(
+                resolve()
+            )
+        }
+
         registerSingleton { NolPaySdkInitInteractor(resolve(), resolve(), resolve()) }
 
         registerFactory { NolPayGetLinkPaymentCardTokenInteractor(resolve()) }
@@ -52,6 +65,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory { NolPayRequestPaymentInteractor(resolve()) }
         registerFactory { NolPayGetLinkedCardsInteractor(resolve()) }
         registerFactory { NolPayRequiredActionInteractor(sdk.resolve(), sdk.resolve()) }
+        registerFactory { NolPayCompletePaymentInteractor(resolve()) }
 
         registerFactory { NolPayLinkDataValidatorRegistry() }
         registerFactory { NolPayUnlinkDataValidatorRegistry() }
@@ -92,6 +106,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
             NolPayStartPaymentDelegate(
                 sdk.resolve(),
                 sdk.resolve(),
+                resolve(),
                 resolve(),
                 resolve(),
                 resolve(),

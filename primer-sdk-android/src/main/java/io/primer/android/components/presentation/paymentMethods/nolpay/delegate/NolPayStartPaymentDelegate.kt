@@ -5,9 +5,11 @@ import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.AsyncPaymentMethodConfigInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.models.AsyncPaymentMethodParams
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequiredActionInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayCompletePaymentParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequiredAction
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
@@ -34,6 +36,7 @@ internal class NolPayStartPaymentDelegate(
     private val tokenizationInteractor: TokenizationInteractor,
     private val requestPaymentInteractor: NolPayRequestPaymentInteractor,
     private val requiredActionInteractor: NolPayRequiredActionInteractor,
+    private val completePaymentInteractor: NolPayCompletePaymentInteractor,
     sdkInitInteractor: NolPaySdkInitInteractor,
     analyticsInteractor: AnalyticsInteractor
 ) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
@@ -92,7 +95,8 @@ internal class NolPayStartPaymentDelegate(
             collectedData.tag,
             requiredAction.transactionNumber
         )
-    ).mapSuspendCatching { NolPayPaymentStep.PaymentRequested }
+    ).flatMap { completePaymentInteractor(NolPayCompletePaymentParams(requiredAction.completeUrl)) }
+        .mapSuspendCatching { NolPayPaymentStep.PaymentRequested }
 
     private suspend fun startListeningForPendingEvents() =
         suspendCancellableCoroutine<NolPayPaymentStep> { cancellableContinuation ->
