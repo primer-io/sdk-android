@@ -1,3 +1,9 @@
+## 2.18.0 (2023-10-16)
+
+### Feat
+
+- removes koin third party dependency
+
 ## 2.17.3 (2023-09-07)
 
 ### Fix
