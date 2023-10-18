@@ -31,6 +31,7 @@ import io.primer.android.domain.error.ErrorMapper
 import io.primer.nolpay.api.PrimerNolPay
 
 internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContainer() {
+    @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         registerFactory<NolPayConfigurationRepository> {
             NolPayConfigurationDataRepository(sdk.resolve())

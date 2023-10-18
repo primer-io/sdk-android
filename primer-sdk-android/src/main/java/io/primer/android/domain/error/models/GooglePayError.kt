@@ -20,6 +20,8 @@ internal sealed class GooglePayError : PrimerError() {
                 "Google pay internal error with status: $status (diagnosticsId: $diagnosticsId)"
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()
 

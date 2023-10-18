@@ -16,6 +16,7 @@ import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaym
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.None
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
@@ -96,7 +97,16 @@ internal class NolPayStartPaymentDelegate(
             requiredAction.transactionNumber
         )
     ).flatMap { completePaymentInteractor(NolPayCompletePaymentParams(requiredAction.completeUrl)) }
-        .mapSuspendCatching { NolPayPaymentStep.PaymentRequested }
+        .mapSuspendCatching {
+            EventBus.broadcast(
+                CheckoutEvent.StartAsyncFlow(
+                    ClientTokenIntent.NOL_PAY_REDIRECTION.name,
+                    requiredAction.statusUrl,
+                    requiredAction.paymentMethodType
+                )
+            )
+            NolPayPaymentStep.PaymentRequested
+        }
 
     private suspend fun startListeningForPendingEvents() =
         suspendCancellableCoroutine<NolPayPaymentStep> { cancellableContinuation ->

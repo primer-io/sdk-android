@@ -43,6 +43,14 @@ class NolPayPaymentFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                startPaymentComponent.componentError.collectLatest {
+                    Snackbar.make(requireView(), it.description, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
                     when (nolPayLinkStep) {
                         NolPayPaymentStep.CollectCardAndPhoneData ->

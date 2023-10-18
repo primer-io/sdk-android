@@ -75,7 +75,11 @@ internal class NolPayLinkPaymentCardDelegate(
             collectedData.phoneCountryDiallingCode
         savedStateHandle[MOBILE_NUMBER_KEY] =
             collectedData.mobileNumber
-    }.mapSuspendCatching { NolPayLinkCardStep.CollectOtpData }
+    }.mapSuspendCatching {
+        NolPayLinkCardStep.CollectOtpData(
+            collectedData.phoneCountryDiallingCode.plus(collectedData.mobileNumber)
+        )
+    }
 
     private suspend fun linkPaymentCard(
         collectedData: NolPayLinkCollectableData.NolPayOtpData,

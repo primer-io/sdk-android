@@ -3,6 +3,7 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequiredAction
 import io.primer.android.data.base.util.requireNotNullCheck
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseSuspendInteractor
 import io.primer.android.domain.base.None
@@ -24,9 +25,14 @@ internal class NolPayRequiredActionInteractor(
                 NolPayIllegalValueKey.TRANSACTION_NUMBER
             ),
             requireNotNullCheck(
+                clientTokenRepository.getStatusUrl(),
+                NolPayIllegalValueKey.STATUS_URL
+            ),
+            requireNotNullCheck(
                 clientTokenRepository.getCompleteUrl(),
                 NolPayIllegalValueKey.COMPLETE_URL
-            )
+            ),
+            PaymentMethodType.NOL_PAY.name
         )
     }.onFailure { throwable ->
         errorEventResolver.resolve(throwable, ErrorMapperType.NOL_PAY)

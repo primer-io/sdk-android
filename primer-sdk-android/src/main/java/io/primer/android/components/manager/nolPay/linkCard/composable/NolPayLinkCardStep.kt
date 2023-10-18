@@ -21,10 +21,11 @@ sealed interface NolPayLinkCardStep : PrimerHeadlessStep {
     data class CollectPhoneData(val cardNumber: String) : NolPayLinkCardStep
 
     /**
-     * Object representing the step of collecting OTP (One-Time Password) data
+     * A data class  representing the step of collecting OTP (One-Time Password) data
      * for Nol Pay card linking.
+     * @property mobileNumber The mobile number to which OTP code was sent to.
      */
-    object CollectOtpData : NolPayLinkCardStep
+    data class CollectOtpData(val mobileNumber: String) : NolPayLinkCardStep
 
     /**
      * A data class representing the step of successfully linking a Nol Pay card.

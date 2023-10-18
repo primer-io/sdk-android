@@ -6,6 +6,7 @@ internal class BadNetworkError(
     override val errorId: String = "bad-network"
     override val description: String =
         "Failed to perform network request because internet connection is bad."
+    override val errorCode: String? = null
     override val exposedError: PrimerError = this
     override val recoverySuggestion: String = "Check the internet connection and retry."
 }

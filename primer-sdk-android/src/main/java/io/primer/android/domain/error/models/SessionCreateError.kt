@@ -10,6 +10,7 @@ internal class SessionCreateError(
 ) : PrimerError() {
     override val errorId = "failed-to-create-session"
     override val description = "Failed to create session for $paymentMethodType. $serverDescription"
+    override val errorCode: String? = null
     override val diagnosticsId = serverDiagnosticsId ?: UUID.randomUUID().toString()
     override val exposedError = this
     override val recoverySuggestion =

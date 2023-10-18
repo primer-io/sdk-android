@@ -30,6 +30,8 @@ internal sealed class IPay88Error : PrimerError() {
                 "IPay SDK connection error occurred: (diagnosticsId: $diagnosticsId)"
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()
 

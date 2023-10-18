@@ -14,6 +14,7 @@ internal sealed class HttpError : PrimerError() {
         serverDiagnosticsId: String?
     ) : HttpError() {
 
+        override val errorCode: String = code.toString()
         override val description = "Server error [$code]"
         override val diagnosticsId = serverDiagnosticsId ?: UUID.randomUUID().toString()
         override val exposedError = UnauthorizedError(diagnosticsId)
@@ -26,6 +27,7 @@ internal sealed class HttpError : PrimerError() {
     ) : HttpError() {
 
         override val description = "Server error [$code] Response: $apiError"
+        override val errorCode: String = code.toString()
         override val diagnosticsId = serverDiagnosticsId ?: UUID.randomUUID().toString()
         override val exposedError = ServerError(apiError, diagnosticsId)
     }
@@ -38,6 +40,7 @@ internal sealed class HttpError : PrimerError() {
     ) : HttpError() {
 
         override val description = "Server error [$code] Response: $apiError"
+        override val errorCode: String = code.toString()
         override val diagnosticsId = serverDiagnosticsId ?: UUID.randomUUID().toString()
     }
 }

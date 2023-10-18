@@ -73,6 +73,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                     )
                 )
             }
+
             ClientTokenIntent.PAYMENT_METHOD_VOUCHER.name -> {
                 eventDispatcher.dispatchEvents(
                     listOf(
@@ -87,15 +88,19 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                     )
                 )
             }
+
             ClientTokenIntent.NOL_PAY_REDIRECTION.name -> {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.StartNolPayFlow(
-                        clientTokenRepository.getStatusUrl().orEmpty(),
-                        clientTokenRepository.getTransactionNo(),
-                        paymentMethodType
+                eventDispatcher.dispatchEvents(
+                    listOf(
+                        CheckoutEvent.StartNolPayFlow(
+                            clientTokenRepository.getStatusUrl().orEmpty(),
+                            clientTokenRepository.getTransactionNo(),
+                            paymentMethodType
+                        )
                     )
                 )
             }
+
             else -> {
                 when (config.settings.fromHUC) {
                     true -> eventDispatcher.dispatchEvents(
@@ -114,6 +119,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                             )
                         )
                     )
+
                     false -> eventDispatcher.dispatchEvents(
                         listOf(
                             CheckoutEvent.StartAsyncRedirectFlow(

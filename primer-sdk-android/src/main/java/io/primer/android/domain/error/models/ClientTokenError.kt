@@ -23,6 +23,8 @@ internal sealed class ClientTokenError : PrimerError() {
                 "Cannot initialize the SDK because the client token provided is expired."
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId = UUID.randomUUID().toString()
 
     override val exposedError: PrimerError

@@ -48,6 +48,8 @@ internal sealed class PaymentMethodError : PrimerError() {
                 "Cannot initialize the SDK because $paymentMethodType does not support $intent."
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId = UUID.randomUUID().toString()
 
     override val recoverySuggestion: String?
