@@ -63,6 +63,8 @@ class NolFragment : Fragment() {
                                 binding.linkedCards.checkedRadioButtonId
                         }?.tag as PrimerNolPaymentCard
                     )
+                    putString(PHONE_NUMBER, binding.mobileNumber.text.toString())
+                    putString(DIALING_CODE, binding.mobileCountryCode.text.toString())
                 })
         }
 
@@ -101,5 +103,7 @@ class NolFragment : Fragment() {
     companion object {
 
         const val NOL_CARD_KEY = "NOL_CARD"
+        const val PHONE_NUMBER = "PHONE_NUMBER"
+        const val DIALING_CODE = "DIALING_CODE"
     }
 }

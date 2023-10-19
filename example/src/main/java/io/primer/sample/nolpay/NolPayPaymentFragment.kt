@@ -53,18 +53,24 @@ class NolPayPaymentFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 startPaymentComponent.componentStep.collectLatest { nolPayLinkStep ->
                     when (nolPayLinkStep) {
-                        NolPayPaymentStep.CollectCardAndPhoneData ->
+                        NolPayPaymentStep.CollectCardAndPhoneData -> {
+                            Snackbar.make(
+                                requireView(),
+                                "Payment started, please wait for the next step!",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                             startPaymentComponent.updateCollectedData(
                                 NolPayPaymentCollectableData.NolPayCardAndPhoneData(
                                     requireArguments().getSerializable(
                                         NolFragment.NOL_CARD_KEY
                                     ) as PrimerNolPaymentCard,
-                                    "62250843",
-                                    "387"
+                                    requireArguments().getString(NolFragment.PHONE_NUMBER).orEmpty(),
+                                    requireArguments().getString(NolFragment.DIALING_CODE).orEmpty(),
                                 )
                             ).also {
                                 startPaymentComponent.submit()
                             }
+                        }
 
                         NolPayPaymentStep.CollectTagData -> Snackbar.make(
                             requireView(),

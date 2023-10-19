@@ -96,7 +96,7 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
     fun setCurrentEnv(env: PrimerEnv) {
         environment.postValue(env)
         this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
@@ -116,9 +116,9 @@ class MainViewModel(
         }
     }
 
-    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
+    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(1000)
     val amount: LiveData<Int> = _amount
-    val amountStringified: String get() = String.format("%.2f", _amount.value!!.toDouble() / 100)
+    val amountStringified: String get() = String.format(Locale.US, "%.2f", _amount.value!!.toDouble() / 100)
     fun setAmount(amount: Int): Unit = _amount.postValue(amount)
 
     private val _descriptor = MutableLiveData("Purchase: Item-123")
