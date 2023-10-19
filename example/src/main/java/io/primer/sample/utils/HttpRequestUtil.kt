@@ -38,6 +38,7 @@ class HttpRequestUtil {
                 .url(uri)
                 .header("X-Api-Version", if (useOldVersion) "2021-09-27" else "2.2")
                 .header("environment", environment)
+                .header("Legacy-Workflows", "false")
                 .post(reqBody)
             if (!apiKey.isNullOrBlank()) requestBuilder.addHeader("X-Api-Key", apiKey)
             return requestBuilder.build()

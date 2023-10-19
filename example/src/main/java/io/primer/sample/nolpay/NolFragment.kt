@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
@@ -64,12 +65,19 @@ class NolFragment : Fragment() {
                     )
                 })
         }
+
+        binding.getLinkedCards.setOnClickListener {
+            getLinkedCards(
+                binding.mobileNumber.text.toString(),
+                binding.mobileCountryCode.text.toString()
+            )
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun getLinkedCards(mobileNumber: String, diallingCode: String) {
         lifecycleScope.launch {
-            manager.provideNolPayLinkedCardsComponent().getLinkedCards("62250843", "387")
+            binding.linkedCards.removeAllViews()
+            manager.provideNolPayLinkedCardsComponent().getLinkedCards(mobileNumber, diallingCode)
                 .onSuccess { cards ->
                     cards.forEach { card ->
                         binding.linkedCards.apply {
@@ -85,7 +93,7 @@ class NolFragment : Fragment() {
                         }
                     }
                 }.onFailure {
-                    it.printStackTrace()
+                    Snackbar.make(requireView(), it.message.orEmpty(), Snackbar.LENGTH_SHORT).show()
                 }
         }
     }
