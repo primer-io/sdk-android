@@ -44,9 +44,9 @@
         <action
             android:id="@+id/action_NolLinkFragment_to_NolFragment"
             app:destination="@id/NolFragment"
+            app:popUpTo="@id/NolFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@+id/nav_graph"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false"  />
     </fragment>
 
     <fragment
@@ -58,9 +58,9 @@
         <action
             android:id="@+id/action_NolUnlinkFragment_to_NolFragment"
             app:destination="@id/NolFragment"
+            app:popUpTo="@id/NolFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@+id/nav_graph"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -71,10 +71,10 @@
 
         <action
             android:id="@+id/action_NolPayPaymentFragment_to_NolFragment"
-            app:destination="@id/NolFragment"
+            app:destination="@id/HeadlessFragment"
+            app:popUpTo="@id/HeadlessFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@+id/nav_graph"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -98,7 +98,6 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-
 
         <action
             android:id="@+id/action_FirstFragment_to_HeadlessRawFragment"

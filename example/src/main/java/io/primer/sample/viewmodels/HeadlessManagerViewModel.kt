@@ -210,6 +210,7 @@ class HeadlessManagerViewModel(
     }
 
     override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
+        Log.d(TAG, "onCheckoutCompleted")
         _uiState.value = UiState.CheckoutCompleted(checkoutData)
     }
 

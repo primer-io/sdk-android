@@ -41,7 +41,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
         binding.mobileNumber.doAfterTextChanged {
             unlinkCardComponent.updateCollectedData(
                 NolPayUnlinkCollectableData.NolPayCardAndPhoneData(
-                    requireParentFragment().requireArguments()
+                    requireParentFragment().requireParentFragment().requireArguments()
                         ?.getSerializable(
                             NolFragment.NOL_CARD_KEY
                         ) as PrimerNolPaymentCard,
