@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
@@ -51,8 +53,27 @@ class NolPayLinkOtpFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                linkCardComponent.componentValidationErrors.collectLatest {
-                    binding.nextButton.isEnabled = it.isEmpty()
+                linkCardComponent.componentValidationStatus.collectLatest { validationStatus ->
+                    binding.otpCode.error = null
+                    when (validationStatus) {
+                        is PrimerValidationStatus.Validated -> {
+                            binding.nextButton.isEnabled = validationStatus.errors.isEmpty()
+                            binding.otpCode.error =
+                                validationStatus.errors.firstOrNull()?.description
+                            binding.progressBar.isVisible = false
+                        }
+
+                        is PrimerValidationStatus.Validating -> {
+                            binding.nextButton.isEnabled = false
+                            binding.progressBar.isVisible = true
+                        }
+
+                        is PrimerValidationStatus.Error -> {
+                            binding.nextButton.isEnabled = false
+                            binding.progressBar.isVisible = false
+                            binding.otpCode.error = validationStatus.error.description
+                        }
+                    }
                 }
             }
         }

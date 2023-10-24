@@ -1,43 +1,40 @@
 package io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator
 
 import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.components.domain.payments.metadata.phone.exception.PhoneValidationException
+import io.primer.android.components.domain.payments.metadata.phone.repository.PhoneMetadataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.DIALLING_CODE_REGEX
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_DIALLING_CODE_ERROR_ID
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_MOBILE_NUMBER_ERROR_ID
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.MOBILE_PHONE_REGEX
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.extensions.mapSuspendCatching
 
-internal class NolPayUnlinkCardAndMobileNumberDataValidator :
-    NolPayDataValidator<NolPayUnlinkCollectableData.NolPayCardAndPhoneData> {
+internal class NolPayUnlinkCardAndMobileNumberDataValidator(
+    private val phoneMetadataRepository: PhoneMetadataRepository
+) : NolPayDataValidator<NolPayUnlinkCollectableData.NolPayCardAndPhoneData> {
     override suspend fun validate(t: NolPayUnlinkCollectableData.NolPayCardAndPhoneData) = when {
         t.nolPaymentCard.cardNumber.isBlank() -> {
-            listOf(
-                PrimerValidationError(
-                    NolPayValidations.INVALID_CARD_NUMBER_ERROR_ID,
-                    "Card number cannot be blank."
+            Result.success(
+                listOf(
+                    PrimerValidationError(
+                        NolPayValidations.INVALID_CARD_NUMBER_ERROR_ID,
+                        "Card number cannot be blank."
+                    )
                 )
             )
         }
 
-        DIALLING_CODE_REGEX.matches(t.phoneCountryDiallingCode).not() -> {
-            listOf(
-                PrimerValidationError(
-                    INVALID_DIALLING_CODE_ERROR_ID,
-                    "Mobile number dialling code is not valid."
-                )
-            )
-        }
+        else -> phoneMetadataRepository.getPhoneMetadata(t.mobileNumber)
+            .mapSuspendCatching { emptyList<PrimerValidationError>() }.recoverCatching { throwable ->
+                when (throwable) {
+                    is PhoneValidationException ->
+                        listOf(
+                            PrimerValidationError(
+                                NolPayValidations.INVALID_MOBILE_NUMBER_ERROR_ID,
+                                throwable.message.orEmpty()
+                            )
+                        )
 
-        MOBILE_PHONE_REGEX.matches(t.mobileNumber).not() -> {
-            listOf(
-                PrimerValidationError(
-                    INVALID_MOBILE_NUMBER_ERROR_ID,
-                    "Mobile number is not valid."
-                )
-            )
-        }
-
-        else -> emptyList()
+                    else -> throw throwable
+                }
+            }
     }
 }

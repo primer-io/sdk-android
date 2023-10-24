@@ -123,7 +123,7 @@ internal class NolPayUnlinkCardComponentTest {
         coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }.returns(listOf())
         runTest {
             component.updateCollectedData(collectableData)
-            assertEquals(listOf(), component.componentValidationErrors.first())
+            assertEquals(listOf(), component.componentValidationStatus.first())
         }
 
         coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }

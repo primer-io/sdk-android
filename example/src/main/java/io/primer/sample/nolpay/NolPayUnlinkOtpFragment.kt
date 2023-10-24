@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
@@ -51,8 +52,9 @@ class NolPayUnlinkOtpFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                unlinkCardComponent.componentValidationErrors.collectLatest {
-                    binding.nextButton.isEnabled = it.isEmpty()
+                unlinkCardComponent.componentValidationStatus.collectLatest {
+                    binding.nextButton.isEnabled =
+                        it is PrimerValidationStatus.Validated && it.errors.isEmpty()
                 }
             }
         }

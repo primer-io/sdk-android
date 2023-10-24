@@ -15,13 +15,11 @@ sealed interface NolPayPaymentCollectableData : NolPayCollectableData {
      *
      * @property nolPaymentCard The NolPay payment card to unlink.
      * @property mobileNumber The mobile number associated with the NolPay account.
-     * @property phoneCountryDiallingCode The country dialing code for the associated phone number
-     * in E.164 format.
+     * E.164 format.
      * */
     data class NolPayCardAndPhoneData(
         val nolPaymentCard: PrimerNolPaymentCard,
         val mobileNumber: String,
-        val phoneCountryDiallingCode: String
     ) : NolPayPaymentCollectableData
 
     /**

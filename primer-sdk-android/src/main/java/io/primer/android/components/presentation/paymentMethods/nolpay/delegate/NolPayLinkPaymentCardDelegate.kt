@@ -3,6 +3,8 @@ package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 import androidx.lifecycle.SavedStateHandle
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
+import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
+import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadataParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
@@ -13,6 +15,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.models
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.data.base.util.requireNotNullCheck
+import io.primer.android.extensions.flatMap
 import io.primer.android.extensions.mapSuspendCatching
 import io.primer.android.extensions.runSuspendCatching
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
@@ -21,6 +24,7 @@ internal class NolPayLinkPaymentCardDelegate(
     private val getLinkPaymentCardTokenInteractor: NolPayGetLinkPaymentCardTokenInteractor,
     private val getLinkPaymentCardOTPInteractor: NolPayGetLinkPaymentCardOTPInteractor,
     private val linkPaymentCardInteractor: NolPayLinkPaymentCardInteractor,
+    private val phoneMetadataInteractor: PhoneMetadataInteractor,
     analyticsInteractor: AnalyticsInteractor,
     sdkInitInteractor: NolPaySdkInitInteractor
 ) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
@@ -61,25 +65,23 @@ internal class NolPayLinkPaymentCardDelegate(
     private suspend fun getPaymentCardOTP(
         collectedData: NolPayLinkCollectableData.NolPayPhoneData,
         savedStateHandle: SavedStateHandle
-    ) = getLinkPaymentCardOTPInteractor(
-        NolPayLinkCardOTPParams(
-            collectedData.mobileNumber,
-            collectedData.phoneCountryDiallingCode,
-            requireNotNullCheck(
-                savedStateHandle[LINKED_TOKEN_KEY],
-                NolPayIllegalValueKey.SAVED_DATA_LINK_TOKEN
-            )
-        )
-    ).onSuccess {
-        savedStateHandle[REGION_CODE_KEY] =
-            collectedData.phoneCountryDiallingCode
-        savedStateHandle[MOBILE_NUMBER_KEY] =
-            collectedData.mobileNumber
-    }.mapSuspendCatching {
-        NolPayLinkCardStep.CollectOtpData(
-            collectedData.phoneCountryDiallingCode.plus(collectedData.mobileNumber)
-        )
-    }
+    ) = phoneMetadataInteractor(PhoneMetadataParams(collectedData.mobileNumber))
+        .flatMap { phoneMetadata ->
+            getLinkPaymentCardOTPInteractor(
+                NolPayLinkCardOTPParams(
+                    phoneMetadata.nationalNumber,
+                    phoneMetadata.countryCode,
+                    requireNotNullCheck(
+                        savedStateHandle[LINKED_TOKEN_KEY],
+                        NolPayIllegalValueKey.SAVED_DATA_LINK_TOKEN
+                    )
+                )
+            ).mapSuspendCatching {
+                NolPayLinkCardStep.CollectOtpData(
+                    collectedData.mobileNumber
+                )
+            }
+        }
 
     private suspend fun linkPaymentCard(
         collectedData: NolPayLinkCollectableData.NolPayOtpData,
@@ -106,7 +108,5 @@ internal class NolPayLinkPaymentCardDelegate(
 
         internal const val PHYSICAL_CARD_KEY = "PHYSICAL_CARD"
         internal const val LINKED_TOKEN_KEY = "LINKED_TOKEN"
-        internal const val REGION_CODE_KEY = "REGION_CODE"
-        internal const val MOBILE_NUMBER_KEY = "MOBILE_NUMBER"
     }
 }

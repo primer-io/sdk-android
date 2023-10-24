@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
@@ -45,8 +47,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
                         ?.getSerializable(
                             NolFragment.NOL_CARD_KEY
                         ) as PrimerNolPaymentCard,
-                    it.toString(),
-                    binding.mobileCountryCode.text.toString()
+                    binding.mobileCountryCode.text.toString().plus(it.toString()),
                 )
             )
         }
@@ -57,8 +58,27 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                unlinkCardComponent.componentValidationErrors.collectLatest {
-                    binding.nextButton.isEnabled = it.isEmpty()
+                unlinkCardComponent.componentValidationStatus.collectLatest { validationStatus ->
+                    binding.mobileNumber.error = null
+                    when (validationStatus) {
+                        is PrimerValidationStatus.Validated -> {
+                            binding.nextButton.isEnabled = validationStatus.errors.isEmpty()
+                            binding.progressBar.isVisible = false
+                            binding.mobileNumber.error =
+                                validationStatus.errors.firstOrNull()?.description
+                        }
+
+                       is PrimerValidationStatus.Validating -> {
+                            binding.nextButton.isEnabled = false
+                            binding.progressBar.isVisible = true
+                        }
+
+                        is PrimerValidationStatus.Error -> {
+                            binding.nextButton.isEnabled = false
+                            binding.progressBar.isVisible = false
+                            binding.mobileNumber.error = validationStatus.error.description
+                        }
+                    }
                 }
             }
         }

@@ -1,14 +1,17 @@
 package io.primer.android.di
 
+import android.content.Context
 import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.http.PrimerHttpClient
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
 
 internal class NetworkContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
@@ -16,9 +19,17 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
         registerSingleton { HttpAnalyticsInterceptor() }
 
         registerSingleton {
+            Cache(
+                File(sdk.resolve<Context>().cacheDir, CACHE_DIRECTORY),
+                MAX_CACHE_SIZE_MB
+            )
+        }
+
+        registerSingleton {
             buildOkhttpClient(
                 sdk.resolve(),
-                sdk.resolve()
+                sdk.resolve(),
+                resolve()
             )
         }
 
@@ -27,9 +38,11 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
 
     private fun buildOkhttpClient(
         checkoutSessionIdDataSource: CheckoutSessionIdDataSource,
-        localClientTokenDataSource: LocalClientTokenDataSource
+        localClientTokenDataSource: LocalClientTokenDataSource,
+        cache: Cache
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
+            .cache(cache)
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.request().newBuilder()
                     .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
@@ -65,6 +78,8 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
         private const val SDK_CLIENT_HEADER = "Primer-SDK-Client"
         private const val CLIENT_TOKEN_HEADER = "Primer-Client-Token"
         private const val PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER = "Primer-SDK-Checkout-Session-ID"
+        private const val MAX_CACHE_SIZE_MB = 5 * 1024 * 1024L
+        private const val CACHE_DIRECTORY = "primer_sdk_cache"
     }
 }
 

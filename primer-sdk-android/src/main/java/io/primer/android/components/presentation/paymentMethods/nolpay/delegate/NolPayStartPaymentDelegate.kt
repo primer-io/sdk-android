@@ -3,6 +3,8 @@ package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
+import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
+import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadataParams
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.AsyncPaymentMethodConfigInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.models.AsyncPaymentMethodParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
@@ -38,6 +40,7 @@ internal class NolPayStartPaymentDelegate(
     private val requestPaymentInteractor: NolPayRequestPaymentInteractor,
     private val requiredActionInteractor: NolPayRequiredActionInteractor,
     private val completePaymentInteractor: NolPayCompletePaymentInteractor,
+    private val phoneMetadataInteractor: PhoneMetadataInteractor,
     sdkInitInteractor: NolPaySdkInitInteractor,
     analyticsInteractor: AnalyticsInteractor
 ) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
@@ -70,14 +73,17 @@ internal class NolPayStartPaymentDelegate(
         asyncPaymentMethodConfigInteractor(
             AsyncPaymentMethodParams(PaymentMethodType.NOL_PAY.name)
         ).flatMapLatest { config ->
+            val phoneMetadata =
+                phoneMetadataInteractor(PhoneMetadataParams(collectedData.mobileNumber))
+                    .getOrThrow()
             tokenizationInteractor.executeV2(
                 TokenizationParamsV2(
                     NolPayPaymentInstrumentParams(
                         PaymentMethodType.NOL_PAY.name,
                         config.paymentMethodConfigId,
                         config.locale,
-                        collectedData.phoneCountryDiallingCode,
-                        collectedData.mobileNumber,
+                        phoneMetadata.countryCode,
+                        phoneMetadata.nationalNumber,
                         collectedData.nolPaymentCard.cardNumber
                     ),
                     PrimerSessionIntent.CHECKOUT

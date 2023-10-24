@@ -9,15 +9,15 @@ import java.io.File
 internal class ImageLoaderContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
-        registerSingleton {
+        registerSingleton(IMAGE_LOADING_CACHE_NAME) {
             Cache(
-                File((sdk.resolve() as Context).cacheDir, CACHE_DIRECTORY),
+                File(sdk.resolve<Context>().cacheDir, CACHE_DIRECTORY),
                 MAX_CACHE_SIZE_MB
             )
         }
 
         registerSingleton(IMAGE_LOADING_CLIENT_NAME) {
-            OkHttpClient.Builder().cache(resolve()).build()
+            OkHttpClient.Builder().cache(resolve(IMAGE_LOADING_CACHE_NAME)).build()
         }
 
         registerFactory { ImageLoader(resolve(IMAGE_LOADING_CLIENT_NAME)) }
@@ -27,5 +27,6 @@ internal class ImageLoaderContainer(private val sdk: SdkContainer) : DependencyC
         const val IMAGE_LOADING_CLIENT_NAME = "IMAGE_LOADING_CLIENT"
         private const val MAX_CACHE_SIZE_MB = 5 * 1024 * 1024L
         private const val CACHE_DIRECTORY = "primer_sdk_image_cache"
+        private const val IMAGE_LOADING_CACHE_NAME = "IMAGE_LOADING_CACHE"
     }
 }

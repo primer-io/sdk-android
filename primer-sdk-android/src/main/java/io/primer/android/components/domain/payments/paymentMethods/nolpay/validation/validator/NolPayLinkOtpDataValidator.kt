@@ -5,14 +5,14 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_OTP_CODE_ERROR_ID
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.OTP_CODE_REGEX
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
+import io.primer.android.extensions.runSuspendCatching
 
 internal class NolPayLinkOtpDataValidator :
     NolPayDataValidator<NolPayLinkCollectableData.NolPayOtpData> {
-    override suspend fun validate(t: NolPayLinkCollectableData.NolPayOtpData):
-        List<PrimerValidationError> {
-        return when {
+    override suspend fun validate(t: NolPayLinkCollectableData.NolPayOtpData) = runSuspendCatching {
+        when {
             t.otpCode.isBlank() -> {
-                return listOf(
+                listOf(
                     PrimerValidationError(
                         INVALID_OTP_CODE_ERROR_ID,
                         "OTP code cannot be blank."

@@ -4,18 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.manager.nolPay.payment.di.NolPayStartPaymentComponentProvider
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
+import io.primer.android.core.extensions.debounce
 import io.primer.android.domain.error.ErrorMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +27,7 @@ class NolPayPaymentComponent internal constructor(
     private val startPaymentDelegate: NolPayStartPaymentDelegate,
     @Suppress("UnusedPrivateMember")
     private val headlessManagerDelegate: DefaultHeadlessManagerDelegate,
-    private val dataValidatorRegistry: NolPayPaymentDataValidatorRegistry,
+    private val validatorRegistry: NolPayPaymentDataValidatorRegistry,
     private val errorMapper: ErrorMapper
 ) : ViewModel(),
     PrimerHeadlessCollectDataComponent<NolPayPaymentCollectableData>,
@@ -39,10 +40,11 @@ class NolPayPaymentComponent internal constructor(
     private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val componentError: Flow<PrimerError> = _componentError
 
-    private val _componentValidationErrors: MutableSharedFlow<List<PrimerValidationError>> =
+    private val _componentValidationStatus:
+        MutableSharedFlow<PrimerValidationStatus<NolPayPaymentCollectableData>> =
         MutableSharedFlow()
-    override val componentValidationErrors: Flow<List<PrimerValidationError>> =
-        _componentValidationErrors
+    override val componentValidationStatus:
+        Flow<PrimerValidationStatus<NolPayPaymentCollectableData>> = _componentValidationStatus
 
     private val _collectedData: MutableSharedFlow<NolPayPaymentCollectableData> =
         MutableSharedFlow(replay = 1)
@@ -65,9 +67,7 @@ class NolPayPaymentComponent internal constructor(
         )
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
-            _componentValidationErrors.emit(
-                dataValidatorRegistry.getValidator(collectedData).validate(collectedData)
-            )
+            onCollectableDataUpdated(collectedData)
         }
     }
 
@@ -100,6 +100,29 @@ class NolPayPaymentComponent internal constructor(
                 startPaymentDelegate.logSdkAnalyticsErrors(error)
             }
     }
+
+    private val onCollectableDataUpdated: (NolPayPaymentCollectableData) -> Unit =
+        viewModelScope.debounce { collectedData ->
+            _componentValidationStatus.emit(PrimerValidationStatus.Validating(collectedData))
+            val validationResult = validatorRegistry.getValidator(collectedData).validate(
+                collectedData
+            )
+            validationResult.onSuccess { errors ->
+                _componentValidationStatus.emit(
+                    PrimerValidationStatus.Validated(
+                        errors,
+                        collectedData
+                    )
+                )
+            }.onFailure { throwable ->
+                _componentValidationStatus.emit(
+                    PrimerValidationStatus.Error(
+                        errorMapper.getPrimerError(throwable),
+                        collectedData
+                    )
+                )
+            }
+        }
 
     internal companion object {
         fun getInstance(owner: ViewModelStoreOwner) =

@@ -10,6 +10,6 @@ import io.primer.android.components.manager.core.composable.PrimerHeadlessValida
 interface PrimerHeadlessCollectDataComponent<T : PrimerCollectableData> :
     PrimerHeadlessComponent,
     PrimerHeadlessErrorable,
-    PrimerHeadlessValidatable,
+    PrimerHeadlessValidatable<T>,
     PrimerHeadlessDataCollectable<T>,
     PrimerHeadlessSubmitable

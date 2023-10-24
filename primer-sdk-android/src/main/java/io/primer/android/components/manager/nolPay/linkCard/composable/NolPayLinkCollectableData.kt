@@ -19,13 +19,11 @@ sealed interface NolPayLinkCollectableData : NolPayCollectableData {
     /**
      * Data class representing Nol Pay phone data collected during the linking process.
      *
-     * @property mobileNumber The mobile number associated with the Nol Pay payment card.
-     * @property phoneCountryDiallingCode The country dialing code for the associated phone number
+     * @property mobileNumber The mobile number associated with the Nol Pay payment card
      * in E.164 format.
      */
     data class NolPayPhoneData(
         val mobileNumber: String,
-        val phoneCountryDiallingCode: String
     ) : NolPayLinkCollectableData
 
     /**

@@ -6,15 +6,16 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
-import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
 import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.di.NolPayUnlinkCardComponentProvider
+import io.primer.android.core.extensions.debounce
 import io.primer.android.domain.error.ErrorMapper
 import io.primer.android.domain.error.models.PrimerError
 import kotlinx.coroutines.flow.Flow
@@ -39,10 +40,10 @@ class NolPayUnlinkCardComponent internal constructor(
     private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
     override val componentError: SharedFlow<PrimerError> = _componentError
 
-    private val _componentValidationErrors: MutableSharedFlow<List<PrimerValidationError>> =
-        MutableSharedFlow()
-    override val componentValidationErrors: SharedFlow<List<PrimerValidationError>> =
-        _componentValidationErrors
+    private val _componentValidationStatus:
+        MutableSharedFlow<PrimerValidationStatus<NolPayUnlinkCollectableData>> = MutableSharedFlow()
+    override val componentValidationStatus:
+        SharedFlow<PrimerValidationStatus<NolPayUnlinkCollectableData>> = _componentValidationStatus
 
     private val _collectedData: MutableSharedFlow<NolPayUnlinkCollectableData> =
         MutableSharedFlow(replay = 1)
@@ -68,9 +69,7 @@ class NolPayUnlinkCardComponent internal constructor(
         )
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
-            _componentValidationErrors.emit(
-                validatorRegistry.getValidator(collectedData).validate(collectedData)
-            )
+            onCollectableDataUpdated(collectedData)
         }
     }
 
@@ -105,6 +104,29 @@ class NolPayUnlinkCardComponent internal constructor(
                 unlinkPaymentCardDelegate.logSdkAnalyticsErrors(error)
             }
     }
+
+    private val onCollectableDataUpdated: (NolPayUnlinkCollectableData) -> Unit =
+        viewModelScope.debounce { collectedData ->
+            _componentValidationStatus.emit(PrimerValidationStatus.Validating(collectedData))
+            val validationResult = validatorRegistry.getValidator(collectedData).validate(
+                collectedData
+            )
+            validationResult.onSuccess { errors ->
+                _componentValidationStatus.emit(
+                    PrimerValidationStatus.Validated(
+                        errors,
+                        collectedData
+                    )
+                )
+            }.onFailure { throwable ->
+                _componentValidationStatus.emit(
+                    PrimerValidationStatus.Error(
+                        errorMapper.getPrimerError(throwable),
+                        collectedData
+                    )
+                )
+            }
+        }
 
     internal companion object {
         fun provideInstance(owner: ViewModelStoreOwner) =

@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
@@ -48,12 +49,15 @@ class NolLinkCardScanTagFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 combine(
-                    linkCardComponent.componentValidationErrors,
+                    linkCardComponent.componentValidationStatus,
                     linkCardComponent.componentStep
                 ) { a, b ->
                     Pair(a, b)
                 }.collectLatest {
-                    if (it.first.isEmpty() && it.second == NolPayLinkCardStep.CollectTagData)
+                    if (it.first is PrimerValidationStatus.Validated &&
+                        (it.first as PrimerValidationStatus.Validated<NolPayLinkCollectableData>).errors.isEmpty() &&
+                        it.second == NolPayLinkCardStep.CollectTagData
+                    )
                         linkCardComponent.submit()
                 }
             }
@@ -64,6 +68,7 @@ class NolLinkCardScanTagFragment : Fragment() {
                 linkCardComponent.updateCollectedData(
                     NolPayLinkCollectableData.NolPayTagData(tag)
                 )
+                mainViewModel.setTag(null)
             }
         }
     }

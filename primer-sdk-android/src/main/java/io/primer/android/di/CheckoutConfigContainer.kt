@@ -44,7 +44,7 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
             )
         }
 
-        registerSingleton { (sdk.resolve() as PrimerConfig).settings.uiOptions.theme }
+        registerSingleton { sdk.resolve<PrimerConfig>().settings.uiOptions.theme }
 
         registerSingleton { ValidationTokenDataSource(sdk.resolve()) }
 

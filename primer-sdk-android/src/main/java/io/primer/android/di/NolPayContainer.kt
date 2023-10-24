@@ -6,6 +6,10 @@ import io.primer.android.components.data.payments.paymentMethods.nolpay.error.No
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayCompletePaymentDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
+import io.primer.android.components.data.metadata.phone.datasource.RemotePhoneMetadataDataSource
+import io.primer.android.components.data.metadata.phone.repository.PhoneMetadataDataRepository
+import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
+import io.primer.android.components.domain.payments.metadata.phone.repository.PhoneMetadataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
@@ -41,6 +45,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
 
         registerFactory { RemoteNolPaySecretDataSource(sdk.resolve()) }
         registerFactory { RemoteNolPayCompletePaymentDataSource(sdk.resolve()) }
+        registerSingleton { RemotePhoneMetadataDataSource(sdk.resolve()) }
 
         registerFactory<NolPayAppSecretRepository> {
             NolPayAppSecretDataRepository(
@@ -51,6 +56,13 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
 
         registerFactory<NolPayCompletePaymentRepository> {
             NolPayCompletePaymentDataRepository(
+                resolve()
+            )
+        }
+
+        registerFactory<PhoneMetadataRepository> {
+            PhoneMetadataDataRepository(
+                sdk.resolve(),
                 resolve()
             )
         }
@@ -67,6 +79,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory { NolPayGetLinkedCardsInteractor(resolve()) }
         registerFactory { NolPayRequiredActionInteractor(sdk.resolve(), sdk.resolve()) }
         registerFactory { NolPayCompletePaymentInteractor(resolve()) }
+        registerFactory { PhoneMetadataInteractor(resolve()) }
 
         registerFactory { NolPayLinkDataValidatorRegistry() }
         registerFactory { NolPayUnlinkDataValidatorRegistry() }
@@ -81,6 +94,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
                 resolve(),
                 resolve(),
                 resolve(),
+                resolve(),
                 sdk.resolve(),
                 resolve()
             )
@@ -88,6 +102,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
 
         registerFactory {
             NolPayUnlinkPaymentCardDelegate(
+                resolve(),
                 resolve(),
                 resolve(),
                 sdk.resolve(),
@@ -107,6 +122,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
             NolPayStartPaymentDelegate(
                 sdk.resolve(),
                 sdk.resolve(),
+                resolve(),
                 resolve(),
                 resolve(),
                 resolve(),

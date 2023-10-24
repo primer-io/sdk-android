@@ -7,5 +7,5 @@ internal fun interface NolPayDataValidator<out T : NolPayCollectableData> {
 
     suspend fun validate(
         t: @UnsafeVariance T
-    ): List<PrimerValidationError>
+    ): Result<List<PrimerValidationError>>
 }

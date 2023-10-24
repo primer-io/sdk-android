@@ -47,6 +47,7 @@ class NolPayPaymentScanTagFragment : Fragment() {
                 ).also {
                     startPaymentComponent.submit()
                 }
+                mainViewModel.setTag(null)
             }
         }
     }

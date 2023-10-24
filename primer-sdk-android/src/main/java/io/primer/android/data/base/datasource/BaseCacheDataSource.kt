@@ -7,7 +7,7 @@ internal interface BaseDataSource<out R, T : Any> where R : Any {
     fun get(): R
 }
 
-internal interface BaseCacheDataSource<out R, T : Any> where R : Any {
+internal interface BaseCacheDataSource<out R, T : Any> where R : Any? {
 
     fun get(): R
 

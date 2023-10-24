@@ -4,15 +4,17 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayPaymentCardAndMobileDataValidator
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import kotlin.reflect.KClass
 
-internal class NolPayPaymentDataValidatorRegistry {
+internal class NolPayPaymentDataValidatorRegistry : DISdkComponent {
 
     private val registry: Map<KClass<out NolPayPaymentCollectableData>,
         NolPayDataValidator<NolPayPaymentCollectableData>> =
         mapOf(
             NolPayPaymentCollectableData.NolPayCardAndPhoneData::class
-                to NolPayPaymentCardAndMobileDataValidator(),
+                to NolPayPaymentCardAndMobileDataValidator(resolve()),
             NolPayPaymentCollectableData.NolPayTagData::class to
                 NolPayPaymentTagDataValidator()
         )
