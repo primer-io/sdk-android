@@ -41,8 +41,8 @@ class NolPayLinkCardComponent internal constructor(
 
     private val _componentValidationStatus:
         MutableSharedFlow<PrimerValidationStatus<NolPayLinkCollectableData>> = MutableSharedFlow()
-    override val componentValidationStatus: Flow<PrimerValidationStatus<NolPayLinkCollectableData>> =
-        _componentValidationStatus
+    override val componentValidationStatus:
+        Flow<PrimerValidationStatus<NolPayLinkCollectableData>> = _componentValidationStatus
 
     private val _collectedData: MutableSharedFlow<NolPayLinkCollectableData> =
         MutableSharedFlow(replay = 1)

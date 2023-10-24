@@ -22,8 +22,7 @@ class NolPayLinkedCardsComponent internal constructor(
      * Retrieves a list of linked Nol Pay cards associated with the specified mobile number and
      * phone country dialing code.
      *
-     * @param mobileNumber The mobile number for which linked cards are to be retrieved.
-     * @param phoneCountryDiallingCode The country dialing code for the specified mobile number in E.164 format.
+     * @param mobileNumber The mobile number in E.164 format for which linked cards are to be retrieved.
      *
      * @return A [Result] containing either a list of linked [PrimerNolPaymentCard] objects on
      * success or an error on failure.
@@ -31,11 +30,10 @@ class NolPayLinkedCardsComponent internal constructor(
      * [io.primer.nolpay.api.exceptions.NolPaySdkException] if an error occurs while fetching the linked cards.
      */
     suspend fun getLinkedCards(
-        mobileNumber: String,
-        phoneCountryDiallingCode: String
+        mobileNumber: String
     ): Result<List<PrimerNolPaymentCard>> {
         logSdkFunctionCalls(NolPayAnalyticsConstants.LINKED_CARDS_GET_CARDS_METHOD)
-        return linkedCardsDelegate.getLinkedCards(mobileNumber, phoneCountryDiallingCode)
+        return linkedCardsDelegate.getLinkedCards(mobileNumber)
     }
 
     private suspend fun logSdkFunctionCalls(

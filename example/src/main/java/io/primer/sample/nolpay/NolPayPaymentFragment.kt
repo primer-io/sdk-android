@@ -64,11 +64,8 @@ class NolPayPaymentFragment : Fragment() {
                                     requireArguments().getSerializable(
                                         NolFragment.NOL_CARD_KEY
                                     ) as PrimerNolPaymentCard,
-                                    requireArguments().getString(NolFragment.DIALING_CODE).orEmpty()
-                                        .plus(
-                                            requireArguments().getString(NolFragment.PHONE_NUMBER)
-                                                .orEmpty()
-                                        )
+                                    requireArguments().getString(NolFragment.PHONE_NUMBER)
+                                        .orEmpty()
                                 )
                             ).also {
                                 startPaymentComponent.submit()

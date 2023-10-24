@@ -41,9 +41,7 @@ class NolPayLinkPhoneInputFragment : Fragment() {
 
         binding.mobileNumber.doAfterTextChanged {
             linkCardComponent.updateCollectedData(
-                NolPayLinkCollectableData.NolPayPhoneData(
-                    binding.mobileCountryCode.text.toString().plus(it.toString()),
-                )
+                NolPayLinkCollectableData.NolPayPhoneData(it.toString())
             )
         }
 

@@ -23,7 +23,7 @@ sealed interface NolPayLinkCollectableData : NolPayCollectableData {
      * in E.164 format.
      */
     data class NolPayPhoneData(
-        val mobileNumber: String,
+        val mobileNumber: String
     ) : NolPayLinkCollectableData
 
     /**

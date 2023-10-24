@@ -64,22 +64,20 @@ class NolFragment : Fragment() {
                         }?.tag as PrimerNolPaymentCard
                     )
                     putString(PHONE_NUMBER, binding.mobileNumber.text.toString())
-                    putString(DIALING_CODE, binding.mobileCountryCode.text.toString())
                 })
         }
 
         binding.getLinkedCards.setOnClickListener {
             getLinkedCards(
-                binding.mobileNumber.text.toString(),
-                binding.mobileCountryCode.text.toString()
+                binding.mobileNumber.text.toString()
             )
         }
     }
 
-    private fun getLinkedCards(mobileNumber: String, diallingCode: String) {
+    private fun getLinkedCards(mobileNumber: String) {
         lifecycleScope.launch {
             binding.linkedCards.removeAllViews()
-            manager.provideNolPayLinkedCardsComponent().getLinkedCards(mobileNumber, diallingCode)
+            manager.provideNolPayLinkedCardsComponent().getLinkedCards(mobileNumber)
                 .onSuccess { cards ->
                     cards.forEach { card ->
                         binding.linkedCards.apply {
@@ -104,6 +102,5 @@ class NolFragment : Fragment() {
 
         const val NOL_CARD_KEY = "NOL_CARD"
         const val PHONE_NUMBER = "PHONE_NUMBER"
-        const val DIALING_CODE = "DIALING_CODE"
     }
 }

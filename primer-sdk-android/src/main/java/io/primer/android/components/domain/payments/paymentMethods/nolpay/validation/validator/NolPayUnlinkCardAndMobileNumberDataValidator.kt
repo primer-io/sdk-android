@@ -23,7 +23,8 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidator(
         }
 
         else -> phoneMetadataRepository.getPhoneMetadata(t.mobileNumber)
-            .mapSuspendCatching { emptyList<PrimerValidationError>() }.recoverCatching { throwable ->
+            .mapSuspendCatching { emptyList<PrimerValidationError>() }
+            .recoverCatching { throwable ->
                 when (throwable) {
                     is PhoneValidationException ->
                         listOf(

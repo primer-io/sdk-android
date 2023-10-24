@@ -42,7 +42,7 @@ class NolPayPaymentComponent internal constructor(
 
     private val _componentValidationStatus:
         MutableSharedFlow<PrimerValidationStatus<NolPayPaymentCollectableData>> =
-        MutableSharedFlow()
+            MutableSharedFlow()
     override val componentValidationStatus:
         Flow<PrimerValidationStatus<NolPayPaymentCollectableData>> = _componentValidationStatus
 

@@ -47,7 +47,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
                         ?.getSerializable(
                             NolFragment.NOL_CARD_KEY
                         ) as PrimerNolPaymentCard,
-                    binding.mobileCountryCode.text.toString().plus(it.toString()),
+                    it.toString(),
                 )
             )
         }

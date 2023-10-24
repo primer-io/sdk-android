@@ -19,7 +19,7 @@ sealed interface NolPayPaymentCollectableData : NolPayCollectableData {
      * */
     data class NolPayCardAndPhoneData(
         val nolPaymentCard: PrimerNolPaymentCard,
-        val mobileNumber: String,
+        val mobileNumber: String
     ) : NolPayPaymentCollectableData
 
     /**

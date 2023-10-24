@@ -17,17 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline" />
 
-    <EditText
-        android:id="@+id/mobileCountryCode"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large_vertical_margin"
-        android:background="@android:color/transparent"
-        android:gravity="center"
-        android:hint="+971"
-        android:inputType="phone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
 
     <EditText
         android:id="@+id/mobileNumber"
@@ -35,10 +24,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/large_vertical_margin"
         android:background="@android:color/transparent"
-        android:hint="Mobile number"
+        android:hint="+97121234567"
         android:inputType="phone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/mobileCountryCode"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <androidx.constraintlayout.widget.Guideline

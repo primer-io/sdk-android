@@ -113,6 +113,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory {
             NolPayGetLinkedCardsDelegate(
                 resolve(),
+                resolve(),
                 sdk.resolve(),
                 resolve()
             )
