@@ -12,6 +12,9 @@ import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
+import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
+import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadata
+import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadataParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
@@ -22,9 +25,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.models
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate.Companion.LINKED_TOKEN_KEY
-import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate.Companion.MOBILE_NUMBER_KEY
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate.Companion.PHYSICAL_CARD_KEY
-import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate.Companion.REGION_CODE_KEY
 import io.primer.android.data.base.exceptions.IllegalValueException
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import io.primer.nolpay.api.models.PrimerLinkCardMetadata
@@ -48,6 +49,9 @@ internal class NolPayLinkPaymentCardDelegateTest {
     lateinit var linkPaymentCardInteractor: NolPayLinkPaymentCardInteractor
 
     @RelaxedMockK
+    lateinit var phoneMetadataInteractor: PhoneMetadataInteractor
+
+    @RelaxedMockK
     lateinit var linkPaymentCardOTPInteractor: NolPayGetLinkPaymentCardOTPInteractor
 
     @RelaxedMockK
@@ -64,6 +68,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
             getLinkPaymentCardTokenInteractor,
             linkPaymentCardOTPInteractor,
             linkPaymentCardInteractor,
+            phoneMetadataInteractor,
             analyticsInteractor,
             initSdkInitInteractor
         )
@@ -131,18 +136,28 @@ internal class NolPayLinkPaymentCardDelegateTest {
     }
 
     @Test
-    fun `handleCollectedCardData with NolPayPhoneData should return CollectOtpData step when NolPayGetLinkPaymentCardOTPInteractor execute was successful`() {
-        val collectedData = NolPayLinkCollectableData.NolPayPhoneData(MOBILE_NUMBER, DIALLING_CODE)
+    fun `handleCollectedCardData with NolPayPhoneData should return CollectOtpData step when PhoneMetadataInteractor execute was successful and NolPayGetLinkPaymentCardOTPInteractor execute was successful`() {
+        val collectedData = NolPayLinkCollectableData.NolPayPhoneData(MOBILE_NUMBER)
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
         every { savedStateHandle.get<String>(LINKED_TOKEN_KEY) }.returns(LINK_TOKEN)
+        val phoneMetadata = mockk<PhoneMetadata>(relaxed = true)
+        every { phoneMetadata.countryCode } returns DIALLING_CODE
+        every { phoneMetadata.nationalNumber } returns MOBILE_NUMBER
         coEvery {
             linkPaymentCardOTPInteractor(any())
         } returns (Result.success(true))
 
+        coEvery { phoneMetadataInteractor(any()) }.returns(Result.success(phoneMetadata))
+
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)
             assert(result.isSuccess)
-            assert(result.getOrThrow() is NolPayLinkCardStep.CollectOtpData)
+            val linkCardStep = result.getOrThrow()
+            assert(linkCardStep is NolPayLinkCardStep.CollectOtpData)
+            assertEquals(
+                MOBILE_NUMBER,
+                (linkCardStep as NolPayLinkCardStep.CollectOtpData).mobileNumber
+            )
         }
 
         coVerify {
@@ -154,19 +169,25 @@ internal class NolPayLinkPaymentCardDelegateTest {
                 )
             )
         }
-        verify { savedStateHandle[REGION_CODE_KEY] = DIALLING_CODE }
-        verify { savedStateHandle[MOBILE_NUMBER_KEY] = MOBILE_NUMBER }
+
+        coVerify {
+            phoneMetadataInteractor(PhoneMetadataParams(collectedData.mobileNumber))
+        }
     }
 
     @Test
-    fun `handleCollectedCardData with NolPayPhoneData should return NolPaySdkException step when NolPayGetLinkPaymentCardOTPInteractor execute fails`() {
-        val collectedData = NolPayLinkCollectableData.NolPayPhoneData(MOBILE_NUMBER, DIALLING_CODE)
+    fun `handleCollectedCardData with NolPayPhoneData should return NolPaySdkException step when PhoneMetadataInteractor execute was successful and NolPayGetLinkPaymentCardOTPInteractor execute fails`() {
+        val collectedData = NolPayLinkCollectableData.NolPayPhoneData(MOBILE_NUMBER)
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
         every { savedStateHandle.get<String>(LINKED_TOKEN_KEY) }.returns(LINK_TOKEN)
+        val phoneMetadata = mockk<PhoneMetadata>(relaxed = true)
+        every { phoneMetadata.countryCode } returns DIALLING_CODE
+        every { phoneMetadata.nationalNumber } returns MOBILE_NUMBER
         val expectedException = mockk<NolPaySdkException>(relaxed = true)
         coEvery {
             linkPaymentCardOTPInteractor(any())
         } returns (Result.failure(expectedException))
+        coEvery { phoneMetadataInteractor(any()) }.returns(Result.success(phoneMetadata))
 
         val exception = assertThrows<NolPaySdkException> {
             runTest {
@@ -186,19 +207,27 @@ internal class NolPayLinkPaymentCardDelegateTest {
                 )
             )
         }
-        verify(exactly = 0) { savedStateHandle[REGION_CODE_KEY] = DIALLING_CODE }
-        verify(exactly = 0) { savedStateHandle[MOBILE_NUMBER_KEY] = MOBILE_NUMBER }
+
+        coVerify {
+            phoneMetadataInteractor(PhoneMetadataParams(collectedData.mobileNumber))
+        }
     }
 
     @Test
-    fun `handleCollectedCardData with NolPayPhoneData should return IllegalValueException step when LINKED_TOKEN is missing`() {
-        val collectedData = NolPayLinkCollectableData.NolPayPhoneData(MOBILE_NUMBER, DIALLING_CODE)
+    fun `handleCollectedCardData with NolPayPhoneData should return IllegalValueException step when PhoneMetadataInteractor execute was successful LINKED_TOKEN is missing`() {
+        val collectedData = NolPayLinkCollectableData.NolPayPhoneData(MOBILE_NUMBER)
         val savedStateHandle = mockk<SavedStateHandle>(relaxed = true)
         every { savedStateHandle.get<String>(LINKED_TOKEN_KEY) }.returns(null)
+
+        val phoneMetadata = mockk<PhoneMetadata>(relaxed = true)
+        every { phoneMetadata.countryCode } returns DIALLING_CODE
+        every { phoneMetadata.nationalNumber } returns MOBILE_NUMBER
 
         coEvery {
             linkPaymentCardOTPInteractor(any())
         } returns (Result.success(true))
+
+        coEvery { phoneMetadataInteractor(any()) }.returns(Result.success(phoneMetadata))
 
         val exception = assertThrows<IllegalValueException> {
             runTest {
@@ -212,6 +241,9 @@ internal class NolPayLinkPaymentCardDelegateTest {
         coVerify(exactly = 0) {
             linkPaymentCardOTPInteractor(any())
         }
+        coVerify {
+            phoneMetadataInteractor(PhoneMetadataParams(collectedData.mobileNumber))
+        }
     }
 
     @Test
@@ -222,7 +254,7 @@ internal class NolPayLinkPaymentCardDelegateTest {
         every { savedStateHandle.get<String>(PHYSICAL_CARD_KEY) } returns CARD_NUMBER
         coEvery {
             linkPaymentCardInteractor(any())
-        } returns(Result.success(true))
+        } returns (Result.success(true))
 
         runTest {
             val result = delegate.handleCollectedCardData(collectedData, savedStateHandle)

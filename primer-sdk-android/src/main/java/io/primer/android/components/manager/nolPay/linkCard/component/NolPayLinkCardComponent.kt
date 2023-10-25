@@ -65,9 +65,7 @@ class NolPayLinkCardComponent internal constructor(
             mapOf(NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectedData.toString())
         )
         viewModelScope.launch { _collectedData.emit(collectedData) }
-        viewModelScope.launch {
-            onCollectableDataUpdated(collectedData)
-        }
+        onCollectableDataUpdated(collectedData)
     }
 
     override fun submit() {

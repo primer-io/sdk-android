@@ -12,7 +12,8 @@ internal class NolPayLinkMobileNumberDataValidator(
 ) : NolPayDataValidator<NolPayLinkCollectableData.NolPayPhoneData> {
     override suspend fun validate(t: NolPayLinkCollectableData.NolPayPhoneData) =
         phoneMetadataRepository.getPhoneMetadata(t.mobileNumber)
-            .mapSuspendCatching { emptyList<PrimerValidationError>() }.recover { throwable ->
+            .mapSuspendCatching { emptyList<PrimerValidationError>() }
+            .recoverCatching { throwable ->
                 when (throwable) {
                     is PhoneValidationException ->
                         listOf(

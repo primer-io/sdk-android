@@ -10,11 +10,13 @@ import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
+import io.primer.android.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalPrimerApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -118,12 +121,44 @@ internal class NolPayUnlinkCardComponentTest {
     }
 
     @Test
-    fun `updateCollectedData should emit validation errors when NolPayUnlinkDataValidatorRegistry validate was successful`() {
+    fun `updateCollectedData should emit validation statuses with validation errors when NolPayUnlinkDataValidatorRegistry validate was successful`() {
         val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
-        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }.returns(listOf())
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf()))
         runTest {
             component.updateCollectedData(collectableData)
-            assertEquals(listOf(), component.componentValidationStatus.first())
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Validated(emptyList(), collectableData)
+                ),
+                validationStatuses
+            )
+        }
+
+        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+    }
+
+    @Test
+    fun `updateCollectedData should emit validation statuses error when NolPayUnlinkDataValidatorRegistry validate failed`() {
+        val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
+        val exception = mockk<Exception>(relaxed = true)
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.failure(exception))
+        runTest {
+            component.updateCollectedData(collectableData)
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Error(
+                        errorMapper.getPrimerError(exception),
+                        collectableData
+                    )
+                ),
+                validationStatuses
+            )
         }
 
         coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }

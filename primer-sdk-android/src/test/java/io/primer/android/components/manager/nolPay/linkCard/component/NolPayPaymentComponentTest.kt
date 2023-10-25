@@ -9,12 +9,14 @@ import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
+import io.primer.android.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalPrimerApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -118,12 +121,44 @@ internal class NolPayPaymentComponentTest {
     }
 
     @Test
-    fun `updateCollectedData should emit validation errors when NolPayPaymentDataValidatorRegistry validate was successful`() {
+    fun `updateCollectedData should emit validation statuses with validation errors when NolPayPaymentDataValidatorRegistry validate was successful`() {
         val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
-        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }.returns(listOf())
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf()))
         runTest {
             component.updateCollectedData(collectableData)
-            assertEquals(listOf(), component.componentValidationStatus.first())
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Validated(emptyList(), collectableData)
+                ),
+                validationStatuses
+            )
+        }
+
+        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+    }
+
+    @Test
+    fun `updateCollectedData should emit validation statuses error when NolPayPaymentDataValidatorRegistry validate failed`() {
+        val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
+        val exception = mockk<Exception>(relaxed = true)
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.failure(exception))
+        runTest {
+            component.updateCollectedData(collectableData)
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Error(
+                        errorMapper.getPrimerError(exception),
+                        collectableData
+                    )
+                ),
+                validationStatuses
+            )
         }
 
         coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }

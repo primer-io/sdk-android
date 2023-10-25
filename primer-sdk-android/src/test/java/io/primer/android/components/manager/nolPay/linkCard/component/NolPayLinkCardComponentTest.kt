@@ -10,10 +10,12 @@ import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
+import io.primer.android.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalPrimerApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -68,6 +71,7 @@ internal class NolPayLinkCardComponentTest {
     @Test
     fun `start should emit CollectTagData step when NolPayLinkPaymentCardDelegate start was successful`() {
         coEvery { linkPaymentCardDelegate.start() }.returns(Result.success(Unit))
+
         runTest {
             component.start()
             assertEquals(NolPayLinkCardStep.CollectTagData, component.componentStep.first())
@@ -80,6 +84,7 @@ internal class NolPayLinkCardComponentTest {
     fun `start should emit PrimerError when NolPayLinkPaymentCardDelegate start failed`() {
         val exception = mockk<NolPaySdkException>(relaxed = true)
         coEvery { linkPaymentCardDelegate.start() }.returns(Result.failure(exception))
+
         runTest {
             component.start()
             assertNotNull(component.componentError.first())
@@ -89,9 +94,7 @@ internal class NolPayLinkCardComponentTest {
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
             linkPaymentCardDelegate.logSdkAnalyticsErrors(
-                errorMapper.getPrimerError(
-                    exception
-                )
+                errorMapper.getPrimerError(exception)
             )
         }
     }
@@ -114,12 +117,46 @@ internal class NolPayLinkCardComponentTest {
     }
 
     @Test
-    fun `updateCollectedData should emit validation errors when NolPayLinkDataValidatorRegistry validate was successful`() {
+    fun `updateCollectedData should emit validation statuses with validation errors when NolPayLinkDataValidatorRegistry validate was successful`() {
         val collectableData = mockk<NolPayLinkCollectableData>(relaxed = true)
-        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }.returns(listOf())
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf()))
+
         runTest {
             component.updateCollectedData(collectableData)
-            assertEquals(listOf(), component.componentValidationStatus.first())
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Validated(emptyList(), collectableData)
+                ),
+                validationStatuses
+            )
+        }
+
+        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+    }
+
+    @Test
+    fun `updateCollectedData should emit validation statuses error when NolPayLinkDataValidatorRegistry validate failed`() {
+        val collectableData = mockk<NolPayLinkCollectableData>(relaxed = true)
+        val exception = mockk<Exception>(relaxed = true)
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.failure(exception))
+
+        runTest {
+            component.updateCollectedData(collectableData)
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Error(
+                        errorMapper.getPrimerError(exception),
+                        collectableData
+                    )
+                ),
+                validationStatuses
+            )
         }
 
         coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
@@ -148,6 +185,7 @@ internal class NolPayLinkCardComponentTest {
                 any()
             )
         }.returns(Result.success(step))
+
         runTest {
             component.submit()
             assertEquals(step, component.componentStep.first())
@@ -173,6 +211,7 @@ internal class NolPayLinkCardComponentTest {
                 any()
             )
         }.returns(Result.failure(exception))
+
         runTest {
             component.submit()
             assertNotNull(component.componentError.first())

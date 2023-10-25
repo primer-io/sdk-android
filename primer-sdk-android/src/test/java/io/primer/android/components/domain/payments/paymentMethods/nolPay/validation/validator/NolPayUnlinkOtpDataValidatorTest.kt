@@ -21,9 +21,9 @@ internal class NolPayUnlinkOtpDataValidatorTest {
         every { data.otpCode } returns ""
 
         runTest {
-            val errors = validator.validate(data)
-
-            assertEquals(1, errors.size)
+            val result = validator.validate(data)
+            assert(result.isSuccess)
+            val errors = result.getOrThrow()
             assertEquals(INVALID_OTP_CODE_ERROR_ID, errors[0].errorId)
             assertEquals("OTP code cannot be blank.", errors[0].description)
         }
@@ -37,9 +37,9 @@ internal class NolPayUnlinkOtpDataValidatorTest {
         every { data.otpCode } returns "1234" // Invalid OTP code format
 
         runTest {
-            val errors = validator.validate(data)
-
-            assertEquals(1, errors.size)
+            val result = validator.validate(data)
+            assert(result.isSuccess)
+            val errors = result.getOrThrow()
             assertEquals(INVALID_OTP_CODE_ERROR_ID, errors[0].errorId)
             assertEquals("OTP code is not valid.", errors[0].description)
         }
@@ -53,7 +53,9 @@ internal class NolPayUnlinkOtpDataValidatorTest {
         every { data.otpCode } returns "123456" // Valid OTP code
 
         runTest {
-            val errors = validator.validate(data)
+            val result = validator.validate(data)
+            assert(result.isSuccess)
+            val errors = result.getOrThrow()
 
             assertEquals(0, errors.size)
         }
