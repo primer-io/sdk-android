@@ -61,7 +61,12 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
                 unlinkCardComponent.componentValidationStatus.collectLatest { validationStatus ->
                     binding.mobileNumber.error = null
                     when (validationStatus) {
-                        is PrimerValidationStatus.Validated -> {
+                        is PrimerValidationStatus.Valid -> {
+                            binding.nextButton.isEnabled = true
+                            binding.progressBar.isVisible = false
+                        }
+
+                        is PrimerValidationStatus.Invalid -> {
                             binding.nextButton.isEnabled = validationStatus.errors.isEmpty()
                             binding.progressBar.isVisible = false
                             binding.mobileNumber.error =

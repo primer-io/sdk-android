@@ -54,8 +54,7 @@ class NolLinkCardScanTagFragment : Fragment() {
                 ) { a, b ->
                     Pair(a, b)
                 }.collectLatest {
-                    if (it.first is PrimerValidationStatus.Validated &&
-                        (it.first as PrimerValidationStatus.Validated<NolPayLinkCollectableData>).errors.isEmpty() &&
+                    if (it.first is PrimerValidationStatus.Valid &&
                         it.second == NolPayLinkCardStep.CollectTagData
                     )
                         linkCardComponent.submit()

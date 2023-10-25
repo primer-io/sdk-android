@@ -1,5 +1,6 @@
-package io.primer.android.components.manager.nolPay.linkCard.component
+package io.primer.android.components.manager.nolPay.unlinkCard.component
 
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
@@ -8,14 +9,13 @@ import io.mockk.mockk
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
+import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
-import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
-import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
-import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
-import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
-import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
@@ -29,29 +29,29 @@ import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalPrimerApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
-internal class NolPayPaymentComponentTest {
+internal class NolPayUnlinkCardComponentTest {
 
     @RelaxedMockK
-    lateinit var startPaymentDelegate: NolPayStartPaymentDelegate
+    lateinit var unlinkPaymentCardDelegate: NolPayUnlinkPaymentCardDelegate
 
     @RelaxedMockK
-    lateinit var headlessManagerDelegate: DefaultHeadlessManagerDelegate
-
-    @RelaxedMockK
-    lateinit var dataValidatorRegistry: NolPayPaymentDataValidatorRegistry
+    lateinit var dataValidatorRegistry: NolPayUnlinkDataValidatorRegistry
 
     @RelaxedMockK
     lateinit var errorMapper: NolPayErrorMapper
 
-    private lateinit var component: NolPayPaymentComponent
+    @RelaxedMockK
+    lateinit var savedStateHandle: SavedStateHandle
+
+    private lateinit var component: NolPayUnlinkCardComponent
 
     @BeforeEach
     fun setUp() {
-        component = NolPayPaymentComponent(
-            startPaymentDelegate,
-            headlessManagerDelegate,
+        component = NolPayUnlinkCardComponent(
+            unlinkPaymentCardDelegate,
             dataValidatorRegistry,
-            errorMapper
+            errorMapper,
+            savedStateHandle
         )
     }
 
@@ -62,40 +62,40 @@ internal class NolPayPaymentComponentTest {
         }
 
         coVerify {
-            startPaymentDelegate.logSdkAnalyticsEvent(
-                NolPayAnalyticsConstants.PAYMENT_START_METHOD,
+            unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
+                NolPayAnalyticsConstants.UNLINK_CARD_START_METHOD,
                 hashMapOf()
             )
         }
     }
 
     @Test
-    fun `start should emit CollectStartPaymentData step when NolPayStartPaymentDelegate start was successful`() {
-        coEvery { startPaymentDelegate.start() }.returns(Result.success(Unit))
+    fun `start should emit CollectCardData step when NolPayUnlinkPaymentCardDelegate start was successful`() {
+        coEvery { unlinkPaymentCardDelegate.start() }.returns(Result.success(Unit))
         runTest {
             component.start()
             assertEquals(
-                NolPayPaymentStep.CollectCardAndPhoneData,
+                NolPayUnlinkCardStep.CollectCardAndPhoneData,
                 component.componentStep.first()
             )
         }
 
-        coVerify { startPaymentDelegate.start() }
+        coVerify { unlinkPaymentCardDelegate.start() }
     }
 
     @Test
-    fun `start should emit PrimerError when NolPayStartPaymentDelegate start failed`() {
+    fun `start should emit PrimerError when NolPayUnlinkPaymentCardDelegate start failed`() {
         val exception = mockk<NolPaySdkException>(relaxed = true)
-        coEvery { startPaymentDelegate.start() }.returns(Result.failure(exception))
+        coEvery { unlinkPaymentCardDelegate.start() }.returns(Result.failure(exception))
         runTest {
             component.start()
             assertNotNull(component.componentError.first())
         }
 
-        coVerify { startPaymentDelegate.start() }
+        coVerify { unlinkPaymentCardDelegate.start() }
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
-            startPaymentDelegate.logSdkAnalyticsErrors(
+            unlinkPaymentCardDelegate.logSdkAnalyticsErrors(
                 errorMapper.getPrimerError(
                     exception
                 )
@@ -105,14 +105,14 @@ internal class NolPayPaymentComponentTest {
 
     @Test
     fun `updateCollectedData should log correct sdk analytics event`() {
-        val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
+        val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
         runTest {
             component.updateCollectedData(collectableData)
         }
 
         coVerify {
-            startPaymentDelegate.logSdkAnalyticsEvent(
-                NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD,
+            unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
+                NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
                 hashMapOf(
                     NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectableData.toString()
                 )
@@ -121,17 +121,19 @@ internal class NolPayPaymentComponentTest {
     }
 
     @Test
-    fun `updateCollectedData should emit validation statuses with validation errors when NolPayPaymentDataValidatorRegistry validate was successful`() {
-        val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
+    fun `updateCollectedData should emit validation statuses with successful validation when NolPayUnlinkDataValidatorRegistry validate returned no errors`() {
+        val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
+
         coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
-            .returns(Result.success(listOf()))
+            .returns(Result.success(emptyList()))
+
         runTest {
             component.updateCollectedData(collectableData)
             val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Validated(emptyList(), collectableData)
+                    PrimerValidationStatus.Valid(collectableData)
                 ),
                 validationStatuses
             )
@@ -141,8 +143,31 @@ internal class NolPayPaymentComponentTest {
     }
 
     @Test
-    fun `updateCollectedData should emit validation statuses error when NolPayPaymentDataValidatorRegistry validate failed`() {
-        val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
+    fun `updateCollectedData should emit validation statuses with validation errors when NolPayUnlinkDataValidatorRegistry validate returned errors`() {
+        val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
+        val validationError = mockk<PrimerValidationError>(relaxed = true)
+
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf(validationError)))
+
+        runTest {
+            component.updateCollectedData(collectableData)
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData)
+                ),
+                validationStatuses
+            )
+        }
+
+        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+    }
+
+    @Test
+    fun `updateCollectedData should emit validation statuses error when NolPayUnlinkDataValidatorRegistry validate failed`() {
+        val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
         coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
             .returns(Result.failure(exception))
@@ -171,29 +196,31 @@ internal class NolPayPaymentComponentTest {
         }
 
         coVerify {
-            startPaymentDelegate.logSdkAnalyticsEvent(
-                NolPayAnalyticsConstants.PAYMENT_SUBMIT_DATA_METHOD,
+            unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
+                NolPayAnalyticsConstants.UNLINK_CARD_SUBMIT_DATA_METHOD,
                 hashMapOf()
             )
         }
     }
 
     @Test
-    fun `submit should emit next step when NolPayPaymentDataValidatorRegistry handleCollectedCardData was successful`() {
-        val paymentStep = mockk<NolPayPaymentStep>(relaxed = true)
+    fun `submit should emit next step when NolPayUnlinkPaymentCardDelegate handleCollectedCardData was successful`() {
+        val step = mockk<NolPayUnlinkCardStep>(relaxed = true)
         coEvery {
-            startPaymentDelegate.handleCollectedCardData(
+            unlinkPaymentCardDelegate.handleCollectedCardData(
+                any(),
                 any()
             )
-        }.returns(Result.success(paymentStep))
+        }.returns(Result.success(step))
         runTest {
             component.submit()
+            assertEquals(step, component.componentStep.first())
         }
 
-        coVerify { startPaymentDelegate.handleCollectedCardData(any()) }
+        coVerify { unlinkPaymentCardDelegate.handleCollectedCardData(any(), any()) }
         coVerify(exactly = 0) { errorMapper.getPrimerError(any()) }
         coVerify(exactly = 0) {
-            startPaymentDelegate.logSdkAnalyticsErrors(
+            unlinkPaymentCardDelegate.logSdkAnalyticsErrors(
                 errorMapper.getPrimerError(
                     any()
                 )
@@ -202,10 +229,11 @@ internal class NolPayPaymentComponentTest {
     }
 
     @Test
-    fun `submit should emit PrimerError when NolPayStartPaymentDelegate handleCollectedCardData failed`() {
+    fun `submit should emit PrimerError when NolPayUnlinkPaymentCardDelegate handleCollectedCardData failed`() {
         val exception = mockk<NolPaySdkException>(relaxed = true)
         coEvery {
-            startPaymentDelegate.handleCollectedCardData(
+            unlinkPaymentCardDelegate.handleCollectedCardData(
+                any(),
                 any()
             )
         }.returns(Result.failure(exception))
@@ -214,10 +242,10 @@ internal class NolPayPaymentComponentTest {
             assertNotNull(component.componentError.first())
         }
 
-        coVerify { startPaymentDelegate.handleCollectedCardData(any()) }
+        coVerify { unlinkPaymentCardDelegate.handleCollectedCardData(any(), any()) }
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
-            startPaymentDelegate.logSdkAnalyticsErrors(
+            unlinkPaymentCardDelegate.logSdkAnalyticsErrors(
                 errorMapper.getPrimerError(
                     exception
                 )

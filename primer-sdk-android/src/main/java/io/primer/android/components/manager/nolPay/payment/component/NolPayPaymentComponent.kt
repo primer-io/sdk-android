@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-@ExperimentalPrimerApi
 class NolPayPaymentComponent internal constructor(
     private val startPaymentDelegate: NolPayStartPaymentDelegate,
     @Suppress("UnusedPrivateMember")
@@ -109,10 +108,10 @@ class NolPayPaymentComponent internal constructor(
             )
             validationResult.onSuccess { errors ->
                 _componentValidationStatus.emit(
-                    PrimerValidationStatus.Validated(
-                        errors,
-                        collectedData
-                    )
+                    when (errors.isEmpty()) {
+                        true -> PrimerValidationStatus.Valid(collectedData)
+                        false -> PrimerValidationStatus.Invalid(errors, collectedData)
+                    }
                 )
             }.onFailure { throwable ->
                 _componentValidationStatus.emit(

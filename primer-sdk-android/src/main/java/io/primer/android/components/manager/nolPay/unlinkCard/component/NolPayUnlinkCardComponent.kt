@@ -113,10 +113,10 @@ class NolPayUnlinkCardComponent internal constructor(
             )
             validationResult.onSuccess { errors ->
                 _componentValidationStatus.emit(
-                    PrimerValidationStatus.Validated(
-                        errors,
-                        collectedData
-                    )
+                    when (errors.isEmpty()) {
+                        true -> PrimerValidationStatus.Valid(collectedData)
+                        false -> PrimerValidationStatus.Invalid(errors, collectedData)
+                    }
                 )
             }.onFailure { throwable ->
                 _componentValidationStatus.emit(

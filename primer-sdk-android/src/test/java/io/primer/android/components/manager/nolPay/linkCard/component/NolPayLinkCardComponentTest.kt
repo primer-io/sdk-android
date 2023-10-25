@@ -9,6 +9,7 @@ import io.mockk.mockk
 import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
+import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
@@ -117,7 +118,7 @@ internal class NolPayLinkCardComponentTest {
     }
 
     @Test
-    fun `updateCollectedData should emit validation statuses with validation errors when NolPayLinkDataValidatorRegistry validate was successful`() {
+    fun `updateCollectedData should emit validation statuses with successful validation when NolPayLinkDataValidatorRegistry validate returned no errors`() {
         val collectableData = mockk<NolPayLinkCollectableData>(relaxed = true)
         coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
             .returns(Result.success(listOf()))
@@ -128,7 +129,30 @@ internal class NolPayLinkCardComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Validated(emptyList(), collectableData)
+                    PrimerValidationStatus.Valid(collectableData)
+                ),
+                validationStatuses
+            )
+        }
+
+        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+    }
+
+    @Test
+    fun `updateCollectedData should emit validation statuses with validation errors when NolPayLinkDataValidatorRegistry validate returned errors`() {
+        val collectableData = mockk<NolPayLinkCollectableData>(relaxed = true)
+        val validationError = mockk<PrimerValidationError>(relaxed = true)
+
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf(validationError)))
+
+        runTest {
+            component.updateCollectedData(collectableData)
+            val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
+            assertEquals(
+                listOf(
+                    PrimerValidationStatus.Validating(collectableData),
+                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData)
                 ),
                 validationStatuses
             )

@@ -1,8 +1,5 @@
 package io.primer.android.components.manager.nolPay.listCards.component
 
-import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.manager.core.composable.PrimerHeadlessComponent
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
@@ -10,12 +7,9 @@ import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.resolve
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
-import kotlinx.coroutines.flow.collect
 
-@ExperimentalPrimerApi
 class NolPayLinkedCardsComponent internal constructor(
-    private val linkedCardsDelegate: NolPayGetLinkedCardsDelegate,
-    private val analyticsInteractor: AnalyticsInteractor
+    private val linkedCardsDelegate: NolPayGetLinkedCardsDelegate
 ) : PrimerHeadlessComponent {
 
     /**
@@ -39,17 +33,13 @@ class NolPayLinkedCardsComponent internal constructor(
     private suspend fun logSdkFunctionCalls(
         methodName: String,
         context: Map<String, String> = hashMapOf()
-    ) = analyticsInteractor(
-        SdkFunctionParams(
-            methodName,
-            mapOf(
-                "category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name
-            ).plus(context)
-        )
-    ).collect()
+    ) = linkedCardsDelegate.logSdkAnalyticsEvent(
+        methodName,
+        mapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name).plus(context)
+    )
 
     internal companion object : DISdkComponent {
 
-        fun getInstance() = NolPayLinkedCardsComponent(resolve(), resolve())
+        fun getInstance() = NolPayLinkedCardsComponent(resolve())
     }
 }

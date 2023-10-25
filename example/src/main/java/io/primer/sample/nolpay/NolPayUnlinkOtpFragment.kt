@@ -53,8 +53,7 @@ class NolPayUnlinkOtpFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 unlinkCardComponent.componentValidationStatus.collectLatest {
-                    binding.nextButton.isEnabled =
-                        it is PrimerValidationStatus.Validated && it.errors.isEmpty()
+                    binding.nextButton.isEnabled = it is PrimerValidationStatus.Valid
                 }
             }
         }
