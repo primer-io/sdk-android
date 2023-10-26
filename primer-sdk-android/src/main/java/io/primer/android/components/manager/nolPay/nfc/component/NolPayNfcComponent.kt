@@ -3,7 +3,6 @@ package io.primer.android.components.manager.nolPay.nfc.component
 import android.app.Activity
 import android.content.Intent
 import android.nfc.Tag
-import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.manager.core.composable.PrimerHeadlessComponent
 import io.primer.nolpay.api.PrimerNolPayNfcUtils
 import io.primer.nolpay.api.models.NfcStatus
@@ -15,7 +14,6 @@ import io.primer.nolpay.api.models.NfcStatus
  * This component allows you to interact with NFC features such as enabling/disabling
  * foreground dispatch, retrieving NFC tag information, and checking the NFC status.
  */
-@ExperimentalPrimerApi
 class NolPayNfcComponent private constructor() : PrimerHeadlessComponent {
 
     /**

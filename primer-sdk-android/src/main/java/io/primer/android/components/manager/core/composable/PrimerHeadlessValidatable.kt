@@ -30,11 +30,12 @@ sealed interface PrimerValidationStatus<T : PrimerCollectableData> {
     /**
      * Indicates that the data has been considered invalid after validation.
      *
-     * @param errors A list of [PrimerValidationError] explaining why the data is considered invalid.
+     * @param validationErrors A list of [PrimerValidationError] explaining why the data is
+     * considered invalid.
      * @param collectableData The data that failed validation.
      */
     data class Invalid<T : PrimerCollectableData>(
-        val errors: List<PrimerValidationError>,
+        val validationErrors: List<PrimerValidationError>,
         val collectableData: PrimerCollectableData
     ) : PrimerValidationStatus<T>
 

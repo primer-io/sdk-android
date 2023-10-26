@@ -62,9 +62,9 @@ class NolPayLinkOtpFragment : Fragment() {
                         }
 
                         is PrimerValidationStatus.Invalid -> {
-                            binding.nextButton.isEnabled = validationStatus.errors.isEmpty()
+                            binding.nextButton.isEnabled = validationStatus.validationErrors.isEmpty()
                             binding.otpCode.error =
-                                validationStatus.errors.firstOrNull()?.description
+                                validationStatus.validationErrors.firstOrNull()?.description
                             binding.progressBar.isVisible = false
                         }
 

@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
 import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-@ExperimentalPrimerApi
 class NolPayUnlinkCardComponent internal constructor(
     private val unlinkPaymentCardDelegate: NolPayUnlinkPaymentCardDelegate,
     private val validatorRegistry: NolPayUnlinkDataValidatorRegistry,

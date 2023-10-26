@@ -60,10 +60,10 @@ class NolPayLinkPhoneInputFragment : Fragment() {
                         }
 
                         is PrimerValidationStatus.Invalid -> {
-                            binding.nextButton.isEnabled = validationStatus.errors.isEmpty()
+                            binding.nextButton.isEnabled = validationStatus.validationErrors.isEmpty()
                             binding.progressBar.isVisible = false
                             binding.mobileNumber.error =
-                                validationStatus.errors.firstOrNull()?.description
+                                validationStatus.validationErrors.firstOrNull()?.description
                         }
 
                         is PrimerValidationStatus.Validating -> {
