@@ -3,7 +3,6 @@ package io.primer.android.components.manager.nolPay.payment.component
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayPaymentDataValidatorRegistry
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
