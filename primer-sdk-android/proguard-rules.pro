@@ -74,14 +74,6 @@
     *;
 }
 
--keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData {
-    *;
-}
-
--keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData* {
-    *;
-}
-
 -keep class io.primer.android.data.tokenization.models.PaymentInstrumentData {
     *;
 }
@@ -342,6 +334,12 @@
 
 -keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
     *;
+}
+
+ #------------------------------------Exceptions--------------------------------------------------#
+
+-keep class io.primer.android.components.domain.payments.metadata.phone.exception.* {
+    public *;
 }
 
 -keepclassmembers,allowoptimization enum * {
