@@ -102,7 +102,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private fun initViewModel() {
         headlessManagerViewModel = ViewModelProvider(
-            this,
+            requireActivity(),
             HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
     }
@@ -273,16 +273,13 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.CARD_COMPONENTS)) {
                 cardManager =
                     PrimerHeadlessUniversalCheckoutCardComponentsManager.newInstance(it.paymentMethodType)
-                cardManager.setCardManagerListener(object :
-                    PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
-                    override fun onCardValidationChanged(isCardFormValid: Boolean) {
-                        Log.d(
-                            TAG,
-                            "onCardValidChanged $isCardFormValid"
-                        )
-                        binding.nextButton.isEnabled = isCardFormValid
-                    }
-                })
+                cardManager.setCardManagerListener { isCardFormValid ->
+                    Log.d(
+                        TAG,
+                        "onCardValidChanged $isCardFormValid"
+                    )
+                    binding.nextButton.isEnabled = isCardFormValid
+                }
                 cardManager.setInputElements(
                     createForm(
                         it.paymentMethodType, cardManager.getRequiredInputElementTypes()

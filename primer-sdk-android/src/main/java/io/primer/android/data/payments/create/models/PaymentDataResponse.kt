@@ -74,16 +74,14 @@ internal data class RequiredActionData(
         private const val CLIENT_TOKEN_FIELD = "clientToken"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<RequiredActionData> {
-
-            override fun deserialize(t: JSONObject): RequiredActionData {
-                return RequiredActionData(
+        val deserializer =
+            JSONDeserializer { t ->
+                RequiredActionData(
                     RequiredActionName.valueOf(t.getString(REQUIRED_ACTION_NAME_FIELD)),
                     t.getString(DESCRIPTION_FIELD),
                     t.optNullableString(CLIENT_TOKEN_FIELD)
                 )
             }
-        }
     }
 }
 

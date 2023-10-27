@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -17,10 +19,16 @@ import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalChecko
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayPaymentBinding
+import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.viewmodels.HeadlessManagerViewModel
+import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
+import io.primer.sample.viewmodels.MainViewModel
+import io.primer.sample.viewmodels.UiState
 import kotlinx.coroutines.flow.collectLatest
 
 class NolPayPaymentFragment : Fragment() {
 
+    private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
     private lateinit var binding: FragmentNolPayPaymentBinding
     private lateinit var startPaymentComponent: NolPayPaymentComponent
 
@@ -35,6 +43,25 @@ class NolPayPaymentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        headlessManagerViewModel = ViewModelProvider(
+            requireActivity(),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+        )[HeadlessManagerViewModel::class.java]
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                headlessManagerViewModel.uiState.observe(viewLifecycleOwner) { state ->
+                    when (state) {
+                        is UiState.ShowError -> findNavController().navigate(
+                            R.id.action_NolPayPaymentFragment_to_NolFragment
+                        )
+
+                        else -> Unit
+                    }
+                }
+            }
+        }
 
         startPaymentComponent =
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayPaymentComponent(

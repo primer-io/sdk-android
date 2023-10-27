@@ -74,8 +74,8 @@ internal open class DefaultPrimerResumeDecisionHandler(
             validateClientToken(clientToken).catch { e ->
                 errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
             }.collect {
-                clientTokenRepository.setClientToken(clientToken)
                 try {
+                    clientTokenRepository.setClientToken(clientToken)
                     handleClientToken(clientToken)
                     handlePaymentMethodData(clientToken)
                 } catch (e: IllegalArgumentException) {

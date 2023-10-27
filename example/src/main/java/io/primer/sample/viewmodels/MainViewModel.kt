@@ -140,6 +140,9 @@ class MainViewModel(
         paymentHandling
     )
 
+    private val _legacyWorkflows: MutableLiveData<Boolean> = MutableLiveData(true)
+    fun setUseLegacyWorkflows(useNewWorkflows: Boolean): Unit = _legacyWorkflows.postValue(useNewWorkflows)
+
     private val _uiOptions: MutableLiveData<PrimerUIOptions> =
         MutableLiveData(PrimerUIOptions(theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration)))
 
@@ -190,7 +193,8 @@ class MainViewModel(
         countryRepository.getCountry().name,
         countryRepository.getCurrency(),
         environment.value?.environment ?: throw Error("no environment set!"),
-        metadata.value
+        metadata.value,
+        _legacyWorkflows.value
     ) { t ->
         viewModelScope.launch {
             withContext(Dispatchers.Main) {

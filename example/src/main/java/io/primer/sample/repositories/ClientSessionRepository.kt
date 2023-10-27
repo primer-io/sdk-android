@@ -23,6 +23,7 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
         currency: String,
         environment: String,
         metadata: String?,
+        useNewWorkflows: Boolean?,
         callback: (token: String?) -> Unit,
     ) {
         val body = ClientSession.Request.build(
@@ -37,7 +38,8 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
             body,
             PrimerRoutes.clientSession,
             environment,
-            apiKey = apiKeyDataSource.getApiKey(environment.type())
+            useNewWorkflows!!,
+            apiKeyDataSource.getApiKey(environment.type())
         )
         client.cache?.delete()
         client.newCall(request).enqueue(object : Callback {
