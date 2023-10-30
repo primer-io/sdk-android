@@ -109,10 +109,7 @@ internal class NolPayLinkCardComponentTest {
 
         coVerify {
             linkPaymentCardDelegate.logSdkAnalyticsEvent(
-                NolPayAnalyticsConstants.LINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
-                hashMapOf(
-                    NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectableData.toString()
-                )
+                NolPayAnalyticsConstants.LINK_CARD_UPDATE_COLLECTED_DATA_METHOD
             )
         }
     }

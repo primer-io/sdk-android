@@ -112,10 +112,7 @@ internal class NolPayUnlinkCardComponentTest {
 
         coVerify {
             unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
-                NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
-                hashMapOf(
-                    NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectableData.toString()
-                )
+                NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD
             )
         }
     }

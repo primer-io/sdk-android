@@ -61,10 +61,7 @@ class NolPayUnlinkCardComponent internal constructor(
     }
 
     override fun updateCollectedData(collectedData: NolPayUnlinkCollectableData) {
-        logSdkFunctionCalls(
-            NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
-            mapOf(NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectedData.toString())
-        )
+        logSdkFunctionCalls(NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD)
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
             onCollectableDataUpdated(collectedData)

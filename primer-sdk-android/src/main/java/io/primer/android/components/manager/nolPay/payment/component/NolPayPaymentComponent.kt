@@ -59,10 +59,7 @@ class NolPayPaymentComponent internal constructor(
     }
 
     override fun updateCollectedData(collectedData: NolPayPaymentCollectableData) {
-        logSdkFunctionCalls(
-            NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD,
-            mapOf(NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectedData.toString())
-        )
+        logSdkFunctionCalls(NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD)
         viewModelScope.launch { _collectedData.emit(collectedData) }
         viewModelScope.launch {
             onCollectableDataUpdated(collectedData)

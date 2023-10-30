@@ -111,10 +111,7 @@ internal class NolPayPaymentComponentTest {
 
         coVerify {
             startPaymentDelegate.logSdkAnalyticsEvent(
-                NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD,
-                hashMapOf(
-                    NolPayAnalyticsConstants.COLLECTED_DATA_SDK_PARAMS to collectableData.toString()
-                )
+                NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD
             )
         }
     }
