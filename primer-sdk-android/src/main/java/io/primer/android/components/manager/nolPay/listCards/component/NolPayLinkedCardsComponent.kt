@@ -21,7 +21,8 @@ class NolPayLinkedCardsComponent internal constructor(
      * @return A [Result] containing either a list of linked [PrimerNolPaymentCard] objects on
      * success or an error on failure.
      * In case of error, as part of [Result] object, SDK will return:
-     * [io.primer.android.components.domain.payments.metadata.phone.exception.PhoneValidationException] if an error occurs while fetching validating [mobileNumber].
+     * [io.primer.android.components.domain.payments.metadata.phone.exception.PhoneValidationException]
+     * if an error occurs while fetching validating [mobileNumber].
      * [io.primer.nolpay.api.exceptions.NolPaySdkException] if an error occurs while fetching the linked cards.
      */
     suspend fun getLinkedCards(
