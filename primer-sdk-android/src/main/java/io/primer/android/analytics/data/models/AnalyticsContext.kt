@@ -286,7 +286,7 @@ internal data class IPay88AnalyticsContext(
 internal data class ThreeDsFailureAnalyticsContext(
     val threeDsSdkVersion: String?,
     val initProtocolVersion: String?,
-    val threeDsSdkWrapperVersion: String = BuildConfig.SDK_VERSION_STRING,
+    val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
     val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_FAILURE) {
@@ -295,7 +295,7 @@ internal data class ThreeDsFailureAnalyticsContext(
 
         private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
         private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
-        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsSdkWrapperVersion"
+        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsWrapperSdkVersion"
         private const val SDK_PROVIDER_FIELD = "threeDsSdkProvider"
 
         @JvmField
@@ -304,7 +304,7 @@ internal data class ThreeDsFailureAnalyticsContext(
                 return JSONObject().apply {
                     putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
                     putOpt(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
-                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsSdkWrapperVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
                     put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
                     put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
@@ -328,7 +328,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
     val threeDsSdkVersion: String?,
     val initProtocolVersion: String,
     val errorCode: String?,
-    val threeDsSdkWrapperVersion: String = BuildConfig.SDK_VERSION_STRING,
+    val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
     val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_RUNTIME_FAILURE) {
@@ -337,7 +337,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
 
         private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
         private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
-        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsSdkWrapperVersion"
+        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsWrapperSdkVersion"
         private const val SDK_PROVIDER_FIELD = "threeDsSdkProvider"
         private const val ERROR_CODE_FIELD = "errorCode"
 
@@ -348,7 +348,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
                     putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
                     put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
                     putOpt(ERROR_CODE_FIELD, t.errorCode)
-                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsSdkWrapperVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
                     put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
                     put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
@@ -379,7 +379,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
     val version: String,
     val threeDsSdkVersion: String?,
     val initProtocolVersion: String,
-    val threeDsSdkWrapperVersion: String = BuildConfig.SDK_VERSION_STRING,
+    val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
     val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_PROTOCOL_FAILURE) {
@@ -395,7 +395,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
         private const val VERSION_FIELD = "version"
         private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
         private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
-        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsSdkWrapperVersion"
+        private const val SDK_WRAPPER_VERSION_FIELD = "threeDsWrapperSdkVersion"
         private const val SDK_PROVIDER_FIELD = "threeDsSdkProvider"
 
         @JvmField
@@ -411,7 +411,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
                     put(VERSION_FIELD, t.version)
                     putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
                     put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
-                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsSdkWrapperVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
                     put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
                     put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
