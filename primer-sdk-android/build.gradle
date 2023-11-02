@@ -87,6 +87,9 @@ dependencies {
     compileOnly Dependencies.iPay88.primeriPay88
     testImplementation Dependencies.iPay88.primeriPay88
 
+    compileOnly Dependencies.nolPay.primerNolPay
+    testImplementation Dependencies.nolPay.primerNolPay
+
     testImplementation TestDependencies.Kotlin.test
     testImplementation TestDependencies.Kotlin.coroutines
     testImplementation TestDependencies.Android.archCore
@@ -118,7 +121,7 @@ subprojects {
 }
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.9"
 }
 
 jacocoAndroidUnitTestReport {

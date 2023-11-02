@@ -40,6 +40,8 @@ internal sealed class HUCError : PrimerError() {
             is InvalidRawDataError -> "Missing raw data."
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()
 

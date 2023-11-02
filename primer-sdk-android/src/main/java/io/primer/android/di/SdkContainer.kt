@@ -1,8 +1,11 @@
 package io.primer.android.di
 
+import androidx.annotation.VisibleForTesting
+
 internal class SdkContainer {
 
-    val containers = mutableMapOf<String, DependencyContainer>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal val containers = mutableMapOf<String, DependencyContainer>()
 
     inline fun <reified T : DependencyContainer> registerContainer(container: T) {
         containers[T::class.java.name] = container.apply { registerInitialDependencies() }
@@ -22,12 +25,17 @@ internal class SdkContainer {
     }
 
     inline fun <reified T : Any> resolve(dependencyName: String): T {
+        val dependencyErrorChain = linkedSetOf<String?>()
         return containers.values.firstNotNullOfOrNull { container ->
             try {
                 container.resolve(dependencyName)
             } catch (expected: Exception) {
+                dependencyErrorChain.add(expected.message)
                 null
             }
-        } ?: error("Unregistered type ${T::class.java.name}")
+        } ?: error(
+            "Unable to resolve type ${T::class.java.name} with dependency chain:" +
+                " ${dependencyErrorChain.filterNotNull().joinToString(" -> ")}"
+        )
     }
 }

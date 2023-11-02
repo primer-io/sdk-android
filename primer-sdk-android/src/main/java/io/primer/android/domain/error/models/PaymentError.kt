@@ -34,6 +34,8 @@ internal sealed class PaymentError : PrimerError() {
             is PaymentResumeFailedError -> serverDescription
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId: String
         get() = when (this) {
             is PaymentFailedError -> UUID.randomUUID().toString()

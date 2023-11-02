@@ -56,7 +56,8 @@ internal class SdkContainerTest {
 
     @Test
     fun `should throw an unregistered type error when resolve() can not resolve the dependency`() {
-        val expectedMessage = "Unregistered type io.primer.android.di.MockDependency"
+        val expectedMessage = "Unable to resolve type io.primer.android.di.MockDependency with" +
+            " dependency chain: Unregistered type class io.primer.android.di.MockDependency"
 
         whenMockContainerIsRegistered(MockContainer())
 

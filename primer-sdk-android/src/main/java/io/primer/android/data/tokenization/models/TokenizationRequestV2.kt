@@ -1,5 +1,6 @@
 package io.primer.android.data.tokenization.models
 
+import android.os.Build
 import android.util.Base64
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.serialization.json.JSONObjectSerializable
@@ -17,6 +18,7 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.webRe
 import io.primer.android.data.tokenization.models.paymentInstruments.card.CardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolPaySessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.ExternalPayerInfoRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentDataRequest
@@ -32,6 +34,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.bancontac
 import io.primer.android.domain.tokenization.models.paymentInstruments.card.CardPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentParams
+import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentParams
 import org.json.JSONObject
@@ -47,8 +50,10 @@ internal abstract class TokenizationRequestV2 : JSONObjectSerializable {
                 return when (t) {
                     is TokenizationCheckoutRequestV2 ->
                         TokenizationCheckoutRequestV2.serializer.serialize(t)
+
                     is TokenizationVaultRequestV2 ->
                         TokenizationVaultRequestV2.serializer.serialize(t)
+
                     else -> throw IllegalStateException("Unsupported instance of $t")
                 }
             }
@@ -61,6 +66,7 @@ internal fun TokenizationParamsV2.toTokenizationRequest(): TokenizationRequestV2
         PrimerSessionIntent.CHECKOUT -> TokenizationCheckoutRequestV2(
             paymentInstrumentParams.toPaymentInstrumentData()
         )
+
         PrimerSessionIntent.VAULT -> TokenizationVaultRequestV2(
             paymentInstrumentParams.toPaymentInstrumentData(),
             TokenType.MULTI_USE.name,
@@ -78,19 +84,23 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
             cvv,
             cardholderName
         )
+
         is KlarnaPaymentInstrumentParams -> KlarnaPaymentInstrumentDataRequest(
             klarnaCustomerToken,
             sessionData
         )
+
         is PaypalCheckoutPaymentInstrumentParams -> PaypalCheckoutPaymentInstrumentDataRequest(
             paypalOrderId,
             ExternalPayerInfoRequest(externalPayerInfoEmail)
         )
+
         is PaypalVaultPaymentInstrumentParams -> PaypalVaultPaymentInstrumentDataRequest(
             paypalBillingAgreementId,
             externalPayerInfo,
             shippingAddress
         )
+
         is GooglePayPaymentInstrumentParams
         -> {
             val token =
@@ -103,36 +113,42 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
                 flow
             )
         }
+
         is WebRedirectPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
             WebRedirectSessionInfoDataRequest(locale, redirectionUrl),
             type
         )
+
         is AdyenBlikPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
             BlikSessionInfoDataRequest(blikCode, locale, redirectionUrl),
             type
         )
+
         is PhonePaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
-            PhoneNumberSessionInfoDataRequest(phoneNumber, locale, redirectionUrl),
+            PhoneNumberSessionInfoDataRequest(locale, redirectionUrl, phoneNumber),
             type
         )
+
         is BankIssuerPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
-            BankIssuerSessionInfoDataRequest(bankIssuer, locale, redirectionUrl),
+            BankIssuerSessionInfoDataRequest(locale, redirectionUrl, bankIssuer),
             type
         )
+
         is PrimerDummyPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
-            PrimerDummySessionInfoDataRequest(flowDecisionType, locale, redirectionUrl),
+            PrimerDummySessionInfoDataRequest(locale, redirectionUrl, flowDecisionType),
             type
         )
+
         is AdyenBancontactCardPaymentInstrumentParams ->
             AdyenBancontactCardPaymentInstrumentDataRequest(
                 number,
@@ -141,15 +157,31 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
                 cardholderName,
                 paymentMethodType,
                 paymentMethodConfigId,
-                AdyenBancontactSessionInfoDataRequest(userAgent, locale, redirectionUrl),
+                AdyenBancontactSessionInfoDataRequest(locale, redirectionUrl, userAgent),
                 type
             )
+
         is XenditRetailOutletPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
-            RetailOutletsSessionInfoDataRequest(retailOutlet, locale, redirectionUrl),
+            RetailOutletsSessionInfoDataRequest(locale, redirectionUrl, retailOutlet),
             type
         )
+
+        is NolPayPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
+            paymentMethodType,
+            paymentMethodConfigId,
+            NolPaySessionInfoDataRequest(
+                mobileCountryCode,
+                mobileNumber,
+                nolPayCardNumber,
+                Build.MANUFACTURER,
+                Build.MODEL,
+                locale
+            ),
+            type
+        )
+
         else -> throw IllegalArgumentException("Missing PaymentInstrumentParams mapping for $this")
     }
 }

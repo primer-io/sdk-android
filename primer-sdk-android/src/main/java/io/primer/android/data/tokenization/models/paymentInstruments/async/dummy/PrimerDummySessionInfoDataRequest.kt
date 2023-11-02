@@ -6,11 +6,10 @@ import io.primer.android.payment.dummy.DummyDecisionType
 import org.json.JSONObject
 
 internal data class PrimerDummySessionInfoDataRequest(
-    val flowDecision: DummyDecisionType,
     override val locale: String,
-    override val redirectionUrl: String,
-    override val platform: String = "ANDROID"
-) : BaseSessionInfoDataRequest(locale, redirectionUrl, platform) {
+    val redirectionUrl: String,
+    val flowDecision: DummyDecisionType
+) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
     companion object {
 
         private const val DECISION_FIELD = "flowDecision"

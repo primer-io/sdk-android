@@ -9,6 +9,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
@@ -37,6 +38,9 @@ internal class CheckoutErrorEventResolverTest {
     internal lateinit var settings: PrimerSettings
 
     @RelaxedMockK
+    internal lateinit var logReporter: LogReporter
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @BeforeEach
@@ -45,6 +49,7 @@ internal class CheckoutErrorEventResolverTest {
         checkoutErrorEventResolver = CheckoutErrorEventResolver(
             analyticsRepository,
             errorMapperFactory,
+            logReporter,
             settings,
             eventDispatcher
         )

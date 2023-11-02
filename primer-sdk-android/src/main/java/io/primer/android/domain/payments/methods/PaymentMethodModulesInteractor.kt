@@ -10,7 +10,7 @@ import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.session.repository.ConfigurationRepository
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
 import io.primer.android.payment.SDKCapability
@@ -30,7 +30,7 @@ internal class PaymentMethodModulesInteractor(
     private val configurationRepository: ConfigurationRepository,
     private val config: PrimerConfig,
     private val baseErrorEventResolver: BaseErrorEventResolver,
-    private val logger: Logger,
+    private val logReporter: LogReporter,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<
     PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
@@ -85,9 +85,9 @@ internal class PaymentMethodModulesInteractor(
                     PaymentDescriptorsHolder(descriptors)
                 }
             }.flowOn(dispatcher)
-            .catch {
-                baseErrorEventResolver.resolve(it, ErrorMapperType.PAYMENT_METHODS)
-                logger.error(it.message.orEmpty(), it)
+            .catch { throwable ->
+                baseErrorEventResolver.resolve(throwable, ErrorMapperType.PAYMENT_METHODS)
+                logReporter.error(throwable.message.orEmpty(), throwable = throwable)
             }
 
     fun getPaymentMethodDescriptors(): List<PaymentMethodDescriptor> {

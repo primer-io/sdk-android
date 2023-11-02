@@ -14,6 +14,10 @@ internal inline fun <reified T : Any> DISdkComponent.resolve(): T {
     return getSdkContainer().resolve()
 }
 
+internal inline fun <reified T : Any> DISdkComponent.resolve(name: String): T {
+    return getSdkContainer().resolve(name)
+}
+
 context(ViewModelStoreOwner)
 internal inline fun <reified T : ViewModel,
     reified R : ViewModelProvider.Factory> DISdkComponent.viewModel(): Lazy<T> {

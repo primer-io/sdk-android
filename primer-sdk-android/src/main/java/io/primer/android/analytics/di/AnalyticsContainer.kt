@@ -18,15 +18,12 @@ import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.di.DependencyContainer
 import io.primer.android.di.SdkContainer
 import io.primer.android.http.PrimerHttpClient
-import io.primer.android.logging.DefaultLogger
-import io.primer.android.logging.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
-        registerSingleton<Logger>(ANALYTICS_LOGGER_NAME) { DefaultLogger(ANALYTICS_LOGGER_NAME) }
         registerSingleton { PrimerHttpClient(HttpClientFactory().build()) }
 
         val localAnalyticsDataSource = LocalAnalyticsDataSource.instance
@@ -51,7 +48,7 @@ internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyCon
                 DeviceIdDataSource(sdk.resolve()),
                 sdk.resolve(),
                 NetworkTypeDataSource(sdk.resolve()),
-                UncaughtHandlerDataSource(),
+                UncaughtHandlerDataSource(Thread.getDefaultUncaughtExceptionHandler()),
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
@@ -59,10 +56,6 @@ internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyCon
             )
         }
 
-        registerSingleton { AnalyticsInteractor(resolve(), resolve(ANALYTICS_LOGGER_NAME)) }
-    }
-
-    companion object {
-        private const val ANALYTICS_LOGGER_NAME = "ANALYTICS_LOGGER"
+        registerSingleton { AnalyticsInteractor(resolve(), sdk.resolve()) }
     }
 }

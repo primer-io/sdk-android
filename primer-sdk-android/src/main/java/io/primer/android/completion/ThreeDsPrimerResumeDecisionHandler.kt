@@ -22,7 +22,7 @@ import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.threeds.BuildConfig
 import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
@@ -51,7 +51,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     private val threeDsRepository: ThreeDsRepository,
     private val errorMapperFactory: ErrorMapperFactory,
     private val resumeHandlerFactory: ResumeHandlerFactory,
-    private val logger: Logger,
+    private val logReporter: LogReporter,
     private val config: PrimerConfig,
     paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
@@ -64,7 +64,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     analyticsRepository,
     errorEventResolver,
     eventDispatcher,
-    logger,
+    logReporter,
     config,
     paymentMethodDescriptorsRepository,
     retailerOutletRepository,
@@ -88,6 +88,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                             )
                         )
                     )
+
                 false -> eventDispatcher.dispatchEvent(
                     CheckoutEvent.Start3DS(
                         Processor3DS(
@@ -97,12 +98,14 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                     )
                 )
             }
+
             threeDsSdkClassValidator.is3dsSdkIncluded().not() ->
                 continueAuthWithException(
                     ThreeDsLibraryNotFoundException(
                         ThreeDsSdkClassValidator.THREE_DS_CLASS_NOT_LOADED_ERROR
                     )
                 )
+
             threeDsLibraryVersionValidator.isValidVersion().not() -> {
                 continueAuthWithException(
                     ThreeDsLibraryVersionMismatchException(
@@ -111,6 +114,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                     )
                 )
             }
+
             else -> when (mockConfigurationRepository.isMockedFlow()) {
                 true -> eventDispatcher.dispatchEvent(CheckoutEvent.Start3DSMock)
                 false -> {
@@ -135,7 +139,9 @@ internal class ThreeDsPrimerResumeDecisionHandler(
                         ErrorMapperType.THREE_DS
                     ).getPrimerError(throwable).also { error ->
                         logAnalytics(error)
-                        logger.warn("${error.description} ${error.recoverySuggestion.orEmpty()}")
+                        logReporter.warn(
+                            "${error.description} ${error.recoverySuggestion.orEmpty()}"
+                        )
                     }
                 )
             ).catch {
@@ -156,7 +162,7 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     private fun logAnalytics(error: PrimerError) = analyticsRepository.addEvent(
         MessageAnalyticsParams(
             MessageType.ERROR,
-            "${DefaultThreeDsInteractor.ANALYTICS_TAG_3DS}: ${error.description}",
+            "${DefaultThreeDsInteractor.ANALYTICS_3DS_COMPONENT}: ${error.description}",
             Severity.ERROR,
             error.diagnosticsId,
             error.context

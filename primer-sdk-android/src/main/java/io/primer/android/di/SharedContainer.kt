@@ -4,6 +4,8 @@ import android.content.Context
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.datasource.TimerDataSource
 import io.primer.android.analytics.data.helper.TimerEventProvider
+import io.primer.android.core.logging.internal.DefaultLogReporter
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
@@ -37,5 +39,7 @@ internal class SharedContainer(
         registerSingleton { MetaDataSource(context) }
 
         registerSingleton { EventDispatcher() }
+
+        registerSingleton<LogReporter> { DefaultLogReporter() }
     }
 }

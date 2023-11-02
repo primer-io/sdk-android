@@ -21,4 +21,5 @@ enum class CurrencyCode(val symbol: String) {
     IDR("Rp"),
     THB("฿"),
     MYR("Rg"),
+    AED("د.إ"),
 }

@@ -9,6 +9,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.completion.PrimerResumeDecisionHandler
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.payments.create.models.PaymentStatus
 import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.events.CheckoutEvent
@@ -28,12 +29,15 @@ internal class PaymentResultEventsResolverTest {
     @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
+    @RelaxedMockK
+    internal lateinit var logReporter: LogReporter
+
     private lateinit var paymentResultEventsResolver: PaymentResultEventsResolver
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        paymentResultEventsResolver = PaymentResultEventsResolver(eventDispatcher)
+        paymentResultEventsResolver = PaymentResultEventsResolver(eventDispatcher, logReporter)
     }
 
     @Test

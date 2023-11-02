@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/large_vertical_margin">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/large_vertical_margin"
+        android:text="Enter your phone number"
+        android:textColor="@color/black"
+        android:textSize="@dimen/primer_default_fontsize"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/mobileNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:background="@android:color/transparent"
+        android:hint="+97121234567"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <Button
+        android:id="@+id/getLinkedCards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:text="Get linked cards"
+        app:layout_constraintTop_toBottomOf="@id/mobileNumber" />
+
+    <TextView
+        android:id="@+id/cardsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:text="Linked cards:"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/getLinkedCards" />
+
+    <RadioGroup
+        android:id="@+id/linkedCards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/cardsTitle" />
+
+    <Button
+        android:id="@+id/unlinkNolCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Unlink Nol card"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/linkedCards" />
+
+    <Button
+        android:id="@+id/payWithNolCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pay with Nol card"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/unlinkNolCard" />
+
+    <Button
+        android:id="@+id/addNewNolCardButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add new card"
+        app:layout_constraintTop_toBottomOf="@id/payWithNolCard" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

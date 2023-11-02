@@ -2,6 +2,7 @@ package io.primer.android.domain.payments.helpers
 
 import io.primer.android.completion.PrimerErrorDecisionHandler
 import io.primer.android.completion.PrimerResumeDecisionHandler
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.payments.create.models.PaymentStatus
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PaymentError
@@ -10,13 +11,22 @@ import io.primer.android.domain.payments.create.model.toPrimerCheckoutData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 
-internal class PaymentResultEventsResolver(private val eventDispatcher: EventDispatcher) {
+internal class PaymentResultEventsResolver(
+    private val eventDispatcher: EventDispatcher,
+    private val logReporter: LogReporter
+) {
 
     fun resolve(paymentResult: PaymentResult, resumeHandler: PrimerResumeDecisionHandler) {
+        logReporter.info("Received new payment status: ${paymentResult.paymentStatus}.")
         when (paymentResult.paymentStatus) {
             PaymentStatus.PENDING -> {
+                logReporter.debug(
+                    "Handling required action: ${paymentResult.requiredActionName?.name}" +
+                        " for payment id: ${paymentResult.payment.id}"
+                )
                 resumeHandler.continueWithNewClientToken(paymentResult.clientToken.orEmpty())
             }
+
             PaymentStatus.FAILED -> {
                 eventDispatcher.dispatchEvent(
                     CheckoutEvent.CheckoutPaymentError(
@@ -33,6 +43,7 @@ internal class PaymentResultEventsResolver(private val eventDispatcher: EventDis
                     )
                 )
             }
+
             else -> completePaymentWithResult(paymentResult, resumeHandler)
         }
     }

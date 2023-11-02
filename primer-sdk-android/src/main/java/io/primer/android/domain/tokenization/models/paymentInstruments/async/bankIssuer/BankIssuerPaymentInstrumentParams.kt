@@ -7,12 +7,11 @@ internal data class BankIssuerPaymentInstrumentParams(
     override val paymentMethodType: String,
     override val paymentMethodConfigId: String,
     override val locale: String,
-    override val redirectionUrl: String,
+    val redirectionUrl: String,
     val bankIssuer: String
 ) : BaseAsyncPaymentInstrumentParams(
     paymentMethodType,
     paymentMethodConfigId,
     locale,
-    PaymentInstrumentType.OFF_SESSION_PAYMENT,
-    redirectionUrl
+    PaymentInstrumentType.OFF_SESSION_PAYMENT
 )

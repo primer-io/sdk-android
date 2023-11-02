@@ -7,6 +7,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.error.CheckoutErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.create.model.PaymentResult
@@ -37,6 +38,9 @@ internal class ResumePaymentInteractorTest {
     @RelaxedMockK
     internal lateinit var errorEventResolver: CheckoutErrorEventResolver
 
+    @RelaxedMockK
+    internal lateinit var logReporter: LogReporter
+
     private lateinit var interactor: ResumePaymentInteractor
 
     @BeforeEach
@@ -46,6 +50,7 @@ internal class ResumePaymentInteractorTest {
             ResumePaymentInteractor(
                 resumePaymentsRepository,
                 paymentResultEventsResolver,
+                logReporter,
                 errorEventResolver
             )
     }

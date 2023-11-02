@@ -10,6 +10,7 @@ import io.primer.android.payment.async.ipay88.IPay88PaymentMethodFactory
 import io.primer.android.payment.card.CardFactory
 import io.primer.android.payment.google.GooglePayFactory
 import io.primer.android.payment.klarna.KlarnaFactory
+import io.primer.android.payment.nolpay.NolPayFactory
 import io.primer.android.payment.paypal.PayPalFactory
 import io.primer.android.utils.Either
 import io.primer.android.utils.Failure
@@ -54,6 +55,7 @@ internal class DefaultPaymentMethodMapping(val settings: PrimerSettings) : Payme
                         type,
                         settings
                     ).build()
+                    PaymentMethodType.NOL_PAY -> NolPayFactory().build()
                     PaymentMethodType.ADYEN_BANK_TRANSFER,
                     PaymentMethodType.UNKNOWN -> Failure(
                         Exception("Unknown payment method, can't register.")

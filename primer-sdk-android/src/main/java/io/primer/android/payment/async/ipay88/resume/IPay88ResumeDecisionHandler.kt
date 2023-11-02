@@ -5,6 +5,7 @@ import io.primer.android.completion.DefaultPrimerResumeDecisionHandler
 import io.primer.android.components.domain.core.validation.ValidationResult
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.ipay88.validation.IPay88ValidationData
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.ipay88.validation.resolvers.IPay88ValidationRulesResolver
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.base.exceptions.IllegalClientSessionValueException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientToken
@@ -18,7 +19,6 @@ import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
 import io.primer.android.model.MonetaryAmount
 import io.primer.android.payment.async.ipay88.IPay88PaymentMethodDescriptor
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
@@ -39,7 +39,7 @@ internal class IPay88ResumeDecisionHandler(
     analyticsRepository: AnalyticsRepository,
     errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    logger: Logger,
+    logReporter: LogReporter,
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
@@ -52,7 +52,7 @@ internal class IPay88ResumeDecisionHandler(
     analyticsRepository,
     errorEventResolver,
     eventDispatcher,
-    logger,
+    logReporter,
     config,
     paymentMethodDescriptorsRepository,
     retailerOutletRepository,

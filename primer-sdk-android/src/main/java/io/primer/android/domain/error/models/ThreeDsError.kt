@@ -36,7 +36,7 @@ internal sealed class ThreeDsError : PrimerError() {
     ) : ThreeDsError()
 
     class ThreeDsChallengeCancelledError(
-        internal val errorCode: String?,
+        override val errorCode: String?,
         internal val message: String?,
         override val context: ThreeDsRuntimeFailureContextParams
     ) : ThreeDsError() {
@@ -45,7 +45,7 @@ internal sealed class ThreeDsError : PrimerError() {
     }
 
     class ThreeDsChallengeTimedOutError(
-        internal val errorCode: String?,
+        override val errorCode: String?,
         internal val message: String?,
         override val context: ThreeDsRuntimeFailureContextParams
     ) : ThreeDsError() {
@@ -64,7 +64,7 @@ internal sealed class ThreeDsError : PrimerError() {
     class ThreeDsChallengeInvalidStatusError(
         internal val transactionStatus: String,
         internal val transactionId: String,
-        internal val errorCode: String?,
+        override val errorCode: String?,
         internal val message: String?,
         override val context: ThreeDsRuntimeFailureContextParams
     ) : ThreeDsError() {
@@ -73,7 +73,7 @@ internal sealed class ThreeDsError : PrimerError() {
     }
 
     class ThreeDsChallengeProtocolFailedError(
-        internal val errorCode: String,
+        override val errorCode: String,
         internal val message: String,
         override val context: ThreeDsProtocolFailureContextParams
     ) : ThreeDsError() {
@@ -129,6 +129,8 @@ internal sealed class ThreeDsError : PrimerError() {
             is ThreeDsUnknownError ->
                 "An unknown error occurred while trying to perform 3DS."
         }
+
+    override val errorCode: String? = null
 
     override val diagnosticsId = UUID.randomUUID().toString()
 

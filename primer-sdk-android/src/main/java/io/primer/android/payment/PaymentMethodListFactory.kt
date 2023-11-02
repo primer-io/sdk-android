@@ -3,14 +3,13 @@ package io.primer.android.payment
 import io.primer.android.PaymentMethod
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.payments.methods.mapping.PaymentMethodMapping
-import io.primer.android.logging.DefaultLogger
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.utils.Failure
 import io.primer.android.utils.Success
 
 internal class PaymentMethodListFactory(
     private val mapping: PaymentMethodMapping,
-    private val logger: Logger = DefaultLogger(TAG)
+    private val logReporter: LogReporter
 ) {
 
     fun buildWith(configList: List<PaymentMethodConfigDataResponse>): MutableList<PaymentMethod> {
@@ -21,8 +20,10 @@ internal class PaymentMethodListFactory(
                 val result = mapping.getPaymentMethodFor(config.implementationType, config.type)
             ) {
                 is Success -> paymentMethods.add(result.value)
-                is Failure -> logger.warn(
-                    "Invalid config for ${config.type} ${result.value.message.orEmpty()}"
+                is Failure -> logReporter.warn(
+                    "${config.type} will be filtered due to invalid config." +
+                        " ${result.value.message.orEmpty()}",
+                    PAYMENT_METHODS_BUILDER_LOGGING_COMPONENT
                 )
             }
         }
@@ -31,6 +32,7 @@ internal class PaymentMethodListFactory(
     }
 
     private companion object {
-        const val TAG = "PaymentMethodListFactory"
+
+        const val PAYMENT_METHODS_BUILDER_LOGGING_COMPONENT = "Payment Method Builder"
     }
 }

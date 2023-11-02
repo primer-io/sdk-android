@@ -64,6 +64,8 @@ internal object DISdkContext {
             registerContainer(PaypalContainer(this))
 
             registerContainer(ComponentsContainer(this))
+
+            registerContainer(NolPayContainer(this))
         }
     }
 }

@@ -23,7 +23,6 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager
 import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface
-import io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManagerListener
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.components.ui.widgets.PrimerEditTextFactory
@@ -102,7 +101,7 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
 
     private fun initViewModel() {
         headlessManagerViewModel = ViewModelProvider(
-            this,
+            requireActivity(),
             HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
     }
@@ -273,22 +272,21 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.CARD_COMPONENTS)) {
                 cardManager =
                     PrimerHeadlessUniversalCheckoutCardComponentsManager.newInstance(it.paymentMethodType)
-                cardManager.setCardManagerListener(object :
-                    PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
-                    override fun onCardValidationChanged(isCardFormValid: Boolean) {
-                        Log.d(
-                            TAG,
-                            "onCardValidChanged $isCardFormValid"
-                        )
-                        binding.nextButton.isEnabled = isCardFormValid
-                    }
-                })
+                cardManager.setCardManagerListener { isCardFormValid ->
+                    Log.d(
+                        TAG,
+                        "onCardValidChanged $isCardFormValid"
+                    )
+                    binding.nextButton.isEnabled = isCardFormValid
+                }
                 cardManager.setInputElements(
                     createForm(
                         it.paymentMethodType, cardManager.getRequiredInputElementTypes()
                     )
                 )
             } else if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.NATIVE_UI)) {
+                addPaymentMethodView(it.paymentMethodType)
+            } else if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.NOL_PAY)) {
                 addPaymentMethodView(it.paymentMethodType)
             }
         }
@@ -347,7 +345,11 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
             contentDescription = "Pay with ${paymentMethodAsset?.paymentMethodName}"
 
             setOnClickListener {
-                onPaymentMethodSelected(paymentMethodType)
+                when (paymentMethodType) {
+                    "NOL_PAY" ->
+                        findNavController().navigate(R.id.action_MerchantComponentsFragment_to_NolPayFragment)
+                    else -> onPaymentMethodSelected(paymentMethodType)
+                }
             }
         })
     }
@@ -385,11 +387,12 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
         checkoutDataWithError = null
         try {
             val nativeUiManager =
-                PrimerHeadlessUniversalCheckoutNativeUiManager.newInstance(paymentMethodType).also {
-                    headlessManagerViewModel.addCloseable {
-                        it.cleanup()
+                PrimerHeadlessUniversalCheckoutNativeUiManager.newInstance(paymentMethodType)
+                    .also {
+                        headlessManagerViewModel.addCloseable {
+                            it.cleanup()
+                        }
                     }
-                }
             nativeUiManager.showPaymentMethod(
                 requireContext(), when (binding.typeButtonGroup.checkedButtonId) {
                     binding.checkout.id -> PrimerSessionIntent.CHECKOUT

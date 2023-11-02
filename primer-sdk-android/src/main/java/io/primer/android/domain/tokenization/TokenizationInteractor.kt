@@ -1,5 +1,6 @@
 package io.primer.android.domain.tokenization
 
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.error.ErrorMapperType
@@ -18,12 +19,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 
 internal class TokenizationInteractor(
     private val tokenizationRepository: TokenizationRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
     private val preTokenizationEventsResolver: PreTokenizationEventsResolver,
     private val postTokenizationEventResolver: PostTokenizationEventResolver,
+    private val logReporter: LogReporter,
     private val errorEventResolver: BaseErrorEventResolver,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<String, TokenizationParams>() {
@@ -37,8 +40,17 @@ internal class TokenizationInteractor(
                 )
             )
         }.flatMapLatest {
+            val paymentMethodType = params.paymentMethodDescriptor.config.type
             tokenizationRepository.tokenize(params)
+                .onStart {
+                    logReporter.info(
+                        "Started tokenization for $paymentMethodType payment method."
+                    )
+                }
                 .onEach {
+                    logReporter.info(
+                        "Tokenization successful for $paymentMethodType payment method."
+                    )
                     paymentMethodRepository.setPaymentMethod(it)
                     postTokenizationEventResolver.resolve(it, params.paymentMethodIntent)
                 }
@@ -59,8 +71,17 @@ internal class TokenizationInteractor(
                 )
             )
         }.flatMapLatest {
+            val paymentMethodType = params.paymentInstrumentParams.paymentMethodType
             tokenizationRepository.tokenize(params)
+                .onStart {
+                    logReporter.info(
+                        "Started tokenization for $paymentMethodType payment method."
+                    )
+                }
                 .onEach {
+                    logReporter.info(
+                        "Tokenization successful for $paymentMethodType payment method."
+                    )
                     paymentMethodRepository.setPaymentMethod(it)
                     postTokenizationEventResolver.resolve(it, params.paymentMethodIntent)
                 }

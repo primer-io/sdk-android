@@ -18,8 +18,6 @@ import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.infrastructure.files.ImagesFileProvider
-import io.primer.android.logging.DefaultLogger
-import io.primer.android.logging.Logger
 import io.primer.android.presentation.base.BaseViewModelFactory
 import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
 import io.primer.android.threeds.data.repository.PaymentMethodDataRepository
@@ -38,13 +36,7 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
 
         registerSingleton<PaymentResultRepository> { PaymentResultDataRepository(resolve()) }
 
-        registerFactory<Logger>(CHECKOUT_SESSION_HANDLER_LOGGER_NAME) {
-            DefaultLogger(
-                CHECKOUT_SESSION_HANDLER_LOGGER_NAME
-            )
-        }
-
-        registerSingleton { (sdk.resolve() as PrimerConfig).settings.uiOptions.theme }
+        registerSingleton { sdk.resolve<PrimerConfig>().settings.uiOptions.theme }
 
         registerSingleton { ValidationTokenDataSource(sdk.resolve()) }
 
@@ -82,7 +74,7 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
             ConfigurationInteractor(
                 resolve(),
                 sdk.resolve(),
-                resolve(CHECKOUT_SESSION_HANDLER_LOGGER_NAME)
+                sdk.resolve()
             )
         }
 
@@ -105,9 +97,5 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
         registerSingleton { ThreeDsSdkClassValidator() }
 
         registerSingleton { ThreeDsLibraryVersionValidator(resolve()) }
-    }
-
-    companion object {
-        private const val CHECKOUT_SESSION_HANDLER_LOGGER_NAME = "CHECKOUT_SESSION"
     }
 }

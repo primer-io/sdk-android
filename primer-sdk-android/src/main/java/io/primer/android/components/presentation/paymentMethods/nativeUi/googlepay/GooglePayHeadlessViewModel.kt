@@ -19,6 +19,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.goog
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.validation.GooglePayValidationRulesResolver
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.GooglePayActivityLauncherParams
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
 import io.primer.android.di.DISdkComponent
@@ -46,6 +47,7 @@ internal class GooglePayHeadlessViewModel(
     private val actionInteractor: ActionInteractor,
     private val validationRulesResolver: GooglePayValidationRulesResolver,
     private val baseErrorEventResolver: BaseErrorEventResolver,
+    private val logReporter: LogReporter,
     savedStateHandle: SavedStateHandle
 ) : NativeUIHeadlessViewModel(savedStateHandle) {
 
@@ -121,7 +123,7 @@ internal class GooglePayHeadlessViewModel(
 
     private fun onRedirect(activity: Activity) = viewModelScope.launch {
         configurationInteractor.execute(None()).catch { GooglePayEvent.OnError }.collect {
-            GooglePayFacadeFactory().create(activity, it.environment).pay(
+            GooglePayFacadeFactory().create(activity, it.environment, logReporter).pay(
                 activity,
                 it.gatewayMerchantId,
                 it.merchantName,
@@ -187,6 +189,7 @@ internal class GooglePayHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return GooglePayHeadlessViewModel(
+                    resolve(),
                     resolve(),
                     resolve(),
                     resolve(),

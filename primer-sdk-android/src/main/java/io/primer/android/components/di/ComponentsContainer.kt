@@ -36,18 +36,11 @@ import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.di.DependencyContainer
 import io.primer.android.di.SdkContainer
-import io.primer.android.logging.DefaultLogger
-import io.primer.android.logging.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
-        registerFactory<Logger>(COMPONENTS_HANDLER_LOGGER_NAME) {
-            DefaultLogger(
-                COMPONENTS_HANDLER_LOGGER_NAME
-            )
-        }
         registerSingleton { Navigator(sdk.resolve()) }
         registerSingleton {
             PrimerPaymentMethodViewFactory(sdk.resolve(), sdk.resolve())
@@ -72,14 +65,14 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
-                resolve(COMPONENTS_HANDLER_LOGGER_NAME)
+                sdk.resolve()
             )
         }
         registerSingleton {
             PaymentInputTypesInteractor(
                 resolve(),
                 sdk.resolve(),
-                resolve(COMPONENTS_HANDLER_LOGGER_NAME)
+                sdk.resolve()
             )
         }
         registerSingleton {
@@ -235,9 +228,5 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 resolve()
             )
         }
-    }
-
-    companion object {
-        private const val COMPONENTS_HANDLER_LOGGER_NAME = "PRIMER_HEADLESS_CHECKOUT"
     }
 }

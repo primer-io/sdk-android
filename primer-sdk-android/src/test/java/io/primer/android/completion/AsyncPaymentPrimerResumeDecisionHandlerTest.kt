@@ -24,7 +24,7 @@ import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -77,7 +77,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
     internal lateinit var config: PrimerConfig
 
     @RelaxedMockK
-    internal lateinit var logger: Logger
+    internal lateinit var logReporter: LogReporter
 
     private lateinit var resumeHandler: AsyncPaymentPrimerResumeDecisionHandler
 
@@ -93,7 +93,7 @@ class AsyncPaymentPrimerResumeDecisionHandlerTest {
                 analyticsRepository,
                 errorEventResolver,
                 eventDispatcher,
-                logger,
+                logReporter,
                 config,
                 paymentMethodDescriptorsRepository,
                 retailOutletRepository,

@@ -74,14 +74,6 @@
     *;
 }
 
--keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData {
-    *;
-}
-
--keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData* {
-    *;
-}
-
 -keep class io.primer.android.data.tokenization.models.PaymentInstrumentData {
     *;
 }
@@ -207,13 +199,10 @@
     public *;
 }
 
--keep class io.primer.android.components.domain.error.PrimerValidationError {
+-keep class io.primer.android.components.domain.error.* {
     *;
 }
 
--keep class io.primer.android.components.domain.error.PrimerInputValidationError {
-    *;
-}
 -keep enum io.primer.android.components.domain.inputs.models.PrimerInputElementType {
     *;
 }
@@ -303,6 +292,76 @@
  #------------------------------------Vault manager exceptions-------------------------------------#
 
 -keep class io.primer.android.components.domain.exception.* {
+    public *;
+}
+
+ #------------------------------------Headless components------------------------------------------------#
+
+-keep class io.primer.android.components.manager.core.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.core.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.linkCard.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.linkCard.composable.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.unlinkCard.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.unlinkCard.composable.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.payment.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.payment.composable.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.nfc.** {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.listCards.** {
+    *;
+}
+
+-keep class io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager {
+    *;
+}
+
+ #------------------------------------Exceptions--------------------------------------------------#
+
+-keep class io.primer.android.components.domain.payments.metadata.phone.exception.* {
+    public *;
+}
+
+ #------------------------------------Logging---------------------------------------------------#
+
+-keep class io.primer.android.core.logging.PrimerLog {
+    public *;
+}
+
+-keep class io.primer.android.core.logging.PrimerLogging {
+    public *;
+}
+
+-keep class io.primer.android.core.logging.PrimerLogger {
+    public *;
+}
+
+-keep enum io.primer.android.core.logging.PrimerLogLevel {
     public *;
 }
 

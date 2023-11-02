@@ -1,6 +1,7 @@
 package io.primer.sample.viewmodels
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
@@ -95,7 +96,7 @@ class MainViewModel(
     private val _transactionResponse: MutableLiveData<TransactionResponse> = MutableLiveData()
     val transactionResponse: LiveData<TransactionResponse> = _transactionResponse
 
-    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Staging)
+    val environment: MutableLiveData<PrimerEnv> = MutableLiveData<PrimerEnv>(PrimerEnv.Sandbox)
     fun setCurrentEnv(env: PrimerEnv) {
         environment.postValue(env)
         this.apiKeyLiveData.postValue(apiKeyDataSource.getApiKey(env))
@@ -115,9 +116,9 @@ class MainViewModel(
         }
     }
 
-    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(10100)
+    private val _amount: MutableLiveData<Int> = MutableLiveData<Int>(1000)
     val amount: LiveData<Int> = _amount
-    val amountStringified: String get() = String.format("%.2f", _amount.value!!.toDouble() / 100)
+    val amountStringified: String get() = String.format(Locale.US, "%.2f", _amount.value!!.toDouble() / 100)
     fun setAmount(amount: Int): Unit = _amount.postValue(amount)
 
     private val _descriptor = MutableLiveData("Purchase: Item-123")
@@ -139,8 +140,12 @@ class MainViewModel(
         paymentHandling
     )
 
+    private val _legacyWorkflows: MutableLiveData<Boolean> = MutableLiveData(true)
+    fun setUseLegacyWorkflows(useNewWorkflows: Boolean): Unit = _legacyWorkflows.postValue(useNewWorkflows)
+
     private val _uiOptions: MutableLiveData<PrimerUIOptions> =
         MutableLiveData(PrimerUIOptions(theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration)))
+
     fun setInitScreenUiOptions(enabled: Boolean): Unit = _uiOptions.postValue(
         _uiOptions.value?.copy(isInitScreenEnabled = enabled)
     )
@@ -170,6 +175,10 @@ class MainViewModel(
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
         )
 
+    private val _collectedTag: MutableLiveData<Intent?> = MutableLiveData()
+    val collectedTag: LiveData<Intent?> = _collectedTag
+    fun setTag(intent: Intent?) = _collectedTag.postValue(intent)
+
     fun configure(
         listener: PrimerCheckoutListener,
     ) {
@@ -184,7 +193,8 @@ class MainViewModel(
         countryRepository.getCountry().name,
         countryRepository.getCurrency(),
         environment.value?.environment ?: throw Error("no environment set!"),
-        metadata.value
+        metadata.value,
+        _legacyWorkflows.value
     ) { t ->
         viewModelScope.launch {
             withContext(Dispatchers.Main) {

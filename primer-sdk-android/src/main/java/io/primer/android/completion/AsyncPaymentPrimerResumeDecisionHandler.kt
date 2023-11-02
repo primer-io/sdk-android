@@ -1,6 +1,7 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -12,7 +13,6 @@ import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     analyticsRepository: AnalyticsRepository,
     baseErrorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    logger: Logger,
+    logReporter: LogReporter,
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
@@ -39,7 +39,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     analyticsRepository,
     baseErrorEventResolver,
     eventDispatcher,
-    logger,
+    logReporter,
     config,
     paymentMethodDescriptorsRepository,
     retailerOutletRepository,
@@ -73,6 +73,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                     )
                 )
             }
+
             ClientTokenIntent.PAYMENT_METHOD_VOUCHER.name -> {
                 eventDispatcher.dispatchEvents(
                     listOf(
@@ -87,6 +88,19 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                     )
                 )
             }
+
+            ClientTokenIntent.NOL_PAY_REDIRECTION.name -> {
+                eventDispatcher.dispatchEvents(
+                    listOf(
+                        CheckoutEvent.StartNolPayFlow(
+                            clientTokenRepository.getStatusUrl().orEmpty(),
+                            clientTokenRepository.getTransactionNo(),
+                            paymentMethodType
+                        )
+                    )
+                )
+            }
+
             else -> {
                 when (config.settings.fromHUC) {
                     true -> eventDispatcher.dispatchEvents(
@@ -105,6 +119,7 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
                             )
                         )
                     )
+
                     false -> eventDispatcher.dispatchEvents(
                         listOf(
                             CheckoutEvent.StartAsyncRedirectFlow(

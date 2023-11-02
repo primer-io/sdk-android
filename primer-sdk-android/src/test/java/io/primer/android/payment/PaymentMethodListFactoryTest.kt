@@ -2,10 +2,10 @@ package io.primer.android.payment
 
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.logging.DefaultLogger
 import io.primer.android.mocks.MockPaymentMethodMapping
 import org.junit.Assert
 import org.junit.Test
@@ -28,7 +28,8 @@ internal class PaymentMethodListFactoryTest {
     @Test
     fun `test maps correctly`() {
         val mapping = MockPaymentMethodMapping()
-        val factory = PaymentMethodListFactory(mapping)
+        val logReporter = mockk<LogReporter>(relaxed = true)
+        val factory = PaymentMethodListFactory(mapping, logReporter)
         val paymentMethods = factory.buildWith(configList)
         Assert.assertTrue(mapping.getPaymentMethodForCalled)
         Assert.assertEquals(paymentMethods.size, 1)
@@ -37,8 +38,8 @@ internal class PaymentMethodListFactoryTest {
     @Test
     fun `test fails correctly`() {
         val mapping = MockPaymentMethodMapping(true)
-        val logger = mockk<DefaultLogger>(relaxed = true)
-        val factory = PaymentMethodListFactory(mapping, logger)
+        val logReporter = mockk<LogReporter>(relaxed = true)
+        val factory = PaymentMethodListFactory(mapping, logReporter)
         val paymentMethods = factory.buildWith(configList)
         Assert.assertTrue(mapping.getPaymentMethodForCalled)
         Assert.assertEquals(paymentMethods.size, 0)

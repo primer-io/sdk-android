@@ -3,6 +3,7 @@ package io.primer.android.domain.payments.methods
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -11,7 +12,7 @@ import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.domain.payments.methods.models.VaultDeleteParams
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,7 +28,7 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
     internal lateinit var vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository
 
     @RelaxedMockK
-    internal lateinit var logger: Logger
+    internal lateinit var logReporter: LogReporter
 
     private lateinit var interactor: VaultedPaymentMethodsDeleteInteractor
 
@@ -36,7 +37,7 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
         MockKAnnotations.init(this, relaxed = true)
         interactor = VaultedPaymentMethodsDeleteInteractor(
             vaultedPaymentMethodsRepository,
-            logger
+            logReporter
         )
     }
 
@@ -56,18 +57,22 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
     @Test
     fun `execute() should dispatch TokenizeError when exchangeVaultedPaymentToken was failed`() {
         val params = mockk<VaultDeleteParams>(relaxed = true)
+        val exception = mockk<Exception>(relaxed = true)
+        every { exception.message } returns "Delete failed."
         coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
-            Result.failure(Exception("Delete failed."))
+            Result.failure(exception)
         )
         runTest {
             interactor(params)
         }
 
         val message = slot<String>()
+        val throwable = slot<Throwable>()
 
         coVerify { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }
-        verify { logger.error(capture(message)) }
+        verify { logReporter.error(capture(message), throwable = capture(throwable)) }
 
         assertEquals("Delete failed.", message.captured)
+        assertEquals(exception, throwable.captured)
     }
 }

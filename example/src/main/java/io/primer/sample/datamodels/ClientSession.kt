@@ -133,7 +133,8 @@ interface ClientSession : ExampleAppRequestBody {
                                     ),
                                 )
                             ),
-                        )
+                        ),
+                        descriptor = "test-descriptor"
                     ),
                 )
             }
@@ -196,6 +197,7 @@ interface ClientSession : ExampleAppRequestBody {
     data class PaymentMethod(
         val vaultOnSuccess: Boolean? = null,
         val options: PaymentMethodOptionGroup,
+        val descriptor: String
     )
 
     @Keep

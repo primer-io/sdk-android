@@ -10,7 +10,6 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.ipay
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.ipay88.validation.rules.ValidCustomerLastNameRule
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.ipay88.validation.rules.ValidProductDescriptionRule
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.ipay88.validation.rules.ValidRemarkRule
-import io.primer.android.di.ResumeEventContainer.Companion.RESUME_HANDLER_LOGGER_NAME
 import io.primer.android.payment.async.ipay88.resume.IPay88ResumeDecisionHandler
 
 internal class IPay88Container(private val sdk: SdkContainer) : DependencyContainer() {
@@ -57,7 +56,7 @@ internal class IPay88Container(private val sdk: SdkContainer) : DependencyContai
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
-                sdk.resolve(RESUME_HANDLER_LOGGER_NAME),
+                sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve()

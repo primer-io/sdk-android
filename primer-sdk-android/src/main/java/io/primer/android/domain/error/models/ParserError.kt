@@ -20,6 +20,8 @@ internal sealed class ParserError : PrimerError() {
             is DecodeError -> "Failed to decode $message"
         }
 
+    override val errorCode: String? = null
+
     override val exposedError = GeneralError.UnknownError(
         "Unknown error occurred. " +
             "Please contact us with diagnosticsId $diagnosticsId to investigate further."

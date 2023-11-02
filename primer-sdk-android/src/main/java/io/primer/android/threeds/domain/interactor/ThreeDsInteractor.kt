@@ -6,6 +6,7 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -15,7 +16,6 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.extensions.doOnError
-import io.primer.android.logging.DefaultLogger
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.common.CardNetwork
 import io.primer.android.threeds.data.models.common.ResponseCode
@@ -78,7 +78,7 @@ internal class DefaultThreeDsInteractor(
     private val baseErrorEventResolver: BaseErrorEventResolver,
     private val errorMapperFactory: ErrorMapperFactory,
     private val analyticsRepository: AnalyticsRepository,
-    private val logger: DefaultLogger,
+    private val logReporter: LogReporter,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ThreeDsInteractor {
 
@@ -133,7 +133,7 @@ internal class DefaultThreeDsInteractor(
                     authResponse.authentication.protocolVersion.orEmpty() >=
                         ProtocolVersion.V_220.versionNumber
                 ) {
-                    true -> logger.warn(PRIMER_INVALID_APP_URL_ERROR)
+                    true -> logReporter.warn(PRIMER_INVALID_APP_URL_ERROR, ANALYTICS_3DS_COMPONENT)
                     false -> Unit
                 }
                 null
@@ -165,8 +165,9 @@ internal class DefaultThreeDsInteractor(
                     errorMapperFactory.buildErrorMapper(ErrorMapperType.THREE_DS)
                         .getPrimerError(throwable).also { error ->
                             logAnalytics(error)
-                            logger.warn(
-                                "${error.description} ${error.recoverySuggestion.orEmpty()}"
+                            logReporter.warn(
+                                "${error.description} ${error.recoverySuggestion.orEmpty()}",
+                                ANALYTICS_3DS_COMPONENT
                             )
                         }
                 )
@@ -188,9 +189,12 @@ internal class DefaultThreeDsInteractor(
                 token.paymentInstrumentType,
                 if (paymentMethodRepository.getPaymentMethod().token == token.token) {
                     paymentMethodRepository.getPaymentMethod().isVaulted
-                } else { token.isVaulted },
+                } else {
+                    token.isVaulted
+                },
                 resumeToken
             )
+
             else -> Unit
         }
     }
@@ -200,6 +204,7 @@ internal class DefaultThreeDsInteractor(
             ClientTokenIntent.`3DS_AUTHENTICATION`.name -> {
                 baseErrorEventResolver.resolve(throwable, ErrorMapperType.THREE_DS)
             }
+
             else -> Unit
         }
     }
@@ -207,7 +212,7 @@ internal class DefaultThreeDsInteractor(
     private fun logAnalytics(error: PrimerError) = analyticsRepository.addEvent(
         MessageAnalyticsParams(
             MessageType.ERROR,
-            "$ANALYTICS_TAG_3DS: ${error.description}",
+            "$ANALYTICS_3DS_COMPONENT: ${error.description}",
             Severity.ERROR,
             error.diagnosticsId,
             error.context
@@ -221,6 +226,6 @@ internal class DefaultThreeDsInteractor(
             want to support redirecting back during the OOB flows please set correct
             threeDsAppRequestorUrl in PrimerThreeDsOptions during SDK initialization.
         """.trimIndent()
-        const val ANALYTICS_TAG_3DS = "Primer3DS"
+        const val ANALYTICS_3DS_COMPONENT = "3DS"
     }
 }

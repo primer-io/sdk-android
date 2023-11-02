@@ -5,13 +5,15 @@ import io.primer.android.PaymentMethodModule
 import io.primer.android.data.configuration.models.ConfigurationData
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.di.DISdkComponent
+import io.primer.android.di.extension.resolve
 import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.GooglePayPaymentMethodChecker
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 internal class GooglePayModule(
     private val googlePayFacadeFactory: GooglePayFacadeFactory = GooglePayFacadeFactory()
-) : PaymentMethodModule {
+) : PaymentMethodModule, DISdkComponent {
 
     private lateinit var googlePayFacade: GooglePayFacade
 
@@ -22,7 +24,7 @@ internal class GooglePayModule(
             GooglePayFacade.Environment.TEST
         }
         googlePayFacade =
-            googlePayFacadeFactory.create(applicationContext, googlePayEnvironment)
+            googlePayFacadeFactory.create(applicationContext, googlePayEnvironment, resolve())
     }
 
     override fun registerPaymentMethodCheckers(

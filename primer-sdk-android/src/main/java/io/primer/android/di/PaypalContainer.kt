@@ -32,6 +32,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.payp
 
 internal class PaypalContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
+    @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         registerSingleton { RemotePaypalOrderInfoDataSource(sdk.resolve()) }
 

@@ -1,6 +1,7 @@
 package io.primer.android.completion
 
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -13,7 +14,6 @@ import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletReposit
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
@@ -32,7 +32,7 @@ internal class ResumeHandlerFactory(
     private val errorMapperFactory: ErrorMapperFactory,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    private val logger: Logger,
+    private val logReporter: LogReporter,
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
@@ -65,7 +65,7 @@ internal class ResumeHandlerFactory(
                     threeDsRepository,
                     errorMapperFactory,
                     this,
-                    logger,
+                    logReporter,
                     config,
                     paymentMethodDescriptorsRepository,
                     retailerOutletRepository
@@ -79,7 +79,7 @@ internal class ResumeHandlerFactory(
                     analyticsRepository,
                     errorEventResolver,
                     eventDispatcher,
-                    logger,
+                    logReporter,
                     config,
                     paymentMethodDescriptorsRepository,
                     retailerOutletRepository,
@@ -93,7 +93,7 @@ internal class ResumeHandlerFactory(
                     analyticsRepository,
                     errorEventResolver,
                     eventDispatcher,
-                    logger,
+                    logReporter,
                     config,
                     paymentMethodDescriptorsRepository,
                     retailerOutletRepository

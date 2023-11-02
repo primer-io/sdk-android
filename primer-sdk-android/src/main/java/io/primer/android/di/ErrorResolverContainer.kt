@@ -15,6 +15,7 @@ internal class ErrorResolverContainer(private val sdk: SdkContainer) : Dependenc
                 sdk.resolve(),
                 resolve(),
                 sdk.resolve(),
+                sdk.resolve(),
                 sdk.resolve()
             )
         }

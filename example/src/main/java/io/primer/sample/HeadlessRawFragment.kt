@@ -88,7 +88,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         super.onViewCreated(view, savedInstanceState)
 
         headlessManagerViewModel = ViewModelProvider(
-            this,
+            requireActivity(),
             HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
 

@@ -18,8 +18,6 @@ import io.primer.android.domain.payments.methods.VaultedPaymentMethodsExchangeIn
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsInteractor
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodExchangeRepository
 import io.primer.android.domain.payments.methods.repository.VaultedPaymentMethodsRepository
-import io.primer.android.logging.DefaultLogger
-import io.primer.android.logging.Logger
 import io.primer.android.viewmodel.PrimerPaymentMethodCheckerRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -27,16 +25,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class PaymentMethodsContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
-        registerSingleton<Logger>(PRIMER_VIEW_MODEL_HANDLER_LOGGER_NAME) {
-            DefaultLogger(
-                PRIMER_VIEW_MODEL_HANDLER_LOGGER_NAME
-            )
-        }
-
-        registerSingleton<Logger>(VAULT_HANDLER_LOGGER_NAME) {
-            DefaultLogger(VAULT_HANDLER_LOGGER_NAME)
-        }
-
         registerSingleton { PrimerPaymentMethodCheckerRegistry }
 
         registerSingleton {
@@ -45,7 +33,7 @@ internal class PaymentMethodsContainer(private val sdk: SdkContainer) : Dependen
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
-                resolve(PRIMER_VIEW_MODEL_HANDLER_LOGGER_NAME)
+                sdk.resolve()
             )
         }
 
@@ -81,7 +69,7 @@ internal class PaymentMethodsContainer(private val sdk: SdkContainer) : Dependen
         registerSingleton {
             VaultedPaymentMethodsDeleteInteractor(
                 resolve(),
-                resolve(VAULT_HANDLER_LOGGER_NAME)
+                sdk.resolve()
             )
         }
 
@@ -110,10 +98,5 @@ internal class PaymentMethodsContainer(private val sdk: SdkContainer) : Dependen
                 sdk.resolve()
             )
         }
-    }
-
-    companion object {
-        private const val PRIMER_VIEW_MODEL_HANDLER_LOGGER_NAME = "PRIMER_VIEW_MODEL"
-        private const val VAULT_HANDLER_LOGGER_NAME = "VAULT_INTERACTOR"
     }
 }

@@ -11,6 +11,7 @@ import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
+import io.primer.android.core.logging.internal.LogReporter
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.Continuation
@@ -18,7 +19,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 internal class GooglePayFacade constructor(
-    private val paymentsClient: PaymentsClient
+    private val paymentsClient: PaymentsClient,
+    private val logReporter: LogReporter
 ) {
 
     companion object {
@@ -97,8 +99,12 @@ internal class GooglePayFacade constructor(
                             completedTask.getResult(ApiException::class.java)?.let { isAvailable ->
                                 continuation.resume(isAvailable)
                             }
-                        } catch (ignored: ApiException) {
-                            // continuation.resumeWithException(exception) // TODO log error
+                        } catch (exception: ApiException) {
+                            logReporter.warn(
+                                "Unable to make payments on this device." +
+                                    " Status returned: ${exception.status}",
+                                "Google Pay"
+                            )
                             continuation.resume(false)
                         }
                     }
@@ -202,18 +208,21 @@ internal class GooglePayFacadeFactory {
 
     fun create(
         applicationContext: Context,
-        environment: GooglePayFacade.Environment
+        environment: GooglePayFacade.Environment,
+        logReporter: LogReporter
     ): GooglePayFacade {
         val walletEnvironment =
             if (environment == GooglePayFacade.Environment.TEST) {
                 WalletConstants.ENVIRONMENT_TEST
-            } else { WalletConstants.ENVIRONMENT_PRODUCTION }
+            } else {
+                WalletConstants.ENVIRONMENT_PRODUCTION
+            }
         val walletOptions = Wallet.WalletOptions.Builder()
             .setEnvironment(walletEnvironment)
             .build()
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)
 
-        return GooglePayFacade(paymentsClient)
+        return GooglePayFacade(paymentsClient, logReporter)
     }
 }

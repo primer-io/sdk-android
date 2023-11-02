@@ -21,7 +21,7 @@ internal class PaymentMethodDescriptorContainer(private val sdk: SdkContainer) :
 
         registerSingleton<PaymentMethodMapping> { DefaultPaymentMethodMapping(sdk.resolve()) }
 
-        registerSingleton { PaymentMethodListFactory(resolve()) }
+        registerSingleton { PaymentMethodListFactory(resolve(), sdk.resolve()) }
 
         registerSingleton<BillingAddressValidator> { DefaultBillingAddressValidator() }
 

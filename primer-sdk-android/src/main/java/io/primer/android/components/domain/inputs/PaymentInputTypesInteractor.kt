@@ -7,12 +7,12 @@ import io.primer.android.data.configuration.models.CheckoutModuleType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
     private val errorEventResolver: BaseErrorEventResolver,
-    private val logger: Logger
+    private val logReporter: LogReporter
 ) {
     // MOVE TO FACTORY
     fun execute(paymentMethodType: String): List<PrimerInputElementType> {
@@ -89,7 +89,7 @@ internal class PaymentInputTypesInteractor(
                 else -> emptyList()
             }
         } catch (e: IllegalArgumentException) {
-            logger.error(CONFIGURATION_ERROR, e)
+            logReporter.error(CONFIGURATION_ERROR, throwable = e)
             errorEventResolver.resolve(e, ErrorMapperType.HUC)
             return emptyList()
         }

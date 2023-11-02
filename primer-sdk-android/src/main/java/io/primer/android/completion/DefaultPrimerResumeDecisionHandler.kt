@@ -19,7 +19,7 @@ import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
@@ -41,7 +41,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private val analyticsRepository: AnalyticsRepository,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    private var logger: Logger,
+    private var logReporter: LogReporter,
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
@@ -51,6 +51,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private var handlerUsed = false
 
     override fun handleFailure(message: String?) = callIfNotHandled {
+        reportDebugLog("Received failure callback.")
         addAnalyticsEvent("handleFailure")
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ShowError(errorType = ErrorType.PAYMENT_FAILED, message = message)
@@ -59,6 +60,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
 
     override fun handleSuccess() = callIfNotHandled {
         addAnalyticsEvent("handleSuccess")
+        reportDebugLog("Received success callback.")
         val successType = when (config.intent.paymentMethodIntent) {
             PrimerSessionIntent.CHECKOUT -> SuccessType.PAYMENT_SUCCESS
             PrimerSessionIntent.VAULT -> SuccessType.VAULT_TOKENIZATION_SUCCESS
@@ -69,13 +71,14 @@ internal open class DefaultPrimerResumeDecisionHandler(
     }
 
     override fun continueWithNewClientToken(clientToken: String) = callIfNotHandled {
+        reportDebugLog("Received new client token.")
         addAnalyticsEvent("handleNewClientToken")
         CoroutineScope(dispatcher).launch {
             validateClientToken(clientToken).catch { e ->
                 errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
             }.collect {
-                clientTokenRepository.setClientToken(clientToken)
                 try {
+                    clientTokenRepository.setClientToken(clientToken)
                     handleClientToken(clientToken)
                     handlePaymentMethodData(clientToken)
                 } catch (e: IllegalArgumentException) {
@@ -111,6 +114,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
                                 )
                             )
                         }
+
                         else -> {
                             if (config.settings.paymentHandling == PrimerPaymentHandling.MANUAL) {
                                 eventDispatcher.dispatchEvent(CheckoutEvent.ResumePending(data))
@@ -158,7 +162,7 @@ internal open class DefaultPrimerResumeDecisionHandler(
             handlerUsed = true
             function()
         } else {
-            logger.warn(HANDLER_USED_ERROR)
+            logReporter.warn(HANDLER_USED_ERROR)
         }
     }
 
@@ -169,6 +173,10 @@ internal open class DefaultPrimerResumeDecisionHandler(
                 mapOf("class" to javaClass.simpleName)
             )
         )
+    }
+
+    private fun reportDebugLog(message: String) {
+        logReporter.debug(message, RESUME_HANDLER_LOG_COMPONENT)
     }
 
     private fun validateClientToken(clientToken: String): Flow<Boolean> {
@@ -183,5 +191,6 @@ internal open class DefaultPrimerResumeDecisionHandler(
         const val HANDLER_USED_ERROR = "ResumeHandler can be used only once."
         const val RESUME_INTENT_ERROR = "Unexpected client token intent"
         const val CLIENT_TOKEN_INTENT_SUFFIX = "_REDIRECTION"
+        const val RESUME_HANDLER_LOG_COMPONENT = "Resume Handler"
     }
 }

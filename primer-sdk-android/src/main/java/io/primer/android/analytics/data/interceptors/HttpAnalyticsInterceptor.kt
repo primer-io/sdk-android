@@ -42,7 +42,9 @@ internal class HttpAnalyticsInterceptor :
                     response.code(),
                     if (response?.isSuccessful == true) {
                         null
-                    } else { response.peekBody(Long.MAX_VALUE).string() }
+                    } else {
+                        response.peekBody(Long.MAX_VALUE).string()
+                    }
                 )
             )
         } catch (e: IOException) {

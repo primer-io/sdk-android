@@ -1,11 +1,11 @@
 package io.primer.android.data.error.model
 
+import io.primer.android.core.logging.internal.DefaultLogReporter
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
-import io.primer.android.logging.DefaultLogger
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -63,7 +63,7 @@ internal data class APIError(
     }
 
     companion object {
-        private val log = DefaultLogger("api-error")
+        private val logReporter = DefaultLogReporter()
 
         private const val DEFAULT_ERROR_ELEMENT =
             """{
@@ -87,8 +87,8 @@ internal data class APIError(
             try {
                 return JSONObject(content).getJSONObject("error")
             } catch (ignored: Exception) {
-                log.warn("Failed to decode json response")
-                log.warn(content)
+                logReporter.warn("Failed to decode json response")
+                logReporter.warn(content)
             }
 
             return JSONObject(DEFAULT_ERROR_ELEMENT)

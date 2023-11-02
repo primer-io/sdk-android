@@ -13,6 +13,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.data.repository.AnalyticsDataRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
@@ -23,7 +24,6 @@ import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
 import io.primer.android.domain.token.repository.ClientTokenRepository
-import io.primer.android.logging.DefaultLogger
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.common.ResponseCode
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
@@ -87,7 +87,7 @@ internal class ThreeDsInteractorTest {
     internal lateinit var analyticsRepository: AnalyticsDataRepository
 
     @RelaxedMockK
-    internal lateinit var logger: DefaultLogger
+    internal lateinit var logReporter: LogReporter
 
     private lateinit var interactor: ThreeDsInteractor
 
@@ -105,7 +105,7 @@ internal class ThreeDsInteractorTest {
             checkoutErrorEventResolver,
             errorMapperFactory,
             analyticsRepository,
-            logger
+            logReporter
         )
 
         every {
@@ -358,7 +358,7 @@ internal class ThreeDsInteractorTest {
         }
 
         coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
-        verify { logger.warn(any()) }
+        verify { logReporter.warn(any(), any()) }
     }
 
     @Test
@@ -391,7 +391,7 @@ internal class ThreeDsInteractorTest {
         }
 
         coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
-        verify(exactly = 0) { logger.warn(any()) }
+        verify(exactly = 0) { logReporter.warn(any()) }
     }
 
     @Test

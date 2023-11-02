@@ -40,6 +40,7 @@ internal class TokenizationContainer(private val sdk: SdkContainer) : Dependency
                 sdk.resolve(),
                 resolve(),
                 resolve(),
+                sdk.resolve(),
                 sdk.resolve()
             )
         }

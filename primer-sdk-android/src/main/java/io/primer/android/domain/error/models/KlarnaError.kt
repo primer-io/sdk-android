@@ -27,6 +27,8 @@ internal sealed class KlarnaError : PrimerError() {
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()
 
+    override val errorCode: String? = null
+
     override val exposedError: PrimerError
         get() = this
 

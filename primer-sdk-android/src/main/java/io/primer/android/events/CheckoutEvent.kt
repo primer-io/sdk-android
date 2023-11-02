@@ -200,6 +200,12 @@ internal sealed class CheckoutEvent(
         val paymentMethodType: String
     ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
 
+    class StartNolPayFlow(
+        val statusUrl: String,
+        val transactionNo: String?,
+        val paymentMethodType: String
+    ) : CheckoutEvent(CheckoutEventType.START_VOUCHER_FLOW)
+
     data class AsyncFlowRedirect(val uri: Uri?) :
         CheckoutEvent(CheckoutEventType.ASYNC_FLOW_REDIRECT)
 

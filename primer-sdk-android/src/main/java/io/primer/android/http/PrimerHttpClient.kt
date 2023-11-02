@@ -74,6 +74,18 @@ internal class PrimerHttpClient(
             )
         }
 
+    suspend inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> postSuspend(
+        url: String,
+        request: T,
+        headers: Map<String, String> = hashMapOf()
+    ): R = executeRequest(
+        Request.Builder()
+            .url(url)
+            .headers(Headers.of(headers))
+            .post(getRequestBody(request))
+            .build()
+    )
+
     suspend inline fun <reified R : JSONDeserializable> delete(
         url: String,
         headers: Map<String, String> = hashMapOf()

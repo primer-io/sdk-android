@@ -4,7 +4,6 @@ import com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
 import io.primer.android.di.DependencyContainer
 import io.primer.android.di.SdkContainer
-import io.primer.android.logging.DefaultLogger
 import io.primer.android.threeds.data.repository.NetceteraThreeDsServiceRepository
 import io.primer.android.threeds.data.repository.ThreeDsAppUrlDataRepository
 import io.primer.android.threeds.data.repository.ThreeDsConfigurationDataRepository
@@ -29,8 +28,6 @@ internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyConta
             )
         }
 
-        registerFactory(LOGGER_TAG_3DS) { DefaultLogger(LOGGER_TAG_3DS) }
-
         registerSingleton<ThreeDsConfigurationRepository> {
             ThreeDsConfigurationDataRepository(
                 sdk.resolve(),
@@ -52,14 +49,10 @@ internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyConta
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
-                resolve(LOGGER_TAG_3DS)
+                sdk.resolve()
             )
         }
 
         registerFactory { ThreeDsViewModelFactory(resolve(), sdk.resolve(), sdk.resolve()) }
-    }
-
-    companion object {
-        private const val LOGGER_TAG_3DS = "3DS"
     }
 }

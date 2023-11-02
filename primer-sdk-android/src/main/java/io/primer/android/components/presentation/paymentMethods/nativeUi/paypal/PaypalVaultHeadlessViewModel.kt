@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
+@Suppress("LongParameterList")
 internal class PaypalVaultHeadlessViewModel(
     private val configurationInteractor: PaypalVaultConfigurationInteractor,
     private val createBillingAgreementInteractor: PaypalCreateBillingAgreementInteractor,

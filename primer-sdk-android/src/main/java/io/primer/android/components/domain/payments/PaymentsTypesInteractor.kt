@@ -10,7 +10,7 @@ import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.logging.Logger
+import io.primer.android.core.logging.internal.LogReporter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -24,7 +24,7 @@ internal class PaymentsTypesInteractor(
     private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
-    private val logger: Logger,
+    private val logReporter: LogReporter,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseFlowInteractor<Unit, None>() {
 
@@ -42,11 +42,11 @@ internal class PaymentsTypesInteractor(
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ConfigurationSuccess(paymentMethods)
         )
-    }.catch {
-        logger.error(CONFIGURATION_ERROR, it)
-        errorEventResolver.resolve(it, ErrorMapperType.HUC)
-    }
-        .flowOn(dispatcher)
+        logReporter.info("Headless Universal Checkout initialized successfully.")
+    }.catch { throwable ->
+        logReporter.error(CONFIGURATION_ERROR, throwable = throwable)
+        errorEventResolver.resolve(throwable, ErrorMapperType.HUC)
+    }.flowOn(dispatcher)
         .mapLatest { }
 
     private companion object {

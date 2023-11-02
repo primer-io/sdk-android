@@ -19,6 +19,8 @@ internal sealed class ApayaError : PrimerError() {
                 "Apaya internal error with status: $status (diagnosticsId: $diagnosticsId)"
         }
 
+    override val errorCode: String? = null
+
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()
 

@@ -38,6 +38,8 @@ internal sealed class GeneralError : PrimerError() {
 
     override val diagnosticsId = UUID.randomUUID().toString()
 
+    override val errorCode: String? = null
+
     override val exposedError: PrimerError
         get() = this
 

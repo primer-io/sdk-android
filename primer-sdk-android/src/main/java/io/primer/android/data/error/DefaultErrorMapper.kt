@@ -22,6 +22,7 @@ import java.io.IOException
 
 internal open class DefaultErrorMapper : ErrorMapper {
 
+    @Suppress("ComplexMethod")
     override fun getPrimerError(throwable: Throwable): PrimerError {
         return when (throwable) {
             is IOException -> ConnectivityError(throwable.message.orEmpty())

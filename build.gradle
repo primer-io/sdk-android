@@ -11,7 +11,7 @@ buildscript {
                         ktlintGradle: 'org.jlleitschuh.gradle:ktlint-gradle:11.6.1',
                 ],
                 mavenPublish       : 'com.github.dcendents:android-maven-gradle-plugin:2.1',
-                jacoco             : 'org.jacoco:org.jacoco.core:0.8.8',
+                jacoco             : 'org.jacoco:org.jacoco.core:0.8.9',
                 dexCount           : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:3.1.0'
         ]
     }
