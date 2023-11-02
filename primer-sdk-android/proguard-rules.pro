@@ -207,6 +207,10 @@
     public *;
 }
 
+-keep class io.primer.android.components.domain.error.PrimerValidationError {
+    *;
+}
+
 -keep class io.primer.android.components.domain.error.PrimerInputValidationError {
     *;
 }
@@ -289,6 +293,10 @@
 }
 
 -keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod {
+    public *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod$AuthenticationDetails {
     public *;
 }
 
