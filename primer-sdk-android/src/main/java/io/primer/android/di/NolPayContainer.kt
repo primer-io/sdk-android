@@ -11,7 +11,6 @@ import io.primer.android.components.data.metadata.phone.repository.PhoneMetadata
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.repository.PhoneMetadataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetCardDetailsInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkPaymentCardTokenInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetLinkedCardsInteractor
@@ -81,7 +80,6 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
         registerFactory { NolPayLinkPaymentCardInteractor(resolve()) }
         registerFactory { NolPayGetUnlinkPaymentCardOTPInteractor(resolve()) }
         registerFactory { NolPayUnlinkPaymentCardInteractor(resolve()) }
-        registerFactory { NolPayGetCardDetailsInteractor(resolve()) }
         registerFactory { NolPayRequestPaymentInteractor(resolve()) }
         registerFactory { NolPayGetLinkedCardsInteractor(resolve()) }
         registerFactory { NolPayRequiredActionInteractor(sdk.resolve(), sdk.resolve()) }
