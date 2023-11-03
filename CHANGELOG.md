@@ -1,3 +1,14 @@
+## 2.19.0 (2023-11-03)
+
+### Feat
+
+- Introduces Nol Pay payment method and PrimerLogging functionalities (#446)
+
+### Fix
+
+- ensures AuthenticationDetails.kt and PrimerValidationError.kt are no longer obscured via proguard
+- Fixed 3DS wrapper analytics field name (#447)
+
 ## 2.18.0 (2023-10-16)
 
 ### Feat
