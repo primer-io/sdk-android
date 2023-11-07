@@ -14,7 +14,7 @@ ext {
             primer3ds              : "1.2.0",
             primerKlarna           : "1.0.1",
             primeriPay88           : "1.0.1",
-            primerNolPay           : "1.0.0",
+            primerNolPay           : "1.0.1",
             json                   : "20220320"
     ]
 }

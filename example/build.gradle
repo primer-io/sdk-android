@@ -93,7 +93,7 @@ dependencies {
 
     implementation 'io.primer:klarna-android:1.0.1'
     implementation 'io.primer:ipay88-my-android:1.0.1'
-    implementation 'io.primer:nol-pay-android:1.0.0'
+    implementation 'io.primer:nol-pay-android:1.0.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
