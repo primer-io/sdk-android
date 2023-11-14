@@ -1,3 +1,9 @@
+## 2.19.2 (2023-11-14)
+
+### Fix
+
+- fixed empty phone number validation, fixed Nol Pay SDK being req… (#462)
+
 ## 2.19.1 (2023-11-07)
 
 ### Fix
