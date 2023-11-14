@@ -16,12 +16,16 @@ internal class PhoneMetadataDataRepository(
 
     override suspend fun getPhoneMetadata(phoneNumber: String) =
         runSuspendCatching {
-            remoteMetadataDataSource.execute(
-                BaseRemoteRequest(
-                    localConfigurationDataSource.getConfiguration(),
-                    phoneNumber
-                )
-            )
+            when (phoneNumber.isBlank()) {
+                true -> throw PhoneValidationException("Phone number cannot be blank.")
+                false ->
+                    remoteMetadataDataSource.execute(
+                        BaseRemoteRequest(
+                            localConfigurationDataSource.getConfiguration(),
+                            phoneNumber
+                        )
+                    )
+            }
         }.mapSuspendCatching { metadataResponse ->
             when (metadataResponse.isValid) {
                 true -> PhoneMetadata(

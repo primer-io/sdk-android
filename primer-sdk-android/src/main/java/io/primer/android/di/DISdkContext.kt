@@ -5,6 +5,7 @@ import io.primer.android.analytics.di.AnalyticsContainer
 import io.primer.android.components.di.ComponentsContainer
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientToken
+import io.primer.android.payment.nolpay.helpers.NolPaySdkClassValidator
 
 internal object DISdkContext {
     var sdkContainer: SdkContainer? = null
@@ -65,7 +66,9 @@ internal object DISdkContext {
 
             registerContainer(ComponentsContainer(this))
 
-            registerContainer(NolPayContainer(this))
+            if (NolPaySdkClassValidator().isSdkIncluded()) {
+                registerContainer(NolPayContainer(this))
+            }
         }
     }
 }

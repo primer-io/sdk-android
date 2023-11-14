@@ -10,7 +10,6 @@ import io.primer.android.components.domain.payments.metadata.phone.exception.Pho
 import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadata
 import io.primer.android.components.domain.payments.metadata.phone.repository.PhoneMetadataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkCardAndMobileNumberDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_CARD_NUMBER_ERROR_ID
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations.INVALID_MOBILE_NUMBER_ERROR_ID
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
@@ -99,7 +98,7 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidatorTest {
             val result = validator.validate(collectableData)
             assert(result.isSuccess)
             val errors = result.getOrThrow()
-            assertEquals(NolPayValidations.INVALID_MOBILE_NUMBER_ERROR_ID, errors.first().errorId)
+            assertEquals(INVALID_MOBILE_NUMBER_ERROR_ID, errors.first().errorId)
         }
 
         coVerify { phoneMetadataRepository.getPhoneMetadata(any()) }
