@@ -1,0 +1,33 @@
+package io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models
+
+import io.primer.android.core.serialization.json.JSONDeserializable
+import io.primer.android.core.serialization.json.JSONDeserializer
+import org.json.JSONObject
+
+internal data class PaymentCategory(
+    val identifier: String,
+    val name: String,
+    val descriptiveAssetUrl: String,
+    val standardAssetUrl: String
+) : JSONDeserializable {
+
+    companion object {
+        private const val IDENTIFIER_FIELD = "identifier"
+        private const val NAME_FIELD = "name"
+        private const val DESCRIPTIVE_ASSET_FIELD = "descriptiveAssetUrl"
+        private const val STANDARD_ASSET_FIELD = "standardAssetUrl"
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<PaymentCategory> {
+
+            override fun deserialize(t: JSONObject): PaymentCategory {
+                return PaymentCategory(
+                    t.getString(IDENTIFIER_FIELD),
+                    t.getString(NAME_FIELD),
+                    t.getString(DESCRIPTIVE_ASSET_FIELD),
+                    t.getString(STANDARD_ASSET_FIELD)
+                )
+            }
+        }
+    }
+}
