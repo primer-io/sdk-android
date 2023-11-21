@@ -65,7 +65,7 @@
                 android:digits="0123456789 "
                 android:drawablePadding="10dp"
                 android:imeOptions="actionNext"
-                android:inputType="number"
+                android:inputType="number|textNoSuggestions"
                 tools:ignore="TouchTargetSizeCheck"
                 tools:text="1234123412341234"
                 tools:textColor="@android:color/black" />
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789/ "
                     android:imeOptions="actionNext"
-                    android:inputType="date"
+                    android:inputType="date|textNoSuggestions"
                     android:maxLength="5"
                     tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
             </io.primer.android.ui.components.TextInputWidget>
@@ -119,7 +119,7 @@
                 style="@style/Primer.FormInput.Outbox.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
+                android:inputType="textPersonName|textNoSuggestions"
                 android:maxLines="1"
                 tools:ignore="TouchTargetSizeCheck" />
         </io.primer.android.ui.components.TextInputWidget>
