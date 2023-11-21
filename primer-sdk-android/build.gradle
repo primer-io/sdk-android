@@ -1,39 +1,23 @@
-import com.getkeepsafe.dexcount.OutputFormat
-
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-
-    dependencies {
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.22.0'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5'
-    }
-}
-
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    id 'com.getkeepsafe.dexcount'
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.junit5
+    alias libs.plugins.dexcount
 }
-
-apply plugin: 'com.dicedmelon.gradle.jacoco-android'
 
 apply from: "$rootDir/config/android-common.gradle"
-apply from: "$rootDir/config/test-dependencies.gradle"
 
 android {
+    namespace 'io.primer.android'
+
     buildTypes {
         debug {
             minifyEnabled false
-            debuggable true
             testCoverageEnabled true
         }
         release {
             minifyEnabled true
 
-            consumerProguardFiles 'consumer-rules.pro'
             proguardFiles getDefaultProguardFile(
                     'proguard-android-optimize.txt'),
                     'proguard-rules.pro'
@@ -43,6 +27,7 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$VERSION_NAME\""
     }
+
     buildFeatures {
         viewBinding true
     }
@@ -57,46 +42,39 @@ android {
 }
 
 dependencies {
+    implementation libs.networking.okhttp
+    implementation libs.networking.okhttp.interceptor
 
-    implementation Dependencies.Networking.okhttp
-    implementation Dependencies.Networking.okhttpLoggingInterceptor
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlin.coroutines
+    implementation libs.android.ktx
+    implementation libs.android.appcompat
 
-    implementation Dependencies.Kotlin.stdlib
-    implementation Dependencies.Kotlin.coroutines
-    implementation AndroidDependencies.coreKtx
-    implementation AndroidDependencies.appCompat
-    implementation AndroidDependencies.material
-    implementation AndroidDependencies.constraintLayout
+    implementation libs.android.material
+    implementation libs.android.constraintlayout
 
-    implementation AndroidDependencies.fragment
-    implementation AndroidDependencies.startup
+    implementation libs.android.fragment
 
-    implementation AndroidDependencies.Lifecycle.liveData
-    implementation AndroidDependencies.Lifecycle.lifecycle
-    implementation AndroidDependencies.Lifecycle.viewModel
-    implementation AndroidDependencies.Lifecycle.viewModelSavedState
+    implementation libs.android.startup
 
-    implementation 'com.google.android.gms:play-services-wallet:19.1.0'
+    implementation libs.android.lifecycle.livedata.ktx
+    implementation libs.android.lifecycle.runtime.ktx
+    implementation libs.android.lifecycle.viewmodel.state
+    implementation libs.android.lifecycle.viewmodel.ktx
 
-    compileOnly Dependencies.ThreeDs.primer3ds
-    testImplementation Dependencies.ThreeDs.primer3ds
+    implementation libs.play.services.wallet
 
-    compileOnly Dependencies.Klarna.primerKlarna
-    testImplementation Dependencies.Klarna.primerKlarna
+    compileOnly libs.primer.threeds
+    testImplementation libs.primer.threeds
 
-    compileOnly Dependencies.iPay88.primeriPay88
-    testImplementation Dependencies.iPay88.primeriPay88
+    compileOnly libs.primer.klarna
+    testImplementation libs.primer.klarna
 
-    compileOnly Dependencies.nolPay.primerNolPay
-    testImplementation Dependencies.nolPay.primerNolPay
+    compileOnly libs.primer.nol.pay
+    testImplementation libs.primer.nol.pay
 
-    testImplementation TestDependencies.Kotlin.test
-    testImplementation TestDependencies.Kotlin.coroutines
-    testImplementation TestDependencies.Android.archCore
-    testImplementation TestDependencies.Android.liveData
-    testImplementation TestDependencies.Serialization.json
-
-    androidTestImplementation TestDependencies.Android.Espresso.core
+    compileOnly libs.primer.ipay88
+    testImplementation libs.primer.ipay88
 }
 
 repositories {
@@ -105,46 +83,29 @@ repositories {
     maven {
         url "${ARTIFACTORY_3DS_URL}"
     }
-    maven {
-        url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
-    }
     mavenLocal()
     maven {
         url 'https://x.klarnacdn.net/mobile-sdk/'
+    }
+    maven {
+        url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
     }
 }
 
 subprojects {
     tasks.withType(Javadoc).all { enabled = false }
-    tasks["sonarqube"].dependsOn "jacocoTestReleaseUnitTestReport"
-    tasks["jacocoTestReleaseUnitTestReport"].dependsOn "testReleaseUnitTest"
-}
-
-jacoco {
-    toolVersion = "0.8.9"
-}
-
-jacocoAndroidUnitTestReport {
-    excludes += [
-            '**/example/**',
-            '**/di/**',
-            '**/ui/**',
-            '**/analytics/**',
-    ]
 }
 
 dexcount {
-    format = OutputFormat.JSON
+    format = com.getkeepsafe.dexcount.OutputFormat.JSON
     includeClasses = false
     orderByMethodCount = true
     maxTreeDepth = 5
 }
 
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-    jacoco.excludes = ['jdk.internal.*']
-}
 
-
-apply from: "$rootDir/config/analysis.gradle"
+apply from: "$rootDir/config/coverage/kover.gradle"
+apply from: "$rootDir/config/code-analysis/static-analysis.gradle"
+apply from: "$rootDir/config/code-analysis/lint.gradle"
 apply from: "$rootDir/config/publish.gradle"
+apply from: "$rootDir/config/code-analysis/sonar.gradle"

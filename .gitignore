@@ -1,22 +1,10 @@
-*.iml
 .gradle
 .env
 *.project
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/dictionaries
-/.idea/compiler.xml
-/.idea/gradle.xml
-/.idea/misc.xml
-/.idea/deploymentTargetDropDown.xml
-/.idea/vcs.xml
-/.idea/jarRepositories.xml
-/.idea/sonarlint
+# IntelliJ
+*.iml
+.idea/
 
 .DS_Store
 /build

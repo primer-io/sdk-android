@@ -21,3 +21,14 @@
 #-renamesourcefileattribute SourceFile
 
 -keepclassmembers enum * { *; }
+
+# okHttp3
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
+-dontwarn com.google.api.client.http.**
+-dontwarn org.joda.time.**
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn java.lang.management.**
+-dontwarn javax.mail.**
+-dontwarn javax.naming.**

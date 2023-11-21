@@ -6,7 +6,6 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.ExperimentalPrimerApi
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.domain.error.PrimerValidationError
@@ -27,7 +26,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalPrimerApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPayUnlinkCardComponentTest {
 
@@ -57,6 +55,8 @@ internal class NolPayUnlinkCardComponentTest {
 
     @Test
     fun `start should log correct sdk analytics event`() {
+        coEvery { unlinkPaymentCardDelegate.start() }.returns(Result.success(Unit))
+
         runTest {
             component.start()
         }
@@ -106,6 +106,10 @@ internal class NolPayUnlinkCardComponentTest {
     @Test
     fun `updateCollectedData should log correct sdk analytics event`() {
         val collectableData = mockk<NolPayUnlinkCollectableData>(relaxed = true)
+
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(emptyList()))
+
         runTest {
             component.updateCollectedData(collectableData)
         }
@@ -188,6 +192,15 @@ internal class NolPayUnlinkCardComponentTest {
 
     @Test
     fun `submit should log correct sdk analytics event`() {
+        val step = mockk<NolPayUnlinkCardStep>(relaxed = true)
+
+        coEvery {
+            unlinkPaymentCardDelegate.handleCollectedCardData(
+                any(),
+                any()
+            )
+        }.returns(Result.success(step))
+
         runTest {
             component.submit()
         }
@@ -209,6 +222,7 @@ internal class NolPayUnlinkCardComponentTest {
                 any()
             )
         }.returns(Result.success(step))
+
         runTest {
             component.submit()
             assertEquals(step, component.componentStep.first())
@@ -234,6 +248,7 @@ internal class NolPayUnlinkCardComponentTest {
                 any()
             )
         }.returns(Result.failure(exception))
+
         runTest {
             component.submit()
             assertNotNull(component.componentError.first())

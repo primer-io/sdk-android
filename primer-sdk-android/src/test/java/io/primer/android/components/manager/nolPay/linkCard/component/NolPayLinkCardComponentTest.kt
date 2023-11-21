@@ -57,6 +57,8 @@ internal class NolPayLinkCardComponentTest {
 
     @Test
     fun `start should log correct sdk analytics event`() {
+        coEvery { linkPaymentCardDelegate.start() }.returns(Result.success(Unit))
+
         runTest {
             component.start()
         }
@@ -103,6 +105,9 @@ internal class NolPayLinkCardComponentTest {
     @Test
     fun `updateCollectedData should log correct sdk analytics event`() {
         val collectableData = mockk<NolPayLinkCollectableData>(relaxed = true)
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf()))
+
         runTest {
             component.updateCollectedData(collectableData)
         }
@@ -185,6 +190,14 @@ internal class NolPayLinkCardComponentTest {
 
     @Test
     fun `submit should log correct sdk analytics event`() {
+        val step = mockk<NolPayLinkCardStep>(relaxed = true)
+        coEvery {
+            linkPaymentCardDelegate.handleCollectedCardData(
+                any(),
+                any()
+            )
+        }.returns(Result.success(step))
+
         runTest {
             component.submit()
         }

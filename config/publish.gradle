@@ -2,7 +2,7 @@ apply plugin: "com.vanniktech.maven.publish"
 
 allprojects {
     def excludedTasks = Arrays.asList("javaSourcesJar", "javaDocReleaseGeneration")
-    tasks.whenTaskAdded { task ->
+    tasks.configureEach { task ->
         if (excludedTasks.stream().any { task.name.contains(it) }) {
             task.enabled = false
         }

@@ -56,6 +56,8 @@ internal class NolPayPaymentComponentTest {
 
     @Test
     fun `start should log correct sdk analytics event`() {
+        coEvery { startPaymentDelegate.start() }.returns(Result.success(Unit))
+
         runTest {
             component.start()
         }
@@ -71,6 +73,7 @@ internal class NolPayPaymentComponentTest {
     @Test
     fun `start should emit CollectStartPaymentData step when NolPayStartPaymentDelegate start was successful`() {
         coEvery { startPaymentDelegate.start() }.returns(Result.success(Unit))
+
         runTest {
             component.start()
             assertEquals(
@@ -86,6 +89,7 @@ internal class NolPayPaymentComponentTest {
     fun `start should emit PrimerError when NolPayStartPaymentDelegate start failed`() {
         val exception = mockk<NolPaySdkException>(relaxed = true)
         coEvery { startPaymentDelegate.start() }.returns(Result.failure(exception))
+
         runTest {
             component.start()
             assertNotNull(component.componentError.first())
@@ -105,6 +109,9 @@ internal class NolPayPaymentComponentTest {
     @Test
     fun `updateCollectedData should log correct sdk analytics event`() {
         val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
+        coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
+            .returns(Result.success(listOf()))
+
         runTest {
             component.updateCollectedData(collectableData)
         }
@@ -121,6 +128,7 @@ internal class NolPayPaymentComponentTest {
         val collectableData = mockk<NolPayPaymentCollectableData>(relaxed = true)
         coEvery { dataValidatorRegistry.getValidator(any()).validate(any()) }
             .returns(Result.success(listOf()))
+
         runTest {
             component.updateCollectedData(collectableData)
             val validationStatuses = component.componentValidationStatus.toListDuring(0.5.seconds)
@@ -183,6 +191,13 @@ internal class NolPayPaymentComponentTest {
 
     @Test
     fun `submit should log correct sdk analytics event`() {
+        val paymentStep = mockk<NolPayPaymentStep>(relaxed = true)
+        coEvery {
+            startPaymentDelegate.handleCollectedCardData(
+                any()
+            )
+        }.returns(Result.success(paymentStep))
+
         runTest {
             component.submit()
         }

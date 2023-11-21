@@ -1,0 +1,16 @@
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "primer-sdk-android"
+        property "sonar.organization", "primerio"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.java.coveragePlugin", "kover"
+        property "sonar.coverage.jacoco.xmlReportPaths", "/home/runner/work/primer-sdk-android/primer-sdk-android/primer-sdk-android/build/reports/kover/reportRelease.xml"
+        property "sonar.language", "kotlin"
+        property "sonar.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*, **/analytics/**/*"
+        property "sonar.coverage.exclusions", "**/example/**/*, **/di/**/*,  **/ui/**/*, **/analytics/**/*"
+    }
+}
+
+tasks.sonar.dependsOn "koverXmlReportRelease"

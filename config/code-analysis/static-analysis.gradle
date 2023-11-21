@@ -1,0 +1,23 @@
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+// static-analysis.gradle setup - https://github.com/detekt/detekt
+detekt {
+    buildUponDefaultConfig = true
+
+    config = files("$rootDir/config/code-analysis/detekt.yml")
+
+    debug = true
+    parallel = true
+    disableDefaultRuleSets = false
+
+    ignoredBuildTypes = ["debug"]
+
+    reports {
+        html.enabled = true
+        xml.enabled = false
+        txt.enabled = true
+        sarif.enabled = true // https://sarifweb.azurewebsites.net - for integrations with Github
+    }
+}
+
+tasks.detekt.jvmTarget = projectJvmTarget

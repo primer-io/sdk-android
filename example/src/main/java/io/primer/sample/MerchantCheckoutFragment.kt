@@ -10,6 +10,8 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.gson.GsonBuilder
 import io.primer.android.Primer
@@ -224,24 +226,26 @@ class MerchantCheckoutFragment : Fragment() {
 
         override fun onDismissed() {
             callbacks.add(PrimerDropInCallbacks.ON_DISMISSED)
-            findNavController().navigate(
-                R.id.action_MerchantCheckoutFragment_to_MerchantResultFragment,
-                Bundle().apply {
-                    putInt(
-                        MerchantResultFragment.PAYMENT_STATUS_KEY,
-                        if (checkoutDataWithError?.error != null) MerchantResultFragment.Companion.PaymentStatus.FAILURE.ordinal
-                        else MerchantResultFragment.Companion.PaymentStatus.SUCCESS.ordinal
-                    )
-                    putStringArrayList(
-                        MerchantResultFragment.INVOKED_CALLBACKS_KEY,
-                        callbacks
-                    )
-                    putString(
-                        MerchantResultFragment.PAYMENT_RESPONSE_KEY,
-                        GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
-                            .toJson(checkoutDataWithError)
-                    )
-                })
+            lifecycleScope.launchWhenResumed {
+                findNavController().navigate(
+                    R.id.action_MerchantCheckoutFragment_to_MerchantResultFragment,
+                    Bundle().apply {
+                        putInt(
+                            MerchantResultFragment.PAYMENT_STATUS_KEY,
+                            if (checkoutDataWithError?.error != null) MerchantResultFragment.Companion.PaymentStatus.FAILURE.ordinal
+                            else MerchantResultFragment.Companion.PaymentStatus.SUCCESS.ordinal
+                        )
+                        putStringArrayList(
+                            MerchantResultFragment.INVOKED_CALLBACKS_KEY,
+                            callbacks
+                        )
+                        putString(
+                            MerchantResultFragment.PAYMENT_RESPONSE_KEY,
+                            GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+                                .toJson(checkoutDataWithError)
+                        )
+                    })
+            }
         }
     }
 

@@ -1,13 +1,13 @@
 android {
     compileSdkVersion 33
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "33.0.1"
 
     defaultConfig {
+        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         minSdkVersion 21
         targetSdkVersion 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArgument("runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder")
     }
 
     buildFeatures {
@@ -27,26 +27,24 @@ android {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
 
         unitTests.all {
-            useJUnitPlatform() // <--- this is the important part
+            useJUnitPlatform()
         }
     }
 }
 
-apply from: "$rootDir/config/dependencies.gradle"
-apply from: "$rootDir/config/test-dependencies.gradle"
-apply from: "$rootDir/config/android-dependencies.gradle"
-
 dependencies {
-    testRuntimeOnly TestDependencies.Junit.jupiterEngine
-    testImplementation TestDependencies.Junit.jupiter
-    testImplementation TestDependencies.Junit.jupiterParams
+    testRuntimeOnly libs.junit.jupiter.api
+    testImplementation libs.junit.jupiter.engine
+    testImplementation libs.junit.jupiter.params
 
-    testImplementation TestDependencies.Mockk.mockk
+    testImplementation libs.mockk
+    testImplementation libs.arch.core
 
-    androidTestImplementation TestDependencies.Mockk.mockkAndroid
-    androidTestImplementation TestDependencies.Android.core
-    androidTestImplementation TestDependencies.Android.testRunner
-    androidTestImplementation TestDependencies.Android.xJunitRunner
+    testImplementation libs.kotlin.test.junit
+    testImplementation libs.kotlin.coroutines.test
+    testImplementation libs.livedata.testing
+    testImplementation libs.json
 
-    androidTestRuntimeOnly TestDependencies.Junit.testRunner
+    androidTestImplementation libs.mockk.android
+    androidTestRuntimeOnly libs.junit.test.runner
 }

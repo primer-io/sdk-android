@@ -18,6 +18,8 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
      * - [VaultManagerFetchException] if an error occurs while fetching the vaulted payment methods.
      * - [IOException] if an I/O error occurs during the API request.
      */
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("fetchVaultedPaymentMethods")
     suspend fun fetchVaultedPaymentMethods(): Result<List<PrimerVaultedPaymentMethod>>
 
     /**
@@ -32,6 +34,8 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
      * - [VaultManagerDeleteException] if an error occurs while deleting the vaulted payment method.
      * - [IOException] if an I/O error occurs during the API request.
      */
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("deleteVaultedPaymentMethod")
     suspend fun deleteVaultedPaymentMethod(vaultedPaymentMethodId: String): Result<Unit>
 
     /**
@@ -44,6 +48,8 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
      * In case of error, as part of [Result] object, SDK will return:
      * - [InvalidVaultedPaymentMethodIdException] if [vaultedPaymentMethodId] does not exists.
      */
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("validate")
     suspend fun validate(
         vaultedPaymentMethodId: String,
         additionalData: PrimerVaultedPaymentMethodAdditionalData
@@ -58,6 +64,8 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
      * In case of error, as part of [Result] object, SDK will return:
      * - [InvalidVaultedPaymentMethodIdException] if [vaultedPaymentMethodId] does not exists.
      */
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("startPaymentFlow")
     suspend fun startPaymentFlow(vaultedPaymentMethodId: String): Result<Unit>
 
     /**
@@ -70,6 +78,8 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
      * In case of error, as part of [Result] object, SDK will return:
      * - [InvalidVaultedPaymentMethodIdException] if [vaultedPaymentMethodId] does not exists.
      */
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("startPaymentFlow")
     suspend fun startPaymentFlow(
         vaultedPaymentMethodId: String,
         additionalData: PrimerVaultedPaymentMethodAdditionalData

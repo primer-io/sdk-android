@@ -28,6 +28,7 @@
                 InnerClasses,PermittedSubclasses,EnclosingMethod,
                 Deprecated,SourceFile,LineNumberTable
 
+-dontwarn java.lang.invoke.StringConcatFactory
 
 -keep public class io.primer.android.**settings.** {
     public *;
@@ -71,6 +72,14 @@
 }
 
 -keep class io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData$* {
+    *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod {
+    *;
+}
+
+-keep class io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethodData* {
     *;
 }
 
@@ -265,12 +274,8 @@
     public *;
 }
 
--keep class io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager$Companion {
+-keep class io.primer.android.components.manager.vault.* {
     *;
-}
-
--keep interface io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface {
-    public *;
 }
 
 -keep interface io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData {
