@@ -17,3 +17,7 @@ node_modules
 *.gpg
 
 firebase_credentials.*
+
+# fastlane
+fastlane/report.xml
+fastlane/README.md
