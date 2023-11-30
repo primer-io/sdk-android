@@ -9,6 +9,9 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.ExpiryDateFormatter
 import io.primer.android.ui.TextInputMask
 
+@Deprecated(
+    "Card components will no longer receive ongoing maintenance and will be removed in future."
+)
 class PrimerExpiryEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 

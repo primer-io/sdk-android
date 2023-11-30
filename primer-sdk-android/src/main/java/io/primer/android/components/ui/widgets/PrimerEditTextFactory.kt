@@ -3,6 +3,9 @@ package io.primer.android.components.ui.widgets
 import android.content.Context
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
+@Deprecated(
+    "Card components will no longer receive ongoing maintenance and will be removed in future."
+)
 class PrimerEditTextFactory private constructor() {
 
     companion object {

@@ -14,6 +14,9 @@ internal interface PrimerInputElementCardNumberListener {
     fun inputElementCardChanged(cardNumber: String)
 }
 
+@Deprecated(
+    "Card components will no longer receive ongoing maintenance and will be removed in future."
+)
 class PrimerCardNumberEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 

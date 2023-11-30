@@ -22,6 +22,11 @@ import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.utils.removeSpaces
 import java.util.Calendar
 
+private const val DEPRECATION_MESSAGE =
+    """This integration will no longer receive ongoing maintenance and will be removed in the future.
+        Use PrimerHeadlessUniversalCheckoutRawDataManager and corresponding listeners instead."""
+
+@Deprecated(DEPRECATION_MESSAGE)
 interface PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface {
     fun getRequiredInputElementTypes(): List<PrimerInputElementType>
     fun setInputElements(elements: List<PrimerInputElement>)
@@ -32,10 +37,12 @@ interface PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface {
     )
 }
 
+@Deprecated(DEPRECATION_MESSAGE)
 fun interface PrimerHeadlessUniversalCheckoutCardComponentsManagerListener {
     fun onCardValidationChanged(isCardFormValid: Boolean)
 }
 
+@Deprecated(DEPRECATION_MESSAGE)
 class PrimerHeadlessUniversalCheckoutCardComponentsManager
 private constructor(private val paymentMethodType: String) :
     PrimerHeadlessUniversalCheckoutCardComponentsManagerInterface,
@@ -153,11 +160,13 @@ private constructor(private val paymentMethodType: String) :
             getInputElementValue(PrimerInputElementType.CVV).toString(),
             getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME)
         )
+
         PaymentMethodType.ADYEN_BANCONTACT_CARD.name -> PrimerBancontactCardData(
             getInputElementValue(PrimerInputElementType.CARD_NUMBER).toString().removeSpaces(),
             getExpiryDate(),
             getInputElementValue(PrimerInputElementType.CARDHOLDER_NAME).toString()
         )
+
         else -> throw UnsupportedPaymentMethodException(paymentMethodType)
     }
 
@@ -177,6 +186,7 @@ private constructor(private val paymentMethodType: String) :
     companion object {
         private const val YEAR_DIVIDER = 100
 
+        @Deprecated(DEPRECATION_MESSAGE)
         @Throws(SdkUninitializedException::class, UnsupportedPaymentMethodException::class)
         @JvmStatic
         fun newInstance(paymentMethodType: String):

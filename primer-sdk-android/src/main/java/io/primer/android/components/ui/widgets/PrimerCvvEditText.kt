@@ -8,6 +8,9 @@ import android.util.AttributeSet
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.ui.CardNumberFormatter
 
+@Deprecated(
+    "Card components will no longer receive ongoing maintenance and will be removed in future."
+)
 class PrimerCvvEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
