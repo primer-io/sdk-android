@@ -108,7 +108,6 @@
     <string name="other_ways_to_pay">其他付款方式</string>
     <string name="pay">支付</string>
     <string name="pay_by_card">用卡支付</string>
-    <string name="pay_by_mobile">手机支付</string>
     <string name="pay_specific_amount">支付 %s</string>
     <string name="pay_with">付款方式</string>
     <string name="pay_with_card">使用银行卡支付</string>

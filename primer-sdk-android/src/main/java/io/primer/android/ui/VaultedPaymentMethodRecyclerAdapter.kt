@@ -17,7 +17,7 @@ internal enum class PaymentItemStatus {
 }
 
 internal enum class AlternativePaymentMethodType {
-    PayPal, Klarna, DirectDebit, Apaya, Generic
+    PayPal, Klarna, DirectDebit, Generic
 }
 
 internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -67,8 +67,6 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     iconView.setImageResource(R.drawable.ic_klarna_card)
                 AlternativePaymentMethodType.DirectDebit ->
                     iconView.setImageResource(R.drawable.ic_directdebit_card)
-                AlternativePaymentMethodType.Apaya ->
-                    iconView.setImageResource(R.drawable.ic_logo_apaya)
                 AlternativePaymentMethodType.Generic ->
                     iconView.setImageResource(R.drawable.ic_generic_card)
             }

@@ -21,7 +21,6 @@ internal enum class PaymentMethodType(
     GOOGLE_PAY(ClientTokenIntent.`3DS_AUTHENTICATION`, Brand.GOOGLE_PAY),
     PAYPAL(brand = Brand.PAYPAL),
     PRIMER_TEST_PAYPAL(brand = Brand.PAYPAL),
-    APAYA(brand = Brand.APAYA),
     PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION, Brand.IDEAL),
     PAY_NL_PAYCONIQ(ClientTokenIntent.PAY_NL_PAYCONIQ_REDIRECTION, Brand.PAYQONIC),
     PAY_NL_GIROPAY(ClientTokenIntent.PAY_NL_GIROPAY_REDIRECTION, Brand.GIROPAY),

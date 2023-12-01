@@ -1,4 +1,4 @@
-package io.primer.android.components.data.payments.paymentMethods.nativeUi.apaya.error
+package io.primer.android.components.data.error
 
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.payments.exception.SessionCreateException

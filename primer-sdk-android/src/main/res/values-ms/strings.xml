@@ -110,7 +110,6 @@
     <string name="pay">Bayar</string>
     <string name="pay_amount">%1$s</string>
     <string name="pay_by_card">Bayar menggunakan kad</string>
-    <string name="pay_by_mobile">Bayar menggunakan telefon mudah alih</string>
     <string name="pay_specific_amount">Bayar %s</string>
     <string name="pay_with">Bayar dengan</string>
     <string name="pay_with_card">Bayar dengan kad</string>

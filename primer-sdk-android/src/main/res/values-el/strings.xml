@@ -4,7 +4,6 @@
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Προσθέστε έναν τρόπο πληρωμής</string>
     <string name="pay_by_card">Πληρωμή με κάρτα</string>
-    <string name="pay_by_mobile">Πληρωμή με κινητό</string>
     <string name="add_bank_account">Προσθήκη τραπεζικού λογαριασμού</string>
     <string name="other_ways_to_pay">Άλλοι τρόποι πληρωμής</string>
     <string name="edit_saved_payment_methods">Επεξεργασία αποθηκευμένων καρτών</string>

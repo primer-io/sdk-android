@@ -9,7 +9,6 @@ internal enum class ErrorMapperType {
     PAYMENT_METHODS,
     KLARNA,
     GOOGLE_PAY,
-    APAYA,
     I_PAY88,
     THREE_DS,
     NOL_PAY,

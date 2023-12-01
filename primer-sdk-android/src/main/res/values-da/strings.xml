@@ -4,7 +4,6 @@
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Tilføj en betalingsmetode</string>
     <string name="pay_by_card">Betal med kort</string>
-    <string name="pay_by_mobile">Betal via mobil</string>
     <string name="add_bank_account">Tilføj bankkonto</string>
     <string name="other_ways_to_pay">Andre betalingsmetoder</string>
     <string name="edit_saved_payment_methods">Rediger gemte kort</string>

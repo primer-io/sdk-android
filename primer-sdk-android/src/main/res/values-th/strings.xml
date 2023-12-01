@@ -107,7 +107,6 @@
     <string name="pay">จ่าย</string>
     <string name="pay_amount">%1$s</string>
     <string name="pay_by_card">ชำระเงินด้วยบัตร</string>
-    <string name="pay_by_mobile">ชำระเงินด้วยมือถือ</string>
     <string name="pay_specific_amount">ชำระ %s</string>
     <string name="pay_with">ชำระด้วย</string>
     <string name="pay_with_card">ชำระด้วยบัตร</string>

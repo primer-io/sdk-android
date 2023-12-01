@@ -46,8 +46,6 @@ internal object DISdkContext {
 
             registerContainer(AsyncPaymentMethodContainer(this))
 
-            registerContainer(ApayaContainer(this))
-
             registerContainer(KlarnaContainer(this))
 
             registerContainer(GooglePayContainer(this))

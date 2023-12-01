@@ -23,7 +23,6 @@ internal enum class Brand(
         R.drawable.ic_logo_klarna_square,
         iconDarkResId = R.drawable.ic_logo_klarna_dark
     ),
-    APAYA(R.drawable.ic_logo_apaya, R.drawable.ic_logo_apaya),
     PAYMENT_CARD(R.drawable.ic_logo_credit_card),
     IDEAL(
         R.drawable.ic_logo_ideal,

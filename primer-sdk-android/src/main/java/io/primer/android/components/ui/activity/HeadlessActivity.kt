@@ -17,7 +17,6 @@ import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
 import io.primer.android.klarna.NativeKlarnaActivity
-import io.primer.android.ui.base.webview.WebViewActivity
 import io.primer.android.ui.base.webview.WebViewClientType
 import io.primer.android.ui.mock.PaymentMethodMockActivity
 import io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity
@@ -138,15 +137,6 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
             }
             is GooglePayActivityLauncherParams -> viewModel.onEvent(
                 GooglePayEvent.StartRedirect(this)
-            )
-            is ApayaActivityLauncherParams -> resultLauncher.launch(
-                WebViewActivity.getLaunchIntent(
-                    this,
-                    params.redirectUrl,
-                    params.returnUrl,
-                    params.webViewTitle,
-                    WebViewClientType.APAYA
-                )
             )
             is IPay88ActivityLauncherParams -> resultLauncher.launch(
                 NativeIPay88Activity.getLaunchIntent(this, params.toIPay88LauncherParams())

@@ -4,7 +4,6 @@
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Dodaj metodę płatności</string>
     <string name="pay_by_card">Zapłać kartą</string>
-    <string name="pay_by_mobile">Zapłać urządzeniem mobilnym</string>
     <string name="add_bank_account">Dodaj konto bankowe</string>
     <string name="other_ways_to_pay">Inne sposoby zapłaty</string>
     <string name="edit_saved_payment_methods">Edytuj zapisane karty</string>

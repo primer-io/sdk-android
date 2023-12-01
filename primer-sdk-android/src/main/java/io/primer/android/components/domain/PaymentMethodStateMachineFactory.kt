@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.StateMachine
-import io.primer.android.components.presentation.paymentMethods.nativeUi.apaya.ApayaStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.googlepay.GooglePayStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.ipay88.IPay88StateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.KlarnaStateMachine
@@ -43,9 +42,6 @@ internal class DefaultPaymentMethodStateMachineFactory : PaymentMethodStateMachi
                 }
             }
             paymentMethodType == PaymentMethodType.KLARNA.name -> KlarnaStateMachine.create(
-                initialState
-            )
-            paymentMethodType == PaymentMethodType.APAYA.name -> ApayaStateMachine.create(
                 initialState
             )
             paymentMethodImplementationType == PaymentMethodImplementationType.IPAY88_SDK ->

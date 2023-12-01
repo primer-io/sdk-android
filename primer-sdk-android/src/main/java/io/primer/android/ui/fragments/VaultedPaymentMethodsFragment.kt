@@ -113,14 +113,6 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                     CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
                 }
 
-                PaymentMethodType.APAYA.name -> {
-                    AlternativePaymentMethodData(
-                        it.paymentInstrumentData?.hashedIdentifier ?: "unknown",
-                        it.token,
-                        AlternativePaymentMethodType.Apaya
-                    )
-                }
-
                 else -> {
                     AlternativePaymentMethodData(
                         "saved payment method",

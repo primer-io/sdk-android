@@ -6,7 +6,6 @@ import io.primer.android.data.configuration.models.PaymentMethodImplementationTy
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
 import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.payment.apaya.Apaya
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.google.GooglePay
@@ -97,20 +96,6 @@ internal class PaymentMethodMappingTest {
         ) {
             is Failure -> Assert.fail()
             is Success -> Assert.assertTrue(result.value is GooglePay)
-        }
-    }
-
-    @Test
-    fun `test maps apaya correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
-        when (
-            val result = factory.getPaymentMethodFor(
-                PaymentMethodImplementationType.NATIVE_SDK,
-                PaymentMethodType.APAYA.name
-            )
-        ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is Apaya)
         }
     }
 

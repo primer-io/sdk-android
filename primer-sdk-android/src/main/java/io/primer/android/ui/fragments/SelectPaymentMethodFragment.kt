@@ -313,12 +313,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                         getString(R.string.expiry_date, expirationMonth, expirationYear)
                     setCardIcon(data.network)
                 }
-                PaymentMethodType.APAYA.name -> {
-                    renderAlternativeSavedPaymentMethodView(
-                        paymentMethod.paymentInstrumentData?.hashedIdentifier
-                    )
-                    paymentMethodIcon.setImageResource(R.drawable.ic_logo_apaya)
-                }
                 else -> {
                     paymentMethodIcon.setImageResource(R.drawable.ic_generic_card)
                 }

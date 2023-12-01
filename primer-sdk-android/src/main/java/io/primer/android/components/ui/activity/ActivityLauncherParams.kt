@@ -48,16 +48,6 @@ internal data class WebRedirectActivityLauncherParams(
     PrimerSessionIntent.CHECKOUT
 )
 
-internal data class ApayaActivityLauncherParams(
-    val webViewTitle: String,
-    val redirectUrl: String,
-    val returnUrl: String,
-    override val sessionIntent: PrimerSessionIntent
-) : PaymentMethodRedirectLauncherParams(
-    PaymentMethodType.APAYA.name,
-    sessionIntent
-)
-
 internal data class BrowserLauncherParams(
     val url: String,
     val host: String,

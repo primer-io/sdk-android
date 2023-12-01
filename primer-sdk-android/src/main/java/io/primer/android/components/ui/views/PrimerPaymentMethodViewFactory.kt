@@ -24,10 +24,6 @@ internal class PrimerPaymentMethodViewFactory(
                 context,
                 container
             )
-            PaymentMethodType.APAYA -> ApayaViewCreator(config.settings.uiOptions.theme).create(
-                context,
-                container
-            )
             else -> when (displayMetadata.type) {
                 BaseDisplayMetadata.DisplayMetadataType.TEXT ->
                     DynamicPaymentMethodTextViewCreator(

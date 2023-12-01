@@ -4,7 +4,6 @@
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Bir ödeme yöntemi ekleyin</string>
     <string name="pay_by_card">Kart ile öde</string>
-    <string name="pay_by_mobile">Mobil ile öde</string>
     <string name="add_bank_account">Banka hesabı ekle</string>
     <string name="other_ways_to_pay">Diğer ödeme yolları</string>
     <string name="edit_saved_payment_methods">Kaydedilen kartları düzenle</string>

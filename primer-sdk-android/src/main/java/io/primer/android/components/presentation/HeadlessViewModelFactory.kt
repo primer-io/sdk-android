@@ -3,7 +3,6 @@ package io.primer.android.components.presentation
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.components.presentation.paymentMethods.nativeUi.apaya.ApayaHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.googlepay.GooglePayHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.ipay88.IPay88HeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.KlarnaHeadlessViewModel
@@ -39,10 +38,6 @@ internal class HeadlessViewModelFactory {
             componentActivity,
             KlarnaHeadlessViewModel.Companion.Factory()
         )[paymentMethodType, KlarnaHeadlessViewModel::class.java]
-        paymentMethodType == PaymentMethodType.APAYA.name -> ViewModelProvider(
-            componentActivity,
-            ApayaHeadlessViewModel.Companion.Factory()
-        )[paymentMethodType, ApayaHeadlessViewModel::class.java]
         paymentMethodImplementationType == PaymentMethodImplementationType.IPAY88_SDK ->
             ViewModelProvider(
                 componentActivity,

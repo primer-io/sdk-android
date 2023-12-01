@@ -4,7 +4,6 @@
     <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Voeg een Betalingsmethode toe</string>
     <string name="pay_by_card">Betaal met pas</string>
-    <string name="pay_by_mobile">Betaal met mobiel</string>
     <string name="add_bank_account">Voeg een bankrekening toe</string>
     <string name="other_ways_to_pay">Andere manieren om te betalen</string>
     <string name="edit_saved_payment_methods">Opgeslagen passen bewerken</string>
