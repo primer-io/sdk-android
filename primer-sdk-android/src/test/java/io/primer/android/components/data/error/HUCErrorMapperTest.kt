@@ -17,7 +17,7 @@ class HUCErrorMapperTest {
     private val errorMapper = HUCErrorMapper()
 
     @Test
-    fun `should emit InvalidTokenizationInputDataError when throwable is UnsupportedPaymentMethodException`() {
+    fun `should emit InvalidTokenizationInputDataError when throwable is InvalidTokenizationDataException`() {
         val paymentMethodType = PaymentMethodType.ADYEN_ALIPAY
         val inputData = mockk<KClass<out PrimerRawData>> {
             every { this@mockk.simpleName } returns "simpleName"
