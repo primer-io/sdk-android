@@ -24,12 +24,12 @@ internal sealed class PaymentMethodError : PrimerError() {
             ErrorContextParams(errorId, paymentMethodType)
     }
 
-    class UnsupportedPaymentMethodError(val primerMethodType: String) :
+    class UnsupportedPaymentMethodError(val paymentMethodType: String) :
         PaymentMethodError() {
         override val exposedError = this
 
         override val context: BaseContextParams get() =
-            ErrorContextParams(errorId, primerMethodType)
+            ErrorContextParams(errorId, paymentMethodType)
     }
 
     class UnsupportedIntentPaymentMethodError(
@@ -57,7 +57,7 @@ internal sealed class PaymentMethodError : PrimerError() {
             is PaymentMethodCancelledError ->
                 "Vaulting/Checking out for $paymentMethodType was cancelled by the user."
             is UnsupportedPaymentMethodError ->
-                "Cannot present $primerMethodType because it is not supported."
+                "Cannot present $paymentMethodType because it is not supported."
             is UnsupportedIntentPaymentMethodError ->
                 "Cannot initialize the SDK because $paymentMethodType does not support $intent."
         }
