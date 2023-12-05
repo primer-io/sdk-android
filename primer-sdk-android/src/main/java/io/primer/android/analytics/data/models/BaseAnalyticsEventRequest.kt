@@ -6,6 +6,7 @@ import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
 import io.primer.android.analytics.domain.models.DummyApmDecisionParams
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.IPay88PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParams
@@ -390,4 +391,5 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
         threeDsSdkVersion,
         initProtocolVersion
     )
+    is ErrorContextParams -> ErrorAnalyticsContext(errorId, paymentMethodType)
 }

@@ -1,24 +1,35 @@
 package io.primer.android.domain.error.models
 
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import java.util.UUID
 
 internal sealed class PaymentMethodError : PrimerError() {
 
-    class MisConfiguredPaymentMethodError(val primerPaymentMethod: String) :
+    class MisConfiguredPaymentMethodError(val paymentMethodType: String) :
         PaymentMethodError() {
         override val exposedError = this
+
+        override val context: BaseContextParams get() =
+            ErrorContextParams(errorId, paymentMethodType)
     }
 
     class PaymentMethodCancelledError(
         val paymentMethodType: String
     ) : PaymentMethodError() {
         override val exposedError = this
+
+        override val context: BaseContextParams get() =
+            ErrorContextParams(errorId, paymentMethodType)
     }
 
-    class UnsupportedPaymentMethodError(val primerPaymentMethod: String) :
+    class UnsupportedPaymentMethodError(val paymentMethodType: String) :
         PaymentMethodError() {
         override val exposedError = this
+
+        override val context: BaseContextParams get() =
+            ErrorContextParams(errorId, paymentMethodType)
     }
 
     class UnsupportedIntentPaymentMethodError(
@@ -26,6 +37,9 @@ internal sealed class PaymentMethodError : PrimerError() {
         val intent: PrimerSessionIntent
     ) : PaymentMethodError() {
         override val exposedError = this
+
+        override val context: BaseContextParams get() =
+            ErrorContextParams(errorId, paymentMethodType)
     }
 
     override val errorId: String
@@ -39,11 +53,11 @@ internal sealed class PaymentMethodError : PrimerError() {
     override val description: String
         get() = when (this) {
             is MisConfiguredPaymentMethodError ->
-                "Cannot present $primerPaymentMethod because it has not been configured correctly."
+                "Cannot present $paymentMethodType because it has not been configured correctly."
             is PaymentMethodCancelledError ->
                 "Vaulting/Checking out for $paymentMethodType was cancelled by the user."
             is UnsupportedPaymentMethodError ->
-                "Cannot present $primerPaymentMethod because it is not supported."
+                "Cannot present $paymentMethodType because it is not supported."
             is UnsupportedIntentPaymentMethodError ->
                 "Cannot initialize the SDK because $paymentMethodType does not support $intent."
         }
@@ -55,7 +69,7 @@ internal sealed class PaymentMethodError : PrimerError() {
     override val recoverySuggestion: String?
         get() = when (this) {
             is MisConfiguredPaymentMethodError ->
-                "Ensure that $primerPaymentMethod has been configured correctly " +
+                "Ensure that $paymentMethodType has been configured correctly " +
                     "on the dashboard (https://dashboard.primer.io/)"
             is PaymentMethodCancelledError -> null
             is UnsupportedPaymentMethodError -> null

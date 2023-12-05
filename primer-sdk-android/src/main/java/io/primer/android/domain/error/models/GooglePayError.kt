@@ -1,6 +1,9 @@
 package io.primer.android.domain.error.models
 
 import com.google.android.gms.common.api.Status
+import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.ErrorContextParams
+import io.primer.android.data.configuration.models.PaymentMethodType
 import java.util.UUID
 
 internal sealed class GooglePayError : PrimerError() {
@@ -30,4 +33,7 @@ internal sealed class GooglePayError : PrimerError() {
 
     override val recoverySuggestion: String?
         get() = null
+
+    override val context: BaseContextParams get() =
+        ErrorContextParams(errorId, PaymentMethodType.GOOGLE_PAY.name)
 }

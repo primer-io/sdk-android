@@ -1,5 +1,8 @@
 package io.primer.android.domain.error.models
 
+import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.ErrorContextParams
+import io.primer.android.data.configuration.models.PaymentMethodType
 import java.util.UUID
 
 internal sealed class KlarnaError : PrimerError() {
@@ -34,4 +37,7 @@ internal sealed class KlarnaError : PrimerError() {
 
     override val recoverySuggestion: String?
         get() = null
+
+    override val context: BaseContextParams get() =
+        ErrorContextParams(errorId, PaymentMethodType.KLARNA.name)
 }

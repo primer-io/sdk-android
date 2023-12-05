@@ -21,7 +21,8 @@ internal sealed class AnalyticsContext(
         IPAY88,
         THREE_DS_FAILURE,
         THREE_DS_RUNTIME_FAILURE,
-        THREE_DS_PROTOCOL_FAILURE
+        THREE_DS_PROTOCOL_FAILURE,
+        ERROR
     }
 
     companion object {
@@ -68,6 +69,10 @@ internal sealed class AnalyticsContext(
                         IPay88AnalyticsContext.serializer.serialize(
                             t as IPay88AnalyticsContext
                         )
+                    AnalyticsContextType.ERROR ->
+                        ErrorAnalyticsContext.serializer.serialize(
+                            t as ErrorAnalyticsContext
+                        )
                 }
             }
         }
@@ -97,6 +102,8 @@ internal sealed class AnalyticsContext(
                         ThreeDsProtocolFailureAnalyticsContext.deserializer.deserialize(t)
                     AnalyticsContextType.IPAY88 ->
                         IPay88AnalyticsContext.deserializer.deserialize(t)
+                    AnalyticsContextType.ERROR ->
+                        ErrorAnalyticsContext.deserializer.deserialize(t)
                 }
             }
         }
@@ -432,6 +439,39 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
                     t.optNullableString(SDK_VERSION_FIELD),
                     t.optString(INIT_PROTOCOL_VERSION_FIELD),
                     t.optString(SDK_WRAPPER_VERSION_FIELD)
+                )
+            }
+        }
+    }
+}
+
+internal data class ErrorAnalyticsContext(
+    val errorId: String,
+    val paymentMethodType: String
+) :
+    AnalyticsContext(AnalyticsContextType.ERROR) {
+
+    companion object {
+
+        private const val ERROR_ID = "errorId"
+        private const val PAYMENT_METHOD_TYPE = "paymentMethodType"
+
+        @JvmField
+        val serializer = object : JSONObjectSerializer<ErrorAnalyticsContext> {
+            override fun serialize(t: ErrorAnalyticsContext): JSONObject {
+                return JSONObject().apply {
+                    put(ERROR_ID, t.errorId)
+                    put(PAYMENT_METHOD_TYPE, t.paymentMethodType)
+                }
+            }
+        }
+
+        @JvmField
+        val deserializer = object : JSONDeserializer<ErrorAnalyticsContext> {
+            override fun deserialize(t: JSONObject): ErrorAnalyticsContext {
+                return ErrorAnalyticsContext(
+                    t.optString(ERROR_ID),
+                    t.optString(PAYMENT_METHOD_TYPE)
                 )
             }
         }
