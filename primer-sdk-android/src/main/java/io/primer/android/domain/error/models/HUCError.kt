@@ -1,5 +1,7 @@
 package io.primer.android.domain.error.models
 
+import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.components.domain.core.models.PrimerRawData
 import java.util.UUID
 import kotlin.reflect.KClass
@@ -18,7 +20,10 @@ internal sealed class HUCError : PrimerError() {
         val paymentMethodType: String,
         val inputData: KClass<out PrimerRawData>,
         val requiredInputData: KClass<out PrimerRawData>?
-    ) : HUCError()
+    ) : HUCError() {
+        override val context: BaseContextParams get() =
+            ErrorContextParams(errorId, paymentMethodType)
+    }
 
     override val errorId: String
         get() = when (this) {

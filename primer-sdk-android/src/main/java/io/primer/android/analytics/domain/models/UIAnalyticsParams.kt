@@ -58,3 +58,24 @@ internal data class ThreeDsProtocolFailureContextParams(
     threeDsSdkVersion,
     initProtocolVersion
 )
+
+internal open class ErrorContextParams(
+    val errorId: String,
+    val paymentMethodType: String
+) : BaseContextParams() {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ErrorContextParams
+
+        if (errorId != other.errorId) return false
+        return paymentMethodType == other.paymentMethodType
+    }
+
+    override fun hashCode(): Int {
+        var result = errorId.hashCode()
+        result = 31 * result + paymentMethodType.hashCode()
+        return result
+    }
+}
