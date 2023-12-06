@@ -8,7 +8,7 @@ internal data class BlikSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
     val blikCode: String
-) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
+) : BaseSessionInfoDataRequest(locale) {
     companion object {
 
         private const val BLIK_CODE_FIELD = "blikCode"

@@ -8,7 +8,7 @@ internal data class RetailOutletsSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
     val retailOutlet: String
-) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
+) : BaseSessionInfoDataRequest(locale) {
     companion object {
 
         private const val RETAIL_OUTLET_FIELD = "retailOutlet"

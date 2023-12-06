@@ -8,7 +8,7 @@ internal data class PhoneNumberSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
     val phoneNumber: String
-) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
+) : BaseSessionInfoDataRequest(locale) {
     companion object {
 
         private const val PHONE_NUMBER_FIELD = "phoneNumber"

@@ -9,7 +9,7 @@ internal data class PrimerDummySessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
     val flowDecision: DummyDecisionType
-) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
+) : BaseSessionInfoDataRequest(locale) {
     companion object {
 
         private const val DECISION_FIELD = "flowDecision"

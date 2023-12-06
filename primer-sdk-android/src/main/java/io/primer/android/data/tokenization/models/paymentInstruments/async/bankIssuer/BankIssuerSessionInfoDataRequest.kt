@@ -8,7 +8,7 @@ internal data class BankIssuerSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String,
     val issuer: String
-) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
+) : BaseSessionInfoDataRequest(locale) {
     companion object {
 
         private const val ISSUER_FIELD = "issuer"
