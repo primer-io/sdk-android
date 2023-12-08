@@ -22,7 +22,8 @@ internal class AnalyticsDataSender(
 
     fun sendEvents(events: List<BaseAnalyticsEventRequest>): Flow<Unit> {
         val groupedChunks =
-            events.chunked(CHUNK_SIZE).map { it.groupBy { it.analyticsUrl ?: ANALYTICS_URL } }
+            events.chunked(CHUNK_SIZE)
+                .map { chunked -> chunked.groupBy { it.analyticsUrl ?: ANALYTICS_URL } }
         return groupedChunks.map { chunk ->
             chunk.map { group ->
                 remoteAnalyticsDataSource.execute(

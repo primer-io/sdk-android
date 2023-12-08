@@ -16,15 +16,15 @@ internal class FileAnalyticsDataSource(
 ) : BaseFlowCacheDataSource<List<BaseAnalyticsEventRequest>, List<BaseAnalyticsEventRequest>> {
 
     override fun get(): Flow<List<BaseAnalyticsEventRequest>> = flow {
-        val bufferedReader =
+        val content =
             fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH).inputStream()
                 .bufferedReader().use {
                     it.lineSequence().joinToString()
                 }
-        if (bufferedReader.isNotBlank()) {
+        if (content.isNotBlank()) {
             try {
                 emit(
-                    JSONArray(bufferedReader).sequence<JSONObject>().map {
+                    JSONArray(content).sequence<JSONObject>().map {
                         JSONSerializationUtils.getDeserializer<BaseAnalyticsEventRequest>()
                             .deserialize(it)
                     }.toList()

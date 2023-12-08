@@ -10,11 +10,15 @@ import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.create.models.PaymentStatus
+import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
+import io.primer.android.domain.error.models.PaymentError
 import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,6 +31,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class PaymentResultEventsResolverTest {
 
     @RelaxedMockK
+    internal lateinit var paymentMethodRepository: PaymentMethodRepository
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
@@ -37,7 +44,8 @@ internal class PaymentResultEventsResolverTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        paymentResultEventsResolver = PaymentResultEventsResolver(eventDispatcher, logReporter)
+        paymentResultEventsResolver =
+            PaymentResultEventsResolver(paymentMethodRepository, eventDispatcher, logReporter)
     }
 
     @Test
@@ -62,8 +70,12 @@ internal class PaymentResultEventsResolverTest {
 
     @Test
     fun `resolve() should dispatch CHECKOUT_AUTO_ERROR type when payment status is FAILED`() {
+        val token = mockk<PaymentMethodTokenInternal>(relaxed = true)
         val paymentResult = mockk<PaymentResult>(relaxed = true)
         val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
+
+        every { token.paymentMethodType }.returns(PaymentMethodType.PAYMENT_CARD.name)
+        every { paymentMethodRepository.getPaymentMethod() }.returns(token)
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.FAILED)
 
@@ -76,9 +88,20 @@ internal class PaymentResultEventsResolverTest {
         verify { eventDispatcher.dispatchEvent(capture(event)) }
 
         assertEquals(CheckoutEventType.CHECKOUT_AUTO_ERROR, event.captured.type)
+
+        val paymentError = event.captured as CheckoutEvent.CheckoutPaymentError
         assertEquals(
             paymentResult.payment,
-            (event.captured as CheckoutEvent.CheckoutPaymentError).data?.payment
+            paymentError.data?.payment
+        )
+
+        assertEquals(
+            paymentError.error,
+            PaymentError.PaymentFailedError(
+                paymentResult.payment.id,
+                paymentResult.paymentStatus,
+                paymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty()
+            )
         )
     }
 

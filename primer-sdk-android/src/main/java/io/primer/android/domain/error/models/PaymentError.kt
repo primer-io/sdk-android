@@ -1,19 +1,26 @@
 package io.primer.android.domain.error.models
 
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.data.payments.create.models.PaymentStatus
 import java.util.UUID
 
 internal sealed class PaymentError : PrimerError() {
 
-    class PaymentFailedError(val paymentId: String, val paymentStatus: PaymentStatus) :
-        PaymentError()
+    data class PaymentFailedError(
+        val paymentId: String,
+        val paymentStatus: PaymentStatus,
+        val paymentMethodType: String
+    ) : PaymentError() {
 
-    class PaymentCreateFailedError(
+        override val context = ErrorContextParams(errorId, paymentMethodType)
+    }
+
+    data class PaymentCreateFailedError(
         val serverDescription: String,
         val serverDiagnosticsId: String?
     ) : PaymentError()
 
-    class PaymentResumeFailedError(
+    data class PaymentResumeFailedError(
         val serverDescription: String,
         val serverDiagnosticsId: String?
     ) : PaymentError()
@@ -30,6 +37,7 @@ internal sealed class PaymentError : PrimerError() {
             is PaymentFailedError ->
                 "The payment with id $paymentId was created but ended up in a " +
                     "$paymentStatus status."
+
             is PaymentCreateFailedError -> serverDescription
             is PaymentResumeFailedError -> serverDescription
         }
@@ -51,6 +59,7 @@ internal sealed class PaymentError : PrimerError() {
             is PaymentFailedError -> null
             is PaymentCreateFailedError ->
                 "Contact Primer and provide us with diagnostics id $diagnosticsId"
+
             is PaymentResumeFailedError ->
                 "Contact Primer and provide us with diagnostics id $diagnosticsId"
         }

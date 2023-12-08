@@ -1,5 +1,9 @@
 package io.primer.android.analytics.data.repository
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.helper.AnalyticsDataSender
 import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
@@ -18,17 +22,33 @@ internal data class AnalyticsInitDataRepository(
     private val analyticsDataSender: AnalyticsDataSender,
     private val localAnalyticsDataSource: LocalAnalyticsDataSource,
     private val fileAnalyticsDataSource: FileAnalyticsDataSource
-) {
+) : LifecycleEventObserver {
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     init {
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         send()
     }
 
-    private fun send() = CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+    private fun send() = scope.launch {
         fileAnalyticsDataSource.get().filterNot { it.isEmpty() }
             .flatMapLatest {
                 localAnalyticsDataSource.addEvents(it)
                 analyticsDataSender.sendEvents(it)
-            }.catch { it.printStackTrace() }
-            .collect { }
+            }.catch { cause: Throwable -> cause.printStackTrace() }
+            .collect()
+    }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when (event) {
+            Lifecycle.Event.ON_STOP -> scope.launch {
+                analyticsDataSender.sendEvents(
+                    localAnalyticsDataSource.get()
+                ).catch { cause: Throwable -> cause.printStackTrace() }.collect()
+            }
+
+            else -> Unit
+        }
     }
 }

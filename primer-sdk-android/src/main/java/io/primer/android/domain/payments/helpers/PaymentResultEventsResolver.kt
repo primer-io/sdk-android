@@ -10,8 +10,10 @@ import io.primer.android.domain.payments.create.model.PaymentResult
 import io.primer.android.domain.payments.create.model.toPrimerCheckoutData
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
+import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 
 internal class PaymentResultEventsResolver(
+    private val paymentMethodRepository: PaymentMethodRepository,
     private val eventDispatcher: EventDispatcher,
     private val logReporter: LogReporter
 ) {
@@ -32,7 +34,8 @@ internal class PaymentResultEventsResolver(
                     CheckoutEvent.CheckoutPaymentError(
                         PaymentError.PaymentFailedError(
                             paymentResult.payment.id,
-                            paymentResult.paymentStatus
+                            paymentResult.paymentStatus,
+                            paymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty()
                         ),
                         PrimerCheckoutData(paymentResult.payment),
                         object : PrimerErrorDecisionHandler {

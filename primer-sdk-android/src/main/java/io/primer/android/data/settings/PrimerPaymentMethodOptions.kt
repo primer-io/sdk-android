@@ -8,14 +8,12 @@ data class PrimerPaymentMethodOptions @JvmOverloads constructor(
     var redirectScheme: String? = null,
     var googlePayOptions: PrimerGooglePayOptions = PrimerGooglePayOptions(),
     var klarnaOptions: PrimerKlarnaOptions = PrimerKlarnaOptions(),
-    var apayaOptions: PrimerApayaOptions = PrimerApayaOptions(),
     var threeDsOptions: PrimerThreeDsOptions = PrimerThreeDsOptions()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readParcelable<PrimerGooglePayOptions>() ?: PrimerGooglePayOptions(),
         parcel.readParcelable<PrimerKlarnaOptions>() ?: PrimerKlarnaOptions(),
-        parcel.readParcelable<PrimerApayaOptions>() ?: PrimerApayaOptions(),
         parcel.readParcelable<PrimerThreeDsOptions>() ?: PrimerThreeDsOptions()
     )
 
@@ -23,7 +21,6 @@ data class PrimerPaymentMethodOptions @JvmOverloads constructor(
         parcel.writeString(redirectScheme)
         parcel.writeParcelable(googlePayOptions, flags)
         parcel.writeParcelable(klarnaOptions, flags)
-        parcel.writeParcelable(apayaOptions, flags)
         parcel.writeParcelable(threeDsOptions, flags)
     }
 

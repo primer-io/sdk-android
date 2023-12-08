@@ -26,8 +26,10 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         override fun onEvent(e: CheckoutEvent) {
             when (e) {
                 is CheckoutEvent.TokenizationSuccessHUC -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onTokenizeSuccess")
+                    addAnalyticsEvent(
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_TOKENIZE_SUCCESS
+                        )
                     )
                     checkoutListener?.onTokenizeSuccess(
                         e.data,
@@ -36,40 +38,53 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 }
 
                 is CheckoutEvent.TokenizationStarted -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
+                    addAnalyticsEvent(
                         SdkFunctionParams(
-                            "onTokenizationStarted",
-                            mapOf("paymentMethodType" to e.paymentMethodType)
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_TOKENIZATION_STARTED,
+                            mapOf(
+                                HeadlessUniversalCheckoutAnalyticsConstants.PAYMENT_METHOD_TYPE
+                                    to e.paymentMethodType
+                            )
                         )
                     )
                     checkoutListener?.onTokenizationStarted(e.paymentMethodType)
                 }
 
                 is CheckoutEvent.ConfigurationSuccess -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
+                    addAnalyticsEvent(
                         SdkFunctionParams(
-                            "onAvailablePaymentMethodsLoaded",
-                            mapOf("availablePaymentMethods" to e.paymentMethods.toString())
+                            HeadlessUniversalCheckoutAnalyticsConstants
+                                .ON_AVAILABLE_PAYMENT_METHODS_LOADED,
+                            mapOf(
+                                HeadlessUniversalCheckoutAnalyticsConstants
+                                    .AVAILABLE_PAYMENT_METHODS_PARAM to e.paymentMethods.toString()
+                            )
                         )
                     )
                     checkoutListener?.onAvailablePaymentMethodsLoaded(e.paymentMethods)
                 }
 
                 is CheckoutEvent.PreparationStarted -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
+                    addAnalyticsEvent(
                         SdkFunctionParams(
-                            "onPreparationStarted",
-                            mapOf("paymentMethodType" to e.paymentMethodType)
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_PREPARATION_STARTED,
+                            mapOf(
+                                HeadlessUniversalCheckoutAnalyticsConstants.PAYMENT_METHOD_TYPE
+                                    to e.paymentMethodType
+                            )
                         )
                     )
                     uiListener?.onPreparationStarted(e.paymentMethodType)
                 }
 
                 is CheckoutEvent.PaymentMethodPresented -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
+                    addAnalyticsEvent(
                         SdkFunctionParams(
-                            "onPaymentMethodShowed",
-                            mapOf("paymentMethodType" to e.paymentMethodType)
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_PAYMENT_METHOD_SHOWED,
+                            mapOf(
+                                HeadlessUniversalCheckoutAnalyticsConstants.PAYMENT_METHOD_TYPE
+                                    to e.paymentMethodType
+                            )
                         )
                     )
                     uiListener?.onPaymentMethodShowed(
@@ -78,8 +93,10 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 }
 
                 is CheckoutEvent.ResumeSuccessHUC -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onCheckoutResume")
+                    addAnalyticsEvent(
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_RESUME
+                        )
                     )
                     checkoutListener?.onCheckoutResume(
                         e.resumeToken,
@@ -88,38 +105,52 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 }
 
                 is CheckoutEvent.ResumePending -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onResumePending")
+                    addAnalyticsEvent(
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_PENDING
+                        )
                     )
                     checkoutListener?.onResumePending(e.paymentMethodInfo)
                 }
 
                 is CheckoutEvent.OnAdditionalInfoReceived -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onCheckoutAdditionalInfoReceived")
+                    addAnalyticsEvent(
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants
+                                .ON_CHECKOUT_ADDITIONAL_INFO_RECEIVED
+                        )
                     )
                     checkoutListener?.onCheckoutAdditionalInfoReceived(e.paymentMethodInfo)
                 }
 
                 is CheckoutEvent.PaymentCreateStartedHUC -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onBeforePaymentCreated")
+                    addAnalyticsEvent(
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_BEFORE_PAYMENT_COMPLETED
+                        )
                     )
                     checkoutListener?.onBeforePaymentCreated(e.data, e.createPaymentHandler)
                 }
 
                 is CheckoutEvent.PaymentSuccess -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onCheckoutCompleted")
+                    addAnalyticsEvent(
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_COMPLETED
+                        )
                     )
                     checkoutListener?.onCheckoutCompleted(e.data)
                 }
 
                 is CheckoutEvent.CheckoutPaymentError -> {
-                    headlessUniversalCheckout?.addAnalyticsEvent(
+                    addAnalyticsEvent(
                         SdkFunctionParams(
-                            "onFailed",
-                            mapOf("error" to e.error.toString())
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_FAILED,
+                            mapOf(
+                                HeadlessUniversalCheckoutAnalyticsConstants.ERROR_ID_PARAM
+                                    to e.error.errorId,
+                                HeadlessUniversalCheckoutAnalyticsConstants.ERROR_DESCRIPTION_PARAM
+                                    to e.error.description
+                            )
                         )
                     )
                     checkoutListener?.onFailed(e.error, e.data)
@@ -128,8 +159,13 @@ class PrimerHeadlessUniversalCheckout private constructor() :
                 is CheckoutEvent.CheckoutError -> {
                     headlessUniversalCheckout?.addAnalyticsEvent(
                         SdkFunctionParams(
-                            "onFailed",
-                            mapOf("error" to e.error.toString())
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_FAILED,
+                            mapOf(
+                                HeadlessUniversalCheckoutAnalyticsConstants.ERROR_ID_PARAM
+                                    to e.error.errorId,
+                                HeadlessUniversalCheckoutAnalyticsConstants.ERROR_DESCRIPTION_PARAM
+                                    to e.error.description
+                            )
                         )
                     )
                     checkoutListener?.onFailed(e.error)
@@ -137,14 +173,19 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
                 is CheckoutEvent.ClientSessionUpdateSuccess -> {
                     headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onClientSessionUpdated")
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ON_CLIENT_SESSION_UPDATED
+                        )
                     )
                     checkoutListener?.onClientSessionUpdated(e.data)
                 }
 
                 is CheckoutEvent.ClientSessionUpdateStarted -> {
                     headlessUniversalCheckout?.addAnalyticsEvent(
-                        SdkFunctionParams("onBeforeClientSessionUpdated")
+                        SdkFunctionParams(
+                            HeadlessUniversalCheckoutAnalyticsConstants
+                                .ON_BEFORE_CLIENT_SESSION_UPDATED
+                        )
                     )
                     checkoutListener?.onBeforeClientSessionUpdated()
                 }
@@ -165,7 +206,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     ) {
         headlessUniversalCheckout?.addAnalyticsEvent(
             SdkFunctionParams(
-                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty()
+                HeadlessUniversalCheckoutAnalyticsConstants.SET_CHECKOUT_LISTENER_METHOD
             )
         )
         subscription?.unregister()
@@ -176,7 +217,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     override fun setCheckoutUiListener(uiListener: PrimerHeadlessUniversalCheckoutUiListener) {
         headlessUniversalCheckout?.addAnalyticsEvent(
             SdkFunctionParams(
-                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty()
+                HeadlessUniversalCheckoutAnalyticsConstants.SET_CHECKOUT_UI_LISTENER_METHOD
             )
         )
         this.uiListener = uiListener
@@ -198,10 +239,12 @@ class PrimerHeadlessUniversalCheckout private constructor() :
             }
             headlessUniversalCheckout?.addAnalyticsEvent(
                 SdkFunctionParams(
-                    object {}.javaClass.enclosingMethod?.toGenericString().orEmpty(),
+                    HeadlessUniversalCheckoutAnalyticsConstants.START_METHOD,
                     mapOf(
-                        "sdkSettings" to this.config?.settings.toString(),
-                        "clientToken" to clientToken
+                        HeadlessUniversalCheckoutAnalyticsConstants.SETTINGS_PARAM to
+                            this.config?.settings.toString(),
+                        HeadlessUniversalCheckoutAnalyticsConstants.CLIENT_TOKEN_PARAM to
+                            clientToken
                     )
                 )
             )
@@ -212,9 +255,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
     override fun cleanup() {
         headlessUniversalCheckout?.addAnalyticsEvent(
-            SdkFunctionParams(
-                object {}.javaClass.enclosingMethod?.toGenericString().orEmpty()
-            )
+            SdkFunctionParams(HeadlessUniversalCheckoutAnalyticsConstants.CLEANUP_METHOD)
         )
         headlessUniversalCheckout?.clear(null)
         headlessUniversalCheckout = null
@@ -231,17 +272,16 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
     internal fun emitError(error: PrimerError) {
         when (getConfig().settings.paymentHandling) {
-            PrimerPaymentHandling.AUTO -> checkoutListener?.onFailed(
+            PrimerPaymentHandling.AUTO -> eventBusListener.onEvent(
                 CheckoutEvent.CheckoutPaymentError(
                     error
-                ).error,
-                null
+                )
             )
 
-            PrimerPaymentHandling.MANUAL -> checkoutListener?.onFailed(
+            PrimerPaymentHandling.MANUAL -> eventBusListener.onEvent(
                 CheckoutEvent.CheckoutError(
                     error
-                ).error
+                )
             )
         }
     }

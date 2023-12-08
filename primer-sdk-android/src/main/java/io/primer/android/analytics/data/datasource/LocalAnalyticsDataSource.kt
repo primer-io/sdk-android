@@ -1,10 +1,11 @@
 package io.primer.android.analytics.data.datasource
 
 import io.primer.android.analytics.data.models.BaseAnalyticsEventRequest
+import java.util.concurrent.ConcurrentLinkedQueue
 
 internal class LocalAnalyticsDataSource private constructor() {
 
-    private val events = mutableListOf<BaseAnalyticsEventRequest>()
+    private val events = ConcurrentLinkedQueue<BaseAnalyticsEventRequest>()
 
     fun addEvent(input: BaseAnalyticsEventRequest) = synchronized(this) {
         events.add(input)
@@ -17,7 +18,7 @@ internal class LocalAnalyticsDataSource private constructor() {
     fun get(): List<BaseAnalyticsEventRequest> = synchronized(this) { events.toList() }
 
     fun remove(events: List<BaseAnalyticsEventRequest>) = synchronized(this) {
-        this.events.removeAll(events)
+        this.events.removeAll(events.toSet())
     }
 
     companion object {
