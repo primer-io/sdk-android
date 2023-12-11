@@ -30,9 +30,7 @@ internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyCon
         val analyticsFileProvider = AnalyticsFileProvider(sdk.resolve())
         val fileAnalyticsDataSource = FileAnalyticsDataSource(analyticsFileProvider)
         val analyticsDataSender = AnalyticsDataSender(
-            RemoteAnalyticsDataSource(resolve()),
-            localAnalyticsDataSource,
-            fileAnalyticsDataSource
+            RemoteAnalyticsDataSource(resolve())
         )
 
         registerSingleton<AnalyticsRepository> {

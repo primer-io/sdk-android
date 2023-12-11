@@ -1,26 +1,21 @@
 package io.primer.android.analytics.data.helper
 
-import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
+import androidx.annotation.WorkerThread
 import io.primer.android.analytics.data.datasource.RemoteAnalyticsDataSource
 import io.primer.android.analytics.data.models.AnalyticsDataRequest
 import io.primer.android.analytics.data.models.BaseAnalyticsEventRequest
-import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.data.base.models.BaseRemoteUrlRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retry
 
 internal class AnalyticsDataSender(
-    private val remoteAnalyticsDataSource: RemoteAnalyticsDataSource,
-    private val localAnalyticsDataSource: LocalAnalyticsDataSource,
-    private val fileAnalyticsDataSource: FileAnalyticsDataSource
+    private val remoteAnalyticsDataSource: RemoteAnalyticsDataSource
 ) {
-
-    fun sendEvents(events: List<BaseAnalyticsEventRequest>): Flow<Unit> {
+    @WorkerThread
+    fun sendEvents(events: List<BaseAnalyticsEventRequest>): Flow<List<BaseAnalyticsEventRequest>> {
         val groupedChunks =
             events.chunked(CHUNK_SIZE)
                 .map { chunked -> chunked.groupBy { it.analyticsUrl ?: ANALYTICS_URL } }
@@ -31,15 +26,11 @@ internal class AnalyticsDataSender(
                         group.key,
                         AnalyticsDataRequest(group.value.map { it.copy(newAnalyticsUrl = null) })
                     )
-                ).map { chunk[group.key] }.retry(NUM_OF_RETRIES).catch {
+                ).map { chunk[group.key].orEmpty() }.retry(NUM_OF_RETRIES).catch {
                     emit(emptyList())
                 }
             }
-        }.flatten().merge().onEach { sentEvents ->
-            localAnalyticsDataSource.remove(sentEvents.orEmpty())
-        }.onCompletion {
-            fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
-        }.map { }
+        }.flatten().merge()
     }
 
     private companion object {

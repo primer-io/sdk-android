@@ -15,7 +15,12 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 @ExperimentalCoroutinesApi
 internal data class AnalyticsInitDataRepository(
@@ -25,6 +30,7 @@ internal data class AnalyticsInitDataRepository(
 ) : LifecycleEventObserver {
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val mutex: Mutex = Mutex()
 
     init {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -32,20 +38,33 @@ internal data class AnalyticsInitDataRepository(
     }
 
     private fun send() = scope.launch {
-        fileAnalyticsDataSource.get().filterNot { it.isEmpty() }
-            .flatMapLatest {
-                localAnalyticsDataSource.addEvents(it)
-                analyticsDataSender.sendEvents(it)
-            }.catch { cause: Throwable -> cause.printStackTrace() }
-            .collect()
+        mutex.withLock {
+            fileAnalyticsDataSource.get().filterNot { it.isEmpty() }
+                .flatMapLatest {
+                    localAnalyticsDataSource.addEvents(it)
+                    analyticsDataSender.sendEvents(it)
+                }.catch { expected: Throwable -> expected.printStackTrace() }
+                .onEach { sentEvents ->
+                    localAnalyticsDataSource.remove(sentEvents)
+                }.onCompletion {
+                    fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+                }.map { }
+                .collect()
+        }
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         when (event) {
             Lifecycle.Event.ON_STOP -> scope.launch {
-                analyticsDataSender.sendEvents(
-                    localAnalyticsDataSource.get()
-                ).catch { cause: Throwable -> cause.printStackTrace() }.collect()
+                mutex.withLock {
+                    analyticsDataSender.sendEvents(localAnalyticsDataSource.get())
+                }.catch { expected: Throwable -> expected.printStackTrace() }
+                    .onEach { sentEvents ->
+                        localAnalyticsDataSource.remove(sentEvents)
+                    }.onCompletion {
+                        fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+                    }.map { }
+                    .collect()
             }
 
             else -> Unit

@@ -22,11 +22,7 @@ internal class AnalyticsInitializer : Initializer<AnalyticsInitDataRepository> {
             PrimerHttpClient(HttpClientFactory().build())
         )
         return AnalyticsInitDataRepository(
-            AnalyticsDataSender(
-                remoteAnalyticsFlowDataSource,
-                LocalAnalyticsDataSource.instance,
-                fileAnalyticsDataSource
-            ),
+            AnalyticsDataSender(remoteAnalyticsFlowDataSource),
             LocalAnalyticsDataSource.instance,
             fileAnalyticsDataSource
         )

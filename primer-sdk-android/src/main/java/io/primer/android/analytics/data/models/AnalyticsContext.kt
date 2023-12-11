@@ -78,35 +78,42 @@ internal sealed class AnalyticsContext(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsContext> {
-
-            override fun deserialize(t: JSONObject): AnalyticsContext {
-                return when (
+        val deserializer =
+            JSONDeserializer { t ->
+                when (
                     AnalyticsContextType.valueOf(t.getString(ANALYTICS_CONTEXT_TYPE_FIELD))
                 ) {
                     AnalyticsContextType.PAYMENT_METHOD ->
                         PaymentMethodAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.URL ->
                         UrlAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.BANK_ISSUER ->
                         BankIssuerAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.DUMMY_APM ->
                         DummyApmAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.PAYMENT_METHOD_ID ->
                         PaymentInstrumentIdAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.THREE_DS_FAILURE ->
                         ThreeDsFailureAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.THREE_DS_RUNTIME_FAILURE ->
                         ThreeDsRuntimeFailureAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.THREE_DS_PROTOCOL_FAILURE ->
                         ThreeDsProtocolFailureAnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.IPAY88 ->
                         IPay88AnalyticsContext.deserializer.deserialize(t)
+
                     AnalyticsContextType.ERROR ->
                         ErrorAnalyticsContext.deserializer.deserialize(t)
                 }
             }
-        }
     }
 }
 
@@ -448,8 +455,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
 internal data class ErrorAnalyticsContext(
     val errorId: String,
     val paymentMethodType: String
-) :
-    AnalyticsContext(AnalyticsContextType.ERROR) {
+) : AnalyticsContext(AnalyticsContextType.ERROR) {
 
     companion object {
 
@@ -462,6 +468,7 @@ internal data class ErrorAnalyticsContext(
                 return JSONObject().apply {
                     put(ERROR_ID, t.errorId)
                     put(PAYMENT_METHOD_TYPE, t.paymentMethodType)
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
             }
         }

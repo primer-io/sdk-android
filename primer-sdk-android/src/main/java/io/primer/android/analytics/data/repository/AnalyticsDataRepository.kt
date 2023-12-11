@@ -24,7 +24,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 
 @ExperimentalCoroutinesApi
@@ -104,4 +106,9 @@ internal class AnalyticsDataRepository(
     }
 
     override fun send() = analyticsDataSender.sendEvents(localAnalyticsDataSource.get())
+        .onEach { sentEvents ->
+            localAnalyticsDataSource.remove(sentEvents)
+        }.onCompletion {
+            fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+        }.map { }
 }
