@@ -1,3 +1,19 @@
+## 2.20.0 (2023-12-11)
+
+### Feat
+
+- override PrimerError.context with ErrorContextParams where appropriate
+- Removed Apaya integration (#477)
+
+### Fix
+
+- Improved handling of SDK analytics events (#481)
+- adds "textNoSuggestions" to the input type of the card form input fields so that the keyboard cache will not be shown when the input field is selected
+
+### Refactor
+
+- ensure events are queued, refactored analytics data sender (#482)
+
 ## 2.19.2 (2023-11-14)
 
 ### Fix
