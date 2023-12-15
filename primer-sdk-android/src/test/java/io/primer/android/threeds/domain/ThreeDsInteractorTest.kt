@@ -121,7 +121,7 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
             flowOf(keysParams)
         )
-        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
             flowOf(Unit)
         )
 
@@ -130,7 +130,7 @@ internal class ThreeDsInteractorTest {
         }
 
         coVerify { threeDsConfigurationRepository.getConfiguration() }
-        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }
+        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any()) }
     }
 
     @Test
@@ -170,7 +170,7 @@ internal class ThreeDsInteractorTest {
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
             flowOf(keysParams)
         )
-        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }.returns(
+        coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
             flow {
                 throw exception
             }
@@ -185,7 +185,7 @@ internal class ThreeDsInteractorTest {
             }
         }
 
-        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any(), any()) }
+        coVerify { threeDsServiceRepository.initializeProvider(any(), any(), any()) }
         coVerify { threeDsConfigurationRepository.getConfiguration() }
 
         assertEquals(exception.javaClass, capturedException.javaClass)

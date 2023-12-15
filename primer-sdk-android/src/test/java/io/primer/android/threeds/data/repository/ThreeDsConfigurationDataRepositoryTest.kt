@@ -54,7 +54,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
         runTest {
             val threeDsParams = repository.getConfiguration().first()
             assertEquals(configurationData.environment, threeDsParams.environment)
-            assertEquals(configurationData.keys?.netceteraLicenseKey, threeDsParams.licenceKey)
+            assertEquals(configurationData.keys?.netceteraApiKey, threeDsParams.apiKey)
             assertEquals(
                 configurationData.keys?.threeDSecureIoCertificates,
                 threeDsParams.threeDsCertificates

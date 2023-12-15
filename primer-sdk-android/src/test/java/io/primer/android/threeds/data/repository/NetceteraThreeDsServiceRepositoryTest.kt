@@ -2,8 +2,10 @@ package io.primer.android.threeds.data.repository
 
 import android.content.Context
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
+import com.netcetera.threeds.sdk.api.exceptions.InvalidInputException
 import com.netcetera.threeds.sdk.api.security.Warning
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -59,7 +61,6 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                 repository.initializeProvider(
                     false,
                     Locale.getDefault(),
-                    true,
                     null
                 ).first()
             }
@@ -67,18 +68,45 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     }
 
     @Test
-    fun `initializeProvider should throw ThreeDsConfigurationException LICENCE_CONFIG_ERROR message when ThreeDsKeysParams licence is missing`() {
+    fun `initializeProvider should throw ThreeDsConfigurationException API_KEY_CONFIG_ERROR message when ThreeDsKeysParams licence is missing`() {
         val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        every { keysParams.licenceKey }.returns(null)
+        every { keysParams.apiKey }.returns(null)
 
         assertThrows<ThreeDsConfigurationException>(
-            NetceteraThreeDsServiceRepository.LICENCE_CONFIG_ERROR
+            NetceteraThreeDsServiceRepository.API_KEY_CONFIG_ERROR
         ) {
             runTest {
                 repository.initializeProvider(
                     false,
                     Locale.getDefault(),
-                    true,
+                    keysParams
+                ).first()
+            }
+        }
+    }
+
+    @Test
+    fun `initializeProvider should throw ThreeDsInitException with correct message when threeDS2Service initialize fails`() {
+        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+        val exception = mockk<InvalidInputException>(relaxed = true)
+        every { exception.message } returns "Failed to initialize 3DS SDK"
+
+        every {
+            threeDS2Service.initialize(
+                any(),
+                any(),
+                any(),
+                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
+            )
+        } throws InvalidInputException("")
+
+        assertThrows<ThreeDsInitException>(
+            exception.message.toString()
+        ) {
+            runTest {
+                repository.initializeProvider(
+                    false,
+                    Locale.getDefault(),
                     keysParams
                 ).first()
             }
@@ -89,11 +117,19 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is not enabled `() {
         val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
 
+        every {
+            threeDS2Service.initialize(
+                any(),
+                any(),
+                any(),
+                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
+            )
+        } returns Unit
+
         runTest {
             val result = repository.initializeProvider(
                 false,
                 Locale.getDefault(),
-                true,
                 keysParams
             ).first()
             assertEquals(Unit, result)
@@ -101,15 +137,22 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     }
 
     @Test
-    fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is enabled and there are no warnings`() {
+    fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is enabled and there are no warnings and initializing provider is successful`() {
         val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+        every {
+            threeDS2Service.initialize(
+                any(),
+                any(),
+                any(),
+                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
+            )
+        } returns Unit
         every { threeDS2Service.warnings }.returns(listOf())
 
         runTest {
             val result = repository.initializeProvider(
                 true,
                 Locale.getDefault(),
-                true,
                 keysParams
             ).first()
             assertEquals(Unit, result)
@@ -127,12 +170,20 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         every { threeDS2Service.warnings }.returns(listOf(warning))
 
+        every {
+            threeDS2Service.initialize(
+                any(),
+                any(),
+                any(),
+                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
+            )
+        } returns Unit
+
         val exception = assertThrows<ThreeDsInitException> {
             runTest {
                 repository.initializeProvider(
                     true,
                     Locale.getDefault(),
-                    true,
                     keysParams
                 ).first()
             }
@@ -197,6 +248,27 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         runTest {
             val transaction =
                 repository.performProviderAuth(CardNetwork.MASTERCARD, protocolVersion, environment)
+                    .first()
+            assertEquals(transactionMock, transaction)
+        }
+
+        val cardNetwork = slot<String>()
+        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
+
+        assertEquals(DsRidValues.MASTERCARD, cardNetwork.captured)
+    }
+
+    @Test
+    fun `performProviderAuth should select directory server DsRidValues-MASTERCARD for CardNetwork-MAESTRO`() {
+        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
+        val transactionMock = mockk<Transaction>(relaxed = true)
+        val environment = mockk<Environment>(relaxed = true)
+
+        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
+
+        runTest {
+            val transaction =
+                repository.performProviderAuth(CardNetwork.MAESTRO, protocolVersion, environment)
                     .first()
             assertEquals(transactionMock, transaction)
         }
@@ -345,7 +417,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
 
         every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
 
-        assertThrows<ThreeDsMissingDirectoryServerException>() {
+        assertThrows<ThreeDsMissingDirectoryServerException> {
             runTest {
                 repository.performProviderAuth(
                     CardNetwork.OTHER,

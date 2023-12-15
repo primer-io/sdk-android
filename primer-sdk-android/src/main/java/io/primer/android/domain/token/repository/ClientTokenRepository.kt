@@ -16,8 +16,6 @@ internal interface ClientTokenRepository {
 
     fun getPaymentMethodId(): String?
 
-    fun useThreeDsWeakValidation(): Boolean?
-
     fun getTransactionNo(): String?
 
     fun getCompleteUrl(): String?

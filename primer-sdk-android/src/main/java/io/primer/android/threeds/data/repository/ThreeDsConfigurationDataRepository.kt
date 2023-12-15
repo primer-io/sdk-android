@@ -22,7 +22,7 @@ internal class ThreeDsConfigurationDataRepository(
             .map { configuration ->
                 ThreeDsKeysParams(
                     configuration.environment,
-                    configuration.keys?.netceteraLicenseKey,
+                    configuration.keys?.netceteraApiKey,
                     configuration.keys?.threeDSecureIoCertificates
                 )
             }

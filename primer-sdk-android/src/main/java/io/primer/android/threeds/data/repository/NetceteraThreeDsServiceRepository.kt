@@ -58,7 +58,6 @@ internal class NetceteraThreeDsServiceRepository(
     override suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
-        useWeakValidation: Boolean,
         threeDsKeysParams: ThreeDsKeysParams?
     ): Flow<Unit> =
         flow {
@@ -66,7 +65,7 @@ internal class NetceteraThreeDsServiceRepository(
 
             try {
                 requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
-                requireNotNull(threeDsKeysParams.licenceKey) { LICENCE_CONFIG_ERROR }
+                requireNotNull(threeDsKeysParams.apiKey) { API_KEY_CONFIG_ERROR }
             } catch (expected: IllegalArgumentException) {
                 throw ThreeDsConfigurationException(
                     expected.message,
@@ -75,7 +74,7 @@ internal class NetceteraThreeDsServiceRepository(
             }
 
             val configurationBuilder = ConfigurationBuilder()
-                .license(threeDsKeysParams.licenceKey)
+                .apiKey(threeDsKeysParams.apiKey)
 
             threeDsKeysParams.let { (environment, _, threeDsSecureCertificates) ->
                 if (environment != Environment.PRODUCTION) {
@@ -93,12 +92,19 @@ internal class NetceteraThreeDsServiceRepository(
                 }
             }
 
-            threeDS2Service.initialize(
-                context,
-                configurationBuilder.useWeakValidation(useWeakValidation).build(),
-                locale.toString(),
-                UiCustomization()
-            )
+            try {
+                threeDS2Service.initialize(
+                    context,
+                    configurationBuilder.build(),
+                    locale.toString(),
+                    emptyMap<UiCustomization.UiCustomizationType, UiCustomization>()
+                )
+            } catch (expected: Exception) {
+                throw ThreeDsInitException(
+                    expected.message,
+                    ThreeDsFailureContextParams(threeDsSdkVersion, null)
+                )
+            }
 
             coroutineContext.ensureActive()
             val warnings = threeDS2Service.warnings
@@ -255,12 +261,13 @@ internal class NetceteraThreeDsServiceRepository(
             CardNetwork.DINERS_CLUB, CardNetwork.DISCOVER -> DsRidValues.DINERS
             CardNetwork.UNIONPAY -> DsRidValues.UNION
             CardNetwork.JCB -> DsRidValues.JCB
-            CardNetwork.MASTERCARD -> DsRidValues.MASTERCARD
+            CardNetwork.MASTERCARD, CardNetwork.MAESTRO -> DsRidValues.MASTERCARD
             else -> when (environment == Environment.PRODUCTION) {
                 true -> throw ThreeDsMissingDirectoryServerException(
                     cardNetwork,
                     ThreeDsFailureContextParams(threeDsSdkVersion, null)
                 )
+
                 false -> TEST_SCHEME_ID
             }
         }
@@ -273,7 +280,7 @@ internal class NetceteraThreeDsServiceRepository(
         const val TEST_SCHEME_ID = "A999999999"
 
         const val KEYS_CONFIG_ERROR = "3DS Config threeDsCertificates are missing."
-        const val LICENCE_CONFIG_ERROR = "3DS Config licenceKey is missing."
+        const val API_KEY_CONFIG_ERROR = "3DS Config apiKey is missing."
 
         const val THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE = "-4"
         const val THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE = "-3"

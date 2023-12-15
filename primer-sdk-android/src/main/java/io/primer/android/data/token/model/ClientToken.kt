@@ -4,7 +4,6 @@ import android.util.Base64
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
-import io.primer.android.core.serialization.json.extensions.optNullableBoolean
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.token.exception.ExpiredClientTokenException
@@ -33,7 +32,6 @@ internal data class ClientToken(
     val iPay88ActionType: String?,
     val supportedCurrencyCode: String?,
     val supportedCountry: String?,
-    val useThreeDsWeakValidation: Boolean?,
     val supportedThreeDsProtocolVersions: List<String>?,
     val nolPayTransactionNo: String?
 ) : JSONDeserializable {
@@ -116,7 +114,6 @@ internal data class ClientToken(
                 t.optNullableString(IPAY88_ACTION_TYPE_FIELD),
                 t.optNullableString(SUPPORTED_CURRENCY_CODE_FIELD),
                 t.optNullableString(SUPPORTED_COUNTRY_FIELD),
-                t.optNullableBoolean(USE_THREE_DS_WEAK_VALIDATION),
                 t.optJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)?.sequence<String>()
                     ?.toList(),
                 t.optNullableString(NOL_PAY_TRANSACTION_NO)

@@ -5,6 +5,6 @@ import io.primer.android.data.configuration.models.ThreeDsSecureCertificateDataR
 
 internal data class ThreeDsKeysParams(
     val environment: Environment,
-    val licenceKey: String?,
+    val apiKey: String?,
     val threeDsCertificates: List<ThreeDsSecureCertificateDataResponse>?
 )

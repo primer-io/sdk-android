@@ -21,7 +21,6 @@ internal interface ThreeDsServiceRepository {
     suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
-        useWeakValidation: Boolean,
         threeDsKeysParams: ThreeDsKeysParams?
     ): Flow<Unit>
 

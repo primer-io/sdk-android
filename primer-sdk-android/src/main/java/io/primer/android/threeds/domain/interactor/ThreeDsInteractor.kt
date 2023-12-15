@@ -89,7 +89,6 @@ internal class DefaultThreeDsInteractor(
             threeDsServiceRepository.initializeProvider(
                 threeDsInitParams.is3DSSanityCheckEnabled,
                 threeDsInitParams.locale,
-                clientTokenRepository.useThreeDsWeakValidation() ?: true,
                 keys
             )
         }.flowOn(dispatcher)

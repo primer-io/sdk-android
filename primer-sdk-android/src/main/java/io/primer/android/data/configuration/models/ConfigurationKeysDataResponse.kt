@@ -9,11 +9,11 @@ import org.json.JSONObject
 
 internal data class ConfigurationKeysDataResponse(
     internal val threeDSecureIoCertificates: List<ThreeDsSecureCertificateDataResponse>?,
-    internal val netceteraLicenseKey: String?
+    internal val netceteraApiKey: String?
 ) : JSONDeserializable {
     companion object {
         private const val THREE_DS_CERTIFICATES_FIELD = "threeDSecureIoCertificates"
-        private const val NETCETERA_LICENCE_KEY = "netceteraLicenseKey"
+        private const val NETCETERA_API_KEY = "netceteraApiKey"
 
         @JvmField
         val deserializer = object :
@@ -26,7 +26,7 @@ internal data class ConfigurationKeysDataResponse(
                             .getDeserializer<ThreeDsSecureCertificateDataResponse>()
                             .deserialize(it)
                     }?.toList(),
-                    t.optNullableString(NETCETERA_LICENCE_KEY)
+                    t.optNullableString(NETCETERA_API_KEY)
                 )
             }
         }

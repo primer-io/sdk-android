@@ -26,8 +26,6 @@ internal class ClientTokenDataRepository(
 
     override fun getClientTokenIntent() = clientTokenDataSource.get().intent
 
-    override fun useThreeDsWeakValidation() = clientTokenDataSource.get().useThreeDsWeakValidation
-
     override fun getTransactionNo() = clientTokenDataSource.get().nolPayTransactionNo
 
     override fun getCompleteUrl() = clientTokenDataSource.get().redirectUrl
