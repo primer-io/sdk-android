@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.NolPayContainer.Companion.NOL_PAY_ERROR_RESOLVER_NAME
@@ -22,6 +23,8 @@ internal class NolPayStartPaymentComponentProvider : DISdkComponent {
                 ): T {
                     return NolPayPaymentComponent(
                         resolve(),
+                        resolve(),
+                        resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
                         resolve(),
                         resolve(),
                         resolve(NOL_PAY_ERROR_RESOLVER_NAME)

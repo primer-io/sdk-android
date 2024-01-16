@@ -38,17 +38,29 @@
             android:layout_marginTop="@dimen/xxl_vertical_margin"
             android:text="@string/bank_selection_title" />
 
+        <io.primer.android.ui.components.SearchViewWidget
+            android:id="@+id/search_bar"
+            style="@style/Primer.Text.Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/choose_bank_title"
+            android:layout_marginTop="@dimen/medium_large_padding"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/ic_search"
+            android:hint="@string/bank_selection_hint"
+            android:paddingHorizontal="@dimen/medium_padding"
+            android:paddingVertical="@dimen/medium_padding" />
 
         <View
             android:id="@+id/choose_bank_divider_top"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_below="@id/choose_bank_title"
+            android:layout_below="@id/search_bar"
             android:layout_marginTop="@dimen/large_vertical_margin"
             android:background="@drawable/divider_bank_selection" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/choose_bank_recycler_view"
+            android:id="@+id/banks_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/choose_bank_divider_top"
@@ -62,7 +74,7 @@
             android:id="@+id/choose_bank_divider_bottom"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_alignBottom="@id/choose_bank_recycler_view"
+            android:layout_alignBottom="@id/banks_list"
             android:background="@drawable/divider_bank_selection"
             android:visibility="gone"
             tools:visibility="visible" />

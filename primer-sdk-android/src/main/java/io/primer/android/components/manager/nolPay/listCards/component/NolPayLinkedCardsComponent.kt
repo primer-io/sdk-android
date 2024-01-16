@@ -3,13 +3,16 @@ package io.primer.android.components.manager.nolPay.listCards.component
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.manager.core.composable.PrimerHeadlessComponent
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.resolve
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
 class NolPayLinkedCardsComponent internal constructor(
-    private val linkedCardsDelegate: NolPayGetLinkedCardsDelegate
+    private val linkedCardsDelegate: NolPayGetLinkedCardsDelegate,
+    private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
 ) : PrimerHeadlessComponent {
 
     /**
@@ -35,13 +38,17 @@ class NolPayLinkedCardsComponent internal constructor(
     private suspend fun logSdkFunctionCalls(
         methodName: String,
         context: Map<String, String> = hashMapOf()
-    ) = linkedCardsDelegate.logSdkAnalyticsEvent(
+    ) = eventLoggingDelegate.logSdkAnalyticsEvent(
+        PaymentMethodType.NOL_PAY.name,
         methodName,
         mapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name).plus(context)
     )
 
     internal companion object : DISdkComponent {
 
-        fun getInstance() = NolPayLinkedCardsComponent(resolve())
+        fun getInstance() = NolPayLinkedCardsComponent(
+            resolve(),
+            resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name)
+        )
     }
 }

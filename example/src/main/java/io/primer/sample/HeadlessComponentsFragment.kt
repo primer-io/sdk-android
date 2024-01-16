@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
@@ -288,6 +289,8 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 addPaymentMethodView(it.paymentMethodType)
             } else if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.NOL_PAY)) {
                 addPaymentMethodView(it.paymentMethodType)
+            } else if (it.paymentMethodManagerCategories.contains(PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT)) {
+                addPaymentMethodView(it.paymentMethodType)
             }
         }
     }
@@ -348,6 +351,11 @@ class HeadlessComponentsFragment : Fragment(), PrimerInputElementListener {
                 when (paymentMethodType) {
                     "NOL_PAY" ->
                         findNavController().navigate(R.id.action_MerchantComponentsFragment_to_NolPayFragment)
+                    "ADYEN_IDEAL", "ADYEN_DOTPAY" ->
+                        findNavController().navigate(
+                            R.id.action_HeadlessFragment_to_AdyenBankSelectionFragment,
+                            bundleOf("paymentMethodType" to paymentMethodType)
+                        )
                     else -> onPaymentMethodSelected(paymentMethodType)
                 }
             }

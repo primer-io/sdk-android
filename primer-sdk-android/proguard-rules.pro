@@ -137,6 +137,10 @@
     *;
 }
 
+-keep class io.primer.android.domain.rpc.banks.models.* {
+    public *;
+}
+
 -keep class io.primer.android.components.domain.core.models.retailOutlet.PrimerRetailerData {
     *;
 }
@@ -304,6 +308,26 @@
 
 -keep class io.primer.android.components.manager.core.** {
     public *;
+}
+
+-keep class io.primer.android.components.manager.componentWithRedirect.* {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.componentWithRedirect.composable.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.componentWithRedirect.component.** {
+    public *;
+}
+
+-keep class io.primer.android.components.manager.banks.component.* {
+    *;
+}
+
+-keep class io.primer.android.components.manager.banks.composable.* {
+    *;
 }
 
 -keep class io.primer.android.components.manager.nolPay.core.** {

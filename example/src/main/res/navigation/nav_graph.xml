@@ -156,6 +156,31 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_HeadlessFragment_to_AdyenBankSelectionFragment"
+            app:destination="@id/AdyenBankSelectionFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AdyenBankSelectionFragment"
+        android:name="io.primer.sample.adyen.ideal.AdyenBankSelectionFragment"
+        android:label="Ideal"
+        tools:layout="@layout/fragment_adyen_bank_selection">
+
+        <action
+            android:id="@+id/action_AdyenBankSelectionFragment_to_HeadlessFragment"
+            app:destination="@id/HeadlessFragment"
+            app:popUpTo="@id/HeadlessFragment"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false" />
+        <argument
+            android:name="paymentMethodType"
+            app:argType="string" />
     </fragment>
 
     <fragment

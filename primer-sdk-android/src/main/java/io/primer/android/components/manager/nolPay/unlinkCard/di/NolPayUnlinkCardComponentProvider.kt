@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.NolPayContainer.Companion.NOL_PAY_ERROR_RESOLVER_NAME
@@ -22,6 +23,8 @@ internal class NolPayUnlinkCardComponentProvider : DISdkComponent {
                     extras: CreationExtras
                 ): T {
                     return NolPayUnlinkCardComponent(
+                        resolve(),
+                        resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
                         resolve(),
                         resolve(),
                         resolve(NOL_PAY_ERROR_RESOLVER_NAME),

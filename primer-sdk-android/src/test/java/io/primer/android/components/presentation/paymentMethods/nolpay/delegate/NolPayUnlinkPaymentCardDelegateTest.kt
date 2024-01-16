@@ -9,7 +9,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadata
@@ -49,9 +48,6 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
     lateinit var phoneMetadataInteractor: PhoneMetadataInteractor
 
     @RelaxedMockK
-    lateinit var analyticsInteractor: AnalyticsInteractor
-
-    @RelaxedMockK
     lateinit var initSdkInitInteractor: NolPaySdkInitInteractor
 
     private lateinit var delegate: NolPayUnlinkPaymentCardDelegate
@@ -62,7 +58,6 @@ internal class NolPayUnlinkPaymentCardDelegateTest {
             unlinkPaymentCardOTPInteractor,
             unlinkPaymentCardInteractor,
             phoneMetadataInteractor,
-            analyticsInteractor,
             initSdkInitInteractor
         )
     }

@@ -5,12 +5,11 @@ import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
-import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadata
@@ -55,9 +54,6 @@ internal class NolPayLinkPaymentCardDelegateTest {
     lateinit var linkPaymentCardOTPInteractor: NolPayGetLinkPaymentCardOTPInteractor
 
     @RelaxedMockK
-    lateinit var analyticsInteractor: AnalyticsInteractor
-
-    @RelaxedMockK
     lateinit var initSdkInitInteractor: NolPaySdkInitInteractor
 
     private lateinit var delegate: NolPayLinkPaymentCardDelegate
@@ -69,7 +65,6 @@ internal class NolPayLinkPaymentCardDelegateTest {
             linkPaymentCardOTPInteractor,
             linkPaymentCardInteractor,
             phoneMetadataInteractor,
-            analyticsInteractor,
             initSdkInitInteractor
         )
     }

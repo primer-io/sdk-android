@@ -1,7 +1,6 @@
 package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadataParams
@@ -9,8 +8,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.asyn
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.async.redirect.models.AsyncPaymentMethodParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequiredActionInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayCompletePaymentParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequestPaymentParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayRequiredAction
@@ -41,9 +40,8 @@ internal class NolPayStartPaymentDelegate(
     private val requiredActionInteractor: NolPayRequiredActionInteractor,
     private val completePaymentInteractor: NolPayCompletePaymentInteractor,
     private val phoneMetadataInteractor: PhoneMetadataInteractor,
-    sdkInitInteractor: NolPaySdkInitInteractor,
-    analyticsInteractor: AnalyticsInteractor
-) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
+    sdkInitInteractor: NolPaySdkInitInteractor
+) : BaseNolPayDelegate(sdkInitInteractor) {
 
     private var subscription: EventBus.SubscriptionHandle? = null
 

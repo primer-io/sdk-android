@@ -1,13 +1,13 @@
 package io.primer.android.di
 
+import io.primer.android.components.data.metadata.phone.datasource.RemotePhoneMetadataDataSource
+import io.primer.android.components.data.metadata.phone.repository.PhoneMetadataDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPayCompletePaymentDataSource
 import io.primer.android.components.data.payments.paymentMethods.nolpay.datasource.RemoteNolPaySecretDataSource
 import io.primer.android.components.data.payments.paymentMethods.nolpay.error.NolPayErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayAppSecretDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayCompletePaymentDataRepository
 import io.primer.android.components.data.payments.paymentMethods.nolpay.repository.NolPayConfigurationDataRepository
-import io.primer.android.components.data.metadata.phone.datasource.RemotePhoneMetadataDataSource
-import io.primer.android.components.data.metadata.phone.repository.PhoneMetadataDataRepository
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.repository.PhoneMetadataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayCompletePaymentInteractor
@@ -17,8 +17,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayGetUnlinkPaymentCardOTPInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayLinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequestPaymentInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayRequiredActionInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPaySdkInitInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayAppSecretRepository
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.repository.NolPayCompletePaymentRepository
@@ -100,8 +100,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
                 resolve(),
                 resolve(),
                 resolve(),
-                sdk.resolve(),
-                resolve()
+                sdk.resolve()
             )
         }
 
@@ -110,8 +109,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
                 resolve(),
                 resolve(),
                 resolve(),
-                sdk.resolve(),
-                resolve()
+                sdk.resolve()
             )
         }
 
@@ -119,8 +117,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
             NolPayGetLinkedCardsDelegate(
                 resolve(),
                 resolve(),
-                sdk.resolve(),
-                resolve()
+                sdk.resolve()
             )
         }
 
@@ -132,8 +129,7 @@ internal class NolPayContainer(private val sdk: SdkContainer) : DependencyContai
                 resolve(),
                 resolve(),
                 resolve(),
-                resolve(),
-                sdk.resolve()
+                resolve()
             )
         }
     }

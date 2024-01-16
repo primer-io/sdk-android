@@ -31,10 +31,12 @@ internal class AdyenIdealPaymentMethodDescriptor(
         listOf(AsyncPaymentMethodBehaviour(this))
 
     override val sdkCapabilities: List<SDKCapability>
-        get() = listOf(SDKCapability.DROP_IN)
+        get() = listOf(SDKCapability.DROP_IN, SDKCapability.HEADLESS)
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
-    override val headlessDefinition: HeadlessDefinition
-        get() = HeadlessDefinition(listOf(PrimerPaymentMethodManagerCategory.RAW_DATA))
+    override val headlessDefinition: HeadlessDefinition =
+        HeadlessDefinition(
+            listOf(PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT)
+        )
 }

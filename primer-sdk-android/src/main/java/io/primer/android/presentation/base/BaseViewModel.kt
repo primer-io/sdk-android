@@ -11,6 +11,6 @@ internal open class BaseViewModel(private val analyticsInteractor: AnalyticsInte
     ViewModel() {
 
     fun addAnalyticsEvent(params: BaseAnalyticsParams) = viewModelScope.launch {
-        analyticsInteractor(params).collect { }
+        analyticsInteractor(params).collect()
     }
 }

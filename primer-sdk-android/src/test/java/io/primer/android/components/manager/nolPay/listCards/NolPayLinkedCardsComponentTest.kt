@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package io.primer.android.components.manager.nolPay.listCards
 
 import io.mockk.coEvery
@@ -9,9 +11,12 @@ import io.primer.android.InstantExecutorExtension
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.listCards.component.NolPayLinkedCardsComponent
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayGetLinkedCardsDelegate
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,11 +30,14 @@ internal class NolPayLinkedCardsComponentTest {
     @RelaxedMockK
     lateinit var linkedCardsDelegate: NolPayGetLinkedCardsDelegate
 
+    @RelaxedMockK
+    lateinit var eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
+
     private lateinit var component: NolPayLinkedCardsComponent
 
     @BeforeEach
     fun setUp() {
-        component = NolPayLinkedCardsComponent(linkedCardsDelegate)
+        component = NolPayLinkedCardsComponent(linkedCardsDelegate, eventLoggingDelegate)
     }
 
     @Test
@@ -80,7 +88,8 @@ internal class NolPayLinkedCardsComponentTest {
         }
 
         coVerify {
-            linkedCardsDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINKED_CARDS_GET_CARDS_METHOD,
                 hashMapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name)
             )

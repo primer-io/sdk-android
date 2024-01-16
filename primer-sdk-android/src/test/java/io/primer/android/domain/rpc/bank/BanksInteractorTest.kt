@@ -12,8 +12,6 @@ import io.primer.android.domain.rpc.banks.models.IssuingBank
 import io.primer.android.domain.rpc.banks.models.IssuingBankParams
 import io.primer.android.domain.rpc.banks.repository.IssuingBankRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -36,13 +34,27 @@ class BanksInteractorTest {
     }
 
     @Test
-    fun `getIssuingBanks() should return list of sorted banks IssuingBankRepository getIssuingBanks() was success`() {
+    fun `getIssuingBanks() should return list of sorted banks when IssuingBankRepository getIssuingBanks() was success`() {
         val params = mockk<IssuingBankParams>(relaxed = true)
-        coEvery { repository.getIssuingBanks(any()) }.returns(flowOf(banks))
+        coEvery { repository.getIssuingBanks(any()) } returns Result.success(banks)
 
         runTest {
-            val res = interactor(params).first()
+            val res = interactor(params).getOrThrow()
             assertEquals(banks.sortedBy { it.name.lowercase() }, res)
+        }
+
+        coVerify { repository.getIssuingBanks(any()) }
+    }
+
+    @Test
+    fun `getIssuingBanks() should return exception when IssuingBankRepository getIssuingBanks() was failure`() {
+        val exception = mockk<Exception>()
+        val params = mockk<IssuingBankParams>(relaxed = true)
+        coEvery { repository.getIssuingBanks(any()) } returns Result.failure(exception)
+
+        runTest {
+            val res = interactor(params).exceptionOrNull()
+            assertEquals(exception, res)
         }
 
         coVerify { repository.getIssuingBanks(any()) }

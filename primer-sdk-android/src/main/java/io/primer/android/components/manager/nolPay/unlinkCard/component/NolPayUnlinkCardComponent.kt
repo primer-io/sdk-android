@@ -4,17 +4,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
-import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayUnlinkDataValidatorRegistry
 import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
-import io.primer.android.components.manager.core.composable.PrimerHeadlessStepable
+import io.primer.android.components.manager.core.composable.PrimerHeadlessSteppable
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.di.NolPayUnlinkCardComponentProvider
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
 import io.primer.android.core.extensions.debounce
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.error.ErrorMapper
 import io.primer.android.domain.error.models.PrimerError
 import kotlinx.coroutines.flow.Flow
@@ -24,13 +27,15 @@ import kotlinx.coroutines.launch
 
 class NolPayUnlinkCardComponent internal constructor(
     private val unlinkPaymentCardDelegate: NolPayUnlinkPaymentCardDelegate,
+    private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
+    private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
     private val validatorRegistry: NolPayUnlinkDataValidatorRegistry,
     private val errorMapper: ErrorMapper,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     PrimerHeadlessStartable,
     PrimerHeadlessCollectDataComponent<NolPayUnlinkCollectableData>,
-    PrimerHeadlessStepable<NolPayUnlinkCardStep> {
+    PrimerHeadlessSteppable<NolPayUnlinkCardStep> {
 
     private val _componentStep: MutableSharedFlow<NolPayUnlinkCardStep> = MutableSharedFlow()
     override val componentStep: Flow<NolPayUnlinkCardStep> = _componentStep
@@ -86,7 +91,11 @@ class NolPayUnlinkCardComponent internal constructor(
         methodName: String,
         context: Map<String, String> = hashMapOf()
     ) = viewModelScope.launch {
-        unlinkPaymentCardDelegate.logSdkAnalyticsEvent(methodName, context)
+        eventLoggingDelegate.logSdkAnalyticsEvent(
+            PaymentMethodType.NOL_PAY.name,
+            methodName,
+            context
+        )
     }
 
     private fun handleError(
@@ -96,7 +105,7 @@ class NolPayUnlinkCardComponent internal constructor(
             .also { error ->
                 _componentError.emit(error)
             }.also { error ->
-                unlinkPaymentCardDelegate.logSdkAnalyticsErrors(error)
+                errorLoggingDelegate.logSdkAnalyticsErrors(error)
             }
     }
 

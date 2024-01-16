@@ -1,7 +1,6 @@
 package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import androidx.lifecycle.SavedStateHandle
-import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadataParams
@@ -10,8 +9,8 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPay
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.NolPayUnlinkPaymentCardInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardOTPParams
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.models.NolPayUnlinkCardParams
-import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
+import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.extensions.flatMap
 import io.primer.android.extensions.mapSuspendCatching
@@ -22,9 +21,8 @@ internal class NolPayUnlinkPaymentCardDelegate(
     private val unlinkPaymentCardOTPInteractor: NolPayGetUnlinkPaymentCardOTPInteractor,
     private val unlinkPaymentCardInteractor: NolPayUnlinkPaymentCardInteractor,
     private val phoneMetadataInteractor: PhoneMetadataInteractor,
-    analyticsInteractor: AnalyticsInteractor,
     sdkInitInteractor: NolPaySdkInitInteractor
-) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
+) : BaseNolPayDelegate(sdkInitInteractor) {
 
     suspend fun handleCollectedCardData(
         collectedData: NolPayUnlinkCollectableData?,

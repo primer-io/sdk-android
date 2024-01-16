@@ -14,7 +14,10 @@ import io.primer.android.components.manager.core.composable.PrimerValidationStat
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCardStep
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayUnlinkPaymentCardDelegate
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
@@ -33,6 +36,12 @@ internal class NolPayUnlinkCardComponentTest {
     lateinit var unlinkPaymentCardDelegate: NolPayUnlinkPaymentCardDelegate
 
     @RelaxedMockK
+    lateinit var eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
+
+    @RelaxedMockK
+    lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
+
+    @RelaxedMockK
     lateinit var dataValidatorRegistry: NolPayUnlinkDataValidatorRegistry
 
     @RelaxedMockK
@@ -47,6 +56,8 @@ internal class NolPayUnlinkCardComponentTest {
     fun setUp() {
         component = NolPayUnlinkCardComponent(
             unlinkPaymentCardDelegate,
+            eventLoggingDelegate,
+            errorLoggingDelegate,
             dataValidatorRegistry,
             errorMapper,
             savedStateHandle
@@ -62,7 +73,8 @@ internal class NolPayUnlinkCardComponentTest {
         }
 
         coVerify {
-            unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.UNLINK_CARD_START_METHOD,
                 hashMapOf()
             )
@@ -95,7 +107,7 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify { unlinkPaymentCardDelegate.start() }
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
-            unlinkPaymentCardDelegate.logSdkAnalyticsErrors(
+            errorLoggingDelegate.logSdkAnalyticsErrors(
                 errorMapper.getPrimerError(
                     exception
                 )
@@ -115,7 +127,8 @@ internal class NolPayUnlinkCardComponentTest {
         }
 
         coVerify {
-            unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD
             )
         }
@@ -206,7 +219,8 @@ internal class NolPayUnlinkCardComponentTest {
         }
 
         coVerify {
-            unlinkPaymentCardDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.UNLINK_CARD_SUBMIT_DATA_METHOD,
                 hashMapOf()
             )
@@ -231,10 +245,8 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify { unlinkPaymentCardDelegate.handleCollectedCardData(any(), any()) }
         coVerify(exactly = 0) { errorMapper.getPrimerError(any()) }
         coVerify(exactly = 0) {
-            unlinkPaymentCardDelegate.logSdkAnalyticsErrors(
-                errorMapper.getPrimerError(
-                    any()
-                )
+            errorLoggingDelegate.logSdkAnalyticsErrors(
+                errorMapper.getPrimerError(any())
             )
         }
     }
@@ -257,10 +269,8 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify { unlinkPaymentCardDelegate.handleCollectedCardData(any(), any()) }
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
-            unlinkPaymentCardDelegate.logSdkAnalyticsErrors(
-                errorMapper.getPrimerError(
-                    exception
-                )
+            errorLoggingDelegate.logSdkAnalyticsErrors(
+                errorMapper.getPrimerError(exception)
             )
         }
     }

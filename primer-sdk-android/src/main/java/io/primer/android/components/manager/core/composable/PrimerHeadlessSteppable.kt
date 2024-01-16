@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PrimerHeadlessStep
 
-internal interface PrimerHeadlessStepable<T : PrimerHeadlessStep> {
+interface PrimerHeadlessSteppable<T : PrimerHeadlessStep> {
 
     val componentStep: Flow<T>
 }

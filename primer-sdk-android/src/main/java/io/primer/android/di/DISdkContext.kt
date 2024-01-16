@@ -67,6 +67,12 @@ internal object DISdkContext {
             if (NolPaySdkClassValidator().isSdkIncluded()) {
                 registerContainer(NolPayContainer(this))
             }
+
+            registerContainer(LoggingContainer(this))
+
+            registerContainer(BanksContainer())
+
+            registerContainer(WebRedirectContainer(this))
         }
     }
 }

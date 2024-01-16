@@ -1,7 +1,6 @@
 package io.primer.android.components.presentation.paymentMethods.nolpay.delegate
 
 import androidx.lifecycle.SavedStateHandle
-import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.data.payments.paymentMethods.nolpay.exception.NolPayIllegalValueKey
 import io.primer.android.components.domain.payments.metadata.phone.PhoneMetadataInteractor
 import io.primer.android.components.domain.payments.metadata.phone.model.PhoneMetadataParams
@@ -25,9 +24,8 @@ internal class NolPayLinkPaymentCardDelegate(
     private val getLinkPaymentCardOTPInteractor: NolPayGetLinkPaymentCardOTPInteractor,
     private val linkPaymentCardInteractor: NolPayLinkPaymentCardInteractor,
     private val phoneMetadataInteractor: PhoneMetadataInteractor,
-    analyticsInteractor: AnalyticsInteractor,
     sdkInitInteractor: NolPaySdkInitInteractor
-) : BaseNolPayDelegate(sdkInitInteractor, analyticsInteractor) {
+) : BaseNolPayDelegate(sdkInitInteractor) {
 
     suspend fun handleCollectedCardData(
         collectedData: NolPayLinkCollectableData?,

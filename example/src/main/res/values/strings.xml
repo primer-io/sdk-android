@@ -50,6 +50,11 @@
     <string name="universal_checkout_options">Universal Checkout Options</string>
     <string name="vault_manager_options">Vault Manager Options</string>
 
+    <string name="adyen_bank_selection_hint">Search banks</string>
+    <string name="adyen_bank_selection_title">Choose your bank</string>
+    <string name="adyen_bank_selection_load_error_text">Failed to load banks</string>
+    <string name="adyen_bank_selection_try_again_text">Try again</string>
+
     <string-array name="app_environments">
         <item>@string/env_sandbox</item>
         <item>@string/env_dev</item>

@@ -1,8 +1,8 @@
 package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
@@ -121,7 +121,7 @@ internal data class MessageProperties(
 }
 
 internal enum class MessageType {
-    VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED
+    VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED, INFO
 }
 
 internal enum class Severity {

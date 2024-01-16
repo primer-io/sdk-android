@@ -1,5 +1,6 @@
 package io.primer.android.payment.async.dotpay
 
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.HeadlessDefinition
@@ -28,10 +29,12 @@ internal class AdyenDotpayPaymentMethodDescriptor(
         get() = listOf(AsyncPaymentMethodBehaviour(this))
 
     override val sdkCapabilities: List<SDKCapability>
-        get() = listOf(SDKCapability.DROP_IN)
+        get() = listOf(SDKCapability.DROP_IN, SDKCapability.HEADLESS)
 
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
-    override val headlessDefinition: HeadlessDefinition?
-        get() = null
+    override val headlessDefinition: HeadlessDefinition =
+        HeadlessDefinition(
+            listOf(PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT)
+        )
 }

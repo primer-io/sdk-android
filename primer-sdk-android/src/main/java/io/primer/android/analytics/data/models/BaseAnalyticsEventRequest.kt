@@ -21,8 +21,8 @@ import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
-import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
 

@@ -15,7 +15,10 @@ import io.primer.android.components.manager.core.composable.PrimerValidationStat
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
@@ -38,6 +41,12 @@ internal class NolPayLinkCardComponentTest {
     lateinit var dataValidatorRegistry: NolPayLinkDataValidatorRegistry
 
     @RelaxedMockK
+    lateinit var eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
+
+    @RelaxedMockK
+    lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
+
+    @RelaxedMockK
     lateinit var errorMapper: NolPayErrorMapper
 
     @RelaxedMockK
@@ -50,6 +59,8 @@ internal class NolPayLinkCardComponentTest {
         component = NolPayLinkCardComponent(
             linkPaymentCardDelegate,
             dataValidatorRegistry,
+            eventLoggingDelegate,
+            errorLoggingDelegate,
             errorMapper,
             savedStateHandle
         )
@@ -64,7 +75,8 @@ internal class NolPayLinkCardComponentTest {
         }
 
         coVerify {
-            linkPaymentCardDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINK_CARD_START_METHOD,
                 hashMapOf()
             )
@@ -96,7 +108,7 @@ internal class NolPayLinkCardComponentTest {
         coVerify { linkPaymentCardDelegate.start() }
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
-            linkPaymentCardDelegate.logSdkAnalyticsErrors(
+            errorLoggingDelegate.logSdkAnalyticsErrors(
                 errorMapper.getPrimerError(exception)
             )
         }
@@ -113,7 +125,8 @@ internal class NolPayLinkCardComponentTest {
         }
 
         coVerify {
-            linkPaymentCardDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINK_CARD_UPDATE_COLLECTED_DATA_METHOD
             )
         }
@@ -203,7 +216,8 @@ internal class NolPayLinkCardComponentTest {
         }
 
         coVerify {
-            linkPaymentCardDelegate.logSdkAnalyticsEvent(
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINK_CARD_SUBMIT_DATA_METHOD,
                 hashMapOf()
             )
@@ -228,10 +242,8 @@ internal class NolPayLinkCardComponentTest {
         coVerify { linkPaymentCardDelegate.handleCollectedCardData(any(), any()) }
         coVerify(exactly = 0) { errorMapper.getPrimerError(any()) }
         coVerify(exactly = 0) {
-            linkPaymentCardDelegate.logSdkAnalyticsErrors(
-                errorMapper.getPrimerError(
-                    any()
-                )
+            errorLoggingDelegate.logSdkAnalyticsErrors(
+                errorMapper.getPrimerError(any())
             )
         }
     }
@@ -254,10 +266,8 @@ internal class NolPayLinkCardComponentTest {
         coVerify { linkPaymentCardDelegate.handleCollectedCardData(any(), any()) }
         coVerify { errorMapper.getPrimerError(exception) }
         coVerify {
-            linkPaymentCardDelegate.logSdkAnalyticsErrors(
-                errorMapper.getPrimerError(
-                    exception
-                )
+            errorLoggingDelegate.logSdkAnalyticsErrors(
+                errorMapper.getPrimerError(exception)
             )
         }
     }

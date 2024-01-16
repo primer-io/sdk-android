@@ -5,14 +5,13 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.domain.rpc.banks.BanksFilterInteractor
 import io.primer.android.domain.rpc.banks.models.IssuingBank
 import io.primer.android.domain.rpc.banks.models.IssuingBankFilterParams
 import io.primer.android.domain.rpc.banks.repository.IssuingBankRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -35,17 +34,31 @@ class BanksFilterInteractorTest {
     }
 
     @Test
-    fun `filterIssuingBanks() should return list of sorted and filtered banks IssuingBankRepository getCachedIssuingBanks() was success`() {
+    fun `filterIssuingBanks() should return list of sorted and filtered banks when IssuingBankRepository getCachedIssuingBanks() was success`() {
         val filter = "u"
         val params = IssuingBankFilterParams(filter)
-        coEvery { repository.getCachedIssuingBanks() }.returns(flowOf(banks))
+        coEvery { repository.getCachedIssuingBanks() } returns Result.success(banks)
         runTest {
-            val res = interactor(params).first()
+            val res = interactor(params).getOrThrow()
             assertEquals(
                 banks.sortedBy { it.name.lowercase() }
                     .filter { it.name.contains(filter) },
                 res
             )
+        }
+
+        coVerify { repository.getCachedIssuingBanks() }
+    }
+
+    @Test
+    fun `filterIssuingBanks() should return exception when IssuingBankRepository getCachedIssuingBanks() was failure`() {
+        val exception = mockk<Exception>()
+        val filter = "u"
+        val params = IssuingBankFilterParams(filter)
+        coEvery { repository.getCachedIssuingBanks() } returns Result.failure(exception)
+        runTest {
+            val res = interactor(params).exceptionOrNull()
+            assertEquals(exception, res)
         }
 
         coVerify { repository.getCachedIssuingBanks() }

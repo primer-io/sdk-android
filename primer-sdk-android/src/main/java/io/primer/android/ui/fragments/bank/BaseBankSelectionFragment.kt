@@ -7,6 +7,10 @@ import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -15,13 +19,18 @@ import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.components.manager.banks.composable.BanksCollectableData
+import io.primer.android.components.manager.banks.composable.BanksStep
+import io.primer.android.components.manager.componentWithRedirect.PrimerHeadlessUniversalCheckoutComponentWithRedirectManager
+import io.primer.android.components.manager.componentWithRedirect.component.BanksComponent
+import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.di.DISdkContext
 import io.primer.android.di.RpcContainer
 import io.primer.android.di.extension.inject
-import io.primer.android.di.extension.viewModel
-import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
+import io.primer.android.ui.BankItem
 import io.primer.android.ui.BankSelectionAdapter
 import io.primer.android.ui.BankSelectionAdapterListener
 import io.primer.android.ui.extensions.autoCleaned
@@ -29,18 +38,14 @@ import io.primer.android.ui.extensions.getCollapsedSheetHeight
 import io.primer.android.ui.fragments.bank.binding.BaseBankSelectionBinding
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.utils.ImageLoader
-import io.primer.android.viewmodel.TokenizationViewModel
-import io.primer.android.viewmodel.TokenizationViewModelFactory
-import io.primer.android.viewmodel.bank.BankSelectionViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
+@Suppress("detekt:TooManyFunctions")
 @ExperimentalCoroutinesApi
 internal abstract class BaseBankSelectionFragment :
     BaseFragment(),
     BankSelectionAdapterListener {
-
-    protected val tokenizationViewModel by viewModel<TokenizationViewModel,
-        TokenizationViewModelFactory>()
 
     private val imageLoader: ImageLoader by inject()
 
@@ -52,8 +57,17 @@ internal abstract class BaseBankSelectionFragment :
         )
     }
 
+    private val paymentMethodType: String
+        get() = primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
+
     protected abstract val baseBinding: BaseBankSelectionBinding
-    protected abstract val viewModel: BankSelectionViewModel
+
+    private var banks: List<BankItem>? = null
+
+    protected val component: BanksComponent by lazy {
+        PrimerHeadlessUniversalCheckoutComponentWithRedirectManager(viewModelStoreOwner = this)
+            .provide(paymentMethodType = paymentMethodType)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,10 +93,7 @@ internal abstract class BaseBankSelectionFragment :
     }
 
     override fun onBankSelected(issuerId: String) {
-        viewModel.onBankSelected(issuerId)
-        val descriptor = primerViewModel.selectedPaymentMethod.value as AsyncPaymentMethodDescriptor
-        descriptor.appendTokenizableValue("sessionInfo", "issuer", issuerId)
-        primerViewModel.executeBehaviour(descriptor.behaviours.first())
+        component.updateCollectedData(BanksCollectableData.BankId(issuerId))
     }
 
     protected open fun setupViews() {
@@ -129,21 +140,99 @@ internal abstract class BaseBankSelectionFragment :
         adapter = BankSelectionAdapter(this, imageLoader, theme)
         baseBinding.recyclerView.adapter = adapter
 
+        baseBinding.searchBar.setTextColor(
+            theme.input.text.defaultColor.getColor(
+                requireContext(),
+                theme.isDarkMode
+            )
+        )
+
+        baseBinding.searchBar.doAfterTextChanged { newText ->
+            component.updateCollectedData(
+                BanksCollectableData.Filter(newText.toString())
+            )
+            baseBinding.chooseBankDividerBottom.visibility =
+                when (newText.isNullOrBlank()) {
+                    false -> View.INVISIBLE
+                    true -> View.VISIBLE
+                }
+        }
+
         setupErrorViews()
         adjustBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
     }
 
     protected open fun setupObservers() {
-        viewModel.itemsLiveData.observe(viewLifecycleOwner) {
-            adapter.items = it
-            onLoadingSuccess()
-        }
-        viewModel.errorLiveData.observe(viewLifecycleOwner) {
-            onLoadingError()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { collectBankSteps() }
+
+                launch { collectComponentErrors() }
+
+                launch { collectValidationStatuses() }
+            }
         }
 
-        viewModel.loadingLiveData.observe(viewLifecycleOwner) {
-            onLoading(it)
+        primerViewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
+    }
+
+    private fun onKeyboardVisibilityChanged(visible: Boolean) {
+        if (visible) {
+            adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
+        }
+    }
+
+    private suspend fun collectBankSteps() {
+        component.componentStep.collect { bankStep ->
+            when (bankStep) {
+                is BanksStep.Loading -> {
+                    banks = null
+                    onLoading(true)
+                }
+
+                is BanksStep.BanksRetrieved -> {
+                    onLoading(false)
+                    adapter.items = bankStep.banks.map { issuingBank ->
+                        BankItem(
+                            id = issuingBank.id,
+                            name = issuingBank.name,
+                            logoUrl = issuingBank.iconUrl
+                        )
+                    }.also { banks = it }
+                    onLoadingSuccess()
+                }
+            }
+        }
+    }
+
+    private suspend fun collectComponentErrors() {
+        component.componentError.collect {
+            onLoading(false)
+            onLoadingError()
+        }
+    }
+
+    private suspend fun collectValidationStatuses() {
+        component.componentValidationStatus.collect {
+            if (it is PrimerValidationStatus.Valid &&
+                it.collectableData is BanksCollectableData.BankId
+            ) {
+                val issuerId = it.collectableData.id
+
+                adapter.items = banks.orEmpty().map { bankItem ->
+                    if (bankItem.id == issuerId) {
+                        bankItem.toLoadingBankItem()
+                    } else {
+                        bankItem.toDisabledBankItem()
+                    }
+                }
+                onLoadingSuccess()
+                logAnalyticsBankSelected(issuerId)
+
+                component.submit()
+            } else {
+                // no-op
+            }
         }
     }
 
@@ -168,9 +257,7 @@ internal abstract class BaseBankSelectionFragment :
     }
 
     private fun loadData() {
-        viewModel.loadData(
-            primerViewModel.selectedPaymentMethod.value as? AsyncPaymentMethodDescriptor ?: return
-        )
+        component.start()
     }
 
     private fun onLoadingSuccess() {
@@ -210,7 +297,7 @@ internal abstract class BaseBankSelectionFragment :
         )
     }
 
-    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
+    private fun logAnalyticsViewed() = addAnalyticsEvent(
         UIAnalyticsParams(
             AnalyticsAction.VIEW,
             ObjectType.VIEW,
@@ -222,7 +309,7 @@ internal abstract class BaseBankSelectionFragment :
         )
     )
 
-    private fun logAnalyticsBackPressed() = viewModel.addAnalyticsEvent(
+    private fun logAnalyticsBackPressed() = addAnalyticsEvent(
         UIAnalyticsParams(
             AnalyticsAction.CLICK,
             ObjectType.BUTTON,
@@ -233,4 +320,18 @@ internal abstract class BaseBankSelectionFragment :
             }
         )
     )
+
+    private fun logAnalyticsBankSelected(issuerId: String) = addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.CLICK,
+            ObjectType.LIST_ITEM,
+            Place.BANK_SELECTION_LIST,
+            ObjectId.SELECT,
+            BankIssuerContextParams(issuerId)
+        )
+    )
+
+    private fun addAnalyticsEvent(params: UIAnalyticsParams) {
+        primerViewModel.addAnalyticsEvent(params)
+    }
 }
