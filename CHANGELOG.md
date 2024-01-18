@@ -1,3 +1,9 @@
+## 2.22.0 (2024-01-18)
+
+### Feat
+
+- implement form with redirect payment manager, bank list with web redirect support, update iDeal, DotPay drop-in to use new payment manager (#467)
+
 ## 2.21.0 (2023-12-15)
 
 ### Feat
