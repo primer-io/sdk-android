@@ -13,11 +13,12 @@ import io.primer.android.http.exception.JsonEncodingException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.Headers
-import okhttp3.MediaType
+import okhttp3.Headers.Companion.toHeaders
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -38,7 +39,7 @@ internal class PrimerHttpClient(
                 executeRequest(
                     Request.Builder()
                         .url(url)
-                        .headers(Headers.of(headers))
+                        .headers(headers.toHeaders())
                         .get()
                         .build()
                 )
@@ -52,7 +53,7 @@ internal class PrimerHttpClient(
         executeRequest(
             Request.Builder()
                 .url(url)
-                .headers(Headers.of(headers))
+                .headers(headers.toHeaders())
                 .get()
                 .build()
         )
@@ -67,7 +68,7 @@ internal class PrimerHttpClient(
                 executeRequest(
                     Request.Builder()
                         .url(url)
-                        .headers(Headers.of(headers))
+                        .headers(headers.toHeaders())
                         .post(getRequestBody(request))
                         .build()
                 )
@@ -81,7 +82,7 @@ internal class PrimerHttpClient(
     ): R = executeRequest(
         Request.Builder()
             .url(url)
-            .headers(Headers.of(headers))
+            .headers(headers.toHeaders())
             .post(getRequestBody(request))
             .build()
     )
@@ -92,7 +93,7 @@ internal class PrimerHttpClient(
     ): R = executeRequest(
         Request.Builder()
             .url(url)
-            .headers(Headers.of(headers))
+            .headers(headers.toHeaders())
             .delete()
             .build()
     )
@@ -106,13 +107,13 @@ internal class PrimerHttpClient(
 
         if (!response.isSuccessful) {
             val error = APIError.create(response)
-            throw HttpException(response.code(), error)
+            throw HttpException(response.code, error)
         }
 
-        val body: ResponseBody? = response.body()
+        val body: ResponseBody? = response.body
 
         val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-            val json = JSONObject(response.body()?.string() ?: "{}")
+            val json = JSONObject(response.body?.string() ?: "{}")
             body?.close()
             continuation.resume(json)
         }
@@ -130,10 +131,8 @@ internal class PrimerHttpClient(
                 is JSONObjectSerializer -> serializer.serialize(request).toString()
                 is JSONArraySerializer -> serializer.serialize(request).toString()
             }
-            RequestBody.create(
-                MediaType.get(CONTENT_TYPE_APPLICATION_JSON),
-                serialized
-            )
+            serialized
+                .toRequestBody(CONTENT_TYPE_APPLICATION_JSON.toMediaType())
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)
         }

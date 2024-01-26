@@ -25,8 +25,8 @@ internal class HttpAnalyticsInterceptor :
             NetworkCallProperties(
                 NetworkCallType.REQUEST_START,
                 id,
-                request.url().toString(),
-                request.method()
+                request.url.toString(),
+                request.method
             )
         )
 
@@ -37,10 +37,10 @@ internal class HttpAnalyticsInterceptor :
                 NetworkCallProperties(
                     NetworkCallType.REQUEST_END,
                     id,
-                    request.url().toString(),
-                    request.method(),
-                    response.code(),
-                    if (response?.isSuccessful == true) {
+                    request.url.toString(),
+                    request.method,
+                    response.code,
+                    if (response.isSuccessful) {
                         null
                     } else {
                         response.peekBody(Long.MAX_VALUE).string()
@@ -52,8 +52,8 @@ internal class HttpAnalyticsInterceptor :
                 NetworkCallProperties(
                     NetworkCallType.REQUEST_END,
                     id,
-                    request.url().toString(),
-                    request.method(),
+                    request.url.toString(),
+                    request.method,
                     null,
                     e.stackTraceToString()
                 )

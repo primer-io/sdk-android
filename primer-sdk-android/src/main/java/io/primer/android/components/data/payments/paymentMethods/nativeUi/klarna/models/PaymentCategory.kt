@@ -12,10 +12,10 @@ internal data class PaymentCategory(
 ) : JSONDeserializable {
 
     companion object {
-        private const val IDENTIFIER_FIELD = "identifier"
-        private const val NAME_FIELD = "name"
-        private const val DESCRIPTIVE_ASSET_FIELD = "descriptiveAssetUrl"
-        private const val STANDARD_ASSET_FIELD = "standardAssetUrl"
+        const val IDENTIFIER_FIELD = "identifier"
+        const val NAME_FIELD = "name"
+        const val DESCRIPTIVE_ASSET_FIELD = "descriptiveAssetUrl"
+        const val STANDARD_ASSET_FIELD = "standardAssetUrl"
 
         @JvmField
         val deserializer = object : JSONDeserializer<PaymentCategory> {

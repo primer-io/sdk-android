@@ -44,7 +44,6 @@ android {
 
 dependencies {
     implementation libs.networking.okhttp
-    implementation libs.networking.okhttp.interceptor
 
     implementation libs.kotlin.stdlib
     implementation libs.kotlin.coroutines

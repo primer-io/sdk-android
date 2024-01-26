@@ -5,13 +5,27 @@ import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataRequest
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataResponse
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateSessionDataRequest
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateSessionDataResponse
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalConfirmBillingAgreementDataRequest
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalCreateBillingAgreementDataRequest
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalCreateOrderDataRequest
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalOrderInfoDataRequest
+import io.primer.android.components.data.payments.paymentMethods.nolpay.model.NolPaySecretDataRequest
+import io.primer.android.core.logging.BlacklistedHttpHeaderProviderRegistry
+import io.primer.android.core.logging.BlacklistedHttpHeadersProvider
+import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
 import io.primer.android.core.logging.internal.HttpLoggerInterceptor
+import io.primer.android.data.configuration.models.ConfigurationDataResponse
+import io.primer.android.data.rpc.banks.models.IssuingBankDataRequest
+import io.primer.android.data.rpc.banks.models.IssuingBankResultDataResponse
 import io.primer.android.data.token.datasource.LocalClientTokenDataSource
 import io.primer.android.http.PrimerHttpClient
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 
 internal class NetworkContainer(private val sdk: SdkContainer) : DependencyContainer() {
@@ -19,7 +33,37 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
     override fun registerInitialDependencies() {
         registerSingleton { HttpAnalyticsInterceptor() }
 
-        registerSingleton { HttpLoggerInterceptor(sdk.resolve()) }
+        registerSingleton {
+            HttpLoggerInterceptor(
+                logReporter = sdk.resolve(),
+                blacklistedHttpHeaderProviderRegistry =
+                sdk.resolve<BlacklistedHttpHeaderProviderRegistry>().apply {
+                    register(
+                        sdk.resolve<BlacklistedHttpHeadersProvider>(
+                            HttpLogObfuscationContainer.DEFAULT_NAME
+                        )
+                    )
+                },
+                whitelistedHttpBodyKeyProviderRegistry =
+                sdk.resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
+                    listOf(
+                        CreateSessionDataRequest.provider,
+                        CreateSessionDataResponse.provider,
+                        CreateCustomerTokenDataRequest.provider,
+                        CreateCustomerTokenDataResponse.provider,
+                        PaypalCreateOrderDataRequest.provider,
+                        PaypalOrderInfoDataRequest.provider,
+                        PaypalCreateBillingAgreementDataRequest.provider,
+                        PaypalConfirmBillingAgreementDataRequest.provider,
+                        IssuingBankDataRequest.provider,
+                        IssuingBankResultDataResponse.provider,
+                        NolPaySecretDataRequest.provider,
+                        ConfigurationDataResponse.provider
+                    ).forEach(::register)
+                },
+                localConfigurationDataSource = sdk.resolve()
+            )
+        }
 
         registerSingleton {
             Cache(
@@ -62,13 +106,6 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
                     .build()
                     .let { chain.proceed(it) }
             }
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-            )
-        }
         builder.addInterceptor(resolve<HttpAnalyticsInterceptor>())
         builder.addInterceptor(resolve<HttpLoggerInterceptor>())
         return builder.build()

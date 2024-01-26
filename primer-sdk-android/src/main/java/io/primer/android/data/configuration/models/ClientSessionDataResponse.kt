@@ -45,8 +45,8 @@ internal data class ClientSessionDataResponse(
             }
 
         companion object {
-            private const val VAULT_ON_SUCCESS_FIELD = "vaultOnSuccess"
-            private const val OPTIONS_FIELD = "options"
+            const val VAULT_ON_SUCCESS_FIELD = "vaultOnSuccess"
+            const val OPTIONS_FIELD = "options"
 
             @JvmField
             val deserializer = object : JSONDeserializer<PaymentMethodDataResponse> {
@@ -72,9 +72,9 @@ internal data class ClientSessionDataResponse(
         val networks: List<NetworkOptionDataResponse>?
     ) : JSONDeserializable {
         companion object {
-            private const val TYPE_FIELD = "type"
-            private const val SURCHARGE_FIELD = "surcharge"
-            private const val NETWORKS_FIELD = "networks"
+            const val TYPE_FIELD = "type"
+            const val SURCHARGE_FIELD = "surcharge"
+            const val NETWORKS_FIELD = "networks"
 
             @JvmField
             val deserializer = object : JSONDeserializer<PaymentMethodOptionDataResponse> {
@@ -98,8 +98,8 @@ internal data class ClientSessionDataResponse(
         val surcharge: Int
     ) : JSONDeserializable {
         companion object {
-            private const val TYPE_FIELD = "type"
-            private const val SURCHARGE_FIELD = "surcharge"
+            const val TYPE_FIELD = "type"
+            const val SURCHARGE_FIELD = "surcharge"
 
             @JvmField
             val deserializer = object : JSONDeserializer<NetworkOptionDataResponse> {
@@ -129,15 +129,15 @@ internal data class ClientSessionDataResponse(
     fun toClientSession() = ClientSession(this)
 
     companion object {
-        private const val CLIENT_SESSION_ID_FIELD = "clientSessionId"
+        const val CLIENT_SESSION_ID_FIELD = "clientSessionId"
         private const val CUSTOMER_ID_FIELD = "customerId"
         private const val ORDER_ID_FIELD = "orderId"
         private const val TEST_ID_FIELD = "testId"
         private const val AMOUNT_FIELD = "amount"
         private const val CURRENCY_CODE_FIELD = "currencyCode"
         private const val CUSTOMER_DATA_FIELD = "customer"
-        private const val ORDER_DATA_FIELD = "order"
-        private const val PAYMENT_METHOD_DATA_FIELD = "paymentMethod"
+        const val ORDER_DATA_FIELD = "order"
+        const val PAYMENT_METHOD_DATA_FIELD = "paymentMethod"
 
         @JvmField
         val deserializer = object : JSONDeserializer<ClientSessionDataResponse> {

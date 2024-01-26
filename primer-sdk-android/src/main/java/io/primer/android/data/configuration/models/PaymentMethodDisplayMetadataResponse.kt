@@ -27,9 +27,9 @@ internal data class PaymentMethodDisplayMetadataResponse(
             val dark: String?
         ) : JSONDeserializable {
             companion object {
-                private const val COLORED_FIELD = "colored"
-                private const val LIGHT_FIELD = "light"
-                private const val DARK_FIELD = "dark"
+                const val COLORED_FIELD = "colored"
+                const val LIGHT_FIELD = "light"
+                const val DARK_FIELD = "dark"
 
                 @JvmField
                 val deserializer = object : JSONDeserializer<IconUrlDataResponse> {
@@ -51,9 +51,9 @@ internal data class PaymentMethodDisplayMetadataResponse(
             val dark: String?
         ) : JSONDeserializable {
             companion object {
-                private const val COLORED_FIELD = "colored"
-                private const val LIGHT_FIELD = "light"
-                private const val DARK_FIELD = "dark"
+                const val COLORED_FIELD = "colored"
+                const val LIGHT_FIELD = "light"
+                const val DARK_FIELD = "dark"
 
                 @JvmField
                 val deserializer = object : JSONDeserializer<ColorDataResponse> {
@@ -75,9 +75,9 @@ internal data class PaymentMethodDisplayMetadataResponse(
             val dark: Float?
         ) : JSONDeserializable {
             companion object {
-                private const val COLORED_FIELD = "colored"
-                private const val LIGHT_FIELD = "light"
-                private const val DARK_FIELD = "dark"
+                const val COLORED_FIELD = "colored"
+                const val LIGHT_FIELD = "light"
+                const val DARK_FIELD = "dark"
 
                 @JvmField
                 val deserializer = object : JSONDeserializer<BorderWidthDataResponse> {
@@ -94,14 +94,14 @@ internal data class PaymentMethodDisplayMetadataResponse(
         }
 
         companion object {
-            private const val ICON_URL_DATA_FIELD = "iconUrl"
-            private const val BACKGROUND_COLOR_DATA_FIELD = "backgroundColor"
-            private const val BORDER_COLOR_DATA_FIELD = "borderColor"
-            private const val BORDER_WIDTH_DATA_FIELD = "borderWidth"
-            private const val CORNER_RADIUS_FIELD = "cornerRadius"
-            private const val TEXT_FIELD = "text"
-            private const val TEXT_COLOR_DATA_FIELD = "textColor"
-            private const val ICON_POSITION_FIELD = "iconPositionRelativeToText"
+            const val ICON_URL_DATA_FIELD = "iconUrl"
+            const val BACKGROUND_COLOR_DATA_FIELD = "backgroundColor"
+            const val BORDER_COLOR_DATA_FIELD = "borderColor"
+            const val BORDER_WIDTH_DATA_FIELD = "borderWidth"
+            const val CORNER_RADIUS_FIELD = "cornerRadius"
+            const val TEXT_FIELD = "text"
+            const val TEXT_COLOR_DATA_FIELD = "textColor"
+            const val ICON_POSITION_FIELD = "iconPositionRelativeToText"
 
             @JvmField
             val deserializer = object : JSONDeserializer<ButtonDataResponse> {
@@ -138,7 +138,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
     }
 
     companion object {
-        private const val BUTTON_DATA_FIELD = "button"
+        const val BUTTON_DATA_FIELD = "button"
 
         @JvmField
         val deserializer = object : JSONDeserializer<PaymentMethodDisplayMetadataResponse> {

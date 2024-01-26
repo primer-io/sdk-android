@@ -18,7 +18,7 @@ import okhttp3.Response
 import java.io.BufferedInputStream
 import java.util.WeakHashMap
 
-internal class ImageLoader constructor(private val okHttpClient: OkHttpClient) {
+internal class ImageLoader(private val okHttpClient: OkHttpClient) {
 
     private val jobs = WeakHashMap<ImageView, Job>()
     private val scope =
@@ -54,7 +54,7 @@ internal class ImageLoader constructor(private val okHttpClient: OkHttpClient) {
             .newCall(request)
             .await()
 
-        val bufferedInputStream = BufferedInputStream(response.body()?.byteStream())
+        val bufferedInputStream = BufferedInputStream(response.body?.byteStream())
         bufferedInputStream.use {
             BitmapFactory.decodeStream(bufferedInputStream)
         }

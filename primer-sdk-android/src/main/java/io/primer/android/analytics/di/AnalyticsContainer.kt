@@ -15,6 +15,8 @@ import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSour
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
 import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
+import io.primer.android.core.logging.BlacklistedHttpHeaderProviderRegistry
+import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
 import io.primer.android.di.DependencyContainer
 import io.primer.android.di.SdkContainer
 import io.primer.android.http.PrimerHttpClient
@@ -24,7 +26,18 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
-        registerSingleton { PrimerHttpClient(HttpClientFactory().build()) }
+        registerSingleton {
+            PrimerHttpClient(
+                HttpClientFactory(
+                    logReporter = sdk.resolve(),
+                    blacklistedHttpHeaderProviderRegistry =
+                    sdk.resolve<BlacklistedHttpHeaderProviderRegistry>(),
+                    whitelistedHttpBodyKeyProviderRegistry =
+                    sdk.resolve<WhitelistedHttpBodyKeyProviderRegistry>(),
+                    localConfigurationDataSource = sdk.resolve()
+                ).build()
+            )
+        }
 
         val localAnalyticsDataSource = LocalAnalyticsDataSource.instance
         val analyticsFileProvider = AnalyticsFileProvider(sdk.resolve())

@@ -40,13 +40,13 @@ internal data class OrderDataResponse(
         )
 
         companion object {
-            private const val ITEM_ID_FIELD = "itemId"
+            const val ITEM_ID_FIELD = "itemId"
             private const val DESCRIPTION_FIELD = "description"
-            private const val UNIT_AMOUNT_FIELD = "amount"
-            private const val QUANTITY_FIELD = "quantity"
-            private const val DISCOUNT_AMOUNT_FIELD = "discountAmount"
-            private const val TAX_AMOUNT_FIELD = "taxAmount"
-            private const val TAX_CODE_FIELD = "taxCode"
+            const val UNIT_AMOUNT_FIELD = "amount"
+            const val QUANTITY_FIELD = "quantity"
+            const val DISCOUNT_AMOUNT_FIELD = "discountAmount"
+            const val TAX_AMOUNT_FIELD = "taxAmount"
+            const val TAX_CODE_FIELD = "taxCode"
 
             @JvmField
             val deserializer = object : JSONDeserializer<LineItemDataResponse> {
@@ -91,13 +91,13 @@ internal data class OrderDataResponse(
     fun toOrder() = PrimerOrder(countryCode)
 
     companion object {
-        private const val ORDER_ID_FIELD = "orderId"
-        private const val CURRENCY_CODE_FIELD = "currencyCode"
-        private const val MERCHANT_AMOUNT_FIELD = "merchantAmount"
-        private const val TOTAL_ORDER_AMOUNT_FIELD = "totalOrderAmount"
-        private const val COUNTRY_CODE_FIELD = "countryCode"
-        private const val LINE_ITEMS_FIELD = "lineItems"
-        private const val FEES_FIELD = "fees"
+        const val ORDER_ID_FIELD = "orderId"
+        const val CURRENCY_CODE_FIELD = "currencyCode"
+        const val MERCHANT_AMOUNT_FIELD = "merchantAmount"
+        const val TOTAL_ORDER_AMOUNT_FIELD = "totalOrderAmount"
+        const val COUNTRY_CODE_FIELD = "countryCode"
+        const val LINE_ITEMS_FIELD = "lineItems"
+        const val FEES_FIELD = "fees"
 
         @JvmField
         val deserializer = object : JSONDeserializer<OrderDataResponse> {

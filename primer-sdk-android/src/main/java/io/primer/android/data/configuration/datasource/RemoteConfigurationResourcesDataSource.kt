@@ -66,7 +66,7 @@ internal class RemoteConfigurationResourcesDataSource(
                                         )
                                         if (it.isSuccessful) {
                                             val bufferedInputStream =
-                                                BufferedInputStream(it.body()?.byteStream())
+                                                BufferedInputStream(it.body?.byteStream())
                                             val file = imagesFileProvider.getFile(
                                                 "${config.type}_${urlColor.second}".lowercase()
                                             )

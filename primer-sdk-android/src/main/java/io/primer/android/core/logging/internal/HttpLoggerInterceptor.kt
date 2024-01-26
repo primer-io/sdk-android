@@ -1,55 +1,188 @@
 package io.primer.android.core.logging.internal
 
+import io.primer.android.BuildConfig
+import io.primer.android.core.extensions.logBody
+import io.primer.android.core.extensions.logHeaders
+import io.primer.android.core.logging.BlacklistedHttpHeaderProviderRegistry
+import io.primer.android.core.logging.ConsolePrimerLogger
+import io.primer.android.core.logging.PrimerLogging
+import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 
-internal class HttpLoggerInterceptor(private val logReporter: LogReporter) : Interceptor {
+@Suppress("LongParameterList")
+internal class HttpLoggerInterceptor(
+    private val logReporter: LogReporter,
+    private val level: Level = Level.BODY,
+    private val blacklistedHttpHeaderProviderRegistry: BlacklistedHttpHeaderProviderRegistry,
+    private val whitelistedHttpBodyKeyProviderRegistry: WhitelistedHttpBodyKeyProviderRegistry,
+    private val localConfigurationDataSource: LocalConfigurationDataSource,
+    private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() },
+    private val isDebugBuild: Boolean = BuildConfig.DEBUG
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val requestStartTime = System.currentTimeMillis()
+        val blacklistedHeaders = blacklistedHttpHeaderProviderRegistry.getAll()
+            .flatMap { it.values }
+        val whitelistedBodyKeys = whitelistedHttpBodyKeyProviderRegistry.getAll()
+            .flatMap { it.values }
 
-        logReporter.apply {
-            debug("---> ${request.method()} ${request.url()}")
-            request.body()?.let { requestBody ->
-                debug("Content-Type: ${requestBody.contentType()}")
-                debug("Content-Length: ${requestBody.contentLength()}")
-            }
-            debug("---> END ${request.method()}")
+        val request = chain.request()
+        val obfuscationLevel = request.obfuscationLevel
+        val requestStartTime = getCurrentTimeMillis()
+
+        val shouldLogBody = level == Level.BODY
+        val shouldLogHeaders = shouldLogBody || level >= Level.HEADERS
+
+        with(request) {
+            logHeaders(
+                logReporter = logReporter,
+                shouldLogHeaders = shouldLogHeaders,
+                blacklistedHeaders = blacklistedHeaders,
+                obfuscationLevel = obfuscationLevel,
+                obfuscationString = OBFUSCATION_STRING
+            )
+            logBody(
+                logReporter = logReporter,
+                shouldLogBody = shouldLogBody,
+                whitelistedBodyKeys = whitelistedBodyKeys,
+                obfuscationLevel = obfuscationLevel,
+                obfuscationString = OBFUSCATION_STRING
+            )
         }
 
         val response: Response?
         try {
             response = chain.proceed(request)
 
-            val errorBody = if (response?.isSuccessful == true) {
-                null
-            } else {
-                response.peekBody(Long.MAX_VALUE).string()
-            }
-
-            logReporter.apply {
-                debug(
-                    "<--- ${response.code()} ${request.method()} ${request.url()}" +
-                        " (${System.currentTimeMillis() - requestStartTime}ms)"
+            with(response) {
+                logHeaders(
+                    logReporter = logReporter,
+                    requestTime = getCurrentTimeMillis() - requestStartTime,
+                    shouldLogHeaders = shouldLogHeaders,
+                    blacklistedHeaders = blacklistedHeaders,
+                    obfuscationLevel = obfuscationLevel,
+                    obfuscationString = OBFUSCATION_STRING
                 )
-                response.body()?.let { responseBody ->
-                    debug("Content-Type: ${responseBody.contentType()}")
-                    debug("Content-Length: ${responseBody.contentLength()}")
-                }
-                errorBody?.let { body ->
-                    debug("Network Error Response: $body")
-                }
-                debug("<--- END HTTP")
+                logBody(
+                    logReporter = logReporter,
+                    shouldLogBody = shouldLogBody,
+                    whitelistedBodyKeys = whitelistedBodyKeys,
+                    obfuscationLevel = obfuscationLevel,
+                    obfuscationString = OBFUSCATION_STRING
+                )
             }
         } catch (e: IOException) {
-            logReporter.apply {
-                debug("<--- ${request.method()} ${request.url()}")
-                debug("HTTP failed: ${e.message}")
-            }
+            logReporter.debug(
+                """
+                    <-- ${request.method} ${request.url}
+                    HTTP failed: ${e.message}
+                    <-- END HTTP
+                """.trimIndent()
+            )
             throw e
         }
 
         return response
+    }
+
+    private val Request.obfuscationLevel: ObfuscationLevel
+        get() = when {
+            isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
+                ObfuscationLevel.NONE
+            }
+
+            containsPciUrl -> ObfuscationLevel.REDACT_BODY
+
+            else -> ObfuscationLevel.LIST
+        }
+
+    private val Request.containsPciUrl: Boolean
+        get() {
+            val configuration = localConfigurationDataSource.getConfigurationNullable() ?: run {
+                logReporter.warn("Failed to get configuration")
+                return false
+            }
+
+            return url.toUrl().toString().startsWith(configuration.pciUrl)
+        }
+
+    private companion object {
+        const val OBFUSCATION_STRING = "****"
+    }
+
+    internal enum class ObfuscationLevel {
+        /**
+         * Obfuscation is disabled
+         */
+        NONE,
+
+        /**
+         * Headers (bodies) are obfuscated based on a blacklist (whitelist)
+         */
+        LIST,
+
+        /**
+         * The entire body is redacted
+         */
+        REDACT_BODY
+    }
+
+    enum class Level {
+        /**
+         * Logs request and response lines.
+         *
+         * Example:
+         * ```
+         * --> POST /greeting (3-byte body)
+         *
+         * <-- 200 POST /greeting (22ms, 6-byte body)
+         * ```
+         */
+        BASIC,
+
+        /**
+         * Logs request and response lines and their respective headers.
+         *
+         * Example:
+         * ```
+         * --> POST /greeting (3-byte body)
+         * Host: example.com
+         * Content-Type: plain/text
+         * Content-Length: 3
+         * --> END POST
+         *
+         * <-- 200 POST /greeting (22ms, 6-byte body)
+         * Content-Type: plain/text
+         * Content-Length: 6
+         * <-- END HTTP
+         * ```
+         */
+        HEADERS,
+
+        /**
+         * Logs request and response lines and their respective headers and bodies (if present).
+         *
+         * Example:
+         * ```
+         * --> POST /greeting (3-byte body)
+         * Host: example.com
+         * Content-Type: plain/text
+         * Content-Length: 3
+         *
+         * Hi?
+         * --> END POST
+         *
+         * <-- 200 POST /greeting (22ms, 6-byte body)
+         * Content-Type: plain/text
+         * Content-Length: 6
+         *
+         * Hello!
+         * <-- END HTTP
+         * ```
+         */
+        BODY
     }
 }

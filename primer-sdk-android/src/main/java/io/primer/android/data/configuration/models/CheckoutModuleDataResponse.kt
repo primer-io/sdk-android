@@ -16,13 +16,12 @@ internal data class CheckoutModuleDataResponse(
     fun toCheckoutModule() = CheckoutModule(type, options)
 
     companion object {
-        private const val TYPE_FIELD = "type"
-        private const val REQUEST_URL_FIELD = "requestUrl"
-        private const val OPTIONS_FIELD = "options"
+        const val TYPE_FIELD = "type"
+        const val REQUEST_URL_FIELD = "requestUrl"
+        const val OPTIONS_FIELD = "options"
 
         @JvmField
-        val deserializer = object :
-            JSONDeserializer<CheckoutModuleDataResponse> {
+        val deserializer = object : JSONDeserializer<CheckoutModuleDataResponse> {
 
             override fun deserialize(t: JSONObject): CheckoutModuleDataResponse {
                 return CheckoutModuleDataResponse(

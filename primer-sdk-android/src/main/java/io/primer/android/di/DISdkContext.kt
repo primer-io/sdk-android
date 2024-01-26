@@ -20,6 +20,8 @@ internal object DISdkContext {
                 )
             )
 
+            registerContainer(HttpLogObfuscationContainer())
+
             registerContainer(ImageLoaderContainer(this))
 
             registerContainer(NetworkContainer(this))

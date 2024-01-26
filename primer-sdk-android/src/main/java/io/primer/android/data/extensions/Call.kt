@@ -13,7 +13,7 @@ internal suspend inline fun Call.await(): Response =
     suspendCancellableCoroutine { continuation ->
         val callback = object : Callback, CompletionHandler {
             override fun onFailure(call: Call, e: IOException) {
-                if (!call.isCanceled) {
+                if (!call.isCanceled()) {
                     continuation.resumeWithException(e)
                 }
             }

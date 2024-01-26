@@ -12,9 +12,9 @@ internal data class LocaleDataRequest(
 ) : JSONObjectSerializable {
 
     companion object {
-        private const val COUNTRY_CODE_FIELD = "countryCode"
-        private const val CURRENCY_CODE_FIELD = "currencyCode"
-        private const val LOCALE_CODE_FIELD = "localeCode"
+        const val COUNTRY_CODE_FIELD = "countryCode"
+        const val CURRENCY_CODE_FIELD = "currencyCode"
+        const val LOCALE_CODE_FIELD = "localeCode"
 
         @JvmField
         val serializer = object : JSONObjectSerializer<LocaleDataRequest> {

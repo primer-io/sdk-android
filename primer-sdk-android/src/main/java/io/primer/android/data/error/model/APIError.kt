@@ -74,7 +74,7 @@ internal data class APIError(
 
         fun create(response: Response): APIError {
             return JSONSerializationUtils.getDeserializer<APIError>()
-                .deserialize(getErrorFromContent(response.body()))
+                .deserialize(getErrorFromContent(response.body))
         }
 
         private fun getErrorFromContent(body: ResponseBody?): JSONObject {

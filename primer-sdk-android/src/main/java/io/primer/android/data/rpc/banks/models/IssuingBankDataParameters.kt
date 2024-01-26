@@ -10,8 +10,8 @@ internal data class IssuingBankDataParameters(
 ) : JSONObjectSerializable {
 
     companion object {
-        private const val PAYMENT_METHOD_FIELD = "paymentMethod"
-        private const val LOCALE_FIELD = "locale"
+        const val PAYMENT_METHOD_FIELD = "paymentMethod"
+        const val LOCALE_FIELD = "locale"
 
         @JvmField
         val serializer = object : JSONObjectSerializer<IssuingBankDataParameters> {
