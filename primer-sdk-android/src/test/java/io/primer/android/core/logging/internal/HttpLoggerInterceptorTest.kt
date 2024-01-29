@@ -414,7 +414,7 @@ class HttpLoggerInterceptorTest {
     }
 
     @Test
-    fun `should log headers and not obfuscate sensitive headers when intercept() is called and with PCI url`() {
+    fun `should log headers and obfuscate sensitive headers when intercept() is called and with PCI url`() {
         initInterceptor(
             primerLogger = customPrimerLogger,
             localConfigurationDataSource = pciLocalConfigurationDataSource
@@ -466,7 +466,7 @@ class HttpLoggerInterceptorTest {
                     Content-Length: 2
                     Primer-SDK-Version: 2.19.2
                     Primer-SDK-Client: ANDROID_NATIVE
-                    Primer-Client-Token: 0928df7c-ed97-4c2b-9ca7-3774c9252b56
+                    Primer-Client-Token: ****
                 """.trimIndent()
             )
             logReporter.debug(
@@ -481,7 +481,7 @@ class HttpLoggerInterceptorTest {
                     date: Wed, 20 Dec 2023 13:05:11 GMT
                     server: Google Frontend
                     alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
-                    Primer-Client-Token: 0928df7c-ed97-4c2b-9ca7-3774c9252b56
+                    Primer-Client-Token: ****
                 """.trimIndent()
             )
         }

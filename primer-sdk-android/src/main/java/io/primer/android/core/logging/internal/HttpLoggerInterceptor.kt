@@ -30,7 +30,8 @@ internal class HttpLoggerInterceptor(
             .flatMap { it.values }
 
         val request = chain.request()
-        val obfuscationLevel = request.obfuscationLevel
+        val bodyObfuscationLevel = request.bodyObfuscationLevel
+        val headersObfuscationLevel = request.headersObfuscationLevel
         val requestStartTime = getCurrentTimeMillis()
 
         val shouldLogBody = level == Level.BODY
@@ -41,14 +42,14 @@ internal class HttpLoggerInterceptor(
                 logReporter = logReporter,
                 shouldLogHeaders = shouldLogHeaders,
                 blacklistedHeaders = blacklistedHeaders,
-                obfuscationLevel = obfuscationLevel,
+                obfuscationLevel = headersObfuscationLevel,
                 obfuscationString = OBFUSCATION_STRING
             )
             logBody(
                 logReporter = logReporter,
                 shouldLogBody = shouldLogBody,
                 whitelistedBodyKeys = whitelistedBodyKeys,
-                obfuscationLevel = obfuscationLevel,
+                obfuscationLevel = bodyObfuscationLevel,
                 obfuscationString = OBFUSCATION_STRING
             )
         }
@@ -63,14 +64,14 @@ internal class HttpLoggerInterceptor(
                     requestTime = getCurrentTimeMillis() - requestStartTime,
                     shouldLogHeaders = shouldLogHeaders,
                     blacklistedHeaders = blacklistedHeaders,
-                    obfuscationLevel = obfuscationLevel,
+                    obfuscationLevel = headersObfuscationLevel,
                     obfuscationString = OBFUSCATION_STRING
                 )
                 logBody(
                     logReporter = logReporter,
                     shouldLogBody = shouldLogBody,
                     whitelistedBodyKeys = whitelistedBodyKeys,
-                    obfuscationLevel = obfuscationLevel,
+                    obfuscationLevel = bodyObfuscationLevel,
                     obfuscationString = OBFUSCATION_STRING
                 )
             }
@@ -88,13 +89,22 @@ internal class HttpLoggerInterceptor(
         return response
     }
 
-    private val Request.obfuscationLevel: ObfuscationLevel
+    private val Request.bodyObfuscationLevel: ObfuscationLevel
         get() = when {
             isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
                 ObfuscationLevel.NONE
             }
 
             containsPciUrl -> ObfuscationLevel.REDACT_BODY
+
+            else -> ObfuscationLevel.LIST
+        }
+
+    private val Request.headersObfuscationLevel: ObfuscationLevel
+        get() = when {
+            isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
+                ObfuscationLevel.NONE
+            }
 
             else -> ObfuscationLevel.LIST
         }
