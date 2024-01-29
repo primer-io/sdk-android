@@ -7,7 +7,7 @@ import org.json.JSONObject
 internal data class WebRedirectSessionInfoDataRequest(
     override val locale: String,
     val redirectionUrl: String
-) : BaseSessionInfoDataRequest(locale, redirectionUrl) {
+) : BaseSessionInfoDataRequest(locale) {
 
     companion object {
         @JvmField
