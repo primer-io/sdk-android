@@ -1,33 +1,34 @@
-package io.primer.android.core.serialization.json.gson.extensions
+package io.primer.android.core.serialization.json.extensions.obfuscation
 
-import com.google.gson.JsonObject
 import io.primer.android.core.logging.internal.WhitelistedKey
 import io.primer.android.core.logging.internal.WhitelistedKey.NonPrimitiveWhitelistedKey
 import io.primer.android.core.logging.internal.WhitelistedKey.PrimitiveWhitelistedKey
+import org.json.JSONArray
+import org.json.JSONObject
 
-internal fun JsonObject.update(whitelistedKeys: List<WhitelistedKey>, newValue: String) {
+internal fun JSONObject.update(whitelistedKeys: List<WhitelistedKey>, newValue: String) {
     val keysToObfuscate = mutableListOf<String>()
 
     val primitiveKeys by lazy {
         whitelistedKeys.filterIsInstance<PrimitiveWhitelistedKey>().map { it.value }.toSet()
     }
 
-    for ((currentKey, element) in entrySet()) {
-        if (element.isJsonArray) {
-            element.asJsonArray.update(whitelistedKeys.mapToChildren(currentKey), newValue)
-        } else if (element.isJsonObject) {
-            element.asJsonObject.update(whitelistedKeys.mapToChildren(currentKey), newValue)
+    for (currentKey in keys()) {
+        val element = get(currentKey)
+        if (element is JSONArray) {
+            element.update(whitelistedKeys.mapToChildren(currentKey), newValue)
+        } else if (element is JSONObject) {
+            element.update(whitelistedKeys.mapToChildren(currentKey), newValue)
         } else if (
-            element.isJsonPrimitive &&
             currentKey !in primitiveKeys &&
-            !element.asJsonPrimitive.isJsonNull
+            !isNull(currentKey)
         ) {
             keysToObfuscate += currentKey
         }
     }
 
     for (key in keysToObfuscate) {
-        addProperty(key, newValue)
+        put(key, newValue)
     }
 }
 

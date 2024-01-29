@@ -1,14 +1,15 @@
 package io.primer.android.core.extensions
 
-import com.google.gson.JsonParser
 import io.primer.android.core.logging.internal.HttpLoggerInterceptor.ObfuscationLevel
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.core.logging.internal.WhitelistedKey
-import io.primer.android.core.serialization.json.gson.extensions.update
+import io.primer.android.core.serialization.json.extensions.obfuscation.update
 import okhttp3.Response
 import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import okio.GzipSource
+import org.json.JSONArray
+import org.json.JSONObject
 
 @Suppress("LongParameterList")
 internal fun Response.logHeaders(
@@ -116,15 +117,19 @@ private fun Response.appendKnownEncodingBody(
 
     if (buffer.isProbablyUtf8()) {
         if (responseBody.contentLength() != 0L) {
-            val jsonElement = JsonParser.parseString(
-                buffer.clone().readString(contentType.charset)
-            )
+            var json = buffer.clone().readString(contentType.charset)
 
             if (shouldObfuscate) {
-                jsonElement.update(whitelistedBodyKeys, obfuscationString)
+                runCatching { JSONObject(json) }.getOrNull()?.let { jsonObject ->
+                    jsonObject.update(whitelistedBodyKeys, obfuscationString)
+                    json = jsonObject.toString()
+                } ?: runCatching { JSONArray(json) }.getOrNull()?.let { jsonArray ->
+                    jsonArray.update(whitelistedBodyKeys, obfuscationString)
+                    json = jsonArray.toString()
+                }
             }
 
-            stringBuilder.appendLine(jsonElement.toString())
+            stringBuilder.appendLine(json)
         }
 
         if (gzippedLength != null) {
