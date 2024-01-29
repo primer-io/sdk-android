@@ -67,7 +67,7 @@ internal data class OrderDataResponse(
     }
 
     data class FeeDataResponse(
-        val type: String,
+        val type: String?,
         val amount: Int
     ) : JSONDeserializable {
 
@@ -80,7 +80,7 @@ internal data class OrderDataResponse(
 
                 override fun deserialize(t: JSONObject): FeeDataResponse {
                     return FeeDataResponse(
-                        t.getString(TYPE_FIELD),
+                        t.optNullableString(TYPE_FIELD),
                         t.getInt(AMOUNT_FIELD)
                     )
                 }
