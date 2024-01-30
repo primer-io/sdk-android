@@ -1,16 +1,3 @@
-## 2.23.0 (2024-01-30)
-
-### Feat
-
-- replace gson with org.json in HttpLoggerInterceptor (#502)
-- HTTP request/response logging improvements (#483)
-
-### Fix
-
-- Obfuscate blacklisted headers when request is targeting PCI host (#507)
-- Fixed wrong platform sent when using Web redirect payment methods (#504)
-- mark fees.type as optional string (#505)
-
 ## 2.22.0 (2024-01-18)
 
 ### Feat
