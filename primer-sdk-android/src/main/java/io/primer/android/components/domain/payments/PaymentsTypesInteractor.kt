@@ -1,16 +1,17 @@
 package io.primer.android.components.domain.payments
 
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.BaseFlowInteractor
 import io.primer.android.domain.base.None
+import io.primer.android.domain.currencyformat.interactors.FetchCurrencyFormatDataInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.core.logging.internal.LogReporter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -22,6 +23,7 @@ internal class PaymentsTypesInteractor(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val paymentMethodMapper: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
+    private val fetchCurrencyFormatDataInteractor: FetchCurrencyFormatDataInteractor,
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     private val logReporter: LogReporter,
@@ -42,6 +44,7 @@ internal class PaymentsTypesInteractor(
         eventDispatcher.dispatchEvent(
             CheckoutEvent.ConfigurationSuccess(paymentMethods)
         )
+        fetchCurrencyFormatDataInteractor(None())
         logReporter.info("Headless Universal Checkout initialized successfully.")
     }.catch { throwable ->
         logReporter.error(CONFIGURATION_ERROR, throwable = throwable)

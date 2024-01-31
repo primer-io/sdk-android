@@ -25,7 +25,8 @@ internal class FileAnalyticsDataSource(
             try {
                 emit(
                     JSONArray(content).sequence<JSONObject>().map {
-                        JSONSerializationUtils.getDeserializer<BaseAnalyticsEventRequest>()
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<BaseAnalyticsEventRequest>()
                             .deserialize(it)
                     }.toList()
                 )

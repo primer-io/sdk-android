@@ -1,6 +1,6 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.payment.dummy.DummyDecisionType
@@ -79,7 +79,7 @@ internal sealed class AnalyticsContext(
 
         @JvmField
         val deserializer =
-            JSONDeserializer { t ->
+            JSONObjectDeserializer { t ->
                 when (
                     AnalyticsContextType.valueOf(t.getString(ANALYTICS_CONTEXT_TYPE_FIELD))
                 ) {
@@ -137,7 +137,7 @@ internal data class UrlAnalyticsContext(val url: String?, val paymentMethodType:
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<UrlAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<UrlAnalyticsContext> {
             override fun deserialize(t: JSONObject): UrlAnalyticsContext {
                 return UrlAnalyticsContext(
                     t.optNullableString(URL_FIELD),
@@ -166,7 +166,7 @@ internal data class PaymentMethodAnalyticsContext(val paymentMethodType: String)
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentMethodAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<PaymentMethodAnalyticsContext> {
             override fun deserialize(t: JSONObject): PaymentMethodAnalyticsContext {
                 return PaymentMethodAnalyticsContext(
                     t.optString(PAYMENT_METHOD_TYPE_FIELD)
@@ -194,7 +194,7 @@ internal data class BankIssuerAnalyticsContext(val issuerId: String) :
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<BankIssuerAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<BankIssuerAnalyticsContext> {
             override fun deserialize(t: JSONObject): BankIssuerAnalyticsContext {
                 return BankIssuerAnalyticsContext(
                     t.optString(ISSUER_ID_FIELD)
@@ -222,7 +222,7 @@ internal data class DummyApmAnalyticsContext(val decision: DummyDecisionType) :
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<DummyApmAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<DummyApmAnalyticsContext> {
             override fun deserialize(t: JSONObject): DummyApmAnalyticsContext {
                 return DummyApmAnalyticsContext(
                     t.optString(DECISION_FIELD).let { DummyDecisionType.valueOf(it) }
@@ -250,7 +250,7 @@ internal data class PaymentInstrumentIdAnalyticsContext(val paymentMethodId: Str
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentInstrumentIdAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<PaymentInstrumentIdAnalyticsContext> {
             override fun deserialize(t: JSONObject): PaymentInstrumentIdAnalyticsContext {
                 return PaymentInstrumentIdAnalyticsContext(
                     t.optString(PAYMENT_METHOD_ID_FIELD)
@@ -285,7 +285,7 @@ internal data class IPay88AnalyticsContext(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<IPay88AnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<IPay88AnalyticsContext> {
             override fun deserialize(t: JSONObject): IPay88AnalyticsContext {
                 return IPay88AnalyticsContext(
                     t.getString(PAYMENT_METHOD_TYPE_FIELD),
@@ -326,7 +326,7 @@ internal data class ThreeDsFailureAnalyticsContext(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ThreeDsFailureAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<ThreeDsFailureAnalyticsContext> {
             override fun deserialize(t: JSONObject): ThreeDsFailureAnalyticsContext {
                 return ThreeDsFailureAnalyticsContext(
                     t.optNullableString(SDK_VERSION_FIELD),
@@ -370,7 +370,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ThreeDsRuntimeFailureAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<ThreeDsRuntimeFailureAnalyticsContext> {
             override fun deserialize(t: JSONObject): ThreeDsRuntimeFailureAnalyticsContext {
                 return ThreeDsRuntimeFailureAnalyticsContext(
                     t.optNullableString(SDK_VERSION_FIELD),
@@ -433,7 +433,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ThreeDsProtocolFailureAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<ThreeDsProtocolFailureAnalyticsContext> {
             override fun deserialize(t: JSONObject): ThreeDsProtocolFailureAnalyticsContext {
                 return ThreeDsProtocolFailureAnalyticsContext(
                     t.optString(ERROR_DETAILS_FIELD),
@@ -474,7 +474,7 @@ internal data class ErrorAnalyticsContext(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ErrorAnalyticsContext> {
+        val deserializer = object : JSONObjectDeserializer<ErrorAnalyticsContext> {
             override fun deserialize(t: JSONObject): ErrorAnalyticsContext {
                 return ErrorAnalyticsContext(
                     t.optString(ERROR_ID),

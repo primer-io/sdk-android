@@ -105,7 +105,6 @@
     <string name="other_ways_of_paying">วิธีชำระเงินแบบอื่น</string>
     <string name="other_ways_to_pay">วิธีชำระเงินอื่นๆ</string>
     <string name="pay">จ่าย</string>
-    <string name="pay_amount">%1$s</string>
     <string name="pay_by_card">ชำระเงินด้วยบัตร</string>
     <string name="pay_specific_amount">ชำระ %s</string>
     <string name="pay_with">ชำระด้วย</string>

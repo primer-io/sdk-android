@@ -1,7 +1,6 @@
 <resources>
     <string name="pay">Πληρωμή</string>
     <string name="pay_specific_amount">Πληρώστε %s</string>
-    <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Προσθέστε έναν τρόπο πληρωμής</string>
     <string name="pay_by_card">Πληρωμή με κάρτα</string>
     <string name="add_bank_account">Προσθήκη τραπεζικού λογαριασμού</string>

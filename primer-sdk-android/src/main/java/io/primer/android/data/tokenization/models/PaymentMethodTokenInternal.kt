@@ -1,6 +1,6 @@
 package io.primer.android.data.tokenization.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.base.models.BasePaymentToken
@@ -31,12 +31,12 @@ internal data class PaymentMethodTokenInternal(
         private const val TOKEN_TYPE_FIELD = "tokenType"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentMethodTokenInternal> {
+        val deserializer = object : JSONObjectDeserializer<PaymentMethodTokenInternal> {
 
             override fun deserialize(t: JSONObject): PaymentMethodTokenInternal {
                 val paymentInstrumentDataJson = t.optJSONObject(PAYMENT_INSTRUMENT_DATA_FIELD)
                 val paymentInstrumentData = paymentInstrumentDataJson?.let {
-                    JSONSerializationUtils.getDeserializer<PaymentInstrumentData>()
+                    JSONSerializationUtils.getJsonObjectDeserializer<PaymentInstrumentData>()
                         .deserialize(it)
                 }
                 val paymentMethodType = paymentInstrumentDataJson
@@ -47,12 +47,12 @@ internal data class PaymentMethodTokenInternal(
                     paymentMethodType ?: t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
                     paymentInstrumentData,
                     t.optJSONObject(VAULT_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<VaultDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<VaultDataResponse>()
                             .deserialize(it)
                     },
                     t.optJSONObject(THREE_DS_AUTHENTICATION_FIELD)?.let {
                         JSONSerializationUtils
-                            .getDeserializer<AuthenticationDetailsDataResponse>()
+                            .getJsonObjectDeserializer<AuthenticationDetailsDataResponse>()
                             .deserialize(it)
                     },
                     t.optBoolean(IS_VAULTED_FIELD),

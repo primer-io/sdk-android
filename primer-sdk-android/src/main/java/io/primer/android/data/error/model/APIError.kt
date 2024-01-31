@@ -2,7 +2,7 @@ package io.primer.android.data.error.model
 
 import io.primer.android.core.logging.internal.DefaultLogReporter
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
@@ -27,7 +27,7 @@ internal data class APIError(
             private const val DESCRIPTION_FIELD = "description"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<ValidationErrorDetail> {
+            val deserializer = object : JSONObjectDeserializer<ValidationErrorDetail> {
                 override fun deserialize(t: JSONObject): ValidationErrorDetail {
                     return ValidationErrorDetail(
                         t.getString(PATH_FIELD),
@@ -48,12 +48,13 @@ internal data class APIError(
             private const val ERRORS_FIELD = "errors"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<ValidationError> {
+            val deserializer = object : JSONObjectDeserializer<ValidationError> {
                 override fun deserialize(t: JSONObject): ValidationError {
                     return ValidationError(
                         t.getString(MODEL_FIELD),
                         t.getJSONArray(ERRORS_FIELD).sequence<JSONObject>().map {
-                            JSONSerializationUtils.getDeserializer<ValidationErrorDetail>()
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<ValidationErrorDetail>()
                                 .deserialize(it)
                         }.toList()
                     )
@@ -73,7 +74,7 @@ internal data class APIError(
                 }"""
 
         fun create(response: Response): APIError {
-            return JSONSerializationUtils.getDeserializer<APIError>()
+            return JSONSerializationUtils.getJsonObjectDeserializer<APIError>()
                 .deserialize(getErrorFromContent(response.body))
         }
 
@@ -100,14 +101,14 @@ internal data class APIError(
         private const val VALIDATION_ERRORS_FIELD = "validationErrors"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<APIError> {
+        val deserializer = object : JSONObjectDeserializer<APIError> {
             override fun deserialize(t: JSONObject): APIError {
                 return APIError(
                     t.getString(DESCRIPTION_FIELD),
                     t.optNullableString(ERROR_ID_FIELD),
                     t.optNullableString(DIAGNOSTICS_ID_FIELD),
                     t.optJSONArray(VALIDATION_ERRORS_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils.getDeserializer<ValidationError>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<ValidationError>()
                             .deserialize(it)
                     }?.toList().orEmpty()
                 )

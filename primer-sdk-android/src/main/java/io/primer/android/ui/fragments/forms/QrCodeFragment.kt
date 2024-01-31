@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentManager
 import io.primer.android.databinding.FragmentQrCodeBinding
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
-import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
@@ -66,12 +65,12 @@ internal class QrCodeFragment : BaseFormFragment() {
     }
 
     private fun setupAmount() {
-        binding.formAmount.text = PayAmountText.generate(
-            requireContext(),
-            primerViewModel.amountLabelMonetaryAmount(
-                primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
+        binding.formAmount.text =
+            primerViewModel.amountToCurrencyString(
+                primerViewModel.amountLabelMonetaryAmount(
+                    primerViewModel.selectedPaymentMethod.value?.config?.type.orEmpty()
+                )
             )
-        )
     }
 
     private fun setupQrCodeImage(qrCode: String) {

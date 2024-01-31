@@ -2,7 +2,7 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypa
 
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalOrderInfo
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
@@ -18,13 +18,13 @@ internal data class PaypalOrderInfoResponse(
         private const val EXTERNAL_PAYER_INFO_FIELD = "externalPayerInfo"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaypalOrderInfoResponse> {
+        val deserializer = object : JSONObjectDeserializer<PaypalOrderInfoResponse> {
 
             override fun deserialize(t: JSONObject): PaypalOrderInfoResponse {
                 return PaypalOrderInfoResponse(
                     t.getString(ORDER_ID_FIELD),
                     t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<PaypalExternalPayerInfo>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<PaypalExternalPayerInfo>()
                             .deserialize(it)
                     }
                 )
@@ -59,7 +59,7 @@ internal data class PaypalExternalPayerInfo(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaypalExternalPayerInfo> {
+        val deserializer = object : JSONObjectDeserializer<PaypalExternalPayerInfo> {
 
             override fun deserialize(t: JSONObject): PaypalExternalPayerInfo {
                 return PaypalExternalPayerInfo(

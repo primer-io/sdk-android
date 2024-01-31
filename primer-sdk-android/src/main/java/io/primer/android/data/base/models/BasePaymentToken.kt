@@ -1,7 +1,7 @@
 package io.primer.android.data.base.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableBoolean
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
@@ -24,7 +24,7 @@ internal abstract class BasePaymentToken : JSONDeserializable {
             private const val CUSTOMER_ID_FIELD = "customerId"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<VaultDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<VaultDataResponse> {
 
                 override fun deserialize(t: JSONObject): VaultDataResponse {
                     return VaultDataResponse(t.getString(CUSTOMER_ID_FIELD))
@@ -48,7 +48,7 @@ internal abstract class BasePaymentToken : JSONDeserializable {
             private const val CHALLENGE_ISSUED_FIELD = "challengeIssued"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<AuthenticationDetailsDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<AuthenticationDetailsDataResponse> {
 
                 override fun deserialize(t: JSONObject): AuthenticationDetailsDataResponse {
                     return AuthenticationDetailsDataResponse(

@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
@@ -17,13 +17,13 @@ internal data class ConfigurationKeysDataResponse(
 
         @JvmField
         val deserializer = object :
-            JSONDeserializer<ConfigurationKeysDataResponse> {
+            JSONObjectDeserializer<ConfigurationKeysDataResponse> {
 
             override fun deserialize(t: JSONObject): ConfigurationKeysDataResponse {
                 return ConfigurationKeysDataResponse(
                     t.optJSONArray(THREE_DS_CERTIFICATES_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils
-                            .getDeserializer<ThreeDsSecureCertificateDataResponse>()
+                            .getJsonObjectDeserializer<ThreeDsSecureCertificateDataResponse>()
                             .deserialize(it)
                     }?.toList(),
                     t.optNullableString(NETCETERA_API_KEY)
@@ -45,7 +45,7 @@ internal data class ThreeDsSecureCertificateDataResponse(
         private const val ENCRYPTION_KEY_FIELD = "encryptionKey"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ThreeDsSecureCertificateDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<ThreeDsSecureCertificateDataResponse> {
 
             override fun deserialize(t: JSONObject): ThreeDsSecureCertificateDataResponse {
                 return ThreeDsSecureCertificateDataResponse(

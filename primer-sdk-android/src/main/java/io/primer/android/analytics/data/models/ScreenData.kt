@@ -1,7 +1,7 @@
 package io.primer.android.analytics.data.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
@@ -24,7 +24,7 @@ internal data class ScreenData(val height: Int, val width: Int) :
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ScreenData> {
+        val deserializer = object : JSONObjectDeserializer<ScreenData> {
             override fun deserialize(t: JSONObject): ScreenData {
                 return ScreenData(t.getInt(HEIGHT_FIELD), t.getInt(WIDTH_FIELD))
             }

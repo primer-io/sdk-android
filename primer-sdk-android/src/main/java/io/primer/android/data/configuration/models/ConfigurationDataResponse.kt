@@ -6,7 +6,7 @@ import io.primer.android.core.logging.WhitelistedHttpBodyKeysProvider
 import io.primer.android.core.logging.internal.WhitelistedKey
 import io.primer.android.core.logging.internal.dsl.whitelistedKeys
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableBoolean
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -21,6 +21,7 @@ import org.json.JSONObject
 internal data class ConfigurationDataResponse(
     val pciUrl: String,
     val coreUrl: String,
+    val assetsUrl: String,
     val paymentMethods: List<PaymentMethodConfigDataResponse>,
     val checkoutModules: List<CheckoutModuleDataResponse>,
     val keys: ConfigurationKeysDataResponse?,
@@ -33,6 +34,7 @@ internal data class ConfigurationDataResponse(
         ConfigurationData(
             pciUrl,
             coreUrl,
+            assetsUrl,
             paymentMethods,
             checkoutModules,
             keys,
@@ -45,7 +47,8 @@ internal data class ConfigurationDataResponse(
     companion object {
         private const val PCI_URL_FIELD = "pciUrl"
         private const val CORE_URL_FIELD = "coreUrl"
-        const val PAYMENT_METHODS_CONFIG_FIELD = "paymentMethods"
+        private const val ASSETS_URL_FIELD = "assetsUrl"
+        private const val PAYMENT_METHODS_CONFIG_FIELD = "paymentMethods"
         private const val CHECKOUT_MODULES_FIELD = "checkoutModules"
         private const val CONFIGURATION_KEYS_FIELD = "keys"
         private const val CLIENT_SESSION_FIELD = "clientSession"
@@ -200,31 +203,32 @@ internal data class ConfigurationDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ConfigurationDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<ConfigurationDataResponse> {
 
             override fun deserialize(t: JSONObject): ConfigurationDataResponse {
                 return ConfigurationDataResponse(
                     t.getString(PCI_URL_FIELD),
                     t.getString(CORE_URL_FIELD),
+                    t.optString(ASSETS_URL_FIELD),
                     t.getJSONArray(PAYMENT_METHODS_CONFIG_FIELD).sequence<JSONObject>()
                         .map {
                             JSONSerializationUtils
-                                .getDeserializer<PaymentMethodConfigDataResponse>()
+                                .getJsonObjectDeserializer<PaymentMethodConfigDataResponse>()
                                 .deserialize(it)
                         }.toList(),
                     t.getJSONArray(CHECKOUT_MODULES_FIELD).sequence<JSONObject>()
                         .map {
                             JSONSerializationUtils
-                                .getDeserializer<CheckoutModuleDataResponse>()
+                                .getJsonObjectDeserializer<CheckoutModuleDataResponse>()
                                 .deserialize(it)
                         }.toList(),
                     t.optJSONObject(CONFIGURATION_KEYS_FIELD)?.let {
                         JSONSerializationUtils
-                            .getDeserializer<ConfigurationKeysDataResponse>()
+                            .getJsonObjectDeserializer<ConfigurationKeysDataResponse>()
                             .deserialize(it)
                     },
                     JSONSerializationUtils
-                        .getDeserializer<ClientSessionDataResponse>()
+                        .getJsonObjectDeserializer<ClientSessionDataResponse>()
                         .deserialize(t.getJSONObject(CLIENT_SESSION_FIELD)),
                     Environment.valueOf(t.getString(ENVIRONMENT_FIELD)),
                     t.optNullableString(PRIMER_ACCOUNT_ID_FIELD)
@@ -253,7 +257,7 @@ internal data class PaymentMethodConfigDataResponse(
         const val DISPLAY_METADATA_FIELD = "displayMetadata"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentMethodConfigDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<PaymentMethodConfigDataResponse> {
 
             override fun deserialize(t: JSONObject): PaymentMethodConfigDataResponse {
                 return PaymentMethodConfigDataResponse(
@@ -267,12 +271,12 @@ internal data class PaymentMethodConfigDataResponse(
                     t.getString(TYPE_FIELD),
                     t.optJSONObject(OPTIONS_FIELD)?.let {
                         JSONSerializationUtils
-                            .getDeserializer<PaymentMethodRemoteConfigOptions>()
+                            .getJsonObjectDeserializer<PaymentMethodRemoteConfigOptions>()
                             .deserialize(it)
                     },
                     t.optJSONObject(DISPLAY_METADATA_FIELD)?.let {
                         JSONSerializationUtils
-                            .getDeserializer<PaymentMethodDisplayMetadataResponse>()
+                            .getJsonObjectDeserializer<PaymentMethodDisplayMetadataResponse>()
                             .deserialize(it)
                     }
                 )
@@ -306,7 +310,7 @@ internal data class PaymentMethodRemoteConfigOptions(
         private const val MERCHANT_APP_ID_FIELD = "appId"
 
         @JvmField
-        val deserializer = JSONDeserializer { t ->
+        val deserializer = JSONObjectDeserializer { t ->
             PaymentMethodRemoteConfigOptions(
                 t.optNullableString(MERCHANT_ID_FIELD),
                 t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),

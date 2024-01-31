@@ -2,10 +2,10 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypa
 
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalConfirmBillingAgreement
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
-import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import org.json.JSONObject
 
@@ -22,22 +22,25 @@ internal data class PaypalConfirmBillingAgreementDataResponse(
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaypalConfirmBillingAgreementDataResponse> {
+        val deserializer =
+            object : JSONObjectDeserializer<PaypalConfirmBillingAgreementDataResponse> {
 
-            override fun deserialize(t: JSONObject): PaypalConfirmBillingAgreementDataResponse {
-                return PaypalConfirmBillingAgreementDataResponse(
-                    t.getString(BILLING_AGREEMENT_FIELD),
-                    t.getJSONObject(EXTERNAL_PAYER_INFO_FIELD).let {
-                        JSONSerializationUtils.getDeserializer<PaypalExternalPayerInfo>()
-                            .deserialize(it)
-                    },
-                    t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<PaypalShippingAddressDataResponse>()
-                            .deserialize(it)
-                    }
-                )
+                override fun deserialize(t: JSONObject): PaypalConfirmBillingAgreementDataResponse {
+                    return PaypalConfirmBillingAgreementDataResponse(
+                        t.getString(BILLING_AGREEMENT_FIELD),
+                        t.getJSONObject(EXTERNAL_PAYER_INFO_FIELD).let {
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<PaypalExternalPayerInfo>()
+                                .deserialize(it)
+                        },
+                        t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<PaypalShippingAddressDataResponse>()
+                                .deserialize(it)
+                        }
+                    )
+                }
             }
-        }
     }
 }
 
@@ -81,7 +84,7 @@ internal data class PaypalShippingAddressDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaypalShippingAddressDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<PaypalShippingAddressDataResponse> {
 
             override fun deserialize(t: JSONObject): PaypalShippingAddressDataResponse {
                 return PaypalShippingAddressDataResponse(

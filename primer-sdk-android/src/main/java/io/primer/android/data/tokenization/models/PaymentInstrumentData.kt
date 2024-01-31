@@ -1,7 +1,7 @@
 package io.primer.android.data.tokenization.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
@@ -54,7 +54,7 @@ data class PaymentInstrumentData(
         private const val BIN_DATA_FIELD = "binData"
 
         @JvmField
-        internal val deserializer = object : JSONDeserializer<PaymentInstrumentData> {
+        internal val deserializer = object : JSONObjectDeserializer<PaymentInstrumentData> {
 
             override fun deserialize(t: JSONObject): PaymentInstrumentData {
                 return PaymentInstrumentData(
@@ -66,12 +66,12 @@ data class PaymentInstrumentData(
                     t.optNullableInt(EXPIRATION_YEAR_FIELD),
                     t.optNullableString(GO_CARDLESS_MANDATE_ID_FIELD),
                     t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<ExternalPayerInfo>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<ExternalPayerInfo>()
                             .deserialize(it)
                     },
                     t.optNullableString(KLARNA_CUSTOMER_TOKEN_FIELD),
                     t.optJSONObject(SESSION_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<SessionData>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<SessionData>()
                             .deserialize(it)
                     },
                     t.optNullableString(MX_FIELD),
@@ -82,7 +82,7 @@ data class PaymentInstrumentData(
                     t.optNullableString(PRODUCT_ID_FIELD),
                     t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
                     t.optJSONObject(BIN_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<BinData>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<BinData>()
                             .deserialize(it)
                     }
                 )
@@ -98,7 +98,7 @@ data class ExternalPayerInfo(
         private const val EMAIL_FIELD = "email"
 
         @JvmField
-        internal val deserializer = object : JSONDeserializer<ExternalPayerInfo> {
+        internal val deserializer = object : JSONObjectDeserializer<ExternalPayerInfo> {
 
             override fun deserialize(t: JSONObject): ExternalPayerInfo {
                 return ExternalPayerInfo(t.getString(EMAIL_FIELD))
@@ -116,13 +116,13 @@ data class SessionData(
         private const val BILLING_ADDRESS_FIELD = "billingAddress"
 
         @JvmField
-        internal val deserializer = object : JSONDeserializer<SessionData> {
+        internal val deserializer = object : JSONObjectDeserializer<SessionData> {
 
             override fun deserialize(t: JSONObject): SessionData {
                 return SessionData(
                     t.optNullableString(RECURRING_DESCRIPTION_FIELD),
                     t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<BillingAddress>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<BillingAddress>()
                             .deserialize(it)
                     }
                 )
@@ -138,7 +138,7 @@ data class BillingAddress(
         private const val EMAIL_FIELD = "email"
 
         @JvmField
-        internal val deserializer = object : JSONDeserializer<BillingAddress> {
+        internal val deserializer = object : JSONObjectDeserializer<BillingAddress> {
 
             override fun deserialize(t: JSONObject): BillingAddress {
                 return BillingAddress(
@@ -166,7 +166,7 @@ data class BinData(
         }
 
         @JvmField
-        internal val deserializer = object : JSONDeserializer<BinData> {
+        internal val deserializer = object : JSONObjectDeserializer<BinData> {
 
             override fun deserialize(t: JSONObject): BinData {
                 return BinData(t.optNullableString(NETWORK_FIELD))

@@ -45,11 +45,28 @@ internal object JSONSerializationUtils {
         NoSuchFieldException::class,
         IllegalAccessException::class
     )
-    inline fun <reified T : JSONDeserializable> getDeserializer(): JSONDeserializer<T> {
+    inline fun <reified T : JSONDeserializable> getJsonArrayDeserializer():
+        JSONArrayDeserializer<T> {
         val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
-        check(field.type.equals(JSONDeserializer::class.java)) {
-            "Deserializer is not of the type JSONDeserializer"
+
+        check(field.type.equals(JSONArrayDeserializer::class.java)) {
+            "Deserializer is not of the type JSONArrayDeserializer"
         }
-        return field[null] as JSONDeserializer<T>
+        return field[null] as JSONArrayDeserializer<T>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Throws(
+        IllegalStateException::class,
+        NoSuchFieldException::class,
+        IllegalAccessException::class
+    )
+    inline fun <reified T : JSONDeserializable> getJsonObjectDeserializer():
+        JSONObjectDeserializer<T> {
+        val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
+        check(field.type.equals(JSONObjectDeserializer::class.java)) {
+            "Deserializer is not of the type JSONObjectDeserializer"
+        }
+        return field[null] as JSONObjectDeserializer<T>
     }
 }

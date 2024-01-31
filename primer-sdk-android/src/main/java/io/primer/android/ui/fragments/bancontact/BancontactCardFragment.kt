@@ -16,7 +16,6 @@ import io.primer.android.di.extension.inject
 import io.primer.android.di.extension.viewModel
 import io.primer.android.payment.async.AsyncPaymentMethodDescriptor
 import io.primer.android.ui.CardNetwork
-import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
@@ -244,7 +243,7 @@ internal class BancontactCardFragment : BaseFragment() {
 
     private fun updateSubmitButton() {
         val amount = localConfig.getMonetaryAmountWithSurcharge()
-        val amountString = PayAmountText.generate(requireContext(), amount)
+        val amountString = primerViewModel.amountToCurrencyString(amount)
         binding.btnPay.text = getString(R.string.pay_specific_amount, amountString)
 
         binding.btnPay.isEnabled = isReadyForPAy()

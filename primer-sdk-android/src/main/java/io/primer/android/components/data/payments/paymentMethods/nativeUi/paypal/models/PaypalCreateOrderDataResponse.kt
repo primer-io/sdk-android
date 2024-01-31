@@ -2,7 +2,7 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypa
 
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalOrder
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import org.json.JSONObject
 
 internal data class PaypalCreateOrderDataResponse(
@@ -16,7 +16,7 @@ internal data class PaypalCreateOrderDataResponse(
         private const val APPROVAL_URL_FIELD = "approvalUrl"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaypalCreateOrderDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<PaypalCreateOrderDataResponse> {
 
             override fun deserialize(t: JSONObject): PaypalCreateOrderDataResponse {
                 return PaypalCreateOrderDataResponse(

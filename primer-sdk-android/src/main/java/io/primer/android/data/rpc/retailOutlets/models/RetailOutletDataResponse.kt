@@ -1,7 +1,7 @@
 package io.primer.android.data.rpc.retailOutlets.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.sequence
 import org.json.JSONObject
@@ -14,13 +14,13 @@ internal data class RetailOutletResultDataResponse(
         private const val RESULT_FIELD = "result"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<RetailOutletResultDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<RetailOutletResultDataResponse> {
 
             override fun deserialize(t: JSONObject): RetailOutletResultDataResponse {
                 return RetailOutletResultDataResponse(
                     t.optJSONArray(RESULT_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils
-                            .getDeserializer<RetailOutletDataResponse>()
+                            .getJsonObjectDeserializer<RetailOutletDataResponse>()
                             .deserialize(it)
                     }?.toList().orEmpty()
                 )
@@ -42,7 +42,7 @@ internal data class RetailOutletDataResponse(
         private const val ICON_URL_FIELD = "iconUrl"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<RetailOutletDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<RetailOutletDataResponse> {
 
             override fun deserialize(t: JSONObject): RetailOutletDataResponse {
                 return RetailOutletDataResponse(

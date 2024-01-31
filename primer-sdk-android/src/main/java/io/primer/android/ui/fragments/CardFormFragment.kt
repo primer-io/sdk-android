@@ -40,7 +40,6 @@ import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.FieldFocuser
-import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.TextInputMask
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
@@ -48,7 +47,6 @@ import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.ui.utils.setMarginBottomForError
-import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
@@ -322,7 +320,7 @@ internal class CardFormFragment : BaseFragment() {
         val surcharge = primerViewModel.findSurchargeAmount("PAYMENT_CARD", networkAsString)
         val currency = localConfig.settings.order.currencyCode
         val amount = MonetaryAmount.create(currency, surcharge)
-        val amountText = "+" + PaymentUtils.amountToCurrencyString(amount)
+        val amountText = "+" + primerViewModel.amountToCurrencyString(amount)
         val surchargeText = if (surcharge > 0) amountText else ""
         inputFrame.suffixText = surchargeText
     }
@@ -390,7 +388,7 @@ internal class CardFormFragment : BaseFragment() {
                 String
                     .format(
                         getString(R.string.pay_specific_amount),
-                        PayAmountText.generate(context, primerViewModel.monetaryAmount)
+                        primerViewModel.amountToCurrencyString()
                     )
             }
         }
@@ -427,7 +425,7 @@ internal class CardFormFragment : BaseFragment() {
             return
         }
         val amount = localConfig.getMonetaryAmountWithSurcharge()
-        val amountString = PayAmountText.generate(requireContext(), amount)
+        val amountString = primerViewModel.amountToCurrencyString(amount)
         binding.btnSubmitForm.text = getString(R.string.pay_specific_amount, amountString)
     }
 

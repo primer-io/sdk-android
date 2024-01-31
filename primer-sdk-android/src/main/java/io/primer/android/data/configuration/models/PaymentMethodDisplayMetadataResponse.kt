@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableFloat
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -32,7 +32,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
                 const val DARK_FIELD = "dark"
 
                 @JvmField
-                val deserializer = object : JSONDeserializer<IconUrlDataResponse> {
+                val deserializer = object : JSONObjectDeserializer<IconUrlDataResponse> {
 
                     override fun deserialize(t: JSONObject): IconUrlDataResponse {
                         return IconUrlDataResponse(
@@ -56,7 +56,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
                 const val DARK_FIELD = "dark"
 
                 @JvmField
-                val deserializer = object : JSONDeserializer<ColorDataResponse> {
+                val deserializer = object : JSONObjectDeserializer<ColorDataResponse> {
 
                     override fun deserialize(t: JSONObject): ColorDataResponse {
                         return ColorDataResponse(
@@ -80,7 +80,7 @@ internal data class PaymentMethodDisplayMetadataResponse(
                 const val DARK_FIELD = "dark"
 
                 @JvmField
-                val deserializer = object : JSONDeserializer<BorderWidthDataResponse> {
+                val deserializer = object : JSONObjectDeserializer<BorderWidthDataResponse> {
 
                     override fun deserialize(t: JSONObject): BorderWidthDataResponse {
                         return BorderWidthDataResponse(
@@ -104,30 +104,31 @@ internal data class PaymentMethodDisplayMetadataResponse(
             const val ICON_POSITION_FIELD = "iconPositionRelativeToText"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<ButtonDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<ButtonDataResponse> {
 
                 override fun deserialize(t: JSONObject): ButtonDataResponse {
                     return ButtonDataResponse(
                         t.optJSONObject(ICON_URL_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<IconUrlDataResponse>()
+                            JSONSerializationUtils.getJsonObjectDeserializer<IconUrlDataResponse>()
                                 .deserialize(it)
                         },
                         t.optJSONObject(BACKGROUND_COLOR_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<ColorDataResponse>()
+                            JSONSerializationUtils.getJsonObjectDeserializer<ColorDataResponse>()
                                 .deserialize(it)
                         },
                         t.optJSONObject(BORDER_COLOR_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<ColorDataResponse>()
+                            JSONSerializationUtils.getJsonObjectDeserializer<ColorDataResponse>()
                                 .deserialize(it)
                         },
                         t.optJSONObject(BORDER_WIDTH_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<BorderWidthDataResponse>()
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<BorderWidthDataResponse>()
                                 .deserialize(it)
                         },
                         t.optNullableFloat(CORNER_RADIUS_FIELD),
                         t.optNullableString(TEXT_FIELD),
                         t.optJSONObject(TEXT_COLOR_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<ColorDataResponse>()
+                            JSONSerializationUtils.getJsonObjectDeserializer<ColorDataResponse>()
                                 .deserialize(it)
                         },
                         IconPosition.safeValueOf(t.optNullableString(ICON_POSITION_FIELD))
@@ -141,11 +142,11 @@ internal data class PaymentMethodDisplayMetadataResponse(
         const val BUTTON_DATA_FIELD = "button"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentMethodDisplayMetadataResponse> {
+        val deserializer = object : JSONObjectDeserializer<PaymentMethodDisplayMetadataResponse> {
 
             override fun deserialize(t: JSONObject): PaymentMethodDisplayMetadataResponse {
                 return PaymentMethodDisplayMetadataResponse(
-                    JSONSerializationUtils.getDeserializer<ButtonDataResponse>()
+                    JSONSerializationUtils.getJsonObjectDeserializer<ButtonDataResponse>()
                         .deserialize(t.getJSONObject(BUTTON_DATA_FIELD))
                 )
             }

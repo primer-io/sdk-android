@@ -1,7 +1,6 @@
 <resources>
     <string name="pay">Öde</string>
     <string name="pay_specific_amount">%s öde</string>
-    <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Bir ödeme yöntemi ekleyin</string>
     <string name="pay_by_card">Kart ile öde</string>
     <string name="add_bank_account">Banka hesabı ekle</string>

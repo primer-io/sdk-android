@@ -40,6 +40,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
+    @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         registerSingleton { Navigator(sdk.resolve()) }
         registerSingleton {
@@ -63,6 +64,7 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 sdk.resolve(),
                 sdk.resolve(),
                 resolve(),
+                sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve()

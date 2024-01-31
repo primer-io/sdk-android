@@ -6,7 +6,7 @@ import io.primer.android.core.logging.WhitelistedHttpBodyKeysProvider
 import io.primer.android.core.logging.internal.WhitelistedKey
 import io.primer.android.core.logging.internal.dsl.whitelistedKeys
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.sequence
 import org.json.JSONObject
@@ -35,14 +35,15 @@ internal data class CreateSessionDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<CreateSessionDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<CreateSessionDataResponse> {
+
             override fun deserialize(t: JSONObject): CreateSessionDataResponse {
                 return CreateSessionDataResponse(
                     t.getString(CLIENT_TOKEN_FIELD),
                     t.getString(SESSION_ID_FIELD),
                     t.optJSONArray(CATEGORIES_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils
-                            .getDeserializer<PaymentCategory>()
+                            .getJsonObjectDeserializer<PaymentCategory>()
                             .deserialize(it)
                     }?.toList().orEmpty()
                 )

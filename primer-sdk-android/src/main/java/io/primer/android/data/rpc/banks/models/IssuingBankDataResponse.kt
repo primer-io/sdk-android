@@ -4,7 +4,7 @@ import io.primer.android.core.logging.WhitelistedHttpBodyKeysProvider
 import io.primer.android.core.logging.internal.WhitelistedKey
 import io.primer.android.core.logging.internal.dsl.whitelistedKeys
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.rpc.banks.models.IssuingBankDataResponse.Companion.DISABLED_FIELD
@@ -32,13 +32,13 @@ internal data class IssuingBankResultDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<IssuingBankResultDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<IssuingBankResultDataResponse> {
 
             override fun deserialize(t: JSONObject): IssuingBankResultDataResponse {
                 return IssuingBankResultDataResponse(
                     t.optJSONArray(RESULT_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils
-                            .getDeserializer<IssuingBankDataResponse>()
+                            .getJsonObjectDeserializer<IssuingBankDataResponse>()
                             .deserialize(it)
                     }?.toList().orEmpty()
                 )
@@ -60,7 +60,7 @@ internal data class IssuingBankDataResponse(
         const val ICON_URL_FIELD = "iconUrl"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<IssuingBankDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<IssuingBankDataResponse> {
 
             override fun deserialize(t: JSONObject): IssuingBankDataResponse {
                 return IssuingBankDataResponse(

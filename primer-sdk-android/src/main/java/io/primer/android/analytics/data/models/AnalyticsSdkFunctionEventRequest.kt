@@ -1,8 +1,8 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.toStringMap
 import io.primer.android.data.settings.PrimerPaymentHandling
@@ -44,17 +44,18 @@ internal data class AnalyticsSdkFunctionEventRequest(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsSdkFunctionEventRequest> {
+        val deserializer = object : JSONObjectDeserializer<AnalyticsSdkFunctionEventRequest> {
             override fun deserialize(t: JSONObject): AnalyticsSdkFunctionEventRequest {
                 return AnalyticsSdkFunctionEventRequest(
                     t.optJSONObject(DEVICE_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<DeviceData>().deserialize(
+                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                             it
                         )
                     },
-                    JSONSerializationUtils.getDeserializer<FunctionProperties>().deserialize(
-                        t.getJSONObject(PROPERTIES_FIELD)
-                    ),
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<FunctionProperties>().deserialize(
+                            t.getJSONObject(PROPERTIES_FIELD)
+                        ),
                     t.optNullableString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
@@ -91,7 +92,7 @@ internal data class FunctionProperties(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<FunctionProperties> {
+        val deserializer = object : JSONObjectDeserializer<FunctionProperties> {
             override fun deserialize(t: JSONObject): FunctionProperties {
                 return FunctionProperties(
                     t.getString(NAME_FIELD),

@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -49,7 +49,7 @@ internal data class OrderDataResponse(
             const val TAX_CODE_FIELD = "taxCode"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<LineItemDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<LineItemDataResponse> {
 
                 override fun deserialize(t: JSONObject): LineItemDataResponse {
                     return LineItemDataResponse(
@@ -76,7 +76,7 @@ internal data class OrderDataResponse(
             private const val AMOUNT_FIELD = "amount"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<FeeDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<FeeDataResponse> {
 
                 override fun deserialize(t: JSONObject): FeeDataResponse {
                     return FeeDataResponse(
@@ -100,7 +100,7 @@ internal data class OrderDataResponse(
         const val FEES_FIELD = "fees"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<OrderDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<OrderDataResponse> {
 
             override fun deserialize(t: JSONObject): OrderDataResponse {
                 return OrderDataResponse(
@@ -110,11 +110,11 @@ internal data class OrderDataResponse(
                     t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
                     t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
                     t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils.getDeserializer<LineItemDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<LineItemDataResponse>()
                             .deserialize(it)
                     }?.toList().orEmpty(),
                     t.optJSONArray(FEES_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils.getDeserializer<FeeDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<FeeDataResponse>()
                             .deserialize(it)
                     }?.toList().orEmpty()
                 )

@@ -1,6 +1,6 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -43,15 +43,14 @@ internal data class AnalyticsMessageEventRequest(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsMessageEventRequest> {
+        val deserializer = object : JSONObjectDeserializer<AnalyticsMessageEventRequest> {
             override fun deserialize(t: JSONObject): AnalyticsMessageEventRequest {
                 return AnalyticsMessageEventRequest(
-                    JSONSerializationUtils.getDeserializer<DeviceData>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
-                    JSONSerializationUtils.getDeserializer<MessageProperties>().deserialize(
-                        t.getJSONObject(PROPERTIES_FIELD)
-                    ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<MessageProperties>()
+                        .deserialize(t.getJSONObject(PROPERTIES_FIELD)),
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
@@ -103,7 +102,7 @@ internal data class MessageProperties(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<MessageProperties> {
+        val deserializer = object : JSONObjectDeserializer<MessageProperties> {
             override fun deserialize(t: JSONObject): MessageProperties {
                 return MessageProperties(
                     MessageType.valueOf(t.getString(MESSAGE_TYPE_FIELD)),
@@ -111,7 +110,7 @@ internal data class MessageProperties(
                     Severity.valueOf(t.getString(SEVERITY_FIELD)),
                     t.optNullableString(DIAGNOSTICS_ID_FIELD),
                     t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<AnalyticsContext>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
                             .deserialize(it)
                     }
                 )

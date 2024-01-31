@@ -1,13 +1,10 @@
 package io.primer.android.core.serialization.json
 
+import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * An interface describing simple JSON deserializer.
- * @param [JSONObject] an object to be deserialized.
- * @return Deserialized object T.
+ * An interface describing base interface for [JSONObject] and [JSONArray] deserialization.
+ * @param T an object to be deserialized.
  */
-
-internal fun interface JSONDeserializer<T : JSONDeserializable> {
-    fun deserialize(t: JSONObject): T
-}
+internal sealed interface JSONDeserializer<T : JSONDeserializable>

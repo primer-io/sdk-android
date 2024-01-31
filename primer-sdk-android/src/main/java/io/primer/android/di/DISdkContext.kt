@@ -66,6 +66,8 @@ internal object DISdkContext {
 
             registerContainer(ComponentsContainer(this))
 
+            registerContainer(CurrencyFormatContainer(this))
+
             if (NolPaySdkClassValidator().isSdkIncluded()) {
                 registerContainer(NolPayContainer(this))
             }

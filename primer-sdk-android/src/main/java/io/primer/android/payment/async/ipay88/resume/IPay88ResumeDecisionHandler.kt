@@ -10,6 +10,8 @@ import io.primer.android.data.base.exceptions.IllegalClientSessionValueException
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientToken
 import io.primer.android.domain.base.BaseErrorEventResolver
+import io.primer.android.domain.currencyformat.interactors.FormatAmountToDecimalInteractor
+import io.primer.android.domain.currencyformat.models.FormatCurrencyParams
 import io.primer.android.domain.deeplink.ipay88.repository.IPay88DeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
@@ -22,7 +24,6 @@ import io.primer.android.events.EventDispatcher
 import io.primer.android.model.MonetaryAmount
 import io.primer.android.payment.async.ipay88.IPay88PaymentMethodDescriptor
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
-import io.primer.android.utils.PaymentUtils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.net.URLEncoder
@@ -42,6 +43,7 @@ internal class IPay88ResumeDecisionHandler(
     logReporter: LogReporter,
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
+    private val amountToDecimalInteractor: FormatAmountToDecimalInteractor,
     retailerOutletRepository: RetailOutletRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
@@ -84,8 +86,15 @@ internal class IPay88ResumeDecisionHandler(
         val paymentMethodType =
             paymentMethodRepository.getPaymentMethod()
                 .paymentInstrumentData?.paymentMethodType.orEmpty()
-
+        val amount = MonetaryAmount.create(
+            config.settings.currency,
+            config.settings.currentAmount
+        )
+        val amountString =
+            amount?.let { amountToDecimalInteractor.invoke(params = FormatCurrencyParams(it)) }
+                ?: ""
         eventDispatcher.dispatchEvents(
+
             listOf(
                 CheckoutEvent.StartIPay88Flow(
                     clientTokenRepository.getClientTokenIntent(),
@@ -95,12 +104,7 @@ internal class IPay88ResumeDecisionHandler(
                     descriptor.paymentMethod,
                     requireNotNull(descriptor.config.options?.merchantId),
                     clientTokenRepository.getActionType().orEmpty(),
-                    PaymentUtils.amountToDecimalString(
-                        MonetaryAmount.create(
-                            config.settings.currency,
-                            config.settings.currentAmount
-                        )
-                    ).toString(),
+                    amountString,
                     requireNotNull(clientTokenRepository.getTransactionId()),
                     config.settings.order.let { order ->
                         order.lineItems.joinToString { it.description.orEmpty() }

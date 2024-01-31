@@ -1,7 +1,6 @@
 <resources>
     <string name="pay">Betaal</string>
     <string name="pay_specific_amount">Betaal %s</string>
-    <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Voeg een Betalingsmethode toe</string>
     <string name="pay_by_card">Betaal met pas</string>
     <string name="add_bank_account">Voeg een bankrekening toe</string>

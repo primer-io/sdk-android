@@ -2,7 +2,7 @@ package io.primer.android.components.data.payments.paymentMethods.nativeUi.paypa
 
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.paypal.models.PaypalBillingAgreement
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import org.json.JSONObject
 
 internal data class PaypalCreateBillingAgreementDataResponse(
@@ -16,15 +16,15 @@ internal data class PaypalCreateBillingAgreementDataResponse(
         private const val APPROVAL_URL_FIELD = "approvalUrl"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaypalCreateBillingAgreementDataResponse> {
-
-            override fun deserialize(t: JSONObject): PaypalCreateBillingAgreementDataResponse {
-                return PaypalCreateBillingAgreementDataResponse(
-                    t.getString(TOKEN_ID_FIELD),
-                    t.getString(APPROVAL_URL_FIELD)
-                )
+        val deserializer =
+            object : JSONObjectDeserializer<PaypalCreateBillingAgreementDataResponse> {
+                override fun deserialize(t: JSONObject): PaypalCreateBillingAgreementDataResponse {
+                    return PaypalCreateBillingAgreementDataResponse(
+                        t.getString(TOKEN_ID_FIELD),
+                        t.getString(APPROVAL_URL_FIELD)
+                    )
+                }
             }
-        }
     }
 }
 

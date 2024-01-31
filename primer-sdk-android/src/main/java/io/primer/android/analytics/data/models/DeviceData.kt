@@ -3,7 +3,7 @@ package io.primer.android.analytics.data.models
 import android.os.Build
 import io.primer.android.analytics.extensions.getMemoryUsage
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
@@ -55,14 +55,14 @@ internal data class DeviceData(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<DeviceData> {
+        val deserializer = object : JSONObjectDeserializer<DeviceData> {
             override fun deserialize(t: JSONObject): DeviceData {
                 return DeviceData(
                     t.getInt(BATTERY_LEVEL_FIELD),
                     BatteryStatus.valueOf(
                         t.getString(BATTERY_STATUS_FIELD)
                     ),
-                    JSONSerializationUtils.getDeserializer<ScreenData>()
+                    JSONSerializationUtils.getJsonObjectDeserializer<ScreenData>()
                         .deserialize(t.getJSONObject(SCREEN_DATA_FIELD)),
                     t.getString(UNIQUE_DEVICE_ID_FIELD),
                     t.getString(LOCALE_FIELD),

@@ -80,7 +80,7 @@ internal class DummyResultSelectorFragment : Fragment(), OnActionContinueCallbac
     }
 
     private fun setupPayButton() {
-        binding.btnPay.amount = localConfig.monetaryAmount
+        binding.btnPay.amount = primerViewModel.amountToCurrencyString(localConfig.monetaryAmount)
     }
 
     private fun setupCurrentPaymentMethod() {

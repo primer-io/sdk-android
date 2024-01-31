@@ -1,7 +1,6 @@
 <resources>
     <string name="pay">Pagar</string>
     <string name="pay_specific_amount">Pagar %s</string>
-    <string name="pay_amount">%1$s</string>
     <string name="add_new_payment_method">Adicionar um método de pagamento</string>
     <string name="pay_by_card">Pagar com cartão</string>
     <string name="add_bank_account">Adicionar conta bancária</string>

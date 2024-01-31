@@ -6,6 +6,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.action.ActionInteractor
+import io.primer.android.domain.currencyformat.interactors.FetchCurrencyFormatDataInteractor
+import io.primer.android.domain.currencyformat.interactors.FormatAmountToCurrencyInteractor
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
@@ -31,7 +33,9 @@ internal class PrimerViewModelFactory(
     private val resumePaymentInteractor: ResumePaymentInteractor,
     private val actionInteractor: ActionInteractor,
     private val config: PrimerConfig,
-    private val billingAddressValidator: BillingAddressValidator
+    private val billingAddressValidator: BillingAddressValidator,
+    private val fetchCurrencyFormatDataInteractor: FetchCurrencyFormatDataInteractor,
+    private val amountToCurrencyInteractor: FormatAmountToCurrencyInteractor
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
@@ -46,6 +50,8 @@ internal class PrimerViewModelFactory(
             createPaymentInteractor,
             resumePaymentInteractor,
             actionInteractor,
+            fetchCurrencyFormatDataInteractor,
+            amountToCurrencyInteractor,
             config,
             billingAddressValidator
         ) as T

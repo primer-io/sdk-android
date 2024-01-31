@@ -10,7 +10,7 @@ import io.primer.android.core.logging.WhitelistedHttpBodyKeysProvider
 import io.primer.android.core.logging.internal.WhitelistedKey
 import io.primer.android.core.logging.internal.dsl.whitelistedKeys
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
@@ -90,7 +90,7 @@ internal data class CreateCustomerTokenDataResponse(
             }
 
             @JvmField
-            val deserializer = object : JSONDeserializer<SessionData> {
+            val deserializer = object : JSONObjectDeserializer<SessionData> {
 
                 override fun deserialize(t: JSONObject): SessionData {
                     return SessionData(
@@ -102,15 +102,15 @@ internal data class CreateCustomerTokenDataResponse(
                         t.getJSONArray(ORDER_LINES_FIELD).sequence<JSONObject>()
                             .map {
                                 JSONSerializationUtils
-                                    .getDeserializer<SessionOrderLines>()
+                                    .getJsonObjectDeserializer<SessionOrderLines>()
                                     .deserialize(it)
                             }.toList(),
                         t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<BillingAddressData>()
+                            JSONSerializationUtils.getJsonObjectDeserializer<BillingAddressData>()
                                 .deserialize(it)
                         },
                         t.optJSONObject(TOKEN_DETAILS_FIELD)?.let {
-                            JSONSerializationUtils.getDeserializer<TokenDetailsData>()
+                            JSONSerializationUtils.getJsonObjectDeserializer<TokenDetailsData>()
                                 .deserialize(it)
                         }
                     )
@@ -171,7 +171,7 @@ internal data class CreateCustomerTokenDataResponse(
             }
 
             @JvmField
-            val deserializer = object : JSONDeserializer<BillingAddressData> {
+            val deserializer = object : JSONObjectDeserializer<BillingAddressData> {
 
                 override fun deserialize(t: JSONObject): BillingAddressData {
                     return BillingAddressData(
@@ -226,7 +226,7 @@ internal data class CreateCustomerTokenDataResponse(
             }
 
             @JvmField
-            val deserializer = object : JSONDeserializer<SessionOrderLines> {
+            val deserializer = object : JSONObjectDeserializer<SessionOrderLines> {
 
                 override fun deserialize(t: JSONObject): SessionOrderLines {
                     return SessionOrderLines(
@@ -269,7 +269,7 @@ internal data class CreateCustomerTokenDataResponse(
             }
 
             @JvmField
-            val deserializer = object : JSONDeserializer<TokenDetailsData> {
+            val deserializer = object : JSONObjectDeserializer<TokenDetailsData> {
 
                 override fun deserialize(t: JSONObject): TokenDetailsData {
                     return TokenDetailsData(
@@ -302,12 +302,12 @@ internal data class CreateCustomerTokenDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<CreateCustomerTokenDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<CreateCustomerTokenDataResponse> {
 
             override fun deserialize(t: JSONObject): CreateCustomerTokenDataResponse {
                 return CreateCustomerTokenDataResponse(
                     t.optNullableString(CUSTOMER_TOKEN_ID_FIELD),
-                    JSONSerializationUtils.getDeserializer<SessionData>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<SessionData>().deserialize(
                         t.getJSONObject(
                             SESSION_DATA_FIELD
                         )

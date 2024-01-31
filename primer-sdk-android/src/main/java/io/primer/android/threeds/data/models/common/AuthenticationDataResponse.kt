@@ -1,7 +1,7 @@
 package io.primer.android.threeds.data.models.common
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import org.json.JSONObject
 
@@ -41,7 +41,7 @@ internal data class AuthenticationDataResponse(
         private const val DECLINED_REASON_TEXT_FIELD = "declinedReasonText"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AuthenticationDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<AuthenticationDataResponse> {
 
             override fun deserialize(t: JSONObject): AuthenticationDataResponse {
                 return AuthenticationDataResponse(

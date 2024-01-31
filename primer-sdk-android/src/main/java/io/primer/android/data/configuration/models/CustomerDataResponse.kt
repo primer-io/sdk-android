@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.domain.action.models.PrimerCustomer
@@ -44,7 +44,7 @@ internal data class CustomerDataResponse(
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<CustomerDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<CustomerDataResponse> {
 
             override fun deserialize(t: JSONObject): CustomerDataResponse {
                 return CustomerDataResponse(
@@ -57,13 +57,13 @@ internal data class CustomerDataResponse(
                     t.optNullableString(WORK_PHONE_FIELD),
                     t.optNullableString(NATIONAL_DOCUMENT_ID_FIELD),
                     t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<AddressDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<AddressDataResponse>()
                             .deserialize(
                                 it
                             )
                     },
                     t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<AddressDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<AddressDataResponse>()
                             .deserialize(
                                 it
                             )

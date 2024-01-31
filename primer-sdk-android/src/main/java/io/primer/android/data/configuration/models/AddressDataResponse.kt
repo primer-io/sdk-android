@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.domain.action.models.PrimerAddress
 import org.json.JSONObject
@@ -39,7 +39,7 @@ internal data class AddressDataResponse(
         private const val POSTAL_CODE_FIELD = "postalCode"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AddressDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<AddressDataResponse> {
 
             override fun deserialize(t: JSONObject): AddressDataResponse {
                 return AddressDataResponse(

@@ -2,7 +2,7 @@ package io.primer.android.data.token.model
 
 import android.util.Base64
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
@@ -52,7 +52,7 @@ internal data class ClientToken(
                 val decoded = String(bytes)
 
                 if (decoded.contains("\"accessToken\":")) {
-                    val token = JSONSerializationUtils.getDeserializer<ClientToken>()
+                    val token = JSONSerializationUtils.getJsonObjectDeserializer<ClientToken>()
                         .deserialize(JSONObject(decoded))
 
                     val isExpired = checkIfExpired(token.exp.toLong())
@@ -92,7 +92,7 @@ internal data class ClientToken(
         private const val NOL_PAY_TRANSACTION_NO = "nolPayTransactionNo"
 
         @JvmField
-        val deserializer = JSONDeserializer { t ->
+        val deserializer = JSONObjectDeserializer { t ->
             ClientToken(
                 t.optNullableString(CONFIGURATION_URL_FIELD),
                 t.optNullableString(ANALYTICS_URL_V2_FIELD),

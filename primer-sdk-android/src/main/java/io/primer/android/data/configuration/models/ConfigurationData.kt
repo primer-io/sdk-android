@@ -6,6 +6,7 @@ import io.primer.android.domain.session.models.Configuration
 internal data class ConfigurationData(
     val pciUrl: String,
     val coreUrl: String,
+    val assetsUrl: String,
     val paymentMethods: List<PaymentMethodConfigDataResponse>,
     val checkoutModules: List<CheckoutModuleDataResponse> = listOf(),
     val keys: ConfigurationKeysDataResponse?,

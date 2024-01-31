@@ -28,6 +28,9 @@ import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.models.PrimerCountry
 import io.primer.android.domain.action.models.PrimerPhoneCode
 import io.primer.android.domain.base.None
+import io.primer.android.domain.currencyformat.interactors.FetchCurrencyFormatDataInteractor
+import io.primer.android.domain.currencyformat.interactors.FormatAmountToCurrencyInteractor
+import io.primer.android.domain.currencyformat.models.FormatCurrencyParams
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.displayMetadata.PaymentMethodsImplementationInteractor
@@ -61,6 +64,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
@@ -81,6 +85,8 @@ internal class PrimerViewModel(
     private val createPaymentInteractor: CreatePaymentInteractor,
     private val resumePaymentInteractor: ResumePaymentInteractor,
     private val actionInteractor: ActionInteractor,
+    private val fetchCurrencyFormatDataInteractor: FetchCurrencyFormatDataInteractor,
+    private val amountToCurrencyInteractor: FormatAmountToCurrencyInteractor,
     private val config: PrimerConfig,
     private val billingAddressValidator: BillingAddressValidator,
     private val savedStateHandle: SavedStateHandle = SavedStateHandle()
@@ -200,7 +206,11 @@ internal class PrimerViewModel(
         viewModelScope.launch {
             configurationInteractor(ConfigurationParams(config.settings.fromHUC))
                 .flatMapLatest {
-                    paymentMethodModulesInteractor(None()).zip(
+                    flowOf(fetchCurrencyFormatDataInteractor(None())).zip(
+                        paymentMethodModulesInteractor(None())
+                    ) { _, descriptorsHolder ->
+                        descriptorsHolder
+                    }.zip(
                         vaultedPaymentMethodsInteractor(
                             VaultInstrumentParams(config.settings.fromHUC.not())
                         )
@@ -308,7 +318,7 @@ internal class PrimerViewModel(
         }
 
     private val formatter: SurchargeFormatter
-        get() = SurchargeFormatter(actionInteractor.surcharges, currency)
+        get() = SurchargeFormatter(actionInteractor, amountToCurrencyInteractor, currency)
 
     private val token: BasePaymentToken?
         get() = _selectedPaymentMethodId.value
@@ -327,9 +337,14 @@ internal class PrimerViewModel(
         formatter.getSurchargeForPaymentMethodType(paymentMethodType)
     )
 
-    fun amountLabelMonetaryAmount(
+    fun amountLabel(
         config: PrimerConfig
-    ): MonetaryAmount? = AmountLabelContentFactory.build(config, savedPaymentMethodSurcharge)
+    ): String? = amountToCurrencyString(
+        AmountLabelContentFactory.build(
+            config,
+            savedPaymentMethodSurcharge
+        )
+    )
 
     val monetaryAmount: MonetaryAmount? get() = config.monetaryAmount
 
@@ -406,6 +421,7 @@ internal class PrimerViewModel(
                     )
                 }
             }
+
             is CheckoutEvent.PaymentContinue -> {
                 viewModelScope.launch {
                     createPaymentInteractor(
@@ -427,6 +443,7 @@ internal class PrimerViewModel(
                     ).collect { }
                 }
             }
+
             else -> Unit
         }
     }
@@ -481,4 +498,10 @@ internal class PrimerViewModel(
         billingAddressFields.value.orEmpty(),
         showBillingFields.value.orEmpty()
     )
+
+    fun amountToCurrencyString(amount: MonetaryAmount?) =
+        amount?.let { amountToCurrencyInteractor.execute(params = FormatCurrencyParams(it)) }
+
+    fun amountToCurrencyString() =
+        monetaryAmount?.let { amountToCurrencyString(it) }
 }

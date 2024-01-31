@@ -1,7 +1,7 @@
 package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableBoolean
 import io.primer.android.core.serialization.json.extensions.optNullableInt
@@ -49,14 +49,14 @@ internal data class ClientSessionDataResponse(
             const val OPTIONS_FIELD = "options"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<PaymentMethodDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<PaymentMethodDataResponse> {
 
                 override fun deserialize(t: JSONObject): PaymentMethodDataResponse {
                     return PaymentMethodDataResponse(
                         t.optNullableBoolean(VAULT_ON_SUCCESS_FIELD),
                         t.optJSONArray(OPTIONS_FIELD)?.sequence<JSONObject>()?.map {
                             JSONSerializationUtils
-                                .getDeserializer<PaymentMethodOptionDataResponse>()
+                                .getJsonObjectDeserializer<PaymentMethodOptionDataResponse>()
                                 .deserialize(it)
                         }?.toList().orEmpty()
                     )
@@ -77,14 +77,15 @@ internal data class ClientSessionDataResponse(
             const val NETWORKS_FIELD = "networks"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<PaymentMethodOptionDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<PaymentMethodOptionDataResponse> {
 
                 override fun deserialize(t: JSONObject): PaymentMethodOptionDataResponse {
                     return PaymentMethodOptionDataResponse(
                         t.getString(TYPE_FIELD),
                         t.optNullableInt(SURCHARGE_FIELD),
                         t.optJSONArray(NETWORKS_FIELD)?.sequence<JSONObject>()?.map {
-                            JSONSerializationUtils.getDeserializer<NetworkOptionDataResponse>()
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<NetworkOptionDataResponse>()
                                 .deserialize(it)
                         }?.toList()
                     )
@@ -102,7 +103,7 @@ internal data class ClientSessionDataResponse(
             const val SURCHARGE_FIELD = "surcharge"
 
             @JvmField
-            val deserializer = object : JSONDeserializer<NetworkOptionDataResponse> {
+            val deserializer = object : JSONObjectDeserializer<NetworkOptionDataResponse> {
 
                 override fun deserialize(t: JSONObject): NetworkOptionDataResponse {
                     return NetworkOptionDataResponse(
@@ -140,7 +141,7 @@ internal data class ClientSessionDataResponse(
         const val PAYMENT_METHOD_DATA_FIELD = "paymentMethod"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<ClientSessionDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<ClientSessionDataResponse> {
 
             override fun deserialize(t: JSONObject): ClientSessionDataResponse {
                 return ClientSessionDataResponse(
@@ -151,16 +152,16 @@ internal data class ClientSessionDataResponse(
                     t.optNullableInt(AMOUNT_FIELD),
                     t.optNullableString(CURRENCY_CODE_FIELD),
                     t.optJSONObject(CUSTOMER_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<CustomerDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<CustomerDataResponse>()
                             .deserialize(it)
                     },
                     t.optJSONObject(ORDER_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<OrderDataResponse>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<OrderDataResponse>()
                             .deserialize(it)
                     },
                     t.optJSONObject(PAYMENT_METHOD_DATA_FIELD)?.let {
                         JSONSerializationUtils
-                            .getDeserializer<PaymentMethodDataResponse>()
+                            .getJsonObjectDeserializer<PaymentMethodDataResponse>()
                             .deserialize(it)
                     }
                 )

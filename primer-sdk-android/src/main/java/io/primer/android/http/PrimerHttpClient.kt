@@ -1,6 +1,9 @@
 package io.primer.android.http
 
 import io.primer.android.core.serialization.json.JSONArraySerializer
+import io.primer.android.core.serialization.json.JSONDataUtils.JSONData.JSONArrayData
+import io.primer.android.core.serialization.json.JSONDataUtils.JSONData.JSONObjectData
+import io.primer.android.core.serialization.json.JSONDataUtils.stringToJsonData
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializable
@@ -12,7 +15,6 @@ import io.primer.android.http.exception.JsonDecodingException
 import io.primer.android.http.exception.JsonEncodingException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -21,8 +23,6 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.json.JSONObject
-import kotlin.coroutines.resume
 
 private const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 
@@ -111,15 +111,20 @@ internal class PrimerHttpClient(
         }
 
         val body: ResponseBody? = response.body
+        val bodyString = response.body?.string() ?: "{}"
 
-        val jsonBody: JSONObject = suspendCancellableCoroutine { continuation ->
-            val json = JSONObject(response.body?.string() ?: "{}")
-            body?.close()
-            continuation.resume(json)
-        }
+        try {
+            return when (val jsonData = stringToJsonData(bodyString)) {
+                is JSONObjectData -> {
+                    body?.close()
+                    JSONSerializationUtils.getJsonObjectDeserializer<R>().deserialize(jsonData.json)
+                }
 
-        return try {
-            JSONSerializationUtils.getDeserializer<R>().deserialize(jsonBody)
+                is JSONArrayData -> {
+                    body?.close()
+                    JSONSerializationUtils.getJsonArrayDeserializer<R>().deserialize(jsonData.json)
+                }
+            }
         } catch (expected: Exception) {
             throw JsonDecodingException(expected)
         }
@@ -131,8 +136,7 @@ internal class PrimerHttpClient(
                 is JSONObjectSerializer -> serializer.serialize(request).toString()
                 is JSONArraySerializer -> serializer.serialize(request).toString()
             }
-            serialized
-                .toRequestBody(CONTENT_TYPE_APPLICATION_JSON.toMediaType())
+            serialized.toRequestBody(CONTENT_TYPE_APPLICATION_JSON.toMediaType())
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)
         }

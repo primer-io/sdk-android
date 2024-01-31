@@ -1,6 +1,6 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -45,13 +45,13 @@ internal data class AnalyticsCrashEventRequest(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsCrashEventRequest> {
+        val deserializer = object : JSONObjectDeserializer<AnalyticsCrashEventRequest> {
             override fun deserialize(t: JSONObject): AnalyticsCrashEventRequest {
                 return AnalyticsCrashEventRequest(
-                    JSONSerializationUtils.getDeserializer<DeviceData>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
-                    JSONSerializationUtils.getDeserializer<CrashProperties>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<CrashProperties>().deserialize(
                         t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.getString(APP_IDENTIFIER_FIELD),
@@ -86,7 +86,7 @@ internal data class CrashProperties(val stacktrace: List<String>) : BaseAnalytic
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<CrashProperties> {
+        val deserializer = object : JSONObjectDeserializer<CrashProperties> {
             override fun deserialize(t: JSONObject): CrashProperties {
                 return CrashProperties(t.getJSONArray(STACKTRACE_FIELD).sequence<String>().toList())
             }

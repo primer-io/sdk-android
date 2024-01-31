@@ -1,7 +1,7 @@
 package io.primer.android.domain.action.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.toMap
 import io.primer.android.data.configuration.models.CountryCode
 import org.json.JSONObject
@@ -17,7 +17,7 @@ internal data class PrimerCountry(
         private const val COUNTRY_CODE_FIELD = "code"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PrimerCountry> {
+        val deserializer = object : JSONObjectDeserializer<PrimerCountry> {
             override fun deserialize(t: JSONObject): PrimerCountry {
                 return PrimerCountry(
                     t.getString(NAME_FIELD),
@@ -38,7 +38,7 @@ internal data class PrimerCountriesCodeInfo(
         private const val COUNTRIES_FIELD = "countries"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PrimerCountriesCodeInfo> {
+        val deserializer = object : JSONObjectDeserializer<PrimerCountriesCodeInfo> {
             override fun deserialize(t: JSONObject): PrimerCountriesCodeInfo {
                 return PrimerCountriesCodeInfo(
                     t.getString(LOCALE_FIELD),

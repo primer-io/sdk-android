@@ -1,7 +1,7 @@
 package io.primer.android.domain.action.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.data.configuration.models.CountryCode
 import org.json.JSONObject
 
@@ -19,7 +19,7 @@ internal data class PrimerPhoneCode(
         private const val DIAL_CODE_FIELD = "dial_code"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PrimerPhoneCode> {
+        val deserializer = object : JSONObjectDeserializer<PrimerPhoneCode> {
             override fun deserialize(t: JSONObject): PrimerPhoneCode {
                 return PrimerPhoneCode(
                     t.getString(NAME_FIELD),

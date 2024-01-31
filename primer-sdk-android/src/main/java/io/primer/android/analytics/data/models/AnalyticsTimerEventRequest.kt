@@ -1,6 +1,6 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -43,13 +43,13 @@ internal data class AnalyticsTimerEventRequest(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsTimerEventRequest> {
+        val deserializer = object : JSONObjectDeserializer<AnalyticsTimerEventRequest> {
             override fun deserialize(t: JSONObject): AnalyticsTimerEventRequest {
                 return AnalyticsTimerEventRequest(
-                    JSONSerializationUtils.getDeserializer<DeviceData>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
-                    JSONSerializationUtils.getDeserializer<TimerProperties>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<TimerProperties>().deserialize(
                         t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.getString(APP_IDENTIFIER_FIELD),
@@ -97,13 +97,13 @@ internal data class TimerProperties(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<TimerProperties> {
+        val deserializer = object : JSONObjectDeserializer<TimerProperties> {
             override fun deserialize(t: JSONObject): TimerProperties {
                 return TimerProperties(
                     TimerId.valueOf(t.getString(ID_FIELD)),
                     TimerType.valueOf(t.getString(TIMER_TYPE_FIELD)),
                     t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<AnalyticsContext>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
                             .deserialize(it)
                     }
                 )

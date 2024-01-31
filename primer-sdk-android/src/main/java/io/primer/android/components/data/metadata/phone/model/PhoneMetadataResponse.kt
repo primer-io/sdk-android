@@ -1,7 +1,7 @@
 package io.primer.android.components.data.metadata.phone.model
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 
 internal data class PhoneMetadataResponse(
@@ -17,7 +17,7 @@ internal data class PhoneMetadataResponse(
         private const val NATIONAL_NUMBER_FIELD = "nationalNumber"
 
         @JvmField
-        val deserializer = JSONDeserializer {
+        val deserializer = JSONObjectDeserializer {
             PhoneMetadataResponse(
                 it.getBoolean(VALID_FIELD),
                 it.optNullableString(COUNTRY_CODE_FIELD),

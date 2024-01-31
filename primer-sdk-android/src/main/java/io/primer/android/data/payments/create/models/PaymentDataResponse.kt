@@ -1,7 +1,7 @@
 package io.primer.android.data.payments.create.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
@@ -33,7 +33,7 @@ internal data class PaymentDataResponse(
         private const val REQUIRED_ACTION_DATA_FIELD = "requiredAction"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PaymentDataResponse> {
+        val deserializer = object : JSONObjectDeserializer<PaymentDataResponse> {
 
             override fun deserialize(t: JSONObject): PaymentDataResponse {
                 return PaymentDataResponse(
@@ -46,7 +46,7 @@ internal data class PaymentDataResponse(
                     t.optNullableString(CUSTOMER_ID_FIELD),
                     t.optNullableString(PAYMENT_FAILURE_REASON_FIELD),
                     t.optJSONObject(REQUIRED_ACTION_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<RequiredActionData>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<RequiredActionData>()
                             .deserialize(it)
                     }
                 )
@@ -75,7 +75,7 @@ internal data class RequiredActionData(
 
         @JvmField
         val deserializer =
-            JSONDeserializer { t ->
+            JSONObjectDeserializer { t ->
                 RequiredActionData(
                     RequiredActionName.valueOf(t.getString(REQUIRED_ACTION_NAME_FIELD)),
                     t.getString(DESCRIPTION_FIELD),

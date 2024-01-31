@@ -108,7 +108,6 @@
     <string name="other_ways_of_paying">Cara lain untuk membayar</string>
     <string name="other_ways_to_pay">Cara lain untuk membayar</string>
     <string name="pay">Bayar</string>
-    <string name="pay_amount">%1$s</string>
     <string name="pay_by_card">Bayar menggunakan kad</string>
     <string name="pay_specific_amount">Bayar %s</string>
     <string name="pay_with">Bayar dengan</string>

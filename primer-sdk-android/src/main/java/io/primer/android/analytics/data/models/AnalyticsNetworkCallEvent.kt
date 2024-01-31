@@ -1,8 +1,8 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
-import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
@@ -44,15 +44,16 @@ internal data class AnalyticsNetworkCallEvent(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsNetworkCallEvent> {
+        val deserializer = object : JSONObjectDeserializer<AnalyticsNetworkCallEvent> {
             override fun deserialize(t: JSONObject): AnalyticsNetworkCallEvent {
                 return AnalyticsNetworkCallEvent(
-                    JSONSerializationUtils.getDeserializer<DeviceData>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
-                    JSONSerializationUtils.getDeserializer<NetworkCallProperties>().deserialize(
-                        t.getJSONObject(PROPERTIES_FIELD)
-                    ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<NetworkCallProperties>()
+                        .deserialize(
+                            t.getJSONObject(PROPERTIES_FIELD)
+                        ),
                     t.getString(APP_IDENTIFIER_FIELD),
                     t.getString(SDK_SESSION_ID_FIELD),
                     SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
@@ -102,7 +103,7 @@ internal data class NetworkCallProperties(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<NetworkCallProperties> {
+        val deserializer = object : JSONObjectDeserializer<NetworkCallProperties> {
             override fun deserialize(t: JSONObject): NetworkCallProperties {
                 return NetworkCallProperties(
                     NetworkCallType.valueOf(t.getString(NETWORK_CALL_TYPE_FIELD)),

@@ -50,7 +50,7 @@ internal class CountriesDataRepository(private val context: Context) :
     @Throws(IOException::class)
     private fun parseFileAndLoadCountries(dataJson: String) {
         val countryCodesData =
-            JSONSerializationUtils.getDeserializer<PrimerCountriesCodeInfo>()
+            JSONSerializationUtils.getJsonObjectDeserializer<PrimerCountriesCodeInfo>()
                 .deserialize(JSONObject(dataJson))
         countries.clear()
         countries.addAll(
@@ -75,7 +75,8 @@ internal class CountriesDataRepository(private val context: Context) :
             if (dataJson.isNotBlank()) {
                 try {
                     val phoneCodesData = JSONArray(dataJson).sequence<JSONObject>().map {
-                        JSONSerializationUtils.getDeserializer<PrimerPhoneCode>().deserialize(it)
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<PrimerPhoneCode>().deserialize(it)
                     }.toList()
                     phoneCodes.clear()
                     phoneCodes.addAll(phoneCodesData)

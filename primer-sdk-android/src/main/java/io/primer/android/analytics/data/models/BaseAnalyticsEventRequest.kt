@@ -19,7 +19,7 @@ import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.analytics.domain.models.UrlContextParams
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
@@ -94,7 +94,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<BaseAnalyticsEventRequest> {
+        val deserializer = object : JSONObjectDeserializer<BaseAnalyticsEventRequest> {
             override fun deserialize(t: JSONObject): BaseAnalyticsEventRequest {
                 return when (AnalyticsEventType.valueOf(t.getString(EVENT_TYPE_FIELD))) {
                     AnalyticsEventType.UI_EVENT ->

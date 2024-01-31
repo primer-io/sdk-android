@@ -56,7 +56,8 @@ internal class DynamicFormFragment : BaseFormFragment() {
             if (status != TokenizationStatus.NONE) {
                 formButton.showProgress()
             } else {
-                formButton.amount = localConfig.monetaryAmount
+                formButton.amount =
+                    primerViewModel.amountToCurrencyString(localConfig.monetaryAmount)
             }
         }
     }
@@ -126,7 +127,8 @@ internal class DynamicFormFragment : BaseFormFragment() {
         }
         parentLayout.requestLayout()
         if (form.buttonType == ButtonType.PAY) {
-            binding.formButton.amount = localConfig.monetaryAmount
+            binding.formButton.amount =
+                primerViewModel.amountToCurrencyString(localConfig.monetaryAmount)
         } else {
             binding.formButton.text = resources.getText(R.string.confirm)
         }

@@ -99,7 +99,6 @@
     <string name="other_ways_of_paying">其他付款方式</string>
     <string name="other_ways_to_pay">使用其他方式支付</string>
     <string name="pay">支付</string>
-    <string name="pay_amount">%1$s</string>
     <string name="pay_by_card">刷卡支付</string>
     <string name="pay_specific_amount">支付 %s</string>
     <string name="pay_with">支付使用</string>

@@ -96,7 +96,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     // show title label that displays total amount minus any applies surcharges
     private fun renderAmountLabel() {
         binding.primerSheetTitleLayout.apply {
-            setAmount(primerViewModel.amountLabelMonetaryAmount(localConfig))
+            setAmount(primerViewModel.amountLabel(localConfig))
             setUxMode(localConfig.paymentMethodIntent)
         }
     }
@@ -167,11 +167,13 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         primerViewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 SessionState.AWAITING_USER -> {
-                    binding.payAllButton.amount = localConfig.monetaryAmount
+                    binding.payAllButton.amount =
+                        primerViewModel.amountToCurrencyString(localConfig.monetaryAmount)
                     renderVaultedItemSurchargeLabel()
                     renderAmountLabel()
                     setBusy(false)
                 }
+
                 else -> setBusy(true)
             }
         }
@@ -191,7 +193,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) {
             if (primerViewModel.shouldDisplaySavedPaymentMethod) {
                 renderSelectedPaymentMethod()
-            } else { binding.primerSavedPaymentSection.isVisible = false }
+            } else {
+                binding.primerSavedPaymentSection.isVisible = false
+            }
         }
     }
 
@@ -199,7 +203,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         val text = primerViewModel.savedPaymentMethodSurchargeLabel(requireContext())
         if (primerViewModel.surchargeDisabled) {
             binding.savedPaymentMethodBox.hideSurchargeFrame()
-        } else { binding.savedPaymentMethodBox.showSurchargeLabel(text) }
+        } else {
+            binding.savedPaymentMethodBox.showSurchargeLabel(text)
+        }
     }
 
     private fun setBusy(isBusy: Boolean) {
@@ -294,12 +300,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                     renderAlternativeSavedPaymentMethodView(title)
                     paymentMethodIcon.setImageResource(R.drawable.ic_klarna_card)
                 }
+
                 PaymentMethodType.PAYPAL.name -> {
                     val title =
                         paymentMethod.paymentInstrumentData?.externalPayerInfo?.email ?: "PayPal"
                     renderAlternativeSavedPaymentMethodView(title)
                     paymentMethodIcon.setImageResource(R.drawable.ic_paypal_card)
                 }
+
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     val data = paymentMethod.paymentInstrumentData
                     titleLabel.text = data?.cardholderName
@@ -313,6 +321,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                         getString(R.string.expiry_date, expirationMonth, expirationYear)
                     setCardIcon(data.network)
                 }
+
                 else -> {
                     paymentMethodIcon.setImageResource(R.drawable.ic_generic_card)
                 }

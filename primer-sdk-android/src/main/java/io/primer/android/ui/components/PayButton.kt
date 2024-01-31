@@ -7,11 +7,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.R
 import io.primer.android.databinding.PayButtonBinding
-import io.primer.android.model.MonetaryAmount
-import io.primer.android.ui.PayAmountText
+import io.primer.android.ui.settings.PrimerTheme
 
 private const val FADE_IN_DURATION_MS = 900L
 private const val BUTTON_PROGRESS_ALPHA = 0.5f
@@ -34,14 +32,13 @@ internal class PayButton @JvmOverloads constructor(
         text = resources.getString(R.string.pay)
     }
 
-    var amount: MonetaryAmount? = null
+    var amount: String? = null
         set(value) {
             field = value
             text = if (value == null) {
                 resources.getString(R.string.pay)
             } else {
-                val amountValue = PayAmountText.generate(context, value)
-                resources.getString(R.string.pay_specific_amount, amountValue)
+                resources.getString(R.string.pay_specific_amount, amount)
             }
         }
 

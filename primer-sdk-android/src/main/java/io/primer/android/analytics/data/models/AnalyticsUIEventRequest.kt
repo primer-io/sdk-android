@@ -1,6 +1,6 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
@@ -43,13 +43,13 @@ internal data class AnalyticsUIEventRequest(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<AnalyticsUIEventRequest> {
+        val deserializer = object : JSONObjectDeserializer<AnalyticsUIEventRequest> {
             override fun deserialize(t: JSONObject): AnalyticsUIEventRequest {
                 return AnalyticsUIEventRequest(
-                    JSONSerializationUtils.getDeserializer<DeviceData>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
-                    JSONSerializationUtils.getDeserializer<UIProperties>().deserialize(
+                    JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
                         t.getJSONObject(PROPERTIES_FIELD)
                     ),
                     t.getString(APP_IDENTIFIER_FIELD),
@@ -104,7 +104,7 @@ internal data class UIProperties(
         }
 
         @JvmField
-        val deserializer = object : JSONDeserializer<UIProperties> {
+        val deserializer = object : JSONObjectDeserializer<UIProperties> {
             override fun deserialize(t: JSONObject): UIProperties {
                 return UIProperties(
                     AnalyticsAction.valueOf(t.getString(ACTION_FIELD)),
@@ -112,7 +112,7 @@ internal data class UIProperties(
                     Place.valueOf(t.getString(PLACE_FIELD)),
                     t.optNullableString(OBJECT_ID_FIELD)?.let { ObjectId.valueOf(it) },
                     t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<AnalyticsContext>()
+                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
                             .deserialize(it)
                     }
                 )

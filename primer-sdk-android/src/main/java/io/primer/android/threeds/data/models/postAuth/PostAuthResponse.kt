@@ -1,7 +1,7 @@
 package io.primer.android.threeds.data.models.postAuth
 
 import io.primer.android.core.serialization.json.JSONDeserializable
-import io.primer.android.core.serialization.json.JSONDeserializer
+import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.threeds.data.models.common.AuthenticationDataResponse
@@ -19,18 +19,19 @@ internal data class PostAuthResponse(
         private const val RESUME_TOKEN_FIELD = "resumeToken"
 
         @JvmField
-        val deserializer = object : JSONDeserializer<PostAuthResponse> {
+        val deserializer = object : JSONObjectDeserializer<PostAuthResponse> {
 
             override fun deserialize(t: JSONObject): PostAuthResponse {
                 return PostAuthResponse(
-                    JSONSerializationUtils.getDeserializer<PaymentMethodTokenInternal>()
+                    JSONSerializationUtils.getJsonObjectDeserializer<PaymentMethodTokenInternal>()
                         .deserialize(
                             t.getJSONObject(
                                 TOKEN_FIELD
                             )
                         ),
                     t.optJSONObject(AUTHENTICATION_FIELD)?.let {
-                        JSONSerializationUtils.getDeserializer<AuthenticationDataResponse>()
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<AuthenticationDataResponse>()
                             .deserialize(
                                 it
                             )

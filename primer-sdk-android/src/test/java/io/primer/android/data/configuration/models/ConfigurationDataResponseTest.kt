@@ -18,6 +18,7 @@ internal class ConfigurationDataResponseTest {
             ConfigurationData(
                 pciUrl,
                 coreUrl,
+                assetsUrl,
                 paymentMethods,
                 checkoutModules,
                 keys,
@@ -39,6 +40,11 @@ internal class ConfigurationDataResponseTest {
     @Test
     fun `'pciUrl' should be deserialized correctly`() {
         assertEquals(PCI_URL, configurationDataResponse.pciUrl)
+    }
+
+    @Test
+    fun `'assetsUrl' should be deserialized correctly`() {
+        assertEquals(ASSETS_URL, configurationDataResponse.assetsUrl)
     }
 
     @Test
@@ -344,6 +350,7 @@ internal class ConfigurationDataResponseTest {
 
         const val CORE_URL = "https://api.staging.primer.io"
         const val PCI_URL = "https://sdk.api.staging.primer.io"
+        const val ASSETS_URL = "https://assets.staging.core.primer.io"
         const val PAYMENT_METHOD_ID = "a02e7d8b-8749-4bf6-a1d6"
         const val PAYMENT_METHOD_TYPE = "XENDIT_OVO"
         const val PAYMENT_METHOD_OPTIONS_MERCHANT_ID = "364218b4-8d33-48d1-a849"
@@ -396,6 +403,7 @@ internal class ConfigurationDataResponseTest {
        {
            "coreUrl":"$CORE_URL",
            "pciUrl":"$PCI_URL",
+           "assetsUrl":"$ASSETS_URL",
            "paymentMethods":[
               {
                  "id":"$PAYMENT_METHOD_ID",

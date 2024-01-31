@@ -15,7 +15,6 @@ import io.primer.android.databinding.FragmentMultibancoPaymentBinding
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.inject
 import io.primer.android.domain.payments.forms.models.Form
-import io.primer.android.ui.PayAmountText
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.copyTextToClipboard
 import io.primer.android.ui.fragments.forms.BaseFormFragment
@@ -98,10 +97,8 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
     }
 
     private fun setupAmount() {
-        binding.tvValueAmount.text = PayAmountText.generate(
-            requireContext(),
-            localConfig.monetaryAmount
-        )
+        binding.tvValueAmount.text =
+            primerViewModel.amountToCurrencyString(localConfig.monetaryAmount)
     }
 
     override fun setupForm(form: Form) {
@@ -149,7 +146,9 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
                     binding.tvValueDueDate.text = this
                 }
             }
-        } else { null }
+        } else {
+            null
+        }
     }
 
     private fun setupReferences(entity: String?, reference: String?) {
