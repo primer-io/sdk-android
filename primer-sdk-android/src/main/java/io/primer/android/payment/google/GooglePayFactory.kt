@@ -12,17 +12,6 @@ import java.util.Currency
 internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
-        val amount: Int
-        try {
-            amount = settings.currentAmount
-        } catch (e: IllegalArgumentException) {
-            return Failure(Exception(e.message))
-        }
-
-        if (amount == 0) {
-            return Failure(Exception("Amount is zero"))
-        }
-
         if (settings.order.countryCode == null) {
             return Failure(Exception("Country code is null"))
         }
