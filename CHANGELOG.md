@@ -1,3 +1,10 @@
+## 2.24.0 (2024-02-06)
+
+### Feat
+
+- bumped Primer 3DS to 1.4.0 (#515)
+- enable google pay when amount in zero in session token
+
 ## 2.23.0 (2024-01-30)
 
 ### Feat
