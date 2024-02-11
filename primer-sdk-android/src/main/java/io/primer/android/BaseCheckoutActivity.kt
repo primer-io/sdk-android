@@ -13,6 +13,7 @@ internal open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+
         if (DISdkContext.sdkContainer == null) {
             // we need to restore the state in case of process death
             val config = getConfigFromState(savedInstanceState)
@@ -35,10 +36,18 @@ internal open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
         outState.putParcelable(SAVED_STATE_CONFIG_KEY, resolve<PrimerConfig>())
     }
 
+    protected fun AppCompatActivity.runIfNotFinishing(block: () -> Unit) {
+        if (isFinishing.not()) {
+            block.invoke()
+        }
+    }
+
     private fun getConfigFromState(savedInstanceState: Bundle?) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             savedInstanceState?.getParcelable(SAVED_STATE_CONFIG_KEY, PrimerConfig::class.java)
-        } else { savedInstanceState?.getParcelable(SAVED_STATE_CONFIG_KEY) as? PrimerConfig }
+        } else {
+            savedInstanceState?.getParcelable(SAVED_STATE_CONFIG_KEY) as? PrimerConfig
+        }
 
     private companion object {
         const val SAVED_STATE_CONFIG_KEY = "CONFIG"

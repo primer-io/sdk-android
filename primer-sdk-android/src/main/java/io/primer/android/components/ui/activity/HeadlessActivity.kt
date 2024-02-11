@@ -32,41 +32,43 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val params = getLauncherParams() ?: return
-        savedInstanceState?.let {
-            intent.putExtra(LAUNCHED_BROWSER_KEY, it.getBoolean(LAUNCHED_BROWSER_KEY))
-        }
-        val implementationType = paymentMethodModulesInteractor.getPaymentMethodDescriptors()
-            .first { it.config.type == params.paymentMethodType }.config.implementationType
+        runIfNotFinishing {
+            val params = getLauncherParams() ?: return@runIfNotFinishing
+            savedInstanceState?.let {
+                intent.putExtra(LAUNCHED_BROWSER_KEY, it.getBoolean(LAUNCHED_BROWSER_KEY))
+            }
+            val implementationType = paymentMethodModulesInteractor.getPaymentMethodDescriptors()
+                .first { it.config.type == params.paymentMethodType }.config.implementationType
 
-        viewModel = HeadlessViewModelFactory().getViewModel(
-            this,
-            implementationType,
-            params.paymentMethodType,
-            params.sessionIntent
-        ).also { manager ->
-            manager.startActivityEvent.observe(this) {
-                eventDispatcher.dispatchEvent(
-                    CheckoutEvent.PaymentMethodPresented(params.paymentMethodType)
-                )
-                startRedirect(it)
-            }
-            manager.finishActivityEvent.observe(this) {
-                finish()
-            }
-        }
-        viewModel.initialize(
-            implementationType,
-            params.paymentMethodType,
-            params.sessionIntent,
-            if (savedInstanceState == null) params.initialState else null
-        )
-        // we don't want to start again in case of config change
-        if (savedInstanceState == null && params.initialState == null) {
-            viewModel.start(
+            viewModel = HeadlessViewModelFactory().getViewModel(
+                this,
+                implementationType,
                 params.paymentMethodType,
                 params.sessionIntent
+            ).also { manager ->
+                manager.startActivityEvent.observe(this) {
+                    eventDispatcher.dispatchEvent(
+                        CheckoutEvent.PaymentMethodPresented(params.paymentMethodType)
+                    )
+                    startRedirect(it)
+                }
+                manager.finishActivityEvent.observe(this) {
+                    finish()
+                }
+            }
+            viewModel.initialize(
+                implementationType,
+                params.paymentMethodType,
+                params.sessionIntent,
+                if (savedInstanceState == null) params.initialState else null
             )
+            // we don't want to start again in case of config change
+            if (savedInstanceState == null && params.initialState == null) {
+                viewModel.start(
+                    params.paymentMethodType,
+                    params.sessionIntent
+                )
+            }
         }
     }
 
