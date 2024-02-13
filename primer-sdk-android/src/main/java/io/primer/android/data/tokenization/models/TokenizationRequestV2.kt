@@ -45,17 +45,15 @@ internal abstract class TokenizationRequestV2 : JSONObjectSerializable {
 
     companion object {
         @JvmField
-        val serializer = object : JSONObjectSerializer<TokenizationRequestV2> {
-            override fun serialize(t: TokenizationRequestV2): JSONObject {
-                return when (t) {
-                    is TokenizationCheckoutRequestV2 ->
-                        TokenizationCheckoutRequestV2.serializer.serialize(t)
+        val serializer = JSONObjectSerializer<TokenizationRequestV2> { t ->
+            when (t) {
+                is TokenizationCheckoutRequestV2 ->
+                    TokenizationCheckoutRequestV2.serializer.serialize(t)
 
-                    is TokenizationVaultRequestV2 ->
-                        TokenizationVaultRequestV2.serializer.serialize(t)
+                is TokenizationVaultRequestV2 ->
+                    TokenizationVaultRequestV2.serializer.serialize(t)
 
-                    else -> throw IllegalStateException("Unsupported instance of $t")
-                }
+                else -> throw IllegalStateException("Unsupported instance of $t")
             }
         }
     }
@@ -82,7 +80,8 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
             expirationMonth,
             expirationYear,
             cvv,
-            cardholderName
+            cardholderName,
+            preferredNetwork
         )
 
         is KlarnaPaymentInstrumentParams -> KlarnaPaymentInstrumentDataRequest(
@@ -124,7 +123,7 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
         is AdyenBlikPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
             paymentMethodConfigId,
-            BlikSessionInfoDataRequest(blikCode, locale, redirectionUrl),
+            BlikSessionInfoDataRequest(locale, redirectionUrl, blikCode),
             type
         )
 
@@ -198,18 +197,16 @@ internal data class TokenizationVaultRequestV2(
         private const val PAYMENT_FLOW_FIELD = "paymentFlow"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<TokenizationVaultRequestV2> {
-            override fun serialize(t: TokenizationVaultRequestV2): JSONObject {
-                return JSONObject().apply {
-                    put(
-                        PAYMENT_INSTRUMENT_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<PaymentInstrumentDataRequest>()
-                            .serialize(t.paymentInstrument)
-                    )
-                    put(TOKEN_TYPE_FIELD, t.tokenType)
-                    put(PAYMENT_FLOW_FIELD, t.paymentFlow)
-                }
+        val serializer = JSONObjectSerializer<TokenizationVaultRequestV2> { t ->
+            JSONObject().apply {
+                put(
+                    PAYMENT_INSTRUMENT_FIELD,
+                    JSONSerializationUtils
+                        .getJsonObjectSerializer<PaymentInstrumentDataRequest>()
+                        .serialize(t.paymentInstrument)
+                )
+                put(TOKEN_TYPE_FIELD, t.tokenType)
+                put(PAYMENT_FLOW_FIELD, t.paymentFlow)
             }
         }
     }
@@ -222,16 +219,14 @@ internal data class TokenizationCheckoutRequestV2(
         private const val PAYMENT_INSTRUMENT_FIELD = "paymentInstrument"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<TokenizationCheckoutRequestV2> {
-            override fun serialize(t: TokenizationCheckoutRequestV2): JSONObject {
-                return JSONObject().apply {
-                    put(
-                        PAYMENT_INSTRUMENT_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<PaymentInstrumentDataRequest>()
-                            .serialize(t.paymentInstrument)
-                    )
-                }
+        val serializer = JSONObjectSerializer<TokenizationCheckoutRequestV2> { t ->
+            JSONObject().apply {
+                put(
+                    PAYMENT_INSTRUMENT_FIELD,
+                    JSONSerializationUtils
+                        .getJsonObjectSerializer<PaymentInstrumentDataRequest>()
+                        .serialize(t.paymentInstrument)
+                )
             }
         }
     }

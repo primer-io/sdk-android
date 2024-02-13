@@ -8,7 +8,6 @@
     <string name="tokenize">Tokenize</string>
 
     <string name="huc_ui">Headless SDK</string>
-    <string name="huc_raw">Headless SDK (RAW)</string>
     <string name="huc_vault">Headless SDK (Vault)</string>
 
     <string name="previous">Previous</string>

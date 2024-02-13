@@ -3,7 +3,6 @@ package io.primer.android.threeds.data.models.common
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
-import org.json.JSONObject
 
 internal data class AuthenticationDataResponse(
     val acsReferenceNumber: String? = null,
@@ -41,27 +40,24 @@ internal data class AuthenticationDataResponse(
         private const val DECLINED_REASON_TEXT_FIELD = "declinedReasonText"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AuthenticationDataResponse> {
-
-            override fun deserialize(t: JSONObject): AuthenticationDataResponse {
-                return AuthenticationDataResponse(
-                    t.optNullableString(ACS_REFERENCE_NUMBER_FIELD),
-                    t.optNullableString(ACS_SIGNED_CONTENT_FIELD),
-                    t.optNullableString(ACS_TRANSACTION_ID_FIELD),
-                    ResponseCode.valueOf(t.getString(RESPONSE_CODE_FIELD)),
-                    t.optNullableString(TRANSACTION_ID_FIELD),
-                    t.optNullableString(ACS_OPERATOR_ID_FIELD),
-                    t.optNullableString(DS_REFERENCE_NUMBER_FIELD),
-                    t.optNullableString(DS_TRANSACTION_ID_FIELD),
-                    t.optNullableString(ECI_FIELD),
-                    t.optNullableString(PROTOCOL_VERSION_FIELD),
-                    t.optNullableString(SKIPPED_REASON_CODE_FIELD)?.let { SkippedCode.valueOf(it) },
-                    t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
-                    t.optNullableString(DECLINED_REASON_CODE_FIELD)
-                        ?.let { DeclinedReasonCode.valueOf(it) },
-                    t.optNullableString(DECLINED_REASON_TEXT_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            AuthenticationDataResponse(
+                t.optNullableString(ACS_REFERENCE_NUMBER_FIELD),
+                t.optNullableString(ACS_SIGNED_CONTENT_FIELD),
+                t.optNullableString(ACS_TRANSACTION_ID_FIELD),
+                ResponseCode.valueOf(t.getString(RESPONSE_CODE_FIELD)),
+                t.optNullableString(TRANSACTION_ID_FIELD),
+                t.optNullableString(ACS_OPERATOR_ID_FIELD),
+                t.optNullableString(DS_REFERENCE_NUMBER_FIELD),
+                t.optNullableString(DS_TRANSACTION_ID_FIELD),
+                t.optNullableString(ECI_FIELD),
+                t.optNullableString(PROTOCOL_VERSION_FIELD),
+                t.optNullableString(SKIPPED_REASON_CODE_FIELD)?.let { SkippedCode.valueOf(it) },
+                t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
+                t.optNullableString(DECLINED_REASON_CODE_FIELD)
+                    ?.let { DeclinedReasonCode.valueOf(it) },
+                t.optNullableString(DECLINED_REASON_TEXT_FIELD)
+            )
         }
     }
 }

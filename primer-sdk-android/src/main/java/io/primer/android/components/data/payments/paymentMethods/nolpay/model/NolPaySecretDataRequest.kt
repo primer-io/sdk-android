@@ -29,14 +29,12 @@ internal data class NolPaySecretDataRequest(
         }
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<NolPaySecretDataRequest> {
-            override fun serialize(t: NolPaySecretDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(SDK_ID_FIELD, t.sdkId)
-                    put(APP_ID_FIELD, t.appId)
-                    put(PHONE_VENDOR_FIELD, t.deviceVendor)
-                    put(PHONE_MODEL_FIELD, t.deviceModel)
-                }
+        val serializer = JSONObjectSerializer<NolPaySecretDataRequest> { t ->
+            JSONObject().apply {
+                put(SDK_ID_FIELD, t.sdkId)
+                put(APP_ID_FIELD, t.appId)
+                put(PHONE_VENDOR_FIELD, t.deviceVendor)
+                put(PHONE_MODEL_FIELD, t.deviceModel)
             }
         }
     }

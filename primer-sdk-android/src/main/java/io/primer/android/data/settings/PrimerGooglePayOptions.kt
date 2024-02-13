@@ -10,6 +10,7 @@ enum class GooglePayButtonStyle {
 
 data class PrimerGooglePayOptions @JvmOverloads constructor(
     var merchantName: String? = null,
+    @Deprecated(DEPRECATION_MESSAGE)
     var allowedCardNetworks: List<String> = listOf(
         "AMEX",
         "DISCOVER",
@@ -38,13 +39,23 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         return 0
     }
 
-    internal companion object CREATOR : Parcelable.Creator<PrimerGooglePayOptions> {
-        override fun createFromParcel(parcel: Parcel): PrimerGooglePayOptions {
-            return PrimerGooglePayOptions(parcel)
-        }
+    internal companion object {
 
-        override fun newArray(size: Int): Array<PrimerGooglePayOptions?> {
-            return arrayOfNulls(size)
+        const val DEPRECATION_MESSAGE = """
+        This field has been deprecated, and modifying its settings will no longer have any impact.
+        To set allowed card networks pass 'orderedAllowedCardNetworks` when creating client session
+        (https://apiref.primer.io/reference/create_client_side_token_client_session_post)."
+    """
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<PrimerGooglePayOptions> {
+            override fun createFromParcel(parcel: Parcel): PrimerGooglePayOptions {
+                return PrimerGooglePayOptions(parcel)
+            }
+
+            override fun newArray(size: Int): Array<PrimerGooglePayOptions?> {
+                return arrayOfNulls(size)
+            }
         }
     }
 }

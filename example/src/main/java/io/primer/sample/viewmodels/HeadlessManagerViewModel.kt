@@ -223,7 +223,7 @@ class HeadlessManagerViewModel(
     override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
         super.onClientSessionUpdated(clientSession)
         Log.d(TAG, "onClientSessionUpdated")
-        _uiState.value = UiState.ClientSessionUpdatedReceived
+        _uiState.value = UiState.ClientSessionUpdatedReceived(clientSession)
     }
 
     override fun onPreparationStarted(paymentMethodType: String) {
@@ -237,6 +237,7 @@ class HeadlessManagerViewModel(
     override fun onCleared() {
         super.onCleared()
         headlessUniversalCheckout.cleanup()
+        isLaunched = false
     }
 
     companion object {
@@ -267,7 +268,7 @@ sealed class UiState {
         UiState()
 
     object BeforeClientSessionUpdateReceived : UiState()
-    object ClientSessionUpdatedReceived : UiState()
+    data class ClientSessionUpdatedReceived(val clientSession: PrimerClientSession) : UiState()
 
     data class ShowError(val payment: Payment?, val error: PrimerError) : UiState()
     data class CheckoutCompleted(val checkoutData: PrimerCheckoutData) : UiState()

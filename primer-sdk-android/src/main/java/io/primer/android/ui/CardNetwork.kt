@@ -1,13 +1,18 @@
 package io.primer.android.ui
 
+import androidx.annotation.DrawableRes
 import io.primer.android.R
+import io.primer.android.components.ui.assets.ImageColor
+import io.primer.android.utils.sanitizedCardNumber
+import kotlin.math.abs
 
 const val CARD_PADDING: Int = 8
 
 class CardNetwork {
 
     enum class Type {
-        UNKNOWN,
+
+        OTHER,
         VISA,
         MASTERCARD,
         AMEX,
@@ -19,7 +24,68 @@ class CardNetwork {
         ELO,
         MIR,
         HIPER,
-        HIPERCARD
+        HIPERCARD,
+        CARTES_BANCAIRES,
+        DANKORT;
+
+        @Suppress("ComplexMethod")
+        internal fun getCardBrand() = when (this) {
+            VISA -> Brand.VISA
+            MASTERCARD -> Brand.MASTERCARD
+            AMEX -> Brand.AMEX
+            DANKORT -> Brand.DANKORT
+            DINERS_CLUB -> Brand.DINERS_CLUB
+            DISCOVER -> Brand.DISCOVER
+            JCB -> Brand.JCB
+            UNIONPAY -> Brand.UNIONPAY
+            MIR -> Brand.MIR
+            HIPER -> Brand.HIPER
+            CARTES_BANCAIRES -> Brand.CARTES_BANCAIRES
+            MAESTRO -> Brand.MEASTRO
+            ELO -> Brand.ELO
+            HIPERCARD -> Brand.GENERIC
+            OTHER -> Brand.GENERIC
+        }
+
+        internal companion object {
+            fun valueOrNull(type: String?) = values().find {
+                it.name == type
+            }
+        }
+    }
+
+    internal enum class Brand(
+        @DrawableRes internal val iconResId: Int,
+        @DrawableRes internal val iconLightResId: Int? = null,
+        @DrawableRes internal val iconDarkResId: Int? = null,
+        internal val displayName: String
+    ) {
+        VISA(iconResId = R.drawable.ic_visa_card_colored, displayName = "Visa"),
+        MASTERCARD(iconResId = R.drawable.ic_mastercard_card_colored, displayName = "Mastercard"),
+        AMEX(iconResId = R.drawable.ic_amex_card_colored, displayName = "American Express"),
+        DISCOVER(iconResId = R.drawable.ic_discover_card_colored, displayName = "Discover"),
+        JCB(iconResId = R.drawable.ic_jcb_card_colored, displayName = "JCB"),
+        DINERS_CLUB(
+            iconResId = R.drawable.ic_diners_club_card_colored,
+            displayName = "Diners Club"
+        ),
+        MIR(iconResId = R.drawable.ic_mir_card_colored, displayName = " MIR"),
+        UNIONPAY(iconResId = R.drawable.ic_unionpay_card_colored, displayName = "UnionPay"),
+        HIPER(iconResId = R.drawable.ic_hiper_card_colored, displayName = "Hiper"),
+        CARTES_BANCAIRES(
+            iconResId = R.drawable.ic_card_bancaires_colored,
+            displayName = "Cartes Bancaires"
+        ),
+        DANKORT(iconResId = R.drawable.ic_dankort_card_colored, displayName = "Dankort"),
+        MEASTRO(iconResId = R.drawable.ic_maestro_card_colored, displayName = "Maestro"),
+        ELO(iconResId = R.drawable.ic_elo_card_colored, displayName = "Elo"),
+        GENERIC(iconResId = R.drawable.ic_generic_card, displayName = "Other");
+
+        internal fun getImageAsset(imageColor: ImageColor) = when (imageColor) {
+            ImageColor.COLORED -> iconResId
+            ImageColor.DARK -> iconDarkResId
+            ImageColor.LIGHT -> iconLightResId
+        }
     }
 
     internal open class Descriptor(
@@ -43,13 +109,14 @@ class CardNetwork {
             return bin.padEnd(CARD_NUM_GAP_8, '0') in min..max
         }
 
-        fun getResource(): Int = when (type) {
-            Type.VISA -> R.drawable.ic_visa_card
-            Type.MASTERCARD -> R.drawable.ic_mastercard_card
-            Type.AMEX -> R.drawable.ic_amex_card
-            Type.DISCOVER -> R.drawable.ic_discover_card
-            Type.JCB -> R.drawable.ic_jcb_card
-            else -> R.drawable.ic_generic_card
+        fun shortestDistanceInRange(bin: String): Long {
+            val paddedBin = bin.sanitizedCardNumber().padEnd(CARD_NUM_GAP_8, '0')
+            return abs(
+                minOf(
+                    paddedBin.toBigInteger() - min.toBigInteger(),
+                    max.toBigInteger() - paddedBin.toBigInteger()
+                ).toLong()
+            )
         }
     }
 
@@ -71,7 +138,7 @@ class CardNetwork {
     internal class JcbDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.JCB, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
-    internal class UnionpayDescriptor(lower: String, upper: String? = null) :
+    internal class UnionPayDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.UNIONPAY, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
     internal class MaestroDescriptor(lower: String, upper: String? = null) :
@@ -95,6 +162,9 @@ class CardNetwork {
     internal class HiperCardDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.HIPERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
 
+    internal class DankortCardDescriptor(lower: String, upper: String? = null) :
+        Descriptor(Type.DANKORT, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
+
     internal companion object {
 
         private val types = listOf(
@@ -117,31 +187,31 @@ class CardNetwork {
             JcbDescriptor("2131"),
             JcbDescriptor("1800"),
             JcbDescriptor("3528", "3589"),
-            UnionpayDescriptor("620"),
-            UnionpayDescriptor("624", "626"),
-            UnionpayDescriptor("62100", "62182"),
-            UnionpayDescriptor("62184", "62187"),
-            UnionpayDescriptor("62185", "62197"),
-            UnionpayDescriptor("62200", "62205"),
-            UnionpayDescriptor("622010", "622999"),
-            UnionpayDescriptor("622018"),
-            UnionpayDescriptor("622019", "622999"),
-            UnionpayDescriptor("62207", "62209"),
-            UnionpayDescriptor("622126", "622925"),
-            UnionpayDescriptor("623", "626"),
-            UnionpayDescriptor("6270"),
-            UnionpayDescriptor("6272"),
-            UnionpayDescriptor("6276"),
-            UnionpayDescriptor("627700", "627779"),
-            UnionpayDescriptor("627781", "627799"),
-            UnionpayDescriptor("6282", "6289"),
-            UnionpayDescriptor("6291"),
-            UnionpayDescriptor("6292"),
-            UnionpayDescriptor("810"),
-            UnionpayDescriptor("8110", "8131"),
-            UnionpayDescriptor("8132", "8151"),
-            UnionpayDescriptor("8152", "8163"),
-            UnionpayDescriptor("8164", "8171"),
+            UnionPayDescriptor("620"),
+            UnionPayDescriptor("624", "626"),
+            UnionPayDescriptor("62100", "62182"),
+            UnionPayDescriptor("62184", "62187"),
+            UnionPayDescriptor("62185", "62197"),
+            UnionPayDescriptor("62200", "62205"),
+            UnionPayDescriptor("622010", "622999"),
+            UnionPayDescriptor("622018"),
+            UnionPayDescriptor("622019", "622999"),
+            UnionPayDescriptor("62207", "62209"),
+            UnionPayDescriptor("622126", "622925"),
+            UnionPayDescriptor("623", "626"),
+            UnionPayDescriptor("6270"),
+            UnionPayDescriptor("6272"),
+            UnionPayDescriptor("6276"),
+            UnionPayDescriptor("627700", "627779"),
+            UnionPayDescriptor("627781", "627799"),
+            UnionPayDescriptor("6282", "6289"),
+            UnionPayDescriptor("6291"),
+            UnionPayDescriptor("6292"),
+            UnionPayDescriptor("810"),
+            UnionPayDescriptor("8110", "8131"),
+            UnionPayDescriptor("8132", "8151"),
+            UnionPayDescriptor("8152", "8163"),
+            UnionPayDescriptor("8164", "8171"),
             MaestroDescriptor("493698"),
             MaestroDescriptor("500000", "504174"),
             MaestroDescriptor("504176", "506698"),
@@ -183,16 +253,26 @@ class CardNetwork {
             HiperDescriptor("637599"),
             HiperDescriptor("637609"),
             HiperDescriptor("637612"),
-            HiperCardDescriptor("606282")
+            HiperCardDescriptor("606282"),
+            DankortCardDescriptor("5019")
         ).sorted()
 
         fun lookup(bin: String): Descriptor {
             val matching = types.filter { it.matches(bin) }
 
             return if (matching.isNotEmpty()) {
-                matching[0]
+                matching.minBy { descriptor ->
+                    descriptor.shortestDistanceInRange(bin)
+                }
             } else {
-                Descriptor(Type.UNKNOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
+                Descriptor(Type.OTHER, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
+            }
+        }
+
+        fun lookupAll(bin: String): List<Descriptor> {
+            val matching = types.filter { it.matches(bin) }
+            return matching.ifEmpty {
+                listOf(Descriptor(Type.OTHER, CARD_GAPS_4_8_12, CARD_LENS_16, "", ""))
             }
         }
 
@@ -202,9 +282,9 @@ class CardNetwork {
             }
 
             return if (matching.isNotEmpty()) {
-                matching[0]
+                matching.first()
             } else {
-                Descriptor(Type.UNKNOWN, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
+                Descriptor(Type.OTHER, CARD_GAPS_4_8_12, CARD_LENS_16, "", "")
             }
         }
     }

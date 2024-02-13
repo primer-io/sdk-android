@@ -14,11 +14,9 @@ internal data class RetailOutletDataRequest(
         private const val PAYMENT_METHOD_CONFIG_ID_FIELD = "paymentMethodConfigId"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<RetailOutletDataRequest> {
-            override fun serialize(t: RetailOutletDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                }
+        val serializer = JSONObjectSerializer<RetailOutletDataRequest> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
             }
         }
     }

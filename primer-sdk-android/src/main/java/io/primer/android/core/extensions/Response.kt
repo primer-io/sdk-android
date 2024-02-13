@@ -71,20 +71,25 @@ internal fun Response.logBody(
             stringBuilder.appendLine("[sensitive data]")
                 .append("<-- END HTTP")
         } else {
-            if (errorBody != null) {
-                stringBuilder.appendLine("Network Error Response: $errorBody")
-                    .append("<-- END HTTP")
-            } else if (!promisesBody()) {
-                stringBuilder.append("<-- END HTTP")
-            } else if (headers.bodyHasUnknownEncoding()) {
-                stringBuilder.append("<-- END HTTP (encoded body omitted)")
-            } else {
-                appendKnownEncodingBody(
-                    stringBuilder = stringBuilder,
-                    shouldObfuscate = obfuscationLevel == ObfuscationLevel.LIST,
-                    whitelistedBodyKeys = whitelistedBodyKeys,
-                    obfuscationString = obfuscationString
-                )
+            when {
+                errorBody != null -> {
+                    stringBuilder.appendLine("Network Error Response: $errorBody")
+                        .append("<-- END HTTP")
+                }
+                !promisesBody() -> {
+                    stringBuilder.append("<-- END HTTP")
+                }
+                headers.bodyHasUnknownEncoding() -> {
+                    stringBuilder.append("<-- END HTTP (encoded body omitted)")
+                }
+                else -> {
+                    appendKnownEncodingBody(
+                        stringBuilder = stringBuilder,
+                        shouldObfuscate = obfuscationLevel == ObfuscationLevel.LIST,
+                        whitelistedBodyKeys = whitelistedBodyKeys,
+                        obfuscationString = obfuscationString
+                    )
+                }
             }
         }
     } else {

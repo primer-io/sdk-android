@@ -7,12 +7,12 @@ import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerPhoneNumberData
 import io.primer.android.components.domain.core.models.retailOutlet.PrimerRetailerData
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
-import io.primer.android.components.domain.payments.paymentMethods.raw.card.CardInputDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.raw.otp.blik.BlikInputDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.raw.phoneNumber.mbway.MBWayPhoneNumberInputDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.raw.phoneNumber.ovo.OvoPhoneNumberInputDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.raw.card.BancontactCardInputDataValidator
-import io.primer.android.components.domain.payments.paymentMethods.raw.retailerOutlet.XenditRetailerOutletInputValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.validation.validator.card.CardInputDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.validation.validator.otp.blik.BlikInputDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.validation.validator.phoneNumber.mbway.MBWayPhoneNumberInputDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.validation.validator.phoneNumber.ovo.OvoPhoneNumberInputDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.validation.validator.card.BancontactCardInputDataValidator
+import io.primer.android.components.domain.payments.paymentMethods.raw.validation.validator.retailerOutlet.XenditRetailerOutletInputValidator
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 

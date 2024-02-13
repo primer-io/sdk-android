@@ -5,7 +5,6 @@ import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.toBooleanMap
 import io.primer.android.domain.session.models.CheckoutModule
-import org.json.JSONObject
 
 internal data class CheckoutModuleDataResponse(
     val type: CheckoutModuleType,
@@ -21,16 +20,12 @@ internal data class CheckoutModuleDataResponse(
         const val OPTIONS_FIELD = "options"
 
         @JvmField
-        val deserializer = object :
-            JSONObjectDeserializer<CheckoutModuleDataResponse> {
-
-            override fun deserialize(t: JSONObject): CheckoutModuleDataResponse {
-                return CheckoutModuleDataResponse(
-                    CheckoutModuleType.safeValueOf(t.optNullableString(TYPE_FIELD)),
-                    t.optNullableString(REQUEST_URL_FIELD),
-                    t.optJSONObject(OPTIONS_FIELD)?.toBooleanMap()
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            CheckoutModuleDataResponse(
+                CheckoutModuleType.safeValueOf(t.optNullableString(TYPE_FIELD)),
+                t.optNullableString(REQUEST_URL_FIELD),
+                t.optJSONObject(OPTIONS_FIELD)?.toBooleanMap()
+            )
         }
     }
 }

@@ -14,12 +14,10 @@ internal data class IssuingBankDataParameters(
         const val LOCALE_FIELD = "locale"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<IssuingBankDataParameters> {
-            override fun serialize(t: IssuingBankDataParameters): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_FIELD, t.paymentMethod)
-                    put(LOCALE_FIELD, t.locale)
-                }
+        val serializer = JSONObjectSerializer<IssuingBankDataParameters> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_FIELD, t.paymentMethod)
+                put(LOCALE_FIELD, t.locale)
             }
         }
     }

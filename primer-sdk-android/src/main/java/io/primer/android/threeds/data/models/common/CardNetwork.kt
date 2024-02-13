@@ -13,8 +13,8 @@ internal enum class CardNetwork {
     MAESTRO,
     MASTERCARD,
     MIR,
-    PRIVATE_LABEL,
     UNIONPAY,
     VISA,
+    CARTES_BANCAIRES,
     OTHER
 }

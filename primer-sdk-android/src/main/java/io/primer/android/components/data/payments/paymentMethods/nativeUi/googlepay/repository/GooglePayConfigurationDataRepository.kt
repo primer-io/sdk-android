@@ -8,6 +8,7 @@ import io.primer.android.data.configuration.datasource.LocalConfigurationDataSou
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.google.GooglePayFacade
 import io.primer.android.utils.PaymentUtils
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,10 @@ internal class GooglePayConfigurationDataRepository(
             val paymentMethodConfig =
                 localConfigurationDataSource.getConfiguration().paymentMethods
                     .first { it.type == PaymentMethodType.GOOGLE_PAY.name }
+            val allowedCardNetworks = localConfigurationDataSource.getConfiguration().clientSession
+                .paymentMethod?.orderedAllowedCardNetworks.orEmpty().intersect(
+                    GooglePay.allowedCardNetworks
+                ).toList().map { type -> type.name }
             emit(
                 GooglePayConfiguration(
                     getGooglePayEnvironment(
@@ -39,7 +44,7 @@ internal class GooglePayConfigurationDataRepository(
                     ).toString(),
                     settings.order.countryCode.toString(),
                     settings.currency,
-                    settings.paymentMethodOptions.googlePayOptions.allowedCardNetworks,
+                    allowedCardNetworks,
                     allowedCardAuthMethods,
                     settings.paymentMethodOptions.googlePayOptions.captureBillingAddress
                 )
@@ -50,7 +55,9 @@ internal class GooglePayConfigurationDataRepository(
     private fun getGooglePayEnvironment(environment: Environment) =
         if (environment == Environment.PRODUCTION) {
             GooglePayFacade.Environment.PRODUCTION
-        } else { GooglePayFacade.Environment.TEST }
+        } else {
+            GooglePayFacade.Environment.TEST
+        }
 
     private companion object {
         val allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")

@@ -20,15 +20,13 @@ internal data class ThreeDsCustomerDataRequest(
         private const val WORK_PHONE_FIELD = "workPhone"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<ThreeDsCustomerDataRequest> {
-            override fun serialize(t: ThreeDsCustomerDataRequest): JSONObject {
-                return JSONObject().apply {
-                    putOpt(NAME_FIELD, t.name)
-                    putOpt(EMAIL_FIELD, t.email)
-                    putOpt(HOME_PHONE_FIELD, t.homePhone)
-                    putOpt(MOBILE_PHONE_FIELD, t.mobilePhone)
-                    putOpt(WORK_PHONE_FIELD, t.workPhone)
-                }
+        val serializer = JSONObjectSerializer<ThreeDsCustomerDataRequest> { t ->
+            JSONObject().apply {
+                putOpt(NAME_FIELD, t.name)
+                putOpt(EMAIL_FIELD, t.email)
+                putOpt(HOME_PHONE_FIELD, t.homePhone)
+                putOpt(MOBILE_PHONE_FIELD, t.mobilePhone)
+                putOpt(WORK_PHONE_FIELD, t.workPhone)
             }
         }
     }

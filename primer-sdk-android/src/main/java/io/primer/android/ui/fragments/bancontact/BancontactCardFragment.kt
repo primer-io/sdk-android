@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import io.primer.android.R
+import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentFormBancontactCardBinding
 import io.primer.android.di.extension.activityViewModel
@@ -256,7 +257,8 @@ internal class BancontactCardFragment : BaseFragment() {
     }
 
     private fun updateCardNumberInputIcon() {
-        val resource = network?.getResource() ?: R.drawable.ic_generic_card
+        val resource = network?.type?.getCardBrand()?.getImageAsset(ImageColor.COLORED)
+            ?: R.drawable.ic_generic_card
         binding.cardFormCardNumber.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(
             resource,
             0,

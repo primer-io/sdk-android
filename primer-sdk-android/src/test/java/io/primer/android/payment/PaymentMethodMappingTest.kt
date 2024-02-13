@@ -1,7 +1,8 @@
 package io.primer.android.payment
 
-import io.primer.android.data.configuration.models.CountryCode
-import io.primer.android.data.configuration.models.OrderDataResponse
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.RelaxedMockK
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
@@ -15,22 +16,28 @@ import io.primer.android.utils.Failure
 import io.primer.android.utils.Success
 import org.junit.Assert
 import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
 
 internal class PaymentMethodMappingTest {
 
-    private val settings: PrimerSettings = PrimerSettings().apply {
-        order = OrderDataResponse(
-            merchantAmount = 50,
-            currencyCode = "USD",
-            countryCode = CountryCode.US
-        )
+    @RelaxedMockK
+    internal lateinit var settings: PrimerSettings
+
+    @RelaxedMockK
+    internal lateinit var localConfigurationDataSource: LocalConfigurationDataSource
+
+    private lateinit var mapping: DefaultPaymentMethodMapping
+
+    @BeforeEach
+    fun setUp() {
+        MockKAnnotations.init(this, relaxed = true)
+        mapping = DefaultPaymentMethodMapping(settings, localConfigurationDataSource)
     }
 
     @Test
     fun `test maps failure correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.UNKNOWN.name
             )
@@ -45,9 +52,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps klarna correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.KLARNA.name
             )
@@ -59,9 +65,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps paypal correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.PAYPAL.name
             )
@@ -73,9 +78,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps card correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.PAYMENT_CARD.name
             )
@@ -87,9 +91,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps google pay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.GOOGLE_PAY.name
             )
@@ -101,9 +104,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps hoolah correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.HOOLAH.name
             )
@@ -115,9 +117,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps paynl ideal correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.PAY_NL_IDEAL.name
             )
@@ -129,9 +130,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps paynl payconiq correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.PAY_NL_PAYCONIQ.name
             )
@@ -143,9 +143,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps paynl giropay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.PAY_NL_GIROPAY.name
             )
@@ -157,9 +156,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps paynl p24 correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.PAY_NL_P24.name
             )
@@ -171,9 +169,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps paynl eps correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.PAY_NL_EPS.name
             )
@@ -185,9 +182,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen sofort correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_SOFORT.name
             )
@@ -199,9 +195,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen alipay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_ALIPAY.name
             )
@@ -213,9 +208,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen trustly correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_TRUSTLY.name
             )
@@ -227,9 +221,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen twint correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_TWINT.name
             )
@@ -241,9 +234,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen giropay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_GIROPAY.name
             )
@@ -255,9 +247,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen vipps correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_VIPPS.name
             )
@@ -269,9 +260,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen mobilepay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_MOBILEPAY.name
             )
@@ -283,9 +273,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen ideal correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_IDEAL.name
             )
@@ -297,9 +286,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen dotpay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_DOTPAY.name
             )
@@ -311,9 +299,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen blik transfer correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_BLIK.name
             )
@@ -325,9 +312,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen mbway transfer correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.ADYEN_MBWAY.name
             )
@@ -337,20 +323,10 @@ internal class PaymentMethodMappingTest {
         }
     }
 
-//    @Test
-//    fun `test maps adyen bank transfer correctly`() {
-//        val factory = DefaultPaymentMethodMapping(settings)
-//        when (val result = factory.getPaymentMethodFor(PaymentMethodType.ADYEN_BANK_TRANSFER)) {
-//            is Failure -> Assert.fail()
-//            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
-//        }
-//    }
-
     @Test
     fun `test maps adyen paytrail transfer correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_PAYTRAIL.name
             )
@@ -362,9 +338,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen payshop transfer correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ADYEN_PAYSHOP.name
             )
@@ -376,9 +351,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps mollie bancontact correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.MOLLIE_BANCONTACT.name
             )
@@ -390,9 +364,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps mollie ideal correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.MOLLIE_IDEAL.name
             )
@@ -404,9 +377,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps mollie p24 correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.MOLLIE_P24.name
             )
@@ -418,9 +390,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps mollie eps correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.MOLLIE_EPS.name
             )
@@ -432,9 +403,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps buckaroo ideal correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.BUCKAROO_IDEAL.name
             )
@@ -446,9 +416,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps buckaroo eps correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.BUCKAROO_EPS.name
             )
@@ -460,9 +429,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps buckaroo sofort correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.BUCKAROO_SOFORT.name
             )
@@ -474,9 +442,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps buckaroo giropay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.BUCKAROO_GIROPAY.name
             )
@@ -488,9 +455,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps buckaroo bancontact correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.BUCKAROO_BANCONTACT.name
             )
@@ -502,9 +468,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps atome correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.ATOME.name
             )
@@ -516,9 +481,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps 2c2p correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.TWOC2P.name
             )
@@ -530,9 +494,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps opennode correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.OPENNODE.name
             )
@@ -544,9 +507,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps rapyd gcash correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.RAPYD_GCASH.name
             )
@@ -558,9 +520,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps grab pay rapyd correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.RAPYD_GRABPAY.name
             )
@@ -572,9 +533,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps rapyd poli correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.WEB_REDIRECT,
                 PaymentMethodType.RAPYD_POLI.name
             )
@@ -586,9 +546,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps rapyd fast correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.RAPYD_FAST.name
             )
@@ -600,9 +559,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps rapyd promptpay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.RAPYD_PROMPTPAY.name
             )
@@ -614,9 +572,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen multibanco correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.ADYEN_MULTIBANCO.name
             )
@@ -628,9 +585,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps omise promptpay correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.OMISE_PROMPTPAY.name
             )
@@ -642,9 +598,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps adyen bancontact correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.ADYEN_BANCONTACT_CARD.name
             )
@@ -656,9 +611,8 @@ internal class PaymentMethodMappingTest {
 
     @Test
     fun `test maps xendit retail outlets correctly`() {
-        val factory = DefaultPaymentMethodMapping(settings)
         when (
-            val result = factory.getPaymentMethodFor(
+            val result = mapping.getPaymentMethodFor(
                 PaymentMethodImplementationType.NATIVE_SDK,
                 PaymentMethodType.XENDIT_RETAIL_OUTLETS.name
             )

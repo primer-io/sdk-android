@@ -58,19 +58,24 @@ internal fun Request.logBody(
             stringBuilder.insert(0, "[sensitive data]\n")
         } else {
             stringBuilder.append(" ")
-            if (headers.bodyHasUnknownEncoding()) {
-                stringBuilder.append("(encoded body omitted)")
-            } else if (requestBody.isDuplex()) {
-                stringBuilder.append("(duplex request body omitted)")
-            } else if (requestBody.isOneShot()) {
-                stringBuilder.append("(one-shot body omitted)")
-            } else {
-                appendKnownEncodingBody(
-                    stringBuilder = stringBuilder,
-                    shouldObfuscate = obfuscationLevel == ObfuscationLevel.LIST,
-                    whitelistedBodyKeys = whitelistedBodyKeys,
-                    obfuscationString = obfuscationString
-                )
+            when {
+                headers.bodyHasUnknownEncoding() -> {
+                    stringBuilder.append("(encoded body omitted)")
+                }
+                requestBody.isDuplex() -> {
+                    stringBuilder.append("(duplex request body omitted)")
+                }
+                requestBody.isOneShot() -> {
+                    stringBuilder.append("(one-shot body omitted)")
+                }
+                else -> {
+                    appendKnownEncodingBody(
+                        stringBuilder = stringBuilder,
+                        shouldObfuscate = obfuscationLevel == ObfuscationLevel.LIST,
+                        whitelistedBodyKeys = whitelistedBodyKeys,
+                        obfuscationString = obfuscationString
+                    )
+                }
             }
         }
     }

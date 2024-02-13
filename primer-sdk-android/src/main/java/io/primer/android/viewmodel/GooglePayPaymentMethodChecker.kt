@@ -13,7 +13,7 @@ internal class GooglePayPaymentMethodChecker constructor(
     ): Boolean {
         val googlePay = paymentMethod as GooglePay
         return googlePayFacade.checkIfIsReadyToPay(
-            allowedCardNetworks = googlePay.allowedCardNetworks,
+            allowedCardNetworks = googlePay.allowedCardNetworks.map { type -> type.name },
             allowedCardAuthMethods = googlePay.allowedCardAuthMethods,
             billingAddressRequired = googlePay.billingAddressRequired
         )

@@ -114,11 +114,6 @@ internal enum class Brand(
         R.drawable.ic_logo_payshop_light,
         R.drawable.ic_logo_payshop_dark
     ),
-    COINBASE(
-        R.drawable.ic_coinbase_logo,
-        R.drawable.ic_coinbase_logo_square,
-        R.drawable.ic_coinbase_logo_dark
-    ),
     TWOC2P(
         R.drawable.ic_2c2p_logo,
         R.drawable.ic_2c2p_logo_square,

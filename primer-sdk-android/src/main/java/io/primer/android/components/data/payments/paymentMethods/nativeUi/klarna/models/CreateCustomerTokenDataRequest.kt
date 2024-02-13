@@ -36,19 +36,17 @@ internal data class CreateCustomerTokenDataRequest(
         }
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<CreateCustomerTokenDataRequest> {
-            override fun serialize(t: CreateCustomerTokenDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                    put(SESSION_ID_FIELD, t.sessionId)
-                    put(AUTHORIZATION_TOKEN_FIELD, t.authorizationToken)
-                    putOpt(DESCRIPTION_FIELD, t.description)
-                    put(
-                        LOCALE_DATA_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
-                            .serialize(t.localeData)
-                    )
-                }
+        val serializer = JSONObjectSerializer<CreateCustomerTokenDataRequest> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                put(SESSION_ID_FIELD, t.sessionId)
+                put(AUTHORIZATION_TOKEN_FIELD, t.authorizationToken)
+                putOpt(DESCRIPTION_FIELD, t.description)
+                put(
+                    LOCALE_DATA_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
+                        .serialize(t.localeData)
+                )
             }
         }
     }

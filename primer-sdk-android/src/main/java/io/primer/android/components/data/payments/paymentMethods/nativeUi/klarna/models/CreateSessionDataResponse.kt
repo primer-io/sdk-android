@@ -35,19 +35,16 @@ internal data class CreateSessionDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<CreateSessionDataResponse> {
-
-            override fun deserialize(t: JSONObject): CreateSessionDataResponse {
-                return CreateSessionDataResponse(
-                    t.getString(CLIENT_TOKEN_FIELD),
-                    t.getString(SESSION_ID_FIELD),
-                    t.optJSONArray(CATEGORIES_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<PaymentCategory>()
-                            .deserialize(it)
-                    }?.toList().orEmpty()
-                )
-            }
+        val deserializer = JSONObjectDeserializer<CreateSessionDataResponse> { t ->
+            CreateSessionDataResponse(
+                t.getString(CLIENT_TOKEN_FIELD),
+                t.getString(SESSION_ID_FIELD),
+                t.optJSONArray(CATEGORIES_FIELD)?.sequence<JSONObject>()?.map {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<PaymentCategory>()
+                        .deserialize(it)
+                }?.toList().orEmpty()
+            )
         }
     }
 }

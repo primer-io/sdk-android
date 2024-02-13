@@ -8,7 +8,6 @@ import io.primer.android.threeds.data.models.postAuth.error.ChallengeProtocolCon
 import io.primer.android.threeds.data.models.postAuth.error.ChallengeRuntimeContinueAuthErrorDataRequest
 import io.primer.android.threeds.data.models.postAuth.error.PreChallengeContinueAuthErrorDataRequest
 import io.primer.android.threeds.domain.models.FailureThreeDsContinueAuthParams
-import org.json.JSONObject
 
 internal sealed class BaseFailureContinueAuthDataRequest(
     open val error: BaseContinueAuthErrorDataRequest
@@ -20,19 +19,16 @@ internal sealed class BaseFailureContinueAuthDataRequest(
 
         private const val ERROR_FIELD = "error"
 
-        val baseErrorSerializer =
-            object : JSONObjectSerializer<BaseFailureContinueAuthDataRequest> {
-                override fun serialize(t: BaseFailureContinueAuthDataRequest): JSONObject {
-                    return baseSerializer.serialize(t).apply {
-                        put(
-                            ERROR_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<BaseContinueAuthErrorDataRequest>()
-                                .serialize(t.error)
-                        )
-                    }
-                }
+        val baseErrorSerializer = JSONObjectSerializer<BaseFailureContinueAuthDataRequest> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    ERROR_FIELD,
+                    JSONSerializationUtils
+                        .getJsonObjectSerializer<BaseContinueAuthErrorDataRequest>()
+                        .serialize(t.error)
+                )
             }
+        }
     }
 }
 
@@ -46,6 +42,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                     error.recoverySuggestion
                 )
             )
+
         else -> DefaultFailureContinueAuthDataRequest(
             threeDsSdkVersion,
             initProtocolVersion,
@@ -57,6 +54,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                         error.context.errorCode,
                         error.description
                     )
+
                 is ThreeDsError.ThreeDsChallengeInvalidStatusError ->
                     ChallengeRuntimeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.INVALID_CHALLENGE_STATUS,
@@ -64,6 +62,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                         error.errorCode,
                         error.description
                     )
+
                 is ThreeDsError.ThreeDsChallengeCancelledError ->
                     ChallengeRuntimeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.CHALLENGE_CANCELLED_BY_USER,
@@ -71,6 +70,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                         error.errorCode,
                         error.description
                     )
+
                 is ThreeDsError.ThreeDsChallengeTimedOutError ->
                     ChallengeRuntimeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.CHALLENGE_TIMED_OUT,
@@ -78,6 +78,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                         error.errorCode,
                         error.description
                     )
+
                 is ThreeDsError.ThreeDsChallengeProtocolFailedError ->
                     ChallengeProtocolContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.`3DS_SDK_PROTOCOL_ERROR`,
@@ -89,35 +90,41 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                         error.context.transactionId,
                         error.context.version
                     )
+
                 is ThreeDsError.ThreeDsConfigurationError ->
                     PreChallengeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.MISSING_3DS_CONFIGURATION,
                         error.description,
                         error.recoverySuggestion
                     )
+
                 is ThreeDsError.ThreeDsInitError -> PreChallengeContinueAuthErrorDataRequest(
                     ThreeDsSdkErrorReasonCode.`3DS_SDK_INIT_FAILED`,
                     error.description,
                     error.recoverySuggestion
                 )
+
                 is ThreeDsError.ThreeDsLibraryVersionError ->
                     PreChallengeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.INVALID_3DS_SDK_VERSION,
                         error.description,
                         error.recoverySuggestion
                     )
+
                 is ThreeDsError.ThreeDsMissingDirectoryServerIdError ->
                     PreChallengeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.MISSING_DS_RID,
                         error.description,
                         error.recoverySuggestion
                     )
+
                 is ThreeDsError.ThreeDsUnknownProtocolError ->
                     PreChallengeContinueAuthErrorDataRequest(
                         ThreeDsSdkErrorReasonCode.UNKNOWN_PROTOCOL_VERSION,
                         error.description,
                         error.recoverySuggestion
                     )
+
                 else -> PreChallengeContinueAuthErrorDataRequest(
                     ThreeDsSdkErrorReasonCode.`3DS_UNKNOWN_ERROR`,
                     error.description,

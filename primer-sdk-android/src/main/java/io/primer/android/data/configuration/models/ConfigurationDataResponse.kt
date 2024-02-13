@@ -21,11 +21,12 @@ import org.json.JSONObject
 internal data class ConfigurationDataResponse(
     val pciUrl: String,
     val coreUrl: String,
+    val binDataUrl: String,
     val assetsUrl: String,
     val paymentMethods: List<PaymentMethodConfigDataResponse>,
     val checkoutModules: List<CheckoutModuleDataResponse>,
     val keys: ConfigurationKeysDataResponse?,
-    val clientSession: ClientSessionDataResponse?,
+    val clientSession: ClientSessionDataResponse,
     val environment: Environment,
     val primerAccountId: String?
 ) : JSONDeserializable {
@@ -34,6 +35,7 @@ internal data class ConfigurationDataResponse(
         ConfigurationData(
             pciUrl,
             coreUrl,
+            binDataUrl,
             assetsUrl,
             paymentMethods,
             checkoutModules,
@@ -47,6 +49,7 @@ internal data class ConfigurationDataResponse(
     companion object {
         private const val PCI_URL_FIELD = "pciUrl"
         private const val CORE_URL_FIELD = "coreUrl"
+        private const val BIN_DATA_URL_FIELD = "binDataUrl"
         private const val ASSETS_URL_FIELD = "assetsUrl"
         private const val PAYMENT_METHODS_CONFIG_FIELD = "paymentMethods"
         private const val CHECKOUT_MODULES_FIELD = "checkoutModules"
@@ -60,6 +63,7 @@ internal data class ConfigurationDataResponse(
             override val values: List<WhitelistedKey> = whitelistedKeys {
                 primitiveKey(CORE_URL_FIELD)
                 primitiveKey(PCI_URL_FIELD)
+                primitiveKey(BIN_DATA_URL_FIELD)
                 nonPrimitiveKey(CHECKOUT_MODULES_FIELD) {
                     primitiveKey(TYPE_FIELD)
                     primitiveKey(REQUEST_URL_FIELD)
@@ -89,6 +93,9 @@ internal data class ConfigurationDataResponse(
                         primitiveKey(
                             ClientSessionDataResponse.PaymentMethodDataResponse.VAULT_ON_SUCCESS_FIELD
                         )
+                        primitiveKey(
+                            ClientSessionDataResponse.PaymentMethodDataResponse.ALLOWED_CARD_NETWORKS_FIELD
+                        )
                         nonPrimitiveKey(
                             ClientSessionDataResponse.PaymentMethodDataResponse.OPTIONS_FIELD
                         ) {
@@ -109,7 +116,6 @@ internal data class ConfigurationDataResponse(
                                 )
                             }
                         }
-                        primitiveKey("orderedAllowedCardNetworks") // not yet defined as a constant
                     }
                 }
                 primitiveKey(PRIMER_ACCOUNT_ID_FIELD)
@@ -209,6 +215,7 @@ internal data class ConfigurationDataResponse(
                 return ConfigurationDataResponse(
                     t.getString(PCI_URL_FIELD),
                     t.getString(CORE_URL_FIELD),
+                    t.getString(BIN_DATA_URL_FIELD),
                     t.optString(ASSETS_URL_FIELD),
                     t.getJSONArray(PAYMENT_METHODS_CONFIG_FIELD).sequence<JSONObject>()
                         .map {
@@ -257,30 +264,27 @@ internal data class PaymentMethodConfigDataResponse(
         const val DISPLAY_METADATA_FIELD = "displayMetadata"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<PaymentMethodConfigDataResponse> {
-
-            override fun deserialize(t: JSONObject): PaymentMethodConfigDataResponse {
-                return PaymentMethodConfigDataResponse(
-                    t.optNullableString(ID_FIELD),
-                    t.optNullableString(NAME_FIELD),
-                    PaymentMethodImplementationType.safeValueOf(
-                        t.optNullableString(
-                            IMPLEMENTATION_TYPE_FIELD
-                        )
-                    ),
-                    t.getString(TYPE_FIELD),
-                    t.optJSONObject(OPTIONS_FIELD)?.let {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<PaymentMethodRemoteConfigOptions>()
-                            .deserialize(it)
-                    },
-                    t.optJSONObject(DISPLAY_METADATA_FIELD)?.let {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<PaymentMethodDisplayMetadataResponse>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            PaymentMethodConfigDataResponse(
+                t.optNullableString(ID_FIELD),
+                t.optNullableString(NAME_FIELD),
+                PaymentMethodImplementationType.safeValueOf(
+                    t.optNullableString(
+                        IMPLEMENTATION_TYPE_FIELD
+                    )
+                ),
+                t.getString(TYPE_FIELD),
+                t.optJSONObject(OPTIONS_FIELD)?.let {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<PaymentMethodRemoteConfigOptions>()
+                        .deserialize(it)
+                },
+                t.optJSONObject(DISPLAY_METADATA_FIELD)?.let {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<PaymentMethodDisplayMetadataResponse>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }

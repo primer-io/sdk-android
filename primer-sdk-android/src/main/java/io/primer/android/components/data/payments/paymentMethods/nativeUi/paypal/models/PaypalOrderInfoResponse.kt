@@ -18,17 +18,14 @@ internal data class PaypalOrderInfoResponse(
         private const val EXTERNAL_PAYER_INFO_FIELD = "externalPayerInfo"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<PaypalOrderInfoResponse> {
-
-            override fun deserialize(t: JSONObject): PaypalOrderInfoResponse {
-                return PaypalOrderInfoResponse(
-                    t.getString(ORDER_ID_FIELD),
-                    t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<PaypalExternalPayerInfo>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            PaypalOrderInfoResponse(
+                t.getString(ORDER_ID_FIELD),
+                t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<PaypalExternalPayerInfo>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }
@@ -59,16 +56,13 @@ internal data class PaypalExternalPayerInfo(
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<PaypalExternalPayerInfo> {
-
-            override fun deserialize(t: JSONObject): PaypalExternalPayerInfo {
-                return PaypalExternalPayerInfo(
-                    t.optNullableString(EXTERNAL_PAYER_ID_FIELD),
-                    t.optNullableString(EMAIL_FIELD),
-                    t.optNullableString(FIRST_NAME_FIELD),
-                    t.optNullableString(LAST_NAME_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            PaypalExternalPayerInfo(
+                t.optNullableString(EXTERNAL_PAYER_ID_FIELD),
+                t.optNullableString(EMAIL_FIELD),
+                t.optNullableString(FIRST_NAME_FIELD),
+                t.optNullableString(LAST_NAME_FIELD)
+            )
         }
     }
 }

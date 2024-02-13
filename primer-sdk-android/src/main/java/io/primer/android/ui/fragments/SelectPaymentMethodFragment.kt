@@ -339,8 +339,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
 
     private fun setCardIcon(network: String?) = binding.savedPaymentMethod.paymentMethodIcon.apply {
         when (network) {
-            "Visa" -> setImageResource(R.drawable.ic_visa_card)
-            "Mastercard" -> setImageResource(R.drawable.ic_mastercard_card)
+            "Visa" -> setImageResource(R.drawable.ic_visa_card_colored)
+            "Mastercard" -> setImageResource(R.drawable.ic_mastercard_card_colored)
             else -> setImageResource(R.drawable.ic_generic_card)
         }
     }

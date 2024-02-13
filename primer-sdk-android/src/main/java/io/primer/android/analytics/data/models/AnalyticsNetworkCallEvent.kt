@@ -31,41 +31,37 @@ internal data class AnalyticsNetworkCallEvent(
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<AnalyticsNetworkCallEvent> {
-            override fun serialize(t: AnalyticsNetworkCallEvent): JSONObject {
-                return baseSerializer.serialize(t).apply {
-                    put(
-                        PROPERTIES_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<NetworkCallProperties>()
-                            .serialize(t.properties)
-                    )
-                }
+        val serializer = JSONObjectSerializer<AnalyticsNetworkCallEvent> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    PROPERTIES_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<NetworkCallProperties>()
+                        .serialize(t.properties)
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AnalyticsNetworkCallEvent> {
-            override fun deserialize(t: JSONObject): AnalyticsNetworkCallEvent {
-                return AnalyticsNetworkCallEvent(
-                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
+        val deserializer = JSONObjectDeserializer<AnalyticsNetworkCallEvent> { t ->
+            AnalyticsNetworkCallEvent(
+                JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                    t.getJSONObject(DEVICE_FIELD)
+                ),
+                JSONSerializationUtils.getJsonObjectDeserializer<NetworkCallProperties>()
+                    .deserialize(
+                        t.getJSONObject(PROPERTIES_FIELD)
                     ),
-                    JSONSerializationUtils.getJsonObjectDeserializer<NetworkCallProperties>()
-                        .deserialize(
-                            t.getJSONObject(PROPERTIES_FIELD)
-                        ),
-                    t.getString(APP_IDENTIFIER_FIELD),
-                    t.getString(SDK_SESSION_ID_FIELD),
-                    SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
-                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
-                    t.getString(CHECKOUT_SESSION_ID_FIELD),
-                    t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                    t.optNullableString(ORDER_ID_FIELD),
-                    t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
-                    t.optNullableString(ANALYTICS_URL_FIELD),
-                    createdAt = t.getLong(CREATED_AT_FIELD)
-                )
-            }
+                t.getString(APP_IDENTIFIER_FIELD),
+                t.getString(SDK_SESSION_ID_FIELD),
+                SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
+                t.getString(CHECKOUT_SESSION_ID_FIELD),
+                t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                t.optNullableString(ANALYTICS_URL_FIELD),
+                createdAt = t.getLong(CREATED_AT_FIELD)
+            )
         }
     }
 }
@@ -89,31 +85,27 @@ internal data class NetworkCallProperties(
         private const val ERROR_BODY_FIELD = "errorBody"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<NetworkCallProperties> {
-            override fun serialize(t: NetworkCallProperties): JSONObject {
-                return JSONObject().apply {
-                    put(NETWORK_CALL_TYPE_FIELD, t.networkCallType.name)
-                    put(ID_FIELD, t.id)
-                    put(URL_FIELD, t.url)
-                    put(METHOD_FIELD, t.method)
-                    putOpt(RESPONSE_CODE_FIELD, t.responseCode)
-                    putOpt(ERROR_BODY_FIELD, t.errorBody)
-                }
+        val serializer = JSONObjectSerializer<NetworkCallProperties> { t ->
+            JSONObject().apply {
+                put(NETWORK_CALL_TYPE_FIELD, t.networkCallType.name)
+                put(ID_FIELD, t.id)
+                put(URL_FIELD, t.url)
+                put(METHOD_FIELD, t.method)
+                putOpt(RESPONSE_CODE_FIELD, t.responseCode)
+                putOpt(ERROR_BODY_FIELD, t.errorBody)
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<NetworkCallProperties> {
-            override fun deserialize(t: JSONObject): NetworkCallProperties {
-                return NetworkCallProperties(
-                    NetworkCallType.valueOf(t.getString(NETWORK_CALL_TYPE_FIELD)),
-                    t.getString(ID_FIELD),
-                    t.getString(URL_FIELD),
-                    t.getString(METHOD_FIELD),
-                    t.optNullableInt(RESPONSE_CODE_FIELD),
-                    t.optNullableString(ERROR_BODY_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer<NetworkCallProperties> { t ->
+            NetworkCallProperties(
+                NetworkCallType.valueOf(t.getString(NETWORK_CALL_TYPE_FIELD)),
+                t.getString(ID_FIELD),
+                t.getString(URL_FIELD),
+                t.getString(METHOD_FIELD),
+                t.optNullableInt(RESPONSE_CODE_FIELD),
+                t.optNullableString(ERROR_BODY_FIELD)
+            )
         }
     }
 }

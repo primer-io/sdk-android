@@ -5,8 +5,9 @@ import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckoutDelegate
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
-import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
+import io.primer.android.components.presentation.paymentMethods.raw.RawDataDelegate
 import io.primer.android.components.presentation.vault.VaultManagerDelegate
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
@@ -264,9 +265,11 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         subscription?.unregister()
         subscription = null
 
-        DISdkContext.sdkContainer?.let {
-            it.resolve<DefaultHeadlessManagerDelegate>().reset()
-            it.resolve<DefaultRawDataManagerDelegate>().reset()
+        DISdkContext.sdkContainer?.let { sdkContainer ->
+            sdkContainer.resolve<DefaultHeadlessManagerDelegate>().reset()
+            sdkContainer.resolve<RawDataDelegate<*>>().reset()
+            sdkContainer.resolve<RawDataDelegate<*>>(PaymentMethodType.PAYMENT_CARD.name)
+                .reset()
         }
     }
 
@@ -302,11 +305,13 @@ class PrimerHeadlessUniversalCheckout private constructor() :
     private fun getConfig() = config ?: PrimerConfig()
 
     private fun setupDI(context: Context, config: PrimerConfig) {
-        DISdkContext.sdkContainer?.let {
-            it.resolve<DefaultHeadlessManagerDelegate>().reset()
-            it.resolve<DefaultRawDataManagerDelegate>().reset()
-            it.resolve<VaultManagerDelegate>().reset()
-            it.clear()
+        DISdkContext.sdkContainer?.let { sdkContainer ->
+            sdkContainer.resolve<DefaultHeadlessManagerDelegate>().reset()
+            sdkContainer.resolve<RawDataDelegate<*>>().reset()
+            sdkContainer.resolve<RawDataDelegate<*>>(PaymentMethodType.PAYMENT_CARD.name)
+                .reset()
+            sdkContainer.resolve<VaultManagerDelegate>().reset()
+            sdkContainer.clear()
         }
         DISdkContext.init(config, context.applicationContext)
         // refresh the instances

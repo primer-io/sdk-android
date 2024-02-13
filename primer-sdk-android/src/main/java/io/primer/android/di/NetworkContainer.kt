@@ -5,6 +5,7 @@ import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
+import io.primer.android.components.data.payments.metadata.card.model.CardBinMetadataDataNetworksResponse
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataResponse
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateSessionDataRequest
@@ -58,7 +59,8 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
                         IssuingBankDataRequest.provider,
                         IssuingBankResultDataResponse.provider,
                         NolPaySecretDataRequest.provider,
-                        ConfigurationDataResponse.provider
+                        ConfigurationDataResponse.provider,
+                        CardBinMetadataDataNetworksResponse.provider
                     ).forEach(::register)
                 },
                 localConfigurationDataSource = sdk.resolve()
@@ -127,6 +129,7 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
 internal enum class ApiVersion(val version: String) {
     CONFIGURATION_VERSION("2.2"),
     PAYMENT_INSTRUMENTS_VERSION("2.2"),
+    CLIENT_SESSION_ACTIONS_VERSION("2.2"),
     PAYMENTS_VERSION("2.2"),
     THREE_DS_VERSION("2.1")
 }

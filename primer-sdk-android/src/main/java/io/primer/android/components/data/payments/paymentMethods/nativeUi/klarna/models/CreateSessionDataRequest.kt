@@ -34,18 +34,16 @@ internal data class CreateSessionDataRequest(
         }
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<CreateSessionDataRequest> {
-            override fun serialize(t: CreateSessionDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                    put(SESSION_TYPE_FIELD, t.sessionType)
-                    putOpt(DESCRIPTION_FIELD, t.description)
-                    put(
-                        LOCALE_DATA_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
-                            .serialize(t.localeData)
-                    )
-                }
+        val serializer = JSONObjectSerializer<CreateSessionDataRequest> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                put(SESSION_TYPE_FIELD, t.sessionType)
+                putOpt(DESCRIPTION_FIELD, t.description)
+                put(
+                    LOCALE_DATA_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
+                        .serialize(t.localeData)
+                )
             }
         }
     }

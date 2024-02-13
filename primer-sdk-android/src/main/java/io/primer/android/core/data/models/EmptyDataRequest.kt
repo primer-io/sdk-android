@@ -10,17 +10,9 @@ internal class EmptyDataRequest : JSONObjectSerializable, JSONDeserializable {
 
     companion object {
         @JvmField
-        val serializer = object : JSONObjectSerializer<EmptyDataRequest> {
-            override fun serialize(t: EmptyDataRequest): JSONObject {
-                return JSONObject()
-            }
-        }
+        val serializer = JSONObjectSerializer<EmptyDataRequest> { JSONObject() }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<EmptyDataRequest> {
-            override fun deserialize(t: JSONObject): EmptyDataRequest {
-                return EmptyDataRequest()
-            }
-        }
+        val deserializer = JSONObjectDeserializer { EmptyDataRequest() }
     }
 }

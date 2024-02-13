@@ -32,17 +32,14 @@ internal data class IssuingBankResultDataResponse(
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<IssuingBankResultDataResponse> {
-
-            override fun deserialize(t: JSONObject): IssuingBankResultDataResponse {
-                return IssuingBankResultDataResponse(
-                    t.optJSONArray(RESULT_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<IssuingBankDataResponse>()
-                            .deserialize(it)
-                    }?.toList().orEmpty()
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            IssuingBankResultDataResponse(
+                t.optJSONArray(RESULT_FIELD)?.sequence<JSONObject>()?.map {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<IssuingBankDataResponse>()
+                        .deserialize(it)
+                }?.toList().orEmpty()
+            )
         }
     }
 }
@@ -60,16 +57,13 @@ internal data class IssuingBankDataResponse(
         const val ICON_URL_FIELD = "iconUrl"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<IssuingBankDataResponse> {
-
-            override fun deserialize(t: JSONObject): IssuingBankDataResponse {
-                return IssuingBankDataResponse(
-                    t.getString(ID_FIELD),
-                    t.getString(NAME_FIELD),
-                    t.getBoolean(DISABLED_FIELD),
-                    t.getString(ICON_URL_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            IssuingBankDataResponse(
+                t.getString(ID_FIELD),
+                t.getString(NAME_FIELD),
+                t.getBoolean(DISABLED_FIELD),
+                t.getString(ICON_URL_FIELD)
+            )
         }
     }
 }

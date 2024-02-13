@@ -1,6 +1,7 @@
 package io.primer.android.domain.action.models
 
 import io.primer.android.data.configuration.models.CountryCode
+import io.primer.android.ui.CardNetwork
 
 data class PrimerClientSession(
     val customerId: String?,
@@ -9,7 +10,8 @@ data class PrimerClientSession(
     val totalAmount: Int?,
     val lineItems: List<PrimerLineItem>?,
     val orderDetails: PrimerOrder?,
-    val customer: PrimerCustomer?
+    val customer: PrimerCustomer?,
+    val paymentMethod: PrimerPaymentMethod?
 )
 
 data class PrimerCustomer(
@@ -48,3 +50,7 @@ data class PrimerAddress(
     val country: String?
         get() = countryCode?.name
 }
+
+data class PrimerPaymentMethod(
+    val orderedAllowedCardNetworks: List<CardNetwork.Type>
+)

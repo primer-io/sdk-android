@@ -86,7 +86,6 @@ internal data class ClientToken(
         private const val IPAY88_ACTION_TYPE_FIELD = "iPay88ActionType"
         private const val SUPPORTED_CURRENCY_CODE_FIELD = "supportedCurrencyCode"
         private const val SUPPORTED_COUNTRY_FIELD = "supportedCountry"
-        private const val USE_THREE_DS_WEAK_VALIDATION = "useThreeDsWeakValidation"
         private const val SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD =
             "supportedThreeDsProtocolVersions"
         private const val NOL_PAY_TRANSACTION_NO = "nolPayTransactionNo"

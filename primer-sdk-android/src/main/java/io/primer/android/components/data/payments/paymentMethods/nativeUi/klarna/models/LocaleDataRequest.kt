@@ -17,13 +17,11 @@ internal data class LocaleDataRequest(
         const val LOCALE_CODE_FIELD = "localeCode"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<LocaleDataRequest> {
-            override fun serialize(t: LocaleDataRequest): JSONObject {
-                return JSONObject().apply {
-                    putOpt(COUNTRY_CODE_FIELD, t.countryCode?.name)
-                    put(CURRENCY_CODE_FIELD, t.currencyCode)
-                    put(LOCALE_CODE_FIELD, t.localeCode)
-                }
+        val serializer = JSONObjectSerializer<LocaleDataRequest> { t ->
+            JSONObject().apply {
+                putOpt(COUNTRY_CODE_FIELD, t.countryCode?.name)
+                put(CURRENCY_CODE_FIELD, t.currencyCode)
+                put(LOCALE_CODE_FIELD, t.localeCode)
             }
         }
     }

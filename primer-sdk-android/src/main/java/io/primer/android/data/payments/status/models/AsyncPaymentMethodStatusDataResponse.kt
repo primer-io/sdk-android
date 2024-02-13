@@ -2,7 +2,6 @@ package io.primer.android.data.payments.status.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
-import org.json.JSONObject
 
 internal data class AsyncPaymentMethodStatusDataResponse(
     val id: String,
@@ -15,15 +14,12 @@ internal data class AsyncPaymentMethodStatusDataResponse(
         private const val SOURCE_FIELD = "source"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AsyncPaymentMethodStatusDataResponse> {
-
-            override fun deserialize(t: JSONObject): AsyncPaymentMethodStatusDataResponse {
-                return AsyncPaymentMethodStatusDataResponse(
-                    t.getString(ID_FIELD),
-                    AsyncMethodStatus.valueOf(t.getString(STATUS_FIELD)),
-                    t.getString(SOURCE_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            AsyncPaymentMethodStatusDataResponse(
+                t.getString(ID_FIELD),
+                AsyncMethodStatus.valueOf(t.getString(STATUS_FIELD)),
+                t.getString(SOURCE_FIELD)
+            )
         }
     }
 }

@@ -15,9 +15,8 @@ internal object JSONSerializationUtils {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
 
         check(
-            field.type.equals(JSONObjectSerializer::class.java) || field.type.equals(
+            field.type == JSONObjectSerializer::class.java || field.type ==
                 JSONArraySerializer::class.java
-            )
         ) {
             "Serializer is not of the type JSONSerializer"
         }
@@ -33,7 +32,7 @@ internal object JSONSerializationUtils {
     inline fun <reified T : JSONObjectSerializable> getJsonObjectSerializer():
         JSONObjectSerializer<T> {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
-        check(field.type.equals(JSONObjectSerializer::class.java)) {
+        check(field.type == JSONObjectSerializer::class.java) {
             "Serializer is not of the type JSONObjectSerializable"
         }
         return field[null] as JSONObjectSerializer<T>
@@ -49,7 +48,7 @@ internal object JSONSerializationUtils {
         JSONArrayDeserializer<T> {
         val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
 
-        check(field.type.equals(JSONArrayDeserializer::class.java)) {
+        check(field.type == JSONArrayDeserializer::class.java) {
             "Deserializer is not of the type JSONArrayDeserializer"
         }
         return field[null] as JSONArrayDeserializer<T>
@@ -64,7 +63,7 @@ internal object JSONSerializationUtils {
     inline fun <reified T : JSONDeserializable> getJsonObjectDeserializer():
         JSONObjectDeserializer<T> {
         val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
-        check(field.type.equals(JSONObjectDeserializer::class.java)) {
+        check(field.type == JSONObjectDeserializer::class.java) {
             "Deserializer is not of the type JSONObjectDeserializer"
         }
         return field[null] as JSONObjectDeserializer<T>

@@ -27,13 +27,11 @@ internal data class APIError(
             private const val DESCRIPTION_FIELD = "description"
 
             @JvmField
-            val deserializer = object : JSONObjectDeserializer<ValidationErrorDetail> {
-                override fun deserialize(t: JSONObject): ValidationErrorDetail {
-                    return ValidationErrorDetail(
-                        t.getString(PATH_FIELD),
-                        t.getString(DESCRIPTION_FIELD)
-                    )
-                }
+            val deserializer = JSONObjectDeserializer { t ->
+                ValidationErrorDetail(
+                    t.getString(PATH_FIELD),
+                    t.getString(DESCRIPTION_FIELD)
+                )
             }
         }
     }
@@ -48,17 +46,15 @@ internal data class APIError(
             private const val ERRORS_FIELD = "errors"
 
             @JvmField
-            val deserializer = object : JSONObjectDeserializer<ValidationError> {
-                override fun deserialize(t: JSONObject): ValidationError {
-                    return ValidationError(
-                        t.getString(MODEL_FIELD),
-                        t.getJSONArray(ERRORS_FIELD).sequence<JSONObject>().map {
-                            JSONSerializationUtils
-                                .getJsonObjectDeserializer<ValidationErrorDetail>()
-                                .deserialize(it)
-                        }.toList()
-                    )
-                }
+            val deserializer = JSONObjectDeserializer<ValidationError> { t ->
+                ValidationError(
+                    t.getString(MODEL_FIELD),
+                    t.getJSONArray(ERRORS_FIELD).sequence<JSONObject>().map {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<ValidationErrorDetail>()
+                            .deserialize(it)
+                    }.toList()
+                )
             }
         }
     }
@@ -68,10 +64,8 @@ internal data class APIError(
 
         private const val DEFAULT_ERROR_ELEMENT =
             """{
-                    "error": {
-                        "description": "Unknown Client Error."
-                    }
-                }"""
+                "description":"Failed to decode json response."
+            }"""
 
         fun create(response: Response): APIError {
             return JSONSerializationUtils.getJsonObjectDeserializer<APIError>()
@@ -86,33 +80,32 @@ internal data class APIError(
             val content = body.string()
 
             try {
-                return JSONObject(content).getJSONObject("error")
+                return JSONObject(content).optJSONObject("error") ?: JSONObject(content)
             } catch (ignored: Exception) {
-                logReporter.warn("Failed to decode json response")
-                logReporter.warn(content)
+                logReporter.warn("Failed to decode json response: $content")
             }
 
             return JSONObject(DEFAULT_ERROR_ELEMENT)
         }
 
         private const val DESCRIPTION_FIELD = "description"
+        private const val DETAIL_FIELD = "detail"
         private const val ERROR_ID_FIELD = "errorId"
         private const val DIAGNOSTICS_ID_FIELD = "diagnosticsId"
         private const val VALIDATION_ERRORS_FIELD = "validationErrors"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<APIError> {
-            override fun deserialize(t: JSONObject): APIError {
-                return APIError(
-                    t.getString(DESCRIPTION_FIELD),
-                    t.optNullableString(ERROR_ID_FIELD),
-                    t.optNullableString(DIAGNOSTICS_ID_FIELD),
-                    t.optJSONArray(VALIDATION_ERRORS_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils.getJsonObjectDeserializer<ValidationError>()
-                            .deserialize(it)
-                    }?.toList().orEmpty()
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            APIError(
+                t.optNullableString(DESCRIPTION_FIELD)
+                    ?: t.optNullableString(DETAIL_FIELD).orEmpty(),
+                t.optNullableString(ERROR_ID_FIELD),
+                t.optNullableString(DIAGNOSTICS_ID_FIELD),
+                t.optJSONArray(VALIDATION_ERRORS_FIELD)?.sequence<JSONObject>()?.map {
+                    JSONSerializationUtils.getJsonObjectDeserializer<ValidationError>()
+                        .deserialize(it)
+                }?.toList().orEmpty()
+            )
         }
     }
 }

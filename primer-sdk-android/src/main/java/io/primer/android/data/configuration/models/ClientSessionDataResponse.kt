@@ -9,7 +9,9 @@ import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.models.PrimerClientSession
+import io.primer.android.domain.action.models.PrimerPaymentMethod
 import io.primer.android.domain.session.models.ClientSession
+import io.primer.android.ui.CardNetwork
 import org.json.JSONObject
 
 internal data class ClientSessionDataResponse(
@@ -26,7 +28,8 @@ internal data class ClientSessionDataResponse(
 
     data class PaymentMethodDataResponse(
         val vaultOnSuccess: Boolean?,
-        val options: List<PaymentMethodOptionDataResponse>
+        val options: List<PaymentMethodOptionDataResponse>,
+        val orderedAllowedCardNetworks: List<CardNetwork.Type>
     ) : JSONDeserializable {
 
         val surcharges: Map<String, Int>
@@ -44,23 +47,27 @@ internal data class ClientSessionDataResponse(
                 return map
             }
 
+        fun toPrimerPaymentMethod() = PrimerPaymentMethod(orderedAllowedCardNetworks)
+
         companion object {
             const val VAULT_ON_SUCCESS_FIELD = "vaultOnSuccess"
             const val OPTIONS_FIELD = "options"
+            const val ALLOWED_CARD_NETWORKS_FIELD = "orderedAllowedCardNetworks"
 
             @JvmField
-            val deserializer = object : JSONObjectDeserializer<PaymentMethodDataResponse> {
-
-                override fun deserialize(t: JSONObject): PaymentMethodDataResponse {
-                    return PaymentMethodDataResponse(
-                        t.optNullableBoolean(VAULT_ON_SUCCESS_FIELD),
-                        t.optJSONArray(OPTIONS_FIELD)?.sequence<JSONObject>()?.map {
-                            JSONSerializationUtils
-                                .getJsonObjectDeserializer<PaymentMethodOptionDataResponse>()
-                                .deserialize(it)
-                        }?.toList().orEmpty()
-                    )
-                }
+            val deserializer = JSONObjectDeserializer { t ->
+                PaymentMethodDataResponse(
+                    t.optNullableBoolean(VAULT_ON_SUCCESS_FIELD),
+                    t.optJSONArray(OPTIONS_FIELD)?.sequence<JSONObject>()?.map {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<PaymentMethodOptionDataResponse>()
+                            .deserialize(it)
+                    }?.toList().orEmpty(),
+                    t.optJSONArray(ALLOWED_CARD_NETWORKS_FIELD)?.sequence<String>()
+                        ?.map { network ->
+                            CardNetwork.Type.valueOrNull(network)
+                        }?.toList().orEmpty().filterNotNull()
+                )
             }
         }
     }
@@ -77,19 +84,16 @@ internal data class ClientSessionDataResponse(
             const val NETWORKS_FIELD = "networks"
 
             @JvmField
-            val deserializer = object : JSONObjectDeserializer<PaymentMethodOptionDataResponse> {
-
-                override fun deserialize(t: JSONObject): PaymentMethodOptionDataResponse {
-                    return PaymentMethodOptionDataResponse(
-                        t.getString(TYPE_FIELD),
-                        t.optNullableInt(SURCHARGE_FIELD),
-                        t.optJSONArray(NETWORKS_FIELD)?.sequence<JSONObject>()?.map {
-                            JSONSerializationUtils
-                                .getJsonObjectDeserializer<NetworkOptionDataResponse>()
-                                .deserialize(it)
-                        }?.toList()
-                    )
-                }
+            val deserializer = JSONObjectDeserializer { t ->
+                PaymentMethodOptionDataResponse(
+                    t.getString(TYPE_FIELD),
+                    t.optNullableInt(SURCHARGE_FIELD),
+                    t.optJSONArray(NETWORKS_FIELD)?.sequence<JSONObject>()?.map {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<NetworkOptionDataResponse>()
+                            .deserialize(it)
+                    }?.toList()
+                )
             }
         }
     }
@@ -103,14 +107,11 @@ internal data class ClientSessionDataResponse(
             const val SURCHARGE_FIELD = "surcharge"
 
             @JvmField
-            val deserializer = object : JSONObjectDeserializer<NetworkOptionDataResponse> {
-
-                override fun deserialize(t: JSONObject): NetworkOptionDataResponse {
-                    return NetworkOptionDataResponse(
-                        t.getString(TYPE_FIELD),
-                        t.getInt(SURCHARGE_FIELD)
-                    )
-                }
+            val deserializer = JSONObjectDeserializer { t ->
+                NetworkOptionDataResponse(
+                    t.getString(TYPE_FIELD),
+                    t.getInt(SURCHARGE_FIELD)
+                )
             }
         }
     }
@@ -123,7 +124,8 @@ internal data class ClientSessionDataResponse(
             order?.totalOrderAmount ?: amount,
             order?.lineItems?.map { it.toLineItem() },
             order?.toOrder(),
-            customer?.toCustomer()
+            customer?.toCustomer(),
+            paymentMethod?.toPrimerPaymentMethod()
         )
     )
 
@@ -141,31 +143,28 @@ internal data class ClientSessionDataResponse(
         const val PAYMENT_METHOD_DATA_FIELD = "paymentMethod"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<ClientSessionDataResponse> {
-
-            override fun deserialize(t: JSONObject): ClientSessionDataResponse {
-                return ClientSessionDataResponse(
-                    t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                    t.optNullableString(CUSTOMER_ID_FIELD),
-                    t.optNullableString(ORDER_ID_FIELD),
-                    t.optNullableString(TEST_ID_FIELD),
-                    t.optNullableInt(AMOUNT_FIELD),
-                    t.optNullableString(CURRENCY_CODE_FIELD),
-                    t.optJSONObject(CUSTOMER_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<CustomerDataResponse>()
-                            .deserialize(it)
-                    },
-                    t.optJSONObject(ORDER_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<OrderDataResponse>()
-                            .deserialize(it)
-                    },
-                    t.optJSONObject(PAYMENT_METHOD_DATA_FIELD)?.let {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<PaymentMethodDataResponse>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            ClientSessionDataResponse(
+                t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                t.optNullableString(CUSTOMER_ID_FIELD),
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(TEST_ID_FIELD),
+                t.optNullableInt(AMOUNT_FIELD),
+                t.optNullableString(CURRENCY_CODE_FIELD),
+                t.optJSONObject(CUSTOMER_DATA_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<CustomerDataResponse>()
+                        .deserialize(it)
+                },
+                t.optJSONObject(ORDER_DATA_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<OrderDataResponse>()
+                        .deserialize(it)
+                },
+                t.optJSONObject(PAYMENT_METHOD_DATA_FIELD)?.let {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<PaymentMethodDataResponse>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }

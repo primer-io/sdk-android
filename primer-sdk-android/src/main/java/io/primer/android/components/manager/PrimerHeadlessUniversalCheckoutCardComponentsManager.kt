@@ -4,11 +4,12 @@ import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
+import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
-import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
+import io.primer.android.components.presentation.paymentMethods.raw.RawDataDelegate
 import io.primer.android.components.ui.widgets.PrimerCardNumberEditText
 import io.primer.android.components.ui.widgets.PrimerCvvEditText
 import io.primer.android.components.ui.widgets.PrimerEditText
@@ -18,6 +19,7 @@ import io.primer.android.components.ui.widgets.elements.PrimerInputElement
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.inject
+import io.primer.android.di.extension.resolve
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.utils.removeSpaces
 import java.util.Calendar
@@ -49,7 +51,12 @@ private constructor(private val paymentMethodType: String) :
     PrimerTextChangedListener,
     DISdkComponent {
 
-    private val delegate: DefaultRawDataManagerDelegate by inject()
+    private val rawDelegate: RawDataDelegate<PrimerRawData> by lazy {
+        when (paymentMethodType) {
+            PaymentMethodType.PAYMENT_CARD.name -> resolve(paymentMethodType)
+            else -> resolve()
+        }
+    }
     private val headlessManagerDelegate: DefaultHeadlessManagerDelegate by inject()
 
     private val inputElements = mutableListOf<PrimerInputElement>()
@@ -73,7 +80,7 @@ private constructor(private val paymentMethodType: String) :
                 )
             )
         )
-        return delegate.getRequiredInputElementTypes(paymentMethodType)
+        return rawDelegate.getRequiredInputElementTypes(paymentMethodType)
     }
 
     override fun setInputElements(elements: List<PrimerInputElement>) {
@@ -101,7 +108,7 @@ private constructor(private val paymentMethodType: String) :
                 )
             )
         )
-        delegate.startTokenization(paymentMethodType, getRawData(paymentMethodType))
+        rawDelegate.startTokenization(paymentMethodType, getRawData(paymentMethodType))
     }
 
     override fun isCardFormValid() =

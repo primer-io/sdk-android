@@ -64,81 +64,87 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
         const val SDK_PAYMENT_HANDLING_FIELD = "sdkPaymentHandling"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<BaseAnalyticsEventRequest> {
-            override fun serialize(t: BaseAnalyticsEventRequest): JSONObject {
-                return when (t.eventType) {
-                    AnalyticsEventType.UI_EVENT ->
-                        AnalyticsUIEventRequest.serializer.serialize(t as AnalyticsUIEventRequest)
-                    AnalyticsEventType.APP_CRASHED_EVENT ->
-                        AnalyticsCrashEventRequest
-                            .serializer.serialize(t as AnalyticsCrashEventRequest)
-                    AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
-                        AnalyticsNetworkConnectivityEventRequest
-                            .serializer.serialize(t as AnalyticsNetworkConnectivityEventRequest)
-                    AnalyticsEventType.NETWORK_CALL_EVENT ->
-                        AnalyticsNetworkCallEvent
-                            .serializer.serialize(t as AnalyticsNetworkCallEvent)
-                    AnalyticsEventType.TIMER_EVENT ->
-                        AnalyticsTimerEventRequest
-                            .serializer.serialize(t as AnalyticsTimerEventRequest)
-                    AnalyticsEventType.MESSAGE_EVENT ->
-                        AnalyticsMessageEventRequest.serializer.serialize(
-                            t as AnalyticsMessageEventRequest
-                        )
-                    AnalyticsEventType.SDK_FUNCTION_EVENT ->
-                        AnalyticsSdkFunctionEventRequest.serializer.serialize(
-                            t as AnalyticsSdkFunctionEventRequest
-                        )
-                }
+        val serializer = JSONObjectSerializer<BaseAnalyticsEventRequest> { t ->
+            when (t.eventType) {
+                AnalyticsEventType.UI_EVENT ->
+                    AnalyticsUIEventRequest.serializer.serialize(t as AnalyticsUIEventRequest)
+
+                AnalyticsEventType.APP_CRASHED_EVENT ->
+                    AnalyticsCrashEventRequest
+                        .serializer.serialize(t as AnalyticsCrashEventRequest)
+
+                AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
+                    AnalyticsNetworkConnectivityEventRequest
+                        .serializer.serialize(t as AnalyticsNetworkConnectivityEventRequest)
+
+                AnalyticsEventType.NETWORK_CALL_EVENT ->
+                    AnalyticsNetworkCallEvent
+                        .serializer.serialize(t as AnalyticsNetworkCallEvent)
+
+                AnalyticsEventType.TIMER_EVENT ->
+                    AnalyticsTimerEventRequest
+                        .serializer.serialize(t as AnalyticsTimerEventRequest)
+
+                AnalyticsEventType.MESSAGE_EVENT ->
+                    AnalyticsMessageEventRequest.serializer.serialize(
+                        t as AnalyticsMessageEventRequest
+                    )
+
+                AnalyticsEventType.SDK_FUNCTION_EVENT ->
+                    AnalyticsSdkFunctionEventRequest.serializer.serialize(
+                        t as AnalyticsSdkFunctionEventRequest
+                    )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<BaseAnalyticsEventRequest> {
-            override fun deserialize(t: JSONObject): BaseAnalyticsEventRequest {
-                return when (AnalyticsEventType.valueOf(t.getString(EVENT_TYPE_FIELD))) {
-                    AnalyticsEventType.UI_EVENT ->
-                        AnalyticsUIEventRequest.deserializer.deserialize(t)
-                    AnalyticsEventType.APP_CRASHED_EVENT ->
-                        AnalyticsCrashEventRequest.deserializer.deserialize(t)
-                    AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
-                        AnalyticsNetworkConnectivityEventRequest.deserializer.deserialize(t)
-                    AnalyticsEventType.NETWORK_CALL_EVENT ->
-                        AnalyticsNetworkCallEvent.deserializer.deserialize(t)
-                    AnalyticsEventType.TIMER_EVENT ->
-                        AnalyticsTimerEventRequest.deserializer.deserialize(t)
-                    AnalyticsEventType.MESSAGE_EVENT ->
-                        AnalyticsMessageEventRequest.deserializer.deserialize(t)
-                    AnalyticsEventType.SDK_FUNCTION_EVENT ->
-                        AnalyticsSdkFunctionEventRequest.deserializer.deserialize(t)
-                }
+        val deserializer = JSONObjectDeserializer<BaseAnalyticsEventRequest> { t ->
+            when (AnalyticsEventType.valueOf(t.getString(EVENT_TYPE_FIELD))) {
+                AnalyticsEventType.UI_EVENT ->
+                    AnalyticsUIEventRequest.deserializer.deserialize(t)
+
+                AnalyticsEventType.APP_CRASHED_EVENT ->
+                    AnalyticsCrashEventRequest.deserializer.deserialize(t)
+
+                AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
+                    AnalyticsNetworkConnectivityEventRequest.deserializer.deserialize(t)
+
+                AnalyticsEventType.NETWORK_CALL_EVENT ->
+                    AnalyticsNetworkCallEvent.deserializer.deserialize(t)
+
+                AnalyticsEventType.TIMER_EVENT ->
+                    AnalyticsTimerEventRequest.deserializer.deserialize(t)
+
+                AnalyticsEventType.MESSAGE_EVENT ->
+                    AnalyticsMessageEventRequest.deserializer.deserialize(t)
+
+                AnalyticsEventType.SDK_FUNCTION_EVENT ->
+                    AnalyticsSdkFunctionEventRequest.deserializer.deserialize(t)
             }
         }
 
-        val baseSerializer = object : JSONObjectSerializer<BaseAnalyticsEventRequest> {
-            override fun serialize(t: BaseAnalyticsEventRequest): JSONObject {
-                return JSONObject().apply {
-                    putOpt(
-                        DEVICE_FIELD,
-                        t.device?.let {
-                            JSONSerializationUtils.getJsonObjectSerializer<DeviceData>()
-                                .serialize(it)
-                        }
-                    )
-                    putOpt(APP_IDENTIFIER_FIELD, t.appIdentifier)
-                    put(SDK_SESSION_ID_FIELD, t.sdkSessionId)
-                    putOpt(CHECKOUT_SESSION_ID_FIELD, t.checkoutSessionId)
-                    putOpt(CLIENT_SESSION_ID_FIELD, t.clientSessionId)
-                    putOpt(ORDER_ID_FIELD, t.orderId)
-                    putOpt(PRIMER_ACCOUNT_ID_FIELD, t.primerAccountId)
-                    putOpt(ANALYTICS_URL_FIELD, t.analyticsUrl)
-                    putOpt(EVENT_TYPE_FIELD, t.eventType.name)
-                    put(CREATED_AT_FIELD, t.createdAt)
-                    put(SDK_TYPE_FIELD, t.sdkType.name)
-                    put(SDK_VERSION_FIELD, t.sdkVersion)
-                    put(SDK_INTEGRATION_TYPE_FIELD, t.sdkIntegrationType.name)
-                    put(SDK_PAYMENT_HANDLING_FIELD, t.sdkPaymentHandling.name)
-                }
+        val baseSerializer = JSONObjectSerializer<BaseAnalyticsEventRequest> { t ->
+            JSONObject().apply {
+                putOpt(
+                    DEVICE_FIELD,
+                    t.device?.let {
+                        JSONSerializationUtils.getJsonObjectSerializer<DeviceData>()
+                            .serialize(it)
+                    }
+                )
+                putOpt(APP_IDENTIFIER_FIELD, t.appIdentifier)
+                put(SDK_SESSION_ID_FIELD, t.sdkSessionId)
+                putOpt(CHECKOUT_SESSION_ID_FIELD, t.checkoutSessionId)
+                putOpt(CLIENT_SESSION_ID_FIELD, t.clientSessionId)
+                putOpt(ORDER_ID_FIELD, t.orderId)
+                putOpt(PRIMER_ACCOUNT_ID_FIELD, t.primerAccountId)
+                putOpt(ANALYTICS_URL_FIELD, t.analyticsUrl)
+                putOpt(EVENT_TYPE_FIELD, t.eventType.name)
+                put(CREATED_AT_FIELD, t.createdAt)
+                put(SDK_TYPE_FIELD, t.sdkType.name)
+                put(SDK_VERSION_FIELD, t.sdkVersion)
+                put(SDK_INTEGRATION_TYPE_FIELD, t.sdkIntegrationType.name)
+                put(SDK_PAYMENT_HANDLING_FIELD, t.sdkPaymentHandling.name)
             }
         }
     }
@@ -179,6 +185,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is CrashProperties -> AnalyticsCrashEventRequest(
         DeviceData(
             batteryLevel,
@@ -197,6 +204,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is NetworkTypeProperties -> AnalyticsNetworkConnectivityEventRequest(
         DeviceData(
             batteryLevel,
@@ -215,6 +223,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is MessageProperties -> AnalyticsMessageEventRequest(
         DeviceData(
             batteryLevel,
@@ -233,6 +242,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is TimerProperties -> AnalyticsTimerEventRequest(
         DeviceData(
             batteryLevel,
@@ -251,6 +261,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     else -> throw IllegalStateException("Unsupported property params")
 }
 
@@ -287,6 +298,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is TimerAnalyticsParams -> AnalyticsTimerEventRequest(
         DeviceData(
             batteryLevel,
@@ -305,6 +317,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is MessageAnalyticsParams -> AnalyticsMessageEventRequest(
         DeviceData(
             batteryLevel,
@@ -329,6 +342,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     is SdkFunctionParams -> AnalyticsSdkFunctionEventRequest(
         DeviceData(
             batteryLevel,
@@ -347,6 +361,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
         primerAccountId,
         analyticsUrl
     )
+
     else -> throw IllegalStateException("Unsupported event params")
 }
 
@@ -354,28 +369,35 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
     is PaymentMethodContextParams -> PaymentMethodAnalyticsContext(
         paymentMethodType = paymentMethodType
     )
+
     is BankIssuerContextParams -> BankIssuerAnalyticsContext(
         issuerId = issuerId
     )
+
     is PaymentInstrumentIdContextParams -> PaymentInstrumentIdAnalyticsContext(
         paymentMethodId = id
     )
+
     is UrlContextParams -> UrlAnalyticsContext(
         url = url
     )
+
     is DummyApmDecisionParams -> DummyApmAnalyticsContext(
         decision = decision
     )
+
     is IPay88PaymentMethodContextParams -> IPay88AnalyticsContext(
         paymentMethodType = paymentMethodType,
         iPay88PaymentMethodId = iPay88PaymentMethodId,
         iPay88ActionType = iPay88ActionType
     )
+
     is ThreeDsRuntimeFailureContextParams -> ThreeDsRuntimeFailureAnalyticsContext(
         threeDsSdkVersion,
         initProtocolVersion,
         errorCode
     )
+
     is ThreeDsProtocolFailureContextParams -> ThreeDsProtocolFailureAnalyticsContext(
         errorDetails,
         description,
@@ -387,9 +409,11 @@ internal fun BaseContextParams.toAnalyticsContext() = when (this) {
         threeDsSdkVersion,
         initProtocolVersion
     )
+
     is ThreeDsFailureContextParams -> ThreeDsFailureAnalyticsContext(
         threeDsSdkVersion,
         initProtocolVersion
     )
+
     is ErrorContextParams -> ErrorAnalyticsContext(errorId, paymentMethodType)
 }

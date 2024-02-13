@@ -1,6 +1,6 @@
 package io.primer.android.ui
 
-private val INVALID_CHARACTER = Regex("[^0-9]")
+import io.primer.android.utils.sanitizedCardNumber
 
 internal class CardNumberFormatter private constructor(
     private val value: String,
@@ -31,7 +31,7 @@ internal class CardNumberFormatter private constructor(
     }
 
     fun getValue(): String {
-        return value.replace(INVALID_CHARACTER, "")
+        return value.sanitizedCardNumber()
     }
 
     fun isEmpty(): Boolean {
@@ -78,7 +78,7 @@ internal class CardNumberFormatter private constructor(
             autoInsert: Boolean = false,
             replaceInvalid: Boolean = true
         ): CardNumberFormatter {
-            val input = if (replaceInvalid) str.replace(INVALID_CHARACTER, "") else str
+            val input = if (replaceInvalid) str.sanitizedCardNumber() else str
             return CardNumberFormatter(input, autoInsert)
         }
     }

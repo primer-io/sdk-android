@@ -7,14 +7,14 @@ import io.primer.android.data.configuration.models.Environment
 internal data class Configuration(
     val environment: Environment,
     val paymentMethods: List<PaymentMethodConfig>,
-    val clientSession: ClientSession?,
+    val clientSession: ClientSession,
     val checkoutModules: List<CheckoutModule>
 )
 
 internal data class PaymentMethodConfig(val type: String)
 
 internal data class ClientSession(
-    val clientSession: ClientSessionDataResponse?
+    val clientSessionDataResponse: ClientSessionDataResponse
 )
 
 internal data class CheckoutModule(val type: CheckoutModuleType, val options: Map<String, Boolean>?)

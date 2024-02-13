@@ -134,7 +134,14 @@ interface ClientSession : ExampleAppRequestBody {
                                 )
                             ),
                         ),
-                        descriptor = "test-descriptor"
+                        descriptor = "test-descriptor",
+                        orderedAllowedCardNetworks = listOf(
+                            "DANKORT",
+                            "MASTERCARD",
+                            "CARTES_BANCAIRES",
+                            "VISA",
+                            "AMEX"
+                        )
                     ),
                 )
             }
@@ -197,7 +204,8 @@ interface ClientSession : ExampleAppRequestBody {
     data class PaymentMethod(
         val vaultOnSuccess: Boolean? = null,
         val options: PaymentMethodOptionGroup,
-        val descriptor: String
+        val descriptor: String,
+        val orderedAllowedCardNetworks: List<String>
     )
 
     @Keep

@@ -12,7 +12,7 @@ internal class ValidClientSessionCustomerIdRule(
     override fun validate(t: Any): ValidationResult {
         return runCatching {
             configurationRepository.getConfiguration().clientSession
-                ?.clientSession?.customerId.isNullOrBlank()
+                .clientSessionDataResponse.customerId.isNullOrBlank()
                 .not()
         }.fold(
             { ValidationResult.Success },

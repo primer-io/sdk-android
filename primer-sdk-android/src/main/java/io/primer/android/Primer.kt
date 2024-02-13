@@ -9,7 +9,8 @@ import io.primer.android.analytics.data.models.AnalyticsSdkFunctionEventRequest
 import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
-import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
+import io.primer.android.components.presentation.paymentMethods.raw.RawDataDelegate
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
@@ -143,9 +144,11 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
     private fun show(context: Context, clientToken: String) {
         try {
             setupAndVerifyClientToken(clientToken)
-            DISdkContext.sdkContainer?.let {
-                it.resolve<DefaultHeadlessManagerDelegate>().reset()
-                it.resolve<DefaultRawDataManagerDelegate>().reset()
+            DISdkContext.sdkContainer?.let { sdkContainer ->
+                sdkContainer.resolve<DefaultHeadlessManagerDelegate>().reset()
+                sdkContainer.resolve<RawDataDelegate<*>>().reset()
+                sdkContainer.resolve<RawDataDelegate<*>>(PaymentMethodType.PAYMENT_CARD.name)
+                    .reset()
             }
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {

@@ -21,7 +21,8 @@ internal class CardRawDataMapper(private val config: PaymentMethodConfigDataResp
             ),
             rawData.expiryDate.split("/")[1],
             rawData.cvv,
-            rawData.cardHolderName
+            rawData.cardHolderName,
+            rawData.cardNetwork
         )
     }
 

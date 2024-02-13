@@ -32,43 +32,41 @@ internal data class BeginAuthDataRequest(
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<BeginAuthDataRequest> {
-            override fun serialize(t: BeginAuthDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(MAX_PROTOCOL_VERSION_FIELD, t.maxProtocolVersion)
-                    putOpt(AMOUNT_FIELD, t.amount)
-                    putOpt(CURRENCY_CODE_FIELD, t.currencyCode)
-                    putOpt(ORDER_ID_FIELD, t.orderId)
+        val serializer = JSONObjectSerializer<BeginAuthDataRequest> { t ->
+            JSONObject().apply {
+                put(MAX_PROTOCOL_VERSION_FIELD, t.maxProtocolVersion)
+                putOpt(AMOUNT_FIELD, t.amount)
+                putOpt(CURRENCY_CODE_FIELD, t.currencyCode)
+                putOpt(ORDER_ID_FIELD, t.orderId)
+                put(
+                    DEVICE_FIELD,
+                    JSONSerializationUtils
+                        .getJsonObjectSerializer<SDKAuthDataRequest>()
+                        .serialize(t.device)
+                )
+                t.customer?.let {
                     put(
-                        DEVICE_FIELD,
+                        CUSTOMER_FIELD,
                         JSONSerializationUtils
-                            .getJsonObjectSerializer<SDKAuthDataRequest>()
-                            .serialize(t.device)
+                            .getJsonObjectSerializer<ThreeDsCustomerDataRequest>()
+                            .serialize(it)
                     )
-                    t.customer?.let {
-                        put(
-                            CUSTOMER_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<ThreeDsCustomerDataRequest>()
-                                .serialize(it)
-                        )
-                    }
-                    t.billingAddress?.let {
-                        put(
-                            BILLING_ADDRESS_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<Address>()
-                                .serialize(it)
-                        )
-                    }
-                    t.shippingAddress?.let {
-                        put(
-                            SHIPPING_ADDRESS_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<Address>()
-                                .serialize(it)
-                        )
-                    }
+                }
+                t.billingAddress?.let {
+                    put(
+                        BILLING_ADDRESS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<Address>()
+                            .serialize(it)
+                    )
+                }
+                t.shippingAddress?.let {
+                    put(
+                        SHIPPING_ADDRESS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<Address>()
+                            .serialize(it)
+                    )
                 }
             }
         }
@@ -88,6 +86,7 @@ internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
                 sdkReferenceNumber
             )
         )
+
         is ThreeDsVaultParams -> BeginAuthDataRequest(
             maxProtocolVersion.versionNumber,
             amount,

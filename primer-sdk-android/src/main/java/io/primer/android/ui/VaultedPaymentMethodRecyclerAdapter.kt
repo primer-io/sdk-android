@@ -9,6 +9,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.R
+import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.databinding.PaymentMethodItemVaultBinding
 import io.primer.android.ui.settings.PrimerTheme
 
@@ -17,7 +18,7 @@ internal enum class PaymentItemStatus {
 }
 
 internal enum class AlternativePaymentMethodType {
-    PayPal, Klarna, DirectDebit, Generic
+    PayPal, Klarna, Generic
 }
 
 internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -38,9 +39,11 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                         theme.errorText.defaultColor.getColor(context, theme.isDarkMode)
                     )
                 }
+
                 PaymentItemStatus.UNSELECTED -> {
                     isInvisible = true
                 }
+
                 PaymentItemStatus.SELECTED -> {
                     isInvisible = false
                     checkIcon.setImageResource(R.drawable.ic_check)
@@ -63,10 +66,10 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             when (type) {
                 AlternativePaymentMethodType.PayPal ->
                     iconView.setImageResource(R.drawable.ic_paypal_card)
+
                 AlternativePaymentMethodType.Klarna ->
                     iconView.setImageResource(R.drawable.ic_klarna_card)
-                AlternativePaymentMethodType.DirectDebit ->
-                    iconView.setImageResource(R.drawable.ic_directdebit_card)
+
                 AlternativePaymentMethodType.Generic ->
                     iconView.setImageResource(R.drawable.ic_generic_card)
             }
@@ -94,13 +97,14 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     class Card(private val binding: PaymentMethodItemVaultBinding, val theme: PrimerTheme) :
         ViewHolder(binding.root) {
 
-        private fun setCardIcon(network: String?) {
+        private fun setCardIcon(network: CardNetwork.Type) {
             val iconView = binding.paymentMethodIcon
-            when (network) {
-                "Visa" -> iconView.setImageResource(R.drawable.ic_visa_card)
-                "Mastercard" -> iconView.setImageResource(R.drawable.ic_mastercard_card)
-                else -> iconView.setImageResource(R.drawable.ic_generic_card)
-            }
+            iconView.setImageDrawable(
+                PrimerHeadlessUniversalCheckoutAssetsManager.getCardNetworkAsset(
+                    binding.root.context,
+                    network
+                ).cardImage
+            )
         }
 
         fun bind(item: CardData, status: PaymentItemStatus) {
@@ -142,7 +146,7 @@ internal data class CardData(
     val lastFour: Int,
     val expiryMonth: Int,
     val expiryYear: Int,
-    val network: String?,
+    val network: CardNetwork.Type,
     val tokenId: String
 ) : PaymentMethodItemData
 
@@ -192,6 +196,7 @@ internal class VaultedPaymentMethodRecyclerAdapter(
                     theme
                 )
             }
+
             VIEW_TYPE_CARD -> {
                 ViewHolder.Card(
                     PaymentMethodItemVaultBinding.inflate(
@@ -202,6 +207,7 @@ internal class VaultedPaymentMethodRecyclerAdapter(
                     theme
                 )
             }
+
             else -> throw IllegalStateException("View type \"$viewType\" not valid")
         }
     }
@@ -224,6 +230,7 @@ internal class VaultedPaymentMethodRecyclerAdapter(
                 }
                 holder.bind(item, getStatusForItemWith(item.tokenId))
             }
+
             is ViewHolder.Card -> {
                 val item = itemData[position] as CardData
                 holder.itemView.setOnClickListener { invokeListener(item.tokenId) }

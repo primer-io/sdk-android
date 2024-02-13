@@ -4,7 +4,6 @@ import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.domain.action.models.PrimerAddress
-import org.json.JSONObject
 
 internal data class AddressDataResponse(
     val firstName: String?,
@@ -39,20 +38,17 @@ internal data class AddressDataResponse(
         private const val POSTAL_CODE_FIELD = "postalCode"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AddressDataResponse> {
-
-            override fun deserialize(t: JSONObject): AddressDataResponse {
-                return AddressDataResponse(
-                    t.optNullableString(FIRST_NAME_FIELD),
-                    t.optNullableString(LAST_NAME_FIELD),
-                    t.optNullableString(ADDRESS_LINE_1_FIELD),
-                    t.optNullableString(ADDRESS_LINE_2_FIELD),
-                    t.optNullableString(POSTAL_CODE_FIELD),
-                    t.optNullableString(CITY_FIELD),
-                    t.optNullableString(STATE_FIELD),
-                    t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) }
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            AddressDataResponse(
+                t.optNullableString(FIRST_NAME_FIELD),
+                t.optNullableString(LAST_NAME_FIELD),
+                t.optNullableString(ADDRESS_LINE_1_FIELD),
+                t.optNullableString(ADDRESS_LINE_2_FIELD),
+                t.optNullableString(POSTAL_CODE_FIELD),
+                t.optNullableString(CITY_FIELD),
+                t.optNullableString(STATE_FIELD),
+                t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) }
+            )
         }
     }
 }

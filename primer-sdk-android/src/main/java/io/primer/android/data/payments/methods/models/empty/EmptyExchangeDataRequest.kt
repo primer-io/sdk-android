@@ -9,10 +9,6 @@ internal class EmptyExchangeDataRequest : BasePaymentMethodVaultExchangeDataRequ
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<EmptyExchangeDataRequest> {
-            override fun serialize(t: EmptyExchangeDataRequest): JSONObject {
-                return JSONObject()
-            }
-        }
+        val serializer = JSONObjectSerializer<EmptyExchangeDataRequest> { JSONObject() }
     }
 }

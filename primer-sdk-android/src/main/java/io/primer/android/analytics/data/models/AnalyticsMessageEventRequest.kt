@@ -30,39 +30,35 @@ internal data class AnalyticsMessageEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<AnalyticsMessageEventRequest> {
-            override fun serialize(t: AnalyticsMessageEventRequest): JSONObject {
-                return baseSerializer.serialize(t).apply {
-                    put(
-                        PROPERTIES_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<MessageProperties>()
-                            .serialize(t.properties)
-                    )
-                }
+        val serializer = JSONObjectSerializer<AnalyticsMessageEventRequest> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    PROPERTIES_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<MessageProperties>()
+                        .serialize(t.properties)
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AnalyticsMessageEventRequest> {
-            override fun deserialize(t: JSONObject): AnalyticsMessageEventRequest {
-                return AnalyticsMessageEventRequest(
-                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
-                    ),
-                    JSONSerializationUtils.getJsonObjectDeserializer<MessageProperties>()
-                        .deserialize(t.getJSONObject(PROPERTIES_FIELD)),
-                    t.getString(APP_IDENTIFIER_FIELD),
-                    t.getString(SDK_SESSION_ID_FIELD),
-                    SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
-                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
-                    t.getString(CHECKOUT_SESSION_ID_FIELD),
-                    t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                    t.optNullableString(ORDER_ID_FIELD),
-                    t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
-                    t.optNullableString(ANALYTICS_URL_FIELD),
-                    createdAt = t.getLong(CREATED_AT_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer<AnalyticsMessageEventRequest> { t ->
+            AnalyticsMessageEventRequest(
+                JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                    t.getJSONObject(DEVICE_FIELD)
+                ),
+                JSONSerializationUtils.getJsonObjectDeserializer<MessageProperties>()
+                    .deserialize(t.getJSONObject(PROPERTIES_FIELD)),
+                t.getString(APP_IDENTIFIER_FIELD),
+                t.getString(SDK_SESSION_ID_FIELD),
+                SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
+                t.getString(CHECKOUT_SESSION_ID_FIELD),
+                t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                t.optNullableString(ANALYTICS_URL_FIELD),
+                createdAt = t.getLong(CREATED_AT_FIELD)
+            )
         }
     }
 }
@@ -83,44 +79,40 @@ internal data class MessageProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<MessageProperties> {
-            override fun serialize(t: MessageProperties): JSONObject {
-                return JSONObject().apply {
-                    put(MESSAGE_TYPE_FIELD, t.messageType.name)
-                    put(MESSAGE_FIELD, t.message)
-                    put(SEVERITY_FIELD, t.severity.name)
-                    putOpt(DIAGNOSTICS_ID_FIELD, t.diagnosticsId)
-                    putOpt(
-                        ANALYTICS_CONTEXT_FIELD,
-                        t.context?.let {
-                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
-                                .serialize(it)
-                        }
-                    )
-                }
+        val serializer = JSONObjectSerializer<MessageProperties> { t ->
+            JSONObject().apply {
+                put(MESSAGE_TYPE_FIELD, t.messageType.name)
+                put(MESSAGE_FIELD, t.message)
+                put(SEVERITY_FIELD, t.severity.name)
+                putOpt(DIAGNOSTICS_ID_FIELD, t.diagnosticsId)
+                putOpt(
+                    ANALYTICS_CONTEXT_FIELD,
+                    t.context?.let {
+                        JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
+                            .serialize(it)
+                    }
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<MessageProperties> {
-            override fun deserialize(t: JSONObject): MessageProperties {
-                return MessageProperties(
-                    MessageType.valueOf(t.getString(MESSAGE_TYPE_FIELD)),
-                    t.getString(MESSAGE_FIELD),
-                    Severity.valueOf(t.getString(SEVERITY_FIELD)),
-                    t.optNullableString(DIAGNOSTICS_ID_FIELD),
-                    t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        val deserializer = JSONObjectDeserializer<MessageProperties> { t ->
+            MessageProperties(
+                MessageType.valueOf(t.getString(MESSAGE_TYPE_FIELD)),
+                t.getString(MESSAGE_FIELD),
+                Severity.valueOf(t.getString(SEVERITY_FIELD)),
+                t.optNullableString(DIAGNOSTICS_ID_FIELD),
+                t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }
 
 internal enum class MessageType {
-    VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED, INFO
+    INFO, VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED
 }
 
 internal enum class Severity {

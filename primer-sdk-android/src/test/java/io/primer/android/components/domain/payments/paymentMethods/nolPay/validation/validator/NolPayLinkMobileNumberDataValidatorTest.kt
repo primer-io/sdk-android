@@ -12,14 +12,12 @@ import io.primer.android.components.domain.payments.metadata.phone.repository.Ph
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayLinkMobileNumberDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayValidations
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class NolPayLinkMobileNumberDataValidatorTest {
 
     @RelaxedMockK

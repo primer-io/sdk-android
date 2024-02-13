@@ -32,17 +32,22 @@ internal class PaymentsTypesInteractor(
 
     override fun execute(params: None) = configurationInteractor(
         ConfigurationParams(false)
-    ).flatMapLatest {
+    ).flatMapLatest { configuration ->
         paymentMethodModulesInteractor.execute(None())
             .mapLatest { it.descriptors.map { it.config } }
-    }.mapLatest { configs ->
-        val paymentMethods = configs.map { config ->
+            .mapLatest { configs -> configuration to configs }
+    }.mapLatest { configurations ->
+        val paymentMethods = configurations.second.map { config ->
             paymentMethodMapper.getPrimerHeadlessUniversalCheckoutPaymentMethod(
                 config.type
             )
         }
         eventDispatcher.dispatchEvent(
-            CheckoutEvent.ConfigurationSuccess(paymentMethods)
+            CheckoutEvent.ConfigurationSuccess(
+                paymentMethods,
+                configurations.first.clientSession.clientSessionDataResponse
+                    .toClientSessionData().clientSession
+            )
         )
         fetchCurrencyFormatDataInteractor(None())
         logReporter.info("Headless Universal Checkout initialized successfully.")

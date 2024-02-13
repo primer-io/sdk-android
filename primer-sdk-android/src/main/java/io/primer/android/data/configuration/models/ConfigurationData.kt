@@ -6,11 +6,12 @@ import io.primer.android.domain.session.models.Configuration
 internal data class ConfigurationData(
     val pciUrl: String,
     val coreUrl: String,
+    val binDataUrl: String,
     val assetsUrl: String,
     val paymentMethods: List<PaymentMethodConfigDataResponse>,
     val checkoutModules: List<CheckoutModuleDataResponse> = listOf(),
     val keys: ConfigurationKeysDataResponse?,
-    val clientSession: ClientSessionDataResponse?,
+    val clientSession: ClientSessionDataResponse,
     val environment: Environment,
     val primerAccountId: String?,
     val iconsDisplayMetadata: List<Map<String, List<IconDisplayMetadata>>>
@@ -18,7 +19,7 @@ internal data class ConfigurationData(
     fun toConfiguration() = Configuration(
         environment,
         paymentMethods.map { it.toPaymentMethodConfig() },
-        clientSession?.toClientSession(),
+        clientSession.toClientSession(),
         checkoutModules.map { it.toCheckoutModule() }
     )
 }

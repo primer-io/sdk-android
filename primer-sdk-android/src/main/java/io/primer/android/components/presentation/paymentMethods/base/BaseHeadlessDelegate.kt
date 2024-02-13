@@ -14,6 +14,7 @@ import io.primer.android.components.domain.payments.paymentMethods.nativeUi.vali
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.validation.rules.PaymentMethodManagerInitValidationData
 import io.primer.android.components.presentation.paymentMethods.nativeUi.ipay88.IPay88State
 import io.primer.android.components.presentation.paymentMethods.nativeUi.webRedirect.AsyncState
+import io.primer.android.components.presentation.paymentMethods.raw.RawDataManagerAnalyticsConstants
 import io.primer.android.components.ui.activity.PaymentMethodLauncherParams
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.data.configuration.models.PaymentMethodType
@@ -191,6 +192,9 @@ internal class DefaultHeadlessManagerDelegate(
                     )
                 }
             }
+            is CheckoutEvent.Start3DSMock -> {
+                navigator.open3DSMockScreen()
+            }
             else -> Unit
         }
     }
@@ -277,6 +281,15 @@ internal class DefaultHeadlessManagerDelegate(
         paymentMethodType: String,
         completion: (PrimerInitializationData?, PrimerError?) -> Unit
     ) {
+        PrimerHeadlessUniversalCheckout.instance.addAnalyticsEvent(
+            SdkFunctionParams(
+                RawDataManagerAnalyticsConstants.CONFIGURE_METHOD,
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
+                )
+            )
+        )
         when (paymentMethodType) {
             PaymentMethodType.XENDIT_RETAIL_OUTLETS.name -> {
                 scope.launch {
@@ -318,7 +331,7 @@ internal class DefaultHeadlessManagerDelegate(
     ) = when (rawData) {
         is PrimerCardData -> {
             val cardType = CardNetwork.lookup(rawData.cardNumber).type
-            if (cardType == CardNetwork.Type.UNKNOWN) {
+            if (cardType == CardNetwork.Type.OTHER) {
                 ActionUpdateUnselectPaymentMethodParams
             } else {
                 ActionUpdateSelectPaymentMethodParams(

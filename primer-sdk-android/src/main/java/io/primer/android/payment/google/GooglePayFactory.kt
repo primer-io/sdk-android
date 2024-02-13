@@ -1,6 +1,7 @@
 package io.primer.android.payment.google
 
 import io.primer.android.PaymentMethod
+import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.payments.methods.mapping.PaymentMethodFactory
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.utils.Either
@@ -9,7 +10,10 @@ import io.primer.android.utils.PaymentUtils
 import io.primer.android.utils.Success
 import java.util.Currency
 
-internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFactory {
+internal class GooglePayFactory(
+    private val settings: PrimerSettings,
+    private val localConfigurationDataSource: LocalConfigurationDataSource
+) : PaymentMethodFactory {
 
     override fun build(): Either<PaymentMethod, Exception> {
         if (settings.order.countryCode == null) {
@@ -29,7 +33,10 @@ internal class GooglePayFactory(val settings: PrimerSettings) : PaymentMethodFac
             PaymentUtils.minorToAmount(settings.currentAmount, currency).toString(),
             settings.order.countryCode.toString(),
             currency.currencyCode,
-            settings.paymentMethodOptions.googlePayOptions.allowedCardNetworks,
+            localConfigurationDataSource.getConfiguration().clientSession
+                .paymentMethod?.orderedAllowedCardNetworks.orEmpty().intersect(
+                    GooglePay.allowedCardNetworks
+                ).toList(),
             settings.paymentMethodOptions.googlePayOptions.buttonStyle,
             settings.paymentMethodOptions.googlePayOptions.captureBillingAddress
         )

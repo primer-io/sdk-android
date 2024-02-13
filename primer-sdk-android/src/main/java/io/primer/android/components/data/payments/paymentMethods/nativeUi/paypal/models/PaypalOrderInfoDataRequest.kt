@@ -24,12 +24,10 @@ internal data class PaypalOrderInfoDataRequest(
         }
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<PaypalOrderInfoDataRequest> {
-            override fun serialize(t: PaypalOrderInfoDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                    put(ORDER_ID_FIELD, t.orderId)
-                }
+        val serializer = JSONObjectSerializer<PaypalOrderInfoDataRequest> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                put(ORDER_ID_FIELD, t.orderId)
             }
         }
     }

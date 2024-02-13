@@ -1,5 +1,7 @@
 package io.primer.android.di
 
+import io.primer.android.components.data.payments.paymentMethods.raw.repository.card.OrderedAllowedCardNetworksDataRepository
+import io.primer.android.components.domain.payments.paymentMethods.raw.repository.card.OrderedAllowedCardNetworksRepository
 import io.primer.android.data.configuration.datasource.RemoteConfigurationDataSource
 import io.primer.android.data.configuration.datasource.RemoteConfigurationResourcesDataSource
 import io.primer.android.data.configuration.repository.ConfigurationDataRepository
@@ -59,6 +61,12 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
                 resolve(),
                 resolve(),
                 sdk.resolve(),
+                sdk.resolve()
+            )
+        }
+
+        registerSingleton<OrderedAllowedCardNetworksRepository> {
+            OrderedAllowedCardNetworksDataRepository(
                 sdk.resolve()
             )
         }

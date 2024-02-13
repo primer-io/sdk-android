@@ -44,9 +44,9 @@
         <action
             android:id="@+id/action_NolLinkFragment_to_NolFragment"
             app:destination="@id/NolFragment"
-            app:popUpTo="@id/NolFragment"
             app:launchSingleTop="true"
-            app:popUpToInclusive="false"  />
+            app:popUpTo="@id/NolFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -58,8 +58,8 @@
         <action
             android:id="@+id/action_NolUnlinkFragment_to_NolFragment"
             app:destination="@id/NolFragment"
-            app:popUpTo="@id/NolFragment"
             app:launchSingleTop="true"
+            app:popUpTo="@id/NolFragment"
             app:popUpToInclusive="false" />
     </fragment>
 
@@ -72,8 +72,8 @@
         <action
             android:id="@+id/action_NolPayPaymentFragment_to_NolFragment"
             app:destination="@id/HeadlessFragment"
-            app:popUpTo="@id/HeadlessFragment"
             app:launchSingleTop="true"
+            app:popUpTo="@id/HeadlessFragment"
             app:popUpToInclusive="false" />
     </fragment>
 
@@ -94,14 +94,6 @@
         <action
             android:id="@+id/action_FirstFragment_to_ThirdFragment"
             app:destination="@id/HeadlessFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-
-        <action
-            android:id="@+id/action_FirstFragment_to_HeadlessRawFragment"
-            app:destination="@id/HeadlessRawFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -138,7 +130,7 @@
     <fragment
         android:id="@+id/HeadlessFragment"
         android:name="io.primer.sample.HeadlessComponentsFragment"
-        android:label="HUC"
+        android:label="Headless"
         tools:layout="@layout/fragment_headless">
 
         <action
@@ -152,6 +144,14 @@
         <action
             android:id="@+id/action_MerchantComponentsFragment_to_NolPayFragment"
             app:destination="@id/NolFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_MerchantComponentsFragment_to_HeadlessRawFragment"
+            app:destination="@id/HeadlessRawFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -175,8 +175,8 @@
         <action
             android:id="@+id/action_AdyenBankSelectionFragment_to_HeadlessFragment"
             app:destination="@id/HeadlessFragment"
-            app:popUpTo="@id/HeadlessFragment"
             app:launchSingleTop="true"
+            app:popUpTo="@id/HeadlessFragment"
             app:popUpToInclusive="false" />
         <argument
             android:name="paymentMethodType"
@@ -186,8 +186,18 @@
     <fragment
         android:id="@+id/HeadlessRawFragment"
         android:name="io.primer.sample.HeadlessRawFragment"
-        android:label="HUC"
-        tools:layout="@layout/fragment_headless" />
+        android:label="Headless"
+        tools:layout="@layout/fragment_headless">
+
+        <action
+            android:id="@+id/action_MerchantRawFragment_to_MerchantResultFragment"
+            app:destination="@id/MerchantResultFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/CountryPickerFragment"

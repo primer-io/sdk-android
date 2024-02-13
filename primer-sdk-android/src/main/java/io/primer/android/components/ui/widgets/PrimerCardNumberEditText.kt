@@ -20,7 +20,7 @@ internal interface PrimerInputElementCardNumberListener {
 class PrimerCardNumberEditText(context: Context, attrs: AttributeSet? = null) :
     PrimerEditText(context, attrs) {
 
-    private var cardNetwork: CardNetwork.Type = CardNetwork.Type.UNKNOWN
+    private var cardNetwork: CardNetwork.Type? = null
     private var typeListener: PrimerInputElementCardNumberListener? = null
 
     init {

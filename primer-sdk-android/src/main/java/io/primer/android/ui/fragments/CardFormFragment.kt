@@ -28,6 +28,7 @@ import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.via
+import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.FragmentCardFormBinding
@@ -48,12 +49,14 @@ import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.ui.utils.setMarginBottomForError
 import io.primer.android.utils.hideKeyboard
+import io.primer.android.utils.sanitizedCardNumber
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.TokenizationViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.Collections
 import java.util.TreeMap
+
 /**
  * A simple [Fragment] subclass.
  * Use the [CardFormFragment.newInstance] factory method to
@@ -266,7 +269,7 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun onCardNumberInput(content: Editable?) {
-        val newNetwork = CardNetwork.lookup(content.toString())
+        val newNetwork = CardNetwork.lookup(content.toString().sanitizedCardNumber())
         val isSameNetwork = network?.type?.equals(newNetwork.type) ?: false
         if (isSameNetwork) {
             return
@@ -283,7 +286,7 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun emitCardNetworkAction() {
-        val actionParams = if (network == null || network?.type == CardNetwork.Type.UNKNOWN) {
+        val actionParams = if (network == null || network?.type == CardNetwork.Type.OTHER) {
             ActionUpdateUnselectPaymentMethodParams
         } else {
             ActionUpdateSelectPaymentMethodParams(
@@ -308,7 +311,8 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun updateCardNumberInputIcon() {
-        val resource = network?.getResource() ?: R.drawable.ic_generic_card
+        val resource = network?.type?.getCardBrand()?.getImageAsset(ImageColor.COLORED)
+            ?: R.drawable.ic_generic_card
         val input = cardInputFields[PrimerInputElementType.CARD_NUMBER] ?: return
         input.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0)
     }
@@ -534,8 +538,10 @@ internal class CardFormFragment : BaseFragment() {
             when (currentFocus?.key) {
                 PrimerInputElementType.CARD_NUMBER ->
                     FieldFocuser.focus(cardInputFields[PrimerInputElementType.EXPIRY_DATE])
+
                 PrimerInputElementType.EXPIRY_DATE ->
                     FieldFocuser.focus(cardInputFields[PrimerInputElementType.CVV])
+
                 PrimerInputElementType.CVV -> {
                     val containsCardholderName =
                         primerViewModel.showCardInformation.value.let { options ->
@@ -546,9 +552,11 @@ internal class CardFormFragment : BaseFragment() {
                     when {
                         containsCardholderName == null || containsCardholderName ->
                             takeFocusCardholderName()
+
                         else -> binding.billingAddressForm.findNextFocus()
                     }
                 }
+
                 else -> Unit
             }
         }

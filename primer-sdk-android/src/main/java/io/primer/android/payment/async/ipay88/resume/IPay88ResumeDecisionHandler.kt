@@ -69,7 +69,7 @@ internal class IPay88ResumeDecisionHandler(
             it.validate(
                 IPay88ValidationData(
                     configurationRepository.getConfiguration().clientSession
-                        ?.clientSession?.toClientSessionData(),
+                        .clientSessionDataResponse.toClientSessionData(),
                     ClientToken.fromString(clientToken)
                 )
             )

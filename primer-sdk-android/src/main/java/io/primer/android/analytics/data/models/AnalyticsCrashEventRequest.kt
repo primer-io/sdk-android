@@ -32,22 +32,20 @@ internal data class AnalyticsCrashEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<AnalyticsCrashEventRequest> {
-            override fun serialize(t: AnalyticsCrashEventRequest): JSONObject {
-                return baseSerializer.serialize(t).apply {
-                    put(
-                        PROPERTIES_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<CrashProperties>()
-                            .serialize(t.properties)
-                    )
-                }
+        val serializer = JSONObjectSerializer<AnalyticsCrashEventRequest> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    PROPERTIES_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<CrashProperties>()
+                        .serialize(t.properties)
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AnalyticsCrashEventRequest> {
-            override fun deserialize(t: JSONObject): AnalyticsCrashEventRequest {
-                return AnalyticsCrashEventRequest(
+        val deserializer =
+            JSONObjectDeserializer<AnalyticsCrashEventRequest> { t ->
+                AnalyticsCrashEventRequest(
                     JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
                         t.getJSONObject(DEVICE_FIELD)
                     ),
@@ -66,7 +64,6 @@ internal data class AnalyticsCrashEventRequest(
                     createdAt = t.getLong(CREATED_AT_FIELD)
                 )
             }
-        }
     }
 }
 
@@ -77,19 +74,16 @@ internal data class CrashProperties(val stacktrace: List<String>) : BaseAnalytic
         private const val STACKTRACE_FIELD = "stacktrace"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<CrashProperties> {
-            override fun serialize(t: CrashProperties): JSONObject {
-                return JSONObject().apply {
-                    put(STACKTRACE_FIELD, JSONArray(t.stacktrace))
-                }
+        val serializer = JSONObjectSerializer<CrashProperties> { t ->
+            JSONObject().apply {
+                put(STACKTRACE_FIELD, JSONArray(t.stacktrace))
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<CrashProperties> {
-            override fun deserialize(t: JSONObject): CrashProperties {
-                return CrashProperties(t.getJSONArray(STACKTRACE_FIELD).sequence<String>().toList())
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                CrashProperties(t.getJSONArray(STACKTRACE_FIELD).sequence<String>().toList())
             }
-        }
     }
 }

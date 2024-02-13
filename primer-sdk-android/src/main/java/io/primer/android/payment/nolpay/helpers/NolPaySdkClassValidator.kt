@@ -14,10 +14,10 @@ internal class NolPaySdkClassValidator {
     companion object {
 
         const val NOL_PAY_CLASS_NOT_LOADED_ERROR =
-            "%s configuration has been found but dependency " +
+            "Nol pay configuration has been found but dependency " +
                 "'io.primer:nol-pay-android is missing. " +
                 "Add `io.primer:nol-pay-android' in your project so you can perform " +
-                "payments with %s."
+                "payments with Nol pay`."
         private const val NOL_PAY_CLASS_NAME = "io.primer.nolpay.api.PrimerNolPay"
     }
 }

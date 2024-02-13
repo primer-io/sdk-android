@@ -30,40 +30,36 @@ internal data class AnalyticsUIEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<AnalyticsUIEventRequest> {
-            override fun serialize(t: AnalyticsUIEventRequest): JSONObject {
-                return baseSerializer.serialize(t).apply {
-                    put(
-                        PROPERTIES_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<UIProperties>()
-                            .serialize(t.properties)
-                    )
-                }
+        val serializer = JSONObjectSerializer<AnalyticsUIEventRequest> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    PROPERTIES_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<UIProperties>()
+                        .serialize(t.properties)
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AnalyticsUIEventRequest> {
-            override fun deserialize(t: JSONObject): AnalyticsUIEventRequest {
-                return AnalyticsUIEventRequest(
-                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                        t.getJSONObject(DEVICE_FIELD)
-                    ),
-                    JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
-                        t.getJSONObject(PROPERTIES_FIELD)
-                    ),
-                    t.getString(APP_IDENTIFIER_FIELD),
-                    t.getString(SDK_SESSION_ID_FIELD),
-                    SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
-                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
-                    t.getString(CHECKOUT_SESSION_ID_FIELD),
-                    t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                    t.optNullableString(ORDER_ID_FIELD),
-                    t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
-                    t.optNullableString(ANALYTICS_URL_FIELD),
-                    createdAt = t.getLong(CREATED_AT_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            AnalyticsUIEventRequest(
+                JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                    t.getJSONObject(DEVICE_FIELD)
+                ),
+                JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
+                    t.getJSONObject(PROPERTIES_FIELD)
+                ),
+                t.getString(APP_IDENTIFIER_FIELD),
+                t.getString(SDK_SESSION_ID_FIELD),
+                SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
+                t.getString(CHECKOUT_SESSION_ID_FIELD),
+                t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                t.optNullableString(ANALYTICS_URL_FIELD),
+                createdAt = t.getLong(CREATED_AT_FIELD)
+            )
         }
     }
 }
@@ -85,38 +81,34 @@ internal data class UIProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<UIProperties> {
-            override fun serialize(t: UIProperties): JSONObject {
-                return JSONObject().apply {
-                    put(ACTION_FIELD, t.action.name)
-                    put(OBJECT_TYPE_FIELD, t.objectType.name)
-                    put(PLACE_FIELD, t.place)
-                    putOpt(OBJECT_ID_FIELD, t.objectId?.name)
-                    putOpt(
-                        ANALYTICS_CONTEXT_FIELD,
-                        t.context?.let {
-                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
-                                .serialize(it)
-                        }
-                    )
-                }
+        val serializer = JSONObjectSerializer<UIProperties> { t ->
+            JSONObject().apply {
+                put(ACTION_FIELD, t.action.name)
+                put(OBJECT_TYPE_FIELD, t.objectType.name)
+                put(PLACE_FIELD, t.place)
+                putOpt(OBJECT_ID_FIELD, t.objectId?.name)
+                putOpt(
+                    ANALYTICS_CONTEXT_FIELD,
+                    t.context?.let {
+                        JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
+                            .serialize(it)
+                    }
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<UIProperties> {
-            override fun deserialize(t: JSONObject): UIProperties {
-                return UIProperties(
-                    AnalyticsAction.valueOf(t.getString(ACTION_FIELD)),
-                    ObjectType.valueOf(t.getString(OBJECT_TYPE_FIELD)),
-                    Place.valueOf(t.getString(PLACE_FIELD)),
-                    t.optNullableString(OBJECT_ID_FIELD)?.let { ObjectId.valueOf(it) },
-                    t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            UIProperties(
+                AnalyticsAction.valueOf(t.getString(ACTION_FIELD)),
+                ObjectType.valueOf(t.getString(OBJECT_TYPE_FIELD)),
+                Place.valueOf(t.getString(PLACE_FIELD)),
+                t.optNullableString(OBJECT_ID_FIELD)?.let { ObjectId.valueOf(it) },
+                t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }

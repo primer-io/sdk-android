@@ -254,6 +254,14 @@
     public *;
 }
 
+-keep interface io.primer.android.components.ui.assets.PrimerAsset {
+    *;
+}
+
+-keep class io.primer.android.components.ui.assets.PrimerCardNetworkAsset {
+   public *;
+}
+
  #------------------------------------HUC exceptions-----------------------------------------------#
 
 -keep class io.primer.android.components.SdkUninitializedException {

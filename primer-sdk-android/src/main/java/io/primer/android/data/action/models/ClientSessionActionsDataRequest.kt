@@ -23,17 +23,15 @@ internal data class ClientSessionActionsDataRequest(
         companion object {
 
             @JvmField
-            val serializer = object : JSONObjectSerializer<SetPaymentMethod> {
-                override fun serialize(t: SetPaymentMethod): JSONObject {
-                    return JSONObject().apply {
-                        put(TYPE_FIELD, "SELECT_PAYMENT_METHOD")
-                        put(
-                            PARAMS_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<SetPaymentMethodRequestDataParams>()
-                                .serialize(t.params)
-                        )
-                    }
+            val serializer = JSONObjectSerializer<SetPaymentMethod> { t ->
+                JSONObject().apply {
+                    put(TYPE_FIELD, "SELECT_PAYMENT_METHOD")
+                    put(
+                        PARAMS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<SetPaymentMethodRequestDataParams>()
+                            .serialize(t.params)
+                    )
                 }
             }
         }
@@ -49,18 +47,16 @@ internal data class ClientSessionActionsDataRequest(
             private const val BIN_DATA_FIELD = "binData"
 
             @JvmField
-            val serializer = object : JSONObjectSerializer<SetPaymentMethodRequestDataParams> {
-                override fun serialize(t: SetPaymentMethodRequestDataParams): JSONObject {
-                    return JSONObject().apply {
-                        put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
-                        putOpt(
-                            BIN_DATA_FIELD,
-                            t.binData?.let {
-                                JSONSerializationUtils.getJsonObjectSerializer<BinData>()
-                                    .serialize(t.binData)
-                            }
-                        )
-                    }
+            val serializer = JSONObjectSerializer<SetPaymentMethodRequestDataParams> { t ->
+                JSONObject().apply {
+                    put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
+                    putOpt(
+                        BIN_DATA_FIELD,
+                        t.binData?.let {
+                            JSONSerializationUtils.getJsonObjectSerializer<BinData>()
+                                .serialize(t.binData)
+                        }
+                    )
                 }
             }
         }
@@ -70,16 +66,14 @@ internal data class ClientSessionActionsDataRequest(
         companion object {
 
             @JvmField
-            val serializer = object : JSONObjectSerializer<UnsetPaymentMethod> {
-                override fun serialize(t: UnsetPaymentMethod): JSONObject {
-                    return JSONObject().apply {
-                        put(TYPE_FIELD, "UNSELECT_PAYMENT_METHOD")
-                        put(
-                            PARAMS_FIELD,
-                            JSONSerializationUtils.getJsonObjectSerializer<EmptyDataRequest>()
-                                .serialize(EmptyDataRequest())
-                        )
-                    }
+            val serializer = JSONObjectSerializer<UnsetPaymentMethod> {
+                JSONObject().apply {
+                    put(TYPE_FIELD, "UNSELECT_PAYMENT_METHOD")
+                    put(
+                        PARAMS_FIELD,
+                        JSONSerializationUtils.getJsonObjectSerializer<EmptyDataRequest>()
+                            .serialize(EmptyDataRequest())
+                    )
                 }
             }
         }
@@ -91,17 +85,15 @@ internal data class ClientSessionActionsDataRequest(
         companion object {
 
             @JvmField
-            val serializer = object : JSONObjectSerializer<SetBillingAddress> {
-                override fun serialize(t: SetBillingAddress): JSONObject {
-                    return JSONObject().apply {
-                        put(TYPE_FIELD, "SET_BILLING_ADDRESS")
-                        put(
-                            PARAMS_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<SetBillingAddressRequestDataParams>()
-                                .serialize(t.params)
-                        )
-                    }
+            val serializer = JSONObjectSerializer<SetBillingAddress> { t ->
+                JSONObject().apply {
+                    put(TYPE_FIELD, "SET_BILLING_ADDRESS")
+                    put(
+                        PARAMS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<SetBillingAddressRequestDataParams>()
+                            .serialize(t.params)
+                    )
                 }
             }
         }
@@ -116,16 +108,14 @@ internal data class ClientSessionActionsDataRequest(
             private const val BILLING_ADDRESS_FIELD = "billingAddress"
 
             @JvmField
-            val serializer = object : JSONObjectSerializer<SetBillingAddressRequestDataParams> {
-                override fun serialize(t: SetBillingAddressRequestDataParams): JSONObject {
-                    return JSONObject().apply {
-                        put(
-                            BILLING_ADDRESS_FIELD,
-                            JSONSerializationUtils
-                                .getJsonObjectSerializer<Address>()
-                                .serialize(t.billingAddress)
-                        )
-                    }
+            val serializer = JSONObjectSerializer<SetBillingAddressRequestDataParams> { t ->
+                JSONObject().apply {
+                    put(
+                        BILLING_ADDRESS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<Address>()
+                            .serialize(t.billingAddress)
+                    )
                 }
             }
         }
@@ -138,33 +128,33 @@ internal data class ClientSessionActionsDataRequest(
         private const val ACTIONS_FIELD = "actions"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<ClientSessionActionsDataRequest> {
-            override fun serialize(t: ClientSessionActionsDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(
-                        ACTIONS_FIELD,
-                        JSONArray().apply {
-                            t.actions.map { action ->
-                                put(
-                                    when (action) {
-                                        is SetPaymentMethod ->
-                                            JSONSerializationUtils
-                                                .getJsonObjectSerializer<SetPaymentMethod>()
-                                                .serialize(action)
-                                        is UnsetPaymentMethod ->
-                                            JSONSerializationUtils
-                                                .getJsonObjectSerializer<UnsetPaymentMethod>()
-                                                .serialize(action)
-                                        is SetBillingAddress ->
-                                            JSONSerializationUtils
-                                                .getJsonObjectSerializer<SetBillingAddress>()
-                                                .serialize(action)
-                                    }
-                                )
-                            }
+        val serializer = JSONObjectSerializer<ClientSessionActionsDataRequest> { t ->
+            JSONObject().apply {
+                put(
+                    ACTIONS_FIELD,
+                    JSONArray().apply {
+                        t.actions.map { action ->
+                            put(
+                                when (action) {
+                                    is SetPaymentMethod ->
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<SetPaymentMethod>()
+                                            .serialize(action)
+
+                                    is UnsetPaymentMethod ->
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<UnsetPaymentMethod>()
+                                            .serialize(action)
+
+                                    is SetBillingAddress ->
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<SetBillingAddress>()
+                                            .serialize(action)
+                                }
+                            )
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }
@@ -177,8 +167,10 @@ internal fun BaseActionUpdateParams.toActionData() = when (this) {
             cardNetwork?.let { BinData(it) }
         )
     )
+
     is ActionUpdateUnselectPaymentMethodParams ->
         ClientSessionActionsDataRequest.UnsetPaymentMethod()
+
     is ActionUpdateBillingAddressParams -> ClientSessionActionsDataRequest.SetBillingAddress(
         ClientSessionActionsDataRequest.SetBillingAddressRequestDataParams(
             Address(

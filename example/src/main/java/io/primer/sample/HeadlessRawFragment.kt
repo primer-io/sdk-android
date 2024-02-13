@@ -7,35 +7,36 @@ import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.primer.android.completion.PrimerHeadlessUniversalCheckoutResumeDecisionHandler
-import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
-import io.primer.android.components.PrimerHeadlessUniversalCheckout
-import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
-import io.primer.android.components.PrimerHeadlessUniversalCheckoutUiListener
+import com.google.gson.GsonBuilder
 import io.primer.android.components.SdkUninitializedException
-import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.core.models.PrimerRawData
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
 import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardData
-import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
+import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeData
 import io.primer.android.components.domain.core.models.phoneNumber.PrimerPhoneNumberData
 import io.primer.android.components.domain.core.models.retailOutlet.PrimerRetailerData
@@ -44,36 +45,47 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
+import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.data.payments.configure.PrimerInitializationData
 import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
-import io.primer.android.domain.PrimerCheckoutData
-import io.primer.android.domain.action.models.PrimerClientSession
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
-import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.XenditCheckoutVoucherAdditionalInfo
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import io.primer.android.ui.CardNetwork
+import io.primer.sample.constants.PrimerHeadlessCallbacks
+import io.primer.sample.databinding.CardNumberInputViewBinding
 import io.primer.sample.databinding.FragmentHeadlessBinding
+import io.primer.sample.databinding.InputViewBinding
+import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
-import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
-import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
+import io.primer.sample.viewmodels.UiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 
 class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
 
     private val viewModel: MainViewModel by activityViewModels()
-    private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
+    private val headlessManagerViewModel: HeadlessManagerViewModel by activityViewModels()
 
-    private val headlessUniversalCheckout by lazy {
-        PrimerHeadlessUniversalCheckout.current
-    }
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 
     private var _binding: FragmentHeadlessBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = requireNotNull(_binding)
+
+    private var _cardNumberInputBinding: CardNumberInputViewBinding? = null
+    private val cardNumberInputBinding get() = requireNotNull(_cardNumberInputBinding)
+
+    private val callbacks: ArrayList<String> = arrayListOf()
+    private var checkoutDataWithError: CheckoutDataWithError? = null
+
+    private val rawDataFlow = MutableStateFlow<PrimerRawData?>(null)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,22 +99,6 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        headlessManagerViewModel = ViewModelProvider(
-            requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
-        )[HeadlessManagerViewModel::class.java]
-
-        viewModel.clientToken.observe(viewLifecycleOwner) { token ->
-            token?.let {
-                headlessUniversalCheckout.start(
-                    requireContext(),
-                    it,
-                    viewModel.settings
-                )
-                showLoading("Starting HUC.")
-            }
-        }
-
         headlessManagerViewModel.transactionState.observe(viewLifecycleOwner) { state ->
             val message = when (state) {
                 TransactionState.SUCCESS -> viewModel.transactionResponse.value.toString()
@@ -114,154 +110,246 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             viewModel.resetTransactionState()
         }
 
-        viewModel.fetchClientSession()
-        showLoading("Loading client token.")
+        observeUiState()
 
-        headlessUniversalCheckout.setCheckoutListener(object :
-            PrimerHeadlessUniversalCheckoutListener {
-            override fun onAvailablePaymentMethodsLoaded(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
-                Log.d(TAG, paymentMethods.toString())
-                setupPaymentMethod(paymentMethods)
-                hideLoading()
-            }
-
-            override fun onTokenizationStarted(paymentMethodType: String) {
-                showLoading("Tokenization started $paymentMethodType")
-            }
-
-            override fun onTokenizeSuccess(
-                paymentMethodTokenData: PrimerPaymentMethodTokenData,
-                decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
-            ) {
-                showLoading("Tokenization success $paymentMethodTokenData. Creating payment.")
-                headlessManagerViewModel.createPayment(
-                    paymentMethodTokenData, requireNotNull(viewModel.environment.value),
-                    viewModel.descriptor.value.orEmpty(), decisionHandler
-                )
-            }
-
-            override fun onCheckoutResume(
-                resumeToken: String,
-                decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
-            ) {
-                showLoading("Resume success $resumeToken. Resuming payment.")
-                headlessManagerViewModel.resumePayment(
-                    resumeToken,
-                    requireNotNull(viewModel.environment.value),
-                    decisionHandler
-                )
-            }
-
-            override fun onBeforePaymentCreated(
-                paymentMethodData: PrimerPaymentMethodData,
-                createPaymentHandler: PrimerPaymentCreationDecisionHandler
-            ) {
-                super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
-                showLoading("On Before Payment Created with ${paymentMethodData.paymentMethodType}")
-            }
-
-            override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
-                hideLoading()
-                AlertDialog.Builder(context)
-                    .setMessage("On Failed $error with data $checkoutData")
-                    .show()
-            }
-
-            override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
-                hideLoading()
-                AlertDialog.Builder(context).setMessage("On Checkout Completed $checkoutData")
-                    .show()
-            }
-
-            override fun onCheckoutAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
-                super.onCheckoutAdditionalInfoReceived(additionalInfo)
-                when (additionalInfo) {
-                    is XenditCheckoutVoucherAdditionalInfo -> {
-                        AlertDialog.Builder(context)
-                            .setMessage("Obtained additional info: $additionalInfo")
-                            .show()
-                    }
-                }
-            }
-
-            @SuppressLint("NewApi")
-            override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
-                super.onClientSessionUpdated(clientSession)
-                val format = NumberFormat.getCurrencyInstance()
-                val currency = Currency.getInstance(clientSession.currencyCode.orEmpty())
-                format.maximumFractionDigits = currency.defaultFractionDigits
-                format.minimumFractionDigits = currency.defaultFractionDigits
-                format.currency = Currency.getInstance(clientSession.currencyCode.orEmpty())
-
-                binding.nextButton.text =
-                    format.format(clientSession.totalAmount?.toDouble()!! / 10.0.pow(currency.defaultFractionDigits))
-            }
-        })
-
-        headlessUniversalCheckout.setCheckoutUiListener(object :
-            PrimerHeadlessUniversalCheckoutUiListener {
-            override fun onPreparationStarted(paymentMethodType: String) {
-                showLoading("Preparation started $paymentMethodType")
-                Log.d(TAG, "onPreparationStarted")
-            }
-
-            override fun onPaymentMethodShowed(paymentMethodType: String) {
-                Log.d(TAG, "onPaymentMethodShowed $paymentMethodType")
-            }
-
-        })
+        setupManager(requireNotNull(requireArguments().getString(PAYMENT_METHOD_TYPE_EXTRA)))
 
         binding.nextButton.setOnClickListener {
             rawDataManager.submit()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                rawDataFlow.filterNotNull().collectLatest { rawData ->
+                    rawDataManager.setRawData(rawData)
+                }
+            }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.setClientToken(null)
-        headlessUniversalCheckout.cleanup()
+        headlessManagerViewModel.resetUiState()
         if (::rawDataManager.isInitialized) rawDataManager.cleanup()
         _binding = null
+        _cardNumberInputBinding = null
     }
 
     override fun onValidationChanged(
         isValid: Boolean,
         errors: List<PrimerInputValidationError>
     ) {
-        binding.pmView.children.filterIsInstance<TextInputLayout>().iterator().forEach {
-            it.error = null
+        binding.pmView.children.iterator().forEach { parent ->
+            (parent as ViewGroup).children.iterator().forEach {
+                PrimerInputElementType.values().forEach { type ->
+                    it.findViewWithTag<TextInputLayout>(type)?.error = null
+                }
+            }
         }
-        errors.forEach {
-            binding.pmView.findViewWithTag<TextInputLayout>(it.inputElementType).error =
-                it.description
+        errors.forEach { validationError ->
+            binding.pmView.children.iterator().forEach { parent ->
+                (parent as ViewGroup).children.iterator().forEach {
+                    it.findViewWithTag<TextInputLayout>(validationError.inputElementType)?.error =
+                        validationError.description
+                }
+            }
         }
         binding.nextButton.isEnabled = isValid
     }
 
     override fun onMetadataChanged(metadata: PrimerPaymentMethodMetadata) {
         when (metadata) {
-            is PrimerCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.CARD_NUMBER
-            ).prefixText = metadata.cardNetwork.name
             is PrimerBancontactCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
                 PrimerInputElementType.CARD_NUMBER
             ).prefixText = metadata.cardNetwork.name
         }
     }
 
-    private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
-        paymentMethodTypes.forEach { paymentMethod ->
-            if (paymentMethod.paymentMethodManagerCategories.contains(
-                    PrimerPaymentMethodManagerCategory.RAW_DATA
-                )
-            ) {
-                val viewGroup = (binding.parentView as ViewGroup)
-                viewGroup.addView(Button(context).apply {
-                    text = paymentMethod.paymentMethodType
-                    setOnClickListener {
-                        setupManager(paymentMethod.paymentMethodType)
+    override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
+        when (metadataState) {
+            is PrimerCardMetadataState -> {
+                when (metadataState) {
+                    is PrimerCardMetadataState.Fetching ->
+                        _cardNumberInputBinding?.progressBar?.isVisible = true
+
+                    is PrimerCardMetadataState.Fetched -> _cardNumberInputBinding?.apply {
+                        progressBar.isVisible = false
+                        cardNetworksSelectionView.isVisible = false
+                        cardNetworksSelectionView.removeAllViews()
+                        cardNetworkPreview.isVisible = false
+                        metadataState.cardNumberEntryMetadata.selectableCardNetworks?.let { selectableCardNetworks ->
+                            cardNetworksSelectionView.isVisible = true
+                            cardNetworksSelectionView.apply {
+                                val lastSelectedCardNetwork =
+                                    children.filterIsInstance<AppCompatRadioButton>()
+                                        .firstOrNull {
+                                            it.id == checkedRadioButtonId
+                                        }?.tag
+                                selectableCardNetworks.items.forEach { cardNetwork ->
+                                    addView(
+                                        getCardNetworkView(
+                                            lastSelectedCardNetwork as? PrimerCardNetwork,
+                                            cardNetwork
+                                        )
+                                    )
+
+                                }
+                            }
+                        } ?: run {
+                            metadataState.cardNumberEntryMetadata.detectedCardNetworks.let { detectedCardNetworks ->
+                                val cardNetworkMetadata = (detectedCardNetworks.preferred
+                                    ?: detectedCardNetworks.items.firstOrNull())
+                                cardNetworkMetadata?.let {
+                                    cardNetworkPreview.isVisible = true
+                                    cardNetworkPreview.setImageDrawable(
+                                        PrimerHeadlessUniversalCheckoutAssetsManager
+                                            .getCardNetworkAsset(
+                                                requireContext(),
+                                                cardNetworkMetadata.network
+                                            ).cardImage
+                                    )
+                                    cardNetworkPreview.alpha =
+                                        if (cardNetworkMetadata.allowed) 1.0f else 0.4f
+                                    cardNetworkPreview.contentDescription =
+                                        cardNetworkMetadata.displayName
+                                } ?: run {
+                                    cardNetworkPreview.setImageDrawable(null)
+                                    cardNetworkPreview.isVisible = false
+                                }
+                            }
+                        }
                     }
-                })
+                }
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun observeUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            headlessManagerViewModel.uiState.observe(viewLifecycleOwner) { state ->
+                when (state) {
+                    is UiState.InitializingHeadless -> showLoading("Initializing Headless.")
+                    is UiState.InitializedHeadless -> hideLoading()
+                    is UiState.TokenizationStarted -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
+                        showLoading("Tokenization started ${state.paymentMethodType}")
+                    }
+
+                    is UiState.PreparationStarted -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
+                        showLoading("Preparation started ${state.paymentMethodType}")
+                    }
+
+                    is UiState.PaymentMethodShowed -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_PAYMENT_METHOD_SHOWED)
+                        showLoading("Presented ${state.paymentMethodType}")
+                    }
+
+                    is UiState.TokenizationSuccessReceived -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZE_SUCCESS)
+                        if (state.paymentMethodTokenData.isVaulted) {
+                            hideLoading()
+                            navigateToResultScreen()
+                        } else {
+                            showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
+                            headlessManagerViewModel.createPayment(
+                                state.paymentMethodTokenData,
+                                requireNotNull(viewModel.environment.value),
+                                viewModel.descriptor.value.orEmpty(),
+                                state.decisionHandler
+                            )
+                        }
+                    }
+
+                    is UiState.ResumePaymentReceived -> {
+                        showLoading("Resume success. Resuming payment.")
+                        headlessManagerViewModel.resumePayment(
+                            state.resumeToken,
+                            requireNotNull(viewModel.environment.value),
+                            state.decisionHandler
+                        )
+                    }
+
+                    is UiState.ResumePendingReceived -> {
+                        hideLoading()
+                        when (state.additionalInfo) {
+                            is MultibancoCheckoutAdditionalInfo -> {
+                                AlertDialog.Builder(context)
+                                    .setMessage("MultibancoData: $state.additionalInfo")
+                                    .setPositiveButton("OK") { d, _ -> d.dismiss() }.show()
+                                Log.d(
+                                    TAG,
+                                    "onResumePending MULTIBANCO: $state.additionalInfo"
+                                )
+                            }
+                        }
+                    }
+
+                    is UiState.AdditionalInfoReceived -> {
+                        hideLoading()
+                        when (state.additionalInfo) {
+                            is PromptPayCheckoutAdditionalInfo -> {
+                                AlertDialog.Builder(context)
+                                    .setMessage("PromptPay: $state.additionalInfo")
+                                    .setPositiveButton("OK") { d, _ -> d.dismiss() }.show()
+                                Log.d(
+                                    TAG,
+                                    "onAdditionalInfoReceived: $state.additionalInfo"
+                                )
+                            }
+
+                            is XenditCheckoutVoucherAdditionalInfo -> {
+                                AlertDialog.Builder(context)
+                                    .setMessage("Obtained additional info: ${state.additionalInfo}")
+                                    .show()
+                            }
+                        }
+                    }
+
+                    is UiState.BeforePaymentCreateReceived -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
+                    }
+
+                    is UiState.BeforeClientSessionUpdateReceived -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
+                    }
+
+                    is UiState.ClientSessionUpdatedReceived -> {
+                        callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
+                        val format = NumberFormat.getCurrencyInstance()
+                        val clientSession = state.clientSession
+                        val currency =
+                            Currency.getInstance(clientSession.currencyCode.orEmpty())
+                        format.maximumFractionDigits = currency.defaultFractionDigits
+                        format.minimumFractionDigits = currency.defaultFractionDigits
+                        format.currency =
+                            Currency.getInstance(clientSession.currencyCode.orEmpty())
+
+                        binding.nextButton.text =
+                            format.format(
+                                clientSession.totalAmount?.toDouble()!! / 10.0.pow(
+                                    currency.defaultFractionDigits
+                                )
+                            )
+                    }
+
+                    is UiState.ShowError -> {
+                        checkoutDataWithError =
+                            CheckoutDataWithError(state.payment, state.error.toMappedError())
+                        callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
+                        hideLoading()
+                        navigateToResultScreen()
+                    }
+
+                    is UiState.CheckoutCompleted -> {
+                        checkoutDataWithError =
+                            CheckoutDataWithError(state.checkoutData.payment)
+                        callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
+                        hideLoading()
+                        navigateToResultScreen()
+                    }
+                }
             }
         }
     }
@@ -271,19 +359,64 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         requiredInputElementTypes: List<PrimerInputElementType>
     ) {
         val inputElements = requiredInputElementTypes.map { type ->
-            TextInputLayout(requireContext()).apply {
-                tag = type
-                hint = getHint(type)
-                addView(TextInputEditText(context).apply {
-                    id = View.generateViewId()
-                    doAfterTextChanged {
-                        rawDataManager.setRawData(getRawData(paymentMethodType))
+            FrameLayout(requireContext()).apply {
+                if (type == PrimerInputElementType.CARD_NUMBER) {
+                    _cardNumberInputBinding =
+                        CardNumberInputViewBinding.inflate(layoutInflater).apply {
+                            cardInput.apply {
+                                tag = type
+                                hint = getString(getHint(type))
+                                addView(TextInputEditText(context).apply {
+                                    id = View.generateViewId()
+                                    isSingleLine = true
+                                    doAfterTextChanged {
+                                        // the only reason for this is because Appium sends blank input
+                                        // after focusing input
+                                        if (rawDataFlow.value != null || it.isNullOrBlank().not()) {
+                                            setRawData(getRawData(paymentMethodType))
+                                        }
+                                    }
+                                    layoutParams = LinearLayout.LayoutParams(
+                                        RelativeLayout.LayoutParams.MATCH_PARENT,
+                                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                    )
+                                })
+                                cardNetworksSelectionView.setOnCheckedChangeListener { _, checkedId ->
+                                    cardNetworksSelectionView.children.filterIsInstance<AppCompatRadioButton>()
+                                        .iterator()
+                                        .forEachRemaining {
+                                            it.isChecked = it.id == checkedId
+                                            it.compoundDrawables[0]?.alpha = if (it.isChecked) {
+                                                RADIO_BUTTON_SELECTED_ALPHA
+                                            } else RADIO_BUTTON_UNSELECTED_ALPHA
+                                        }
+                                    setRawData(getRawData(paymentMethodType))
+                                }
+                            }
+                        }.also {
+                            addView(it.root)
+                        }
+                } else {
+                    InputViewBinding.inflate(layoutInflater).apply {
+                        input.apply {
+                            tag = type
+                            hint = getString(getHint(type))
+                            addView(TextInputEditText(context).apply {
+                                id = View.generateViewId()
+                                isSingleLine = true
+                                doAfterTextChanged {
+                                    setRawData(getRawData(paymentMethodType))
+                                }
+                                layoutParams = LinearLayout.LayoutParams(
+                                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                )
+                            })
+                        }
+                    }.also {
+                        addView(it.root)
                     }
-                    layoutParams = LinearLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.MATCH_PARENT,
-                        RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    )
-                })
+                }
             }
         }
 
@@ -303,14 +436,23 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         binding.progressLayout.root.isVisible = false
     }
 
-    private fun getHint(inputElementType: PrimerInputElementType): String {
+    private fun getHint(inputElementType: PrimerInputElementType): Int {
         return when (inputElementType) {
-            PrimerInputElementType.CARDHOLDER_NAME -> requireContext().getString(R.string.card_holder_name)
-            PrimerInputElementType.CVV -> requireContext().getString(R.string.card_cvv)
-            PrimerInputElementType.EXPIRY_DATE -> requireContext().getString(R.string.card_expiry)
-            PrimerInputElementType.CARD_NUMBER -> requireContext().getString(R.string.card_number)
-            PrimerInputElementType.POSTAL_CODE -> requireContext().getString(R.string.card_zip)
-            else -> inputElementType.name
+            PrimerInputElementType.CARDHOLDER_NAME -> R.string.card_holder_name
+            PrimerInputElementType.CVV -> R.string.card_cvv
+            PrimerInputElementType.EXPIRY_DATE -> R.string.card_expiry
+            PrimerInputElementType.CARD_NUMBER -> R.string.card_number
+            PrimerInputElementType.POSTAL_CODE -> R.string.postalCodeLabel
+            PrimerInputElementType.COUNTRY_CODE -> R.string.countryLabel
+            PrimerInputElementType.CITY -> R.string.cityLabel
+            PrimerInputElementType.STATE -> R.string.stateLabel
+            PrimerInputElementType.ADDRESS_LINE_1 -> R.string.addressLine1
+            PrimerInputElementType.ADDRESS_LINE_2 -> R.string.addressLine2
+            PrimerInputElementType.PHONE_NUMBER -> R.string.input_hint_form_phone_number
+            PrimerInputElementType.FIRST_NAME -> R.string.firstNameLabel
+            PrimerInputElementType.LAST_NAME -> R.string.lastNameLabel
+            PrimerInputElementType.OTP_CODE -> R.string.input_hint_form_blik_otp
+            else -> R.string.enter_address
         }
     }
 
@@ -319,17 +461,23 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             "PAYMENT_CARD" -> PrimerCardData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARD_NUMBER
-                ).editText?.text.toString(),
+                ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.EXPIRY_DATE
                 ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CVV
-                ).editText?.text.toString(),
+                ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARDHOLDER_NAME
-                ).editText?.text.toString(),
+                ).editText?.text.toString().trim(),
+                (cardNumberInputBinding.cardNetworksSelectionView.let { cardNetworkBinding ->
+                    cardNetworkBinding.children.firstOrNull { child ->
+                        child.id == cardNetworkBinding.checkedRadioButtonId
+                    }
+                }?.tag as? PrimerCardNetwork)?.network
             )
+
             "ADYEN_BANCONTACT_CARD" -> PrimerBancontactCardData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARD_NUMBER
@@ -341,21 +489,25 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     PrimerInputElementType.CARDHOLDER_NAME
                 ).editText?.text.toString().trim(),
             )
+
             "XENDIT_OVO" -> PrimerPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.PHONE_NUMBER
                 ).editText?.text.toString()
             )
+
             "ADYEN_MBWAY" -> PrimerPhoneNumberData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.PHONE_NUMBER
                 ).editText?.text.toString()
             )
+
             "ADYEN_BLIK" -> PrimerOtpCodeData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.OTP_CODE
                 ).editText?.text.toString()
             )
+
             else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
         }
     }
@@ -395,7 +547,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 val retailerNames = primerInitializationData.result.map { it.name }.toTypedArray()
                 val itemClick = DialogInterface.OnClickListener { dialog, which ->
                     if (which > -1) {
-                        rawDataManager.setRawData(
+                        setRawData(
                             PrimerRetailerData(
                                 primerInitializationData.result[which].id
                             )
@@ -415,7 +567,75 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         }
     }
 
+    private fun getCardNetworkView(
+        lastSelectedCardNetwork: PrimerCardNetwork?,
+        cardNetwork: PrimerCardNetwork
+    ) = AppCompatRadioButton(requireContext()).apply {
+        isChecked = lastSelectedCardNetwork
+            ?.network == cardNetwork.network
+        buttonDrawable = null
+        setCompoundDrawablesWithIntrinsicBounds(
+            PrimerHeadlessUniversalCheckoutAssetsManager
+                .getCardNetworkAsset(
+                    requireContext(),
+                    cardNetwork.network
+                ).cardImage,
+            null,
+            null,
+            null
+        )
+        id = cardNetwork.network.hashCode()
+        tag = cardNetwork
+        contentDescription = cardNetwork.displayName
+        compoundDrawables[0]?.alpha = if (isChecked) {
+            RADIO_BUTTON_SELECTED_ALPHA
+        } else RADIO_BUTTON_UNSELECTED_ALPHA
+
+        layoutParams = RelativeLayout.LayoutParams(
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                28f,
+                resources.displayMetrics
+            ).toInt(),
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                30f,
+                resources.displayMetrics
+            ).toInt()
+        )
+    }
+
+    private fun setRawData(rawData: PrimerRawData) = lifecycleScope.launch {
+        rawDataFlow.emit(rawData)
+    }
+
+    private fun navigateToResultScreen() {
+        headlessManagerViewModel.resetUiState()
+        findNavController().navigate(
+            R.id.action_MerchantRawFragment_to_MerchantResultFragment,
+            Bundle().apply {
+                putInt(
+                    MerchantResultFragment.PAYMENT_STATUS_KEY,
+                    if (checkoutDataWithError?.error != null) MerchantResultFragment.Companion.PaymentStatus.FAILURE.ordinal
+                    else MerchantResultFragment.Companion.PaymentStatus.SUCCESS.ordinal
+                )
+                putStringArrayList(
+                    MerchantResultFragment.INVOKED_CALLBACKS_KEY,
+                    callbacks
+                )
+                putString(
+                    MerchantResultFragment.PAYMENT_RESPONSE_KEY,
+                    GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+                        .toJson(checkoutDataWithError)
+                )
+            })
+    }
+
     companion object {
         private val TAG = this::class.simpleName
+        private const val RADIO_BUTTON_SELECTED_ALPHA = 255
+        private const val RADIO_BUTTON_UNSELECTED_ALPHA = 100
+
+        const val PAYMENT_METHOD_TYPE_EXTRA = "PAYMENT_METHOD_TYPE"
     }
 }

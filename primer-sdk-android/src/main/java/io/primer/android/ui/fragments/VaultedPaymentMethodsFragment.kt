@@ -26,6 +26,7 @@ import io.primer.android.di.extension.inject
 import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.AlternativePaymentMethodType
 import io.primer.android.ui.CardData
+import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.PaymentMethodItemData
 import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
@@ -60,7 +61,9 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
             binding.vaultTitleLabel.text =
                 if (isEditing) {
                     getString(R.string.edit_saved_payment_methods)
-                } else { getString(R.string.other_ways_to_pay) }
+                } else {
+                    getString(R.string.other_ways_to_pay)
+                }
 
             binding.editVaultedPaymentMethods.text =
                 if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
@@ -109,8 +112,15 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                     val lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR
                     val expiryMonth = it.paymentInstrumentData?.expirationMonth ?: DEFAULT_MONTH
                     val expiryYear = it.paymentInstrumentData?.expirationYear ?: DEFAULT_YEAR
-                    val network = it.paymentInstrumentData?.network ?: "unknown"
-                    CardData(title, lastFour, expiryMonth, expiryYear, network, it.token)
+                    val network = it.paymentInstrumentData?.binData?.network
+                    CardData(
+                        title,
+                        lastFour,
+                        expiryMonth,
+                        expiryYear,
+                        CardNetwork.Type.valueOrNull(network) ?: CardNetwork.Type.OTHER,
+                        it.token
+                    )
                 }
 
                 else -> {

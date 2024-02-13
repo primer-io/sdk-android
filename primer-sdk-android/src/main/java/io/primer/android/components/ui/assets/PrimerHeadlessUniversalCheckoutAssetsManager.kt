@@ -58,6 +58,21 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
         return getAssetsDelegate().getCardNetworkImage(cardNetwork)
     }
 
+    internal fun getCardNetworkAsset(
+        context: Context,
+        cardNetwork: CardNetwork.Type
+    ): PrimerCardNetworkAsset {
+        return getAssetsDelegate().getCardNetworkAsset(context, cardNetwork)
+    }
+
+    // this will be added in subsequent release
+    internal fun getCardNetworkAssets(
+        context: Context,
+        cardNetworks: List<CardNetwork.Type>
+    ): List<PrimerCardNetworkAsset> {
+        return getAssetsDelegate().getCardNetworkAssets(context, cardNetworks)
+    }
+
     private fun getAssetsDelegate(): DefaultAssetsHeadlessDelegate = resolve()
 
     companion object {
@@ -85,11 +100,23 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
             paymentMethodType: String
         ): PrimerPaymentMethodAsset = assetManager.getPaymentMethodAsset(context, paymentMethodType)
 
+        @Deprecated(
+            message = "This method is deprecated.",
+            replaceWith = ReplaceWith("getCardNetworkAssets(context, cardNetwork)")
+        )
         @DrawableRes
-        @Throws(SdkUninitializedException::class)
         @JvmStatic
         fun getCardNetworkImage(
             cardNetwork: CardNetwork.Type
         ): Int = assetManager.getCardNetworkImage(cardNetwork)
+
+        /**
+         * This method returns a card asset for the specified card network.
+         */
+        @JvmStatic
+        fun getCardNetworkAsset(
+            context: Context,
+            cardNetwork: CardNetwork.Type
+        ): PrimerCardNetworkAsset = assetManager.getCardNetworkAsset(context, cardNetwork)
     }
 }

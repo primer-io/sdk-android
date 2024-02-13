@@ -31,43 +31,39 @@ internal data class AnalyticsSdkFunctionEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<AnalyticsSdkFunctionEventRequest> {
-            override fun serialize(t: AnalyticsSdkFunctionEventRequest): JSONObject {
-                return baseSerializer.serialize(t).apply {
-                    put(
-                        PROPERTIES_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<FunctionProperties>()
-                            .serialize(t.properties)
-                    )
-                }
+        val serializer = JSONObjectSerializer<AnalyticsSdkFunctionEventRequest> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    PROPERTIES_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<FunctionProperties>()
+                        .serialize(t.properties)
+                )
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<AnalyticsSdkFunctionEventRequest> {
-            override fun deserialize(t: JSONObject): AnalyticsSdkFunctionEventRequest {
-                return AnalyticsSdkFunctionEventRequest(
-                    t.optJSONObject(DEVICE_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                            it
-                        )
-                    },
-                    JSONSerializationUtils
-                        .getJsonObjectDeserializer<FunctionProperties>().deserialize(
-                            t.getJSONObject(PROPERTIES_FIELD)
-                        ),
-                    t.optNullableString(APP_IDENTIFIER_FIELD),
-                    t.getString(SDK_SESSION_ID_FIELD),
-                    SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
-                    PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
-                    t.optNullableString(CHECKOUT_SESSION_ID_FIELD),
-                    t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                    t.optNullableString(ORDER_ID_FIELD),
-                    t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
-                    t.optNullableString(ANALYTICS_URL_FIELD),
-                    createdAt = t.getLong(CREATED_AT_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer<AnalyticsSdkFunctionEventRequest> { t ->
+            AnalyticsSdkFunctionEventRequest(
+                t.optJSONObject(DEVICE_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                        it
+                    )
+                },
+                JSONSerializationUtils
+                    .getJsonObjectDeserializer<FunctionProperties>().deserialize(
+                        t.getJSONObject(PROPERTIES_FIELD)
+                    ),
+                t.optNullableString(APP_IDENTIFIER_FIELD),
+                t.getString(SDK_SESSION_ID_FIELD),
+                SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
+                t.optNullableString(CHECKOUT_SESSION_ID_FIELD),
+                t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                t.optNullableString(ANALYTICS_URL_FIELD),
+                createdAt = t.getLong(CREATED_AT_FIELD)
+            )
         }
     }
 }
@@ -82,23 +78,19 @@ internal data class FunctionProperties(
         private const val PARAMS_FIELD = "params"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<FunctionProperties> {
-            override fun serialize(t: FunctionProperties): JSONObject {
-                return JSONObject().apply {
-                    put(NAME_FIELD, t.name)
-                    put(PARAMS_FIELD, JSONObject(t.params))
-                }
+        val serializer = JSONObjectSerializer<FunctionProperties> { t ->
+            JSONObject().apply {
+                put(NAME_FIELD, t.name)
+                put(PARAMS_FIELD, JSONObject(t.params))
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<FunctionProperties> {
-            override fun deserialize(t: JSONObject): FunctionProperties {
-                return FunctionProperties(
-                    t.getString(NAME_FIELD),
-                    t.getJSONObject(PARAMS_FIELD).toStringMap()
-                )
-            }
+        val deserializer = JSONObjectDeserializer<FunctionProperties> { t ->
+            FunctionProperties(
+                t.getString(NAME_FIELD),
+                t.getJSONObject(PARAMS_FIELD).toStringMap()
+            )
         }
     }
 }

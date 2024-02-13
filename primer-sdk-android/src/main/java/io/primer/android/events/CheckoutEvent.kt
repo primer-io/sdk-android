@@ -213,7 +213,8 @@ internal sealed class CheckoutEvent(
 
     // components helpers
     class ConfigurationSuccess(
-        val paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>
+        val paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
+        val clientSession: PrimerClientSession
     ) : CheckoutEvent(CheckoutEventType.CONFIGURATION_SUCCESS)
 
     class TokenizationStarted(val paymentMethodType: String) :

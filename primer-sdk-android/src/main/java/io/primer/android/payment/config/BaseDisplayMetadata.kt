@@ -40,8 +40,8 @@ internal fun PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata.getB
 internal fun List<IconDisplayMetadata>.getImageColor(
     isDarkMode: Boolean
 ) = when {
-    find { it.imageColor == ImageColor.DARK } != null && isDarkMode -> ImageColor.DARK
-    find { it.imageColor == ImageColor.COLORED } != null -> ImageColor.COLORED
-    find { it.imageColor == ImageColor.LIGHT } != null -> ImageColor.LIGHT
+    any { it.imageColor == ImageColor.DARK } && isDarkMode -> ImageColor.DARK
+    any { it.imageColor == ImageColor.COLORED } -> ImageColor.COLORED
+    any { it.imageColor == ImageColor.LIGHT } -> ImageColor.LIGHT
     else -> null
 }

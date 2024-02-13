@@ -12,11 +12,9 @@ internal data class CreatePaymentDataRequest(private val paymentMethodToken: Str
         private const val PAYMENT_METHOD_TOKEN_FILED = "paymentMethodToken"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<CreatePaymentDataRequest> {
-            override fun serialize(t: CreatePaymentDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_TOKEN_FILED, t.paymentMethodToken)
-                }
+        val serializer = JSONObjectSerializer<CreatePaymentDataRequest> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_TOKEN_FILED, t.paymentMethodToken)
             }
         }
     }

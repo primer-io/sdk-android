@@ -23,6 +23,7 @@ internal object HeadlessUniversalCheckoutAnalyticsConstants {
     const val ON_CHECKOUT_PENDING = "PrimerHeadlessUniversalCheckout.onResumePending"
     const val ON_CHECKOUT_ADDITIONAL_INFO_RECEIVED =
         "PrimerHeadlessUniversalCheckout.onCheckoutAdditionalInfoReceived"
+    const val ON_CLIENT_SESSION_LOADED = "PrimerHeadlessUniversalCheckout.onClientSessionLoaded"
     const val ON_CLIENT_SESSION_UPDATED = "PrimerHeadlessUniversalCheckout.onClientSessionUpdated"
     const val ON_BEFORE_CLIENT_SESSION_UPDATED =
         "PrimerHeadlessUniversalCheckout.onBeforeClientSessionUpdated"

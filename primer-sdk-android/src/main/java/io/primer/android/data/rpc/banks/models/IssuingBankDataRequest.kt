@@ -35,17 +35,15 @@ internal data class IssuingBankDataRequest(
         }
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<IssuingBankDataRequest> {
-            override fun serialize(t: IssuingBankDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                    put(COMMAND_FIELD, t.command)
-                    put(
-                        PARAMETERS_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<IssuingBankDataParameters>()
-                            .serialize(t.parameters)
-                    )
-                }
+        val serializer = JSONObjectSerializer<IssuingBankDataRequest> { t ->
+            JSONObject().apply {
+                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                put(COMMAND_FIELD, t.command)
+                put(
+                    PARAMETERS_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<IssuingBankDataParameters>()
+                        .serialize(t.parameters)
+                )
             }
         }
     }

@@ -13,16 +13,14 @@ internal data class PaymentMethodTokenInternalResponse(
         private const val DATA_FIELD = "data"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<PaymentMethodTokenInternalResponse> {
-            override fun deserialize(t: JSONObject): PaymentMethodTokenInternalResponse {
-                return PaymentMethodTokenInternalResponse(
-                    t.getJSONArray(DATA_FIELD).sequence<JSONObject>().map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<PaymentMethodVaultTokenInternal>()
-                            .deserialize(it)
-                    }.toList()
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            PaymentMethodTokenInternalResponse(
+                t.getJSONArray(DATA_FIELD).sequence<JSONObject>().map {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<PaymentMethodVaultTokenInternal>()
+                        .deserialize(it)
+                }.toList()
+            )
         }
     }
 }

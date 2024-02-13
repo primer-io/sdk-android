@@ -76,14 +76,11 @@ internal data class OrderDataResponse(
             private const val AMOUNT_FIELD = "amount"
 
             @JvmField
-            val deserializer = object : JSONObjectDeserializer<FeeDataResponse> {
-
-                override fun deserialize(t: JSONObject): FeeDataResponse {
-                    return FeeDataResponse(
-                        t.optNullableString(TYPE_FIELD),
-                        t.getInt(AMOUNT_FIELD)
-                    )
-                }
+            val deserializer = JSONObjectDeserializer { t ->
+                FeeDataResponse(
+                    t.optNullableString(TYPE_FIELD),
+                    t.getInt(AMOUNT_FIELD)
+                )
             }
         }
     }
@@ -100,25 +97,22 @@ internal data class OrderDataResponse(
         const val FEES_FIELD = "fees"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<OrderDataResponse> {
-
-            override fun deserialize(t: JSONObject): OrderDataResponse {
-                return OrderDataResponse(
-                    t.optNullableString(ORDER_ID_FIELD),
-                    t.optNullableString(CURRENCY_CODE_FIELD),
-                    t.optNullableInt(MERCHANT_AMOUNT_FIELD),
-                    t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
-                    t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
-                    t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils.getJsonObjectDeserializer<LineItemDataResponse>()
-                            .deserialize(it)
-                    }?.toList().orEmpty(),
-                    t.optJSONArray(FEES_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils.getJsonObjectDeserializer<FeeDataResponse>()
-                            .deserialize(it)
-                    }?.toList().orEmpty()
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            OrderDataResponse(
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(CURRENCY_CODE_FIELD),
+                t.optNullableInt(MERCHANT_AMOUNT_FIELD),
+                t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
+                t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
+                t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
+                    JSONSerializationUtils.getJsonObjectDeserializer<LineItemDataResponse>()
+                        .deserialize(it)
+                }?.toList().orEmpty(),
+                t.optJSONArray(FEES_FIELD)?.sequence<JSONObject>()?.map {
+                    JSONSerializationUtils.getJsonObjectDeserializer<FeeDataResponse>()
+                        .deserialize(it)
+                }?.toList().orEmpty()
+            )
         }
     }
 }

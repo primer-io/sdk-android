@@ -10,11 +10,9 @@ internal data class ResumePaymentDataRequest(val resumeToken: String) : JSONObje
         private const val RESUME_TOKEN_FIELD = "resumeToken"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<ResumePaymentDataRequest> {
-            override fun serialize(t: ResumePaymentDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(RESUME_TOKEN_FIELD, t.resumeToken)
-                }
+        val serializer = JSONObjectSerializer<ResumePaymentDataRequest> { t ->
+            JSONObject().apply {
+                put(RESUME_TOKEN_FIELD, t.resumeToken)
             }
         }
     }

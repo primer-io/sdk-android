@@ -4,19 +4,14 @@ import io.primer.android.PaymentMethod
 import io.primer.android.PaymentMethodModule
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.GooglePayButtonStyle
+import io.primer.android.ui.CardNetwork
 
 internal data class GooglePay(
     val merchantName: String? = null,
     val totalPrice: String,
     val countryCode: String,
     val currencyCode: String,
-    val allowedCardNetworks: List<String> = listOf(
-        "AMEX",
-        "DISCOVER",
-        "JCB",
-        "MASTERCARD",
-        "VISA"
-    ),
+    val allowedCardNetworks: List<CardNetwork.Type>,
     val buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
     val billingAddressRequired: Boolean = false
 ) : PaymentMethod {
@@ -28,4 +23,15 @@ internal data class GooglePay(
     internal val allowedCardAuthMethods: List<String> = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
 
     override val module: PaymentMethodModule by lazy { GooglePayModule() }
+
+    companion object {
+
+        val allowedCardNetworks = setOf(
+            CardNetwork.Type.VISA,
+            CardNetwork.Type.MASTERCARD,
+            CardNetwork.Type.AMEX,
+            CardNetwork.Type.DISCOVER,
+            CardNetwork.Type.JCB
+        )
+    }
 }

@@ -4,5 +4,5 @@ import io.primer.android.components.domain.error.PrimerInputValidationError
 
 internal interface PaymentInputTypeValidator<T> {
 
-    fun validate(input: T?): PrimerInputValidationError?
+    suspend fun validate(input: T?): PrimerInputValidationError?
 }

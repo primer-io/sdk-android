@@ -208,9 +208,6 @@ class MerchantSettingsFragment : Fragment() {
         binding.headlessCheckoutButton.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment)
         }
-        binding.hucRawButton.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_HeadlessRawFragment)
-        }
         binding.universalCheckoutButton.setOnClickListener {
             findNavController().navigate(R.id.action_MerchantSettingsFragment_to_MerchantCheckoutFragment)
         }

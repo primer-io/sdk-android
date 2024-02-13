@@ -30,43 +30,38 @@ internal data class AnalyticsNetworkConnectivityEventRequest(
     companion object {
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<AnalyticsNetworkConnectivityEventRequest> {
-            override fun serialize(t: AnalyticsNetworkConnectivityEventRequest): JSONObject {
-                return baseSerializer.serialize(t).apply {
-                    put(
-                        PROPERTIES_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<NetworkTypeProperties>()
-                            .serialize(t.properties)
-                    )
-                }
+        val serializer = JSONObjectSerializer<AnalyticsNetworkConnectivityEventRequest> { t ->
+            baseSerializer.serialize(t).apply {
+                put(
+                    PROPERTIES_FIELD,
+                    JSONSerializationUtils.getJsonObjectSerializer<NetworkTypeProperties>()
+                        .serialize(t.properties)
+                )
             }
         }
 
         @JvmField
-        val deserializer =
-            object : JSONObjectDeserializer<AnalyticsNetworkConnectivityEventRequest> {
-                override fun deserialize(t: JSONObject): AnalyticsNetworkConnectivityEventRequest {
-                    return AnalyticsNetworkConnectivityEventRequest(
-                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                            t.getJSONObject(DEVICE_FIELD)
-                        ),
-                        JSONSerializationUtils.getJsonObjectDeserializer<NetworkTypeProperties>()
-                            .deserialize(
-                                t.getJSONObject(PROPERTIES_FIELD)
-                            ),
-                        t.getString(APP_IDENTIFIER_FIELD),
-                        t.getString(SDK_SESSION_ID_FIELD),
-                        SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
-                        PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
-                        t.getString(CHECKOUT_SESSION_ID_FIELD),
-                        t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                        t.optNullableString(ORDER_ID_FIELD),
-                        t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
-                        t.optNullableString(ANALYTICS_URL_FIELD),
-                        createdAt = t.getLong(CREATED_AT_FIELD)
-                    )
-                }
-            }
+        val deserializer = JSONObjectDeserializer<AnalyticsNetworkConnectivityEventRequest> { t ->
+            AnalyticsNetworkConnectivityEventRequest(
+                JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                    t.getJSONObject(DEVICE_FIELD)
+                ),
+                JSONSerializationUtils.getJsonObjectDeserializer<NetworkTypeProperties>()
+                    .deserialize(
+                        t.getJSONObject(PROPERTIES_FIELD)
+                    ),
+                t.getString(APP_IDENTIFIER_FIELD),
+                t.getString(SDK_SESSION_ID_FIELD),
+                SdkIntegrationType.valueOf(t.getString(SDK_INTEGRATION_TYPE_FIELD)),
+                PrimerPaymentHandling.valueOf(t.getString(SDK_PAYMENT_HANDLING_FIELD)),
+                t.getString(CHECKOUT_SESSION_ID_FIELD),
+                t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                t.optNullableString(ORDER_ID_FIELD),
+                t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                t.optNullableString(ANALYTICS_URL_FIELD),
+                createdAt = t.getLong(CREATED_AT_FIELD)
+            )
+        }
     }
 }
 
@@ -79,19 +74,15 @@ internal data class NetworkTypeProperties(
         private const val NETWORK_TYPE_FIELD = "networkType"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<NetworkTypeProperties> {
-            override fun serialize(t: NetworkTypeProperties): JSONObject {
-                return JSONObject().apply {
-                    put(NETWORK_TYPE_FIELD, t.networkType.name)
-                }
+        val serializer = JSONObjectSerializer<NetworkTypeProperties> { t ->
+            JSONObject().apply {
+                put(NETWORK_TYPE_FIELD, t.networkType.name)
             }
         }
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<NetworkTypeProperties> {
-            override fun deserialize(t: JSONObject): NetworkTypeProperties {
-                return NetworkTypeProperties(NetworkType.valueOf(t.getString(NETWORK_TYPE_FIELD)))
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            NetworkTypeProperties(NetworkType.valueOf(t.getString(NETWORK_TYPE_FIELD)))
         }
     }
 }

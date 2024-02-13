@@ -6,7 +6,7 @@ import org.json.JSONObject
 internal object JSONDataUtils {
 
     fun stringToJsonData(jsonString: String): JSONData {
-        return if (jsonString.startsWith('{')) {
+        return if (runCatching { JSONObject(jsonString) }.getOrNull() != null) {
             JSONData.JSONObjectData(JSONObject(jsonString))
         } else {
             JSONData.JSONArrayData(JSONArray(jsonString))

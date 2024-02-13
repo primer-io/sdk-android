@@ -14,17 +14,14 @@ internal data class RetailOutletResultDataResponse(
         private const val RESULT_FIELD = "result"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<RetailOutletResultDataResponse> {
-
-            override fun deserialize(t: JSONObject): RetailOutletResultDataResponse {
-                return RetailOutletResultDataResponse(
-                    t.optJSONArray(RESULT_FIELD)?.sequence<JSONObject>()?.map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<RetailOutletDataResponse>()
-                            .deserialize(it)
-                    }?.toList().orEmpty()
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            RetailOutletResultDataResponse(
+                t.optJSONArray(RESULT_FIELD)?.sequence<JSONObject>()?.map {
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<RetailOutletDataResponse>()
+                        .deserialize(it)
+                }?.toList().orEmpty()
+            )
         }
     }
 }
@@ -42,16 +39,13 @@ internal data class RetailOutletDataResponse(
         private const val ICON_URL_FIELD = "iconUrl"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<RetailOutletDataResponse> {
-
-            override fun deserialize(t: JSONObject): RetailOutletDataResponse {
-                return RetailOutletDataResponse(
-                    t.getString(ID_FIELD),
-                    t.getString(NAME_FIELD),
-                    t.getBoolean(DISABLED_FIELD),
-                    t.getString(ICON_URL_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            RetailOutletDataResponse(
+                t.getString(ID_FIELD),
+                t.getString(NAME_FIELD),
+                t.getBoolean(DISABLED_FIELD),
+                t.getString(ICON_URL_FIELD)
+            )
         }
     }
 }

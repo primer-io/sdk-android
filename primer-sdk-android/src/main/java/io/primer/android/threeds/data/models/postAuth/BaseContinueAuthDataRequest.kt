@@ -23,25 +23,23 @@ internal sealed class BaseContinueAuthDataRequest(
         private const val PLATFORM_FIELD = "platform"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<BaseContinueAuthDataRequest> {
-            override fun serialize(t: BaseContinueAuthDataRequest): JSONObject {
-                return when (t) {
-                    is MissingDependencyFailureContinueAuthDataRequest ->
-                        MissingDependencyFailureContinueAuthDataRequest.serializer.serialize(t)
-                    is DefaultFailureContinueAuthDataRequest ->
-                        DefaultFailureContinueAuthDataRequest.serializer.serialize(t)
-                    is SuccessContinueAuthDataRequest ->
-                        SuccessContinueAuthDataRequest.serializer.serialize(t)
-                }
+        val serializer = JSONObjectSerializer<BaseContinueAuthDataRequest> { t ->
+            when (t) {
+                is MissingDependencyFailureContinueAuthDataRequest ->
+                    MissingDependencyFailureContinueAuthDataRequest.serializer.serialize(t)
+
+                is DefaultFailureContinueAuthDataRequest ->
+                    DefaultFailureContinueAuthDataRequest.serializer.serialize(t)
+
+                is SuccessContinueAuthDataRequest ->
+                    SuccessContinueAuthDataRequest.serializer.serialize(t)
             }
         }
 
-        val baseSerializer = object : JSONObjectSerializer<BaseContinueAuthDataRequest> {
-            override fun serialize(t: BaseContinueAuthDataRequest): JSONObject {
-                return JSONObject().apply {
-                    put(STATUS_FIELD, t.status.name)
-                    put(PLATFORM_FIELD, t.platform)
-                }
+        val baseSerializer = JSONObjectSerializer<BaseContinueAuthDataRequest> { t ->
+            JSONObject().apply {
+                put(STATUS_FIELD, t.status.name)
+                put(PLATFORM_FIELD, t.platform)
             }
         }
     }

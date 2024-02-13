@@ -1,5 +1,6 @@
 package io.primer.android.data.configuration.models
 
+import io.primer.android.ui.CardNetwork
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -18,6 +19,7 @@ internal class ConfigurationDataResponseTest {
             ConfigurationData(
                 pciUrl,
                 coreUrl,
+                binDataUrl,
                 assetsUrl,
                 paymentMethods,
                 checkoutModules,
@@ -203,7 +205,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-id' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ID,
-            configurationDataResponse.clientSession?.clientSessionId
+            configurationDataResponse.clientSession.clientSessionId
         )
     }
 
@@ -211,7 +213,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-id' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ORDER_ID,
-            configurationDataResponse.clientSession?.order?.orderId
+            configurationDataResponse.clientSession.order?.orderId
         )
     }
 
@@ -219,7 +221,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-countryCode' should be deserialized correctly`() {
         assertEquals(
             CountryCode.GB,
-            configurationDataResponse.clientSession?.order?.countryCode
+            configurationDataResponse.clientSession.order?.countryCode
         )
     }
 
@@ -227,7 +229,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-currencyCode' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ORDER_CURRENCY,
-            configurationDataResponse.clientSession?.order?.currencyCode
+            configurationDataResponse.clientSession.order?.currencyCode
         )
     }
 
@@ -235,7 +237,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-totalOrderAmount' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ORDER_TOTAL_AMOUNT,
-            configurationDataResponse.clientSession?.order?.totalOrderAmount
+            configurationDataResponse.clientSession.order?.totalOrderAmount
         )
     }
 
@@ -251,7 +253,7 @@ internal class ConfigurationDataResponseTest {
                     description = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_DESCRIPTION
                 )
             ),
-            configurationDataResponse.clientSession?.order?.lineItems
+            configurationDataResponse.clientSession.order?.lineItems
         )
     }
 
@@ -264,7 +266,7 @@ internal class ConfigurationDataResponseTest {
                     CLIENT_SESSION_ORDER_FEE_AMOUNT
                 )
             ),
-            configurationDataResponse.clientSession?.order?.fees
+            configurationDataResponse.clientSession.order?.fees
         )
     }
 
@@ -299,7 +301,7 @@ internal class ConfigurationDataResponseTest {
                 ),
                 nationalDocumentId = CLIENT_SESSION_CUSTOMER_NATIONAL_ID
             ),
-            configurationDataResponse.clientSession?.customer
+            configurationDataResponse.clientSession.customer
         )
     }
 
@@ -324,9 +326,10 @@ internal class ConfigurationDataResponseTest {
                         50,
                         null
                     )
-                )
+                ),
+                listOf(CardNetwork.Type.VISA, CardNetwork.Type.AMEX, CardNetwork.Type.MASTERCARD)
             ),
-            configurationDataResponse.clientSession?.paymentMethod
+            configurationDataResponse.clientSession.paymentMethod
         )
     }
 
@@ -350,6 +353,7 @@ internal class ConfigurationDataResponseTest {
 
         const val CORE_URL = "https://api.staging.primer.io"
         const val PCI_URL = "https://sdk.api.staging.primer.io"
+        const val BIN_DATA_URL = "https://sdk.bin.data.staging.primer.io"
         const val ASSETS_URL = "https://assets.staging.core.primer.io"
         const val PAYMENT_METHOD_ID = "a02e7d8b-8749-4bf6-a1d6"
         const val PAYMENT_METHOD_TYPE = "XENDIT_OVO"
@@ -403,6 +407,7 @@ internal class ConfigurationDataResponseTest {
        {
            "coreUrl":"$CORE_URL",
            "pciUrl":"$PCI_URL",
+           "binDataUrl":"$BIN_DATA_URL",
            "assetsUrl":"$ASSETS_URL",
            "paymentMethods":[
               {
@@ -515,6 +520,7 @@ internal class ConfigurationDataResponseTest {
               },
               "paymentMethod":{
                  "vaultOnSuccess":false,
+                 "orderedAllowedCardNetworks": ["VISA", "AMEX", "MASTERCARD", "TEST"],
                  "options":[
                     {
                        "type":"PAYMENT_CARD",

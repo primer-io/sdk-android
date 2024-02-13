@@ -7,7 +7,6 @@ import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.domain.payments.create.model.PaymentResult
-import org.json.JSONObject
 
 internal data class PaymentDataResponse(
     val id: String,
@@ -33,24 +32,21 @@ internal data class PaymentDataResponse(
         private const val REQUIRED_ACTION_DATA_FIELD = "requiredAction"
 
         @JvmField
-        val deserializer = object : JSONObjectDeserializer<PaymentDataResponse> {
-
-            override fun deserialize(t: JSONObject): PaymentDataResponse {
-                return PaymentDataResponse(
-                    t.getString(ID_FIELD),
-                    t.getString(DATE_FIELD),
-                    PaymentStatus.valueOf(t.getString(PAYMENT_STATUS_FIELD)),
-                    t.getString(ORDER_ID_FIELD),
-                    t.getString(CURRENCY_CODE_FIELD),
-                    t.getInt(AMOUNT_FIELD),
-                    t.optNullableString(CUSTOMER_ID_FIELD),
-                    t.optNullableString(PAYMENT_FAILURE_REASON_FIELD),
-                    t.optJSONObject(REQUIRED_ACTION_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<RequiredActionData>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            PaymentDataResponse(
+                t.getString(ID_FIELD),
+                t.getString(DATE_FIELD),
+                PaymentStatus.valueOf(t.getString(PAYMENT_STATUS_FIELD)),
+                t.getString(ORDER_ID_FIELD),
+                t.getString(CURRENCY_CODE_FIELD),
+                t.getInt(AMOUNT_FIELD),
+                t.optNullableString(CUSTOMER_ID_FIELD),
+                t.optNullableString(PAYMENT_FAILURE_REASON_FIELD),
+                t.optJSONObject(REQUIRED_ACTION_DATA_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<RequiredActionData>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }
@@ -74,14 +70,13 @@ internal data class RequiredActionData(
         private const val CLIENT_TOKEN_FIELD = "clientToken"
 
         @JvmField
-        val deserializer =
-            JSONObjectDeserializer { t ->
-                RequiredActionData(
-                    RequiredActionName.valueOf(t.getString(REQUIRED_ACTION_NAME_FIELD)),
-                    t.getString(DESCRIPTION_FIELD),
-                    t.optNullableString(CLIENT_TOKEN_FIELD)
-                )
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            RequiredActionData(
+                RequiredActionName.valueOf(t.getString(REQUIRED_ACTION_NAME_FIELD)),
+                t.getString(DESCRIPTION_FIELD),
+                t.optNullableString(CLIENT_TOKEN_FIELD)
+            )
+        }
     }
 }
 

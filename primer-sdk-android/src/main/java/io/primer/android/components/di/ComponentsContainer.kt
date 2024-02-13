@@ -2,15 +2,24 @@
 
 package io.primer.android.components.di
 
+import io.primer.android.components.data.payments.metadata.card.datasource.InMemoryCardBinMetadataDataSource
+import io.primer.android.components.data.payments.metadata.card.datasource.RemoteCardBinMetadataDataSource
+import io.primer.android.components.data.payments.metadata.card.repository.CardBinMetadataDataRepository
 import io.primer.android.components.data.payments.repository.CheckoutModuleDataRepository
 import io.primer.android.components.domain.assets.validation.resolvers.AssetManagerInitValidationRulesResolver
 import io.primer.android.components.domain.core.mapper.PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+import io.primer.android.components.domain.core.models.PrimerRawData
+import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.inputs.PaymentInputTypesInteractor
 import io.primer.android.components.domain.payments.PaymentRawDataChangedInteractor
 import io.primer.android.components.domain.payments.PaymentRawDataTypeValidateInteractor
 import io.primer.android.components.domain.payments.PaymentTokenizationInteractor
 import io.primer.android.components.domain.payments.PaymentsTypesInteractor
 import io.primer.android.components.domain.payments.metadata.PaymentRawDataMetadataRetrieverFactory
+import io.primer.android.components.domain.payments.metadata.card.CardDataMetadataRetriever
+import io.primer.android.components.domain.payments.metadata.card.CardDataMetadataStateRetriever
+import io.primer.android.components.domain.payments.metadata.card.CardMetadataCacheHelper
+import io.primer.android.components.domain.payments.metadata.card.repository.CardBinMetadataRepository
 import io.primer.android.components.domain.payments.paymentMethods.PaymentRawDataValidationInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.validation.resolvers.PaymentMethodManagerInitValidationRulesResolver
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.validation.resolvers.PaymentMethodManagerSessionIntentRulesResolver
@@ -31,9 +40,12 @@ import io.primer.android.components.presentation.DefaultHeadlessUniversalCheckou
 import io.primer.android.components.presentation.assets.DefaultAssetsHeadlessDelegate
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.raw.DefaultRawDataManagerDelegate
+import io.primer.android.components.presentation.paymentMethods.raw.RawDataDelegate
+import io.primer.android.components.presentation.paymentMethods.raw.card.CardRawDataManagerDelegate
 import io.primer.android.components.presentation.vault.VaultManagerDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DependencyContainer
 import io.primer.android.di.SdkContainer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -90,6 +102,18 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
             )
         }
 
+        registerSingleton {
+            InMemoryCardBinMetadataDataSource()
+        }
+
+        registerSingleton {
+            RemoteCardBinMetadataDataSource(sdk.resolve())
+        }
+
+        registerFactory<CardBinMetadataRepository> {
+            CardBinMetadataDataRepository(sdk.resolve(), resolve(), resolve())
+        }
+
         registerFactory {
             PaymentInputDataValidatorFactory(
                 resolve(),
@@ -127,6 +151,7 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
             DefaultAssetsHeadlessDelegate(
                 resolve(),
                 sdk.resolve(),
+                sdk.resolve(),
                 sdk.resolve()
             )
         }
@@ -151,7 +176,7 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
             PaymentMethodManagerSessionIntentRulesResolver(resolve())
         }
 
-        registerSingleton {
+        registerSingleton<RawDataDelegate<PrimerRawData>> {
             DefaultRawDataManagerDelegate(
                 sdk.resolve(),
                 resolve(),
@@ -160,7 +185,36 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 resolve(),
                 resolve(),
                 sdk.resolve(),
-                resolve()
+                sdk.resolve()
+            )
+        }
+
+        registerFactory {
+            CardDataMetadataRetriever()
+        }
+
+        registerSingleton { CardMetadataCacheHelper() }
+
+        registerFactory {
+            CardDataMetadataStateRetriever(
+                resolve(),
+                sdk.resolve(),
+                resolve(),
+                sdk.resolve(),
+                sdk.resolve()
+            )
+        }
+
+        registerSingleton<RawDataDelegate<PrimerCardData>>(PaymentMethodType.PAYMENT_CARD.name) {
+            CardRawDataManagerDelegate(
+                sdk.resolve(),
+                resolve(),
+                resolve(),
+                resolve(),
+                resolve(),
+                resolve(),
+                sdk.resolve(),
+                sdk.resolve()
             )
         }
 

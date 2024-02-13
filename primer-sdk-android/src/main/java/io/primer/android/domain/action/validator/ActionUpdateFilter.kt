@@ -21,8 +21,8 @@ internal class ActionUpdateFilter(
             is ActionUpdateUnselectPaymentMethodParams ->
                 configurationRepository.fetchConfiguration(true).map {
                     config.intent.paymentMethodIntent.isVault ||
-                        it.clientSession?.clientSession
-                            ?.paymentMethod
+                        it.clientSession.clientSessionDataResponse
+                            .paymentMethod
                             ?.surcharges.orEmpty()
                             .all { item -> item.value == 0 }
                 }
