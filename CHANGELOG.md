@@ -1,3 +1,13 @@
+## 2.25.0 (2024-02-15)
+
+### Feat
+
+- Co-badged DX, updated example app, added card networks and asse… (#460)
+
+### Fix
+
+- Fixed crash in Headless Activity after process death (#517)
+
 ## 2.24.0 (2024-02-06)
 
 ### Feat
