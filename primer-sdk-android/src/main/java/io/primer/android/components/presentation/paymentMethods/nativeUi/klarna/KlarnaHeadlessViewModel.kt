@@ -15,9 +15,10 @@ import io.primer.android.components.domain.BaseEvent
 import io.primer.android.components.domain.Event
 import io.primer.android.components.domain.State
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.KlarnaCustomerTokenInteractor
-import io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.KlarnaSessionInteractor
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.models.KlarnaCustomerTokenParam
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
+import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.delegate.GetKlarnaDeeplinkDelegate
+import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.delegate.KlarnaSessionCreationDelegate
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.KlarnaPaymentModel
 import io.primer.android.components.ui.activity.KlarnaActivityLauncherParams
 import io.primer.android.components.ui.activity.KlarnaMockActivityLauncherParams
@@ -27,7 +28,6 @@ import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.resolve
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.base.None
-import io.primer.android.domain.deeplink.klarna.KlarnaDeeplinkInteractor
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.mock.MockConfigurationInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -36,12 +36,11 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.Kl
 import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.ui.base.webview.WebViewActivity.Companion.RESULT_ERROR
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 internal class KlarnaHeadlessViewModel(
-    private val klarnaSessionInteractor: KlarnaSessionInteractor,
-    private val klarnaDeeplinkInteractor: KlarnaDeeplinkInteractor,
+    private val klarnaSessionCreationDelegate: KlarnaSessionCreationDelegate,
+    private val getKlarnaDeeplinkDelegate: GetKlarnaDeeplinkDelegate,
     private val klarnaCustomerTokenInteractor: KlarnaCustomerTokenInteractor,
     private val tokenizationInteractor: TokenizationInteractor,
     private val mockConfigurationInteractor: MockConfigurationInteractor,
@@ -165,17 +164,23 @@ internal class KlarnaHeadlessViewModel(
     }
 
     private fun createKlarnaPaymentSession() = viewModelScope.launch {
-        klarnaSessionInteractor.execute(None()).mapLatest { klarnaSession ->
-            KlarnaPaymentModel(
-                klarnaSession.webViewTitle,
-                klarnaDeeplinkInteractor.execute(None()),
-                klarnaSession.sessionId,
-                klarnaSession.clientToken,
-                KlarnaPaymentCategory.PAY_NOW
-            )
-        }.catch { onEvent(KlarnaEvent.OnError) }
-            .collect {
-                onEvent(KlarnaEvent.OnSessionCreated(it))
+        klarnaSessionCreationDelegate.createSession()
+            .mapCatching { klarnaSession ->
+                klarnaSession to getKlarnaDeeplinkDelegate.getDeeplink().getOrThrow()
+            }
+            .onFailure { onEvent(KlarnaEvent.OnError) }
+            .onSuccess { (klarnaSession, redirectUrl) ->
+                onEvent(
+                    KlarnaEvent.OnSessionCreated(
+                        KlarnaPaymentModel(
+                            klarnaSession.webViewTitle,
+                            redirectUrl,
+                            klarnaSession.sessionId,
+                            klarnaSession.clientToken,
+                            KlarnaPaymentCategory.PAY_NOW
+                        )
+                    )
+                )
             }
     }
 
@@ -188,13 +193,13 @@ internal class KlarnaHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return KlarnaHeadlessViewModel(
-                    resolve(),
-                    resolve(),
-                    resolve(),
-                    resolve(),
-                    resolve(),
-                    resolve(),
-                    extras.createSavedStateHandle()
+                    klarnaSessionCreationDelegate = resolve(),
+                    getKlarnaDeeplinkDelegate = resolve(),
+                    klarnaCustomerTokenInteractor = resolve(),
+                    tokenizationInteractor = resolve(),
+                    mockConfigurationInteractor = resolve(),
+                    baseErrorEventResolver = resolve(),
+                    savedStateHandle = extras.createSavedStateHandle()
                 ) as T
             }
         }

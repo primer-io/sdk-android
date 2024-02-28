@@ -22,5 +22,13 @@ internal class LoggingContainer(private val sdk: SdkContainer) : DependencyConta
                 analyticsInteractor = sdk.resolve()
             )
         }
+
+        registerSingleton(PrimerPaymentMethodManagerCategory.NATIVE_UI.name) {
+            PaymentMethodSdkAnalyticsEventLoggingDelegate(
+                primerPaymentMethodManagerCategory =
+                PrimerPaymentMethodManagerCategory.NATIVE_UI,
+                analyticsInteractor = sdk.resolve()
+            )
+        }
     }
 }

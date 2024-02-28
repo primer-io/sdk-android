@@ -152,6 +152,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
 
 internal abstract class BaseAnalyticsProperties : JSONObjectSerializable, JSONDeserializable
 
+@Suppress("LongParameterList")
 internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     batteryLevel: Int,
     batteryStatus: BatteryStatus,
@@ -265,6 +266,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     else -> throw IllegalStateException("Unsupported property params")
 }
 
+@Suppress("LongParameterList")
 internal fun BaseAnalyticsParams.toAnalyticsEvent(
     batteryLevel: Int,
     batteryStatus: BatteryStatus,

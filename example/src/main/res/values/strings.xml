@@ -54,6 +54,12 @@
     <string name="adyen_bank_selection_load_error_text">Failed to load banks</string>
     <string name="adyen_bank_selection_try_again_text">Try again</string>
 
+    <string name="klarna_title">Klarna session</string>
+    <string name="klarna_initialize_view_text">Initialize Klarna view</string>
+    <string name="klarna_authorize_text">Continue</string>
+
+    <string name="deeplink_return_activity_text">Deeplink return activity</string>
+
     <string-array name="app_environments">
         <item>@string/env_sandbox</item>
         <item>@string/env_dev</item>

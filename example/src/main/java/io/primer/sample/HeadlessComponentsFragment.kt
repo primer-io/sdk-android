@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -286,6 +284,8 @@ class HeadlessComponentsFragment : Fragment() {
                             R.id.action_HeadlessFragment_to_AdyenBankSelectionFragment,
                             bundleOf("paymentMethodType" to paymentMethodType)
                         )
+                    paymentMethodType == "KLARNA" ->
+                        findNavController().navigate(R.id.action_MerchantComponentsFragment_to_KlarnaFragment)
                     else -> onPaymentMethodSelected(paymentMethodType)
                 }
             }

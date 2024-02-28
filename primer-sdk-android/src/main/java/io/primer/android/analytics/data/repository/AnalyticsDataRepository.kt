@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 
+@Suppress("LongParameterList")
 @ExperimentalCoroutinesApi
 internal class AnalyticsDataRepository(
     private val localConfigurationDataSource: LocalConfigurationDataSource,
