@@ -318,26 +318,6 @@
     public *;
 }
 
--keep class io.primer.android.components.manager.klarna.* {
-    public *;
-}
-
--keep class io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.* {
-    public *;
-}
-
--keep class io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.composable.** {
-    public *;
-}
-
--keep class io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.** {
-    public *;
-}
-
--keep class io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.models.** {
-    public *;
-}
-
 -keep class io.primer.android.components.manager.componentWithRedirect.* {
     public *;
 }

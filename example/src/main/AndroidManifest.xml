@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name=".ExampleApp"
@@ -15,6 +15,7 @@
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true"
         tools:replace="android:theme">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,10 +24,10 @@
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="io.primer.android.threeds.ui.ThreeDsActivity"
             android:exported="true"
@@ -45,20 +46,5 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".DeeplinkReturnActivity"
-            android:exported="true"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="app" />
-                <data android:host="deeplink.return.activity" />
-            </intent-filter>
-        </activity>
     </application>
-
 </manifest>

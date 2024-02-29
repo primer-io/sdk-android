@@ -1,6 +1,6 @@
 package io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.models
 
-data class KlarnaPaymentCategory(
+internal data class KlarnaPaymentCategory(
     val identifier: String,
     val name: String,
     val descriptiveAssetUrl: String,

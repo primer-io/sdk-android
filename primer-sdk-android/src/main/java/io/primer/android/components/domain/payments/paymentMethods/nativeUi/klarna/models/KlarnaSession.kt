@@ -1,6 +1,6 @@
 package io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.models
 
-data class KlarnaSession(
+internal data class KlarnaSession(
     val webViewTitle: String,
     val sessionId: String,
     val clientToken: String,

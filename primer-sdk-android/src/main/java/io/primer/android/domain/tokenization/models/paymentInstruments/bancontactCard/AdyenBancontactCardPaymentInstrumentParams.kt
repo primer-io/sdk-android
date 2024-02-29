@@ -3,7 +3,6 @@ package io.primer.android.domain.tokenization.models.paymentInstruments.banconta
 import io.primer.android.data.configuration.models.PaymentInstrumentType
 import io.primer.android.domain.tokenization.models.paymentInstruments.async.BaseAsyncPaymentInstrumentParams
 
-@Suppress("LongParameterList")
 internal class AdyenBancontactCardPaymentInstrumentParams(
     override val paymentMethodType: String,
     override val paymentMethodConfigId: String,
