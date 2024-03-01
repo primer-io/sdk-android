@@ -6,6 +6,7 @@ import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
+import io.primer.android.domain.action.models.PrimerFee
 import io.primer.android.domain.action.models.PrimerLineItem
 import io.primer.android.domain.action.models.PrimerOrder
 import org.json.JSONObject
@@ -27,7 +28,8 @@ internal data class OrderDataResponse(
         val quantity: Int,
         val discountAmount: Int? = null,
         val taxAmount: Int? = null,
-        val taxCode: String? = null
+        val taxCode: String? = null,
+        val productType: String? = null
     ) : JSONDeserializable {
         fun toLineItem() = PrimerLineItem(
             itemId,
@@ -47,6 +49,7 @@ internal data class OrderDataResponse(
             const val DISCOUNT_AMOUNT_FIELD = "discountAmount"
             const val TAX_AMOUNT_FIELD = "taxAmount"
             const val TAX_CODE_FIELD = "taxCode"
+            private const val PRODUCT_TYPE_FIELD = "productType"
 
             @JvmField
             val deserializer = object : JSONObjectDeserializer<LineItemDataResponse> {
@@ -59,7 +62,8 @@ internal data class OrderDataResponse(
                         t.getInt(QUANTITY_FIELD),
                         t.optNullableInt(DISCOUNT_AMOUNT_FIELD),
                         t.optNullableInt(TAX_AMOUNT_FIELD),
-                        t.optNullableString(TAX_CODE_FIELD)
+                        t.optNullableString(TAX_CODE_FIELD),
+                        t.optNullableString(PRODUCT_TYPE_FIELD)
                     )
                 }
             }
@@ -86,6 +90,8 @@ internal data class OrderDataResponse(
     }
 
     fun toOrder() = PrimerOrder(countryCode)
+
+    fun toFees() = fees.map { PrimerFee(type = it.type, amount = it.amount) }
 
     companion object {
         const val ORDER_ID_FIELD = "orderId"

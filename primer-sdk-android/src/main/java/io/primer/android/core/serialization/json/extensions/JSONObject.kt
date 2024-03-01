@@ -35,6 +35,14 @@ internal fun JSONObject.optNullableInt(name: String, fallback: Int? = null): Int
     }
 }
 
+internal fun JSONObject.optNullableObject(name: String, fallback: JSONObject? = null): JSONObject? {
+    return if (has(name) && !isNull(name)) {
+        getJSONObject(name)
+    } else {
+        fallback
+    }
+}
+
 internal fun JSONObject.toBooleanMap(): Map<String, Boolean> {
     return keys().asSequence().associateWith {
         getBoolean(it)

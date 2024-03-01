@@ -6,7 +6,8 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.Async
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactCardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.card.CardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentDataRequest
-import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaCheckoutPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaVaultPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentDataRequest
 import org.json.JSONObject
@@ -19,8 +20,12 @@ internal open class PaymentInstrumentDataRequest : JSONObjectSerializable {
         val serializer = object : JSONObjectSerializer<PaymentInstrumentDataRequest> {
             override fun serialize(t: PaymentInstrumentDataRequest): JSONObject {
                 return when (t) {
-                    is KlarnaPaymentInstrumentDataRequest ->
-                        KlarnaPaymentInstrumentDataRequest.serializer.serialize(t)
+                    is KlarnaVaultPaymentInstrumentDataRequest ->
+                        KlarnaVaultPaymentInstrumentDataRequest.serializer.serialize(t)
+
+                    is KlarnaCheckoutPaymentInstrumentDataRequest ->
+                        KlarnaCheckoutPaymentInstrumentDataRequest.serializer.serialize(t)
+
                     is AdyenBancontactCardPaymentInstrumentDataRequest ->
                         AdyenBancontactCardPaymentInstrumentDataRequest.serializer.serialize(
                             t

@@ -1,5 +1,6 @@
 package io.primer.android.di
 
+import io.primer.android.components.presentation.mock.delegate.MockConfigurationDelegate
 import io.primer.android.data.mock.datasource.RemoteFinalizeMockedFlowDataSource
 import io.primer.android.data.mock.repository.MockDataConfigurationRepository
 import io.primer.android.domain.mock.FinaliseMockedFlowInteractor
@@ -20,6 +21,8 @@ internal class PaymentMethodsMockContainer(private val sdk: SdkContainer) : Depe
         }
 
         registerSingleton { MockConfigurationInteractor(resolve()) }
+
+        registerSingleton { MockConfigurationDelegate(resolve()) }
 
         registerSingleton { FinaliseMockedFlowInteractor(resolve()) }
 

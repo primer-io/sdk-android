@@ -66,12 +66,34 @@ internal class ConfigurationDataResponseTest {
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
                 null,
+                null,
                 null
             )
         )
         assertEquals(
             paymentMethodRemoteConfigOptions,
-            configurationDataResponse.paymentMethods.map { it.options }
+            configurationDataResponse.paymentMethods.map {
+                it.options?.copy(extraMerchantData = null)
+            }
+        )
+    }
+
+    @Test
+    fun `'paymentMethod-options-extraMerchantData' should be deserialized correctly`() {
+        val paymentMethodRemoteConfigOptions = listOf(
+            PaymentMethodRemoteConfigOptions(
+                PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
+                PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
+                null,
+                null,
+                null
+            )
+        )
+        assertEquals(
+            JSONObject(EXTRA_MERCHANT_DATA).toString(),
+            configurationDataResponse.paymentMethods.map {
+                it.options
+            }.single()?.extraMerchantData.toString()
         )
     }
 
@@ -308,28 +330,37 @@ internal class ConfigurationDataResponseTest {
     @Test
     fun `'client-session-payment-method' should be deserialized correctly`() {
         assertEquals(
-            ClientSessionDataResponse.PaymentMethodDataResponse(
-                false,
-                listOf(
-                    ClientSessionDataResponse.PaymentMethodOptionDataResponse(
-                        PaymentMethodType.PAYMENT_CARD.name,
-                        null,
-                        listOf(
-                            ClientSessionDataResponse.NetworkOptionDataResponse(
-                                "VISA",
-                                100
-                            )
-                        )
-                    ),
-                    ClientSessionDataResponse.PaymentMethodOptionDataResponse(
-                        PaymentMethodType.PAYPAL.name,
-                        50,
-                        null
+            false,
+            configurationDataResponse.clientSession.paymentMethod?.vaultOnSuccess
+        )
+        assertEquals(
+            ClientSessionDataResponse.PaymentMethodOptionDataResponse(
+                type = PaymentMethodType.PAYMENT_CARD.name,
+                surcharge = null,
+                networks = listOf(
+                    ClientSessionDataResponse.NetworkOptionDataResponse(
+                        "VISA",
+                        100
                     )
-                ),
-                listOf(CardNetwork.Type.VISA, CardNetwork.Type.AMEX, CardNetwork.Type.MASTERCARD)
+                )
             ),
-            configurationDataResponse.clientSession.paymentMethod
+            configurationDataResponse.clientSession.paymentMethod?.options?.get(0)
+        )
+        assertEquals(
+            ClientSessionDataResponse.PaymentMethodOptionDataResponse(
+                type = PaymentMethodType.PAYPAL.name,
+                surcharge = 50,
+                networks = null
+            ),
+            configurationDataResponse.clientSession.paymentMethod?.options?.get(1)
+        )
+        val klarnaOptions = configurationDataResponse.clientSession.paymentMethod?.options?.get(2)
+        assertEquals(PaymentMethodType.KLARNA.name, klarnaOptions?.type)
+        assertEquals(140, klarnaOptions?.surcharge)
+        assertEquals(null, klarnaOptions?.networks)
+        assertEquals(
+            listOf(CardNetwork.Type.VISA, CardNetwork.Type.AMEX, CardNetwork.Type.MASTERCARD),
+            configurationDataResponse.clientSession.paymentMethod?.orderedAllowedCardNetworks
         )
     }
 
@@ -356,9 +387,20 @@ internal class ConfigurationDataResponseTest {
         const val BIN_DATA_URL = "https://sdk.bin.data.staging.primer.io"
         const val ASSETS_URL = "https://assets.staging.core.primer.io"
         const val PAYMENT_METHOD_ID = "a02e7d8b-8749-4bf6-a1d6"
-        const val PAYMENT_METHOD_TYPE = "XENDIT_OVO"
+        const val PAYMENT_METHOD_TYPE = "KLARNA"
         const val PAYMENT_METHOD_OPTIONS_MERCHANT_ID = "364218b4-8d33-48d1-a849"
         const val PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID = "d09d6311-3a3b-5f9b-aef3"
+        const val EXTRA_MERCHANT_DATA = """
+            {
+               "customer_account_info":[
+                  {
+                     "unique_account_identifier":"Adam_Adamsson",
+                     "account_registration_date":"2020-11-24T15:00",
+                     "account_last_modified":"2020-11-24T15:00"
+                  }
+               ]
+            }
+        """
         const val PAYMENT_METHOD_IMPLEMENTATION_TYPE = "NATIVE_SDK"
         const val PAYMENT_METHOD_NAME = "Ovo"
         const val PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_ICON_URL_COLORED =
@@ -414,6 +456,7 @@ internal class ConfigurationDataResponseTest {
                  "id":"$PAYMENT_METHOD_ID",
                  "type":"$PAYMENT_METHOD_TYPE",
                  "options":{
+                    "extraMerchantData":$EXTRA_MERCHANT_DATA,
                     "merchantId":"$PAYMENT_METHOD_OPTIONS_MERCHANT_ID",
                     "merchantAccountId":"$PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID"
                  },
@@ -534,6 +577,10 @@ internal class ConfigurationDataResponseTest {
                     {
                        "type":"PAYPAL",
                        "surcharge":50
+                    },
+                    {
+                       "type":"KLARNA",
+                       "surcharge":140
                     },
                  ]
               }

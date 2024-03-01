@@ -13,10 +13,10 @@
     <color name="primer_android_red">#FFFF1744</color>
     <color name="primer_android_dark_gray">#8E8E93</color>
 
-    <color name="primer_button_primary">@color/primer_app_primary</color>
+    <color name="primer_button_primary">#3A83F9</color>
     <color name="primer_button_primary_text_color">@android:color/white</color>
-    <color name="primer_button_primary_disabled_text_color">#5d6269</color>
-    <color name="primer_button_primary_disabled">#1F000000</color>
+    <color name="primer_button_primary_disabled_text_color">#BEBEBE</color>
+    <color name="primer_button_primary_disabled">#F1F1F4</color>
     <color name="primer_secondary">@android:color/black</color>
 
     <color name="bank_transfer">#0054A6</color>
@@ -94,7 +94,7 @@
 
     <!-- Dummy APM selector -->
     <color name="primer_dummy_apm_text_color_description">#75757B</color>
-    <color name="primer_dummy_apm_checked_border">#007AFF</color>
+    <color name="primer_dummy_apm_checked_border">#3A83F9</color>
     <color name="primer_dummy_apm_light_unchecked_border">#E5E5EA</color>
 
     <!-- curom folors for search text inputs in country selection screen -->

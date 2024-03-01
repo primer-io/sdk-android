@@ -16,26 +16,6 @@ internal sealed class PaymentMethodRedirectLauncherParams(
     sessionIntent: PrimerSessionIntent
 ) : ActivityLauncherParams(paymentMethodType, sessionIntent)
 
-internal data class KlarnaActivityLauncherParams(
-    val webViewTitle: String,
-    val clientToken: String,
-    val redirectUrl: String,
-    val paymentCategory: String,
-    val errorCode: Int,
-    override val sessionIntent: PrimerSessionIntent
-) : PaymentMethodRedirectLauncherParams(
-    PaymentMethodType.KLARNA.name,
-    sessionIntent
-)
-
-internal data class KlarnaMockActivityLauncherParams(
-    val errorCode: Int,
-    override val sessionIntent: PrimerSessionIntent
-) : PaymentMethodRedirectLauncherParams(
-    PaymentMethodType.KLARNA.name,
-    sessionIntent
-)
-
 internal data class WebRedirectActivityLauncherParams(
     val statusUrl: String,
     val paymentUrl: String,

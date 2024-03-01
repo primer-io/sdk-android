@@ -9,9 +9,7 @@ import io.primer.android.payment.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.viewmodel.PaymentMethodCheckerRegistry
 
 internal data class Klarna(
-    override val type: String = PaymentMethodType.KLARNA.name,
-    val orderDescription: String? = null,
-    val webViewTitle: String? = "Klarna"
+    override val type: String = PaymentMethodType.KLARNA.name
 ) : PaymentMethod {
 
     override val canBeVaulted: Boolean = true

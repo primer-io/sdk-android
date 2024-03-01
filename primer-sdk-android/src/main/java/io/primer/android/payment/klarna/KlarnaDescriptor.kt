@@ -5,11 +5,12 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.data.configuration.models.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.HeadlessDefinition
+import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.SelectedPaymentMethodBehaviour
-import io.primer.android.payment.SelectedPaymentMethodManagerBehaviour
 import io.primer.android.payment.VaultCapability
+import io.primer.android.ui.fragments.klarna.KlarnaPaymentCategorySelectionFragment
 import io.primer.android.ui.payment.LoadingState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -21,10 +22,12 @@ internal open class KlarnaDescriptor constructor(
 ) : PaymentMethodDescriptor(config, localConfig) {
 
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
-        get() = SelectedPaymentMethodManagerBehaviour(options.type, localConfig.paymentMethodIntent)
+        get() = NewFragmentBehaviour(
+            KlarnaPaymentCategorySelectionFragment::newInstance,
+            returnToPreviousOnBack = localConfig.isStandalonePaymentMethod.not()
+        )
 
-    override val type: PaymentMethodUiType
-        get() = PaymentMethodUiType.SIMPLE_BUTTON
+    override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
 
     override val vaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
 

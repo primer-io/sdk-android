@@ -133,4 +133,6 @@
     <string name="twoc_2p_button">分期支付</string>
     <string name="uploadScreenshot">上傳截圖到你的銀行流動應用程式</string>
     <string name="primer_payment_method_button_content_description">Pay with %s</string>
+    <string name="loading_text">Loading</string>
+    <string name="continue_button">Continue</string>
 </resources>

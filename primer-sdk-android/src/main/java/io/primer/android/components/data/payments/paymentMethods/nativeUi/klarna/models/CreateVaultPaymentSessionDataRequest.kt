@@ -8,9 +8,9 @@ import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import org.json.JSONObject
 
-internal data class CreateSessionDataRequest(
+internal data class CreateVaultPaymentSessionDataRequest(
     val paymentMethodConfigId: String,
-    val sessionType: String,
+    val sessionType: KlarnaSessionType,
     val description: String?,
     val localeData: LocaleDataRequest
 ) : JSONObjectSerializable {
@@ -34,16 +34,18 @@ internal data class CreateSessionDataRequest(
         }
 
         @JvmField
-        val serializer = JSONObjectSerializer<CreateSessionDataRequest> { t ->
-            JSONObject().apply {
-                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                put(SESSION_TYPE_FIELD, t.sessionType)
-                putOpt(DESCRIPTION_FIELD, t.description)
-                put(
-                    LOCALE_DATA_FIELD,
-                    JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
-                        .serialize(t.localeData)
-                )
+        val serializer = object : JSONObjectSerializer<CreateVaultPaymentSessionDataRequest> {
+            override fun serialize(t: CreateVaultPaymentSessionDataRequest): JSONObject {
+                return JSONObject().apply {
+                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                    put(SESSION_TYPE_FIELD, t.sessionType.name)
+                    putOpt(DESCRIPTION_FIELD, t.description)
+                    put(
+                        LOCALE_DATA_FIELD,
+                        JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
+                            .serialize(t.localeData)
+                    )
+                }
             }
         }
     }

@@ -49,8 +49,7 @@ internal data class CreateSessionDataResponse(
     }
 }
 
-internal fun CreateSessionDataResponse.toKlarnaSession(webViewTitle: String?) = KlarnaSession(
-    webViewTitle.orEmpty(),
+internal fun CreateSessionDataResponse.toKlarnaSession() = KlarnaSession(
     sessionId,
     clientToken,
     categories.map {

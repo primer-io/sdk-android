@@ -5,11 +5,12 @@ import io.primer.android.BuildConfig
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdDataSource
 import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCheckoutPaymentSessionDataRequest
 import io.primer.android.components.data.payments.metadata.card.model.CardBinMetadataDataNetworksResponse
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataResponse
-import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateSessionDataRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateSessionDataResponse
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateVaultPaymentSessionDataRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalConfirmBillingAgreementDataRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalCreateBillingAgreementDataRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalCreateOrderDataRequest
@@ -48,7 +49,8 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
                 whitelistedHttpBodyKeyProviderRegistry =
                 sdk.resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
                     listOf(
-                        CreateSessionDataRequest.provider,
+                        CreateVaultPaymentSessionDataRequest.provider,
+                        CreateCheckoutPaymentSessionDataRequest.provider,
                         CreateSessionDataResponse.provider,
                         CreateCustomerTokenDataRequest.provider,
                         CreateCustomerTokenDataResponse.provider,

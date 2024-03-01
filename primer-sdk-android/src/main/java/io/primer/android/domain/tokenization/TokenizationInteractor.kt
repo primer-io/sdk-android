@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 
+@Suppress("LongParameterList")
 internal class TokenizationInteractor(
     private val tokenizationRepository: TokenizationRepository,
     private val paymentMethodRepository: PaymentMethodRepository,

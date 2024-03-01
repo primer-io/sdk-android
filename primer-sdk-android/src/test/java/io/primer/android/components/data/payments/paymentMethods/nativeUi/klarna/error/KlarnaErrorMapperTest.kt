@@ -7,8 +7,6 @@ import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.error.models.GeneralError
 import io.primer.android.domain.error.models.KlarnaError
-import io.primer.android.klarna.exceptions.KlarnaSdkErrorException
-import io.primer.android.klarna.exceptions.KlarnaUserUnapprovedException
 import org.junit.jupiter.api.Test
 import java.util.UUID
 import kotlin.test.assertEquals

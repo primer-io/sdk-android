@@ -118,14 +118,15 @@ internal data class ClientSessionDataResponse(
 
     fun toClientSessionData() = ClientSessionData(
         PrimerClientSession(
-            customer?.customerId ?: customerId,
-            order?.orderId ?: orderId,
-            order?.currencyCode ?: currencyCode,
-            order?.totalOrderAmount ?: amount,
-            order?.lineItems?.map { it.toLineItem() },
-            order?.toOrder(),
-            customer?.toCustomer(),
-            paymentMethod?.toPrimerPaymentMethod()
+            customerId = customer?.customerId ?: customerId,
+            orderId = order?.orderId ?: orderId,
+            currencyCode = order?.currencyCode ?: currencyCode,
+            totalAmount = order?.totalOrderAmount ?: amount,
+            lineItems = order?.lineItems?.map { it.toLineItem() },
+            orderDetails = order?.toOrder(),
+            customer = customer?.toCustomer(),
+            paymentMethod = paymentMethod?.toPrimerPaymentMethod(),
+            fees = order?.toFees()
         )
     )
 

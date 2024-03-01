@@ -11,7 +11,6 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.extension.inject
 import io.primer.android.di.extension.viewModel
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
-import io.primer.android.klarna.NativeKlarnaActivity
 import io.primer.android.presentation.mock.PaymentMethodMockViewModel
 import io.primer.android.presentation.mock.PaymentMethodMockViewModelFactory
 import java.util.UUID
@@ -37,6 +36,7 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
         setupListeners()
         setupObservers()
     }
+
     private fun setupViews() {
         val toolbar = findViewById<Toolbar>(R.id.primerWebviewToolbar)
         toolbar.title = paymentMethodType
@@ -49,13 +49,6 @@ internal class PaymentMethodMockActivity : BaseCheckoutActivity() {
     private fun setupListeners() {
         findViewById<TextView>(R.id.send_credentials_btn).setOnClickListener {
             when (paymentMethodType) {
-                PaymentMethodType.KLARNA.name -> setResult(
-                    RESULT_OK,
-                    Intent().apply {
-                        putExtra(NativeKlarnaActivity.AUTH_TOKEN_KEY, UUID.randomUUID().toString())
-                    }
-                ).also { finish() }
-
                 PaymentMethodType.IPAY88_CARD.name -> viewModel.finaliseMockedFlow()
                 PaymentMethodType.PAYMENT_CARD.name ->
                     eventResolver.resolve(

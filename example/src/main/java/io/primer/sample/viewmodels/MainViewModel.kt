@@ -2,6 +2,7 @@ package io.primer.sample.viewmodels
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
@@ -41,7 +42,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Locale
+import java.util.UUID
 
 @Keep
 class MainViewModel(
@@ -167,7 +169,14 @@ class MainViewModel(
             paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
             paymentMethodOptions = PrimerPaymentMethodOptions(
                 redirectScheme = "primer",
-                klarnaOptions = PrimerKlarnaOptions("This is custom description"),
+                klarnaOptions = PrimerKlarnaOptions(
+                    recurringPaymentDescription = "This is custom description",
+                    returnIntentUrl = Uri.Builder()
+                        .scheme("app")
+                        .authority("deeplink.return.activity")
+                        .build()
+                        .toString()
+                ),
                 googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds")
             ),

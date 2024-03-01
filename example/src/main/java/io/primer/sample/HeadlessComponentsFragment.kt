@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -31,6 +29,7 @@ import io.primer.sample.databinding.FragmentHeadlessBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
+import io.primer.sample.klarna.KlarnaPaymentFragment.Companion.PRIMER_SESSION_INTENT_ARG
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
@@ -286,6 +285,11 @@ class HeadlessComponentsFragment : Fragment() {
                             R.id.action_HeadlessFragment_to_AdyenBankSelectionFragment,
                             bundleOf("paymentMethodType" to paymentMethodType)
                         )
+                    paymentMethodType == "KLARNA" ->
+                        findNavController().navigate(
+                            R.id.action_MerchantComponentsFragment_to_KlarnaFragment,
+                            bundleOf(PRIMER_SESSION_INTENT_ARG to getPrimerSessionIntent())
+                        )
                     else -> onPaymentMethodSelected(paymentMethodType)
                 }
             }
@@ -312,12 +316,7 @@ class HeadlessComponentsFragment : Fragment() {
                             it.cleanup()
                         }
                     }
-            nativeUiManager.showPaymentMethod(
-                requireContext(), when (binding.typeButtonGroup.checkedButtonId) {
-                    binding.checkout.id -> PrimerSessionIntent.CHECKOUT
-                    else -> PrimerSessionIntent.VAULT
-                }
-            )
+            nativeUiManager.showPaymentMethod(requireContext(), getPrimerSessionIntent())
         } catch (e: SdkUninitializedException) {
             AlertDialog.Builder(context).setMessage(e.message).setNegativeButton(
                 android.R.string.cancel
@@ -327,6 +326,11 @@ class HeadlessComponentsFragment : Fragment() {
                 android.R.string.cancel
             ) { _, _ -> findNavController().navigateUp() }.show()
         }
+    }
+
+    private fun getPrimerSessionIntent() = when (binding.typeButtonGroup.checkedButtonId) {
+        binding.checkout.id -> PrimerSessionIntent.CHECKOUT
+        else -> PrimerSessionIntent.VAULT
     }
 
     private fun navigateToResultScreen() {

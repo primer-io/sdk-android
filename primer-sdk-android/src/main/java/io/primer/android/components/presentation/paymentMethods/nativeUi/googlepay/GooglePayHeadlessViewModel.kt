@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 internal class GooglePayHeadlessViewModel(
@@ -177,7 +178,7 @@ internal class GooglePayHeadlessViewModel(
         val googlePayBillingAddressMapper = GooglePayBillingAddressMapper()
         val action = googlePayBillingAddressMapper.mapToClientSessionUpdateParams(paymentData)
         return action?.let {
-            actionInteractor(action).catch { emit(Unit) }
+            actionInteractor(action).map { Unit }.catch { emit(Unit) }
         } ?: flowOf(Unit)
     }
 

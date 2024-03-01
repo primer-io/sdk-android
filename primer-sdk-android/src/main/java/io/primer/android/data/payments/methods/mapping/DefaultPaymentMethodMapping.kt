@@ -37,7 +37,7 @@ internal class DefaultPaymentMethodMapping(
                 when (PaymentMethodType.safeValueOf(type)) {
                     PaymentMethodType.PAYMENT_CARD -> CardFactory().build()
                     PaymentMethodType.PRIMER_TEST_KLARNA,
-                    PaymentMethodType.KLARNA -> KlarnaFactory(type, settings).build()
+                    PaymentMethodType.KLARNA -> KlarnaFactory(type).build()
 
                     PaymentMethodType.GOOGLE_PAY -> GooglePayFactory(
                         settings,

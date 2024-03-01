@@ -1,6 +1,7 @@
 package io.primer.sample.datamodels
 
 import androidx.annotation.Keep
+import org.json.JSONObject
 
 @Keep
 interface ClientSession : ExampleAppRequestBody {
@@ -61,28 +62,32 @@ interface ClientSession : ExampleAppRequestBody {
                                 itemId = "item-123",
                                 description = "this item",
                                 discountAmount = 0,
+                                taxAmount = 0,
+                                productType = "DIGITAL"
                             ),
                         ),
                     ),
                     customer = Customer(
-                        emailAddress = "test@mail.com",
-                        mobileNumber = "+44 7398 595742",
+                        emailAddress = "customer@email.de",
+                        mobileNumber = "+4901761428434",
                         firstName = "John",
                         lastName = "Doe",
                         shippingAddress = Address(
-                            addressLine1 = "1 test",
-                            postalCode = "12345",
-                            city = "test",
-                            state = "test",
+                            firstName = "John",
+                            lastName = "Doe",
+                            addressLine1 = "Neue Schönhauser Str. 2",
+                            postalCode = "10178",
+                            city = "Berlin",
+                            state = "Berlin",
                             countryCode = countryCode,
                         ),
                         billingAddress = Address(
                             firstName = "John",
                             lastName = "Doe",
-                            addressLine1 = "1 test",
-                            postalCode = "12345",
-                            city = "test",
-                            state = "test",
+                            addressLine1 = "Neue Schönhauser Str. 2",
+                            postalCode = "10178",
+                            city = "Berlin",
+                            state = "Berlin",
                             countryCode = countryCode,
                         ),
                         nationalDocumentId = "9011211234567",
@@ -122,6 +127,19 @@ interface ClientSession : ExampleAppRequestBody {
                             KLARNA = PaymentMethodOption(
                                 surcharge = SurchargeOption(
                                     amount = 140,
+                                ),
+                                extraMerchantData = JSONObject(
+                                    """
+                                    {
+                                       "customer_account_info":[
+                                          {
+                                             "unique_account_identifier":"Adam_Adamsson",
+                                             "account_registration_date":"2020-11-24T15:00",
+                                             "account_last_modified":"2020-11-24T15:00"
+                                          }
+                                       ]
+                                    }
+                                    """.trimIndent()
                                 )
                             ),
                             PAYMENT_CARD = PaymentCardOption(
@@ -175,6 +193,8 @@ interface ClientSession : ExampleAppRequestBody {
         val itemId: String,
         val description: String,
         val discountAmount: Int,
+        val taxAmount: Int,
+        val productType: String
     )
 
     @Keep
@@ -224,6 +244,7 @@ interface ClientSession : ExampleAppRequestBody {
     @Keep
     data class PaymentMethodOption(
         val surcharge: SurchargeOption,
+        val extraMerchantData: JSONObject? = null
     )
 
     @Keep

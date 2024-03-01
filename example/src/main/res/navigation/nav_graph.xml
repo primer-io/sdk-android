@@ -6,6 +6,22 @@
     app:startDestination="@id/MerchantSettingsFragment">
 
     <fragment
+        android:id="@+id/KlarnaFragment"
+        android:name="io.primer.sample.klarna.KlarnaPaymentFragment"
+        android:label="Klarna"
+        tools:layout="@layout/fragment_klarna">
+        <action
+            android:id="@+id/action_KlarnaFragment_to_HeadlessFragment"
+            app:popUpTo="@id/HeadlessFragment"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false"
+            app:destination="@id/HeadlessFragment" />
+        <argument
+            android:name="primerSessionIntent"
+            app:argType="io.primer.android.PrimerSessionIntent" />
+    </fragment>
+
+    <fragment
         android:id="@+id/NolFragment"
         android:name="io.primer.sample.nolpay.NolFragment"
         android:label="Nol pay"
@@ -144,6 +160,14 @@
         <action
             android:id="@+id/action_MerchantComponentsFragment_to_NolPayFragment"
             app:destination="@id/NolFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_MerchantComponentsFragment_to_KlarnaFragment"
+            app:destination="@id/KlarnaFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"

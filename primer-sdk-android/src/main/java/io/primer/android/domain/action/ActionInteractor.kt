@@ -1,7 +1,9 @@
 package io.primer.android.domain.action
 
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
+import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.models.BaseActionUpdateParams
+import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.action.repository.ActionRepository
 import io.primer.android.domain.action.validator.ActionUpdateFilter
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -16,7 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
@@ -28,7 +29,7 @@ internal class ActionInteractor(
     private val errorEventResolver: BaseErrorEventResolver,
     private val eventDispatcher: EventDispatcher,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseFlowInteractor<Unit, BaseActionUpdateParams>() {
+) : BaseFlowInteractor<ClientSessionData, BaseActionUpdateParams>() {
 
     val surcharges: Map<String, Int>
         get() = localConfigurationDataSource
@@ -43,7 +44,7 @@ internal class ActionInteractor(
 
     private var lastParams: BaseActionUpdateParams? = null
 
-    override fun execute(params: BaseActionUpdateParams): Flow<Unit> {
+    override fun execute(params: BaseActionUpdateParams): Flow<ClientSessionData> {
         return actionUpdateFilter.filter(params).filterNot { it }.filterNot { lastParams == params }
             .flatMapLatest {
                 lastParams = params
@@ -57,9 +58,25 @@ internal class ActionInteractor(
                     eventDispatcher.dispatchEvent(
                         CheckoutEvent.ClientSessionUpdateSuccess(it.clientSession)
                     )
-                }.map { }
+                }
             }
-            .onEmpty { emit(Unit) }
+            .onEmpty {
+                emit(
+                    ClientSessionData(
+                        clientSession = PrimerClientSession(
+                            customerId = null,
+                            orderId = null,
+                            currencyCode = null,
+                            totalAmount = null,
+                            lineItems = null,
+                            orderDetails = null,
+                            customer = null,
+                            paymentMethod = null,
+                            fees = null
+                        )
+                    )
+                )
+            }
             .flowOn(dispatcher)
     }
 }

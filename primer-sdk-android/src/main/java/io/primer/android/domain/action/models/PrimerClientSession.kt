@@ -11,7 +11,8 @@ data class PrimerClientSession(
     val lineItems: List<PrimerLineItem>?,
     val orderDetails: PrimerOrder?,
     val customer: PrimerCustomer?,
-    val paymentMethod: PrimerPaymentMethod?
+    val paymentMethod: PrimerPaymentMethod?,
+    val fees: List<PrimerFee>?
 )
 
 data class PrimerCustomer(
@@ -53,4 +54,9 @@ data class PrimerAddress(
 
 data class PrimerPaymentMethod(
     val orderedAllowedCardNetworks: List<CardNetwork.Type>
+)
+
+data class PrimerFee(
+    val type: String?,
+    val amount: Int
 )

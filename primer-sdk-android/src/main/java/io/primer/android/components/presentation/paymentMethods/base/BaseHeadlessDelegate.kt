@@ -78,7 +78,7 @@ internal interface HeadlessDelegate {
     fun cleanup()
 }
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 internal class DefaultHeadlessManagerDelegate(
     private val paymentRawDataTypeValidateInteractor: PaymentRawDataTypeValidateInteractor,
     private val actionInteractor: ActionInteractor,

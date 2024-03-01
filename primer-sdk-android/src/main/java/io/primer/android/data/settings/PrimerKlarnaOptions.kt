@@ -5,8 +5,7 @@ import android.os.Parcelable
 
 data class PrimerKlarnaOptions @JvmOverloads constructor(
     var recurringPaymentDescription: String? = null,
-    @Deprecated("This property is deprecated and will be removed in future release.")
-    var webViewTitle: String? = null
+    var returnIntentUrl: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -15,7 +14,7 @@ data class PrimerKlarnaOptions @JvmOverloads constructor(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(recurringPaymentDescription)
-        parcel.writeString(webViewTitle)
+        parcel.writeString(returnIntentUrl)
     }
 
     override fun describeContents(): Int {

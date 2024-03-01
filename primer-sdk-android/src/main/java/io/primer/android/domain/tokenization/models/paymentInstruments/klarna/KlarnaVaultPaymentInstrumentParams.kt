@@ -1,10 +1,10 @@
 package io.primer.android.domain.tokenization.models.paymentInstruments.klarna
 
-import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.CreateCustomerTokenDataResponse
+import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.models.KlarnaSessionData
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.tokenization.models.paymentInstruments.BasePaymentInstrumentParams
 
-internal data class KlarnaPaymentInstrumentParams(
+internal data class KlarnaVaultPaymentInstrumentParams(
     val klarnaCustomerToken: String?,
-    val sessionData: CreateCustomerTokenDataResponse.SessionData
+    val sessionData: KlarnaSessionData
 ) : BasePaymentInstrumentParams(PaymentMethodType.KLARNA.name)

@@ -35,8 +35,8 @@
         app:layout_constraintStart_toStartOf="@+id/button"
         app:layout_constraintTop_toTopOf="@+id/button"
         tools:alpha="0.5"
-        tools:layout_height="40dp"
-        tools:layout_width="40dp"
+        tools:layout_height="@dimen/primer_progress_indicator_size"
+        tools:layout_width="@dimen/primer_progress_indicator_size"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

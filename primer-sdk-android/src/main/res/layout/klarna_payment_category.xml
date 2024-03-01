@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/payment_category_name"
+    style="@style/Primer.Text.Body"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawablePadding="@dimen/primer_selector_padding"
+    android:gravity="center|start"
+    android:padding="@dimen/primer_selector_padding"
+    android:textIsSelectable="false"
+    app:drawableStartCompat="@drawable/ic_klarna_payment_category"
+    tools:drawableStart="@drawable/ic_klarna_payment_category"
+    tools:text="Pay now" />

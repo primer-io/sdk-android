@@ -10,6 +10,7 @@ class HeadlessManagerViewModelFactory(
     private val apiKeyDataSource: ApiKeyDataSource,
 ) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return HeadlessManagerViewModel(
             apiKeyDataSource,

@@ -9,6 +9,7 @@ import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableBoolean
+import io.primer.android.core.serialization.json.extensions.optNullableObject
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.data.configuration.models.CheckoutModuleDataResponse.Companion.OPTIONS_FIELD
@@ -253,7 +254,7 @@ internal data class PaymentMethodConfigDataResponse(
     val options: PaymentMethodRemoteConfigOptions?,
     val displayMetadata: PaymentMethodDisplayMetadataResponse?
 ) : JSONDeserializable {
-    fun toPaymentMethodConfig() = PaymentMethodConfig(type)
+    fun toPaymentMethodConfig() = PaymentMethodConfig(type, options)
 
     companion object {
         const val ID_FIELD = "id"
@@ -304,7 +305,8 @@ internal data class PaymentMethodRemoteConfigOptions(
     val merchantId: String?,
     val merchantAccountId: String?,
     val merchantAppId: String?,
-    val threeDSecureEnabled: Boolean?
+    val threeDSecureEnabled: Boolean?,
+    val extraMerchantData: JSONObject?
 ) : JSONDeserializable {
 
     companion object {
@@ -312,6 +314,7 @@ internal data class PaymentMethodRemoteConfigOptions(
         private const val MERCHANT_ACCOUNT_ID_FIELD = "merchantAccountId"
         private const val THREE_DS_SECURE_ENABLED_FIELD = "threeDSecureEnabled"
         private const val MERCHANT_APP_ID_FIELD = "appId"
+        private const val EXTRA_MERCHANT_DATA = "extraMerchantData"
 
         @JvmField
         val deserializer = JSONObjectDeserializer { t ->
@@ -319,7 +322,8 @@ internal data class PaymentMethodRemoteConfigOptions(
                 t.optNullableString(MERCHANT_ID_FIELD),
                 t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
                 t.optNullableString(MERCHANT_APP_ID_FIELD),
-                t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD)
+                t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD),
+                t.optNullableObject(EXTRA_MERCHANT_DATA)
             )
         }
     }

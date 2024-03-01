@@ -385,7 +385,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         }
 
         behaviour.execute(sheet)
-        sheet?.dialog?.show()
+        sheet.dialog?.show()
     }
 
     private fun openSheet() {

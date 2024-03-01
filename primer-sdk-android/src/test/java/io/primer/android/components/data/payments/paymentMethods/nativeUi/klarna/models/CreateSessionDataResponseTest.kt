@@ -8,7 +8,6 @@ import kotlin.test.assertEquals
 
 internal class CreateSessionDataResponseTest {
 
-    private val webViewTitle = "webViewTitle"
     private val createSessionDataResponse by lazy {
         CreateSessionDataResponse.deserializer.deserialize(
             JSONObject(JSON_OBJECT)
@@ -18,7 +17,6 @@ internal class CreateSessionDataResponseTest {
     @Test
     fun `createSessionDataResponse should be deserialized correctly`() {
         val klarnaSession = KlarnaSession(
-            webViewTitle,
             SESSION_ID,
             CLIENT_TOKEN,
             listOf(
@@ -31,7 +29,7 @@ internal class CreateSessionDataResponseTest {
             )
         )
 
-        assertEquals(klarnaSession, createSessionDataResponse.toKlarnaSession(webViewTitle))
+        assertEquals(klarnaSession, createSessionDataResponse.toKlarnaSession())
     }
 
     private companion object {

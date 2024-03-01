@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.presentation.paymentMethods.nativeUi.googlepay.GooglePayHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.ipay88.IPay88HeadlessViewModel
-import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.KlarnaHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalCheckoutHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalVaultHeadlessViewModel
 import io.primer.android.components.presentation.paymentMethods.nativeUi.webRedirect.AsyncPaymentMethodNativeUiHeadlessViewModel
@@ -34,10 +33,6 @@ internal class HeadlessViewModelFactory {
                 PaypalVaultHeadlessViewModel.Companion.Factory()
             )[paymentMethodType, PaypalVaultHeadlessViewModel::class.java]
         }
-        paymentMethodType == PaymentMethodType.KLARNA.name -> ViewModelProvider(
-            componentActivity,
-            KlarnaHeadlessViewModel.Companion.Factory()
-        )[paymentMethodType, KlarnaHeadlessViewModel::class.java]
         paymentMethodImplementationType == PaymentMethodImplementationType.IPAY88_SDK ->
             ViewModelProvider(
                 componentActivity,

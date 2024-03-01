@@ -6,7 +6,6 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.StateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.googlepay.GooglePayStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.ipay88.IPay88StateMachine
-import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.KlarnaStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalCheckoutStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.paypal.PaypalVaultStateMachine
 import io.primer.android.components.presentation.paymentMethods.nativeUi.webRedirect.AsyncStateMachine
@@ -41,9 +40,6 @@ internal class DefaultPaymentMethodStateMachineFactory : PaymentMethodStateMachi
                     PrimerSessionIntent.VAULT -> PaypalVaultStateMachine.create(initialState)
                 }
             }
-            paymentMethodType == PaymentMethodType.KLARNA.name -> KlarnaStateMachine.create(
-                initialState
-            )
             paymentMethodImplementationType == PaymentMethodImplementationType.IPAY88_SDK ->
                 IPay88StateMachine.create(initialState)
             else -> AsyncStateMachine.create(initialState)

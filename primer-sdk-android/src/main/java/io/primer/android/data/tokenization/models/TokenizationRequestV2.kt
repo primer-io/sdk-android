@@ -4,8 +4,8 @@ import android.os.Build
 import android.util.Base64
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.serialization.json.JSONObjectSerializable
-import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.tokenization.models.paymentInstruments.async.AsyncPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactCardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.bancontactCard.AdyenBancontactSessionInfoDataRequest
@@ -17,7 +17,8 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.retai
 import io.primer.android.data.tokenization.models.paymentInstruments.async.webRedirect.WebRedirectSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.card.CardPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentDataRequest
-import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaCheckoutPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.klarna.KlarnaVaultPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolPaySessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.ExternalPayerInfoRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentDataRequest
@@ -33,7 +34,8 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.async.web
 import io.primer.android.domain.tokenization.models.paymentInstruments.bancontactCard.AdyenBancontactCardPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.card.CardPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.googlepay.GooglePayPaymentInstrumentParams
-import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.KlarnaPaymentInstrumentParams
+import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.KlarnaCheckoutPaymentInstrumentParams
+import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.KlarnaVaultPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentParams
@@ -73,6 +75,7 @@ internal fun TokenizationParamsV2.toTokenizationRequest(): TokenizationRequestV2
     }
 }
 
+@Suppress("LongMethod", "ComplexMethod")
 internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstrumentDataRequest {
     return when (this) {
         is CardPaymentInstrumentParams -> CardPaymentInstrumentDataRequest(
@@ -84,9 +87,14 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
             preferredNetwork
         )
 
-        is KlarnaPaymentInstrumentParams -> KlarnaPaymentInstrumentDataRequest(
-            klarnaCustomerToken,
-            sessionData
+        is KlarnaCheckoutPaymentInstrumentParams -> KlarnaCheckoutPaymentInstrumentDataRequest(
+            klarnaAuthorizationToken = klarnaAuthorizationToken,
+            sessionData = sessionData
+        )
+
+        is KlarnaVaultPaymentInstrumentParams -> KlarnaVaultPaymentInstrumentDataRequest(
+            klarnaCustomerToken = klarnaCustomerToken,
+            sessionData = sessionData
         )
 
         is PaypalCheckoutPaymentInstrumentParams -> PaypalCheckoutPaymentInstrumentDataRequest(
