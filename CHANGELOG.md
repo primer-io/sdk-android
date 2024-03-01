@@ -2,8 +2,10 @@
 
 ### Feat
 
-- implement Klarna headless
-- klarna headless payment manager (#478)
+- Implement Klarna headless API
+- Implement ability to select Klarna payment category in Klarna Drop-in
+- Implement support for CHECKOUT payment intents for Klarna Drop-in
+- Implement support for Klarna Extra Merchant Data
 
 ## 2.25.0 (2024-02-15)
 
