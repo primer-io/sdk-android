@@ -1,3 +1,10 @@
+## 2.26.0 (2024-03-01)
+
+### Feat
+
+- implement Klarna headless
+- klarna headless payment manager (#478)
+
 ## 2.25.0 (2024-02-15)
 
 ### Feat
