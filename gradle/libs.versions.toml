@@ -34,7 +34,6 @@ kover = "0.7.3"
 ktlint = "11.6.1"
 junit5Plugin = "1.9.3.0"
 mavenPublish = "0.22.0"
-stripe = "20.37.3"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -72,8 +71,6 @@ kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 json = { group = "org.json", name = "json", version.ref = "json" }
 livedata-testing = { group = "com.jraska.livedata", name = "testing-ktx", version.ref = "liveDataTesting" }
 arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
-stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripe" }
-stripe-financial-connections = { module = "com.stripe:financial-connections", version.ref = "stripe" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
