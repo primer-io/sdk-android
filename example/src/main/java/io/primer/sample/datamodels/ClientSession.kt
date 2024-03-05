@@ -63,7 +63,7 @@ interface ClientSession : ExampleAppRequestBody {
                                 description = "this item",
                                 discountAmount = 0,
                                 taxAmount = 0,
-                                productType = "PHYSICAL"
+                                productType = "DIGITAL"
                             ),
                         ),
                     ),
