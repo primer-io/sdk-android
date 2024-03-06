@@ -11,6 +11,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
@@ -99,6 +100,8 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
         binding.progressBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.height = requireContext().getCollapsedSheetHeight()
         }
+
+        adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
