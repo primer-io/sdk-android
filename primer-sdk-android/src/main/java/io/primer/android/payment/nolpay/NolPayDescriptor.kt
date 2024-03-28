@@ -17,7 +17,7 @@ internal class NolPayDescriptor constructor(
     override val selectedBehaviour: SelectedPaymentMethodBehaviour
         get() = TODO("Not yet implemented")
     override val type: PaymentMethodUiType = PaymentMethodUiType.FORM
-    override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_AND_VAULT
+    override val vaultCapability: VaultCapability = VaultCapability.SINGLE_USE_ONLY
     override val headlessDefinition: HeadlessDefinition = HeadlessDefinition(
         listOf(
             PrimerPaymentMethodManagerCategory.NOL_PAY
