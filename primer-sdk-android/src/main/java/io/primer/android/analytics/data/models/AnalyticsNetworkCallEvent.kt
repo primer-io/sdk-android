@@ -67,7 +67,7 @@ internal data class AnalyticsNetworkCallEvent(
 }
 
 internal data class NetworkCallProperties(
-    val networkCallType: NetworkCallType,
+    val callType: NetworkCallType,
     val id: String,
     val url: String,
     val method: String,
@@ -77,7 +77,7 @@ internal data class NetworkCallProperties(
 
     companion object {
 
-        private const val NETWORK_CALL_TYPE_FIELD = "networkCallType"
+        private const val NETWORK_CALL_TYPE_FIELD = "callType"
         private const val ID_FIELD = "id"
         private const val URL_FIELD = "url"
         private const val METHOD_FIELD = "method"
@@ -87,7 +87,7 @@ internal data class NetworkCallProperties(
         @JvmField
         val serializer = JSONObjectSerializer<NetworkCallProperties> { t ->
             JSONObject().apply {
-                put(NETWORK_CALL_TYPE_FIELD, t.networkCallType.name)
+                put(NETWORK_CALL_TYPE_FIELD, t.callType.name)
                 put(ID_FIELD, t.id)
                 put(URL_FIELD, t.url)
                 put(METHOD_FIELD, t.method)
