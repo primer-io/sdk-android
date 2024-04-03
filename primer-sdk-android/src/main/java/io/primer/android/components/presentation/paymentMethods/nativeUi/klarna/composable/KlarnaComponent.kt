@@ -36,7 +36,9 @@ import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.
 import io.primer.android.data.base.util.requireNotNullCheck
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapper
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.error.models.PrimerError
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +58,7 @@ class KlarnaComponent internal constructor(
     private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
     private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
     private val authorizationSessionDataDelegate: GetKlarnaAuthorizationSessionDataDelegate,
+    private val errorEventResolver: BaseErrorEventResolver,
     private val errorMapper: ErrorMapper,
     private val createKlarnaPaymentView:
         (Context, String, KlarnaPaymentViewCallback, String) -> KlarnaPaymentView,
@@ -232,6 +235,10 @@ class KlarnaComponent internal constructor(
     private fun handleError(
         throwable: Throwable
     ) = viewModelScope.launch {
+        if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN) {
+            errorEventResolver.resolve(throwable, ErrorMapperType.KLARNA)
+        }
+
         errorMapper.getPrimerError(throwable)
             .also { error ->
                 _componentError.emit(error)

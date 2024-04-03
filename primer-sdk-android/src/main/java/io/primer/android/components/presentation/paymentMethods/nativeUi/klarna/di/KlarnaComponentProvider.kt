@@ -36,6 +36,7 @@ internal class KlarnaComponentProvider : DISdkComponent {
                         ),
                         errorLoggingDelegate = resolve(),
                         authorizationSessionDataDelegate = resolve(),
+                        errorEventResolver = resolve(),
                         errorMapper = resolve(KLARNA_ERROR_RESOLVER_NAME),
                         createKlarnaPaymentView = { context, paymentCategory, callback, returnUrl ->
                             KlarnaPaymentView(

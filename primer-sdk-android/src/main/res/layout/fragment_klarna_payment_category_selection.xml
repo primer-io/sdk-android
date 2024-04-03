@@ -77,7 +77,7 @@
             android:id="@+id/payment_category_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="payment_method_back,payment_categories,authorize" />
+            app:constraint_referenced_ids="payment_categories,authorize" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"

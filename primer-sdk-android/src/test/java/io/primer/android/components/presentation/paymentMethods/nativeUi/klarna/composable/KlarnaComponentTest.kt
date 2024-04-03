@@ -10,6 +10,7 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
@@ -41,7 +42,9 @@ import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.KlarnaPaymentStep
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapper
+import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.extensions.collectIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -85,6 +88,9 @@ class KlarnaComponentTest {
     @MockK
     private lateinit var authorizationSessionDataDelegate: GetKlarnaAuthorizationSessionDataDelegate
 
+    @RelaxedMockK
+    private lateinit var baseErrorEventResolver: BaseErrorEventResolver
+
     @MockK
     private lateinit var errorMapper: ErrorMapper
 
@@ -113,6 +119,7 @@ class KlarnaComponentTest {
             eventLoggingDelegate = eventLoggingDelegate,
             errorLoggingDelegate = errorLoggingDelegate,
             authorizationSessionDataDelegate = authorizationSessionDataDelegate,
+            errorEventResolver = baseErrorEventResolver,
             errorMapper = errorMapper,
             createKlarnaPaymentView = createKlarnaPaymentView,
             primerSettings = primerSettings,
@@ -174,7 +181,7 @@ class KlarnaComponentTest {
     }
 
     @Test
-    fun `start() should log event, log and emit error when session creation delegate fails`() = runTest {
+    fun `start() should log event, log and emit error when session creation delegate fails and in HEADLESS mode`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -198,7 +205,55 @@ class KlarnaComponentTest {
         validationJob.cancel()
         stepJob.cancel()
 
+        verify(exactly = 0) {
+            baseErrorEventResolver.resolve(any(), any())
+        }
         verify(exactly = 1) {
+            errorMapper.getPrimerError(exception)
+        }
+        coVerify(exactly = 1) {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_START_METHOD,
+                paymentMethodType = PaymentMethodType.KLARNA.name
+            )
+            klarnaSessionCreationDelegate.createSession(primerSessionIntent)
+            errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
+        }
+        assertEquals(listOf(primerError), errors)
+        assertEquals(
+            emptyList<PrimerValidationStatus<KlarnaPaymentCollectableData>>(),
+            validationStatuses
+        )
+        assertEquals(emptyList<KlarnaPaymentStep>(), steps)
+    }
+
+    @Test
+    fun `start() should log event, log, emit error, and resolve checkout errors when session creation delegate fails and in DROP-in mode`() = runTest {
+        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
+        coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
+        val exception = Exception()
+        coEvery {
+            klarnaSessionCreationDelegate.createSession(primerSessionIntent)
+        } returns Result.failure(exception)
+        val primerError = mockk<PrimerError>()
+        coEvery { errorMapper.getPrimerError(any()) } returns primerError
+        val errors = mutableListOf<PrimerError>()
+        val errorJob = component.componentError.collectIn(errors, this)
+        val validationStatuses =
+            mutableListOf<PrimerValidationStatus<KlarnaPaymentCollectableData>>()
+        val validationJob = component.componentValidationStatus.collectIn(validationStatuses, this)
+        val steps = mutableListOf<KlarnaPaymentStep>()
+        val stepJob = component.componentStep.collectIn(steps, this)
+
+        component.start()
+        delay(1.seconds)
+        errorJob.cancel()
+        validationJob.cancel()
+        stepJob.cancel()
+
+        verify(exactly = 1) {
+            baseErrorEventResolver.resolve(exception, ErrorMapperType.KLARNA)
             errorMapper.getPrimerError(exception)
         }
         coVerify(exactly = 1) {
@@ -663,6 +718,9 @@ class KlarnaComponentTest {
             )
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
         }
+        verify(exactly = 0) {
+            baseErrorEventResolver.resolve(any(), any())
+        }
         coVerify(exactly = 0) {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
         }
@@ -751,6 +809,9 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize("sessionId", "authToken", primerSessionIntent)
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
         }
+        verify(exactly = 0) {
+            baseErrorEventResolver.resolve(any(), any())
+        }
         assertEquals(listOf<PrimerError>(primerError), errors)
         assertEquals(
             listOf<PrimerValidationStatus<KlarnaPaymentCollectableData>>(
@@ -835,6 +896,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
+        }
+        verify(exactly = 0) {
+            baseErrorEventResolver.resolve(any(), any())
         }
         assertEquals(listOf<PrimerError>(primerError), errors)
         assertEquals(
@@ -1000,6 +1064,9 @@ class KlarnaComponentTest {
         }
         coVerify(exactly = 0) {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
+        }
+        verify(exactly = 0) {
+            baseErrorEventResolver.resolve(any(), any())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(listOf<PrimerError>(primerError), errors)

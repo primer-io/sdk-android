@@ -78,6 +78,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
         binding.paymentCategories.dummyKlarnaPaymentViewContainer =
             binding.dummyKlarnaPaymentViewContainer
         binding.paymentCategoryGroup.isVisible = false
+        updatePaymentMethodBackVisibility(isVisible = false)
         binding.progressGroup.isVisible = true
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -102,6 +103,11 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
         }
 
         adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
+    }
+
+    private fun updatePaymentMethodBackVisibility(isVisible: Boolean? = null) {
+        binding.paymentMethodBack.isVisible =
+            isVisible ?: primerConfig?.isStandalonePaymentMethod?.not() ?: false
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -137,6 +143,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
                             }
                         binding.progressGroup.isVisible = false
                         binding.paymentCategoryGroup.isVisible = true
+                        updatePaymentMethodBackVisibility()
                     }
                 }
 
@@ -173,7 +180,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
 
     private suspend fun collectComponentErrors() {
         component.componentError.collectLatest {
-            parentFragmentManager.popBackStack()
+            // no-op: For drop-in, errors are dispatched as via CheckoutErrorEventResolver
         }
     }
 
@@ -199,6 +206,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
             // Show loading indicator after 1 second
             binding.root.postDelayed(1000) {
                 binding.paymentCategoryGroup.isVisible = false
+                updatePaymentMethodBackVisibility(isVisible = false)
                 binding.progressGroup.isVisible = true
             }
         }
