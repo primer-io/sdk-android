@@ -441,3 +441,5 @@
 
 # for the BuildConfig
 -keep class io.primer.android.BuildConfig { *; }
+
+-keepattributes RuntimeVisibleAnnotations

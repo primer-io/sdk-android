@@ -1,6 +1,7 @@
 package io.primer.android.di
 
 import kotlin.reflect.KClass
+import kotlin.Function0
 
 internal abstract class DependencyContainer {
 
