@@ -13,7 +13,8 @@ internal data class GooglePay(
     val currencyCode: String,
     val allowedCardNetworks: List<CardNetwork.Type>,
     val buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
-    val billingAddressRequired: Boolean = false
+    val billingAddressRequired: Boolean = false,
+    val existingPaymentMethodRequired: Boolean = false
 ) : PaymentMethod {
 
     override val type = PaymentMethodType.GOOGLE_PAY.name

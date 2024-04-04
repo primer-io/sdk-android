@@ -29,16 +29,17 @@ internal class GooglePayFactory(
         }
 
         val googlePay = GooglePay(
-            settings.paymentMethodOptions.googlePayOptions.merchantName,
-            PaymentUtils.minorToAmount(settings.currentAmount, currency).toString(),
-            settings.order.countryCode.toString(),
-            currency.currencyCode,
-            localConfigurationDataSource.getConfiguration().clientSession
+            merchantName = settings.paymentMethodOptions.googlePayOptions.merchantName,
+            totalPrice = PaymentUtils.minorToAmount(settings.currentAmount, currency).toString(),
+            countryCode = settings.order.countryCode.toString(),
+            currencyCode = currency.currencyCode,
+            allowedCardNetworks = localConfigurationDataSource.getConfiguration().clientSession
                 .paymentMethod?.orderedAllowedCardNetworks.orEmpty().intersect(
                     GooglePay.allowedCardNetworks
                 ).toList(),
-            settings.paymentMethodOptions.googlePayOptions.buttonStyle,
-            settings.paymentMethodOptions.googlePayOptions.captureBillingAddress
+            buttonStyle = settings.paymentMethodOptions.googlePayOptions.buttonStyle,
+            billingAddressRequired = settings.paymentMethodOptions.googlePayOptions.captureBillingAddress,
+            existingPaymentMethodRequired = settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired
         )
 
         return Success(googlePay)

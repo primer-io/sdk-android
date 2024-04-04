@@ -19,13 +19,15 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         "VISA"
     ),
     var buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
-    var captureBillingAddress: Boolean = false
+    var captureBillingAddress: Boolean = false,
+    val existingPaymentMethodRequired: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.createStringArrayList().orEmpty(),
-        GooglePayButtonStyle.valueOf(parcel.readString().orEmpty()),
-        parcel.readByte() != 0.toByte()
+        merchantName = parcel.readString(),
+        allowedCardNetworks = parcel.createStringArrayList().orEmpty(),
+        buttonStyle = GooglePayButtonStyle.valueOf(parcel.readString().orEmpty()),
+        captureBillingAddress = parcel.readByte() != 0.toByte(),
+        existingPaymentMethodRequired = parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -33,6 +35,7 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         parcel.writeStringList(allowedCardNetworks)
         parcel.writeString(buttonStyle.name)
         parcel.writeByte(if (captureBillingAddress) 1 else 0)
+        parcel.writeByte(if (existingPaymentMethodRequired) 1 else 0)
     }
 
     override fun describeContents(): Int {

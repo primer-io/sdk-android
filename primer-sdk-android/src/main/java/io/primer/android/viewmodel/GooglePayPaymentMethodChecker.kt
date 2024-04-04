@@ -15,7 +15,8 @@ internal class GooglePayPaymentMethodChecker constructor(
         return googlePayFacade.checkIfIsReadyToPay(
             allowedCardNetworks = googlePay.allowedCardNetworks.map { type -> type.name },
             allowedCardAuthMethods = googlePay.allowedCardAuthMethods,
-            billingAddressRequired = googlePay.billingAddressRequired
+            billingAddressRequired = googlePay.billingAddressRequired,
+            existingPaymentMethodRequired = googlePay.existingPaymentMethodRequired
         )
     }
 }

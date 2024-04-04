@@ -36,19 +36,22 @@ internal class GooglePayFacade constructor(
     suspend fun checkIfIsReadyToPay(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean
+        billingAddressRequired: Boolean,
+        existingPaymentMethodRequired: Boolean
     ): Boolean = checkIfIsReadyToPay(
         buildIsReadyToGooglePayRequest(
             allowedCardNetworks = allowedCardNetworks,
             allowedCardAuthMethods = allowedCardAuthMethods,
-            billingAddressRequired = billingAddressRequired
+            billingAddressRequired = billingAddressRequired,
+            existingPaymentMethodRequired = existingPaymentMethodRequired
         )
     )
 
     private fun buildIsReadyToGooglePayRequest(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean
+        billingAddressRequired: Boolean,
+        existingPaymentMethodRequired: Boolean
     ): JSONObject {
         val baseCardPaymentMethods = baseCardPaymentMethod(
             allowedCardNetworks,
@@ -58,6 +61,7 @@ internal class GooglePayFacade constructor(
 
         return baseRequest.apply {
             put("allowedPaymentMethods", JSONArray().put(baseCardPaymentMethods))
+            put("existingPaymentMethodRequired", existingPaymentMethodRequired)
         }
     }
 

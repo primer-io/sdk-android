@@ -177,7 +177,10 @@ class MainViewModel(
                         .build()
                         .toString()
                 ),
-                googlePayOptions = PrimerGooglePayOptions(captureBillingAddress = true),
+                googlePayOptions = PrimerGooglePayOptions(
+                    captureBillingAddress = true,
+                    existingPaymentMethodRequired = true
+                ),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds")
             ),
             uiOptions = _uiOptions.value ?: PrimerUIOptions(),
