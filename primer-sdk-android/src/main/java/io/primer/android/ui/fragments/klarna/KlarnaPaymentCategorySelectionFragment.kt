@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.manager.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.composable.KlarnaComponent
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.KlarnaPaymentCollectableData
@@ -160,6 +159,8 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
                         }
                     if (categories.orEmpty().size == 1) {
                         submit()
+                    } else if (categories.orEmpty().size > 1) {
+                        binding.authorize.isEnabled = true
                     }
                 }
 
@@ -186,16 +187,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
 
     private suspend fun collectValidationStatuses() {
         component.componentValidationStatus.collectLatest {
-            if (
-                it is PrimerValidationStatus.Valid &&
-                it.collectableData is KlarnaPaymentCollectableData.PaymentOptions
-            ) {
-                if (categories.orEmpty().size > 1) {
-                    binding.authorize.isEnabled = true
-                }
-            } else {
-                // no-op
-            }
+            // no-op
         }
     }
 
