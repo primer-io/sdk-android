@@ -1,3 +1,13 @@
+## 2.26.1 (2024-04-04)
+
+### Fix
+
+- enable authorization button after Klarna payment view is loaded (#535)
+- **proguard**: Added rules to consumer-rules.pro to avoid issues in release mode (#534)
+- Klarna drop-in stuck in loading state when SDK returns error (#533)
+- **analytics**: Renamed networkCallType -> callType to align with other platforms (#532)
+- fixed Nol Pay Vault capability and regression with payment completion (#530)
+
 ## 2.26.0 (2024-03-01)
 
 ### Feat
