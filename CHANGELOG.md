@@ -1,3 +1,11 @@
+## 2.27.0 (2024-04-09)
+
+### Feat
+
+- **CVV-recapture**: Adds cvv recapture to drop in (#531)
+- **paypal**: Added externalPayerId to tokenization request, exposed externalPayerId, first and last name in payment instrument (#538)
+- **google-pay**: hide GooglePay from checkout when no card in the wallet (#529)
+
 ## 2.26.1 (2024-04-04)
 
 ### Fix
