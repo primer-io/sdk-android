@@ -6,9 +6,6 @@ plugins {
 repositories {
     google()
     mavenCentral()
-    maven {
-        url "${ARTIFACTORY_3DS_URL}"
-    }
     mavenLocal()
     maven {
         url 'https://x.klarnacdn.net/mobile-sdk/'

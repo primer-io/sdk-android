@@ -13,9 +13,9 @@ googleWallet = "19.2.1"
 
 okhttp = "4.12.0"
 
-primer-3ds = "1.4.1"
+primer-3ds = "1.4.2"
 primer-klarna = "1.0.4"
-primer-ipay88 = "1.0.1"
+primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
 
 junit5 = "5.8.2"
