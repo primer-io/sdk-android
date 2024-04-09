@@ -94,7 +94,7 @@ dependencies {
     implementation libs.primer.ipay88
     implementation libs.primer.nol.pay
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
 
     testImplementation 'junit:junit:4.13.2'
 
