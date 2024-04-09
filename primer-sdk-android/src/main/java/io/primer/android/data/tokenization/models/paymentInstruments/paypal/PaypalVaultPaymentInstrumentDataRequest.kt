@@ -19,29 +19,26 @@ internal data class PaypalVaultPaymentInstrumentDataRequest(
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
         @JvmField
-        val serializer =
-            object : JSONObjectSerializer<PaypalVaultPaymentInstrumentDataRequest> {
-                override fun serialize(t: PaypalVaultPaymentInstrumentDataRequest): JSONObject {
-                    return JSONObject().apply {
-                        putOpt(BILLING_AGREEMENT_ID_FIELD, t.billingAgreementId)
-                        put(
-                            EXTERNAL_PAYER_INFO_FIELD,
-                            t.externalPayerInfo.let {
-                                JSONSerializationUtils
-                                    .getJsonObjectSerializer<PaypalExternalPayerInfo>()
-                                    .serialize(it)
-                            }
-                        )
-                        putOpt(
-                            SHIPPING_ADDRESS_FIELD,
-                            t.shippingAddressDataResponse?.let {
-                                JSONSerializationUtils
-                                    .getJsonObjectSerializer<PaypalShippingAddressDataResponse>()
-                                    .serialize(it)
-                            }
-                        )
+        val serializer = JSONObjectSerializer<PaypalVaultPaymentInstrumentDataRequest> { t ->
+            JSONObject().apply {
+                putOpt(BILLING_AGREEMENT_ID_FIELD, t.billingAgreementId)
+                put(
+                    EXTERNAL_PAYER_INFO_FIELD,
+                    t.externalPayerInfo.let {
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<PaypalExternalPayerInfo>()
+                            .serialize(it)
                     }
-                }
+                )
+                putOpt(
+                    SHIPPING_ADDRESS_FIELD,
+                    t.shippingAddressDataResponse?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<PaypalShippingAddressDataResponse>()
+                            .serialize(it)
+                    }
+                )
             }
+        }
     }
 }

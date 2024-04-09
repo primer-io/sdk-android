@@ -5,18 +5,19 @@ import io.primer.android.core.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 internal data class ExternalPayerInfoRequest(
-    val email: String?
+    val email: String?,
+    val externalPayerId: String?
 ) : JSONObjectSerializable {
     companion object {
 
         private const val EMAIL_FIELD = "email"
+        private const val EXTERNAL_PAYER_ID = "external_payer_id" // BE does not support camelCase
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<ExternalPayerInfoRequest> {
-            override fun serialize(t: ExternalPayerInfoRequest): JSONObject {
-                return JSONObject().apply {
-                    put(EMAIL_FIELD, t.email)
-                }
+        val serializer = JSONObjectSerializer<ExternalPayerInfoRequest> { t ->
+            JSONObject().apply {
+                put(EMAIL_FIELD, t.email)
+                put(EXTERNAL_PAYER_ID, t.externalPayerId)
             }
         }
     }

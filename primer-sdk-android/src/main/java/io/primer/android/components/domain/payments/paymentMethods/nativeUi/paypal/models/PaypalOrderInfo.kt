@@ -2,5 +2,6 @@ package io.primer.android.components.domain.payments.paymentMethods.nativeUi.pay
 
 internal data class PaypalOrderInfo(
     val orderId: String,
-    val email: String?
+    val email: String?,
+    val externalPayerId: String?
 )

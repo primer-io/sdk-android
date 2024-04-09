@@ -15,22 +15,18 @@ internal data class PaypalCheckoutPaymentInstrumentDataRequest(
         private const val EXTERNAL_PAYER_INFO_FIELD = "externalPayerInfo"
 
         @JvmField
-        val serializer =
-            object : JSONObjectSerializer<PaypalCheckoutPaymentInstrumentDataRequest> {
-                override fun serialize(t: PaypalCheckoutPaymentInstrumentDataRequest):
-                    JSONObject {
-                    return JSONObject().apply {
-                        putOpt(PAYPAL_ORDER_ID_FIELD, t.paypalOrderId)
-                        put(
-                            EXTERNAL_PAYER_INFO_FIELD,
-                            t.externalPayerInfo?.let {
-                                JSONSerializationUtils
-                                    .getJsonObjectSerializer<ExternalPayerInfoRequest>()
-                                    .serialize(it)
-                            }
-                        )
+        val serializer = JSONObjectSerializer<PaypalCheckoutPaymentInstrumentDataRequest> { t ->
+            JSONObject().apply {
+                putOpt(PAYPAL_ORDER_ID_FIELD, t.paypalOrderId)
+                put(
+                    EXTERNAL_PAYER_INFO_FIELD,
+                    t.externalPayerInfo?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<ExternalPayerInfoRequest>()
+                            .serialize(it)
                     }
-                }
+                )
             }
+        }
     }
 }

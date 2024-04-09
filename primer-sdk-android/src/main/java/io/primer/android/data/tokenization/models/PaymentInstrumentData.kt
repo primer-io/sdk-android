@@ -54,55 +54,60 @@ data class PaymentInstrumentData(
         private const val BIN_DATA_FIELD = "binData"
 
         @JvmField
-        internal val deserializer = object : JSONObjectDeserializer<PaymentInstrumentData> {
-
-            override fun deserialize(t: JSONObject): PaymentInstrumentData {
-                return PaymentInstrumentData(
-                    t.optNullableString(NETWORK_FIELD),
-                    t.optNullableString(CARDHOLDER_NAME_FIELD),
-                    t.optNullableInt(FIRST_6_DIGITS_FIELD),
-                    t.optNullableInt(LAST_4_DIGITS_FIELD),
-                    t.optNullableInt(EXPIRATION_MONTH_FIELD),
-                    t.optNullableInt(EXPIRATION_YEAR_FIELD),
-                    t.optNullableString(GO_CARDLESS_MANDATE_ID_FIELD),
-                    t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<ExternalPayerInfo>()
-                            .deserialize(it)
-                    },
-                    t.optNullableString(KLARNA_CUSTOMER_TOKEN_FIELD),
-                    t.optJSONObject(SESSION_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<SessionData>()
-                            .deserialize(it)
-                    },
-                    t.optNullableString(MX_FIELD),
-                    t.optNullableInt(MNC_FIELD),
-                    t.optNullableInt(MCC_FIELD),
-                    t.optNullableString(HASHED_IDENTIFIER_FIELD),
-                    t.optNullableString(CURRENCY_CODE_FIELD),
-                    t.optNullableString(PRODUCT_ID_FIELD),
-                    t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
-                    t.optJSONObject(BIN_DATA_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<BinData>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        internal val deserializer = JSONObjectDeserializer { t ->
+            PaymentInstrumentData(
+                t.optNullableString(NETWORK_FIELD),
+                t.optNullableString(CARDHOLDER_NAME_FIELD),
+                t.optNullableInt(FIRST_6_DIGITS_FIELD),
+                t.optNullableInt(LAST_4_DIGITS_FIELD),
+                t.optNullableInt(EXPIRATION_MONTH_FIELD),
+                t.optNullableInt(EXPIRATION_YEAR_FIELD),
+                t.optNullableString(GO_CARDLESS_MANDATE_ID_FIELD),
+                t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<ExternalPayerInfo>()
+                        .deserialize(it)
+                },
+                t.optNullableString(KLARNA_CUSTOMER_TOKEN_FIELD),
+                t.optJSONObject(SESSION_DATA_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<SessionData>()
+                        .deserialize(it)
+                },
+                t.optNullableString(MX_FIELD),
+                t.optNullableInt(MNC_FIELD),
+                t.optNullableInt(MCC_FIELD),
+                t.optNullableString(HASHED_IDENTIFIER_FIELD),
+                t.optNullableString(CURRENCY_CODE_FIELD),
+                t.optNullableString(PRODUCT_ID_FIELD),
+                t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
+                t.optJSONObject(BIN_DATA_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<BinData>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }
 
 data class ExternalPayerInfo(
-    val email: String
+    val email: String,
+    val externalPayerId: String?,
+    val firstName: String?,
+    val lastName: String?
 ) : JSONDeserializable {
     companion object {
         private const val EMAIL_FIELD = "email"
+        private const val EXTERNAL_PAYER_ID_FIELD = "externalPayerId"
+        private const val FIRST_NAME_FIELD = "firstName"
+        private const val LAST_NAME_FIELD = "lastName"
 
         @JvmField
-        internal val deserializer = object : JSONObjectDeserializer<ExternalPayerInfo> {
-
-            override fun deserialize(t: JSONObject): ExternalPayerInfo {
-                return ExternalPayerInfo(t.getString(EMAIL_FIELD))
-            }
+        internal val deserializer = JSONObjectDeserializer { t ->
+            ExternalPayerInfo(
+                email = t.getString(EMAIL_FIELD),
+                externalPayerId = t.optNullableString(EXTERNAL_PAYER_ID_FIELD),
+                firstName = t.optNullableString(FIRST_NAME_FIELD),
+                lastName = t.optNullableString(LAST_NAME_FIELD)
+            )
         }
     }
 }
@@ -116,17 +121,14 @@ data class SessionData(
         private const val BILLING_ADDRESS_FIELD = "billingAddress"
 
         @JvmField
-        internal val deserializer = object : JSONObjectDeserializer<SessionData> {
-
-            override fun deserialize(t: JSONObject): SessionData {
-                return SessionData(
-                    t.optNullableString(RECURRING_DESCRIPTION_FIELD),
-                    t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
-                        JSONSerializationUtils.getJsonObjectDeserializer<BillingAddress>()
-                            .deserialize(it)
-                    }
-                )
-            }
+        internal val deserializer = JSONObjectDeserializer { t ->
+            SessionData(
+                t.optNullableString(RECURRING_DESCRIPTION_FIELD),
+                t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
+                    JSONSerializationUtils.getJsonObjectDeserializer<BillingAddress>()
+                        .deserialize(it)
+                }
+            )
         }
     }
 }
@@ -138,13 +140,10 @@ data class BillingAddress(
         private const val EMAIL_FIELD = "email"
 
         @JvmField
-        internal val deserializer = object : JSONObjectDeserializer<BillingAddress> {
-
-            override fun deserialize(t: JSONObject): BillingAddress {
-                return BillingAddress(
-                    t.getString(EMAIL_FIELD)
-                )
-            }
+        internal val deserializer = JSONObjectDeserializer { t ->
+            BillingAddress(
+                t.getString(EMAIL_FIELD)
+            )
         }
     }
 }
@@ -156,22 +155,15 @@ data class BinData(
         private const val NETWORK_FIELD = "network"
 
         @JvmField
-        internal val serializer = object :
-            JSONObjectSerializer<BinData> {
-            override fun serialize(t: BinData): JSONObject {
-                return JSONObject().apply {
-                    putOpt(NETWORK_FIELD, t.network)
-                }
+        internal val serializer = JSONObjectSerializer<BinData> { t ->
+            JSONObject().apply {
+                putOpt(NETWORK_FIELD, t.network)
             }
         }
 
         @JvmField
-        internal val deserializer = object : JSONObjectDeserializer<BinData> {
-
-            override fun deserialize(t: JSONObject): BinData {
-                return BinData(t.optNullableString(NETWORK_FIELD))
-            }
-        }
+        internal val deserializer =
+            JSONObjectDeserializer { t -> BinData(t.optNullableString(NETWORK_FIELD)) }
     }
 }
 

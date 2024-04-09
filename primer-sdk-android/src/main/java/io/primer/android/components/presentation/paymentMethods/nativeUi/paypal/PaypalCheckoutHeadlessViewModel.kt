@@ -191,7 +191,8 @@ internal class PaypalCheckoutHeadlessViewModel(
                 TokenizationParamsV2(
                     PaypalCheckoutPaymentInstrumentParams(
                         paypalOrderInfo.orderId,
-                        paypalOrderInfo.email
+                        paypalOrderInfo.email,
+                        paypalOrderInfo.externalPayerId
                     ),
                     sessionIntent
                 )
