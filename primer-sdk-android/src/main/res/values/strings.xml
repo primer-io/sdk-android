@@ -17,6 +17,8 @@
     <string name="last_four">•••• %d</string>
     <string name="expiry_date">%1$s / %2$s</string>
     <string name="available_payment_methods">Available payment methods</string>
+    <string name="primer_cvv_recapture_title">Enter CVV</string>
+    <string name="primer_cvv_recapture_explanation">Input the %d digit security code on your card for a secure payment.</string>
 
     <!-- Form things -->
     <string name="card_holder_name">Cardholder name</string>

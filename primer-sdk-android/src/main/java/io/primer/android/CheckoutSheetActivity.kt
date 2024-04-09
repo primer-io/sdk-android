@@ -40,6 +40,7 @@ import io.primer.android.ui.fragments.PaymentMethodStatusFragment
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
 import io.primer.android.ui.fragments.SessionCompleteFragment
 import io.primer.android.ui.fragments.SessionCompleteViewType
+import io.primer.android.ui.fragments.VaultedPaymentMethodsCvvRecaptureFragment
 import io.primer.android.ui.fragments.VaultedPaymentMethodsFragment
 import io.primer.android.ui.fragments.forms.FastBankTransferFragment
 import io.primer.android.ui.fragments.forms.PromptPayFragment
@@ -84,6 +85,10 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
 
             viewStatus == ViewStatus.VIEW_VAULTED_PAYMENT_METHODS -> {
                 VaultedPaymentMethodsFragment.newInstance()
+            }
+
+            viewStatus == ViewStatus.VAULTED_PAYMENT_RECAPTURE_CVV -> {
+                VaultedPaymentMethodsCvvRecaptureFragment.newInstance()
             }
 
             else -> null
@@ -266,14 +271,18 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         val actionParams =
             if (type == PaymentMethodType.PAYMENT_CARD.name) {
                 ActionUpdateUnselectPaymentMethodParams
-            } else { ActionUpdateSelectPaymentMethodParams(type) }
+            } else {
+                ActionUpdateSelectPaymentMethodParams(type)
+            }
 
         primerViewModel.dispatchAction(actionParams, false) { error: Error? ->
             runOnUiThread {
                 if (error == null) {
                     presentFragment(descriptor.selectedBehaviour)
                     primerViewModel.setState(SessionState.AWAITING_USER)
-                } else { emitError(error) }
+                } else {
+                    emitError(error)
+                }
             }
         }
     }

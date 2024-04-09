@@ -32,6 +32,7 @@
     <string name="payment_handling_manual">MANUAL</string>
     <string name="workflows_settings">Use legacy workflows</string>
     <string name="ui_settings_disable_init_screen">Disable init screen</string>
+    <string name="ui_settings_enable_cvv_recapture">Enable CVV recapture flow</string>
     <string name="env_production">Production</string>
     <string name="env_staging">Staging</string>
     <string name="env_dev">Dev</string>

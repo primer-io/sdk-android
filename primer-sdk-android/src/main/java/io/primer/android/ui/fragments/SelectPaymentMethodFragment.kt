@@ -11,9 +11,11 @@ import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.SessionState
+import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -25,11 +27,13 @@ import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
+import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions")
@@ -149,12 +153,16 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
 
     private fun onPayButtonPressed() {
         binding.payAllButton.showProgress()
-        val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return
-
-        // disable buttons and links
-        disableButtons()
-
-        primerViewModel.exchangePaymentMethodToken(paymentMethod)
+        lifecycleScope.launch {
+            if (primerViewModel.shouldShowCaptureCvv()) {
+                primerViewModel.goToVaultedPaymentCvvRecaptureView()
+            } else {
+                val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return@launch
+                // disable buttons and links
+                disableButtons()
+                primerViewModel.exchangePaymentMethodToken(paymentMethod)
+            }
+        }
     }
 
     /*
@@ -319,7 +327,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                     val expirationMonth = "${data.expirationMonth}".padStart(2, '0')
                     expiryLabel.text =
                         getString(R.string.expiry_date, expirationMonth, expirationYear)
-                    setCardIcon(data.network)
+                    setCardIcon(data.binData?.network)
                 }
 
                 else -> {
@@ -338,10 +346,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     private fun setCardIcon(network: String?) = binding.savedPaymentMethod.paymentMethodIcon.apply {
-        when (network) {
-            "Visa" -> setImageResource(R.drawable.ic_visa_card_colored)
-            "Mastercard" -> setImageResource(R.drawable.ic_mastercard_card_colored)
-            else -> setImageResource(R.drawable.ic_generic_card)
-        }
+        val resId = CardNetwork.Type.valueOrNull(network)?.getCardBrand()?.getImageAsset(ImageColor.COLORED)
+            ?: R.drawable.ic_generic_card
+        setImageResource(resId)
     }
 }

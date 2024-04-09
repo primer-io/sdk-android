@@ -16,8 +16,10 @@ import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.data.base.models.BasePaymentToken
 import io.primer.android.data.configuration.models.CheckoutModuleType
+import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -65,6 +67,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
@@ -170,6 +173,14 @@ internal class PrimerViewModel(
         }
         .asLiveData()
 
+    suspend fun shouldShowCaptureCvv(): Boolean =
+        configurationInteractor(ConfigurationParams(true)).map { configuration ->
+            configuration.paymentMethods.find { paymentMethod ->
+                paymentMethod.type == PaymentMethodType.PAYMENT_CARD.name
+            }?.options?.captureVaultedCardCvv
+        }.last() == true && selectedSavedPaymentMethod?.paymentMethodType ==
+            PaymentMethodType.PAYMENT_CARD.name
+
     fun goToVaultedPaymentMethodsView() {
         logGoToVaultedPaymentMethodsView()
         viewStatus.postValue(ViewStatus.VIEW_VAULTED_PAYMENT_METHODS)
@@ -179,6 +190,10 @@ internal class PrimerViewModel(
         logGoToSelectPaymentMethodsView()
         reselectSavedPaymentMethod()
         viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
+    }
+
+    fun goToVaultedPaymentCvvRecaptureView() {
+        viewStatus.postValue(ViewStatus.VAULTED_PAYMENT_RECAPTURE_CVV)
     }
 
     fun selectPaymentMethod(paymentMethodDescriptor: PaymentMethodDescriptor) {
@@ -292,6 +307,19 @@ internal class PrimerViewModel(
         exchangeInteractor(VaultTokenParams(token.token, token.paymentMethodType)).collect { }
     }
 
+    fun exchangePaymentMethodTokenWithAdditionalData(
+        token: PaymentMethodVaultTokenInternal,
+        additionalData: String
+    ) = viewModelScope.launch {
+        exchangeInteractor(
+            VaultTokenParams(
+                token.token,
+                token.paymentMethodType,
+                (PrimerVaultedCardAdditionalData(additionalData))
+            )
+        ).collect { }
+    }
+
     fun deleteToken(token: BasePaymentToken) = viewModelScope.launch {
         vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(token.token)).onSuccess { token ->
             _vaultedPaymentMethods.value =
@@ -346,7 +374,7 @@ internal class PrimerViewModel(
         )
     )
 
-    val monetaryAmount: MonetaryAmount? get() = config.monetaryAmount
+    private val monetaryAmount: MonetaryAmount? get() = config.monetaryAmount
 
     fun findSurchargeAmount(
         type: String,

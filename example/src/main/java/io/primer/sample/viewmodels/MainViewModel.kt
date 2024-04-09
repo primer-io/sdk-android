@@ -131,6 +131,12 @@ class MainViewModel(
     val metadata: LiveData<String> = _metadata
     fun setMetadata(metadata: String) = _metadata.postValue(metadata)
 
+    private val _captureVaultedCardCvv = MutableLiveData(false)
+    val captureVaultedCardCvv: LiveData<Boolean> = _captureVaultedCardCvv
+    fun setCaptureVaultedCardCvv(captureVaultedCardCvv: Boolean) = _captureVaultedCardCvv.postValue(
+        captureVaultedCardCvv
+    )
+
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
 
     private val _transactionState: MutableLiveData<TransactionState> =
@@ -206,7 +212,8 @@ class MainViewModel(
         countryRepository.getCurrency(),
         environment.value?.environment ?: throw Error("no environment set!"),
         metadata.value,
-        _legacyWorkflows.value
+        _legacyWorkflows.value,
+        _captureVaultedCardCvv.value ?: false
     ) { t ->
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
@@ -251,9 +258,11 @@ class MainViewModel(
                         "Manually created payment failed id: ${_transactionId.value.orEmpty()}"
                     )
                 }
+
                 TransactionState.SUCCESS -> {
                     completion?.handleSuccess()
                 }
+
                 else -> Unit
             }
             _transactionState.postValue(state)
@@ -281,9 +290,11 @@ class MainViewModel(
                         "Manually created payment resume failed id: ${_transactionId.value.orEmpty()}"
                     )
                 }
+
                 TransactionState.PENDING -> {
                     completion?.handleFailure(null)
                 }
+
                 else -> {
                     completion?.handleSuccess()
                 }

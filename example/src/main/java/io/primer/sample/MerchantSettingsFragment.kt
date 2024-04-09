@@ -47,6 +47,7 @@ class MerchantSettingsFragment : Fragment() {
         configureAmountTextField()
         configurePaymentHandlingViews()
         configureSdkUiSettingsViews()
+        configureCVVRecaptureViews()
         configureEnvSetup()
         configureNextButton()
         configureEnvDropDown()
@@ -183,6 +184,12 @@ class MerchantSettingsFragment : Fragment() {
     private fun configureSdkUiSettingsViews() {
         binding.disableInitScreen.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setInitScreenUiOptions(isChecked.not())
+        }
+    }
+
+    private fun configureCVVRecaptureViews() {
+        binding.enableCvvRecaptureFlow.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setCaptureVaultedCardCvv(isChecked)
         }
     }
 

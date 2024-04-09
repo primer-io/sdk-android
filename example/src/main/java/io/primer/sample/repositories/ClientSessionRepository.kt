@@ -24,6 +24,7 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
         environment: String,
         metadata: String?,
         useNewWorkflows: Boolean?,
+        captureVaultedCardCvv: Boolean,
         callback: (token: String?) -> Unit,
     ) {
         val body = ClientSession.Request.build(
@@ -32,7 +33,8 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
             amount,
             countryCode,
             currency,
-            metadata
+            metadata,
+            captureVaultedCardCvv
         )
         val request = HttpRequestUtil.generateRequest(
             body,

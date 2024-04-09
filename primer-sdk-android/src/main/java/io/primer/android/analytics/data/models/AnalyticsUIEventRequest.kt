@@ -158,5 +158,6 @@ internal enum class Place {
     WEBVIEW,
     `3DS_VIEW`,
     DIRECT_CHECKOUT,
-    IPAY88_VIEW
+    IPAY88_VIEW,
+    CVV_RECAPTURE_VIEW
 }

@@ -132,4 +132,10 @@
     <string name="primer_payment_method_button_content_description">Pay with %s</string>
     <string name="loading_text">Loading</string>
     <string name="continue_button">Continue</string>
+
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Indtast den %d-cifrede sikkerhedskode på dit kort for at foretage en sikker betaling.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Indtast CVV</string>
+    <!-- CVV- CVV recapture explanation label -->
 </resources>

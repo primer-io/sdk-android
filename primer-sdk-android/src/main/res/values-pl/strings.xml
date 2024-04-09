@@ -131,5 +131,9 @@
     <string name="card_expiry_formatted">Expiry (MM/YY)</string>
     <string name="primer_payment_method_button_content_description">Pay with %s</string>
     <string name="loading_text">Loading</string>
-    <string name="continue_button">Continue</string>
+    <string name="continue_button">Kontynuuj</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Przepisz %d-cyfrowy kod zabezpieczający ze swojej karty, aby dokonać bezpiecznej płatności.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Podaj kod CVV</string>
 </resources>

@@ -67,6 +67,7 @@ internal class ConfigurationDataResponseTest {
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
                 null,
                 null,
+                null,
                 null
             )
         )
@@ -84,6 +85,7 @@ internal class ConfigurationDataResponseTest {
             PaymentMethodRemoteConfigOptions(
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
                 PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
+                null,
                 null,
                 null,
                 null

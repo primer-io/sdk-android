@@ -157,6 +157,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/ui_settings_disable_init_screen" />
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/enableCvvRecaptureFlow"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_settings_enable_cvv_recapture" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/descriptorTextFieldLayout"
                 android:layout_width="match_parent"

@@ -306,7 +306,8 @@ internal data class PaymentMethodRemoteConfigOptions(
     val merchantAccountId: String?,
     val merchantAppId: String?,
     val threeDSecureEnabled: Boolean?,
-    val extraMerchantData: JSONObject?
+    val extraMerchantData: JSONObject?,
+    val captureVaultedCardCvv: Boolean?
 ) : JSONDeserializable {
 
     companion object {
@@ -315,6 +316,7 @@ internal data class PaymentMethodRemoteConfigOptions(
         private const val THREE_DS_SECURE_ENABLED_FIELD = "threeDSecureEnabled"
         private const val MERCHANT_APP_ID_FIELD = "appId"
         private const val EXTRA_MERCHANT_DATA = "extraMerchantData"
+        private const val CAPTURE_VAULTED_CARD_CVV = "captureVaultedCardCvv"
 
         @JvmField
         val deserializer = JSONObjectDeserializer { t ->
@@ -323,7 +325,8 @@ internal data class PaymentMethodRemoteConfigOptions(
                 t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
                 t.optNullableString(MERCHANT_APP_ID_FIELD),
                 t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD),
-                t.optNullableObject(EXTRA_MERCHANT_DATA)
+                t.optNullableObject(EXTRA_MERCHANT_DATA),
+                t.optNullableBoolean(CAPTURE_VAULTED_CARD_CVV)
             )
         }
     }

@@ -35,6 +35,7 @@ interface ClientSession : ExampleAppRequestBody {
                 countryCode: String,
                 currency: String,
                 metadata: String?,
+                captureVaultedCardCvv: Boolean
             ): Request {
                 var metadataMap: MutableMap<String, String>? = null
                 if (!metadata.isNullOrEmpty() && metadata.contains(":")) {
@@ -149,7 +150,8 @@ interface ClientSession : ExampleAppRequestBody {
                                             amount = 0,
                                         )
                                     ),
-                                )
+                                ),
+                                captureVaultedCardCvv = captureVaultedCardCvv
                             ),
                         ),
                         descriptor = "test-descriptor",
@@ -254,7 +256,8 @@ interface ClientSession : ExampleAppRequestBody {
 
     @Keep
     data class PaymentCardOption(
-        val networks: NetworkOptionGroup
+        val networks: NetworkOptionGroup,
+        val captureVaultedCardCvv: Boolean
     )
 
     @Keep

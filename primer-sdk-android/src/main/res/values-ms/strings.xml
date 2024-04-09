@@ -145,5 +145,9 @@
     <string name="uploadScreenshot">Muat naik tangkap layar tersebut menggunakan aplikasi perbankan anda</string>
     <string name="primer_payment_method_button_content_description">Pay with %s</string>
     <string name="loading_text">Loading</string>
-    <string name="continue_button">Continue</string>
+    <string name="continue_button">Teruskan</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Masukkan kod keselamatan digit %d pada kad anda untuk pembayaran yang selamat.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Masukkan CVV</string>
 </resources>

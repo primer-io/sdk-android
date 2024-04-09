@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/vaultedPaymentMethodCvvGoBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|start"
+        android:background="@drawable/icon_button"
+        android:contentDescription="@string/go_back_description"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_go_back"
+        app:layout_constraintBottom_toBottomOf="@id/vaultedPaymentMethodCvvTitleLabel"
+        app:layout_constraintEnd_toStartOf="@id/vaultedPaymentMethodCvvTitleLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/vaultedPaymentMethodCvvTitleLabel" />
+
+    <TextView
+        android:id="@+id/vaultedPaymentMethodCvvTitleLabel"
+        style="@style/Primer.Text.NewTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:text="@string/primer_cvv_recapture_title"
+        app:layout_constraintStart_toEndOf="@id/vaultedPaymentMethodCvvGoBack"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vaultedPaymentMethodCvvDescLabel"
+        style="@style/Primer.Text.Small.Muted"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xl_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vaultedPaymentMethodCvvTitleLabel" />
+
+    <LinearLayout
+        android:id="@+id/vaultedPaymentMethodCvvCardDetailsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xl_vertical_margin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vaultedPaymentMethodCvvDescLabel">
+
+        <ImageView
+            android:id="@+id/vaultedPaymentMethodCvvCardIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="@dimen/medium_large_padding"
+            android:layout_marginTop="@dimen/medium_large_padding"
+            android:layout_marginBottom="@dimen/medium_large_padding"
+            android:background="@null"
+            android:clickable="false"
+            android:contentDescription="@string/payment_method_icon"
+            android:src="@drawable/ic_generic_card" />
+
+        <TextView
+            android:id="@+id/vaultedPaymentMethodCvvLastFourLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/medium_padding"
+            android:layout_marginEnd="8dp"
+            android:text="@string/last_four_with_dots"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/primer_text_size_sm" />
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/vaultedPaymentMethodCvvCardCvvLabel"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:hint="@string/card_cvv"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/vaultedPaymentMethodCvvCardCvvInput"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number|textNoSuggestions"
+                android:maxLength="4"
+                tools:ignore="TouchTargetSizeCheck" />
+        </io.primer.android.ui.components.TextInputWidget>
+    </LinearLayout>
+
+    <io.primer.android.ui.components.ButtonPrimary
+        android:id="@+id/vaultedPaymentMethodCvvBtnSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_vertical_margin"
+        android:layout_marginBottom="@dimen/large_vertical_margin"
+        android:background="@color/primer_button_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vaultedPaymentMethodCvvCardDetailsContainer"
+        tools:layout_height="48dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
