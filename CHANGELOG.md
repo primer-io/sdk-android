@@ -1,3 +1,9 @@
+## 2.27.1 (2024-04-22)
+
+### Fix
+
+- Fixed scoping of NolPay components by taking into account current Headless session (#556)
+
 ## 2.27.0 (2024-04-09)
 
 ### Feat
