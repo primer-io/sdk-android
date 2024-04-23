@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.NolPayContainer.Companion.NOL_PAY_ERROR_RESOLVER_NAME
 import io.primer.android.di.extension.resolve
@@ -29,6 +30,11 @@ internal class NolPayUnlinkCardComponentProvider : DISdkComponent {
                     ) as T
                 }
             }
-        )[NolPayUnlinkCardComponent::class.java]
+        ).get(
+            key = runCatching {
+                resolve<PrimerConfig>().clientTokenBase64.orEmpty()
+            }.getOrNull() ?: NolPayUnlinkCardComponent::class.java.canonicalName,
+            modelClass = NolPayUnlinkCardComponent::class.java
+        )
     }
 }
