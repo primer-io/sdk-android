@@ -33,7 +33,7 @@ internal data class PrimerConfig(
         parcel.readParcelable<PrimerSettings>() ?: PrimerSettings()
     ) {
         clientTokenBase64 = parcel.readString()
-        intent = parcel.readParcelable(PrimerIntent::class.java.classLoader) ?: PrimerIntent()
+        intent = parcel.readParcelable<PrimerIntent>() ?: PrimerIntent()
     }
 
     internal fun getMonetaryAmountWithSurcharge(): MonetaryAmount? {

@@ -41,12 +41,11 @@ data class PrimerSettings @JvmOverloads constructor(
         )
 
     constructor(parcel: Parcel) : this(
-        PrimerPaymentHandling.valueOf(parcel.readString().orEmpty()),
-        parcel.readSerializable<Locale>() ?: Locale.getDefault(),
-        parcel.readParcelable<PrimerPaymentMethodOptions>()
-            ?: PrimerPaymentMethodOptions(),
-        parcel.readParcelable<PrimerUIOptions>() ?: PrimerUIOptions(),
-        parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions()
+        paymentHandling = PrimerPaymentHandling.valueOf(parcel.readString().orEmpty()),
+        locale = parcel.readSerializable<Locale>() ?: Locale.getDefault(),
+        paymentMethodOptions = parcel.readParcelable<PrimerPaymentMethodOptions>() ?: PrimerPaymentMethodOptions(),
+        uiOptions = parcel.readParcelable<PrimerUIOptions>() ?: PrimerUIOptions(),
+        debugOptions = parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions()
     ) {
         fromHUC = parcel.readByte() != 0.toByte()
     }

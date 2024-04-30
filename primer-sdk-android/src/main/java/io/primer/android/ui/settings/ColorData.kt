@@ -2,21 +2,52 @@ package io.primer.android.ui.settings
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import io.primer.android.utils.UiMode
 
-sealed class ColorData {
+sealed class ColorData : Parcelable {
 
-    fun getColor(context: Context, isDarkMode: Boolean?): Int {
-        val isDarkTheme = isDarkMode ?: UiMode.useDarkTheme(context)
-        return when (this) {
+    abstract fun getColor(context: Context, isDarkMode: Boolean?): Int
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        when (this) {
             is ResourceColor -> {
-                val id = if (isDarkTheme) this.dark else this.default
-                ContextCompat.getColor(context, id)
+                parcel.writeInt(1)
+                parcel.writeInt(default)
+                parcel.writeInt(dark)
             }
-            is DynamicColor -> if (isDarkTheme) this.dark else this.default
+
+            is DynamicColor -> {
+                parcel.writeInt(2)
+                parcel.writeInt(default)
+                parcel.writeInt(dark)
+            }
+        }
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Parcelable.Creator<ColorData> = object : Parcelable.Creator<ColorData> {
+
+            override fun createFromParcel(parcel: Parcel): ColorData {
+                return when (parcel.readInt()) {
+                    1 -> ResourceColor.valueOf(parcel.readInt(), parcel.readInt())
+                    2 -> DynamicColor(parcel.readInt(), parcel.readInt())
+                    else -> throw IllegalArgumentException("Unknown type")
+                }
+            }
+
+            override fun newArray(size: Int): Array<ColorData?> {
+                return arrayOfNulls(size)
+            }
         }
     }
 }
@@ -26,21 +57,29 @@ class ResourceColor private constructor(
     @ColorRes val dark: Int
 ) : ColorData() {
 
-    companion object {
+    override fun getColor(context: Context, isDarkMode: Boolean?): Int {
+        val isDarkTheme = isDarkMode ?: UiMode.useDarkTheme(context)
+        return ContextCompat.getColor(context, if (isDarkTheme) dark else default)
+    }
 
+    companion object {
         fun valueOf(default: Int, dark: Int? = null): ResourceColor {
             return ResourceColor(default = default, dark = dark ?: default)
         }
     }
 }
 
-class DynamicColor private constructor(
+class DynamicColor(
     @ColorInt val default: Int,
     @ColorInt val dark: Int
 ) : ColorData() {
 
-    companion object {
+    override fun getColor(context: Context, isDarkMode: Boolean?): Int {
+        val isDarkTheme = isDarkMode ?: UiMode.useDarkTheme(context)
+        return if (isDarkTheme) dark else default
+    }
 
+    companion object {
         private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
 
         private fun hexToColorInt(hex: String): Int {
@@ -54,7 +93,6 @@ class DynamicColor private constructor(
         fun valueOf(default: String, dark: String? = null): DynamicColor {
             val mainColor = hexToColorInt(default)
             val darkColor = hexToColorInt(dark ?: default)
-
             return DynamicColor(default = mainColor, dark = darkColor)
         }
     }
