@@ -440,9 +440,9 @@ data class PrimerTheme internal constructor(
         /**
          * Style the Primer SDK using React Native
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         @JvmStatic
-        fun buildRN(
+        fun buildWithDynamicValues(
             isDarkMode: Boolean? = null,
             mainColor: String? = null,
             backgroundColor: String? = null,
