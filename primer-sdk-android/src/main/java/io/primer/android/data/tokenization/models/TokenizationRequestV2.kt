@@ -99,7 +99,13 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
 
         is PaypalCheckoutPaymentInstrumentParams -> PaypalCheckoutPaymentInstrumentDataRequest(
             paypalOrderId,
-            ExternalPayerInfoRequest(externalPayerInfoEmail, externalPayerId)
+            ExternalPayerInfoRequest(
+                email = externalPayerInfoEmail,
+                externalPayerId = externalPayerId,
+                firstName = externalPayerFirstName,
+                lastName = externalPayerLastName
+
+            )
         )
 
         is PaypalVaultPaymentInstrumentParams -> PaypalVaultPaymentInstrumentDataRequest(
