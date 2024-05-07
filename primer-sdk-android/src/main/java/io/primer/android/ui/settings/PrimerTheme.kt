@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import androidx.annotation.RestrictTo
 import io.primer.android.R
 import io.primer.android.extensions.readParcelable
 
@@ -439,6 +440,7 @@ data class PrimerTheme internal constructor(
         /**
          * Style the Primer SDK using React Native
          */
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         @JvmStatic
         fun buildRN(
             isDarkMode: Boolean? = null,

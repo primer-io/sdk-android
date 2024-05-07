@@ -5,7 +5,18 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.DimenRes
 
-sealed class DimensionData : Parcelable {
+enum class DimensionType(val value: Int) {
+    RESOURCE_DIMENSION(1),
+    DYNAMIC_DIMENSION(2);
+
+    companion object {
+        fun fromValue(value: Int): DimensionType {
+            return values().first { it.value == value }
+        }
+    }
+}
+
+sealed class DimensionData(private val dimensionType: DimensionType) : Parcelable {
 
     fun getDimension(context: Context): Float {
         return when (this) {
@@ -24,9 +35,10 @@ sealed class DimensionData : Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         when (this) {
             is ResourceDimension -> {
-                parcel.writeInt(1)
+                parcel.writeInt(dimensionType.value)
                 parcel.writeInt(default)
             }
+
             is DynamicDimension -> {
                 parcel.writeInt(2)
                 parcel.writeFloat(default)
@@ -43,10 +55,9 @@ sealed class DimensionData : Parcelable {
         val CREATOR: Parcelable.Creator<DimensionData> = object : Parcelable.Creator<DimensionData> {
 
             override fun createFromParcel(parcel: Parcel): DimensionData {
-                return when (parcel.readInt()) {
-                    1 -> ResourceDimension.valueOf(parcel.readInt())
-                    2 -> DynamicDimension.valueOf(parcel.readFloat())
-                    else -> throw IllegalArgumentException("Unknown type")
+                return when (DimensionType.fromValue(parcel.readInt())) {
+                    DimensionType.RESOURCE_DIMENSION -> ResourceDimension.valueOf(parcel.readInt())
+                    DimensionType.DYNAMIC_DIMENSION -> DynamicDimension.valueOf(parcel.readFloat())
                 }
             }
 
@@ -59,7 +70,7 @@ sealed class DimensionData : Parcelable {
 
 class ResourceDimension private constructor(
     @DimenRes val default: Int
-) : DimensionData() {
+) : DimensionData(DimensionType.RESOURCE_DIMENSION) {
 
     companion object {
 
@@ -71,7 +82,7 @@ class ResourceDimension private constructor(
 
 class DynamicDimension private constructor(
     val default: Float
-) : DimensionData() {
+) : DimensionData(DimensionType.DYNAMIC_DIMENSION) {
 
     companion object {
 
