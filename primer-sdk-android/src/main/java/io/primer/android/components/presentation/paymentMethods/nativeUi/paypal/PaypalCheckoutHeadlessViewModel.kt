@@ -69,6 +69,7 @@ internal class PaypalCheckoutHeadlessViewModel(
             validTransition.sideEffect is PaypalSideEffect.LoadConfiguration -> loadConfiguration()
             validTransition.sideEffect is PaypalSideEffect.CreateOrder &&
                 e is PaypalEvent.OnCreateOrder -> createOrder(e.configuration)
+
             validTransition.sideEffect is PaypalSideEffect.NavigateToPaypal &&
                 e is PaypalEvent.OnOrderCreated
             -> {
@@ -81,18 +82,23 @@ internal class PaypalCheckoutHeadlessViewModel(
                     )
                 )
             }
+
             validTransition.sideEffect is PaypalSideEffect.HandleResult &&
                 e is BaseEvent.OnBrowserResult &&
                 validTransition.fromState is PaypalCheckoutState.Redirect
             -> handleBrowserResult(e, validTransition.fromState)
+
             validTransition.sideEffect is PaypalSideEffect.RetrievePaypalInfo &&
                 e is PaypalEvent.OnRetrievePaypalInfo ->
                 getPaypalOrderInfo(e.paymentMethodConfigId, e.orderId)
+
             validTransition.sideEffect is PaypalSideEffect.Tokenize &&
                 e is PaypalEvent.OnPaypalInfoRetrieved -> tokenize(e.paypalOrderInfo)
+
             validTransition.sideEffect is PaypalSideEffect.HandleError -> {
                 _finishActivityEvent.postValue(Unit)
             }
+
             validTransition.sideEffect is PaypalSideEffect.HandleFinished -> {
                 _finishActivityEvent.postValue(Unit)
             }
@@ -150,6 +156,7 @@ internal class PaypalCheckoutHeadlessViewModel(
                     event.uri?.getQueryParameter(TOKEN_QUERY_PARAM)
                 )
             )
+
             else -> {
                 baseErrorEventResolver.resolve(
                     PaymentMethodCancelledException(
@@ -190,9 +197,11 @@ internal class PaypalCheckoutHeadlessViewModel(
             tokenizationInteractor.executeV2(
                 TokenizationParamsV2(
                     PaypalCheckoutPaymentInstrumentParams(
-                        paypalOrderInfo.orderId,
-                        paypalOrderInfo.email,
-                        paypalOrderInfo.externalPayerId
+                        paypalOrderId = paypalOrderInfo.orderId,
+                        externalPayerInfoEmail = paypalOrderInfo.email,
+                        externalPayerId = paypalOrderInfo.externalPayerId,
+                        externalPayerFirstName = paypalOrderInfo.externalPayerFirstName,
+                        externalPayerLastName = paypalOrderInfo.externalPayerLastName
                     ),
                     sessionIntent
                 )

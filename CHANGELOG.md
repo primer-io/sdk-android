@@ -1,3 +1,9 @@
+## 2.27.2 (2024-05-06)
+
+### Fix
+
+- Added missing paypal checkout tokenization params - first and last name (#565)
+
 ## 2.27.1 (2024-04-22)
 
 ### Fix

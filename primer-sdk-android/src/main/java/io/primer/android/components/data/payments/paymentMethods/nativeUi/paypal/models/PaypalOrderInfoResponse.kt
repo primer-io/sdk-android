@@ -70,5 +70,7 @@ internal data class PaypalExternalPayerInfo(
 internal fun PaypalOrderInfoResponse.toPaypalOrder() = PaypalOrderInfo(
     orderId,
     externalPayerInfo?.email,
-    externalPayerInfo?.externalPayerId
+    externalPayerInfo?.externalPayerId,
+    externalPayerInfo?.firstName,
+    externalPayerInfo?.lastName
 )
