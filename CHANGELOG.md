@@ -1,5 +1,9 @@
 ## 2.27.3 (2024-05-21)
 
+### Fix
+
+- Added support for RN styling and fixed PrimerTheme handling
+
 ## 2.27.2 (2024-05-06)
 
 ### Fix
