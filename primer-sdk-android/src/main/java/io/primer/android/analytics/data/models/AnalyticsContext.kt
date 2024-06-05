@@ -424,7 +424,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
 
 internal data class ErrorAnalyticsContext(
     val errorId: String,
-    val paymentMethodType: String
+    val paymentMethodType: String? = null
 ) : AnalyticsContext(AnalyticsContextType.ERROR) {
 
     companion object {
@@ -445,7 +445,7 @@ internal data class ErrorAnalyticsContext(
         val deserializer = JSONObjectDeserializer<ErrorAnalyticsContext> { t ->
             ErrorAnalyticsContext(
                 t.optString(ERROR_ID),
-                t.optString(PAYMENT_METHOD_TYPE)
+                t.optNullableString(PAYMENT_METHOD_TYPE)
             )
         }
     }

@@ -29,7 +29,7 @@ class HUCErrorMapperTest {
             "PrimerHeadlessUniversalCheckout tokenization error for" +
                 " $paymentMethodType and input data ${inputData.simpleName}"
         val expectedContext = ErrorContextParams(
-            "huc-invalid-raw-type-data",
+            "invalid-raw-type-data",
             paymentMethodType.name
         )
 

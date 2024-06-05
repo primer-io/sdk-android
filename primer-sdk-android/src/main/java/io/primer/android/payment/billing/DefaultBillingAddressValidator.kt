@@ -59,7 +59,7 @@ internal class DefaultBillingAddressValidator : BillingAddressValidator {
     }
 }
 
-private fun MutableList<SyncValidationError>.checkPutError(
+internal fun MutableList<SyncValidationError>.checkPutError(
     inputType: PrimerInputElementType,
     availableFields: Map<String, Boolean>,
     billingAddressFields: Map<PrimerInputElementType, String?>
@@ -71,8 +71,9 @@ private fun MutableList<SyncValidationError>.checkPutError(
             add(
                 SyncValidationError(
                     name = inputType.field,
-                    errorId = errorIdBy(inputType),
-                    fieldId = fieldIdBy(inputType)
+                    errorResId = errorResIdBy(inputType),
+                    fieldId = fieldIdBy(inputType),
+                    errorId = errorIdBy(inputType)
                 )
             )
         }
@@ -80,7 +81,7 @@ private fun MutableList<SyncValidationError>.checkPutError(
 }
 
 @Suppress("ComplexMethod")
-private fun errorIdBy(inputType: PrimerInputElementType): Int = when (inputType) {
+private fun errorResIdBy(inputType: PrimerInputElementType): Int = when (inputType) {
     PrimerInputElementType.POSTAL_CODE -> R.string.postalCodeErrorRequired
     PrimerInputElementType.COUNTRY_CODE -> R.string.countryCodeErrorRequired
     PrimerInputElementType.CITY -> R.string.cityErrorRequired
@@ -89,6 +90,18 @@ private fun errorIdBy(inputType: PrimerInputElementType): Int = when (inputType)
     PrimerInputElementType.FIRST_NAME -> R.string.firstNameErrorRequired
     PrimerInputElementType.LAST_NAME -> R.string.lastNameErrorRequired
     else -> R.string.error_default
+}
+
+@Suppress("ComplexMethod")
+private fun errorIdBy(inputType: PrimerInputElementType): String = when (inputType) {
+    PrimerInputElementType.POSTAL_CODE -> "invalid-postal-code"
+    PrimerInputElementType.COUNTRY_CODE -> "invalid-country"
+    PrimerInputElementType.CITY -> "invalid-city"
+    PrimerInputElementType.STATE -> "invalid-state"
+    PrimerInputElementType.ADDRESS_LINE_1 -> "invalid-address"
+    PrimerInputElementType.FIRST_NAME -> "invalid-first-name"
+    PrimerInputElementType.LAST_NAME -> "invalid-last-name"
+    else -> "unknown"
 }
 
 @Suppress("ComplexMethod")

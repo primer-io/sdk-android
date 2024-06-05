@@ -102,7 +102,7 @@ internal class CardNumberValidatorTest {
         val resultError = validator.run {
             validate("4242424242424242")
         }
-        assertEquals("invalid-card-type", resultError?.errorId)
+        assertEquals(UNSUPPORTED_CARD_TYPE_ERROR_ID, resultError?.errorId)
         assertEquals("Unsupported card type detected: Visa", resultError?.description)
     }
 
@@ -122,7 +122,7 @@ internal class CardNumberValidatorTest {
         val resultError = validator.run {
             validate("4242424242424242")
         }
-        assertEquals("invalid-card-type", resultError?.errorId)
+        assertEquals(UNSUPPORTED_CARD_TYPE_ERROR_ID, resultError?.errorId)
         assertEquals("Unsupported card type detected: Visa", resultError?.description)
     }
 
@@ -222,5 +222,6 @@ internal class CardNumberValidatorTest {
 
         val ALLOWED_VISA_CARD_NETWORK = PrimerCardNetwork(CardNetwork.Type.VISA, "Visa", true)
         val UNALLOWED_VISA_CARD_NETWORK = PrimerCardNetwork(CardNetwork.Type.VISA, "Visa", false)
+        const val UNSUPPORTED_CARD_TYPE_ERROR_ID = "unsupported-card-type"
     }
 }

@@ -34,6 +34,7 @@ internal class KlarnaComponentProvider : DISdkComponent {
                         eventLoggingDelegate = resolve(
                             PrimerPaymentMethodManagerCategory.NATIVE_UI.name
                         ),
+                        validationErrorLoggingDelegate = resolve(),
                         errorLoggingDelegate = resolve(),
                         authorizationSessionDataDelegate = resolve(),
                         errorEventResolver = resolve(),

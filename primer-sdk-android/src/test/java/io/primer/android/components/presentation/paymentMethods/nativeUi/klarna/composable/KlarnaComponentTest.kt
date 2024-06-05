@@ -34,6 +34,7 @@ import io.primer.android.components.manager.core.composable.PrimerValidationStat
 import io.primer.android.components.presentation.mock.delegate.MockConfigurationDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.analytics.KlarnaPaymentAnalyticsConstants
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.delegate.GetKlarnaAuthorizationSessionDataDelegate
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.delegate.KlarnaSessionCreationDelegate
@@ -83,6 +84,9 @@ class KlarnaComponentTest {
     private lateinit var eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
 
     @MockK
+    private lateinit var validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate
+
+    @MockK
     private lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
 
     @MockK
@@ -118,6 +122,7 @@ class KlarnaComponentTest {
             mockConfigurationDelegate = mockConfigurationDelegate,
             eventLoggingDelegate = eventLoggingDelegate,
             errorLoggingDelegate = errorLoggingDelegate,
+            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
             authorizationSessionDataDelegate = authorizationSessionDataDelegate,
             errorEventResolver = baseErrorEventResolver,
             errorMapper = errorMapper,
@@ -165,6 +170,9 @@ class KlarnaComponentTest {
         validationJob.cancel()
         stepJob.cancel()
 
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
         coVerify(exactly = 1) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_START_METHOD,
@@ -211,6 +219,9 @@ class KlarnaComponentTest {
         verify(exactly = 1) {
             errorMapper.getPrimerError(exception)
         }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
         coVerify(exactly = 1) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_START_METHOD,
@@ -255,6 +266,9 @@ class KlarnaComponentTest {
         verify(exactly = 1) {
             baseErrorEventResolver.resolve(exception, ErrorMapperType.KLARNA)
             errorMapper.getPrimerError(exception)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
         }
         coVerify(exactly = 1) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
@@ -323,6 +337,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
         }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
         verify(exactly = 1) {
             KlarnaPaymentCategoryValidator.validate(listOf(paymentCategory), paymentCategory)
             klarnaPaymentView.initialize("clientToken", returnIntentUrl)
@@ -376,6 +393,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
         }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
         verify(exactly = 1) {
             KlarnaPaymentFinalizationValidator.validate(isFinalizationRequired = true)
         }
@@ -392,9 +412,10 @@ class KlarnaComponentTest {
     }
 
     @Test
-    fun `updateCollectedData() should log event and emit invalid status when KlarnaPaymentFinalizationValidator validate() returns validation error`() = runTest {
+    fun `updateCollectedData() should log event, validation errors and emit invalid status when KlarnaPaymentFinalizationValidator validate() returns validation error`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        coEvery { validationErrorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
         mockkObject(KlarnaPaymentFinalizationValidator)
         component.isFinalizationRequired = false
         val validationError = mockk<PrimerValidationError>()
@@ -420,6 +441,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
         }
+        coVerify(exactly = 1) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(validationError)
+        }
         assertEquals(emptyList<PrimerError>(), errors)
         assertEquals(
             listOf<PrimerValidationStatus<KlarnaPaymentCollectableData>>(
@@ -433,9 +457,10 @@ class KlarnaComponentTest {
     }
 
     @Test
-    fun `updateCollectedData() should log event and emit invalid status when KlarnaPaymentCategoryValidator validate() returns validation error`() = runTest {
+    fun `updateCollectedData() should log event, validation errors and emit invalid status when KlarnaPaymentCategoryValidator validate() returns validation error`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        coEvery { validationErrorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
         mockkObject(KlarnaPaymentCategoryValidator)
         val validationError = mockk<PrimerValidationError>()
         every { KlarnaPaymentCategoryValidator.validate(any(), any()) } returns validationError
@@ -461,6 +486,9 @@ class KlarnaComponentTest {
                 methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_COLLECTED_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
+        }
+        coVerify(exactly = 1) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(validationError)
         }
         coVerify(exactly = 0) {
             createKlarnaPaymentView.invoke(any(), any(), any(), any())
@@ -543,6 +571,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -628,6 +659,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -717,6 +751,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
         }
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())
@@ -809,6 +846,9 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize("sessionId", "authToken", primerSessionIntent)
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
         }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())
         }
@@ -900,6 +940,9 @@ class KlarnaComponentTest {
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())
         }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
         assertEquals(listOf<PrimerError>(primerError), errors)
         assertEquals(
             listOf<PrimerValidationStatus<KlarnaPaymentCollectableData>>(
@@ -976,6 +1019,9 @@ class KlarnaComponentTest {
                 paymentMethodType = PaymentMethodType.KLARNA.name
             )
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -1064,6 +1110,9 @@ class KlarnaComponentTest {
         }
         coVerify(exactly = 0) {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
         }
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())

@@ -9,6 +9,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.components.data.error.VaultErrorMapper
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodInteractor
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsExchangeInteractor
 import io.primer.android.components.domain.payments.vault.HeadlessVaultedPaymentMethodsInteractor
@@ -16,6 +17,7 @@ import io.primer.android.components.domain.payments.vault.model.card.PrimerVault
 import io.primer.android.components.domain.payments.vault.validation.additionalData.VaultedPaymentMethodAdditionalDataValidatorRegistry
 import io.primer.android.components.domain.payments.vault.validation.additionalData.card.VaultedCardAdditionalDataValidator
 import io.primer.android.components.domain.payments.vault.validation.resolvers.VaultManagerInitValidationRulesResolver
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
@@ -60,6 +62,12 @@ internal class VaultManagerDelegateTest {
     internal lateinit var analyticsInteractor: AnalyticsInteractor
 
     @RelaxedMockK
+    internal lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
+
+    @RelaxedMockK
+    internal lateinit var errorMapper: VaultErrorMapper
+
+    @RelaxedMockK
     internal lateinit var vaultedPaymentMethodAdditionalDataValidatorRegistry:
         VaultedPaymentMethodAdditionalDataValidatorRegistry
 
@@ -81,6 +89,8 @@ internal class VaultManagerDelegateTest {
             resumePaymentInteractor,
             analyticsInteractor,
             vaultedPaymentMethodAdditionalDataValidatorRegistry,
+            errorLoggingDelegate,
+            errorMapper,
             navigator
         )
     }

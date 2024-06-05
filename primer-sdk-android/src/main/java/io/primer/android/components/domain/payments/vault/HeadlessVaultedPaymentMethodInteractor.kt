@@ -18,7 +18,7 @@ internal class HeadlessVaultedPaymentMethodInteractor(
 
     override suspend fun performAction(params: VaultPaymentMethodIdParams) =
         vaultedPaymentMethodsRepository.getVaultedPaymentMethods(true)
-            .map { vaultedTokens ->
+            .mapCatching { vaultedTokens ->
                 vaultedTokens.firstOrNull { it.token == params.vaulterPaymentMethodId }
                     ?.toVaultedPaymentMethod()
                     ?: throw InvalidVaultedPaymentMethodIdException()

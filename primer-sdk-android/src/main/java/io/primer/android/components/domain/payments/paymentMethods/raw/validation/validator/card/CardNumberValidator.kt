@@ -36,7 +36,7 @@ internal class CardNumberValidator(
                         val errorMessage = "Unsupported card type detected: " +
                             "${detectedCardNetworks.firstOrNull()?.displayName}"
                         PrimerInputValidationError(
-                            INVALID_CARD_TYPE_ERROR_ID,
+                            UNSUPPORTED_CARD_TYPE_ERROR_ID,
                             errorMessage,
                             PrimerInputElementType.CARD_NUMBER
                         )
@@ -74,6 +74,6 @@ internal class CardNumberValidator(
     private companion object {
 
         const val INVALID_CARD_NUMBER_ERROR_ID = "invalid-card-number"
-        const val INVALID_CARD_TYPE_ERROR_ID = "invalid-card-type"
+        const val UNSUPPORTED_CARD_TYPE_ERROR_ID = "unsupported-card-type"
     }
 }

@@ -14,6 +14,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerSessionIntent
@@ -24,6 +25,7 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Severity
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
@@ -126,6 +128,22 @@ internal class CardFormFragment : BaseFragment() {
         primerViewModel.selectCountryCode.observe(viewLifecycleOwner) { country ->
             country ?: return@observe
             binding.billingAddressForm.onSelectCountry(country)
+        }
+
+        var lastValidationErrors = emptySet<SyncValidationError>()
+        tokenizationViewModel.validationErrors.distinctUntilChanged().observe(viewLifecycleOwner) { validationErrors ->
+            val validationErrorsDiff = validationErrors.minus(lastValidationErrors)
+            lastValidationErrors = validationErrors.toSet()
+            validationErrorsDiff.forEach { validationError ->
+                primerViewModel.addAnalyticsEvent(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.VALIDATION_FAILED,
+                        message = validationError.name,
+                        severity = Severity.WARN,
+                        context = ErrorContextParams(errorId = validationError.errorId)
+                    )
+                )
+            }
         }
 
         renderTitle()
@@ -612,7 +630,7 @@ internal class CardFormFragment : BaseFragment() {
                 .let { context ->
                     input.error = error.errorFormatId?.let {
                         context.getString(error.errorFormatId, context.getString(error.fieldId))
-                    } ?: error.errorId?.let { context.getString(it) }
+                    } ?: error.errorResId?.let { context.getString(it) }
                     primerViewModel.addAnalyticsEvent(
                         MessageAnalyticsParams(
                             MessageType.VALIDATION_FAILED,

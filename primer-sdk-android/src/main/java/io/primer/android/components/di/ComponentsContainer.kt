@@ -2,6 +2,7 @@
 
 package io.primer.android.components.di
 
+import io.primer.android.components.data.error.VaultErrorMapper
 import io.primer.android.components.data.payments.metadata.card.datasource.InMemoryCardBinMetadataDataSource
 import io.primer.android.components.data.payments.metadata.card.datasource.RemoteCardBinMetadataDataSource
 import io.primer.android.components.data.payments.metadata.card.repository.CardBinMetadataDataRepository
@@ -48,6 +49,7 @@ import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.di.DependencyContainer
 import io.primer.android.di.SdkContainer
+import io.primer.android.domain.error.ErrorMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyContainer() {
@@ -266,8 +268,13 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 sdk.resolve()
             )
         }
+
         registerFactory {
             VaultedPaymentMethodAdditionalDataValidatorRegistry()
+        }
+
+        registerFactory<ErrorMapper>(name = VAULT_ERROR_RESOLVER_NAME) {
+            VaultErrorMapper()
         }
 
         registerSingleton {
@@ -281,8 +288,15 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 sdk.resolve(),
                 sdk.resolve(),
                 resolve(),
+                sdk.resolve(),
+                resolve(name = VAULT_ERROR_RESOLVER_NAME),
                 resolve()
             )
         }
+    }
+
+    private companion object {
+
+        const val VAULT_ERROR_RESOLVER_NAME = "vaultErrorResolver"
     }
 }

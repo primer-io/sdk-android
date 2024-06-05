@@ -3,10 +3,13 @@ package io.primer.android.di
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 
 internal class LoggingContainer(private val sdk: SdkContainer) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton { SdkAnalyticsErrorLoggingDelegate(analyticsInteractor = sdk.resolve()) }
+
+        registerSingleton { SdkAnalyticsValidationErrorLoggingDelegate(analyticsInteractor = sdk.resolve()) }
 
         registerSingleton(PrimerPaymentMethodManagerCategory.NOL_PAY.name) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(

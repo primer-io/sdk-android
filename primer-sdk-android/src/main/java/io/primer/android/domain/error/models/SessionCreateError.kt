@@ -16,8 +16,7 @@ internal class SessionCreateError(
     override val diagnosticsId = serverDiagnosticsId ?: UUID.randomUUID().toString()
     override val exposedError = this
     override val recoverySuggestion =
-        "Ensure that the $paymentMethodType is configured correctly " +
-            "on the dashboard (https://dashboard.primer.io/)"
+        "Ensure that the $paymentMethodType is configured correctly on the dashboard (https://dashboard.primer.io/)"
     override val context: BaseContextParams get() =
         ErrorContextParams(errorId, paymentMethodType.name)
 }

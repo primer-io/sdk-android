@@ -17,11 +17,14 @@ internal sealed class GeneralError : PrimerError() {
         val message: String?
     ) : GeneralError()
 
+    class InvalidUrlError(val message: String) : GeneralError()
+
     class UnknownError(val message: String) : GeneralError()
 
     override val errorId: String
         get() = when (this) {
             is UnknownError -> "unknown-error"
+            is InvalidUrlError -> "invalid-url"
             is MissingConfigurationError -> "missing-configuration"
             is InvalidValueError -> "invalid-value"
             is InvalidClientSessionValueError -> "invalid-client-session-value"
@@ -30,6 +33,7 @@ internal sealed class GeneralError : PrimerError() {
     override val description: String
         get() = when (this) {
             is UnknownError -> "Something went wrong. Message $message."
+            is InvalidUrlError -> "$message."
             is MissingConfigurationError -> "Missing SDK configuration."
             is InvalidValueError -> "Invalid value for '${illegalValueKey.key}'. Message $message."
             is InvalidClientSessionValueError ->
@@ -45,10 +49,9 @@ internal sealed class GeneralError : PrimerError() {
 
     override val recoverySuggestion: String?
         get() = when (this) {
-            is UnknownError -> "Contact Primer and provide us with diagnostics id $diagnosticsId"
+            is UnknownError, is InvalidUrlError -> "Contact Primer and provide us with diagnostics id $diagnosticsId"
             is MissingConfigurationError ->
-                "Check if you have an active internet connection." +
-                    " Contact Primer and provide us with diagnostics id $diagnosticsId"
+                "Check if you have an active internet connection."
             is InvalidValueError ->
                 "Contact Primer and provide us with diagnostics id $diagnosticsId"
             is InvalidClientSessionValueError ->

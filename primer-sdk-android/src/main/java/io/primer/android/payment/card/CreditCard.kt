@@ -85,7 +85,8 @@ internal class CreditCard(
                     SyncValidationError(
                         name = PrimerInputElementType.CARDHOLDER_NAME.field,
                         errorFormatId = R.string.form_error_required,
-                        fieldId = R.string.card_holder_name
+                        fieldId = R.string.card_holder_name,
+                        errorId = "invalid-cardholder-name"
                     )
                 )
             }
@@ -101,7 +102,8 @@ internal class CreditCard(
                 SyncValidationError(
                     name = PrimerInputElementType.CARD_NUMBER.field,
                     errorFormatId = R.string.form_error_required,
-                    fieldId = R.string.card_number
+                    fieldId = R.string.card_number,
+                    errorId = "invalid-card-number"
                 )
             )
         } else if (!number.isValid()) {
@@ -109,7 +111,8 @@ internal class CreditCard(
                 SyncValidationError(
                     name = PrimerInputElementType.CARD_NUMBER.field,
                     errorFormatId = R.string.form_error_invalid,
-                    fieldId = R.string.card_number
+                    fieldId = R.string.card_number,
+                    errorId = "invalid-card-number"
                 )
             )
         }
@@ -121,7 +124,8 @@ internal class CreditCard(
                 SyncValidationError(
                     name = PrimerInputElementType.CVV.field,
                     errorFormatId = R.string.form_error_required,
-                    fieldId = R.string.card_cvv
+                    fieldId = R.string.card_cvv,
+                    errorId = "invalid-cvv"
                 )
             )
         } else if (cvv.length != number.getCvvLength()) {
@@ -129,7 +133,8 @@ internal class CreditCard(
                 SyncValidationError(
                     name = PrimerInputElementType.CVV.field,
                     errorFormatId = R.string.form_error_invalid,
-                    fieldId = R.string.card_cvv
+                    fieldId = R.string.card_cvv,
+                    errorId = "invalid-cvv"
                 )
             )
         }
@@ -143,7 +148,8 @@ internal class CreditCard(
                 SyncValidationError(
                     name = PrimerInputElementType.EXPIRY_DATE.field,
                     errorFormatId = R.string.form_error_required,
-                    fieldId = R.string.card_expiry
+                    fieldId = R.string.card_expiry,
+                    errorId = "invalid-expiry-date"
                 )
             )
         } else if (!expiry.isValid()) {
@@ -151,7 +157,8 @@ internal class CreditCard(
                 SyncValidationError(
                     name = PrimerInputElementType.EXPIRY_DATE.field,
                     errorFormatId = R.string.form_error_invalid,
-                    fieldId = R.string.card_expiry
+                    fieldId = R.string.card_expiry,
+                    errorId = "invalid-expiry-date"
                 )
             )
         }

@@ -28,8 +28,8 @@ internal sealed class HUCError : PrimerError() {
     override val errorId: String
         get() = when (this) {
             is InitializationError -> "huc-initialization-failed"
-            is MissingConfigurationError -> "huc-missing-configuration"
-            is InvalidTokenizationInputDataError -> "huc-invalid-raw-type-data"
+            is MissingConfigurationError -> "missing-configuration"
+            is InvalidTokenizationInputDataError -> "invalid-raw-type-data"
             is InvalidRawDataError -> "invalid-raw-data"
         }
 
@@ -56,10 +56,9 @@ internal sealed class HUCError : PrimerError() {
     override val recoverySuggestion: String?
         get() = when (this) {
             is InitializationError ->
-                "Please ensure you are calling 'start' method before calling this method."
+                "Ensure you are calling 'start' method before calling this method."
             is MissingConfigurationError ->
-                "Please ensure that you have an active internet connection." +
-                    " Contact Primer and provide us with diagnostics id $diagnosticsId"
+                "Ensure that you have an active internet connection."
             is InvalidTokenizationInputDataError ->
                 "Make sure you provide data of type ${requiredInputData?.simpleName} " +
                     "for payment method $paymentMethodType."

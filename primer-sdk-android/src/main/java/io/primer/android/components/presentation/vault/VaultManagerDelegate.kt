@@ -14,8 +14,10 @@ import io.primer.android.components.domain.payments.vault.HeadlessVaultedPayment
 import io.primer.android.components.domain.payments.vault.PrimerVaultedPaymentMethodAdditionalData
 import io.primer.android.components.domain.payments.vault.validation.additionalData.VaultedPaymentMethodAdditionalDataValidatorRegistry
 import io.primer.android.components.domain.payments.vault.validation.resolvers.VaultManagerInitValidationRulesResolver
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.components.ui.navigation.Navigator
 import io.primer.android.domain.base.None
+import io.primer.android.domain.error.ErrorMapper
 import io.primer.android.domain.payments.create.CreatePaymentInteractor
 import io.primer.android.domain.payments.create.model.CreatePaymentParams
 import io.primer.android.domain.payments.methods.VaultedPaymentMethodsDeleteInteractor
@@ -27,6 +29,7 @@ import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.extensions.flatMap
+import io.primer.android.extensions.onError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -46,6 +49,8 @@ internal class VaultManagerDelegate(
     private val analyticsInteractor: AnalyticsInteractor,
     private val vaultedPaymentMethodAdditionalDataValidatorRegistry:
         VaultedPaymentMethodAdditionalDataValidatorRegistry,
+    private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
+    private val errorMapper: ErrorMapper,
     private val navigator: Navigator
 ) : EventBus.EventListener {
 
@@ -82,6 +87,9 @@ internal class VaultManagerDelegate(
             )
         ).flatMap { vaultedToken ->
             vaultedPaymentMethodsDeleteInteractor(VaultDeleteParams(vaultedToken.id)).map { }
+        }.onError { throwable ->
+            logErrorEvent(throwable)
+            throwable
         }
     }
 
@@ -97,6 +105,9 @@ internal class VaultManagerDelegate(
         ).map { vaultedToken ->
             vaultedPaymentMethodAdditionalDataValidatorRegistry.getValidator(additionalData)
                 .validate(additionalData, vaultedToken)
+        }.onError { throwable ->
+            logErrorEvent(throwable)
+            throwable
         }
     }
 
@@ -113,6 +124,9 @@ internal class VaultManagerDelegate(
             vaultedPaymentMethodsExchangeInteractor(
                 with(vaultedToken) { VaultTokenParams(id, paymentMethodType, additionalData) }
             ).collect()
+        }.onError { throwable ->
+            logErrorEvent(throwable)
+            throwable
         }
     }
 
@@ -122,10 +136,12 @@ internal class VaultManagerDelegate(
                 e.data.token,
                 e.resumeHandler
             )
+
             is CheckoutEvent.ResumeSuccessInternalVaultHUC -> resumePayment(
                 e.resumeToken,
                 e.resumeHandler
             )
+
             is CheckoutEvent.Start3DSVault -> {
                 if (e.processor3DSData == null) {
                     navigator.openThreeDsScreen()
@@ -138,6 +154,7 @@ internal class VaultManagerDelegate(
                     )
                 }
             }
+
             else -> Unit
         }
     }
@@ -174,6 +191,10 @@ internal class VaultManagerDelegate(
         scope.coroutineContext.cancelChildren()
         subscription?.unregister()
         subscription = null
+    }
+
+    private fun logErrorEvent(throwable: Throwable) = scope.launch {
+        errorLoggingDelegate.logSdkAnalyticsErrors(errorMapper.getPrimerError(throwable))
     }
 
     private fun addAnalyticsEvent(params: BaseAnalyticsParams) = scope.launch {

@@ -61,7 +61,7 @@ internal data class ThreeDsProtocolFailureContextParams(
 
 internal open class ErrorContextParams(
     val errorId: String,
-    val paymentMethodType: String
+    val paymentMethodType: String? = null
 ) : BaseContextParams() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

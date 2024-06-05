@@ -23,6 +23,7 @@ import io.primer.android.components.manager.core.composable.PrimerValidationStat
 import io.primer.android.components.presentation.mock.delegate.MockConfigurationDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.PrimerKlarnaPaymentView
 import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.analytics.KlarnaPaymentAnalyticsConstants
@@ -57,6 +58,7 @@ class KlarnaComponent internal constructor(
     private val mockConfigurationDelegate: MockConfigurationDelegate,
     private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
     private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
+    private val validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     private val authorizationSessionDataDelegate: GetKlarnaAuthorizationSessionDataDelegate,
     private val errorEventResolver: BaseErrorEventResolver,
     private val errorMapper: ErrorMapper,
@@ -273,10 +275,14 @@ class KlarnaComponent internal constructor(
 
         _componentValidationStatus.emit(
             if (validationError != null) {
-                PrimerValidationStatus.Invalid(
+                PrimerValidationStatus.Invalid<KlarnaPaymentCollectableData>(
                     validationErrors = listOf(validationError),
                     collectableData = paymentOptions
-                )
+                ).also { invalidValidationStatus ->
+                    invalidValidationStatus.validationErrors.forEach { error ->
+                        validationErrorLoggingDelegate.logSdkAnalyticsErrors(error)
+                    }
+                }
             } else {
                 runCatching { requireKlarnaSession() }
                     .onSuccess { klarnaSession ->
@@ -331,10 +337,12 @@ class KlarnaComponent internal constructor(
                 klarnaPaymentView.get()?.finalize(null)
                 PrimerValidationStatus.Valid(collectableData = finalizePayment)
             } else {
-                PrimerValidationStatus.Invalid(
+                PrimerValidationStatus.Invalid<KlarnaPaymentCollectableData>(
                     validationErrors = listOf(validationError),
                     collectableData = finalizePayment
-                )
+                ).also {
+                    validationErrorLoggingDelegate.logSdkAnalyticsErrors(validationError)
+                }
             }
         )
     }

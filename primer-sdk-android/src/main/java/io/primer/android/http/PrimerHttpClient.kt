@@ -11,11 +11,13 @@ import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.error.model.APIError
 import io.primer.android.data.extensions.await
 import io.primer.android.http.exception.HttpException
+import io.primer.android.http.exception.InvalidUrlException
 import io.primer.android.http.exception.JsonDecodingException
 import io.primer.android.http.exception.JsonEncodingException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.Headers.Companion.toHeaders
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -35,6 +37,7 @@ internal class PrimerHttpClient(
         headers: Map<String, String> = hashMapOf()
     ): Flow<R> =
         flow {
+            if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
             emit(
                 executeRequest(
                     Request.Builder()
@@ -49,14 +52,16 @@ internal class PrimerHttpClient(
     suspend inline fun <reified R : JSONDeserializable> suspendGet(
         url: String,
         headers: Map<String, String> = hashMapOf()
-    ): R =
-        executeRequest(
+    ): R {
+        if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
+        return executeRequest(
             Request.Builder()
                 .url(url)
                 .headers(headers.toHeaders())
                 .get()
                 .build()
         )
+    }
 
     inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> post(
         url: String,
@@ -64,6 +69,7 @@ internal class PrimerHttpClient(
         headers: Map<String, String> = hashMapOf()
     ): Flow<R> =
         flow {
+            if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
             emit(
                 executeRequest(
                     Request.Builder()
@@ -79,24 +85,30 @@ internal class PrimerHttpClient(
         url: String,
         request: T,
         headers: Map<String, String> = hashMapOf()
-    ): R = executeRequest(
-        Request.Builder()
-            .url(url)
-            .headers(headers.toHeaders())
-            .post(getRequestBody(request))
-            .build()
-    )
+    ): R {
+        if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
+        return executeRequest(
+            Request.Builder()
+                .url(url)
+                .headers(headers.toHeaders())
+                .post(getRequestBody(request))
+                .build()
+        )
+    }
 
     suspend inline fun <reified R : JSONDeserializable> delete(
         url: String,
         headers: Map<String, String> = hashMapOf()
-    ): R = executeRequest(
-        Request.Builder()
-            .url(url)
-            .headers(headers.toHeaders())
-            .delete()
-            .build()
-    )
+    ): R {
+        if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
+        return executeRequest(
+            Request.Builder()
+                .url(url)
+                .headers(headers.toHeaders())
+                .delete()
+                .build()
+        )
+    }
 
     private suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request

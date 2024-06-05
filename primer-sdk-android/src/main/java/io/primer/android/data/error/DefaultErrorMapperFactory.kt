@@ -2,6 +2,7 @@ package io.primer.android.data.error
 
 import io.primer.android.components.data.error.HUCErrorMapper
 import io.primer.android.components.data.error.SessionCreateErrorMapper
+import io.primer.android.components.data.error.VaultErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.googlepay.error.GooglePayErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.iPay88.error.IPayErrorMapper
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.klarna.error.KlarnaErrorMapper
@@ -30,6 +31,7 @@ internal class DefaultErrorMapperFactory : ErrorMapperFactory {
             ErrorMapperType.I_PAY88 -> IPayErrorMapper()
             ErrorMapperType.THREE_DS -> ThreeDsErrorMapper()
             ErrorMapperType.NOL_PAY -> NolPayErrorMapper()
+            ErrorMapperType.VAULT -> VaultErrorMapper()
             ErrorMapperType.DEFAULT -> DefaultErrorMapper()
         }
     }

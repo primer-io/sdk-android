@@ -16,6 +16,7 @@ import io.primer.android.domain.error.models.ParserError
 import io.primer.android.domain.error.models.PaymentMethodError
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.http.exception.HttpException
+import io.primer.android.http.exception.InvalidUrlException
 import io.primer.android.http.exception.JsonDecodingException
 import io.primer.android.http.exception.JsonEncodingException
 import java.io.IOException
@@ -66,6 +67,7 @@ internal open class DefaultErrorMapper : ErrorMapper {
                 throwable.allowedValue,
                 throwable.message
             )
+            is InvalidUrlException -> GeneralError.InvalidUrlError(throwable.message.orEmpty())
             else -> GeneralError.UnknownError(throwable.message.orEmpty())
         }
     }

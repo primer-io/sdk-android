@@ -33,7 +33,7 @@ internal sealed class ClientTokenError : PrimerError() {
         get() = when (this) {
             is InvalidClientTokenError ->
                 "Ensure that the client token fetched from your backend is a valid client token" +
-                    " (i.e. not null, not blank, and it comes from Primer)."
+                    " (i.e. not null, not blank, is valid JWT and it comes from Primer)."
             is ExpiredClientTokenError ->
                 "Avoid storing client tokens locally." +
                     " Fetch a new client token to provide on when starting Primer."

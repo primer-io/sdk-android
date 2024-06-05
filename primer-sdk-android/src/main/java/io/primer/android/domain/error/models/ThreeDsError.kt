@@ -97,8 +97,8 @@ internal sealed class ThreeDsError : PrimerError() {
             is ThreeDsChallengeInvalidStatusError -> "3ds-challenge-failed"
             is ThreeDsChallengeCancelledError -> "3ds-challenge-cancelled-by-user"
             is ThreeDsChallengeTimedOutError -> "3ds-challenge-timed-out"
-            is ThreeDsLibraryMissingError -> "missing-3ds-library"
-            is ThreeDsLibraryVersionError -> "invalid-3ds-library-version"
+            is ThreeDsLibraryMissingError -> "missing-sdk-dependency"
+            is ThreeDsLibraryVersionError -> "invalid-3ds-sdk-version"
             is ThreeDsUnknownError -> "3ds-unknown-error"
         }
 
@@ -140,9 +140,9 @@ internal sealed class ThreeDsError : PrimerError() {
     override val recoverySuggestion: String?
         get() = when (this) {
             is ThreeDsLibraryMissingError ->
-                "Please follow the integration guide and include 3DS library."
+                "Follow the integration guide and include 3DS dependency."
             is ThreeDsLibraryVersionError ->
-                "Please update to io.primer:3ds-android:$validSdkVersion"
+                "Update to io.primer:3ds-android:$validSdkVersion"
             is ThreeDsInitError -> """
                 If this application is not installed from a trusted source
                 (e.g. a debug version, or used on an emulator), try to set 
@@ -150,7 +150,7 @@ internal sealed class ThreeDsError : PrimerError() {
                 Contact Primer and provide us with diagnostics id $diagnosticsId
             """.trimIndent()
             is ThreeDsUnknownProtocolError ->
-                "Please update to newest io.primer:3ds-android version."
+                "Update to the newest io.primer:3ds-android version."
             is ThreeDsConfigurationError,
             is ThreeDsChallengeCancelledError,
             is ThreeDsChallengeTimedOutError,
