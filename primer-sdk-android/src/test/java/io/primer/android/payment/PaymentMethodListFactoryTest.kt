@@ -7,8 +7,9 @@ import io.primer.android.data.configuration.models.PaymentMethodConfigDataRespon
 import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.mocks.MockPaymentMethodMapping
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
@@ -31,8 +32,8 @@ internal class PaymentMethodListFactoryTest {
         val logReporter = mockk<LogReporter>(relaxed = true)
         val factory = PaymentMethodListFactory(mapping, logReporter)
         val paymentMethods = factory.buildWith(configList)
-        Assert.assertTrue(mapping.getPaymentMethodForCalled)
-        Assert.assertEquals(paymentMethods.size, 1)
+        assertTrue(mapping.getPaymentMethodForCalled)
+        assertEquals(paymentMethods.size, 1)
     }
 
     @Test
@@ -41,7 +42,7 @@ internal class PaymentMethodListFactoryTest {
         val logReporter = mockk<LogReporter>(relaxed = true)
         val factory = PaymentMethodListFactory(mapping, logReporter)
         val paymentMethods = factory.buildWith(configList)
-        Assert.assertTrue(mapping.getPaymentMethodForCalled)
-        Assert.assertEquals(paymentMethods.size, 0)
+        assertTrue(mapping.getPaymentMethodForCalled)
+        assertEquals(paymentMethods.size, 0)
     }
 }

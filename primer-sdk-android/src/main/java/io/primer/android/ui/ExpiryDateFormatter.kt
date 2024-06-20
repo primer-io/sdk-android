@@ -12,7 +12,7 @@ private val SEPARATOR_CHAR = Regex("[\\s/-]+")
 private val INVALID_MONTH = Regex("^1[3-9].*")
 private const val MAXIMUM_YEAR_LENGTH = 4
 
-internal class ExpiryDateFormatter(
+internal class ExpiryDateFormatter private constructor(
     private var month: String = "",
     private var year: String = "",
     private var separator: Boolean = false
@@ -44,7 +44,7 @@ internal class ExpiryDateFormatter(
         }
 
         val now = getDate()
-        val maxMonth = month.toInt() - 1
+        val maxMonth = month.toInt()
         val maxYear = getYear(now).toInt()
         val max = getDate(maxMonth, maxYear)
 
@@ -108,17 +108,13 @@ internal class ExpiryDateFormatter(
         private fun tokenize(value: String): List<String> {
             val sanitized = value.replace(INVALID_CHARACTER, "").trim()
 
-            var tokens: List<String>
-
-            if (sanitized.isEmpty()) {
-                tokens = emptyList()
-            } else if (sanitized.matches(THREE_OR_FOUR_DIGITS)) {
-                tokens = listOf(
+            var tokens: List<String> = when {
+                sanitized.isEmpty() -> emptyList()
+                sanitized.matches(THREE_OR_FOUR_DIGITS) -> listOf(
                     sanitized.substring(0, 2),
                     sanitized.substring(2)
                 )
-            } else {
-                tokens = sanitized.split(SEPARATOR_CHAR)
+                else -> sanitized.split(SEPARATOR_CHAR)
             }
 
             tokens = tokens.filter { it.isNotEmpty() }

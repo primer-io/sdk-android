@@ -4,7 +4,6 @@ import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.payments.paymentMethods.raw.validation.PaymentInputTypeValidator
 import io.primer.android.ui.ExpiryDateFormatter
-import java.util.Calendar
 
 internal class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
 
@@ -18,6 +17,7 @@ internal class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
                     PrimerInputElementType.EXPIRY_DATE
                 )
             }
+
             VALID_EXPIRY_DATE_PATTERN.matches(paddedInput.orEmpty()).not() -> {
                 PrimerInputValidationError(
                     EXPIRY_DATE_INVALID_ERROR_ID,
@@ -25,19 +25,14 @@ internal class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
                     PrimerInputElementType.EXPIRY_DATE
                 )
             }
-            VALID_EXPIRY_DATE_PATTERN.find(paddedInput.orEmpty())?.groups?.let { groups ->
-                ExpiryDateFormatter.getDate(
-                    groups[1]?.value?.toInt()?.minus(1),
-                    groups[2]?.value?.toInt()
-                ) <= ExpiryDateFormatter.getDate().apply {
-                    add(Calendar.YEAR, -1)
-                }
-            } == true -> PrimerInputValidationError(
-                EXPIRY_DATE_INVALID_ERROR_ID,
-                "Card expiry date is not valid. " +
-                    "Expiry date should not be less than a year in the past",
-                PrimerInputElementType.EXPIRY_DATE
-            )
+
+            ExpiryDateFormatter.fromString(paddedInput.orEmpty()).isValid().not() ->
+                PrimerInputValidationError(
+                    EXPIRY_DATE_INVALID_ERROR_ID,
+                    "Card expiry date is not valid. ",
+                    PrimerInputElementType.EXPIRY_DATE
+                )
+
             else -> null
         }
     }

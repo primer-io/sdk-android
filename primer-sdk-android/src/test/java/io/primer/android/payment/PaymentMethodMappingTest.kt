@@ -14,9 +14,11 @@ import io.primer.android.payment.klarna.Klarna
 import io.primer.android.payment.paypal.PayPal
 import io.primer.android.utils.Failure
 import io.primer.android.utils.Success
-import org.junit.Assert
-import org.junit.Test
+import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 internal class PaymentMethodMappingTest {
 
@@ -44,9 +46,9 @@ internal class PaymentMethodMappingTest {
         ) {
             is Failure -> {
                 val msg = "Unknown payment method, can't register."
-                Assert.assertEquals(result.value.message, msg)
+                assertEquals(result.value.message, msg)
             }
-            is Success -> Assert.fail()
+            is Success -> assertFails {}
         }
     }
 
@@ -58,8 +60,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.KLARNA.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is Klarna)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is Klarna)
         }
     }
 
@@ -71,8 +73,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAYPAL.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is PayPal)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is PayPal)
         }
     }
 
@@ -84,8 +86,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAYMENT_CARD.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is Card)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is Card)
         }
     }
 
@@ -97,8 +99,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.GOOGLE_PAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is GooglePay)
+            is Failure -> {}
+            is Success -> assertTrue(result.value is GooglePay)
         }
     }
 
@@ -110,8 +112,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.HOOLAH.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -123,8 +125,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAY_NL_IDEAL.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -136,8 +138,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAY_NL_PAYCONIQ.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -149,8 +151,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAY_NL_GIROPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -162,8 +164,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAY_NL_P24.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -175,8 +177,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.PAY_NL_EPS.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -188,8 +190,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_SOFORT.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -201,8 +203,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_ALIPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -214,8 +216,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_TRUSTLY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -227,8 +229,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_TWINT.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -240,8 +242,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_GIROPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -253,8 +255,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_VIPPS.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -266,8 +268,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_MOBILEPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -279,8 +281,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_IDEAL.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -292,8 +294,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_DOTPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -305,8 +307,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_BLIK.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -318,8 +320,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_MBWAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -331,8 +333,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_PAYTRAIL.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -344,8 +346,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_PAYSHOP.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -357,8 +359,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.MOLLIE_BANCONTACT.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -370,8 +372,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.MOLLIE_IDEAL.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -383,8 +385,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.MOLLIE_P24.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -396,8 +398,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.MOLLIE_EPS.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -409,8 +411,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.BUCKAROO_IDEAL.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -422,8 +424,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.BUCKAROO_EPS.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -435,8 +437,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.BUCKAROO_SOFORT.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -448,8 +450,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.BUCKAROO_GIROPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -461,8 +463,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.BUCKAROO_BANCONTACT.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -474,8 +476,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ATOME.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -487,8 +489,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.TWOC2P.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -500,8 +502,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.OPENNODE.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -513,8 +515,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.RAPYD_GCASH.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -526,8 +528,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.RAPYD_GRABPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -539,8 +541,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.RAPYD_POLI.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -552,8 +554,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.RAPYD_FAST.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -565,8 +567,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.RAPYD_PROMPTPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -578,8 +580,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_MULTIBANCO.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -591,8 +593,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.OMISE_PROMPTPAY.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -604,8 +606,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.ADYEN_BANCONTACT_CARD.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 
@@ -617,8 +619,8 @@ internal class PaymentMethodMappingTest {
                 PaymentMethodType.XENDIT_RETAIL_OUTLETS.name
             )
         ) {
-            is Failure -> Assert.fail()
-            is Success -> Assert.assertTrue(result.value is AsyncPaymentMethod)
+            is Failure -> assertFails {}
+            is Success -> assertTrue(result.value is AsyncPaymentMethod)
         }
     }
 }
