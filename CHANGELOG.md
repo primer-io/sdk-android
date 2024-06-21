@@ -1,3 +1,9 @@
+## 2.27.5 (2024-06-21)
+
+### Fix
+
+- 'expiry date is invalid' when entering current month & year (#528)
+
 ## 2.27.4 (2024-06-05)
 
 ### Fix
