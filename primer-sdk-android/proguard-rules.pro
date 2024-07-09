@@ -155,23 +155,7 @@
     public *;
 }
 
--keep class io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager {
-    public *;
-}
-
 -keep interface io.primer.android.components.manager.* {
-    *;
-}
-
--keep class io.primer.android.components.manager.PrimerHeadlessUniversalCheckoutCardComponentsManager$Companion {
-    *;
-}
-
--keep interface io.primer.android.components.ui.widgets.** {
-    *;
-}
-
--keep class io.primer.android.components.ui.widgets.** {
     *;
 }
 

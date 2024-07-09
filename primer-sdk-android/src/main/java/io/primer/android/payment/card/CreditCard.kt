@@ -198,8 +198,7 @@ internal class CreditCard(
     override val headlessDefinition: HeadlessDefinition
         get() = HeadlessDefinition(
             listOf(
-                PrimerPaymentMethodManagerCategory.RAW_DATA,
-                PrimerPaymentMethodManagerCategory.CARD_COMPONENTS
+                PrimerPaymentMethodManagerCategory.RAW_DATA
             ),
             HeadlessDefinition.RawDataDefinition(
                 PrimerCardData::class,

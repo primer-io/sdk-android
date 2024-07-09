@@ -52,8 +52,7 @@ internal class AdyenBancontactCardPaymentMethodDescriptor(
     override val headlessDefinition: HeadlessDefinition
         get() = HeadlessDefinition(
             listOf(
-                PrimerPaymentMethodManagerCategory.RAW_DATA,
-                PrimerPaymentMethodManagerCategory.CARD_COMPONENTS
+                PrimerPaymentMethodManagerCategory.RAW_DATA
             ),
             HeadlessDefinition.RawDataDefinition(
                 PrimerBancontactCardData::class,
