@@ -12,119 +12,119 @@
     targets:
       - file: ./primer-sdk-android/src/main/res/values-da/strings.xml
         params:
-          locale_id: da
-          file_format: android_xml
+          locale_id: Danish
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-de/strings.xml
         params:
-          locale_id: de
-          file_format: android_xml
+          locale_id: German
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-el/strings.xml
         params:
-          locale_id: el
-          file_format: android_xml
+          locale_id: Greek
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-es/strings.xml
         params:
-          locale_id: es
-          file_format: android_xml
+          locale_id: Spanish
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-fr/strings.xml
         params:
-          locale_id: fr
-          file_format: android_xml
+          locale_id: French
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-it/strings.xml
         params:
-          locale_id: it
-          file_format: android_xml
+          locale_id: Italian
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-ms/strings.xml
         params:
-          locale_id: ms
-          file_format: android_xml
+          locale_id: Malay
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-nb/strings.xml
         params:
-          locale_id: nb
-          file_format: android_xml
+          locale_id: Norwegian
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-nl/strings.xml
         params:
-          locale_id: nl
-          file_format: android_xml
+          locale_id: Dutch
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-pl/strings.xml
         params:
-          locale_id: pl
-          file_format: android_xml
+          locale_id: Polish
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-pt/strings.xml
         params:
-          locale_id: pt
-          file_format: android_xml
+          locale_id: Portuguese
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-sv/strings.xml
         params:
-          locale_id: sv
-          file_format: android_xml
+          locale_id: Swedish
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-th/strings.xml
         params:
-          locale_id: th
-          file_format: android_xml
+          locale_id: Thai
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-tr/strings.xml
         params:
-          locale_id: tr
-          file_format: android_xml
+          locale_id: Turkish
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-zh-rCN/strings.xml
         params:
-          locale_id: zh-rCN
-          file_format: android_xml
+          locale_id: Chinese
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-zh-rHK/strings.xml
         params:
-          locale_id: zh-rHK
-          file_format: android_xml
+          locale_id: Chinese-HongKong
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
 
       - file: ./primer-sdk-android/src/main/res/values-zh-rTW/strings.xml
         params:
-          locale_id: zh-rTW
-          file_format: android_xml
+          locale_id: Chinese-Taiwanese
+          file_format: xml
           tags: android-sdk
           encoding: UTF-16
