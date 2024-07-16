@@ -13,3 +13,11 @@
 -dontwarn com.snowballtech.transit.rta.configuration.TransitConfiguration
 -dontwarn com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 -dontwarn com.netcetera.threeds.sdk.api.**
+
+
+# TODO TWS: undo when releasing ACH
+-dontwarn io.primer.android.stripe.StripeBankAccountCollectorActivity$Companion
+-dontwarn io.primer.android.stripe.StripeBankAccountCollectorActivity$Params
+-dontwarn io.primer.android.stripe.StripeBankAccountCollectorActivity
+-dontwarn io.primer.android.stripe.exceptions.StripePublishableKeyMismatchException
+-dontwarn io.primer.android.stripe.exceptions.StripeSdkException
