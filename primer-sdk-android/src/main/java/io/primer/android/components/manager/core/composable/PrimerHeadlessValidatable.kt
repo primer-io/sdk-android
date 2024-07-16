@@ -37,7 +37,12 @@ sealed interface PrimerValidationStatus<T : PrimerCollectableData> {
     data class Invalid<T : PrimerCollectableData>(
         val validationErrors: List<PrimerValidationError>,
         val collectableData: PrimerCollectableData
-    ) : PrimerValidationStatus<T>
+    ) : PrimerValidationStatus<T> {
+        constructor(
+            validationError: PrimerValidationError,
+            collectableData: PrimerCollectableData
+        ) : this(listOf(validationError), collectableData)
+    }
 
     /**
      * Represents the status when an error occurred during the validation process.

@@ -13,6 +13,7 @@ internal enum class ErrorMapperType {
     THREE_DS,
     NOL_PAY,
     VAULT,
+    STRIPE,
     DEFAULT
 }
 

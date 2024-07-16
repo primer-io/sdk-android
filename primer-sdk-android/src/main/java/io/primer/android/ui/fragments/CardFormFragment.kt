@@ -379,7 +379,8 @@ internal class CardFormFragment : BaseFragment() {
         primerViewModel.navigateTo(
             NewFragmentBehaviour(
                 { SelectCountryFragment.newInstance() },
-                returnToPreviousOnBack = true
+                returnToPreviousOnBack = true,
+                tag = null
             )
         )
     }

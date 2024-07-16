@@ -5,16 +5,18 @@ import android.os.Parcelable
 import io.primer.android.extensions.readParcelable
 
 data class PrimerPaymentMethodOptions @JvmOverloads constructor(
-    var redirectScheme: String? = null,
-    var googlePayOptions: PrimerGooglePayOptions = PrimerGooglePayOptions(),
-    var klarnaOptions: PrimerKlarnaOptions = PrimerKlarnaOptions(),
-    var threeDsOptions: PrimerThreeDsOptions = PrimerThreeDsOptions()
+    val redirectScheme: String? = null,
+    val googlePayOptions: PrimerGooglePayOptions = PrimerGooglePayOptions(),
+    val klarnaOptions: PrimerKlarnaOptions = PrimerKlarnaOptions(),
+    val threeDsOptions: PrimerThreeDsOptions = PrimerThreeDsOptions(),
+    val stripeOptions: PrimerStripeOptions = PrimerStripeOptions()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readParcelable<PrimerGooglePayOptions>() ?: PrimerGooglePayOptions(),
-        parcel.readParcelable<PrimerKlarnaOptions>() ?: PrimerKlarnaOptions(),
-        parcel.readParcelable<PrimerThreeDsOptions>() ?: PrimerThreeDsOptions()
+        redirectScheme = parcel.readString(),
+        googlePayOptions = parcel.readParcelable<PrimerGooglePayOptions>() ?: PrimerGooglePayOptions(),
+        klarnaOptions = parcel.readParcelable<PrimerKlarnaOptions>() ?: PrimerKlarnaOptions(),
+        threeDsOptions = parcel.readParcelable<PrimerThreeDsOptions>() ?: PrimerThreeDsOptions(),
+        stripeOptions = parcel.readParcelable<PrimerStripeOptions>() ?: PrimerStripeOptions()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -22,6 +24,7 @@ data class PrimerPaymentMethodOptions @JvmOverloads constructor(
         parcel.writeParcelable(googlePayOptions, flags)
         parcel.writeParcelable(klarnaOptions, flags)
         parcel.writeParcelable(threeDsOptions, flags)
+        parcel.writeParcelable(stripeOptions, flags)
     }
 
     override fun describeContents(): Int {

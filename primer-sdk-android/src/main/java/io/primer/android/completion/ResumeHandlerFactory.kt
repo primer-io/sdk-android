@@ -9,6 +9,7 @@ import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeep
 import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.helpers.StripeAchPostPaymentCreationEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
@@ -36,7 +37,8 @@ internal class ResumeHandlerFactory(
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
-    private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository
+    private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
+    private val stripeAchPostPaymentCreationEventResolver: StripeAchPostPaymentCreationEventResolver
 ) {
 
     fun getResumeHandler(
@@ -52,51 +54,59 @@ internal class ResumeHandlerFactory(
             ?: when (paymentInstrumentType) {
                 CARD_INSTRUMENT_TYPE,
                 PaymentMethodType.GOOGLE_PAY.name -> ThreeDsPrimerResumeDecisionHandler(
-                    validationTokenRepository,
-                    clientTokenRepository,
-                    paymentMethodRepository,
-                    paymentResultRepository,
-                    analyticsRepository,
-                    mockConfigurationRepository,
-                    threeDsSdkClassValidator,
-                    threeDsLibraryVersionValidator,
-                    errorEventResolver,
-                    eventDispatcher,
-                    threeDsRepository,
-                    errorMapperFactory,
-                    this,
-                    logReporter,
-                    config,
-                    paymentMethodDescriptorsRepository,
-                    retailerOutletRepository
+                    validationTokenRepository = validationTokenRepository,
+                    clientTokenRepository = clientTokenRepository,
+                    paymentMethodRepository = paymentMethodRepository,
+                    paymentResultRepository = paymentResultRepository,
+                    analyticsRepository = analyticsRepository,
+                    mockConfigurationRepository = mockConfigurationRepository,
+                    threeDsSdkClassValidator = threeDsSdkClassValidator,
+                    threeDsLibraryVersionValidator = threeDsLibraryVersionValidator,
+                    errorEventResolver = errorEventResolver,
+                    eventDispatcher = eventDispatcher,
+                    threeDsRepository = threeDsRepository,
+                    errorMapperFactory = errorMapperFactory,
+                    resumeHandlerFactory = this,
+                    logReporter = logReporter,
+                    config = config,
+                    paymentMethodDescriptorsRepository = paymentMethodDescriptorsRepository,
+                    retailerOutletRepository = retailerOutletRepository,
+                    stripeAchPostPaymentCreationEventResolver =
+                    stripeAchPostPaymentCreationEventResolver
                 )
+
                 ASYNC_PAYMENT_METHOD,
                 CARD_ASYNC_PAYMENT_METHOD -> AsyncPaymentPrimerResumeDecisionHandler(
-                    validationTokenRepository,
-                    clientTokenRepository,
-                    paymentMethodRepository,
-                    paymentResultRepository,
-                    analyticsRepository,
-                    errorEventResolver,
-                    eventDispatcher,
-                    logReporter,
-                    config,
-                    paymentMethodDescriptorsRepository,
-                    retailerOutletRepository,
-                    asyncPaymentMethodDeeplinkRepository
+                    validationTokenRepository = validationTokenRepository,
+                    clientTokenRepository = clientTokenRepository,
+                    paymentMethodRepository = paymentMethodRepository,
+                    paymentResultRepository = paymentResultRepository,
+                    analyticsRepository = analyticsRepository,
+                    baseErrorEventResolver = errorEventResolver,
+                    eventDispatcher = eventDispatcher,
+                    logReporter = logReporter,
+                    config = config,
+                    paymentMethodDescriptorsRepository = paymentMethodDescriptorsRepository,
+                    retailerOutletRepository = retailerOutletRepository,
+                    asyncPaymentMethodDeeplinkRepository = asyncPaymentMethodDeeplinkRepository,
+                    stripeAchPostPaymentCreationEventResolver =
+                    stripeAchPostPaymentCreationEventResolver
                 )
+
                 else -> DefaultPrimerResumeDecisionHandler(
-                    validationTokenRepository,
-                    clientTokenRepository,
-                    paymentMethodRepository,
-                    paymentResultRepository,
-                    analyticsRepository,
-                    errorEventResolver,
-                    eventDispatcher,
-                    logReporter,
-                    config,
-                    paymentMethodDescriptorsRepository,
-                    retailerOutletRepository
+                    validationTokenRepository = validationTokenRepository,
+                    clientTokenRepository = clientTokenRepository,
+                    paymentMethodRepository = paymentMethodRepository,
+                    paymentResultRepository = paymentResultRepository,
+                    analyticsRepository = analyticsRepository,
+                    errorEventResolver = errorEventResolver,
+                    eventDispatcher = eventDispatcher,
+                    logReporter = logReporter,
+                    config = config,
+                    paymentMethodDescriptorsRepository = paymentMethodDescriptorsRepository,
+                    retailerOutletRepository = retailerOutletRepository,
+                    stripeAchPostPaymentCreationEventResolver =
+                    stripeAchPostPaymentCreationEventResolver
                 )
             }
     }

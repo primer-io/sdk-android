@@ -42,8 +42,7 @@ internal class DefaultBanksComponent constructor(
     private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
     private val errorMapper: ErrorMapper,
     private val savedStateHandle: SavedStateHandle,
-    private val onFinished: () -> Unit,
-    private val onDisposed: () -> Unit
+    private val onFinished: () -> Unit
 ) : ViewModel(), BanksComponent {
     @VisibleForTesting
     var banks: List<IssuingBank>? = null
@@ -108,11 +107,6 @@ internal class DefaultBanksComponent constructor(
                 paymentMethodType = paymentMethodType
             )
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        onDisposed()
     }
 
     // region Utils

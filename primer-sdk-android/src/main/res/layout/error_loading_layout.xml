@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/error_layout_parent"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/success_width"
+    android:layout_height="300dp"
     android:layout_marginHorizontal="@dimen/xxl_vertical_margin">
 
     <ImageView
@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/xxl_vertical_margin"
+        android:contentDescription="@null"
         android:src="@drawable/ic_no_connection"
         app:layout_constraintBottom_toTopOf="@id/error_message"
         app:layout_constraintEnd_toEndOf="parent"

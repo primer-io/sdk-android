@@ -50,6 +50,7 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.extensions.collectIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -79,6 +80,9 @@ class KlarnaComponentTest {
 
     @MockK
     private lateinit var klarnaSessionCreationDelegate: KlarnaSessionCreationDelegate
+
+    @MockK
+    private lateinit var mockConfigurationDelegate: MockConfigurationDelegate
 
     @MockK
     private lateinit var eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
@@ -112,25 +116,6 @@ class KlarnaComponentTest {
             authorizationSessionDataDelegate.getAuthorizationSessionDataOrNull()
         } returns authorizationSessionData
 
-        val mockConfigurationDelegate = mockk<MockConfigurationDelegate> {
-            every { isMockedFlow() } returns false
-        }
-        component = KlarnaComponent(
-            klarnaTokenizationDelegate = klarnaTokenizationDelegate,
-            klarnaSessionCreationDelegate = klarnaSessionCreationDelegate,
-            headlessManagerDelegate = mockk(),
-            mockConfigurationDelegate = mockConfigurationDelegate,
-            eventLoggingDelegate = eventLoggingDelegate,
-            errorLoggingDelegate = errorLoggingDelegate,
-            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-            authorizationSessionDataDelegate = authorizationSessionDataDelegate,
-            errorEventResolver = baseErrorEventResolver,
-            errorMapper = errorMapper,
-            createKlarnaPaymentView = createKlarnaPaymentView,
-            primerSettings = primerSettings,
-            primerSessionIntent = primerSessionIntent
-        )
-
         confirmVerified(mockConfigurationDelegate)
     }
 
@@ -147,6 +132,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `start() should log event and emit session creation step when session creation delegate succeeds`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         val availableCategories = mockk<List<KlarnaPaymentCategory>>()
         val klarnaSession = mockk<KlarnaSession> {
@@ -190,6 +176,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `start() should log event, log and emit error when session creation delegate fails and in HEADLESS mode`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -240,6 +227,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `start() should log event, log, emit error, and resolve checkout errors when session creation delegate fails and in DROP-in mode`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -288,6 +276,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `updateCollectedData() should log event and emit payment view loaded step and valid status when KlarnaPaymentCategoryValidator validate() returns null`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         mockkObject(KlarnaPaymentCategoryValidator)
         every { KlarnaPaymentCategoryValidator.validate(any(), any()) } returns null
@@ -359,6 +348,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `updateCollectedData() should log event and emit valid status when KlarnaPaymentFinalizationValidator validate() returns null`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         mockkObject(KlarnaPaymentFinalizationValidator)
         every { KlarnaPaymentFinalizationValidator.validate(any()) } returns null
@@ -413,6 +403,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `updateCollectedData() should log event, validation errors and emit invalid status when KlarnaPaymentFinalizationValidator validate() returns validation error`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { validationErrorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -458,6 +449,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `updateCollectedData() should log event, validation errors and emit invalid status when KlarnaPaymentCategoryValidator validate() returns validation error`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { validationErrorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -506,7 +498,8 @@ class KlarnaComponentTest {
     }
 
     @Test
-    fun `submit() should start authorization without auto finalization, log event, tokenize and emit authorized step when payment is approved when integration type is HEADLESS`() = runTest {
+    fun `submit() should start authorization without auto finalization, log event, tokenize and emit authorized step when payment is approved and integration type is HEADLESS`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         mockkObject(KlarnaPaymentCategoryValidator)
@@ -594,7 +587,94 @@ class KlarnaComponentTest {
     }
 
     @Test
-    fun `submit() should start authorization with auto finalization, log event, tokenize and emit authorized step when payment is approved when integration type is DROP-IN`() = runTest {
+    fun `submit() should log event, tokenize and emit authorized step when in mocked flow and integration type is HEADLESS`() = runTest {
+        initComponent(isMockedFlow = true)
+        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
+        coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        mockkObject(KlarnaPaymentCategoryValidator)
+        every { KlarnaPaymentCategoryValidator.validate(any(), any()) } returns null
+        val klarnaPaymentViewCallback = slot<KlarnaPaymentViewCallback>()
+        val klarnaPaymentView = mockk<KlarnaPaymentView>(relaxed = true)
+        every {
+            createKlarnaPaymentView.invoke(
+                any(),
+                any(),
+                capture(klarnaPaymentViewCallback),
+                any()
+            )
+        } returns klarnaPaymentView
+        coEvery {
+            klarnaTokenizationDelegate.tokenize(any(), any(), any())
+        } returns Result.success(Unit)
+        val paymentCategory = mockk<KlarnaPaymentCategory> {
+            every { identifier } returns "identifier"
+        }
+        val klarnaSession = mockk<KlarnaSession> {
+            every { sessionId } returns "sessionId"
+            every { clientToken } returns "clientToken"
+            every { availableCategories } returns listOf(paymentCategory)
+        }
+        component.klarnaSession = klarnaSession
+        val errors = mutableListOf<PrimerError>()
+        val errorJob = component.componentError.collectIn(errors, this)
+        val validationStatuses =
+            mutableListOf<PrimerValidationStatus<KlarnaPaymentCollectableData>>()
+        val validationJob = component.componentValidationStatus.collectIn(validationStatuses, this)
+        val steps = mutableListOf<KlarnaPaymentStep>()
+        val stepJob = component.componentStep.collectIn(steps, this)
+        val collectableData = KlarnaPaymentCollectableData.PaymentOptions(
+            context = mockk {
+                every { getText(any()) } returns "text"
+            },
+            returnIntentUrl = returnIntentUrl,
+            paymentCategory = paymentCategory
+        )
+
+        component.updateCollectedData(collectableData)
+        delay(2.seconds)
+        component.submit()
+        delay(MOCK_EMISSION_DELAY)
+        advanceUntilIdle()
+        errorJob.cancel()
+        validationJob.cancel()
+        stepJob.cancel()
+
+        verify(exactly = 1) {
+            KlarnaPaymentCategoryValidator.validate(listOf(paymentCategory), paymentCategory)
+        }
+        verify(exactly = 0) {
+            klarnaPaymentView.authorize(any(), any())
+        }
+        coVerify(exactly = 1) {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_SUBMIT_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.KLARNA.name
+            )
+            klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
+        }
+        coVerify(exactly = 0) {
+            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+        }
+        assertEquals(component.isFinalizationRequired, false)
+        assertEquals(emptyList<PrimerError>(), errors)
+        assertEquals(
+            listOf<PrimerValidationStatus<KlarnaPaymentCollectableData>>(
+                PrimerValidationStatus.Validating(collectableData),
+                PrimerValidationStatus.Valid(collectableData)
+            ),
+            validationStatuses
+        )
+        assertInstanceOf(KlarnaPaymentStep.PaymentViewLoaded::class.java, steps.first())
+        assertEquals(
+            KlarnaPaymentStep.PaymentSessionAuthorized(true),
+            steps.last()
+        )
+        unmockkObject(KlarnaPaymentCategoryValidator)
+    }
+
+    @Test
+    fun `submit() should start authorization with auto finalization, log event, tokenize and emit authorized step when payment is approved and integration type is DROP-IN`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         mockkObject(KlarnaPaymentCategoryValidator)
@@ -683,6 +763,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `submit() should start authorization, log event, and emit error when payment is not approved`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -775,6 +856,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `submit() should start authorization, log event, and emit error when payment is authorized but tokenization delegate fails`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -865,6 +947,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `submit() should start authorization, log event, and emit error when a payment error occurs`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -956,6 +1039,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `submit() should start authorization, log event, tokenize and emit finalized step when payment is finalized`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         mockkObject(KlarnaPaymentCategoryValidator)
@@ -1043,6 +1127,7 @@ class KlarnaComponentTest {
 
     @Test
     fun `submit() should start authorization, log event, and emit error when payment is not finalized`() = runTest {
+        initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
         coEvery { errorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
@@ -1127,5 +1212,24 @@ class KlarnaComponentTest {
             validationStatuses
         )
         unmockkObject(KlarnaPaymentCategoryValidator)
+    }
+
+    private fun initComponent(isMockedFlow: Boolean = false) {
+        every { mockConfigurationDelegate.isMockedFlow() } returns isMockedFlow
+        component = KlarnaComponent(
+            klarnaTokenizationDelegate = klarnaTokenizationDelegate,
+            klarnaSessionCreationDelegate = klarnaSessionCreationDelegate,
+            headlessManagerDelegate = mockk(),
+            mockConfigurationDelegate = mockConfigurationDelegate,
+            eventLoggingDelegate = eventLoggingDelegate,
+            errorLoggingDelegate = errorLoggingDelegate,
+            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+            authorizationSessionDataDelegate = authorizationSessionDataDelegate,
+            errorEventResolver = baseErrorEventResolver,
+            errorMapper = errorMapper,
+            createKlarnaPaymentView = createKlarnaPaymentView,
+            primerSettings = primerSettings,
+            primerSessionIntent = primerSessionIntent
+        )
     }
 }

@@ -25,6 +25,7 @@ import io.primer.android.di.extension.activityViewModel
 import io.primer.android.di.extension.inject
 import io.primer.android.ui.AlternativePaymentMethodData
 import io.primer.android.ui.AlternativePaymentMethodType
+import io.primer.android.ui.BankData
 import io.primer.android.ui.CardData
 import io.primer.android.ui.CardNetwork
 import io.primer.android.ui.PaymentMethodItemData
@@ -120,6 +121,14 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                         expiryYear,
                         CardNetwork.Type.valueOrNull(network) ?: CardNetwork.Type.OTHER,
                         it.token
+                    )
+                }
+
+                PaymentMethodType.STRIPE_ACH.name -> {
+                    BankData(
+                        bankName = it.paymentInstrumentData?.bankName ?: "-",
+                        lastFour = it.paymentInstrumentData?.last4Digits ?: DEFAULT_LAST_FOUR,
+                        tokenId = it.token
                     )
                 }
 

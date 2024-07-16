@@ -153,6 +153,7 @@ data class PrimerTheme internal constructor(
         /**
          * Style the Primer SDK using Android XML resources
          * */
+        @Suppress("LongParameterList")
         @JvmStatic
         fun build(
             isDarkMode: Boolean? = null,
@@ -440,6 +441,7 @@ data class PrimerTheme internal constructor(
         /**
          * Style the Primer SDK using React Native
          */
+        @Suppress("LongParameterList")
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         @JvmStatic
         fun buildWithDynamicValues(

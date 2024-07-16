@@ -75,6 +75,9 @@ dependencies {
 
     compileOnly libs.primer.ipay88
     testImplementation libs.primer.ipay88
+
+    compileOnly libs.primer.stripe
+    testImplementation libs.primer.stripe
 }
 
 repositories {
@@ -86,6 +89,9 @@ repositories {
     }
     maven {
         url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
+    }
+    maven { // TODO TWS: remove before release
+        url "https://s01.oss.sonatype.org/content/repositories/staging/"
     }
 }
 

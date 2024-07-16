@@ -14,6 +14,7 @@ import io.primer.android.domain.currencyformat.interactors.FormatAmountToDecimal
 import io.primer.android.domain.currencyformat.models.FormatCurrencyParams
 import io.primer.android.domain.deeplink.ipay88.repository.IPay88DeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.helpers.StripeAchPostPaymentCreationEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.session.repository.ConfigurationRepository
@@ -39,6 +40,7 @@ internal class IPay88ResumeDecisionHandler(
     paymentResultRepository: PaymentResultRepository,
     analyticsRepository: AnalyticsRepository,
     errorEventResolver: BaseErrorEventResolver,
+    stripeAchPostPaymentCreationEventResolver: StripeAchPostPaymentCreationEventResolver,
     private val eventDispatcher: EventDispatcher,
     logReporter: LogReporter,
     private val config: PrimerConfig,
@@ -58,6 +60,7 @@ internal class IPay88ResumeDecisionHandler(
     config,
     paymentMethodDescriptorsRepository,
     retailerOutletRepository,
+    stripeAchPostPaymentCreationEventResolver,
     dispatcher
 ) {
 

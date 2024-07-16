@@ -10,7 +10,7 @@ import io.primer.android.data.tokenization.models.paymentInstruments.async.phone
 import io.primer.android.data.tokenization.models.paymentInstruments.async.retailOutlets.RetailOutletsSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.async.webRedirect.WebRedirectSessionInfoDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolPaySessionInfoDataRequest
-import org.json.JSONObject
+import io.primer.android.data.tokenization.models.paymentInstruments.stripe.ach.StripeAchSessionInfoDataRequest
 
 internal open class BaseSessionInfoDataRequest(
     open val locale: String,
@@ -23,28 +23,38 @@ internal open class BaseSessionInfoDataRequest(
         const val REDIRECTION_URL_FIELD = "redirectionUrl"
 
         @JvmField
-        val serializer = object : JSONObjectSerializer<BaseSessionInfoDataRequest> {
-            override fun serialize(t: BaseSessionInfoDataRequest): JSONObject {
-                return when (t) {
+        val serializer =
+            JSONObjectSerializer<BaseSessionInfoDataRequest> { t ->
+                when (t) {
                     is WebRedirectSessionInfoDataRequest ->
                         WebRedirectSessionInfoDataRequest.serializer.serialize(t)
+
                     is PhoneNumberSessionInfoDataRequest ->
                         PhoneNumberSessionInfoDataRequest.serializer.serialize(t)
+
                     is BlikSessionInfoDataRequest ->
                         BlikSessionInfoDataRequest.serializer.serialize(t)
+
                     is BankIssuerSessionInfoDataRequest ->
                         BankIssuerSessionInfoDataRequest.serializer.serialize(t)
+
                     is PrimerDummySessionInfoDataRequest ->
                         PrimerDummySessionInfoDataRequest.serializer.serialize(t)
+
                     is RetailOutletsSessionInfoDataRequest ->
                         RetailOutletsSessionInfoDataRequest.serializer.serialize(t)
+
                     is AdyenBancontactSessionInfoDataRequest ->
                         AdyenBancontactSessionInfoDataRequest.serializer.serialize(t)
+
                     is NolPaySessionInfoDataRequest ->
                         NolPaySessionInfoDataRequest.serializer.serialize(t)
+
+                    is StripeAchSessionInfoDataRequest ->
+                        StripeAchSessionInfoDataRequest.serializer.serialize(t)
+
                     else -> throw IllegalArgumentException("Missing serializer declaration for $t")
                 }
             }
-        }
     }
 }

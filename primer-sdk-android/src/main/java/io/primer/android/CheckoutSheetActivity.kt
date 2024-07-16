@@ -2,7 +2,9 @@ package io.primer.android
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.models.TimerAnalyticsParams
@@ -20,6 +22,7 @@ import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodPar
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.additionalInfo.AchAdditionalInfo
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.extensions.getParcelable
@@ -46,6 +49,7 @@ import io.primer.android.ui.fragments.forms.FastBankTransferFragment
 import io.primer.android.ui.fragments.forms.PromptPayFragment
 import io.primer.android.ui.fragments.forms.QrCodeFragment
 import io.primer.android.ui.fragments.multibanko.MultibancoPaymentFragment
+import io.primer.android.ui.fragments.stripe.ach.StripeAchMandateFragment
 import io.primer.android.ui.mock.PaymentMethodMockActivity
 import io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity
 import io.primer.android.viewmodel.PrimerViewModel
@@ -54,7 +58,9 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.TokenizationViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class CheckoutSheetActivity : BaseCheckoutActivity() {
 
@@ -94,17 +100,22 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
             else -> null
         }
 
-        fragment?.let {
-            openFragment(
-                it,
-                initFinished
-            )
-        } ?: run {
-            sheet?.dialog?.hide()
-        }
-
         if (!initFinished && viewStatus != ViewStatus.INITIALIZING) {
             initFinished = true
+        }
+
+        fragment?.let {
+            openFragment(
+                fragment = it,
+                returnToPreviousOnBack = initFinished,
+                tag = if (it is SelectPaymentMethodFragment) {
+                    SelectPaymentMethodFragment.TAG
+                } else {
+                    null
+                }
+            )
+        } ?: run {
+            sheet.dialog?.hide()
         }
     }
 
@@ -120,7 +131,8 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                         SessionCompleteFragment.newInstance(
                             it.delay,
                             SessionCompleteViewType.Success(it.successType)
-                        )
+                        ),
+                        false
                     )
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
@@ -133,7 +145,8 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                         SessionCompleteFragment.newInstance(
                             it.delay,
                             SessionCompleteViewType.Error(it.errorType, it.message)
-                        )
+                        ),
+                        false
                     )
                 } else {
                     onExit(CheckoutExitReason.DISMISSED_BY_USER)
@@ -242,6 +255,29 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 }
             }
 
+            is CheckoutEvent.OnAdditionalInfoReceived -> {
+                when (it.paymentMethodInfo) {
+                    is AchAdditionalInfo.DisplayMandate -> {
+                        sheet.childFragmentManager.setFragmentResultListener(
+                            /* requestKey = */ StripeAchMandateFragment.RESULT_KEY,
+                            /* lifecycleOwner = */ sheet
+                        ) { _, bundle ->
+                            val isAccepted = bundle.getBoolean(StripeAchMandateFragment.IS_ACCEPTED)
+                            lifecycleScope.launch {
+                                if (isAccepted) {
+                                    it.paymentMethodInfo.onAcceptMandate()
+                                } else {
+                                    it.paymentMethodInfo.onDeclineMandate()
+                                }
+                            }
+                        }
+                        sheet.childFragmentManager.commit {
+                            replace(R.id.checkout_sheet_content, StripeAchMandateFragment.newInstance())
+                        }
+                    }
+                }
+            }
+
             else -> Unit
         }
     }
@@ -343,7 +379,8 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
                 is CheckoutEvent.Start3DSMock,
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
-                is CheckoutEvent.ShowError
+                is CheckoutEvent.ShowError,
+                is CheckoutEvent.OnAdditionalInfoReceived
                 -> primerViewModel.setCheckoutEvent(it)
 
                 else -> Unit
@@ -358,10 +395,10 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
     override fun onStart() {
         super.onStart()
         if (config.settings.fromHUC.not()) {
-            val fragments = sheet?.childFragmentManager?.fragments
+            val fragments = sheet.childFragmentManager.fragments
             val descriptor = primerViewModel.selectedPaymentMethod.value
-            if (fragments.isNullOrEmpty() && descriptor != null) {
-                sheet?.dialog?.hide()
+            if (fragments.isEmpty() && descriptor != null) {
+                sheet.dialog?.hide()
             }
         }
     }
@@ -383,9 +420,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
         }
     }
 
-    private fun openFragment(fragment: Fragment, returnToPreviousOnBack: Boolean = false) {
-        sheet?.dialog?.show()
-        openFragment(NewFragmentBehaviour({ fragment }, returnToPreviousOnBack))
+    private fun openFragment(fragment: Fragment, returnToPreviousOnBack: Boolean = false, tag: String? = null) {
+        sheet.dialog?.show()
+        openFragment(NewFragmentBehaviour({ fragment }, returnToPreviousOnBack, tag))
     }
 
     private fun openFragment(behaviour: NewFragmentBehaviour) {

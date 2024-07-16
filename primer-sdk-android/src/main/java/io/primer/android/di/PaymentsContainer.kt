@@ -42,7 +42,13 @@ internal class PaymentsContainer(private val sdk: SdkContainer) : DependencyCont
             )
         }
 
-        registerFactory { PaymentResultEventsResolver(sdk.resolve(), sdk.resolve(), sdk.resolve()) }
+        registerFactory {
+            PaymentResultEventsResolver(
+                sdk.resolve(),
+                sdk.resolve(),
+                sdk.resolve()
+            )
+        }
 
         registerFactory {
             ResumePaymentInteractor(

@@ -72,9 +72,6 @@ class DefaultBanksComponentTest {
     @RelaxedMockK
     private lateinit var onFinished: () -> Unit
 
-    @RelaxedMockK
-    private lateinit var onDisposed: () -> Unit
-
     private lateinit var component: DefaultBanksComponent
 
     @BeforeEach
@@ -89,8 +86,7 @@ class DefaultBanksComponentTest {
             errorLoggingDelegate = errorLoggingDelegate,
             errorMapper = errorMapper,
             savedStateHandle = savedStateHandle,
-            onFinished = onFinished,
-            onDisposed = onDisposed
+            onFinished = onFinished
         )
         mockkStatic(UUID::class)
         every { UUID.randomUUID().toString() } returns "uuid"
@@ -106,8 +102,7 @@ class DefaultBanksComponentTest {
             eventLoggingDelegate,
             errorLoggingDelegate,
             errorMapper,
-            onFinished,
-            onDisposed
+            onFinished
         )
     }
 

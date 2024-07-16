@@ -3,6 +3,7 @@ package io.primer.android.completion
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -10,16 +11,18 @@ import io.primer.android.data.token.model.ClientToken
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
+import io.primer.android.domain.payments.additionalInfo.AchAdditionalInfo
+import io.primer.android.domain.payments.additionalInfo.AdditionalInfoResolverExtraParams
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutQRCodeInfo
 import io.primer.android.domain.payments.additionalInfo.RetailOutletsCheckoutAdditionalInfoResolver
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.helpers.StripeAchPostPaymentCreationEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
@@ -33,6 +36,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
+@Suppress("LongParameterList", "TooManyFunctions")
 internal open class DefaultPrimerResumeDecisionHandler(
     private val validationTokenRepository: ValidateTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
@@ -45,10 +49,15 @@ internal open class DefaultPrimerResumeDecisionHandler(
     private val config: PrimerConfig,
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     private val retailerOutletRepository: RetailOutletRepository,
+    private val stripeAchPostPaymentCreationEventResolver:
+        StripeAchPostPaymentCreationEventResolver,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : PrimerHeadlessUniversalCheckoutResumeDecisionHandler, PrimerResumeDecisionHandler {
 
     private var handlerUsed = false
+    private val scope by lazy { CoroutineScope(dispatcher) }
+    private val paymentMethodType
+        get() = paymentMethodRepository.getPaymentMethod().paymentMethodType
 
     override fun handleFailure(message: String?) = callIfNotHandled {
         reportDebugLog("Received failure callback.")
@@ -73,22 +82,53 @@ internal open class DefaultPrimerResumeDecisionHandler(
     override fun continueWithNewClientToken(clientToken: String) = callIfNotHandled {
         reportDebugLog("Received new client token.")
         addAnalyticsEvent("handleNewClientToken")
-        CoroutineScope(dispatcher).launch {
-            validateClientToken(clientToken).catch { e ->
-                errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
-            }.collect {
-                try {
-                    clientTokenRepository.setClientToken(clientToken)
-                    handleClientToken(clientToken)
-                    handlePaymentMethodData(clientToken)
-                } catch (e: IllegalArgumentException) {
-                    errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
+
+        val resume: (AdditionalInfoResolverExtraParams) -> Unit =
+            { additionalInfoResolverExtraParams ->
+                scope.launch {
+                    validateClientToken(clientToken)
+                        .catch { e ->
+                            errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
+                        }.collect {
+                            try {
+                                clientTokenRepository.setClientToken(clientToken)
+                                handleClientToken(clientToken)
+                                handlePaymentMethodData(
+                                    clientToken = clientToken,
+                                    extraParams = additionalInfoResolverExtraParams
+                                )
+                            } catch (e: IllegalArgumentException) {
+                                errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
+                            }
+                        }
                 }
             }
+
+        when (paymentMethodType) {
+            PaymentMethodType.STRIPE_ACH.name -> {
+                scope.launch {
+                    val currentClientToken: ClientToken
+                    try {
+                        currentClientToken = ClientToken.fromString(clientToken)
+                    } catch (e: IllegalArgumentException) {
+                        errorEventResolver.resolve(e, ErrorMapperType.PAYMENT_RESUME)
+                        return@launch
+                    }
+                    stripeAchPostPaymentCreationEventResolver.resolve(
+                        clientToken = currentClientToken,
+                        onBankSelected = resume
+                    )
+                }
+            }
+
+            else -> resume(AdditionalInfoResolverExtraParams.None)
         }
     }
 
-    private suspend fun handlePaymentMethodData(clientToken: String) {
+    private suspend fun handlePaymentMethodData(
+        clientToken: String,
+        extraParams: AdditionalInfoResolverExtraParams
+    ) {
         val clientTokenConfig = ClientToken.fromString(clientToken)
         paymentMethodDescriptorsRepository.resolvePaymentMethodDescriptors()
             .mapLatest { descriptors ->
@@ -105,13 +145,12 @@ internal open class DefaultPrimerResumeDecisionHandler(
                     }
                 }
 
-                additionalInfoResolver?.resolve(clientTokenConfig)?.let { data ->
+                additionalInfoResolver?.resolve(clientTokenConfig, extraParams)?.let { data ->
                     when (data) {
-                        is PrimerCheckoutQRCodeInfo -> {
+                        is PrimerCheckoutQRCodeInfo,
+                        is AchAdditionalInfo -> {
                             eventDispatcher.dispatchEvent(
-                                CheckoutEvent.OnAdditionalInfoReceived(
-                                    data
-                                )
+                                CheckoutEvent.OnAdditionalInfoReceived(data)
                             )
                         }
 

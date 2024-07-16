@@ -51,9 +51,8 @@ internal object BanksComponentProvider : DISdkComponent {
                 savedStateHandle = runCatching {
                     extras.createSavedStateHandle()
                 }.getOrDefault(SavedStateHandle()),
-                onFinished = onFinished,
-                onDisposed = onDisposed
-            ) as T
+                onFinished = onFinished
+            ).apply { addCloseable { onDisposed() } } as T
         }
     )[DefaultBanksComponent::class.java]
 }

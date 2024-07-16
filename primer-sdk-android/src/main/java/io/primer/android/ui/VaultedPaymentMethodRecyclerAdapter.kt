@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.R
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
@@ -61,7 +62,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val theme: PrimerTheme
     ) : ViewHolder(binding.root) {
 
-        private fun setCardIcon(type: AlternativePaymentMethodType) {
+        private fun setPaymentMethodIcon(type: AlternativePaymentMethodType) {
             val iconView = binding.paymentMethodIcon
             when (type) {
                 AlternativePaymentMethodType.PayPal ->
@@ -76,12 +77,13 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         fun bind(item: AlternativePaymentMethodData, status: PaymentItemStatus) {
+            binding.bankLastFourLabel.isInvisible = true
+            binding.bankNameLabel.isInvisible = true
+            binding.lastFourLabel.isInvisible = true
+            binding.expiryLabel.isInvisible = true
+            binding.titleLabel.isVisible = true
             val titleLabel = binding.titleLabel
-            val lastFourLabel = binding.lastFourLabel
-            val expiryLabel: TextView = binding.expiryLabel
             titleLabel.text = item.title
-            lastFourLabel.text = ""
-            expiryLabel.text = ""
 
             val textColor = theme.paymentMethodButton.text.defaultColor.getColor(
                 itemView.context,
@@ -89,7 +91,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             )
             titleLabel.setTextColor(textColor)
 
-            setCardIcon(item.type)
+            setPaymentMethodIcon(item.type)
             configureCheckIcon(binding, status, theme)
         }
     }
@@ -108,6 +110,11 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         fun bind(item: CardData, status: PaymentItemStatus) {
+            binding.bankLastFourLabel.isInvisible = true
+            binding.bankNameLabel.isInvisible = true
+            binding.titleLabel.isVisible = true
+            binding.lastFourLabel.isVisible = true
+            binding.expiryLabel.isVisible = true
             val titleLabel = binding.titleLabel
             val lastFourLabel = binding.lastFourLabel
             val expiryLabel: TextView = binding.expiryLabel
@@ -131,6 +138,36 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             configureCheckIcon(binding, status, theme)
         }
     }
+
+    class Bank(private val binding: PaymentMethodItemVaultBinding, val theme: PrimerTheme) :
+        ViewHolder(binding.root) {
+
+        private fun setBankIcon() {
+            binding.paymentMethodIcon.setImageResource(R.drawable.ic_bank_56)
+        }
+
+        fun bind(item: BankData, status: PaymentItemStatus) {
+            binding.titleLabel.isInvisible = true
+            binding.lastFourLabel.isInvisible = true
+            binding.expiryLabel.isInvisible = true
+
+            val textColor = theme.paymentMethodButton.text.defaultColor.getColor(
+                itemView.context,
+                theme.isDarkMode
+            )
+            with(binding.bankNameLabel) {
+                isVisible = true
+                text = item.bankName
+                setTextColor(textColor)
+            }
+            with(binding.bankLastFourLabel) {
+                isVisible = true
+                text = itemView.context.getString(R.string.last_four, item.lastFour)
+            }
+            setBankIcon()
+            configureCheckIcon(binding, status, theme)
+        }
+    }
 }
 
 interface PaymentMethodItemData
@@ -150,8 +187,15 @@ internal data class CardData(
     val tokenId: String
 ) : PaymentMethodItemData
 
+internal data class BankData(
+    val bankName: String,
+    val lastFour: Int,
+    val tokenId: String
+) : PaymentMethodItemData
+
 private const val VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD = 1
 private const val VIEW_TYPE_CARD = 2
+private const val VIEW_TYPE_BANK = 3
 
 internal enum class VaultViewAction {
     SELECT, DELETE
@@ -188,29 +232,37 @@ internal class VaultedPaymentMethodRecyclerAdapter(
         return when (viewType) {
             VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD -> {
                 ViewHolder.AlternativePaymentMethod(
-                    PaymentMethodItemVaultBinding.inflate(
-                        inflater,
-                        parent,
-                        false
-                    ),
-                    theme
+                    binding = createBinding(inflater, parent),
+                    theme = theme
                 )
             }
 
             VIEW_TYPE_CARD -> {
                 ViewHolder.Card(
-                    PaymentMethodItemVaultBinding.inflate(
-                        inflater,
-                        parent,
-                        false
-                    ),
-                    theme
+                    binding = createBinding(inflater, parent),
+                    theme = theme
+                )
+            }
+
+            VIEW_TYPE_BANK -> {
+                ViewHolder.Bank(
+                    binding = createBinding(inflater, parent),
+                    theme = theme
                 )
             }
 
             else -> throw IllegalStateException("View type \"$viewType\" not valid")
         }
     }
+
+    private fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup
+    ) = PaymentMethodItemVaultBinding.inflate(
+        inflater,
+        parent,
+        false
+    )
 
     private fun invokeListener(id: String) {
         if (isEditing) {
@@ -225,14 +277,18 @@ internal class VaultedPaymentMethodRecyclerAdapter(
         when (holder) {
             is ViewHolder.AlternativePaymentMethod -> {
                 val item = itemData[position] as AlternativePaymentMethodData
-                holder.itemView.setOnClickListener {
-                    invokeListener(item.tokenId)
-                }
+                holder.itemView.setOnClickListener { invokeListener(item.tokenId) }
                 holder.bind(item, getStatusForItemWith(item.tokenId))
             }
 
             is ViewHolder.Card -> {
                 val item = itemData[position] as CardData
+                holder.itemView.setOnClickListener { invokeListener(item.tokenId) }
+                holder.bind(item, getStatusForItemWith(item.tokenId))
+            }
+
+            is ViewHolder.Bank -> {
+                val item = itemData[position] as BankData
                 holder.itemView.setOnClickListener { invokeListener(item.tokenId) }
                 holder.bind(item, getStatusForItemWith(item.tokenId))
             }
@@ -244,6 +300,7 @@ internal class VaultedPaymentMethodRecyclerAdapter(
     override fun getItemViewType(position: Int): Int =
         when (itemData[position]) {
             is CardData -> VIEW_TYPE_CARD
+            is BankData -> VIEW_TYPE_BANK
             is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
             else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
         }

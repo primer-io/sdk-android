@@ -7,7 +7,7 @@ internal inline fun <T, R> T.runSuspendCatching(block: T.() -> R): Result<R> {
         Result.success(block())
     } catch (expected: CancellationException) {
         throw expected
-    } catch (expected: Exception) {
+    } catch (expected: Throwable) {
         Result.failure(expected)
     }
 }

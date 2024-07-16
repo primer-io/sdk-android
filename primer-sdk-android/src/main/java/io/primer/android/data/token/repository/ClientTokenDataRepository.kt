@@ -27,6 +27,4 @@ internal class ClientTokenDataRepository(
     override fun getClientTokenIntent() = clientTokenDataSource.get().intent
 
     override fun getTransactionNo() = clientTokenDataSource.get().nolPayTransactionNo
-
-    override fun getCompleteUrl() = clientTokenDataSource.get().redirectUrl
 }

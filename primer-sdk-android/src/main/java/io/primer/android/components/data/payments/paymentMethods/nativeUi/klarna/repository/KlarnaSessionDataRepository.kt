@@ -42,7 +42,7 @@ internal class KlarnaSessionDataRepository(
         val customer = config.settings.customer
         return runSuspendCatching {
             when (primerSessionIntent) {
-                PrimerSessionIntent.VAULT -> createVaultSession(paymentMethodConfig, customer)
+                PrimerSessionIntent.VAULT -> createVaultSession(paymentMethodConfig)
                 PrimerSessionIntent.CHECKOUT -> createCheckoutSession(
                     paymentMethodConfig = paymentMethodConfig,
                     customer = customer,
@@ -64,8 +64,7 @@ internal class KlarnaSessionDataRepository(
     }
 
     private suspend fun createVaultSession(
-        paymentMethodConfig: PaymentMethodConfigDataResponse,
-        customer: CustomerDataResponse
+        paymentMethodConfig: PaymentMethodConfigDataResponse
     ) = klarnaVaultPaymentSessionDataSource.execute(
         BaseRemoteRequest(
             configuration = localConfigurationDataSource.getConfiguration(),

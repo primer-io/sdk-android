@@ -1,5 +1,7 @@
 package io.primer.android.domain.payments.additionalInfo
 
+import androidx.activity.result.ActivityResultRegistry
+
 interface PrimerCheckoutAdditionalInfo
 
 interface PrimerCheckoutQRCodeInfo : PrimerCheckoutAdditionalInfo
@@ -23,3 +25,23 @@ data class XenditCheckoutVoucherAdditionalInfo(
     val couponCode: String,
     val retailerName: String?
 ) : PrimerCheckoutVoucherAdditionalInfo
+
+sealed interface AchAdditionalInfo : PrimerCheckoutAdditionalInfo {
+    data class ProvideActivityResultRegistry(
+        /**
+         * Provides an [ActivityResultRegistry] to be used for ACH bank account selection.
+         */
+        val provide: (ActivityResultRegistry) -> Unit
+    ) : AchAdditionalInfo
+
+    data class DisplayMandate(
+        /**
+         * Accepts the ACH mandate, completing the payment.
+         */
+        val onAcceptMandate: suspend () -> Unit,
+        /**
+         * Declines the ACH mandate, cancelling the payment.
+         */
+        val onDeclineMandate: suspend () -> Unit
+    ) : AchAdditionalInfo
+}

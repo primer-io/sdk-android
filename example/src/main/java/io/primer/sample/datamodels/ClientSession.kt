@@ -12,7 +12,7 @@ interface ClientSession : ExampleAppRequestBody {
     val order: Order
     val customer: Customer
     val paymentMethod: PaymentMethod
-    val metadata: Map<String, String>?
+    val metadata: Map<String, Any>?
 
     @Keep
     data class Request(
@@ -23,7 +23,7 @@ interface ClientSession : ExampleAppRequestBody {
         override val order: Order,
         override val customer: Customer,
         override val paymentMethod: PaymentMethod,
-        override val metadata: Map<String, String>? = null
+        override val metadata: Map<String, Any>? = null
     ) : ClientSession {
 
         companion object {
@@ -37,7 +37,7 @@ interface ClientSession : ExampleAppRequestBody {
                 metadata: String?,
                 captureVaultedCardCvv: Boolean
             ): Request {
-                var metadataMap: MutableMap<String, String>? = null
+                var metadataMap: MutableMap<String, Any>? = null
                 if (!metadata.isNullOrEmpty() && metadata.contains(":")) {
                     val values = metadata.split(":")
                     if (values.size % 2 == 0) {
@@ -53,7 +53,12 @@ interface ClientSession : ExampleAppRequestBody {
                     customerId = customerId,
                     orderId = "android-test-$orderId",
                     currencyCode = currency,
-                    metadata = metadataMap,
+                    metadata = (metadataMap ?: mutableMapOf()).apply {
+                        put("deviceInfo", buildMap {
+                            put("ipAddress", "127.0.0.1")
+                        })
+                        put("scenario", "STRIPE_ACH_ONEOFF")
+                    },
                     order = Order(
                         countryCode = countryCode,
                         lineItems = listOf(

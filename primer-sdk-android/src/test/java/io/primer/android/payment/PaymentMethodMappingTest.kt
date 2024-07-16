@@ -1,12 +1,18 @@
 package io.primer.android.payment
 
 import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.delegate.CompleteStripeAchPaymentSessionDelegate
+import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.delegate.StripeAchMandateTimestampLoggingDelegate
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.models.PaymentMethodImplementationType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.mapping.DefaultPaymentMethodMapping
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.domain.error.CheckoutErrorEventResolver
+import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.events.EventDispatcher
 import io.primer.android.payment.async.AsyncPaymentMethod
 import io.primer.android.payment.card.Card
 import io.primer.android.payment.google.GooglePay
@@ -20,6 +26,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
+// TODO TWS: test for ACH factory
 internal class PaymentMethodMappingTest {
 
     @RelaxedMockK
@@ -28,12 +35,37 @@ internal class PaymentMethodMappingTest {
     @RelaxedMockK
     internal lateinit var localConfigurationDataSource: LocalConfigurationDataSource
 
+    @MockK
+    private lateinit var eventDispatcher: EventDispatcher
+
+    @MockK
+    private lateinit var paymentResultRepository: PaymentResultRepository
+
+    @MockK
+    private lateinit var checkoutErrorEventResolver: CheckoutErrorEventResolver
+
+    @MockK
+    private lateinit var completeStripeAchPaymentSessionDelegate:
+        CompleteStripeAchPaymentSessionDelegate
+
+    @MockK
+    private lateinit var stripeAchMandateTimestampLoggingDelegate:
+        StripeAchMandateTimestampLoggingDelegate
+
     private lateinit var mapping: DefaultPaymentMethodMapping
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        mapping = DefaultPaymentMethodMapping(settings, localConfigurationDataSource)
+        mapping = DefaultPaymentMethodMapping(
+            settings,
+            localConfigurationDataSource,
+            eventDispatcher,
+            paymentResultRepository,
+            checkoutErrorEventResolver,
+            completeStripeAchPaymentSessionDelegate,
+            stripeAchMandateTimestampLoggingDelegate
+        )
     }
 
     @Test
@@ -48,6 +80,7 @@ internal class PaymentMethodMappingTest {
                 val msg = "Unknown payment method, can't register."
                 assertEquals(result.value.message, msg)
             }
+
             is Success -> assertFails {}
         }
     }

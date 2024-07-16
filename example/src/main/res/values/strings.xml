@@ -59,6 +59,11 @@
     <string name="klarna_initialize_view_text">Initialize Klarna view</string>
     <string name="klarna_authorize_text">Continue</string>
 
+    <string name="stripe_ach_title">Stripe ACH session</string>
+    <string name="stripe_ach_first_name_hint">First name</string>
+    <string name="stripe_ach_last_name_hint">Last name</string>
+    <string name="stripe_ach_email_address_hint">Email address</string>
+    <string name="stripe_ach_submit_text">Submit</string>
     <string name="deeplink_return_activity_text">Deeplink return activity</string>
 
     <string-array name="app_environments">

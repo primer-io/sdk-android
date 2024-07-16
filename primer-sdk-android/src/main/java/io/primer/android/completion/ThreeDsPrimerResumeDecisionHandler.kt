@@ -5,6 +5,7 @@ import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
@@ -16,13 +17,13 @@ import io.primer.android.domain.exception.ThreeDsLibraryVersionMismatchException
 import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
 import io.primer.android.domain.payments.helpers.ResumeEventResolver
+import io.primer.android.domain.payments.helpers.StripeAchPostPaymentCreationEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
 import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventDispatcher
-import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.payment.processor3ds.Processor3DS
 import io.primer.android.threeds.BuildConfig
 import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
@@ -55,20 +56,22 @@ internal class ThreeDsPrimerResumeDecisionHandler(
     private val config: PrimerConfig,
     paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
+    stripeAchPostPaymentCreationEventResolver: StripeAchPostPaymentCreationEventResolver,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
-    validationTokenRepository,
-    clientTokenRepository,
-    paymentMethodRepository,
-    paymentResultRepository,
-    analyticsRepository,
-    errorEventResolver,
-    eventDispatcher,
-    logReporter,
-    config,
-    paymentMethodDescriptorsRepository,
-    retailerOutletRepository,
-    coroutineDispatcher
+    validationTokenRepository = validationTokenRepository,
+    clientTokenRepository = clientTokenRepository,
+    paymentMethodRepository = paymentMethodRepository,
+    paymentResultRepository = paymentResultRepository,
+    analyticsRepository = analyticsRepository,
+    errorEventResolver = errorEventResolver,
+    eventDispatcher = eventDispatcher,
+    logReporter = logReporter,
+    config = config,
+    paymentMethodDescriptorsRepository = paymentMethodDescriptorsRepository,
+    retailerOutletRepository = retailerOutletRepository,
+    stripeAchPostPaymentCreationEventResolver = stripeAchPostPaymentCreationEventResolver,
+    dispatcher = coroutineDispatcher
 ) {
 
     override fun handleClientToken(clientToken: String) {

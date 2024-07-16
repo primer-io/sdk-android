@@ -2,6 +2,7 @@ package io.primer.android.components.presentation.paymentMethods.nativeUi.klarna
 
 import android.content.Context
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
@@ -45,9 +46,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.VisibleForTesting
 import java.lang.ref.WeakReference
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
+
+@VisibleForTesting
+val MOCK_EMISSION_DELAY = 2.seconds
 
 @Suppress("LongParameterList")
 class KlarnaComponent internal constructor(
@@ -207,7 +211,7 @@ class KlarnaComponent internal constructor(
     override fun submit() {
         viewModelScope.launch {
             if (isMockedFlow) {
-                delay(2000)
+                delay(MOCK_EMISSION_DELAY)
                 klarnaTokenizationDelegate.tokenize(
                     sessionId = requireKlarnaSession().sessionId,
                     authorizationToken = UUID.randomUUID().toString(),

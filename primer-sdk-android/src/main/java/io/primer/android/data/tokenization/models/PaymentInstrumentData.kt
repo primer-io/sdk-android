@@ -3,8 +3,8 @@ package io.primer.android.data.tokenization.models
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializable
-import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import org.json.JSONObject
@@ -30,7 +30,8 @@ data class PaymentInstrumentData(
     // async
     val paymentMethodType: String? = null,
     // bin
-    val binData: BinData? = null
+    val binData: BinData? = null,
+    val bankName: String? = null
 ) : JSONDeserializable {
 
     companion object {
@@ -52,37 +53,39 @@ data class PaymentInstrumentData(
         private const val PRODUCT_ID_FIELD = "productId"
         private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
         private const val BIN_DATA_FIELD = "binData"
+        private const val STRIPE_BANK_NAME_FIELD = "stripeBankName"
 
         @JvmField
         internal val deserializer = JSONObjectDeserializer { t ->
             PaymentInstrumentData(
-                t.optNullableString(NETWORK_FIELD),
-                t.optNullableString(CARDHOLDER_NAME_FIELD),
-                t.optNullableInt(FIRST_6_DIGITS_FIELD),
-                t.optNullableInt(LAST_4_DIGITS_FIELD),
-                t.optNullableInt(EXPIRATION_MONTH_FIELD),
-                t.optNullableInt(EXPIRATION_YEAR_FIELD),
-                t.optNullableString(GO_CARDLESS_MANDATE_ID_FIELD),
-                t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
+                network = t.optNullableString(NETWORK_FIELD),
+                cardholderName = t.optNullableString(CARDHOLDER_NAME_FIELD),
+                first6Digits = t.optNullableInt(FIRST_6_DIGITS_FIELD),
+                last4Digits = t.optNullableInt(LAST_4_DIGITS_FIELD),
+                expirationMonth = t.optNullableInt(EXPIRATION_MONTH_FIELD),
+                expirationYear = t.optNullableInt(EXPIRATION_YEAR_FIELD),
+                gocardlessMandateId = t.optNullableString(GO_CARDLESS_MANDATE_ID_FIELD),
+                externalPayerInfo = t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
                     JSONSerializationUtils.getJsonObjectDeserializer<ExternalPayerInfo>()
                         .deserialize(it)
                 },
-                t.optNullableString(KLARNA_CUSTOMER_TOKEN_FIELD),
-                t.optJSONObject(SESSION_DATA_FIELD)?.let {
+                klarnaCustomerToken = t.optNullableString(KLARNA_CUSTOMER_TOKEN_FIELD),
+                sessionData = t.optJSONObject(SESSION_DATA_FIELD)?.let {
                     JSONSerializationUtils.getJsonObjectDeserializer<SessionData>()
                         .deserialize(it)
                 },
-                t.optNullableString(MX_FIELD),
-                t.optNullableInt(MNC_FIELD),
-                t.optNullableInt(MCC_FIELD),
-                t.optNullableString(HASHED_IDENTIFIER_FIELD),
-                t.optNullableString(CURRENCY_CODE_FIELD),
-                t.optNullableString(PRODUCT_ID_FIELD),
-                t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
-                t.optJSONObject(BIN_DATA_FIELD)?.let {
+                mx = t.optNullableString(MX_FIELD),
+                mnc = t.optNullableInt(MNC_FIELD),
+                mcc = t.optNullableInt(MCC_FIELD),
+                hashedIdentifier = t.optNullableString(HASHED_IDENTIFIER_FIELD),
+                currencyCode = t.optNullableString(CURRENCY_CODE_FIELD),
+                productId = t.optNullableString(PRODUCT_ID_FIELD),
+                paymentMethodType = t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
+                binData = t.optJSONObject(BIN_DATA_FIELD)?.let {
                     JSONSerializationUtils.getJsonObjectDeserializer<BinData>()
                         .deserialize(it)
-                }
+                },
+                bankName = t.optNullableString(STRIPE_BANK_NAME_FIELD)
             )
         }
     }

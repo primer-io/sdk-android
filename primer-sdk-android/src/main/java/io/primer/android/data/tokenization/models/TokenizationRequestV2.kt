@@ -23,6 +23,7 @@ import io.primer.android.data.tokenization.models.paymentInstruments.nolpay.NolP
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.ExternalPayerInfoRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentDataRequest
 import io.primer.android.data.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentDataRequest
+import io.primer.android.data.tokenization.models.paymentInstruments.stripe.ach.StripeAchSessionInfoDataRequest
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
 import io.primer.android.domain.tokenization.models.paymentInstruments.BasePaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.async.bankIssuer.BankIssuerPaymentInstrumentParams
@@ -39,6 +40,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.klarna.Kl
 import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.NolPayPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentParams
+import io.primer.android.domain.tokenization.models.paymentInstruments.stripe.ach.StripeAchPaymentInstrumentParams
 import org.json.JSONObject
 
 internal abstract class TokenizationRequestV2 : JSONObjectSerializable {
@@ -63,7 +65,7 @@ internal abstract class TokenizationRequestV2 : JSONObjectSerializable {
 
 internal fun TokenizationParamsV2.toTokenizationRequest(): TokenizationRequestV2 {
     return when (paymentMethodIntent) {
-        PrimerSessionIntent.CHECKOUT -> TokenizationCheckoutRequestV2(
+        PrimerSessionIntent.CHECKOUT, null -> TokenizationCheckoutRequestV2(
             paymentInstrumentParams.toPaymentInstrumentData()
         )
 
@@ -193,6 +195,14 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
                 locale
             ),
             type
+        )
+
+        is StripeAchPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
+            paymentMethodType = paymentMethodType,
+            paymentMethodConfigId = paymentMethodConfigId,
+            sessionInfo = StripeAchSessionInfoDataRequest(locale = locale),
+            type = type,
+            authenticationProvider = authenticationProvider
         )
 
         else -> throw IllegalArgumentException("Missing PaymentInstrumentParams mapping for $this")

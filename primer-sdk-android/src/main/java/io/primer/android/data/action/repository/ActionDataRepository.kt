@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package io.primer.android.data.action.repository
 
 import io.primer.android.data.action.datasource.RemoteActionDataSource
@@ -7,6 +9,7 @@ import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.repository.ActionRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -22,7 +25,7 @@ internal class ActionDataRepository(
                 remoteActionDataSource.execute(
                     BaseRemoteRequest(
                         it,
-                        ClientSessionActionsDataRequest(listOf(params.toActionData()))
+                        ClientSessionActionsDataRequest(params.toActionData())
                     )
                 )
             }.flatMapLatest { configuration ->

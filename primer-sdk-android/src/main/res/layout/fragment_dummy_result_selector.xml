@@ -35,12 +35,11 @@
 
     <TextView
         android:id="@+id/tv_dummy_info"
-        style="@style/Primer.Text.Small"
+        style="@style/Primer.Text.Small.Body"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/primer_test_header_description"
-        android:textColor="@color/primer_dummy_apm_text_color_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_dummy_result_back"

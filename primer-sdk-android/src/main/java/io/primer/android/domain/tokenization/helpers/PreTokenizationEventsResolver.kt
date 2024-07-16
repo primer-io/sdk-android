@@ -18,7 +18,7 @@ internal class PreTokenizationEventsResolver(
 
     suspend fun resolve(
         paymentMethodType: String,
-        sessionIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT
+        sessionIntent: PrimerSessionIntent? = PrimerSessionIntent.CHECKOUT
     ) {
         suspendCancellableCoroutine { continuation ->
             when {

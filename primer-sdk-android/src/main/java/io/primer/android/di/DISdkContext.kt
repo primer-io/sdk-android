@@ -77,6 +77,8 @@ internal object DISdkContext {
             registerContainer(BanksContainer())
 
             registerContainer(WebRedirectContainer(this))
+
+            registerContainer(StripeContainer(this))
         }
     }
 }

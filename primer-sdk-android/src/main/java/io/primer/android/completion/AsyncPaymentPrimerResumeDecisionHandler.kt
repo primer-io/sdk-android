@@ -7,6 +7,7 @@ import io.primer.android.data.token.model.ClientTokenIntent
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.deeplink.async.repository.AsyncPaymentMethodDeeplinkRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.helpers.StripeAchPostPaymentCreationEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
@@ -30,19 +31,21 @@ internal class AsyncPaymentPrimerResumeDecisionHandler(
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
     retailerOutletRepository: RetailOutletRepository,
     private val asyncPaymentMethodDeeplinkRepository: AsyncPaymentMethodDeeplinkRepository,
+    stripeAchPostPaymentCreationEventResolver: StripeAchPostPaymentCreationEventResolver,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : DefaultPrimerResumeDecisionHandler(
-    validationTokenRepository,
-    clientTokenRepository,
-    paymentMethodRepository,
-    paymentResultRepository,
-    analyticsRepository,
-    baseErrorEventResolver,
-    eventDispatcher,
-    logReporter,
-    config,
-    paymentMethodDescriptorsRepository,
-    retailerOutletRepository,
+    validationTokenRepository = validationTokenRepository,
+    clientTokenRepository = clientTokenRepository,
+    paymentMethodRepository = paymentMethodRepository,
+    paymentResultRepository = paymentResultRepository,
+    analyticsRepository = analyticsRepository,
+    errorEventResolver = baseErrorEventResolver,
+    eventDispatcher = eventDispatcher,
+    logReporter = logReporter,
+    config = config,
+    paymentMethodDescriptorsRepository = paymentMethodDescriptorsRepository,
+    retailerOutletRepository = retailerOutletRepository,
+    stripeAchPostPaymentCreationEventResolver = stripeAchPostPaymentCreationEventResolver,
     coroutineDispatcher
 ) {
 

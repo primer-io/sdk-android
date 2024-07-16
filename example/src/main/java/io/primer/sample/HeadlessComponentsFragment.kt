@@ -75,7 +75,6 @@ class HeadlessComponentsFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         headlessManagerViewModel.isLaunched = false
-        headlessManagerViewModel.resetUiState()
         viewModel.setClientToken(null)
     }
 
@@ -182,6 +181,28 @@ class HeadlessComponentsFragment : Fragment() {
                                     "onAdditionalInfoReceived: $state.additionalInfo"
                                 )
                             }
+
+//                            is AchAdditionalInfo.ProvideActivityResultRegistry -> {
+//                                state.additionalInfo.provide(
+//                                    requireActivity().activityResultRegistry
+//                                )
+//                            }
+//
+//                            is AchAdditionalInfo.DisplayMandate -> {
+//                                requireContext().showMandateDialog(
+//                                    text = "Would you like to accept this mandate?",
+//                                    onOkClick = {
+//                                        lifecycleScope.launch {
+//                                            (state.additionalInfo).onAcceptMandate.invoke()
+//                                        }
+//                                    },
+//                                    onCancelClick = {
+//                                        lifecycleScope.launch {
+//                                            (state.additionalInfo).onDeclineMandate.invoke()
+//                                        }
+//                                    }
+//                                )
+//                            }
                         }
                     }
 
@@ -268,11 +289,11 @@ class HeadlessComponentsFragment : Fragment() {
             setOnClickListener {
                 when {
                     paymentMethodType == "NOL_PAY" ->
-                        findNavController().navigate(R.id.action_MerchantComponentsFragment_to_NolPayFragment)
+                        findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_NolPayFragment)
 
                     managerCategories.contains(PrimerPaymentMethodManagerCategory.RAW_DATA) ->
                         findNavController().navigate(
-                            R.id.action_MerchantComponentsFragment_to_HeadlessRawFragment,
+                            R.id.action_HeadlessComponentsFragment_to_HeadlessRawFragment,
                             Bundle().apply {
                                 putString(
                                     HeadlessRawFragment.PAYMENT_METHOD_TYPE_EXTRA,
@@ -282,14 +303,19 @@ class HeadlessComponentsFragment : Fragment() {
 
                     paymentMethodType == "ADYEN_IDEAL" || paymentMethodType == "ADYEN_DOTPAY" ->
                         findNavController().navigate(
-                            R.id.action_HeadlessFragment_to_AdyenBankSelectionFragment,
+                            R.id.action_HeadlessComponentsFragment_to_AdyenBankSelectionFragment,
                             bundleOf("paymentMethodType" to paymentMethodType)
                         )
+
                     paymentMethodType == "KLARNA" ->
                         findNavController().navigate(
-                            R.id.action_MerchantComponentsFragment_to_KlarnaFragment,
+                            R.id.action_HeadlessComponentsFragment_to_KlarnaFragment,
                             bundleOf(PRIMER_SESSION_INTENT_ARG to getPrimerSessionIntent())
                         )
+
+                    paymentMethodType == "STRIPE_ACH" ->
+                        findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_StripeAchFragment)
+
                     else -> onPaymentMethodSelected(paymentMethodType)
                 }
             }
@@ -336,7 +362,7 @@ class HeadlessComponentsFragment : Fragment() {
     private fun navigateToResultScreen() {
         headlessManagerViewModel.resetUiState()
         findNavController().navigate(
-            R.id.action_MerchantComponentsFragment_to_MerchantResultFragment,
+            R.id.action_HeadlessComponentsFragment_to_MerchantResultFragment,
             Bundle().apply {
                 putInt(
                     MerchantResultFragment.PAYMENT_STATUS_KEY,

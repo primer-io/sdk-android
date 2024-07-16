@@ -153,6 +153,9 @@ internal enum class Brand(
     IPAY_88(
         R.drawable.ic_logo_credit_card
     ),
+    GENERIC_BANK(
+        R.drawable.ic_bank_16
+    ),
     UNKNOWN(0)
 }
 

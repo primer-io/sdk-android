@@ -93,11 +93,12 @@
     <color name="primer_pay_button_background">#007AFF</color>
 
     <!-- Dummy APM selector -->
-    <color name="primer_dummy_apm_text_color_description">#75757B</color>
     <color name="primer_dummy_apm_checked_border">#3A83F9</color>
     <color name="primer_dummy_apm_light_unchecked_border">#E5E5EA</color>
 
     <!-- curom folors for search text inputs in country selection screen -->
     <color name="primer_country_selection_divider">#DBDBDB</color>
+
+    <color name="primer_body">#75757B</color>
 
 </resources>

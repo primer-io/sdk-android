@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.ComponentDialog
+import androidx.activity.addCallback
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -43,7 +44,16 @@ internal class CheckoutSheetFragment :
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
-        dialog.setOnKeyListener(this::onKeyPress)
+        (dialog as ComponentDialog).onBackPressedDispatcher.addCallback(this, true) {
+            val canGoBack = childFragmentManager.backStackEntryCount > 0
+
+            if (canGoBack) {
+                childFragmentManager.popBackStackImmediate()
+            } else {
+                EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_USER))
+                dialog.dismiss()
+            }
+        }
     }
 
     override fun onCreateView(
@@ -77,25 +87,6 @@ internal class CheckoutSheetFragment :
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_USER))
-    }
-
-    private fun onKeyPress(dialog: DialogInterface, keyCode: Int, event: KeyEvent?): Boolean {
-        val isBackKeyUp = keyCode == KeyEvent.KEYCODE_BACK && event?.action == KeyEvent.ACTION_DOWN
-
-        if (!isBackKeyUp) {
-            return false
-        }
-
-        val canGoBack = childFragmentManager.backStackEntryCount > 0
-
-        if (canGoBack) {
-            childFragmentManager.popBackStackImmediate()
-        } else {
-            EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.DISMISSED_BY_USER))
-            dialog.dismiss()
-        }
-
-        return true
     }
 
     private fun setFullHeight() {

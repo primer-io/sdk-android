@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_klarna">
         <action
             android:id="@+id/action_KlarnaFragment_to_HeadlessFragment"
-            app:popUpTo="@id/HeadlessFragment"
+            app:popUpTo="@id/HeadlessComponentsFragment"
             app:launchSingleTop="true"
             app:popUpToInclusive="false"
-            app:destination="@id/HeadlessFragment" />
+            app:destination="@id/HeadlessComponentsFragment" />
         <argument
             android:name="primerSessionIntent"
             app:argType="io.primer.android.PrimerSessionIntent" />
@@ -87,9 +87,9 @@
 
         <action
             android:id="@+id/action_NolPayPaymentFragment_to_NolFragment"
-            app:destination="@id/HeadlessFragment"
+            app:destination="@id/HeadlessComponentsFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/HeadlessFragment"
+            app:popUpTo="@id/HeadlessComponentsFragment"
             app:popUpToInclusive="false" />
     </fragment>
 
@@ -109,7 +109,7 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_ThirdFragment"
-            app:destination="@id/HeadlessFragment"
+            app:destination="@id/HeadlessComponentsFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -144,13 +144,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/HeadlessFragment"
+        android:id="@+id/HeadlessComponentsFragment"
         android:name="io.primer.sample.HeadlessComponentsFragment"
         android:label="Headless"
         tools:layout="@layout/fragment_headless">
 
         <action
-            android:id="@+id/action_MerchantComponentsFragment_to_MerchantResultFragment"
+            android:id="@+id/action_HeadlessComponentsFragment_to_MerchantResultFragment"
             app:destination="@id/MerchantResultFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
@@ -158,7 +158,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
         <action
-            android:id="@+id/action_MerchantComponentsFragment_to_NolPayFragment"
+            android:id="@+id/action_HeadlessComponentsFragment_to_NolPayFragment"
             app:destination="@id/NolFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
@@ -166,7 +166,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
         <action
-            android:id="@+id/action_MerchantComponentsFragment_to_KlarnaFragment"
+            android:id="@+id/action_HeadlessComponentsFragment_to_KlarnaFragment"
             app:destination="@id/KlarnaFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
@@ -174,7 +174,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
         <action
-            android:id="@+id/action_MerchantComponentsFragment_to_HeadlessRawFragment"
+            android:id="@+id/action_HeadlessComponentsFragment_to_HeadlessRawFragment"
             app:destination="@id/HeadlessRawFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
@@ -182,8 +182,16 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
         <action
-            android:id="@+id/action_HeadlessFragment_to_AdyenBankSelectionFragment"
+            android:id="@+id/action_HeadlessComponentsFragment_to_AdyenBankSelectionFragment"
             app:destination="@id/AdyenBankSelectionFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_HeadlessComponentsFragment_to_StripeAchFragment"
+            app:destination="@id/StripeAchFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -198,9 +206,9 @@
 
         <action
             android:id="@+id/action_AdyenBankSelectionFragment_to_HeadlessFragment"
-            app:destination="@id/HeadlessFragment"
+            app:destination="@id/HeadlessComponentsFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/HeadlessFragment"
+            app:popUpTo="@id/HeadlessComponentsFragment"
             app:popUpToInclusive="false" />
         <argument
             android:name="paymentMethodType"
@@ -254,4 +262,17 @@
         android:name="io.primer.sample.MerchantResultFragment"
         android:label="Result"
         tools:layout="@layout/fragment_checkout_result" />
+
+    <fragment
+        android:id="@+id/StripeAchFragment"
+        android:name="io.primer.sample.stripe.ach.StripeAchFragment"
+        android:label="StripeAchFragment"
+        tools:layout="@layout/fragment_stripe_ach">
+        <action
+            android:id="@+id/action_StripeAchFragment_to_HeadlessFragment"
+            app:popUpTo="@id/HeadlessComponentsFragment"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false"
+            app:destination="@id/HeadlessComponentsFragment" />
+    </fragment>
 </navigation>

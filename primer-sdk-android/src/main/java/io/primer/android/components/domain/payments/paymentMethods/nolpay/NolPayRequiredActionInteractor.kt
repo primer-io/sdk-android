@@ -29,7 +29,7 @@ internal class NolPayRequiredActionInteractor(
                 NolPayIllegalValueKey.STATUS_URL
             ),
             requireNotNullCheck(
-                clientTokenRepository.getCompleteUrl(),
+                clientTokenRepository.getRedirectUrl(),
                 NolPayIllegalValueKey.COMPLETE_URL
             ),
             PaymentMethodType.NOL_PAY.name

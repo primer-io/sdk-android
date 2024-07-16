@@ -60,6 +60,7 @@ internal class IPay88Container(private val sdk: SdkContainer) : DependencyContai
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
+                sdk.resolve(),
                 sdk.resolve()
             )
         }

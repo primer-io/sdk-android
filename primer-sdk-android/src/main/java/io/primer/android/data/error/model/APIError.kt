@@ -79,13 +79,12 @@ internal data class APIError(
 
             val content = body.string()
 
-            try {
-                return JSONObject(content).optJSONObject("error") ?: JSONObject(content)
+            return try {
+                JSONObject(content).optJSONObject("error") ?: JSONObject(content)
             } catch (ignored: Exception) {
                 logReporter.warn("Failed to decode json response: $content")
+                JSONObject(DEFAULT_ERROR_ELEMENT)
             }
-
-            return JSONObject(DEFAULT_ERROR_ELEMENT)
         }
 
         private const val DESCRIPTION_FIELD = "description"

@@ -1,6 +1,6 @@
 package io.primer.sample.utils
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import io.primer.sample.datamodels.ExampleAppRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -32,7 +32,10 @@ class HttpRequestUtil {
             apiKey: String? = null
         ): Request {
             val mimeType = "application/json".toMediaType()
-            val json = Gson().toJson(body)
+            val gson = GsonBuilder()
+                .registerTypeAdapter(Map::class.java, MapDeserializer)
+                .create()
+            val json = gson.toJson(body)
             val reqBody = json.toRequestBody(mimeType)
             val requestBuilder = Request.Builder()
                 .url(uri)

@@ -6,6 +6,7 @@ import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.error.models.StripeError
 import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
@@ -44,7 +45,7 @@ interface PrimerCheckoutListener {
         error: PrimerError,
         errorHandler: PrimerErrorDecisionHandler?
     ) {
-        errorHandler?.showErrorMessage(null)
+        errorHandler?.showErrorMessage(error.takeIf { it is StripeError }?.description)
     }
 
     fun onFailed(
@@ -52,7 +53,7 @@ interface PrimerCheckoutListener {
         checkoutData: PrimerCheckoutData?,
         errorHandler: PrimerErrorDecisionHandler?
     ) {
-        errorHandler?.showErrorMessage(null)
+        errorHandler?.showErrorMessage(error.takeIf { it is StripeError }?.description)
     }
 
     fun onDismissed() = Unit

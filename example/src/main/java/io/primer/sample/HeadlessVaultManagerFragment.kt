@@ -21,6 +21,7 @@ import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckou
 import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface
 import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
+import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.sample.constants.PrimerHeadlessCallbacks
 import io.primer.sample.databinding.FragmentVaultManagerBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
@@ -87,10 +88,12 @@ class HeadlessVaultManagerFragment : Fragment() {
                     callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
                     showLoading("Tokenization started ${state.paymentMethodType}")
                 }
+
                 is UiState.PreparationStarted -> {
                     callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
                     showLoading("Preparation started ${state.paymentMethodType}")
                 }
+
                 is UiState.PaymentMethodShowed -> showLoading("Presented ${state.paymentMethodType}")
                 is UiState.TokenizationSuccessReceived -> {
                     showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
@@ -101,6 +104,7 @@ class HeadlessVaultManagerFragment : Fragment() {
                         state.decisionHandler
                     )
                 }
+
                 is UiState.ResumePaymentReceived -> {
                     showLoading("Resume success. Resuming payment.")
                     headlessManagerViewModel.resumePayment(
@@ -109,6 +113,7 @@ class HeadlessVaultManagerFragment : Fragment() {
                         state.decisionHandler
                     )
                 }
+
                 is UiState.ResumePendingReceived -> {
                     hideLoading()
                     when (state.additionalInfo) {
@@ -120,6 +125,7 @@ class HeadlessVaultManagerFragment : Fragment() {
                         }
                     }
                 }
+
                 is UiState.AdditionalInfoReceived -> {
                     hideLoading()
                     when (state.additionalInfo) {
@@ -129,17 +135,37 @@ class HeadlessVaultManagerFragment : Fragment() {
                                 .setPositiveButton("OK") { d, _ -> d.dismiss() }.show()
                             Log.d(TAG, "onAdditionalInfoReceived: $state.additionalInfo")
                         }
+
+//                        is AchAdditionalInfo.DisplayMandate -> {
+//                            requireContext().showMandateDialog(
+//                                text = "Would you like to accept this mandate?",
+//                                onOkClick = {
+//                                    lifecycleScope.launch {
+//                                        (state.additionalInfo).onAcceptMandate.invoke()
+//                                    }
+//                                },
+//                                onCancelClick = {
+//                                    lifecycleScope.launch {
+//                                        (state.additionalInfo).onDeclineMandate.invoke()
+//                                    }
+//                                }
+//                            )
+//                        }
                     }
                 }
+
                 is UiState.BeforePaymentCreateReceived -> {
                     callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
                 }
+
                 is UiState.BeforeClientSessionUpdateReceived -> {
                     callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
                 }
+
                 is UiState.ClientSessionUpdatedReceived -> {
                     callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
                 }
+
                 is UiState.ShowError -> {
                     checkoutDataWithError =
                         CheckoutDataWithError(state.payment, state.error.toMappedError())
@@ -147,6 +173,7 @@ class HeadlessVaultManagerFragment : Fragment() {
                     hideLoading()
                     navigateToResultScreen()
                 }
+
                 is UiState.CheckoutCompleted -> {
                     checkoutDataWithError = CheckoutDataWithError(state.checkoutData.payment)
                     callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
@@ -173,8 +200,8 @@ class HeadlessVaultManagerFragment : Fragment() {
 
         binding.apply {
             cvvInput.doAfterTextChanged {
-                val vaultedPaymentMethodId = vaultedPaymentMethodsGroup.children
-                    .filter { it.id == vaultedPaymentMethodsGroup.checkedRadioButtonId }
+                val vaultedPaymentMethodId = cardVaultedPaymentMethodsGroup.children
+                    .filter { it.id == cardVaultedPaymentMethodsGroup.checkedRadioButtonId }
                     .firstOrNull()?.tag?.toString()
                 lifecycleScope.launch {
                     val errors = vaultedPaymentMethodId?.let { id ->
@@ -188,9 +215,15 @@ class HeadlessVaultManagerFragment : Fragment() {
             }
             submitButton.setOnClickListener {
                 lifecycleScope.launch {
-                    val vaultedPaymentMethodId = vaultedPaymentMethodsGroup.children
-                        .filter { it.id == vaultedPaymentMethodsGroup.checkedRadioButtonId }
-                        .first().tag.toString()
+                    val vaultedPaymentMethodId =
+                        (vaultedPaymentMethodsGroup.children + cardVaultedPaymentMethodsGroup.children)
+                            .filter {
+                                it.id in setOf(
+                                    vaultedPaymentMethodsGroup.checkedRadioButtonId,
+                                    cardVaultedPaymentMethodsGroup.checkedRadioButtonId
+                                )
+                            }
+                            .first().tag.toString()
                     when (cvvInput.text.toString().isBlank()) {
                         true -> vaultManager.startPaymentFlow(vaultedPaymentMethodId)
                         false -> vaultManager.startPaymentFlow(
@@ -212,25 +245,65 @@ class HeadlessVaultManagerFragment : Fragment() {
         vaultManager = PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
         lifecycleScope.launch {
             showLoading("Loading vaulted payment methods.")
-            val vaultedPaymentMethods =
-                vaultManager.fetchVaultedPaymentMethods().getOrElse { emptyList() }.filter {
-                    it.paymentMethodType == "PAYMENT_CARD"
+
+            val vaultedPaymentMethods = vaultManager.fetchVaultedPaymentMethods().getOrElse { emptyList() }
+
+            vaultedPaymentMethods
+                .forEach {
+                    if (it.paymentMethodType == "PAYMENT_CARD") {
+                        binding.cardVaultedPaymentMethodsGroup
+                    } else {
+                        binding.vaultedPaymentMethodsGroup
+                    }.addView(createVaultedPaymentMethodRadioButton(it))
                 }
-            vaultedPaymentMethods.map { vaultedMethod ->
-                binding.vaultedPaymentMethodsGroup.addView(RadioButton(context).apply {
-                    id = vaultedMethod.id.hashCode()
-                    tag = vaultedMethod.id
-                    text = getString(
-                        R.string.last_four,
-                        vaultedMethod.paymentInstrumentData.last4Digits
-                    )
-                    minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
-                })
-            }
-            vaultedPaymentMethods.firstOrNull()?.id?.hashCode()
-                ?.let { binding.vaultedPaymentMethodsGroup.check(it) }
+
+            vaultedPaymentMethods.firstOrNull()
+                ?.let {
+                    if (it.paymentMethodType == "PAYMENT_CARD") {
+                        binding.cardVaultedPaymentMethodsGroup
+                    } else {
+                        binding.vaultedPaymentMethodsGroup
+                    }.check(it.id.hashCode())
+                }
+
             hideLoading()
         }
+    }
+
+    private fun createVaultedPaymentMethodRadioButton(vaultedMethod: PrimerVaultedPaymentMethod) =
+        RadioButton(context).apply {
+            id = vaultedMethod.id.hashCode()
+            tag = vaultedMethod.id
+            text = getVaultedPaymentMethodRepresentation(vaultedMethod)
+            minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
+        }
+
+    private fun getVaultedPaymentMethodRepresentation(vaultedPaymentMethod: PrimerVaultedPaymentMethod): String {
+        val paymentMethodType = vaultedPaymentMethod.paymentMethodType
+        var suffix: String? = null
+        when (paymentMethodType) {
+            "PAYMENT_CARD", "GOOGLE_PAY", "APPLE_PAY" -> {
+                val last4Digits = vaultedPaymentMethod.paymentInstrumentData.last4Digits
+                if (last4Digits != null) {
+                    suffix = getString(R.string.last_four, last4Digits)
+                }
+            }
+
+            "PAYPAL" -> suffix = vaultedPaymentMethod.paymentInstrumentData.externalPayerInfo?.email.orEmpty()
+            "KLARNA" -> {
+                val billingAddress = vaultedPaymentMethod.paymentInstrumentData.sessionData?.billingAddress
+                suffix = billingAddress?.email.orEmpty()
+            }
+            "STRIPE_ACH" -> {
+                val bankName = vaultedPaymentMethod.paymentInstrumentData.bankName ?: "-"
+                suffix = "($bankName)"
+                val lastFour = vaultedPaymentMethod.paymentInstrumentData.last4Digits
+                if (lastFour != null) {
+                    suffix += " ••••$lastFour"
+                }
+            }
+        }
+        return "$paymentMethodType: ${suffix ?: "-"}"
     }
 
     private fun showLoading(message: String? = null) {

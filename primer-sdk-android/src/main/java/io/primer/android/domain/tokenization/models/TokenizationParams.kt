@@ -12,5 +12,5 @@ internal data class TokenizationParams(
 
 internal data class TokenizationParamsV2(
     val paymentInstrumentParams: BasePaymentInstrumentParams,
-    val paymentMethodIntent: PrimerSessionIntent
+    val paymentMethodIntent: PrimerSessionIntent?
 ) : Params

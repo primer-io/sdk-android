@@ -5,7 +5,8 @@ import io.primer.android.R
 
 internal open class NewFragmentBehaviour(
     private val factory: (() -> Fragment),
-    private val returnToPreviousOnBack: Boolean = false
+    private val returnToPreviousOnBack: Boolean = false,
+    private val tag: String? = null
 ) : SelectedPaymentMethodBehaviour() {
 
     fun execute(parent: Fragment) {
@@ -29,7 +30,7 @@ internal open class NewFragmentBehaviour(
             .beginTransaction()
             .apply {
                 if (returnToPreviousOnBack) {
-                    addToBackStack(null)
+                    addToBackStack(tag)
                 }
             }
             .replace(R.id.checkout_sheet_content, newFragment)

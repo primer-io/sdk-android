@@ -32,7 +32,8 @@ internal class ResumeEventContainer(private val sdk: SdkContainer) : DependencyC
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
-                resolve()
+                resolve(),
+                sdk.resolve()
             )
         }
 

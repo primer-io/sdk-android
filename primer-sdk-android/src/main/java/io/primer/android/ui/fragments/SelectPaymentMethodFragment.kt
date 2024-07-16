@@ -3,14 +3,19 @@ package io.primer.android.ui.fragments
 import android.content.res.ColorStateList
 import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.ComponentDialog
+import androidx.activity.addCallback
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
@@ -23,6 +28,9 @@ import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
 import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.activityViewModel
 import io.primer.android.di.extension.inject
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.EventBus
+import io.primer.android.model.CheckoutExitReason
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodUiType
 import io.primer.android.payment.config.BaseDisplayMetadata
@@ -40,6 +48,7 @@ import kotlinx.coroutines.launch
 internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
 
     companion object {
+        val TAG = SelectPaymentMethodFragment::class.simpleName
 
         @JvmStatic
         fun newInstance() =
@@ -66,6 +75,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        addOnBackPressedCallback()
+
         if (!primerViewModel.surchargeDisabled) {
             primerViewModel.reselectSavedPaymentMethod()
         }
@@ -79,6 +91,19 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         setupUiForVaultModeIfNeeded()
 
         addListeners()
+    }
+
+    private fun addOnBackPressedCallback() {
+        getParentDialogOrNull()?.onBackPressedDispatcher?.addCallback(this) {
+            runCatching {
+                parentFragmentManager.commit {
+                    remove(this@SelectPaymentMethodFragment)
+                }
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
+                EventBus.broadcast(CheckoutEvent.DismissInternal(CheckoutExitReason.EXIT_SUCCESS))
+            }
+        }
     }
 
     /*
@@ -134,9 +159,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
             theme.paymentMethodButton.text.defaultColor.getColor(context, theme.isDarkMode)
         binding.savedPaymentMethod.apply {
             titleLabel.setTextColor(textColor)
-            titleLabel.setTextColor(textColor)
             lastFourLabel.setTextColor(textColor)
             expiryLabel.setTextColor(textColor)
+            bankNameLabel.setTextColor(textColor)
         }
     }
 
@@ -149,6 +174,12 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         isEnabled = true
         setTheme(theme)
         setOnClickListener { onPayButtonPressed() }
+    }
+
+    private fun getParentDialogOrNull() = ((parentFragment as? DialogFragment)?.dialog as? ComponentDialog).also {
+        if (it == null) {
+            Log.e(TAG, "Error: expected ComponentDialog parent!")
+        }
     }
 
     private fun onPayButtonPressed() {
@@ -320,7 +351,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                     val data = paymentMethod.paymentInstrumentData
                     titleLabel.text = data?.cardholderName
                     val last4: Int =
-                        data?.last4Digits ?: throw IllegalStateException("card data is invalid!")
+                        data?.last4Digits ?: error("card data is invalid!")
 
                     lastFourLabel.text = getString(R.string.last_four, last4)
                     val expirationYear = "${data.expirationYear}"
@@ -328,6 +359,14 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                     expiryLabel.text =
                         getString(R.string.expiry_date, expirationMonth, expirationYear)
                     setCardIcon(data.binData?.network)
+                }
+
+                PaymentMethodType.STRIPE_ACH.name -> {
+                    val data = paymentMethod.paymentInstrumentData
+                    val bankName = data?.bankName.orEmpty()
+                    val lastFour = getString(R.string.last_four, data?.last4Digits ?: 0)
+                    renderBankSavedPaymentMethodView(bankName, lastFour)
+                    paymentMethodIcon.setImageResource(R.drawable.ic_bank_56)
                 }
 
                 else -> {
@@ -342,6 +381,20 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
             listOf(titleLabel, lastFourLabel, expiryLabel).forEach { it.isVisible = false }
             titleLabel.isVisible = true
             titleLabel.text = title
+        }
+    }
+
+    private fun renderBankSavedPaymentMethodView(bankName: String?, lastFour: String) {
+        binding.savedPaymentMethod.apply {
+            listOf(titleLabel, lastFourLabel, expiryLabel).forEach { it.isVisible = false }
+            with(bankNameLabel) {
+                isVisible = true
+                text = bankName
+            }
+            with(bankLastFourLabel) {
+                isVisible = true
+                text = lastFour
+            }
         }
     }
 

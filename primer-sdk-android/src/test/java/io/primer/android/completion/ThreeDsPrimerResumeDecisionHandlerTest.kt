@@ -9,6 +9,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.token.model.ClientTokenIntent
@@ -18,6 +19,7 @@ import io.primer.android.domain.error.ErrorMapperFactory
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.domain.mock.repository.MockConfigurationRepository
 import io.primer.android.domain.payments.create.repository.PaymentResultRepository
+import io.primer.android.domain.payments.helpers.StripeAchPostPaymentCreationEventResolver
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.rpc.retailOutlets.repository.RetailOutletRepository
 import io.primer.android.domain.token.repository.ClientTokenRepository
@@ -25,7 +27,6 @@ import io.primer.android.domain.token.repository.ValidateTokenRepository
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.CheckoutEventType
 import io.primer.android.events.EventDispatcher
-import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.threeds.domain.respository.PaymentMethodRepository
 import io.primer.android.threeds.domain.respository.ThreeDsRepository
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
@@ -83,6 +84,10 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
     internal lateinit var retailOutletRepository: RetailOutletRepository
 
     @RelaxedMockK
+    internal lateinit var stripeAchPostPaymentCreationEventResolver:
+        StripeAchPostPaymentCreationEventResolver
+
+    @RelaxedMockK
     internal lateinit var eventDispatcher: EventDispatcher
 
     @RelaxedMockK
@@ -124,6 +129,7 @@ class ThreeDsPrimerResumeDecisionHandlerTest {
                 config,
                 paymentMethodDescriptorsRepository,
                 retailOutletRepository,
+                stripeAchPostPaymentCreationEventResolver,
                 instantExecutorExtension.dispatcher
             )
     }

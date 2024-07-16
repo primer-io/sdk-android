@@ -19,6 +19,7 @@ import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.PrimerStripeOptions
 import io.primer.android.data.settings.PrimerThreeDsOptions
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.ui.settings.PrimerUIOptions
@@ -187,7 +188,11 @@ class MainViewModel(
                     captureBillingAddress = true,
                     existingPaymentMethodRequired = true
                 ),
-                threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds")
+                threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
+                stripeOptions = PrimerStripeOptions(
+                    PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
+                    "pk_test_51O8zfQKUK6bXIdC2xPvSS6UvriE9kwpvttwB7H9PAzhNAZoGzLgiDOyd4WooozeWHxoRrKo6b2VjZYxNCMX3W7bk00rMDivjau"
+                )
             ),
             uiOptions = _uiOptions.value ?: PrimerUIOptions(),
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),

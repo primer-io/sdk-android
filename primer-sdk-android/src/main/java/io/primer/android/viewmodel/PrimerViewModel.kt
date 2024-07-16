@@ -382,6 +382,7 @@ internal class PrimerViewModel(
     ): Int = formatter.getSurchargeForPaymentMethodType(type, network)
 
     fun setSelectedPaymentMethodId(id: String) {
+        _selectedPaymentMethod.value = null
         _selectedPaymentMethodId.value = id
     }
 

@@ -6,6 +6,7 @@ import io.primer.sample.datamodels.ClientSession
 import io.primer.sample.datamodels.type
 import io.primer.sample.datasources.ApiKeyDataSource
 import io.primer.sample.utils.HttpRequestUtil
+import io.primer.sample.utils.MapDeserializer
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -55,6 +56,7 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
                     val tokenResponse = GsonBuilder()
+                        .registerTypeAdapter(Map::class.java, MapDeserializer)
                         .create()
                         .fromJson(response.body?.string(), ClientSession.Response::class.java)
 

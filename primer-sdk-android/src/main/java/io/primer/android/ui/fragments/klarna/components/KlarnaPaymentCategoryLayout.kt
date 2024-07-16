@@ -14,6 +14,8 @@ import io.primer.android.ui.fragments.klarna.model.KlarnaPaymentCategory
 import java.util.Timer
 import java.util.TimerTask
 
+private const val TIMER_DELAY = 300L
+
 internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet?) :
     LinearLayout(context, attrs) {
     init {
@@ -114,7 +116,7 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
                                     }
                                 }
                             },
-                            300L
+                            TIMER_DELAY
                         )
                     }
                 }

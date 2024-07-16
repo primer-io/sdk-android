@@ -47,7 +47,7 @@
             style="@style/Primer.FormInput.SubTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/large_vertical_margin"
             android:text="@string/card_details"
             tools:textColor="@android:color/black" />
 

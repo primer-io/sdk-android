@@ -69,6 +69,7 @@ internal enum class PaymentMethodType(
     XENDIT_RETAIL_OUTLETS(ClientTokenIntent.PAYMENT_METHOD_VOUCHER, Brand.RETAIL_OUTLETS),
     IPAY88_CARD(ClientTokenIntent.IPAY88_CARD_REDIRECTION, Brand.IPAY_88),
     NOL_PAY(brand = Brand.UNKNOWN),
+    STRIPE_ACH(brand = Brand.GENERIC_BANK),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     UNKNOWN(brand = Brand.UNKNOWN);

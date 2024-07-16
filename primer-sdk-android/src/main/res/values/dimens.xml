@@ -5,7 +5,6 @@
 
     <dimen name="primer_list_margin">16dp</dimen>
 
-    <dimen name="success_width">300dp</dimen>
     <dimen name="loading_height">300dp</dimen>
 
     <!--  Forms  -->

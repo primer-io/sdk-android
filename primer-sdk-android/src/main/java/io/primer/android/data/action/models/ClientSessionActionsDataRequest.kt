@@ -2,10 +2,11 @@ package io.primer.android.data.action.models
 
 import io.primer.android.core.data.models.EmptyDataRequest
 import io.primer.android.core.serialization.json.JSONObjectSerializable
-import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
+import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
@@ -18,6 +19,108 @@ internal data class ClientSessionActionsDataRequest(
 ) : JSONObjectSerializable {
 
     sealed class Action : JSONObjectSerializable
+
+    data class SetEmailAddress(
+        val params: SetEmailAddressRequestDataParams
+    ) : Action() {
+        companion object {
+            @JvmField
+            val serializer = JSONObjectSerializer<SetEmailAddress> { t ->
+                JSONObject().apply {
+                    put(TYPE_FIELD, "SET_EMAIL_ADDRESS")
+                    put(
+                        PARAMS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<SetEmailAddressRequestDataParams>()
+                            .serialize(t.params)
+                    )
+                }
+            }
+        }
+    }
+
+    data class SetEmailAddressRequestDataParams(
+        val emailAddress: String
+    ) : JSONObjectSerializable {
+        companion object {
+            private const val EMAIL_ADDRESS_FIELD = "emailAddress"
+
+            @JvmField
+            val serializer = JSONObjectSerializer<SetEmailAddressRequestDataParams> { t ->
+                JSONObject().apply {
+                    put(EMAIL_ADDRESS_FIELD, t.emailAddress)
+                }
+            }
+        }
+    }
+
+    data class SetCustomerFirstName(
+        val params: SetCustomerFirstNameRequestDataParams
+    ) : Action() {
+        companion object {
+            @JvmField
+            val serializer = JSONObjectSerializer<SetCustomerFirstName> { t ->
+                JSONObject().apply {
+                    put(TYPE_FIELD, "SET_CUSTOMER_FIRST_NAME")
+                    put(
+                        PARAMS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<SetCustomerFirstNameRequestDataParams>()
+                            .serialize(t.params)
+                    )
+                }
+            }
+        }
+    }
+
+    data class SetCustomerFirstNameRequestDataParams(
+        val firstName: String
+    ) : JSONObjectSerializable {
+        companion object {
+            private const val FIRST_NAME_FIELD = "firstName"
+
+            @JvmField
+            val serializer = JSONObjectSerializer<SetCustomerFirstNameRequestDataParams> { t ->
+                JSONObject().apply {
+                    put(FIRST_NAME_FIELD, t.firstName)
+                }
+            }
+        }
+    }
+
+    data class SetCustomerLastName(
+        val params: SetCustomerLastNameRequestDataParams
+    ) : Action() {
+        companion object {
+            @JvmField
+            val serializer = JSONObjectSerializer<SetCustomerLastName> { t ->
+                JSONObject().apply {
+                    put(TYPE_FIELD, "SET_CUSTOMER_LAST_NAME")
+                    put(
+                        PARAMS_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<SetCustomerLastNameRequestDataParams>()
+                            .serialize(t.params)
+                    )
+                }
+            }
+        }
+    }
+
+    data class SetCustomerLastNameRequestDataParams(
+        val lastName: String
+    ) : JSONObjectSerializable {
+        companion object {
+            private const val LAST_NAME_FIELD = "lastName"
+
+            @JvmField
+            val serializer = JSONObjectSerializer<SetCustomerLastNameRequestDataParams> { t ->
+                JSONObject().apply {
+                    put(LAST_NAME_FIELD, t.lastName)
+                }
+            }
+        }
+    }
 
     data class SetPaymentMethod(val params: SetPaymentMethodRequestDataParams) : Action() {
         companion object {
@@ -150,6 +253,21 @@ internal data class ClientSessionActionsDataRequest(
                                         JSONSerializationUtils
                                             .getJsonObjectSerializer<SetBillingAddress>()
                                             .serialize(action)
+
+                                    is SetEmailAddress ->
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<SetEmailAddress>()
+                                            .serialize(action)
+
+                                    is SetCustomerFirstName ->
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<SetCustomerFirstName>()
+                                            .serialize(action)
+
+                                    is SetCustomerLastName ->
+                                        JSONSerializationUtils
+                                            .getJsonObjectSerializer<SetCustomerLastName>()
+                                            .serialize(action)
                                 }
                             )
                         }
@@ -161,27 +279,55 @@ internal data class ClientSessionActionsDataRequest(
 }
 
 internal fun BaseActionUpdateParams.toActionData() = when (this) {
-    is ActionUpdateSelectPaymentMethodParams -> ClientSessionActionsDataRequest.SetPaymentMethod(
-        ClientSessionActionsDataRequest.SetPaymentMethodRequestDataParams(
-            paymentMethodType,
-            cardNetwork?.let { BinData(it) }
+    is ActionUpdateSelectPaymentMethodParams -> listOf(
+        ClientSessionActionsDataRequest.SetPaymentMethod(
+            ClientSessionActionsDataRequest.SetPaymentMethodRequestDataParams(
+                paymentMethodType,
+                cardNetwork?.let { BinData(it) }
+            )
         )
     )
 
     is ActionUpdateUnselectPaymentMethodParams ->
-        ClientSessionActionsDataRequest.UnsetPaymentMethod()
+        listOf(ClientSessionActionsDataRequest.UnsetPaymentMethod())
 
-    is ActionUpdateBillingAddressParams -> ClientSessionActionsDataRequest.SetBillingAddress(
-        ClientSessionActionsDataRequest.SetBillingAddressRequestDataParams(
-            Address(
-                firstName = firstName,
-                lastName = lastName,
-                addressLine1 = addressLine1.orEmpty(),
-                addressLine2 = addressLine2,
-                postalCode = postalCode.orEmpty(),
-                city = city.orEmpty(),
-                countryCode = countryCode.orEmpty()
+    is ActionUpdateBillingAddressParams -> listOf(
+        ClientSessionActionsDataRequest.SetBillingAddress(
+            ClientSessionActionsDataRequest.SetBillingAddressRequestDataParams(
+                Address(
+                    firstName = firstName,
+                    lastName = lastName,
+                    addressLine1 = addressLine1.orEmpty(),
+                    addressLine2 = addressLine2,
+                    postalCode = postalCode.orEmpty(),
+                    city = city.orEmpty(),
+                    countryCode = countryCode.orEmpty()
+                )
             )
         )
     )
+
+    is ActionUpdateCustomerDetailsParams -> buildList {
+        firstName?.let {
+            add(
+                ClientSessionActionsDataRequest.SetCustomerFirstName(
+                    ClientSessionActionsDataRequest.SetCustomerFirstNameRequestDataParams(it)
+                )
+            )
+        }
+        lastName?.let {
+            add(
+                ClientSessionActionsDataRequest.SetCustomerLastName(
+                    ClientSessionActionsDataRequest.SetCustomerLastNameRequestDataParams(it)
+                )
+            )
+        }
+        emailAddress?.let {
+            add(
+                ClientSessionActionsDataRequest.SetEmailAddress(
+                    ClientSessionActionsDataRequest.SetEmailAddressRequestDataParams(it)
+                )
+            )
+        }
+    }
 }

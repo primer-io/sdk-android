@@ -162,6 +162,17 @@
         <item name="android:textSize">17sp</item>
     </style>
 
+    <style name="Primer.Button.Text.Secondary">
+        <item name="lineHeight">24dp</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="borderWidth">0dp</item>
+        <item name="backgroundColor">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/primer_button_primary</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="Primer.Button.Text.Primary" parent="Primer.Button.Text">
         <item name="android:textColor">@android:color/white</item>
         <item name="lineHeight">24sp</item>
@@ -183,6 +194,15 @@
 
     <style name="Primer.Text.Small" parent="Primer.Text">
         <item name="android:textSize">@dimen/primer_text_size_sm</item>
+    </style>
+
+    <style name="Primer.Text.Small.Body" parent="Primer.Text.Small">
+        <item name="android:textColor">@color/primer_body</item>
+    </style>
+
+    <style name="Primer.Text.Description" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_subtitle_fontsize</item>
+        <item name="lineHeight">20dp</item>
     </style>
 
     <style name="Primer.Text.Large" parent="Primer.Text">
@@ -249,7 +269,6 @@
         <item name="lineHeight">28dp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
-
 
     <style name="Primer.Text.Title.Small" parent="Primer.Text.Large">
         <item name="android:textSize">20sp</item>
