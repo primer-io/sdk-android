@@ -14,8 +14,7 @@
 -dontwarn com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 -dontwarn com.netcetera.threeds.sdk.api.**
 
-
-# TODO TWS: undo when releasing ACH
+# Stripe ACH
 -dontwarn io.primer.android.stripe.StripeBankAccountCollectorActivity$Companion
 -dontwarn io.primer.android.stripe.StripeBankAccountCollectorActivity$Params
 -dontwarn io.primer.android.stripe.StripeBankAccountCollectorActivity
