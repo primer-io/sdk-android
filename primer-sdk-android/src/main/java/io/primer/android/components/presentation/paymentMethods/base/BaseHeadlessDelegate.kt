@@ -336,7 +336,7 @@ internal class DefaultHeadlessManagerDelegate(
             } else {
                 ActionUpdateSelectPaymentMethodParams(
                     type,
-                    cardType.name
+                    rawData.cardNetwork?.name ?: cardType.name
                 )
             }
         }
