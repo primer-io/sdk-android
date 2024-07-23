@@ -31,6 +31,7 @@ internal class HttpAnalyticsInterceptor :
         )
 
         val response: Response?
+        val start: Long = System.currentTimeMillis()
         try {
             response = chain.proceed(request)
             sharedFlow.tryEmit(
@@ -44,7 +45,8 @@ internal class HttpAnalyticsInterceptor :
                         null
                     } else {
                         response.peekBody(Long.MAX_VALUE).string()
-                    }
+                    },
+                    duration = System.currentTimeMillis() - start
                 )
             )
         } catch (e: IOException) {
@@ -55,7 +57,8 @@ internal class HttpAnalyticsInterceptor :
                     request.url.toString(),
                     request.method,
                     null,
-                    e.stackTraceToString()
+                    e.stackTraceToString(),
+                    duration = System.currentTimeMillis() - start
                 )
             )
             throw e

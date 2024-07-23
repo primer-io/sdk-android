@@ -72,7 +72,8 @@ internal data class NetworkCallProperties(
     val url: String,
     val method: String,
     val responseCode: Int? = null,
-    val errorBody: String? = null
+    val errorBody: String? = null,
+    val duration: Long? = null
 ) : BaseAnalyticsProperties() {
 
     companion object {
@@ -83,6 +84,7 @@ internal data class NetworkCallProperties(
         private const val METHOD_FIELD = "method"
         private const val RESPONSE_CODE_FIELD = "responseCode"
         private const val ERROR_BODY_FIELD = "errorBody"
+        private const val DURATION = "duration"
 
         @JvmField
         val serializer = JSONObjectSerializer<NetworkCallProperties> { t ->
@@ -93,6 +95,7 @@ internal data class NetworkCallProperties(
                 put(METHOD_FIELD, t.method)
                 putOpt(RESPONSE_CODE_FIELD, t.responseCode)
                 putOpt(ERROR_BODY_FIELD, t.errorBody)
+                putOpt(DURATION, t.duration)
             }
         }
 
@@ -104,7 +107,8 @@ internal data class NetworkCallProperties(
                 t.getString(URL_FIELD),
                 t.getString(METHOD_FIELD),
                 t.optNullableInt(RESPONSE_CODE_FIELD),
-                t.optNullableString(ERROR_BODY_FIELD)
+                t.optNullableString(ERROR_BODY_FIELD),
+                t.optNullableInt(DURATION)?.toLong()
             )
         }
     }
