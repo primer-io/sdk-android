@@ -45,19 +45,24 @@ class StripeAchUserDetailsComponent internal constructor(
     private val errorMapper: ErrorMapper
 ) : ViewModel(),
     PrimerHeadlessAchComponent<AchUserDetailsCollectableData, AchUserDetailsStep> {
-    private var firstName: String? = savedStateHandle[FIRST_NAME_KEY]
+    private var firstName: String = savedStateHandle.get<String>(FIRST_NAME_KEY).orEmpty()
         set(value) {
             savedStateHandle[FIRST_NAME_KEY] = value
             field = value
         }
-    private var lastName: String? = savedStateHandle[LAST_NAME_KEY]
+    private var lastName: String = savedStateHandle.get<String>(LAST_NAME_KEY).orEmpty()
         set(value) {
             savedStateHandle[LAST_NAME_KEY] = value
             field = value
         }
-    private var emailAddress: String? = savedStateHandle[EMAIL_ADDRESS_KEY]
+    private var emailAddress: String = savedStateHandle.get<String>(EMAIL_ADDRESS_KEY).orEmpty()
         set(value) {
             savedStateHandle[EMAIL_ADDRESS_KEY] = value
+            field = value
+        }
+    private var hadFirstSubmission: Boolean = savedStateHandle[HAD_FIRST_SUBMISSION_KEY] ?: false
+        set(value) {
+            savedStateHandle[HAD_FIRST_SUBMISSION_KEY] = value
             field = value
         }
     private val _componentError = MutableSharedFlow<PrimerError>()
@@ -76,15 +81,14 @@ class StripeAchUserDetailsComponent internal constructor(
         viewModelScope.launch {
             getClientSessionCustomerDetailsDelegate()
                 .onSuccess {
-                    val (firstName, lastName, emailAddress) = it
-                    updateCollectedData(AchUserDetailsCollectableData.FirstName(firstName))
-                    updateCollectedData(AchUserDetailsCollectableData.LastName(lastName))
-                    updateCollectedData(AchUserDetailsCollectableData.EmailAddress(emailAddress))
+                    firstName = it.firstName
+                    lastName = it.lastName
+                    emailAddress = it.emailAddress
                     _componentStep.emit(
                         AchUserDetailsStep.UserDetailsRetrieved(
-                            firstName = firstName,
-                            lastName = lastName,
-                            emailAddress = emailAddress
+                            firstName = it.firstName,
+                            lastName = it.lastName,
+                            emailAddress = it.emailAddress
                         )
                     )
                 }
@@ -99,59 +103,80 @@ class StripeAchUserDetailsComponent internal constructor(
     }
 
     override fun updateCollectedData(collectedData: AchUserDetailsCollectableData) {
-        viewModelScope.launch {
-            _componentValidationStatus.emit(PrimerValidationStatus.Validating(collectedData))
+        viewModelScope.launch { updateCollectedDataImpl(collectedData) }
+    }
 
-            val validationError = when (collectedData) {
-                is AchUserDetailsCollectableData.FirstName -> {
-                    val error = FirstNameValidator.validate(collectedData.value)
-                    if (error == null) firstName = collectedData.value
-                    error
-                }
+    private suspend fun updateCollectedDataImpl(collectedData: AchUserDetailsCollectableData): Boolean {
+        _componentValidationStatus.emit(PrimerValidationStatus.Validating(collectedData))
 
-                is AchUserDetailsCollectableData.LastName -> {
-                    val error = LastNameValidator.validate(collectedData.value)
-                    if (error == null) lastName = collectedData.value
-                    error
-                }
-
-                is AchUserDetailsCollectableData.EmailAddress -> {
-                    val error = EmailAddressValidator.validate(collectedData.value)
-                    if (error == null) emailAddress = collectedData.value
-                    error
-                }
+        val validationError = when (collectedData) {
+            is AchUserDetailsCollectableData.FirstName -> {
+                val error = FirstNameValidator.validate(collectedData.value)
+                if (error == null) firstName = collectedData.value
+                error
             }
 
-            _componentValidationStatus.emit(
-                if (validationError == null) {
-                    PrimerValidationStatus.Valid(collectedData)
-                } else {
-                    PrimerValidationStatus.Invalid(validationError, collectedData)
-                }
-            )
+            is AchUserDetailsCollectableData.LastName -> {
+                val error = LastNameValidator.validate(collectedData.value)
+                if (error == null) lastName = collectedData.value
+                error
+            }
 
-            eventLoggingDelegate.logSdkAnalyticsEvent(
-                methodName =
-                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
-            )
+            is AchUserDetailsCollectableData.EmailAddress -> {
+                val error = EmailAddressValidator.validate(collectedData.value)
+                if (error == null) emailAddress = collectedData.value
+                error
+            }
         }
+
+        _componentValidationStatus.emit(
+            if (validationError == null) {
+                PrimerValidationStatus.Valid(collectedData)
+            } else {
+                PrimerValidationStatus.Invalid(validationError, collectedData)
+            }
+        )
+
+        eventLoggingDelegate.logSdkAnalyticsEvent(
+            methodName =
+            StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
+            paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+        )
+        return validationError == null
     }
 
     override fun submit() {
         viewModelScope.launch {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+
+            if (!hadFirstSubmission) {
+                // First time submit is called, trigger validation
+                var isValid = updateCollectedDataImpl(AchUserDetailsCollectableData.FirstName(firstName))
+                isValid = isValid and updateCollectedDataImpl(AchUserDetailsCollectableData.LastName(lastName))
+                isValid = isValid and updateCollectedDataImpl(AchUserDetailsCollectableData.EmailAddress(emailAddress))
+                hadFirstSubmission = true
+
+                if (!isValid) {
+                    return@launch
+                }
+            }
+
             runCatching {
                 object {
                     val firstName = requireNotNullCheck(
-                        value = this@StripeAchUserDetailsComponent.firstName,
+                        value = this@StripeAchUserDetailsComponent.firstName.takeIf { it.isNotBlank() },
                         key = StripeAchUserDetailsIllegalValueKey.MISSING_FIRST_NAME
                     )
                     val lastName = requireNotNullCheck(
-                        value = this@StripeAchUserDetailsComponent.lastName,
+                        value = this@StripeAchUserDetailsComponent.lastName.takeIf { it.isNotBlank() },
                         key = StripeAchUserDetailsIllegalValueKey.MISSING_LAST_NAME
                     )
                     val emailAddress = requireNotNullCheck(
-                        value = this@StripeAchUserDetailsComponent.emailAddress,
+                        value = this@StripeAchUserDetailsComponent.emailAddress.takeIf { it.isNotBlank() },
                         key = StripeAchUserDetailsIllegalValueKey.MISSING_EMAIL_ADDRESS
                     )
                 }
@@ -171,12 +196,6 @@ class StripeAchUserDetailsComponent internal constructor(
                         .recoverCatching { throw TokenizationFailureException(it) }
                 }
                 .onFailure(::handleError)
-
-            eventLoggingDelegate.logSdkAnalyticsEvent(
-                methodName =
-                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
-            )
         }
     }
 
@@ -202,6 +221,7 @@ class StripeAchUserDetailsComponent internal constructor(
         private const val FIRST_NAME_KEY = "first_name"
         private const val LAST_NAME_KEY = "last_name"
         private const val EMAIL_ADDRESS_KEY = "email_address"
+        private const val HAD_FIRST_SUBMISSION_KEY = "had_first_submission"
 
         fun provideInstance(
             owner: ViewModelStoreOwner

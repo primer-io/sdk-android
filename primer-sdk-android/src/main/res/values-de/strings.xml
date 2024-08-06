@@ -130,25 +130,29 @@
     <string name="save_this_card">Save this card</string>
     <string name="card_expiry_formatted">Expiry (MM/YY)</string>
     <string name="primer_payment_method_button_content_description">Pay with %s</string>
-    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
-    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
-    <string name="stripe_ach_mandate_template">By clicking [accept], you authorise [%1$s] to debit the bank account specified above for any amount owed for charges arising from your use of [%1$s]\'s services and/or purchase of products from [%1$s], pursuant to [%1$s]\'s website and terms, until this authorisation is revoked. You may amend or cancel this authorisation at any time by providing notice to [%1$s] with 30 (thirty) days notice.\n\nIf you use [%1$s]\'s services or purchase additional products periodically pursuant to [%1$s]\'s terms, you authorise [%1$s] to debit your bank account periodically. Payments that fall outside the regular debits authorised above will only be debited after your authorisation is obtained.</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
     <string name="loading_text">Loading</string>
     <string name="continue_button">Weiter</string>
-    <string name="accept_button">Accept</string>
-    <string name="cancel_payment_button">Cancel payment</string>
-
     <!-- CVV- CVV recapture explanation label -->
     <string name="primer_cvv_recapture_explanation">Gib den %d-stelligen Sicherheitscode auf deiner Karte ein, um eine sichere Zahlung zu gewährleisten.</string>
     <!-- CVV - CVV recapture screen title -->
     <string name="primer_cvv_recapture_title">CVV eingeben</string>
-
     <string name="retry_button">Retry</string>
     <string name="choose_other_payment_method_button">Choose other payment method</string>
-
-    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
     <string name="session_complete_payment_success_title">Payment authorized</string>
     <string name="session_complete_payment_failure_title">Payment failed</string>
     <string name="session_complete_payment_cancellation_title">Payment cancelled</string>

@@ -71,7 +71,6 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = FragmentStripeAchUserDetailsCollectionBinding.inflate(inflater, container, false).apply {
-        submit.isEnabled = false
         progressGroup.isVisible = true
         inputGroup.isVisible = false
         binding = this
@@ -115,24 +114,6 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
             it.hideKeyboard()
             component.submit()
         }
-
-        binding.firstNameInput.doAfterTextChanged {
-            component.updateCollectedData(
-                AchUserDetailsCollectableData.FirstName(it.toString())
-            )
-        }
-
-        binding.lastNameInput.doAfterTextChanged {
-            component.updateCollectedData(
-                AchUserDetailsCollectableData.LastName(it.toString())
-            )
-        }
-
-        binding.emailAddressInput.doAfterTextChanged {
-            component.updateCollectedData(
-                AchUserDetailsCollectableData.EmailAddress(it.toString().orEmpty())
-            )
-        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -146,6 +127,23 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
                     binding.emailAddressInput.setText(emailAddress)
                     binding.progressGroup.isVisible = false
                     binding.inputGroup.isVisible = true
+
+                    binding.firstNameInput.doAfterTextChanged {
+                        component.updateCollectedData(
+                            AchUserDetailsCollectableData.FirstName(it.toString())
+                        )
+                    }
+                    binding.lastNameInput.doAfterTextChanged {
+                        component.updateCollectedData(
+                            AchUserDetailsCollectableData.LastName(it.toString())
+                        )
+                    }
+                    binding.emailAddressInput.doAfterTextChanged {
+                        component.updateCollectedData(
+                            AchUserDetailsCollectableData.EmailAddress(it.toString().orEmpty())
+                        )
+                    }
+
                     updatePaymentMethodBackVisibility()
                 }
 
@@ -224,7 +222,7 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
                 }
             }
 
-            binding.submit.isEnabled = !hasInputErrors() && !hasEmptyInput()
+            binding.submit.isEnabled = !hasInputErrors()
         }
     }
 
@@ -250,11 +248,6 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
         binding.firstName.error != null ||
             binding.firstName.error != null ||
             binding.emailAddress.error != null
-
-    private fun hasEmptyInput(): Boolean =
-        binding.firstNameInput.text.isNullOrEmpty() ||
-            binding.lastNameInput.text.isNullOrEmpty() ||
-            binding.emailAddressInput.text.isNullOrEmpty()
 
     private fun updatePaymentMethodBackVisibility(isVisible: Boolean? = null) {
         binding.paymentMethodBack.isVisible = isVisible ?: !isStandalonePaymentMethod

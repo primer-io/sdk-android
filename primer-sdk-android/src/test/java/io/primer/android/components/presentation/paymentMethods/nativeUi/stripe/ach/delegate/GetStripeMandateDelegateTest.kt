@@ -56,7 +56,7 @@ class GetStripeMandateDelegateTest {
     @Test
     fun `invoke() should return template mandate if substitution data exists in Stripe options`() {
         every {
-            resources.getString(R.string.stripe_ach_mandate_template, any())
+            resources.getString(R.string.stripe_ach_mandate_template_android, any())
         } returns "This is a template [Merchant name]"
         val templateMandate = mockk<PrimerStripeOptions.MandateData.TemplateMandateData> {
             every { merchantName } returns "Merchant name"
@@ -67,7 +67,7 @@ class GetStripeMandateDelegateTest {
 
         Assertions.assertEquals(Result.success("This is a template [Merchant name]"), result)
         verify {
-            resources.getString(R.string.stripe_ach_mandate_template, "Merchant name")
+            resources.getString(R.string.stripe_ach_mandate_template_android, "Merchant name")
             primerSettings.paymentMethodOptions.stripeOptions.mandateData
         }
     }

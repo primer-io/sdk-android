@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentDialog
 import androidx.activity.addCallback
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commit
-import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.primer.android.AchMandateActionHandler
+import io.primer.android.R
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.delegate.GetStripeMandateDelegate
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.exception.PaymentMethodCancelledException
@@ -21,10 +22,13 @@ import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
+import io.primer.android.ui.settings.PrimerTheme
+import kotlinx.coroutines.launch
 
 internal class StripeAchMandateFragment : BaseFragment() {
     private var binding: FragmentStripeAchMandateBinding by autoCleaned()
 
+    private val primerTheme: PrimerTheme by inject()
     private val eventResolver: BaseErrorEventResolver by inject()
     private val getStripeMandateDelegate: GetStripeMandateDelegate by inject()
 
@@ -55,7 +59,10 @@ internal class StripeAchMandateFragment : BaseFragment() {
             .onSuccess { binding.mandate.text = it }
             .onFailure { Log.e(TAG, "Failed to fetch mandate", it) }
 
+        binding.accept.setTheme(primerTheme)
+        binding.accept.text = getString(R.string.stripe_ach_mandate_accept_button)
         binding.accept.setOnClickListener {
+            binding.accept.showProgress()
             submit(isAccepted = true)
         }
         binding.decline.setOnClickListener {
@@ -66,8 +73,14 @@ internal class StripeAchMandateFragment : BaseFragment() {
     }
 
     private fun submit(isAccepted: Boolean) {
-        setFragmentResult(RESULT_KEY, bundleOf(IS_ACCEPTED to isAccepted))
-        popBackStack()
+        binding.accept.isEnabled = false
+        binding.decline.isEnabled = false
+        lifecycleScope.launch {
+            (requireActivity() as? AchMandateActionHandler)?.let {
+                it.handleAchMandateAction(isAccepted)
+                popBackStack()
+            }
+        }
     }
 
     private fun getParentDialogOrNull() = ((parentFragment as? DialogFragment)?.dialog as? ComponentDialog)
@@ -79,9 +92,6 @@ internal class StripeAchMandateFragment : BaseFragment() {
 
     companion object {
         private val TAG = StripeAchMandateFragment::class.simpleName
-
-        const val RESULT_KEY = "mandate_result"
-        const val IS_ACCEPTED = "is_accepted"
 
         fun newInstance() = StripeAchMandateFragment()
     }

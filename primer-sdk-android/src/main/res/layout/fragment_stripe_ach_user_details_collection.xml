@@ -2,6 +2,7 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingHorizontal="12dp"
-            android:text="@string/stripe_ach_mandate_title_label"
+            android:text="@string/pay_with_ach"
             app:layout_constraintBottom_toBottomOf="@+id/payment_method_back"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/payment_method_back"
@@ -47,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/xxl_vertical_margin"
-            android:text="@string/stripe_ach_mandate_subtitle_label"
+            android:text="@string/stripe_ach_user_details_collection_subtitle_label"
             android:textColor="@android:color/black"
             android:textIsSelectable="false"
             android:textSize="16sp"
@@ -62,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_vertical_margin"
             android:layout_marginEnd="@dimen/large_padding"
-            android:hint="@string/firstNameLabel"
+            android:hint="@string/stripe_ach_user_details_collection_first_name_label"
             app:errorEnabled="false"
             app:errorIconDrawable="@null"
             app:layout_constrainedHeight="true"
@@ -86,7 +87,7 @@
             style="@style/Primer.FormInput.Outbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/lastNameLabel"
+            android:hint="@string/stripe_ach_user_details_collection_last_name_label"
             app:errorEnabled="false"
             app:errorIconDrawable="@null"
             app:layout_constrainedHeight="true"
@@ -117,7 +118,7 @@
             style="@style/Primer.FormInput.Outbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/email_address"
+            android:hint="@string/stripe_ach_user_details_collection_email_address_label"
             android:paddingTop="@dimen/large_vertical_margin"
             app:errorEnabled="false"
             app:errorIconDrawable="@null"
@@ -136,23 +137,40 @@
                 android:textColor="@android:color/black" />
         </io.primer.android.ui.components.TextInputWidget>
 
+        <TextView
+            android:id="@+id/data_usage"
+            style="@style/Primer.Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/large_vertical_margin"
+            android:paddingTop="@dimen/medium_vertical_margin"
+            android:text="@string/stripe_ach_user_details_collection_data_usage_label"
+            android:textColor="@color/primer_body"
+            android:textIsSelectable="false"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email_address" />
+
         <Button
             android:id="@+id/submit"
             style="@style/Primer.NewButton.Primary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_vertical_margin"
-            android:text="@string/continue_button"
+            android:text="@string/stripe_ach_user_details_collection_continue_button"
+            android:textFontWeight="600"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/email_address" />
+            app:layout_constraintTop_toBottomOf="@id/data_usage"
+            tools:targetApi="p" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/input_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="payment_method_back, title, subtitle, first_name, last_name, email_address, submit" />
+            app:constraint_referenced_ids="payment_method_back, title, subtitle, first_name, last_name, email_address, data_usage, submit" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"

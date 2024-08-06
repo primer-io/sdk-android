@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/pay_button_height"
-    android:gravity="center"
-    tools:background="@color/primer_pay_button_background">
+    android:layout_height="wrap_content"
+    android:gravity="center">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button"
-        style="@style/Primer.NewButton.Pay"
+        style="@style/Primer.NewButton.Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:enabled="false"
-        tools:text="Pay $99"
-        tools:textColor="@android:color/white" />
+        android:text="@string/stripe_ach_mandate_accept_button"
+        android:textAllCaps="false"
+        android:textFontWeight="600"
+        tools:targetApi="p"
+        tools:text="@string/stripe_ach_mandate_accept_button" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressIndicator"

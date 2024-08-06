@@ -82,7 +82,8 @@ class StripeAchUserDetailsComponentTest {
     private fun initComponent(
         firstName: String? = "John",
         lastName: String? = "Doe",
-        emailAddress: String? = "john@doe.com"
+        emailAddress: String? = "john@doe.com",
+        hadFirstSubmission: Boolean = true
     ) {
         every { savedStateHandle.get<String>("first_name") } returns firstName
         every { savedStateHandle.set<String>("first_name", any()) } just Runs
@@ -90,6 +91,8 @@ class StripeAchUserDetailsComponentTest {
         every { savedStateHandle.set<String>("last_name", any()) } just Runs
         every { savedStateHandle.get<String>("email_address") } returns emailAddress
         every { savedStateHandle.set<String>("email_address", any()) } just Runs
+        every { savedStateHandle.get<Boolean>("had_first_submission") } returns hadFirstSubmission
+        every { savedStateHandle.set<String>("had_first_submission", any()) } just Runs
 
         component = StripeAchUserDetailsComponent(
             getClientSessionCustomerDetailsDelegate = getClientSessionCustomerDetailsDelegate,
@@ -152,41 +155,13 @@ class StripeAchUserDetailsComponentTest {
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
         }
-        coVerify(exactly = 3) {
-            eventLoggingDelegate.logSdkAnalyticsEvent(
-                methodName = StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
-            )
-        }
-        verify {
-            FirstNameValidator.validate("John")
-            LastNameValidator.validate("Doe")
-            EmailAddressValidator.validate("john@doe.com")
+        verify(exactly = 0) {
+            FirstNameValidator.validate(any())
+            LastNameValidator.validate(any())
+            EmailAddressValidator.validate(any())
         }
         assertEquals(emptyList(), errors)
-        assertEquals(
-            listOf(
-                PrimerValidationStatus.Validating(
-                    collectableData = AchUserDetailsCollectableData.FirstName(value = "John")
-                ),
-                PrimerValidationStatus.Validating(
-                    collectableData = AchUserDetailsCollectableData.LastName(value = "Doe")
-                ),
-                PrimerValidationStatus.Validating(
-                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "john@doe.com")
-                ),
-                PrimerValidationStatus.Valid(
-                    collectableData = AchUserDetailsCollectableData.FirstName(value = "John")
-                ),
-                PrimerValidationStatus.Valid(
-                    collectableData = AchUserDetailsCollectableData.LastName(value = "Doe")
-                ),
-                PrimerValidationStatus.Valid(
-                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "john@doe.com")
-                )
-            ),
-            validationStatuses
-        )
+        assertEquals(emptyList(), validationStatuses)
         assertEquals(
             listOf<AchUserDetailsStep>(
                 AchUserDetailsStep.UserDetailsRetrieved(
@@ -324,6 +299,7 @@ class StripeAchUserDetailsComponentTest {
             validationStatuses
         )
         assertEquals(emptyList(), steps)
+        unmockkObject(FirstNameValidator)
     }
 
     @Test
@@ -366,6 +342,7 @@ class StripeAchUserDetailsComponentTest {
             validationStatuses
         )
         assertEquals(emptyList(), steps)
+        unmockkObject(LastNameValidator)
     }
 
     @Test
@@ -412,6 +389,7 @@ class StripeAchUserDetailsComponentTest {
             validationStatuses
         )
         assertEquals(emptyList(), steps)
+        unmockkObject(FirstNameValidator)
     }
 
     @Test
@@ -458,6 +436,7 @@ class StripeAchUserDetailsComponentTest {
             validationStatuses
         )
         assertEquals(emptyList(), steps)
+        unmockkObject(LastNameValidator)
     }
 
     @Test
@@ -504,6 +483,223 @@ class StripeAchUserDetailsComponentTest {
             validationStatuses
         )
         assertEquals(emptyList(), steps)
+        unmockkObject(EmailAddressValidator)
+    }
+
+    @Test
+    fun `submit() should log event and return early when submit() is called for the first time and first name is invalid`() = runTest {
+        initComponent(firstName = "", hadFirstSubmission = false)
+        coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        val errors = mutableListOf<PrimerError>()
+        val errorJob = component.componentError.collectIn(errors, this)
+        val validationStatuses =
+            mutableListOf<PrimerValidationStatus<AchUserDetailsCollectableData>>()
+        val validationJob = component.componentValidationStatus.collectIn(validationStatuses, this)
+        val steps = mutableListOf<AchUserDetailsStep>()
+        val stepJob = component.componentStep.collectIn(steps, this)
+        mockkObject(FirstNameValidator)
+        val validationError = mockk<PrimerValidationError>()
+        every { FirstNameValidator.validate(any()) } returns validationError
+
+        component.submit()
+        delay(1.seconds)
+        errorJob.cancel()
+        validationJob.cancel()
+        stepJob.cancel()
+
+        coVerify(exactly = 0) {
+            stripeAchClientSessionPatchDelegate(
+                firstName = any(),
+                lastName = any(),
+                emailAddress = any()
+            )
+            stripeAchTokenizationDelegate.invoke()
+        }
+        coVerify {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+        }
+        coVerify(exactly = 3) {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+        }
+        assertEquals(emptyList(), errors)
+        assertEquals(
+            listOf(
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.FirstName(value = "")
+                ),
+                PrimerValidationStatus.Invalid(
+                    validationError = validationError,
+                    collectableData = AchUserDetailsCollectableData.FirstName(value = "")
+                ),
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.LastName(value = "Doe")
+                ),
+                PrimerValidationStatus.Valid(
+                    collectableData = AchUserDetailsCollectableData.LastName(value = "Doe")
+                ),
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "john@doe.com")
+                ),
+                PrimerValidationStatus.Valid(
+                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "john@doe.com")
+                )
+            ),
+            validationStatuses
+        )
+        assertEquals(emptyList(), steps)
+        unmockkObject(FirstNameValidator)
+    }
+
+    @Test
+    fun `submit() should log event and return early when submit() is called for the first time and last name is invalid`() = runTest {
+        initComponent(lastName = "", hadFirstSubmission = false)
+        coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        val errors = mutableListOf<PrimerError>()
+        val errorJob = component.componentError.collectIn(errors, this)
+        val validationStatuses =
+            mutableListOf<PrimerValidationStatus<AchUserDetailsCollectableData>>()
+        val validationJob = component.componentValidationStatus.collectIn(validationStatuses, this)
+        val steps = mutableListOf<AchUserDetailsStep>()
+        val stepJob = component.componentStep.collectIn(steps, this)
+        mockkObject(LastNameValidator)
+        val validationError = mockk<PrimerValidationError>()
+        every { LastNameValidator.validate(any()) } returns validationError
+
+        component.submit()
+        delay(1.seconds)
+        errorJob.cancel()
+        validationJob.cancel()
+        stepJob.cancel()
+
+        coVerify(exactly = 0) {
+            stripeAchClientSessionPatchDelegate(
+                firstName = any(),
+                lastName = any(),
+                emailAddress = any()
+            )
+            stripeAchTokenizationDelegate.invoke()
+        }
+        coVerify {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+        }
+        coVerify(exactly = 3) {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+        }
+        assertEquals(emptyList(), errors)
+        assertEquals(
+            listOf(
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.FirstName(value = "John")
+                ),
+                PrimerValidationStatus.Valid(
+                    collectableData = AchUserDetailsCollectableData.FirstName(value = "John")
+                ),
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.LastName(value = "")
+                ),
+                PrimerValidationStatus.Invalid(
+                    validationError = validationError,
+                    collectableData = AchUserDetailsCollectableData.LastName(value = "")
+                ),
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "john@doe.com")
+                ),
+                PrimerValidationStatus.Valid(
+                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "john@doe.com")
+                )
+            ),
+            validationStatuses
+        )
+        assertEquals(emptyList(), steps)
+        unmockkObject(LastNameValidator)
+    }
+
+    @Test
+    fun `submit() should log event and return early when submit() is called for the first time and email address is invalid`() = runTest {
+        initComponent(emailAddress = "", hadFirstSubmission = false)
+        coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
+        val errors = mutableListOf<PrimerError>()
+        val errorJob = component.componentError.collectIn(errors, this)
+        val validationStatuses =
+            mutableListOf<PrimerValidationStatus<AchUserDetailsCollectableData>>()
+        val validationJob = component.componentValidationStatus.collectIn(validationStatuses, this)
+        val steps = mutableListOf<AchUserDetailsStep>()
+        val stepJob = component.componentStep.collectIn(steps, this)
+        mockkObject(EmailAddressValidator)
+        val validationError = mockk<PrimerValidationError>()
+        every { EmailAddressValidator.validate(any()) } returns validationError
+
+        component.submit()
+        delay(1.seconds)
+        errorJob.cancel()
+        validationJob.cancel()
+        stepJob.cancel()
+
+        coVerify(exactly = 0) {
+            stripeAchClientSessionPatchDelegate(
+                firstName = any(),
+                lastName = any(),
+                emailAddress = any()
+            )
+            stripeAchTokenizationDelegate.invoke()
+        }
+        coVerify {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+        }
+        coVerify(exactly = 3) {
+            eventLoggingDelegate.logSdkAnalyticsEvent(
+                methodName =
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+            )
+        }
+        assertEquals(emptyList(), errors)
+        assertEquals(
+            listOf(
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.FirstName(value = "John")
+                ),
+                PrimerValidationStatus.Valid(
+                    collectableData = AchUserDetailsCollectableData.FirstName(value = "John")
+                ),
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.LastName(value = "Doe")
+                ),
+                PrimerValidationStatus.Valid(
+                    collectableData = AchUserDetailsCollectableData.LastName(value = "Doe")
+                ),
+                PrimerValidationStatus.Validating(
+                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "")
+                ),
+                PrimerValidationStatus.Invalid(
+                    validationError = validationError,
+                    collectableData = AchUserDetailsCollectableData.EmailAddress(value = "")
+                )
+            ),
+            validationStatuses
+        )
+        assertEquals(emptyList(), steps)
+        unmockkObject(EmailAddressValidator)
     }
 
     @Test

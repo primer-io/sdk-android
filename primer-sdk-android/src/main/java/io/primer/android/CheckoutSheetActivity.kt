@@ -58,11 +58,11 @@ import io.primer.android.viewmodel.TokenizationViewModel
 import io.primer.android.viewmodel.TokenizationViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class CheckoutSheetActivity : BaseCheckoutActivity() {
+internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionHandler {
 
     private var subscription: EventBus.SubscriptionHandle? = null
     private var exited = false
@@ -77,6 +77,8 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
     private val config: PrimerConfig by inject()
 
     private lateinit var sheet: CheckoutSheetFragment
+
+    private var displayMandateAchAdditionalInfo: AchAdditionalInfo.DisplayMandate? = null
 
     private val viewStatusObserver = Observer<ViewStatus> { viewStatus ->
         val fragment = when {
@@ -258,19 +260,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
             is CheckoutEvent.OnAdditionalInfoReceived -> {
                 when (it.paymentMethodInfo) {
                     is AchAdditionalInfo.DisplayMandate -> {
-                        sheet.childFragmentManager.setFragmentResultListener(
-                            /* requestKey = */ StripeAchMandateFragment.RESULT_KEY,
-                            /* lifecycleOwner = */ sheet
-                        ) { _, bundle ->
-                            val isAccepted = bundle.getBoolean(StripeAchMandateFragment.IS_ACCEPTED)
-                            lifecycleScope.launch {
-                                if (isAccepted) {
-                                    it.paymentMethodInfo.onAcceptMandate()
-                                } else {
-                                    it.paymentMethodInfo.onDeclineMandate()
-                                }
-                            }
-                        }
+                        displayMandateAchAdditionalInfo = it.paymentMethodInfo
                         sheet.childFragmentManager.commit {
                             replace(R.id.checkout_sheet_content, StripeAchMandateFragment.newInstance())
                         }
@@ -389,6 +379,19 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity() {
 
         if (config.settings.fromHUC.not()) {
             openSheet()
+        }
+    }
+
+    override suspend fun handleAchMandateAction(isAccepted: Boolean) {
+        withContext(lifecycleScope.coroutineContext) {
+            displayMandateAchAdditionalInfo?.let {
+                displayMandateAchAdditionalInfo = null
+                if (isAccepted) {
+                    it.onAcceptMandate()
+                } else {
+                    it.onDeclineMandate()
+                }
+            }
         }
     }
 

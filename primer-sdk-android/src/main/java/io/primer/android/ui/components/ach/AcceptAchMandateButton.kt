@@ -1,4 +1,4 @@
-package io.primer.android.ui.components
+package io.primer.android.ui.components.ach
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,17 +7,18 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.primer.android.R
-import io.primer.android.databinding.PayButtonBinding
+import io.primer.android.databinding.AcceptAchMandateButtonBinding
+import io.primer.android.ui.components.BUTTON_PROGRESS_ALPHA
+import io.primer.android.ui.components.FADE_IN_DURATION_MS
 import io.primer.android.ui.settings.PrimerTheme
 
-internal class PayButton @JvmOverloads constructor(
+internal class AcceptAchMandateButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val binding = PayButtonBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = AcceptAchMandateButtonBinding.inflate(LayoutInflater.from(context), this, true)
 
     var text: CharSequence?
         get() = binding.button.text
@@ -25,21 +26,7 @@ internal class PayButton @JvmOverloads constructor(
             binding.button.text = value
         }
 
-    init {
-        text = resources.getString(R.string.pay)
-    }
-
-    var amount: String? = null
-        set(value) {
-            field = value
-            text = if (value == null) {
-                resources.getString(R.string.pay)
-            } else {
-                resources.getString(R.string.pay_specific_amount, amount)
-            }
-        }
-
-    private var notLoadingText = text
+    private var notLoadingText: CharSequence = ""
 
     private val isLoading
         get() = !binding.button.isEnabled && binding.progressIndicator.isVisible
@@ -73,13 +60,6 @@ internal class PayButton @JvmOverloads constructor(
             .alpha(BUTTON_PROGRESS_ALPHA)
             .setDuration(FADE_IN_DURATION_MS)
             .start()
-    }
-
-    fun hideProgress() {
-        binding.button.text = notLoadingText
-        binding.button.isEnabled = true
-        binding.progressIndicator.isVisible = false
-        binding.progressIndicator.clearAnimation()
     }
 
     fun setTheme(theme: PrimerTheme) {

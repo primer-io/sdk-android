@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/x_medium_vertical_margin"
-            android:text="@string/stripe_ach_mandate_title_label" />
+            android:text="@string/pay_with_ach" />
 
         <TextView
             android:id="@+id/mandate"
@@ -24,16 +24,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_vertical_margin"
             android:textIsSelectable="false"
-            tools:text="By clicking [accept], you authorise [Business Name] to debit the bank account specified above for any amount owed for charges arising from your use of [Business Name]’s services and/or purchase of products from [Business Name], pursuant to [Business Name]’s website and terms, until this authorisation is revoked. You may amend or cancel this authorisation at any time by providing notice to [Business Name] with 30 (thirty) days notice." />
+            tools:text="@string/stripe_ach_mandate_template_android" />
 
-        <Button
+        <io.primer.android.ui.components.ach.AcceptAchMandateButton
             android:id="@+id/accept"
-            style="@style/Primer.NewButton.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/xl_vertical_margin"
-            android:text="@string/accept_button"
-            android:textFontWeight="600"
             tools:targetApi="p" />
 
         <Button
@@ -41,7 +38,8 @@
             style="@style/Primer.Button.Text.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xl_vertical_margin"
-            android:text="@string/cancel_payment_button" />
+            android:layout_marginTop="@dimen/medium_vertical_margin"
+            android:text="@string/stripe_ach_mandate_cancel_payment_button"
+            android:textAllCaps="false" />
     </LinearLayout>
 </ScrollView>

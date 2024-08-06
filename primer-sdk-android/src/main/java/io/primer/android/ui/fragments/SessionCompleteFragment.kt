@@ -112,7 +112,7 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
         )
 
         if (isStripeAchPaymentMethod) {
-            binding.paymentMethodTitle.text = resources.getString(R.string.stripe_ach_mandate_title_label)
+            binding.paymentMethodTitle.text = resources.getString(R.string.pay_with_ach)
             binding.sessionCompleteMessage.text = getString(
                 if (isError) {
                     if (isCancellationError) {
@@ -232,8 +232,11 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
 
     private fun SessionCompleteViewType?.getCompletedMessageOrNull(): String? =
         when (this) {
-            is SessionCompleteViewType.Error -> message ?: getString(getErrorMessage(errorType))
-            is SessionCompleteViewType.Success -> getString(getSuccessMessage(successType))
+            is SessionCompleteViewType.Error -> message?.takeIf {
+                errorType == ErrorType.PAYMENT_FAILED
+            } ?: getString(getErrorMessage(errorType, isStripeAchPaymentMethod))
+
+            is SessionCompleteViewType.Success -> getString(getSuccessMessage(successType, isStripeAchPaymentMethod))
             null -> null
         }
     // endregion
@@ -241,21 +244,33 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
     companion object {
         private val TAG = SessionCompleteFragment::class.simpleName
 
-        private fun getSuccessMessage(successType: SuccessType): Int {
+        private fun getSuccessMessage(successType: SuccessType, isStripeAch: Boolean = false): Int {
             return when (successType) {
                 SuccessType.DEFAULT -> R.string.success_text
                 SuccessType.VAULT_TOKENIZATION_SUCCESS -> R.string.payment_method_added_message
-                SuccessType.PAYMENT_SUCCESS -> R.string.payment_request_completed_successfully
+                SuccessType.PAYMENT_SUCCESS -> getSuccessStringRes(isStripeAch = isStripeAch)
             }
         }
 
-        private fun getErrorMessage(errorType: ErrorType): Int {
+        private fun getSuccessStringRes(isStripeAch: Boolean) = if (isStripeAch) {
+            R.string.stripe_ach_payment_request_completed_successfully
+        } else {
+            R.string.payment_request_completed_successfully
+        }
+
+        private fun getErrorMessage(errorType: ErrorType, isStripeAch: Boolean = false): Int {
             return when (errorType) {
                 ErrorType.DEFAULT -> R.string.error_default
                 ErrorType.VAULT_TOKENIZATION_FAILED -> R.string.payment_method_not_added_message
                 ErrorType.PAYMENT_FAILED -> R.string.payment_request_unsuccessful
-                ErrorType.PAYMENT_CANCELLED -> R.string.payment_request_unsuccessful
+                ErrorType.PAYMENT_CANCELLED -> getCancellationStringRes(isStripeAch = isStripeAch)
             }
+        }
+
+        private fun getCancellationStringRes(isStripeAch: Boolean) = if (isStripeAch) {
+            R.string.stripe_ach_payment_request_cancelled
+        } else {
+            R.string.payment_request_unsuccessful
         }
 
         fun newInstance(delay: Int, viewType: SessionCompleteViewType): SessionCompleteFragment {
