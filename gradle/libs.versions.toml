@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 coroutines = "1.8.0"
 ktx = "1.13.0"
 appcompat = "1.6.1"
@@ -17,8 +17,8 @@ primer-3ds = "1.4.3"
 primer-klarna = "1.0.4"
 primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
-primer-stripe = "0.1.0" # TODO TWS: use release version
-stripe = "20.44.1"
+primer-stripe = "1.0.0"
+stripe = "20.48.1"
 
 junit5 = "5.11.0-M2"
 androidJunit5TestRunner = "1.3.0"

@@ -9,7 +9,7 @@ import io.primer.android.components.data.payments.paymentMethods.nativeUi.stripe
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.stripe.ach.validation.validator.EmailAddressValidator
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.stripe.ach.validation.validator.FirstNameValidator
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.stripe.ach.validation.validator.LastNameValidator
-import io.primer.android.components.manager.componentWithRedirect.component.PrimerHeadlessMainComponent
+import io.primer.android.components.manager.ach.PrimerHeadlessAchComponent
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
@@ -44,7 +44,7 @@ class StripeAchUserDetailsComponent internal constructor(
     private val savedStateHandle: SavedStateHandle,
     private val errorMapper: ErrorMapper
 ) : ViewModel(),
-    PrimerHeadlessMainComponent<AchUserDetailsCollectableData, AchUserDetailsStep> {
+    PrimerHeadlessAchComponent<AchUserDetailsCollectableData, AchUserDetailsStep> {
     private var firstName: String? = savedStateHandle[FIRST_NAME_KEY]
         set(value) {
             savedStateHandle[FIRST_NAME_KEY] = value
@@ -163,12 +163,12 @@ class StripeAchUserDetailsComponent internal constructor(
                         emailAddress = it.emailAddress
                     )
                 }
+                .onSuccess {
+                    _componentStep.emit(AchUserDetailsStep.UserDetailsCollected)
+                }
                 .flatMap {
                     stripeAchTokenizationDelegate()
                         .recoverCatching { throw TokenizationFailureException(it) }
-                }
-                .onSuccess {
-                    _componentStep.emit(AchUserDetailsStep.UserDetailsCollected)
                 }
                 .onFailure(::handleError)
 

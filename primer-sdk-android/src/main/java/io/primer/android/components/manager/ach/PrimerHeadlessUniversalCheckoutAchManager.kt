@@ -5,7 +5,6 @@ import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.core.validation.ValidationResult
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.stripe.validation.resolvers.StripeInitValidationRulesResolver
-import io.primer.android.components.manager.componentWithRedirect.component.PrimerHeadlessMainComponent
 import io.primer.android.components.manager.core.composable.PrimerCollectableData
 import io.primer.android.components.manager.core.composable.PrimerHeadlessStep
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
@@ -31,14 +30,14 @@ class PrimerHeadlessUniversalCheckoutAchManager(
     private val stripeInitValidationRulesResolver: StripeInitValidationRulesResolver by inject()
 
     /**
-     * Provides an instance of the [PrimerHeadlessMainComponent] to handle ACH sessions.
+     * Provides an instance of the [PrimerHeadlessAchComponent] to handle ACH sessions.
      * @param paymentMethodType A unique string identifier for the payment method. Supported payment methods for current
      * client session are returned in the [PrimerHeadlessUniversalCheckoutListener.onAvailablePaymentMethodsLoaded]
      * callback.
-     * @return An instance of [PrimerHeadlessMainComponent].
+     * @return An instance of [PrimerHeadlessAchComponent].
      */
     @Suppress("ThrowsCount")
-    fun <T : PrimerHeadlessMainComponent<
+    fun <T : PrimerHeadlessAchComponent<
             out PrimerCollectableData,
             out PrimerHeadlessStep>> provide(
         paymentMethodType: String

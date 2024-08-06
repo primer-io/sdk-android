@@ -507,7 +507,7 @@ class StripeAchUserDetailsComponentTest {
     }
 
     @Test
-    fun `submit() should log event, patch client session, tokenize and emit UserDetailsCollected when delegate calls succeed`() = runTest {
+    fun `submit() should log event, patch client session, tokenize and emit UserDetailsCollected when patching delegate calls succeed`() = runTest {
         initComponent()
         coEvery {
             stripeAchClientSessionPatchDelegate.invoke(
@@ -604,7 +604,10 @@ class StripeAchUserDetailsComponentTest {
         }
         assertEquals(listOf(primerError), errors)
         assertEquals(emptyList(), validationStatuses)
-        assertEquals(emptyList(), steps)
+        assertEquals(
+            listOf<AchUserDetailsStep>(AchUserDetailsStep.UserDetailsCollected),
+            steps
+        )
     }
 
     @Test
