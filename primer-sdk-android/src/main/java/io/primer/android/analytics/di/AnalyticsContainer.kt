@@ -35,7 +35,9 @@ internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyCon
                     whitelistedHttpBodyKeyProviderRegistry =
                     sdk.resolve<WhitelistedHttpBodyKeyProviderRegistry>(),
                     localConfigurationDataSource = sdk.resolve()
-                ).build()
+                ).build(),
+                sdk.resolve(),
+                sdk.resolve()
             )
         }
 
@@ -60,6 +62,7 @@ internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyCon
                 sdk.resolve(),
                 NetworkTypeDataSource(sdk.resolve()),
                 UncaughtHandlerDataSource(Thread.getDefaultUncaughtExceptionHandler()),
+                sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),

@@ -29,6 +29,7 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 internal class NetworkContainer(private val sdk: SdkContainer) : DependencyContainer() {
 
@@ -84,36 +85,36 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
             )
         }
 
-        registerSingleton { PrimerHttpClient(resolve()) }
+        registerSingleton { PrimerHttpClient(resolve(), sdk.resolve(), sdk.resolve()) }
     }
 
     private fun buildOkhttpClient(
         checkoutSessionIdDataSource: CheckoutSessionIdDataSource,
         localClientTokenDataSource: LocalClientTokenDataSource,
         cache: Cache
-    ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-            .cache(cache)
-            .addInterceptor { chain: Interceptor.Chain ->
-                chain.request().newBuilder()
-                    .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
-                    .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
-                    .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
-                    .addHeader(
-                        PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER,
-                        checkoutSessionIdDataSource.checkoutSessionId
-                    )
-                    .addHeader(
-                        CLIENT_TOKEN_HEADER,
-                        localClientTokenDataSource.get().accessToken
-                    )
-                    .build()
-                    .let { chain.proceed(it) }
-            }
-        builder.addInterceptor(resolve<HttpAnalyticsInterceptor>())
-        builder.addInterceptor(resolve<HttpLoggerInterceptor>())
-        return builder.build()
-    }
+    ) = OkHttpClient.Builder()
+        .cache(cache)
+        .addInterceptor { chain: Interceptor.Chain ->
+            chain.request().newBuilder()
+                .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
+                .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
+                .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
+                .addHeader(
+                    PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER,
+                    checkoutSessionIdDataSource.checkoutSessionId
+                )
+                .addHeader(
+                    CLIENT_TOKEN_HEADER,
+                    localClientTokenDataSource.get().accessToken
+                )
+                .build()
+                .let { chain.proceed(it) }
+        }
+        .addInterceptor(resolve<HttpAnalyticsInterceptor>())
+        .addInterceptor(resolve<HttpLoggerInterceptor>())
+        .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+        .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+        .build()
 
     companion object {
         internal const val SDK_API_VERSION_HEADER = "X-Api-Version"
@@ -125,6 +126,8 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
         private const val PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER = "Primer-SDK-Checkout-Session-ID"
         private const val MAX_CACHE_SIZE_MB = 5 * 1024 * 1024L
         private const val CACHE_DIRECTORY = "primer_sdk_cache"
+        private const val READ_TIMEOUT = 15L
+        private const val WRITE_TIMEOUT = 15L
     }
 }
 

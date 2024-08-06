@@ -112,7 +112,7 @@ internal data class MessageProperties(
 }
 
 internal enum class MessageType {
-    INFO, VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED
+    INFO, VALIDATION_FAILED, ERROR, PM_IMAGE_LOADING_FAILED, RETRY, RETRY_FAILED, RETRY_SUCCESS
 }
 
 internal enum class Severity {

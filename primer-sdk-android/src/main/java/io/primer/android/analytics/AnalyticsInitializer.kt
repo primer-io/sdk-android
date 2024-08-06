@@ -6,6 +6,7 @@ import io.primer.android.HttpClientFactory
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.RemoteAnalyticsDataSource
 import io.primer.android.analytics.data.helper.AnalyticsDataSender
+import io.primer.android.analytics.data.helper.MessagePropertiesEventProvider
 import io.primer.android.analytics.data.repository.AnalyticsInitDataRepository
 import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
@@ -22,14 +23,17 @@ internal class AnalyticsInitializer : Initializer<AnalyticsInitDataRepository> {
     override fun create(context: Context): AnalyticsInitDataRepository {
         val fileAnalyticsDataSource =
             FileAnalyticsDataSource(AnalyticsFileProvider(context))
+        val logger = DefaultLogReporter()
         val remoteAnalyticsFlowDataSource = RemoteAnalyticsDataSource(
             PrimerHttpClient(
                 HttpClientFactory(
-                    DefaultLogReporter(),
+                    logger,
                     BlacklistedHttpHeaderProviderRegistry(),
                     WhitelistedHttpBodyKeyProviderRegistry(),
                     LocalConfigurationDataSource(PrimerSettings())
-                ).build()
+                ).build(),
+                logger,
+                MessagePropertiesEventProvider()
             )
         )
         return AnalyticsInitDataRepository(
