@@ -49,7 +49,7 @@ internal class PaymentResultEventsResolverTest {
     }
 
     @Test
-    fun `resolve() should call handleNewClientToken when payment status is PENDING`() {
+    fun `resolve() should call continueWithNewClientToken when payment status is PENDING`() {
         val paymentResult = mockk<PaymentResult>(relaxed = true)
         val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
 
@@ -66,6 +66,27 @@ internal class PaymentResultEventsResolverTest {
         }
 
         assertEquals(paymentResult.clientToken, clientToken.captured)
+    }
+
+    @Test
+    fun `resolve() should call continueWithNewClientToken when payment status is PENDING and clientToken is empty`() {
+        val paymentResult = mockk<PaymentResult>(relaxed = true)
+        val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
+
+        every { paymentResult.paymentStatus }.returns(PaymentStatus.PENDING)
+        every { paymentResult.clientToken }.returns(null)
+
+        runTest {
+            paymentResultEventsResolver.resolve(paymentResult, resumeHandler)
+        }
+
+        val clientToken = slot<String>()
+
+        verify {
+            resumeHandler.continueWithNewClientToken(capture(clientToken))
+        }
+
+        assertEquals("", clientToken.captured)
     }
 
     @Test
@@ -111,6 +132,30 @@ internal class PaymentResultEventsResolverTest {
         val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
 
         every { paymentResult.paymentStatus }.returns(PaymentStatus.SUCCESS)
+
+        runTest {
+            paymentResultEventsResolver.resolve(paymentResult, resumeHandler)
+        }
+
+        val event = slot<CheckoutEvent>()
+
+        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { resumeHandler.handleSuccess() }
+
+        assertEquals(CheckoutEventType.PAYMENT_SUCCESS, event.captured.type)
+        assertEquals(
+            paymentResult.payment,
+            (event.captured as CheckoutEvent.PaymentSuccess).data.payment
+        )
+    }
+
+    @Test
+    fun `resolve() should dispatch PAYMENT_SUCCESS type when payment status is PENDING and has showSuccessCheckoutOnPendingPayment flag`() {
+        val paymentResult = mockk<PaymentResult>(relaxed = true)
+        val resumeHandler = mockk<PrimerResumeDecisionHandler>(relaxed = true)
+
+        every { paymentResult.paymentStatus }.returns(PaymentStatus.PENDING)
+        every { paymentResult.showSuccessCheckoutOnPendingPayment }.returns(true)
 
         runTest {
             paymentResultEventsResolver.resolve(paymentResult, resumeHandler)

@@ -152,4 +152,7 @@
     <string name="session_complete_payment_failure_title">Payment failed</string>
     <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
 
+    <string name="payByImmediateTransfer">Paga con bonifico immediato</string>
+    <string name="payBySmartTransfer">Paga con bonifico bancario"</string>
+
 </resources>

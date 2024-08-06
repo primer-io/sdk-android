@@ -131,7 +131,7 @@ internal abstract class BaseWebViewClient(
 
     protected open fun canCaptureUrl(url: String?): Boolean {
         val captureUrl = getCaptureUrl(returnUrl)
-        return captureUrl?.let { url.orEmpty().contains(captureUrl) } == true
+        return captureUrl?.let { url == captureUrl } == true
     }
 
     protected fun getIntentFromUri(uri: Uri?) =

@@ -10,7 +10,8 @@ internal data class PaymentResult(
     val paymentStatus: PaymentStatus,
     val requiredActionName: RequiredActionName?,
     val clientToken: String?,
-    val paymentMethodData: PrimerCheckoutAdditionalInfo? = null
+    val paymentMethodData: PrimerCheckoutAdditionalInfo? = null,
+    val showSuccessCheckoutOnPendingPayment: Boolean = false
 )
 
 internal fun PaymentResult.toPrimerCheckoutData() = PrimerCheckoutData(

@@ -26,7 +26,11 @@ internal class PaymentResultEventsResolver(
                     "Handling required action: ${paymentResult.requiredActionName?.name}" +
                         " for payment id: ${paymentResult.payment.id}"
                 )
-                resumeHandler.continueWithNewClientToken(paymentResult.clientToken.orEmpty())
+                if (paymentResult.showSuccessCheckoutOnPendingPayment) {
+                    completePaymentWithResult(paymentResult, resumeHandler)
+                } else {
+                    resumeHandler.continueWithNewClientToken(paymentResult.clientToken.orEmpty())
+                }
             }
 
             PaymentStatus.FAILED -> {

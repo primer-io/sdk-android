@@ -17,7 +17,8 @@ internal data class PaymentDataResponse(
     val amount: Int,
     val customerId: String?,
     val paymentFailureReason: String?,
-    val requiredAction: RequiredActionData?
+    val requiredAction: RequiredActionData?,
+    val showSuccessCheckoutOnPendingPayment: Boolean?
 ) : JSONDeserializable {
 
     companion object {
@@ -30,6 +31,7 @@ internal data class PaymentDataResponse(
         private const val CUSTOMER_ID_FIELD = "customerId"
         private const val PAYMENT_FAILURE_REASON_FIELD = "paymentFailureReason"
         private const val REQUIRED_ACTION_DATA_FIELD = "requiredAction"
+        private const val SHOW_SUCCESS_CHECKOUT_ON_PENDING_PAYMENT_FIELD = "showSuccessCheckoutOnPendingPayment"
 
         @JvmField
         val deserializer = JSONObjectDeserializer { t ->
@@ -45,7 +47,8 @@ internal data class PaymentDataResponse(
                 t.optJSONObject(REQUIRED_ACTION_DATA_FIELD)?.let {
                     JSONSerializationUtils.getJsonObjectDeserializer<RequiredActionData>()
                         .deserialize(it)
-                }
+                },
+                t.optBoolean(SHOW_SUCCESS_CHECKOUT_ON_PENDING_PAYMENT_FIELD)
             )
         }
     }
@@ -99,5 +102,6 @@ internal fun PaymentDataResponse.toPaymentResult(
     status,
     requiredAction?.name,
     requiredAction?.clientToken,
-    paymentMethodData
+    paymentMethodData,
+    showSuccessCheckoutOnPendingPayment == true
 )
