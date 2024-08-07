@@ -221,21 +221,21 @@ internal class PrimerHttpClient(
             response = try {
                 okHttpClient.newCall(request).await()
             } catch (exception: IOException) {
-                networkError(request.url.toString())
+                if (retryConfig.enabled) {
+                    networkError(request.url.toString())
+                } else {
+                    throw exception
+                }
             }
         } while (retry(response, retryConfig, logReporter, messagePropertiesEventProvider))
 
         if (retryConfig.enabled) {
-            if (response.isSuccessful && retryConfig.retries > 0) {
-                val message = "Request succeeded after ${retryConfig.retries} retries. Status code: ${response.code}"
-                logReporter.info(message)
-                messagePropertiesEventProvider.getMessageEventProvider().tryEmit(
-                    MessageProperties(
-                        MessageType.RETRY_SUCCESS,
-                        message,
-                        Severity.INFO
-                    )
-                )
+            if (response.isSuccessful) {
+                if (retryConfig.retries > 0) {
+                    val message =
+                        "Request succeeded after ${retryConfig.retries} retries. Status code: ${response.code}"
+                    logRetrySuccessAttempt(message = message)
+                }
             } else {
                 val errorMessage = "Failed after ${retryConfig.retries} retries.\n" + when {
                     retryConfig.isLastAttempt() -> "Reached maximum retries (${retryConfig.maxRetries})."
@@ -243,15 +243,7 @@ internal class PrimerHttpClient(
                     response.code in SERVER_ERRORS -> "Server error: ${response.code}."
                     else -> ""
                 }
-                logReporter.error(errorMessage)
-                messagePropertiesEventProvider.getMessageEventProvider().tryEmit(
-                    MessageProperties(
-                        MessageType.RETRY_FAILED,
-                        errorMessage,
-                        Severity.ERROR
-                    )
-                )
-
+                logRetryFailedAttempt(message = errorMessage)
                 throw if (response.code == NETWORK_EXCEPTION_ERROR_CODE) {
                     IOException(errorMessage)
                 } else {
@@ -278,6 +270,28 @@ internal class PrimerHttpClient(
         } catch (expected: Exception) {
             throw JsonDecodingException(expected)
         }
+    }
+
+    private fun logRetrySuccessAttempt(message: String) {
+        logReporter.info(message)
+        messagePropertiesEventProvider.getMessageEventProvider().tryEmit(
+            MessageProperties(
+                MessageType.RETRY_SUCCESS,
+                message,
+                Severity.INFO
+            )
+        )
+    }
+
+    private fun logRetryFailedAttempt(message: String) {
+        logReporter.error(message)
+        messagePropertiesEventProvider.getMessageEventProvider().tryEmit(
+            MessageProperties(
+                MessageType.RETRY_FAILED,
+                message,
+                Severity.ERROR
+            )
+        )
     }
 
     private inline fun <reified T : JSONSerializable> getRequestBody(request: T): RequestBody {
