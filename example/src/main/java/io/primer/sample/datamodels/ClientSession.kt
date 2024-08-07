@@ -56,6 +56,7 @@ interface ClientSession : ExampleAppRequestBody {
                     metadata = (metadataMap ?: mutableMapOf()).apply {
                         put("deviceInfo", buildMap {
                             put("ipAddress", "127.0.0.1")
+                            put("userAgent", "Android")
                         })
                         put("scenario", "STRIPE_ACH_ONEOFF")
                     },

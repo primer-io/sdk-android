@@ -322,17 +322,17 @@
     public *;
 }
 
--keep class io.primer.android.components.manager.ach.* {
-    public *;
-}
-
--keep class io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.* {
-    public *;
-}
-
--keep class io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.** {
-    public *;
-}
+#-keep class io.primer.android.components.manager.ach.* {
+#    public *;
+#}
+#
+#-keep class io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.* {
+#    public *;
+#}
+#
+#-keep class io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.** {
+#    public *;
+#}
 
 -keep class io.primer.android.components.manager.componentWithRedirect.* {
     public *;
