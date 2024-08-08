@@ -250,6 +250,8 @@ internal class PrimerHttpClient(
                     HttpException(response.code, APIError.create(response))
                 }
             }
+        } else if (response.isSuccessful.not()) {
+            throw HttpException(response.code, APIError.create(response))
         }
 
         try {
