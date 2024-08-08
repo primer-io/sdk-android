@@ -1,3 +1,20 @@
+## 2.28.0 (2024-08-08)
+
+### Feat
+
+- global configuration cache (#645)
+- added API calls retry logic (#647)
+- Stripe ACH release preparation (#639)
+- Stripe ACH (#554)
+- **card-components**: Removed card components (#616)
+
+### Fix
+
+- **http-client**: Handle HTTP errros gracefully in case call is not retryable (#658)
+- catch IOException only in case when retry config is enabled (#654)
+- show success if PENDING and showSuccessCheckoutOnPendingPayment flag is true (#646)
+- fixed surcharging for co-badged-cards, updated workflows (#608)
+
 ## 2.27.6 (2024-06-25)
 
 ### Fix
