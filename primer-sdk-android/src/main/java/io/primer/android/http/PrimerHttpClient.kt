@@ -211,6 +211,7 @@ internal class PrimerHttpClient(
         )
     }
 
+    @Suppress("ComplexMethod")
     private suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request,
         retryConfig: RetryConfig = RetryConfig(false)
