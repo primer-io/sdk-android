@@ -16,5 +16,5 @@ internal class RemoteVaultedPaymentMethodsDataSource(
         primerHttpClient.suspendGet<PaymentMethodTokenInternalResponse>(
             "${input.pciUrl}/payment-instruments",
             mapOf(SDK_API_VERSION_HEADER to ApiVersion.PAYMENT_INSTRUMENTS_VERSION.version)
-        ).data
+        ).body.data
 }

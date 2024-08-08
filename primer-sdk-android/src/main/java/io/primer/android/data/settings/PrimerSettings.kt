@@ -15,7 +15,17 @@ data class PrimerSettings @JvmOverloads constructor(
     var locale: Locale = Locale.getDefault(),
     var paymentMethodOptions: PrimerPaymentMethodOptions = PrimerPaymentMethodOptions(),
     var uiOptions: PrimerUIOptions = PrimerUIOptions(),
-    var debugOptions: PrimerDebugOptions = PrimerDebugOptions()
+    var debugOptions: PrimerDebugOptions = PrimerDebugOptions(),
+    /**
+     * Indicates whether client session caching is enabled.
+     *
+     * When set to `true`, responses from the server will be cached on the client side, allowing for faster subsequent
+     * access to the same data within the cache duration. When set to `false`, every request to the server will be
+     * processed without utilizing any client-side cache, ensuring that the client always receives the most up-to-date
+     * data.
+     * @property clientSessionCachingEnabled Boolean flag to enable or disable client session caching.
+     */
+    var clientSessionCachingEnabled: Boolean = false
 ) : Parcelable {
 
     internal var fromHUC: Boolean = false
@@ -45,7 +55,8 @@ data class PrimerSettings @JvmOverloads constructor(
         locale = parcel.readSerializable<Locale>() ?: Locale.getDefault(),
         paymentMethodOptions = parcel.readParcelable<PrimerPaymentMethodOptions>() ?: PrimerPaymentMethodOptions(),
         uiOptions = parcel.readParcelable<PrimerUIOptions>() ?: PrimerUIOptions(),
-        debugOptions = parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions()
+        debugOptions = parcel.readParcelable<PrimerDebugOptions>() ?: PrimerDebugOptions(),
+        clientSessionCachingEnabled = parcel.readByte() != 0.toByte()
     ) {
         fromHUC = parcel.readByte() != 0.toByte()
     }
@@ -56,6 +67,7 @@ data class PrimerSettings @JvmOverloads constructor(
         parcel.writeParcelable(paymentMethodOptions, flags)
         parcel.writeParcelable(uiOptions, flags)
         parcel.writeParcelable(debugOptions, flags)
+        parcel.writeByte(if (clientSessionCachingEnabled) 1 else 0)
         parcel.writeByte(if (fromHUC) 1 else 0)
     }
 

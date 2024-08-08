@@ -48,7 +48,7 @@ internal class PrimerHttpClient(
     inline fun <reified R : JSONDeserializable> get(
         url: String,
         headers: Map<String, String> = hashMapOf()
-    ): Flow<R> =
+    ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
             emit(
@@ -66,7 +66,7 @@ internal class PrimerHttpClient(
         url: String,
         headers: Map<String, String> = hashMapOf(),
         retryConfig: RetryConfig
-    ): Flow<R> =
+    ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
             emit(
@@ -84,9 +84,9 @@ internal class PrimerHttpClient(
     suspend inline fun <reified R : JSONDeserializable> suspendGet(
         url: String,
         headers: Map<String, String> = hashMapOf()
-    ): R {
+    ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
-        return executeRequest(
+        return executeRequest<R>(
             Request.Builder()
                 .url(url)
                 .headers(headers.toHeaders())
@@ -99,7 +99,7 @@ internal class PrimerHttpClient(
         url: String,
         headers: Map<String, String> = hashMapOf(),
         retryConfig: RetryConfig
-    ): R {
+    ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
             Request.Builder()
@@ -115,11 +115,11 @@ internal class PrimerHttpClient(
         url: String,
         request: T,
         headers: Map<String, String> = hashMapOf()
-    ): Flow<R> =
+    ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
             emit(
-                executeRequest(
+                executeRequest<R>(
                     Request.Builder()
                         .url(url)
                         .headers(headers.toHeaders())
@@ -134,7 +134,7 @@ internal class PrimerHttpClient(
         request: T,
         headers: Map<String, String> = hashMapOf(),
         retryConfig: RetryConfig
-    ): Flow<R> =
+    ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
             emit(
@@ -153,9 +153,9 @@ internal class PrimerHttpClient(
         url: String,
         request: T,
         headers: Map<String, String> = hashMapOf()
-    ): R {
+    ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
-        return executeRequest(
+        return executeRequest<R>(
             Request.Builder()
                 .url(url)
                 .headers(headers.toHeaders())
@@ -169,7 +169,7 @@ internal class PrimerHttpClient(
         request: T,
         headers: Map<String, String> = hashMapOf(),
         retryConfig: RetryConfig
-    ): R {
+    ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
             Request.Builder()
@@ -184,9 +184,9 @@ internal class PrimerHttpClient(
     suspend inline fun <reified R : JSONDeserializable> delete(
         url: String,
         headers: Map<String, String> = hashMapOf()
-    ): R {
+    ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
-        return executeRequest(
+        return executeRequest<R>(
             Request.Builder()
                 .url(url)
                 .headers(headers.toHeaders())
@@ -199,7 +199,7 @@ internal class PrimerHttpClient(
         url: String,
         headers: Map<String, String> = hashMapOf(),
         retryConfig: RetryConfig
-    ): R {
+    ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
             Request.Builder()
@@ -214,7 +214,7 @@ internal class PrimerHttpClient(
     private suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request,
         retryConfig: RetryConfig = RetryConfig(false)
-    ): R {
+    ): PrimerResponse<R> {
         var response: Response
 
         do {
@@ -256,17 +256,24 @@ internal class PrimerHttpClient(
 
         try {
             val body = response.body
+            val headers = response.headers.toMultimap()
             val bodyString = body?.string() ?: "{}"
 
             return when (val jsonData = stringToJsonData(bodyString)) {
                 is JSONObjectData -> {
                     body?.close()
-                    JSONSerializationUtils.getJsonObjectDeserializer<R>().deserialize(jsonData.json)
+                    PrimerResponse(
+                        body = JSONSerializationUtils.getJsonObjectDeserializer<R>().deserialize(jsonData.json),
+                        headers = headers
+                    )
                 }
 
                 is JSONArrayData -> {
                     body?.close()
-                    JSONSerializationUtils.getJsonArrayDeserializer<R>().deserialize(jsonData.json)
+                    PrimerResponse(
+                        body = JSONSerializationUtils.getJsonArrayDeserializer<R>().deserialize(jsonData.json),
+                        headers = headers
+                    )
                 }
             }
         } catch (expected: Exception) {

@@ -13,6 +13,6 @@ internal class RemoteCardBinMetadataDataSource(private val httpClient: PrimerHtt
         val bin = input.data
         return httpClient.suspendGet<CardBinMetadataDataNetworksResponse>(
             "${input.configuration.binDataUrl}/v1/bin-data/$bin/networks"
-        ).networks
+        ).body.networks
     }
 }

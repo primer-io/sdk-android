@@ -8,6 +8,7 @@ import io.primer.android.di.ApiVersion
 import io.primer.android.di.NetworkContainer.Companion.SDK_API_VERSION_HEADER
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 internal class ResumePaymentDataSource(private val primerHttpClient: PrimerHttpClient) :
     BaseFlowDataSource<PaymentDataResponse,
@@ -15,12 +16,12 @@ internal class ResumePaymentDataSource(private val primerHttpClient: PrimerHttpC
 
     override fun execute(input: BaseRemoteRequest<Pair<String, ResumePaymentDataRequest>>):
         Flow<PaymentDataResponse> {
-        return primerHttpClient.post(
+        return primerHttpClient.post<ResumePaymentDataRequest, PaymentDataResponse>(
             "${input.configuration.pciUrl}/payments/${input.data.first}/resume",
             input.data.second,
             mapOf(
                 SDK_API_VERSION_HEADER to ApiVersion.PAYMENTS_VERSION.version
             )
-        )
+        ).map { responseData -> responseData.body }
     }
 }

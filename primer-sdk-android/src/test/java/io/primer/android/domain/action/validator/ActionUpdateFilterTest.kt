@@ -12,6 +12,7 @@ import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -64,7 +65,7 @@ class ActionUpdateFilterTest {
 
         assertEquals(listOf(true), result)
         coVerify {
-            configurationRepository.fetchConfiguration(true)
+            configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
     }
@@ -86,7 +87,7 @@ class ActionUpdateFilterTest {
 
         assertEquals(listOf(true), result)
         coVerify {
-            configurationRepository.fetchConfiguration(true)
+            configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
     }
@@ -108,7 +109,7 @@ class ActionUpdateFilterTest {
 
         assertEquals(listOf(false), result)
         coVerify {
-            configurationRepository.fetchConfiguration(true)
+            configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
     }
@@ -124,7 +125,7 @@ class ActionUpdateFilterTest {
 
         assertEquals(listOf(true), result)
         coVerify {
-            configurationRepository.fetchConfiguration(true)
+            configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
     }
@@ -146,7 +147,7 @@ class ActionUpdateFilterTest {
 
         assertEquals(listOf(true), result)
         coVerify {
-            configurationRepository.fetchConfiguration(true)
+            configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
     }
@@ -168,7 +169,7 @@ class ActionUpdateFilterTest {
 
         assertEquals(listOf(false), result)
         coVerify {
-            configurationRepository.fetchConfiguration(true)
+            configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
     }

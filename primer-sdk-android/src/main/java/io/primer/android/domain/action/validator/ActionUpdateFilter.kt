@@ -6,6 +6,7 @@ import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.action.models.BaseActionUpdateParams
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -20,7 +21,7 @@ internal class ActionUpdateFilter(
         return when (updateParams) {
             is ActionUpdateSelectPaymentMethodParams,
             is ActionUpdateUnselectPaymentMethodParams ->
-                configurationRepository.fetchConfiguration(true).map {
+                configurationRepository.fetchConfiguration(CachePolicy.ForceCache).map {
                     config.intent.paymentMethodIntent.isVault ||
                         it.clientSession.clientSessionDataResponse
                             .paymentMethod

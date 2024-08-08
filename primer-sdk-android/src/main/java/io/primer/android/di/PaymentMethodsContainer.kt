@@ -85,7 +85,14 @@ internal class PaymentMethodsContainer(private val sdk: SdkContainer) : Dependen
 
         registerSingleton { RemoteActionDataSource(sdk.resolve()) }
 
-        registerSingleton<ActionRepository> { ActionDataRepository(sdk.resolve(), resolve()) }
+        registerSingleton<ActionRepository> {
+            ActionDataRepository(
+                localConfigurationDataSource = sdk.resolve(),
+                remoteActionDataSource = resolve(),
+                globalConfigurationCache = sdk.resolve(),
+                primerConfig = sdk.resolve()
+            )
+        }
 
         registerFactory { ActionUpdateFilter(sdk.resolve(), sdk.resolve()) }
 

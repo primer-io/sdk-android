@@ -7,6 +7,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +52,7 @@ class GetClientSessionCustomerDetailsDelegateTest {
             result
         )
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         confirmVerified(configurationInteractor)
     }
@@ -79,7 +80,7 @@ class GetClientSessionCustomerDetailsDelegateTest {
             result
         )
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         confirmVerified(configurationInteractor)
     }
@@ -92,7 +93,7 @@ class GetClientSessionCustomerDetailsDelegateTest {
 
         assert(result.isFailure)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         confirmVerified(configurationInteractor)
     }

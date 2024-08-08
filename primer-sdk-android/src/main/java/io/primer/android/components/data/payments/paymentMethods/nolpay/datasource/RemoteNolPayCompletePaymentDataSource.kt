@@ -6,5 +6,5 @@ import io.primer.android.http.PrimerHttpClient
 
 internal class RemoteNolPayCompletePaymentDataSource(private val httpClient: PrimerHttpClient) :
     BaseSuspendDataSource<EmptyDataResponse, String> {
-    override suspend fun execute(input: String) = httpClient.suspendGet<EmptyDataResponse>(input)
+    override suspend fun execute(input: String) = httpClient.suspendGet<EmptyDataResponse>(input).body
 }

@@ -196,6 +196,7 @@ class MainViewModel(
             ),
             uiOptions = _uiOptions.value ?: PrimerUIOptions(),
             debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+            clientSessionCachingEnabled = true
         )
 
     private val _collectedTag: MutableLiveData<Intent?> = MutableLiveData()

@@ -32,7 +32,7 @@ internal class LocalConfigurationDataSource(private val settings: PrimerSettings
     fun getConfigurationNullable() = configuration
 
     private fun updateSettings(configuration: ConfigurationData) =
-        configuration.clientSession?.apply {
+        configuration.clientSession.apply {
             customer?.let { settings.customer = it }
             order?.let { settings.order = it }
         }

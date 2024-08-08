@@ -5,6 +5,7 @@ import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.data.token.validation.model.ValidationTokenDataRequest
 import io.primer.android.domain.token.model.TokenCheckStatusDataResponse
 import io.primer.android.http.PrimerHttpClient
+import kotlinx.coroutines.flow.mapLatest
 
 internal class ValidationTokenDataSource(
     private val primerHttpClient: PrimerHttpClient
@@ -16,5 +17,5 @@ internal class ValidationTokenDataSource(
         primerHttpClient.post<ValidationTokenDataRequest, TokenCheckStatusDataResponse>(
             "${input.configuration.pciUrl}/client-token/validate",
             input.data
-        )
+        ).mapLatest { responseData -> responseData.body }
 }

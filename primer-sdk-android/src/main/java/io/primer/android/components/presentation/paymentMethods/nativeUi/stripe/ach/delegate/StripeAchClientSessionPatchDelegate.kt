@@ -2,6 +2,7 @@ package io.primer.android.components.presentation.paymentMethods.nativeUi.stripe
 
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.extensions.flatMap
@@ -18,7 +19,7 @@ internal class StripeAchClientSessionPatchDelegate(
         lastName: String,
         emailAddress: String
     ): Result<Unit> = runSuspendCatching {
-        configurationInteractor.invoke(ConfigurationParams(true))
+        configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
             .first()
     }.flatMap {
         it.clientSession

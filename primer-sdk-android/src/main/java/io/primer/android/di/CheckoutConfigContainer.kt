@@ -2,6 +2,7 @@ package io.primer.android.di
 
 import io.primer.android.components.data.payments.paymentMethods.raw.repository.card.OrderedAllowedCardNetworksDataRepository
 import io.primer.android.components.domain.payments.paymentMethods.raw.repository.card.OrderedAllowedCardNetworksRepository
+import io.primer.android.data.configuration.datasource.GlobalConfigurationCacheDataSource
 import io.primer.android.data.configuration.datasource.RemoteConfigurationDataSource
 import io.primer.android.data.configuration.datasource.RemoteConfigurationResourcesDataSource
 import io.primer.android.data.configuration.repository.ConfigurationDataRepository
@@ -49,6 +50,10 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
         }
 
         registerSingleton {
+            GlobalConfigurationCacheDataSource
+        }
+
+        registerSingleton {
             RemoteConfigurationResourcesDataSource(
                 sdk.resolve(ImageLoaderContainer.IMAGE_LOADING_CLIENT_NAME),
                 ImagesFileProvider(sdk.resolve()),
@@ -60,6 +65,9 @@ internal class CheckoutConfigContainer(private val sdk: SdkContainer) : Dependen
             ConfigurationDataRepository(
                 resolve(),
                 resolve(),
+                sdk.resolve(),
+                sdk.resolve(),
+                sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve()
             )

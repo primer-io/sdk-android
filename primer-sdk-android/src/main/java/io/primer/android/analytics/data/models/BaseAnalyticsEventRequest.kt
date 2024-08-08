@@ -152,7 +152,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
 
 internal abstract class BaseAnalyticsProperties : JSONObjectSerializable, JSONDeserializable
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     batteryLevel: Int,
     batteryStatus: BatteryStatus,
@@ -266,7 +266,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     else -> throw IllegalStateException("Unsupported property params")
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 internal fun BaseAnalyticsParams.toAnalyticsEvent(
     batteryLevel: Int,
     batteryStatus: BatteryStatus,
@@ -308,7 +308,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             screenData,
             deviceId
         ),
-        TimerProperties(id, timerType),
+        TimerProperties(id = id, timerType = timerType, duration = duration, analyticsContext = context),
         appIdentifier,
         sdkSessionId,
         sdkIntegrationType,

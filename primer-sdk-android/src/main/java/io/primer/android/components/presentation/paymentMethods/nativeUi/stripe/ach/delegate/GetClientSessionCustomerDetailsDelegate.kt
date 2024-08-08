@@ -1,5 +1,6 @@
 package io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.delegate
 
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.extensions.runSuspendCatching
@@ -9,7 +10,7 @@ internal class GetClientSessionCustomerDetailsDelegate(
     private val configurationInteractor: ConfigurationInteractor
 ) {
     suspend operator fun invoke(): Result<ClientSessionCustomerDetails> = runSuspendCatching {
-        val customer = configurationInteractor.invoke(ConfigurationParams(true)).first()
+        val customer = configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache)).first()
             .clientSession.clientSessionDataResponse.customer
         ClientSessionCustomerDetails(
             firstName = customer?.firstName.orEmpty(),

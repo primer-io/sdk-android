@@ -7,6 +7,7 @@ import io.primer.android.data.payments.methods.models.card.CardVaultExchangeData
 import io.primer.android.data.payments.methods.models.empty.EmptyExchangeDataRequest
 import io.primer.android.data.tokenization.models.PaymentMethodTokenInternal
 import io.primer.android.http.PrimerHttpClient
+import kotlinx.coroutines.flow.map
 
 internal abstract class RemoteVaultedPaymentMethodsExchangeDataSource<
     out T : BasePaymentMethodVaultExchangeDataRequest> :
@@ -20,7 +21,7 @@ internal class RemoteVaultedCardExchangeDataSource(
         primerHttpClient.post<CardVaultExchangeDataRequest, PaymentMethodTokenInternal>(
             input.url,
             input.data
-        )
+        ).map { responseData -> responseData.body }
 }
 
 internal class RemoteEmptyExchangeDataSource(
@@ -31,5 +32,5 @@ internal class RemoteEmptyExchangeDataSource(
         primerHttpClient.post<EmptyExchangeDataRequest, PaymentMethodTokenInternal>(
             input.url,
             input.data
-        )
+        ).map { responseData -> responseData.body }
 }

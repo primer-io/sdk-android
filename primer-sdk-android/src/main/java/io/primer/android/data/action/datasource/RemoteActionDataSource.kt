@@ -7,9 +7,10 @@ import io.primer.android.data.configuration.models.ConfigurationDataResponse
 import io.primer.android.di.ApiVersion
 import io.primer.android.di.NetworkContainer
 import io.primer.android.http.PrimerHttpClient
+import io.primer.android.http.PrimerResponse
 
 internal class RemoteActionDataSource(private val httpClient: PrimerHttpClient) :
-    BaseFlowDataSource<ConfigurationDataResponse,
+    BaseFlowDataSource<PrimerResponse<ConfigurationDataResponse>,
         BaseRemoteRequest<ClientSessionActionsDataRequest>> {
 
     override fun execute(input: BaseRemoteRequest<ClientSessionActionsDataRequest>) =

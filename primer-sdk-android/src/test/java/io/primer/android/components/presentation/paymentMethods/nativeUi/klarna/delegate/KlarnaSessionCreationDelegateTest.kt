@@ -18,6 +18,7 @@ import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.PrimerFee
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.Configuration
 import io.primer.android.domain.session.models.ConfigurationParams
@@ -108,7 +109,7 @@ class KlarnaSessionCreationDelegateTest {
 
         assertEquals(klarnaSession, result)
         coVerify(exactly = 1) {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
             klarnaSessionInteractor.invoke(KlarnaSessionParams(140, primerSessionIntent))
         }
     }
@@ -157,7 +158,7 @@ class KlarnaSessionCreationDelegateTest {
 
         assertEquals(klarnaSession, result)
         coVerify(exactly = 1) {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
             klarnaSessionInteractor.invoke(KlarnaSessionParams(null, primerSessionIntent))
         }
     }
@@ -202,7 +203,7 @@ class KlarnaSessionCreationDelegateTest {
 
         assertEquals(exception, result)
         coVerify(exactly = 1) {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
             klarnaSessionInteractor.invoke(any())
         }
     }
@@ -241,7 +242,7 @@ class KlarnaSessionCreationDelegateTest {
 
         assertEquals(exception, result)
         coVerify(exactly = 1) {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify(exactly = 0) {
             klarnaSessionInteractor.invoke(any())

@@ -3,6 +3,7 @@ package io.primer.android.analytics.data.models
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONSerializationUtils
 import io.primer.android.core.serialization.json.JSONObjectSerializer
+import io.primer.android.core.serialization.json.extensions.optNullableLong
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.data.settings.PrimerPaymentHandling
 import org.json.JSONObject
@@ -67,19 +68,22 @@ internal data class AnalyticsTimerEventRequest(
 internal data class TimerProperties(
     val id: TimerId,
     val timerType: TimerType,
+    val duration: Long? = null,
     val analyticsContext: AnalyticsContext? = null
 ) : BaseAnalyticsProperties() {
     companion object {
 
         private const val ID_FIELD = "id"
         private const val TIMER_TYPE_FIELD = "timerType"
-        private const val ANALYTICS_CONTEXT_FIELD = "analyticsContext"
+        private const val DURATION_FIELD = "duration"
+        private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
         val serializer = JSONObjectSerializer<TimerProperties> { t ->
             JSONObject().apply {
                 put(ID_FIELD, t.id)
                 put(TIMER_TYPE_FIELD, t.timerType.name)
+                put(DURATION_FIELD, t.duration)
                 putOpt(
                     ANALYTICS_CONTEXT_FIELD,
                     t.analyticsContext?.let {
@@ -93,9 +97,10 @@ internal data class TimerProperties(
         @JvmField
         val deserializer = JSONObjectDeserializer { t ->
             TimerProperties(
-                TimerId.valueOf(t.getString(ID_FIELD)),
-                TimerType.valueOf(t.getString(TIMER_TYPE_FIELD)),
-                t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
+                id = TimerId.valueOf(t.getString(ID_FIELD)),
+                timerType = TimerType.valueOf(t.getString(TIMER_TYPE_FIELD)),
+                duration = t.optNullableLong(DURATION_FIELD),
+                analyticsContext = t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
                     JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
                         .deserialize(it)
                 }
@@ -112,5 +117,8 @@ internal enum class TimerType {
 internal enum class TimerId {
     CHECKOUT_DURATION,
     PM_ALL_IMAGES_LOADING_DURATION,
-    PM_IMAGE_LOADING_DURATION
+    PM_IMAGE_LOADING_DURATION,
+    HEADLESS_LOADING,
+    CONFIGURATION_LOADING,
+    DROP_IN_LOADING
 }

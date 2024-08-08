@@ -12,6 +12,8 @@ internal interface BaseCacheDataSource<out R, T : Any> where R : Any? {
     fun get(): R
 
     fun update(input: T) = Unit
+
+    fun clear() = Unit
 }
 
 internal interface BaseFlowCacheDataSource<out R, T : Any> where R : Any {

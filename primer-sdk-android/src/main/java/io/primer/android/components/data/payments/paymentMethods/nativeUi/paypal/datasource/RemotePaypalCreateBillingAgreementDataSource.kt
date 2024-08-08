@@ -6,6 +6,7 @@ import io.primer.android.data.base.datasource.BaseFlowDataSource
 import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.http.PrimerHttpClient
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapLatest
 
 internal class RemotePaypalCreateBillingAgreementDataSource(
     private val primerHttpClient: PrimerHttpClient
@@ -14,9 +15,9 @@ internal class RemotePaypalCreateBillingAgreementDataSource(
 
     override fun execute(input: BaseRemoteRequest<PaypalCreateBillingAgreementDataRequest>):
         Flow<PaypalCreateBillingAgreementDataResponse> {
-        return primerHttpClient.post(
+        return primerHttpClient.post<PaypalCreateBillingAgreementDataRequest, PaypalCreateBillingAgreementDataResponse>(
             "${input.configuration.coreUrl}/paypal/billing-agreements/create-agreement",
             input.data
-        )
+        ).mapLatest { responseBody -> responseBody.body }
     }
 }

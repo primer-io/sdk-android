@@ -18,6 +18,6 @@ internal class RemoteStripeAchCompletePaymentDataSource(
         return primerHttpClient.postSuspend<StripeAchCompletePaymentDataRequest, EmptyDataResponse>(
             url = input.url,
             request = input.data
-        )
+        ).body
     }
 }

@@ -10,5 +10,5 @@ internal class RemotePhoneMetadataDataSource(private val httpClient: PrimerHttpC
     override suspend fun execute(input: BaseRemoteRequest<String>) =
         httpClient.suspendGet<PhoneMetadataResponse>(
             "${input.configuration.pciUrl}/phone-number-lookups/${input.data}"
-        )
+        ).body
 }

@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +52,7 @@ class StripeAchClientSessionPatchDelegateTest {
 
         assert(result.isSuccess)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify(exactly = 0) {
             actionInteractor.invoke(any())
@@ -71,7 +72,7 @@ class StripeAchClientSessionPatchDelegateTest {
 
         assert(result.isSuccess)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify {
             actionInteractor.invoke(
@@ -97,7 +98,7 @@ class StripeAchClientSessionPatchDelegateTest {
 
         assert(result.isSuccess)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify {
             actionInteractor.invoke(
@@ -123,7 +124,7 @@ class StripeAchClientSessionPatchDelegateTest {
 
         assert(result.isSuccess)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify {
             actionInteractor.invoke(
@@ -148,7 +149,7 @@ class StripeAchClientSessionPatchDelegateTest {
 
         assert(result.isFailure)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify(exactly = 0) {
             actionInteractor.invoke(any())
@@ -168,7 +169,7 @@ class StripeAchClientSessionPatchDelegateTest {
 
         assert(result.isFailure)
         verify {
-            configurationInteractor.invoke(ConfigurationParams(true))
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify {
             actionInteractor.invoke(

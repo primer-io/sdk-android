@@ -13,8 +13,8 @@ internal class RemoteFinalizeKlarnaSessionDataSource(
     override suspend fun execute(
         input: BaseRemoteRequest<FinalizeKlarnaSessionDataRequest>
     ): FinalizeKlarnaSessionDataResponse =
-        primerHttpClient.postSuspend(
+        primerHttpClient.postSuspend<FinalizeKlarnaSessionDataRequest, FinalizeKlarnaSessionDataResponse>(
             "${input.configuration.coreUrl}/klarna/payment-sessions/finalize",
             input.data
-        )
+        ).body
 }

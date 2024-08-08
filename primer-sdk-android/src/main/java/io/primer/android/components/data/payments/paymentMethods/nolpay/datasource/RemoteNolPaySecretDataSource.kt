@@ -13,5 +13,5 @@ internal class RemoteNolPaySecretDataSource(private val primerHttpClient: Primer
         primerHttpClient.postSuspend<NolPaySecretDataRequest, NolPaySecretDataResponse>(
             "${input.configuration.coreUrl}/nol-pay/sdk-secrets",
             input.data
-        )
+        ).body
 }

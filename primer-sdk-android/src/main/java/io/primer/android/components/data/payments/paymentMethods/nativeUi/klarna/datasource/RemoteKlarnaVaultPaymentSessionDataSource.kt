@@ -11,8 +11,10 @@ internal class RemoteKlarnaVaultPaymentSessionDataSource(
 ) : BaseSuspendDataSource<CreateSessionDataResponse,
         BaseRemoteRequest<CreateVaultPaymentSessionDataRequest>> {
     override suspend fun execute(input: BaseRemoteRequest<CreateVaultPaymentSessionDataRequest>):
-        CreateSessionDataResponse = primerHttpClient.postSuspend(
+        CreateSessionDataResponse = primerHttpClient.postSuspend<
+        CreateVaultPaymentSessionDataRequest, CreateSessionDataResponse
+        >(
         "${input.configuration.coreUrl}/klarna/payment-sessions",
         input.data
-    )
+    ).body
 }

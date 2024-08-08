@@ -9,6 +9,7 @@ import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.configuration.models.ConfigurationData
+import io.primer.android.http.PrimerResponse
 import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
@@ -49,7 +50,10 @@ internal class ThreeDsDataRepositoryTest {
         val beginAuthResponseMock = mockk<BeginAuthResponse>(relaxed = true)
         coEvery { remote3DSAuthDataSource.get3dsAuthToken(any(), any(), any()) }.returns(
             flowOf(
-                beginAuthResponseMock
+                PrimerResponse(
+                    body = beginAuthResponseMock,
+                    headers = emptyMap()
+                )
             )
         )
 
@@ -71,7 +75,10 @@ internal class ThreeDsDataRepositoryTest {
         val continueAuthResponseMock = mockk<PostAuthResponse>(relaxed = true)
         coEvery { remote3DSAuthDataSource.continue3dsAuth(any(), any(), any()) }.returns(
             flowOf(
-                continueAuthResponseMock
+                PrimerResponse(
+                    body = continueAuthResponseMock,
+                    headers = emptyMap()
+                )
             )
         )
 

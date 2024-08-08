@@ -5,6 +5,7 @@ import io.primer.android.data.base.datasource.BaseFlowDataSource
 import io.primer.android.data.base.models.BaseRemoteRequest
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.paypal.models.PaypalOrderInfoResponse
 import io.primer.android.http.PrimerHttpClient
+import kotlinx.coroutines.flow.mapLatest
 
 internal class RemotePaypalOrderInfoDataSource(
     private val primerHttpClient: PrimerHttpClient
@@ -14,5 +15,5 @@ internal class RemotePaypalOrderInfoDataSource(
         primerHttpClient.post<PaypalOrderInfoDataRequest, PaypalOrderInfoResponse>(
             "${input.configuration.coreUrl}/paypal/orders",
             input.data
-        )
+        ).mapLatest { responseBody -> responseBody.body }
 }

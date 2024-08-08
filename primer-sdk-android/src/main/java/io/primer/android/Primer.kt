@@ -10,6 +10,7 @@ import io.primer.android.analytics.data.models.FunctionProperties
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.raw.RawDataDelegate
+import io.primer.android.data.configuration.datasource.GlobalConfigurationCacheDataSource
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.error.DefaultErrorMapper
 import io.primer.android.data.settings.PrimerPaymentHandling
@@ -94,6 +95,7 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
 
     override fun cleanup() {
         addAnalyticsEvent(SdkFunctionParams("cleanup"))
+        GlobalConfigurationCacheDataSource.clear()
         listener = null
         subscription?.unregister(true)
         subscription = null

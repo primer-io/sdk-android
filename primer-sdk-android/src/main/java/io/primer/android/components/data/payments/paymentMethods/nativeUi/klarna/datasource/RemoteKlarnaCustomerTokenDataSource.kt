@@ -10,8 +10,10 @@ internal class RemoteKlarnaCustomerTokenDataSource(private val primerHttpClient:
     BaseSuspendDataSource<CreateCustomerTokenDataResponse,
         BaseRemoteRequest<CreateCustomerTokenDataRequest>> {
     override suspend fun execute(input: BaseRemoteRequest<CreateCustomerTokenDataRequest>):
-        CreateCustomerTokenDataResponse = primerHttpClient.postSuspend(
+        CreateCustomerTokenDataResponse = primerHttpClient.postSuspend<
+        CreateCustomerTokenDataRequest, CreateCustomerTokenDataResponse
+        >(
         "${input.configuration.coreUrl}/klarna/customer-tokens",
         input.data
-    )
+    ).body
 }

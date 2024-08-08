@@ -42,7 +42,7 @@ class HeadlessComponentsFragment : Fragment() {
     private val callbacks: ArrayList<String> = arrayListOf()
     private var checkoutDataWithError: CheckoutDataWithError? = null
 
-    internal val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
 
     private lateinit var binding: FragmentHeadlessBinding
@@ -299,7 +299,8 @@ class HeadlessComponentsFragment : Fragment() {
                                     HeadlessRawFragment.PAYMENT_METHOD_TYPE_EXTRA,
                                     paymentMethodType
                                 )
-                            })
+                            }
+                        )
 
                     paymentMethodType == "ADYEN_IDEAL" || paymentMethodType == "ADYEN_DOTPAY" ->
                         findNavController().navigate(

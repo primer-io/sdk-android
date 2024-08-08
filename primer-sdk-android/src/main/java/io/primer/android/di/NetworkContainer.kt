@@ -132,9 +132,9 @@ internal class NetworkContainer(private val sdk: SdkContainer) : DependencyConta
 }
 
 internal enum class ApiVersion(val version: String) {
-    CONFIGURATION_VERSION("2.2"),
+    CONFIGURATION_VERSION("2.3"),
     PAYMENT_INSTRUMENTS_VERSION("2.2"),
-    CLIENT_SESSION_ACTIONS_VERSION("2.2"),
+    CLIENT_SESSION_ACTIONS_VERSION("2.3"),
     PAYMENTS_VERSION("2.2"),
     THREE_DS_VERSION("2.1")
 }

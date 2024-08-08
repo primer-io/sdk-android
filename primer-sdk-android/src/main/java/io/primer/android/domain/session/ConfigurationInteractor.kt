@@ -12,6 +12,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 
+/**
+ * Represents the caching policy to be used for network requests.
+ */
+internal sealed interface CachePolicy {
+
+    /**
+     * Always use the cached data, even if it is stale.
+     */
+    data object ForceCache : CachePolicy
+
+    /**
+     * Use the cached data if it is available, otherwise fall back to a network request.
+     */
+    data object CacheFirst : CachePolicy
+
+    /**
+     * Always make a network request, ignoring any cached data.
+     */
+    data object ForceNetwork : CachePolicy
+}
+
 internal class ConfigurationInteractor(
     private val configurationRepository: ConfigurationRepository,
     private val baseErrorEventResolver: BaseErrorEventResolver,
@@ -20,7 +41,7 @@ internal class ConfigurationInteractor(
 ) : BaseFlowInteractor<Configuration, ConfigurationParams>() {
 
     override fun execute(params: ConfigurationParams) =
-        configurationRepository.fetchConfiguration(params.fromCache)
+        configurationRepository.fetchConfiguration(params.cachePolicy)
             .flowOn(dispatcher)
             .catch { throwable ->
                 baseErrorEventResolver.resolve(throwable, ErrorMapperType.DEFAULT)

@@ -3,6 +3,7 @@ package io.primer.android.analytics.data.models
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.serialization.json.JSONObjectSerializer
 import io.primer.android.core.serialization.json.extensions.optNullableString
+import io.primer.android.data.configuration.models.ConfigurationSource
 import io.primer.android.payment.dummy.DummyDecisionType
 import io.primer.android.threeds.BuildConfig
 import io.primer.android.threeds.data.models.postAuth.ThreeDsSdkProvider
@@ -22,7 +23,9 @@ internal sealed class AnalyticsContext(
         THREE_DS_FAILURE,
         THREE_DS_RUNTIME_FAILURE,
         THREE_DS_PROTOCOL_FAILURE,
-        ERROR
+        ERROR,
+        CACHE_SOURCE,
+        DROP_IN_SOURCE
     }
 
     companion object {
@@ -81,6 +84,16 @@ internal sealed class AnalyticsContext(
                     ErrorAnalyticsContext.serializer.serialize(
                         t as ErrorAnalyticsContext
                     )
+
+                AnalyticsContextType.CACHE_SOURCE ->
+                    CacheSourceAnalyticsContext.serializer.serialize(
+                        t as CacheSourceAnalyticsContext
+                    )
+
+                AnalyticsContextType.DROP_IN_SOURCE ->
+                    DropInSourceAnalyticsContext.serializer.serialize(
+                        t as DropInSourceAnalyticsContext
+                    )
             }
         }
 
@@ -118,6 +131,12 @@ internal sealed class AnalyticsContext(
 
                 AnalyticsContextType.ERROR ->
                     ErrorAnalyticsContext.deserializer.deserialize(t)
+
+                AnalyticsContextType.CACHE_SOURCE ->
+                    CacheSourceAnalyticsContext.deserializer.deserialize(t)
+
+                AnalyticsContextType.DROP_IN_SOURCE ->
+                    DropInSourceAnalyticsContext.deserializer.deserialize(t)
             }
         }
     }
@@ -241,6 +260,29 @@ internal data class PaymentInstrumentIdAnalyticsContext(val paymentMethodId: Str
         val deserializer = JSONObjectDeserializer<PaymentInstrumentIdAnalyticsContext> { t ->
             PaymentInstrumentIdAnalyticsContext(
                 t.optString(PAYMENT_METHOD_ID_FIELD)
+            )
+        }
+    }
+}
+
+internal data class CacheSourceAnalyticsContext(val source: ConfigurationSource) :
+    AnalyticsContext(AnalyticsContextType.CACHE_SOURCE) {
+
+    companion object {
+
+        private const val CACHE_SOURCE_FIELD = "source"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<CacheSourceAnalyticsContext> { t ->
+            JSONObject().apply {
+                put(CACHE_SOURCE_FIELD, t.source.name)
+            }
+        }
+
+        @JvmField
+        val deserializer = JSONObjectDeserializer<CacheSourceAnalyticsContext> { t ->
+            CacheSourceAnalyticsContext(
+                ConfigurationSource.valueOf(t.getString(CACHE_SOURCE_FIELD))
             )
         }
     }
@@ -446,6 +488,31 @@ internal data class ErrorAnalyticsContext(
             ErrorAnalyticsContext(
                 t.optString(ERROR_ID),
                 t.optNullableString(PAYMENT_METHOD_TYPE)
+            )
+        }
+    }
+}
+
+internal data class DropInSourceAnalyticsContext(
+    val source: DropInLoadingSource
+) : AnalyticsContext(AnalyticsContextType.DROP_IN_SOURCE) {
+
+    companion object {
+
+        private const val SOURCE = "source"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<DropInSourceAnalyticsContext> { t ->
+            JSONObject().apply {
+                put(SOURCE, t.source.name)
+                put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
+            }
+        }
+
+        @JvmField
+        val deserializer = JSONObjectDeserializer { t ->
+            DropInSourceAnalyticsContext(
+                DropInLoadingSource.valueOf(t.getString(SOURCE))
             )
         }
     }

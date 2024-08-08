@@ -11,6 +11,7 @@ import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.domain.payments.methods.repository.PaymentMethodDescriptorsRepository
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.PaymentMethodDescriptorMapping
 import io.primer.android.payment.SDKCapability
@@ -39,7 +40,7 @@ internal class PaymentMethodModulesInteractor(
     override fun execute(params: None) =
         paymentMethodDescriptorsRepository.resolvePaymentMethodDescriptors()
             .combine(
-                configurationRepository.fetchConfiguration(true)
+                configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
                     .map { it.paymentMethods }
             ) { descriptors, paymentMethods -> Pair(descriptors, paymentMethods) }
             .mapLatest { paymentMethodData ->

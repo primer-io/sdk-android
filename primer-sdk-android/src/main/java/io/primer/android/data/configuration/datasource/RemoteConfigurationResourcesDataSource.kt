@@ -143,9 +143,9 @@ internal class RemoteConfigurationResourcesDataSource(
         iconUrl: String
     ) = timerEventProvider.getTimerEventProvider().tryEmit(
         TimerProperties(
-            TimerId.PM_IMAGE_LOADING_DURATION,
-            timerType,
-            UrlAnalyticsContext(
+            id = TimerId.PM_IMAGE_LOADING_DURATION,
+            timerType = timerType,
+            analyticsContext = UrlAnalyticsContext(
                 paymentMethodType = paymentMethodType,
                 url = iconUrl
             )

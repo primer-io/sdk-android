@@ -15,5 +15,5 @@ internal class RemoteIssuingBankSuspendDataSource(
         primerHttpClient.postSuspend<IssuingBankDataRequest, IssuingBankResultDataResponse>(
             "${input.configuration.coreUrl}/adyen/checkout",
             input.data
-        )
+        ).body
 }

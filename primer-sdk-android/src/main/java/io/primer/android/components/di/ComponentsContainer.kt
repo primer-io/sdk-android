@@ -81,6 +81,7 @@ internal class ComponentsContainer(private val sdk: SdkContainer) : DependencyCo
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
+                sdk.resolve(),
                 sdk.resolve()
             )
         }

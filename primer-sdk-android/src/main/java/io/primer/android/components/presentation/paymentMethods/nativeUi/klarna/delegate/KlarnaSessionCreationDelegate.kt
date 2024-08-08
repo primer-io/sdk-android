@@ -10,6 +10,7 @@ import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.PrimerFee
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.extensions.flatMap
@@ -37,7 +38,7 @@ internal class KlarnaSessionCreationDelegate(
     private suspend fun getFees(): List<PrimerFee> =
         when (primerSettings.sdkIntegrationType) {
             SdkIntegrationType.DROP_IN ->
-                configurationInteractor.invoke(ConfigurationParams(true))
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
                     .last().clientSession.clientSessionDataResponse.order?.toFees().orEmpty()
             SdkIntegrationType.HEADLESS ->
                 actionInteractor(

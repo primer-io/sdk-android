@@ -9,11 +9,15 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
+import io.primer.android.analytics.data.models.DropInSourceAnalyticsContext
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
+import io.primer.android.analytics.data.models.TimerId
+import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
+import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
@@ -45,6 +49,7 @@ import io.primer.android.domain.payments.methods.models.VaultInstrumentParams
 import io.primer.android.domain.payments.methods.models.VaultTokenParams
 import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.domain.payments.resume.models.ResumeParams
+import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
 import io.primer.android.events.CheckoutEvent
@@ -69,11 +74,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import java.util.Collections
 import java.util.Currency
+import kotlin.time.TimeSource
 
 @ExperimentalCoroutinesApi
 @Suppress("LongParameterList", "TooManyFunctions")
@@ -151,7 +158,7 @@ internal class PrimerViewModel(
     val billingAddressFields = MutableLiveData(mutableMapOf<PrimerInputElementType, String?>())
 
     val showBillingFields: LiveData<Map<String, Boolean>?> by lazy {
-        configurationInteractor(ConfigurationParams(true))
+        configurationInteractor(ConfigurationParams(CachePolicy.ForceCache))
             .map { configuration ->
                 val module =
                     configuration.checkoutModules.find { m ->
@@ -163,7 +170,7 @@ internal class PrimerViewModel(
     }
 
     val showCardInformation: LiveData<Map<String, Boolean>?> = _state.asFlow()
-        .flatMapLatest { configurationInteractor(ConfigurationParams(true)) }
+        .flatMapLatest { configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)) }
         .map { configuration ->
             val module =
                 configuration.checkoutModules.find { m ->
@@ -174,7 +181,7 @@ internal class PrimerViewModel(
         .asLiveData()
 
     suspend fun shouldShowCaptureCvv(): Boolean =
-        configurationInteractor(ConfigurationParams(true)).map { configuration ->
+        configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)).map { configuration ->
             configuration.paymentMethods.find { paymentMethod ->
                 paymentMethod.type == PaymentMethodType.PAYMENT_CARD.name
             }?.options?.captureVaultedCardCvv
@@ -219,43 +226,71 @@ internal class PrimerViewModel(
 
     fun fetchConfiguration() {
         viewModelScope.launch {
-            configurationInteractor(ConfigurationParams(config.settings.fromHUC))
-                .flatMapLatest {
-                    flowOf(fetchCurrencyFormatDataInteractor(None())).zip(
-                        paymentMethodModulesInteractor(None())
-                    ) { _, descriptorsHolder ->
-                        descriptorsHolder
-                    }.zip(
-                        vaultedPaymentMethodsInteractor(
-                            VaultInstrumentParams(config.settings.fromHUC.not())
+            val timeSource = TimeSource.Monotonic
+            val start = timeSource.markNow()
+            val cachePolicy = when (config.settings.clientSessionCachingEnabled) {
+                true -> CachePolicy.CacheFirst
+                false -> CachePolicy.ForceNetwork
+            }
+            configurationInteractor(
+                ConfigurationParams(cachePolicy = cachePolicy)
+            ).onStart {
+                addAnalyticsEvent(
+                    TimerAnalyticsParams(
+                        id = TimerId.DROP_IN_LOADING,
+                        timerType = TimerType.START,
+                        context = DropInSourceAnalyticsContext(
+                            source = config.toDropInSource()
                         )
-                    ) { descriptorsHolder, paymentModelTokens ->
-                        _vaultedPaymentMethods.postValue(paymentModelTokens)
-                        if (getSelectedPaymentMethodId().isEmpty() &&
-                            paymentModelTokens.isNotEmpty() &&
-                            descriptorsHolder.selectedPaymentMethodDescriptor == null
-                        ) {
-                            setSelectedPaymentMethodId(paymentModelTokens.first().token)
-                        }
-
-                        _paymentMethods.postValue(descriptorsHolder.descriptors)
-                        descriptorsHolder.selectedPaymentMethodDescriptor?.let {
-                            val paymentMethod = descriptorsHolder.selectedPaymentMethodDescriptor
-                            paymentMethod.behaviours.firstOrNull()
-                                ?.let {
-                                    val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
-                                    if (isNotForm) {
-                                        executeBehaviour(it)
-                                    }
-                                } ?: run {
-                                // ignore and let the `selectedBehaviour` execute
-                            }
-                            _selectedPaymentMethod.postValue(paymentMethod)
-                        } ?: run {
-                            viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
-                        }
+                    )
+                )
+            }.flatMapLatest {
+                flowOf(fetchCurrencyFormatDataInteractor(None())).zip(
+                    paymentMethodModulesInteractor(None())
+                ) { _, descriptorsHolder ->
+                    descriptorsHolder
+                }.zip(
+                    vaultedPaymentMethodsInteractor(
+                        VaultInstrumentParams(config.settings.fromHUC.not())
+                    )
+                ) { descriptorsHolder, paymentModelTokens ->
+                    _vaultedPaymentMethods.postValue(paymentModelTokens)
+                    if (getSelectedPaymentMethodId().isEmpty() &&
+                        paymentModelTokens.isNotEmpty() &&
+                        descriptorsHolder.selectedPaymentMethodDescriptor == null
+                    ) {
+                        setSelectedPaymentMethodId(paymentModelTokens.first().token)
                     }
-                }.collect { }
+
+                    _paymentMethods.postValue(descriptorsHolder.descriptors)
+                    descriptorsHolder.selectedPaymentMethodDescriptor?.let {
+                        val paymentMethod = descriptorsHolder.selectedPaymentMethodDescriptor
+                        paymentMethod.behaviours.firstOrNull()
+                            ?.let {
+                                val isNotForm = paymentMethod.type != PaymentMethodUiType.FORM
+                                if (isNotForm) {
+                                    executeBehaviour(it)
+                                }
+                            } ?: run {
+                            // ignore and let the `selectedBehaviour` execute
+                        }
+                        _selectedPaymentMethod.postValue(paymentMethod)
+                    } ?: run {
+                        viewStatus.postValue(ViewStatus.SELECT_PAYMENT_METHOD)
+                    }
+                }.onEach {
+                    addAnalyticsEvent(
+                        TimerAnalyticsParams(
+                            id = TimerId.DROP_IN_LOADING,
+                            timerType = TimerType.END,
+                            duration = (timeSource.markNow() - start).inWholeMilliseconds,
+                            context = DropInSourceAnalyticsContext(
+                                source = config.toDropInSource()
+                            )
+                        )
+                    )
+                }
+            }.collect { }
         }
 
         subscription = EventBus.subscribe(this)

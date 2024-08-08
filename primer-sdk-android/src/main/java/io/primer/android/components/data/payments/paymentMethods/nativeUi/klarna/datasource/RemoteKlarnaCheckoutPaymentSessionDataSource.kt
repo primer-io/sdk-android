@@ -11,8 +11,10 @@ internal class RemoteKlarnaCheckoutPaymentSessionDataSource(
 ) : BaseSuspendDataSource<CreateSessionDataResponse,
         BaseRemoteRequest<CreateCheckoutPaymentSessionDataRequest>> {
     override suspend fun execute(input: BaseRemoteRequest<CreateCheckoutPaymentSessionDataRequest>):
-        CreateSessionDataResponse = primerHttpClient.postSuspend(
+        CreateSessionDataResponse = primerHttpClient.postSuspend<
+        CreateCheckoutPaymentSessionDataRequest, CreateSessionDataResponse
+        >(
         "${input.configuration.coreUrl}/klarna/payment-sessions",
         input.data
-    )
+    ).body
 }

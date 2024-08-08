@@ -1,15 +1,22 @@
 package io.primer.android.components.presentation
 
+import io.primer.android.analytics.data.models.TimerId
+import io.primer.android.analytics.data.models.TimerType
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
+import io.primer.android.analytics.domain.models.TimerAnalyticsParams
 import io.primer.android.components.domain.payments.PaymentsTypesInteractor
+import io.primer.android.data.configuration.datasource.GlobalConfigurationCacheDataSource
 import io.primer.android.domain.base.None
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.TimeSource
 
 internal interface HeadlessUniversalCheckoutDelegate {
     fun start()
@@ -31,7 +38,24 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
             analyticsInteractor.initialize().collect {}
         }
         scope.launch {
-            paymentsTypesInteractor(None()).collect {}
+            val timeSource = TimeSource.Monotonic
+            val start = timeSource.markNow()
+            paymentsTypesInteractor(None()).onStart {
+                addAnalyticsEvent(
+                    TimerAnalyticsParams(
+                        id = TimerId.HEADLESS_LOADING,
+                        timerType = TimerType.START
+                    )
+                )
+            }.onEach {
+                addAnalyticsEvent(
+                    TimerAnalyticsParams(
+                        id = TimerId.HEADLESS_LOADING,
+                        timerType = TimerType.END,
+                        duration = (timeSource.markNow() - start).inWholeMilliseconds
+                    )
+                )
+            }.collect {}
         }
     }
 
@@ -41,6 +65,8 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
         }
     }
 
-    override fun clear(exception: CancellationException?) =
+    override fun clear(exception: CancellationException?) {
+        GlobalConfigurationCacheDataSource.clear()
         scope.coroutineContext.job.cancelChildren(exception)
+    }
 }

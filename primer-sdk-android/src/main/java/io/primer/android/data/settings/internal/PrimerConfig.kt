@@ -3,6 +3,7 @@ package io.primer.android.data.settings.internal
 import android.os.Parcel
 import android.os.Parcelable
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.data.models.DropInLoadingSource
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.extensions.readParcelable
@@ -45,7 +46,15 @@ internal data class PrimerConfig(
     internal fun toPlace() =
         if (intent.paymentMethodIntent == PrimerSessionIntent.CHECKOUT) {
             Place.UNIVERSAL_CHECKOUT
-        } else { Place.VAULT_MANAGER }
+        } else {
+            Place.VAULT_MANAGER
+        }
+
+    internal fun toDropInSource() = when {
+        isStandalonePaymentMethod -> DropInLoadingSource.SHOW_PAYMENT_METHOD
+        intent.paymentMethodIntent == PrimerSessionIntent.CHECKOUT -> DropInLoadingSource.UNIVERSAL_CHECKOUT
+        else -> DropInLoadingSource.VAULT_MANAGER
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(settings, flags)
