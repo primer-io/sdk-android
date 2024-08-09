@@ -1,6 +1,7 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
+    id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
 }
 
 repositories {
@@ -55,12 +56,20 @@ android {
 
         coreLibraryDesugaringEnabled true
     }
+    secrets {
+        propertiesFileName 'local.properties'
+
+        // A properties file containing default secret values. This file can be checked in version
+        // control.
+        defaultPropertiesFileName = 'secrets.defaults.properties'
+    }
     kotlinOptions {
         jvmTarget = 17
         freeCompilerArgs += "-Xjvm-default=all"
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     testOptions {
         unitTests {

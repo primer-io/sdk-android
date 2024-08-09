@@ -23,6 +23,7 @@ import io.primer.android.data.settings.PrimerStripeOptions
 import io.primer.android.data.settings.PrimerThreeDsOptions
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.ui.settings.PrimerUIOptions
+import io.primer.sample.BuildConfig
 import io.primer.sample.constants.ThemeList
 import io.primer.sample.datamodels.AppCountryCode
 import io.primer.sample.datamodels.PrimerEnv
@@ -190,8 +191,8 @@ class MainViewModel(
                 ),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
                 stripeOptions = PrimerStripeOptions(
-                    PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
-                    "pk_test_51O8zfQKUK6bXIdC2xPvSS6UvriE9kwpvttwB7H9PAzhNAZoGzLgiDOyd4WooozeWHxoRrKo6b2VjZYxNCMX3W7bk00rMDivjau"
+                    mandateData = PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
+                    publishableKey = BuildConfig.STRIPE_PUBLISHABLE_KEY
                 )
             ),
             uiOptions = _uiOptions.value ?: PrimerUIOptions(),

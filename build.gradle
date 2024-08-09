@@ -14,4 +14,5 @@ plugins {
     alias libs.plugins.ktlint apply false
     alias libs.plugins.junit5 apply false
     alias libs.plugins.maven.publish
+    alias libs.plugins.google.secrets apply false
 }
