@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="accept_button">Accept</string>
     <string name="add_bank_account">Tambah akaun bank</string>
     <string name="add_card">Tambah kad</string>
     <string name="add_new_payment_method">Tambah kaedah pembayaran</string>
     <string name="additional_fees_may_apply">Yuran tambahan mungkin dikenakan</string>
     <string name="addressLine1">Baris 1 alamat</string>
-    <!-- An error message displayed when the Address line 1 is not correct -->
+    <!-- State, Region or County is required - Form Validation -->
     <string name="addressLine1ErrorRequired">Baris alamat 1 diperlukan</string>
-    <!-- The billing address Address line 1 container view label -->
     <string name="addressLine2">Baris 2 alamat</string>
-    <!-- The billing address Address line 2 container view label -->
     <string name="available_payment_methods">Kaedah pembayaran yang tersedia</string>
     <string name="bank_account">Akaun Bank</string>
     <string name="bank_selection_error_message">Gagal memuat bank. Periksa sambungan anda dan cuba lagi.</string>
@@ -19,6 +18,7 @@
     <string name="billingAddressLabel">Alamat pengebilan</string>
     <!-- Navigation -->
     <string name="cancel">Batal</string>
+    <string name="cancel_payment_button">Cancel payment</string>
     <string name="card_cvv">CVV</string>
     <string name="card_details">Butiran kad</string>
     <string name="card_expiry">Tarikh luput</string>
@@ -30,18 +30,22 @@
     <string name="card_number">Nombor kad</string>
     <string name="card_zip">Kod zip</string>
     <string name="check_icon">ikon semak</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
     <string name="choose_payment_method">Pilih kaedah pembayaran</string>
-    <!-- An error message displayed when the city field is not correct -->
+    <!-- City is required - Form Validation -->
     <string name="cityErrorRequired">Bandar diperlukan</string>
+    <!-- The billing address city container view label -->
     <string name="cityLabel">Bandar</string>
+    <!-- Complete your payment - Account info payment title label -->
     <string name="completeYourPayment">Lengkapkan pembayaran anda</string>
     <string name="completeYourPaymentInTheApp">Lengkapkan pembayaran anda dalam %s</string>
     <string name="confirm">Sahkan</string>
     <string name="confirm_dd_mandate">Sahkan mandat</string>
     <string name="confirmToPayButtonTitle">Sahkan untuk membayar</string>
+    <string name="continue_button">Teruskan</string>
     <string name="country_search_hint">Cari negara</string>
     <string name="country_select">Pilih negara</string>
-    <!-- An error message displayed when the Country is not correct -->
+    <!-- Country is required - Form Validation -->
     <string name="countryCodeErrorRequired">Negara diperlukan</string>
     <string name="countryLabel">Negara</string>
     <string name="credit_debit_card">Kad kredit/debit</string>
@@ -49,9 +53,13 @@
     <string name="dd_cancel_message">Adakah anda ingin membatalkan penambahan akaun bank?</string>
     <string name="dd_mandate_error">Sila semak bahawa semua maklumat anda adalah benar</string>
     <!-- Legal -->
-    <string name="dd_mandate_legal">"\n        Dengan menandatangan borang mandat ini, anda membenarkan (A) %1$s untuk menyampaikan arahan kepada bank anda untuk mendebitkan akaun anda dan (B) bank anda untuk\nmendebitkan akaun anda mengikut arahan daripada %1$s.\n    "</string>
+    <string name="dd_mandate_legal">"
+        Dengan menandatangan borang mandat ini, anda membenarkan (A) %1$s untuk menyampaikan arahan kepada bank anda untuk mendebitkan akaun anda dan (B) bank anda untuk
+mendebitkan akaun anda mengikut arahan daripada %1$s.
+    "</string>
     <string name="delete">Padam</string>
     <string name="done">Selesai</string>
+    <!-- The prefix copy we put before the expiration date -->
     <string name="dueAt">Perlu dibayar pada</string>
     <string name="edit">Edit</string>
     <string name="edit_saved_payment_methods">sunting kad disimpan</string>
@@ -66,8 +74,9 @@
     <string name="expiry_date">%1$s / %2$s</string>
     <string name="fast_bank_transfer">Pemindahan Bank FAST</string>
     <string name="first_last_name">Nama pertama dan terakhir</string>
-    <!-- An error message displayed when the First Name is not correct -->
+    <!-- First name is required - Form Validation -->
     <string name="firstNameErrorRequired">Nama pertama diperlukan</string>
+    <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Nama pertama</string>
     <string name="form_error_invalid">%1$s tidak sah</string>
     <string name="form_error_required">%1$s diperlukan</string>
@@ -75,8 +84,9 @@
     <string name="go_back_description">kembali</string>
     <string name="iban">IBAN</string>
     <string name="icon_showing_state">ikon yang menunjukkan negeri</string>
-    <!-- forms -->
+    <!-- Get the code from your banking app - Blik descriptor -->
     <string name="input_description_otp">Dapatkan kodnya daripada aplikasi perbankan anda.</string>
+    <!-- 6 digit code - Text field top placeholder -->
     <string name="input_hint_form_blik_otp">Kod 6 digit</string>
     <string name="input_hint_form_phone_number">Nombor telefon</string>
     <string name="input_title_bank_details">Berikan butiran bank</string>
@@ -87,12 +97,15 @@
     <string name="label_failed">Gagal</string>
     <string name="last_four">•••• %d</string>
     <string name="last_four_with_dots">•••• 1234</string>
-    <!-- An error message displayed when the Last Name is not correct -->
+    <!-- Last name is required - Form Validation -->
     <string name="lastNameErrorRequired">Nama akhir diperlukan</string>
+    <!-- The billing address Last name container view label -->
     <string name="lastNameLabel">Nama akhir</string>
+    <string name="loading_text">Memuatkan</string>
     <string name="manage">Uruskan</string>
     <string name="mastercard">Mastercard</string>
     <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Simulasi paparan Klarna</string>
     <string name="multibancoAmount">Amaun</string>
     <string name="multibancoCompleteDescription">Sila buat pembayaran di ATM, atau gunakan perbankan dalam talian.</string>
     <string name="multibancoEntity">Entiti</string>
@@ -103,6 +116,7 @@
     <string name="multibancoTitleConditions">Lengkapkan pembayaran anda</string>
     <string name="name">Nama</string>
     <string name="next">Seterusnya</string>
+    <!-- No additional fee - Universal Checkout section text -->
     <string name="no_additional_fee">Tiada yuran tambahan</string>
     <string name="no_results">Tiada hasil</string>
     <string name="no_results_for_query">Maaf, tiada hasil\nditemui yang sepadan dengan \"%s\"</string>
@@ -112,63 +126,77 @@
     <string name="pay_by_card">Bayar menggunakan kad</string>
     <string name="pay_specific_amount">Bayar %s</string>
     <string name="pay_with">Bayar dengan</string>
+    <string name="pay_with_ach">Pay with ACH</string>
     <string name="pay_with_card">Bayar dengan kad</string>
     <string name="pay_with_crypto">Bayar dengan kripto</string>
-    <string name="payment_method_added_message">"\n        Kaedah pembayaran anda \n\n        berjaya ditambah!\n    "</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Kaedah pembayaran anda 
+
+        berjaya ditambah!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
     <string name="payment_method_blik_loading_placeholder">Lengkapkan pembayaran anda dalam aplikasi Blik</string>
     <string name="payment_method_deletion_message">Adakah anda pasti anda ingin memadamkan kaedah pembayaran ini?</string>
     <string name="payment_method_error">Pilih kaedah pembayaran lain</string>
     <string name="payment_method_icon">ikon kaedah pembayaran</string>
-    <string name="payment_method_not_added_message">"\n        Kaedah pembayaran anda tidak dapat ditambah.\n    "</string>
+    <string name="payment_method_not_added_message">"
+        Kaedah pembayaran anda tidak dapat ditambah.
+    "</string>
     <string name="payment_method_xfers_description">Muat naik tangkap layar tersebut menggunakan aplikasi perbankan anda.</string>
     <string name="payment_method_xfers_title">Imbas atau simpan untuk membayar</string>
     <string name="payment_request_completed_successfully">Pembayaran anda berjaya disempurnakan!</string>
     <string name="payment_request_unsuccessful">Pembayaran anda tidak berjaya.</string>
     <string name="phone_code_search_hint">Cari kod</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
     <string name="pleaseTransferFunds">Sila Pindahkan dana ke akaun bank DBS yang diberikan menggunakan akaun bank Singapura anda melalui FAST (diutamakan), MEPS atau GIRO.</string>
-    <!-- An error message displayed when the postal code field is not correct -->
+    <!-- Postal code is required - Form Validation -->
     <string name="postalCodeErrorRequired">Poskod diperlukan</string>
+    <!-- The billing address postal code container view label -->
     <string name="postalCodeLabel">Poskod</string>
-    <string name="primer_test_header_description">This is a mocked flow for sandbox. Choose the result you want to test from the list below.</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Masukkan kod keselamatan digit %d pada kad anda untuk pembayaran yang selamat.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Masukkan CVV</string>
+    <string name="primer_payment_method_button_content_description">Bayar dengan %s</string>
+    <string name="primer_test_header_description">Ini adalah contoh aliran bagi sandbox. Pilih keputusan yang ingin anda uji daripada senarai dibawah.</string>
+    <string name="retry_button">Retry</string>
     <string name="save_this_card">Simpan kad ini</string>
     <string name="saved_payment_methods">KAEDAH PEMBAYARAN YANG DISIMPAN</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
     <string name="scanToPay">Imbas untuk membayar atau simpan tangkap layar</string>
     <string name="search_placeholder">Cari</string>
     <string name="search_result">Hasil carian</string>
     <string name="sepa">SEPA</string>
     <string name="sepa_core_description">SEPA Core Direct Debit Mandate.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
     <string name="stateErrorRequired">Negeri, Kawasan atau Daerah diperlukan</string>
+    <!-- The billing address state container view label -->
     <string name="stateLabel">Negeri / Kawasan / Daerah</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">berjaya</string>
     <string name="success_text">Berjaya!</string>
     <string name="test_mail_com">ujian@mel.com</string>
     <string name="twoc_2p_button">Bayar secara ansuran</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
     <string name="uploadScreenshot">Muat naik tangkap layar tersebut menggunakan aplikasi perbankan anda</string>
-    <string name="primer_payment_method_button_content_description">Pay with %s</string>
-    <string name="pay_with_ach">Pay with ACH</string>
-    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
-    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
-    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
-    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
-    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
-    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
-    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
-    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
-    <string name="stripe_ach_mandate_accept_button">Accept</string>
-    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
-    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
-    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
-    <string name="loading_text">Loading</string>
-    <string name="continue_button">Teruskan</string>
-    <!-- CVV- CVV recapture explanation label -->
-    <string name="primer_cvv_recapture_explanation">Masukkan kod keselamatan digit %d pada kad anda untuk pembayaran yang selamat.</string>
-    <!-- CVV - CVV recapture screen title -->
-    <string name="primer_cvv_recapture_title">Masukkan CVV</string>
-    <string name="retry_button">Retry</string>
-    <string name="choose_other_payment_method_button">Choose other payment method</string>
-    <string name="session_complete_payment_success_title">Payment authorized</string>
-    <string name="session_complete_payment_failure_title">Payment failed</string>
-    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
-
 </resources>

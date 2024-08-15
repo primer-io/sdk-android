@@ -16,6 +16,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-de/strings.xml
         params:
@@ -23,6 +25,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-el/strings.xml
         params:
@@ -30,6 +34,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-es/strings.xml
         params:
@@ -37,6 +43,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-fr/strings.xml
         params:
@@ -44,6 +52,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-it/strings.xml
         params:
@@ -51,6 +61,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-ms/strings.xml
         params:
@@ -58,6 +70,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-nb/strings.xml
         params:
@@ -65,6 +79,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-nl/strings.xml
         params:
@@ -72,6 +88,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-pl/strings.xml
         params:
@@ -79,6 +97,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-pt/strings.xml
         params:
@@ -86,6 +106,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-sv/strings.xml
         params:
@@ -93,6 +115,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-th/strings.xml
         params:
@@ -100,6 +124,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-tr/strings.xml
         params:
@@ -107,6 +133,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-zh-rCN/strings.xml
         params:
@@ -114,6 +142,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-zh-rHK/strings.xml
         params:
@@ -121,6 +151,8 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en
 
       - file: ./primer-sdk-android/src/main/res/values-zh-rTW/strings.xml
         params:
@@ -128,3 +160,5 @@
           file_format: xml
           tags: android-sdk
           encoding: UTF-16
+          include_empty_translations: true
+          fallback_locale_id: en

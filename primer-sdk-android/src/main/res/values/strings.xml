@@ -168,6 +168,8 @@
     <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
     <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
     <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
 
     <string name="loading_text">Loading</string>
     <string name="continue_button">Continue</string>
@@ -183,4 +185,8 @@
 
     <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
     <string name="payBySmartTransfer">Pay by Bank transfer</string>
+
+    <string name="accept_button">Accept</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="success_icon_description">success</string>
 </resources>

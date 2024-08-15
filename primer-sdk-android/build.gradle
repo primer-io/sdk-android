@@ -41,9 +41,6 @@ android {
         unitTests.returnDefaultValues = true
     }
 
-     lintOptions{
-         disable 'MissingTranslation'
-     }
 }
 
 dependencies {

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="accept_button">Accept</string>
     <string name="add_bank_account">เพิ่มบัญชีธนาคาร</string>
     <string name="add_card">เพิ่มบัตร</string>
     <string name="add_new_payment_method">เพิ่มวิธีการชำระเงิน</string>
     <string name="additional_fees_may_apply">อาจมีค่าธรรมเนียมเพิ่มเติม</string>
     <string name="addressLine1">ที่อยู่บรรทัดที่ 1</string>
-    <!-- An error message displayed when the Address line 1 is not correct -->
+    <!-- State, Region or County is required - Form Validation -->
     <string name="addressLine1ErrorRequired">ต้องใช้ที่อยู่บรรทัดที่ 1</string>
-    <!-- The billing address Address line 1 container view label -->
     <string name="addressLine2">ที่อยู่บรรทัดที่ 2</string>
     <string name="available_payment_methods">วิธีชำระเงินที่มี</string>
     <string name="bank_account">บัญชีธนาคาร</string>
@@ -18,6 +18,7 @@
     <string name="billingAddressLabel">ที่อยู่เรียกเก็บเงิน</string>
     <!-- Navigation -->
     <string name="cancel">ยกเลิก</string>
+    <string name="cancel_payment_button">Cancel payment</string>
     <string name="card_cvv">CVV</string>
     <string name="card_details">รายละเอียดบัตร</string>
     <string name="card_expiry">วันหมดอายุ</string>
@@ -29,18 +30,22 @@
     <string name="card_number">หมายเลขบัตร</string>
     <string name="card_zip">รหัสไปรษณีย์</string>
     <string name="check_icon">ตรวจสอบไอคอน</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
     <string name="choose_payment_method">เลือกวิธีชำระเงิน</string>
-    <!-- An error message displayed when the city field is not correct -->
+    <!-- City is required - Form Validation -->
     <string name="cityErrorRequired">ต้องระบุเมือง</string>
+    <!-- The billing address city container view label -->
     <string name="cityLabel">เมือง</string>
+    <!-- Complete your payment - Account info payment title label -->
     <string name="completeYourPayment">ชำระเงินให้เสร็จสมบูรณ์</string>
     <string name="completeYourPaymentInTheApp">ชำระเงินให้เสร็จสมบูรณ์ใน %s</string>
     <string name="confirm">ยืนยัน</string>
     <string name="confirm_dd_mandate">ยืนยันหนังสือมอบอำนาจ</string>
     <string name="confirmToPayButtonTitle">ยืนยันการชำระเงิน</string>
+    <string name="continue_button">ดำเนินการต่อ</string>
     <string name="country_search_hint">ค้นหาประเทศ</string>
     <string name="country_select">เลือกประเทศ</string>
-    <!-- An error message displayed when the Country is not correct -->
+    <!-- Country is required - Form Validation -->
     <string name="countryCodeErrorRequired">ต้องระบุประเทศ</string>
     <string name="countryLabel">ประเทศ</string>
     <string name="credit_debit_card">บัตรเครดิต/เดบิต</string>
@@ -48,9 +53,13 @@
     <string name="dd_cancel_message">คุณต้องการยกเลิกการเพิ่มบัญชีธนาคารหรือไม่</string>
     <string name="dd_mandate_error">กรุณาตรวจสอบว่าข้อมูลทั้งหมดของคุณถูกต้อง</string>
     <!-- Legal -->
-    <string name="dd_mandate_legal">"\n        การลงนามในแบบฟอร์มมอบอำนาจนี้ แสดงว่าคุณอนุญาตให้ (ก) %1$s ส่งคำสั่งไปยังธนาคารของคุณเพื่อหักเงินจากบัญชีของคุณ และ (ข) ธนาคารของคุณเพื่อ\n         หักเงินจากบัญชีของคุณตามคำแนะนำจาก %1$s\n    "</string>
+    <string name="dd_mandate_legal">"
+        การลงนามในแบบฟอร์มมอบอำนาจนี้ แสดงว่าคุณอนุญาตให้ (ก) %1$s ส่งคำสั่งไปยังธนาคารของคุณเพื่อหักเงินจากบัญชีของคุณ และ (ข) ธนาคารของคุณเพื่อ
+         หักเงินจากบัญชีของคุณตามคำแนะนำจาก %1$s
+    "</string>
     <string name="delete">ลบ</string>
     <string name="done">เสร็จสิ้นแล้ว</string>
+    <!-- The prefix copy we put before the expiration date -->
     <string name="dueAt">ครบกำหนดเมื่อ</string>
     <string name="edit">แก้ไข</string>
     <string name="edit_saved_payment_methods">แก้ไขบัตรที่บันทึกไว้</string>
@@ -65,7 +74,9 @@
     <string name="expiry_date">%1$s / %2$s</string>
     <string name="fast_bank_transfer">โอนเงินผ่านธนาคารอย่างรวดเร็ว</string>
     <string name="first_last_name">ชื่อและนามสกุล</string>
+    <!-- First name is required - Form Validation -->
     <string name="firstNameErrorRequired">จำเป็นต้องมีชื่อจริง</string>
+    <!-- The billing address First name container view label -->
     <string name="firstNameLabel">ชื่อจริง</string>
     <string name="form_error_invalid">%1$s ไม่ถูกต้อง</string>
     <string name="form_error_required">จำเป็นต้องมี %1$s</string>
@@ -73,8 +84,9 @@
     <string name="go_back_description">กลับ</string>
     <string name="iban">IBAN</string>
     <string name="icon_showing_state">ไอคอนแสดงสถานะ</string>
-    <!-- forms -->
+    <!-- Get the code from your banking app - Blik descriptor -->
     <string name="input_description_otp">รับรหัสจากแอปธนาคารของคุณ</string>
+    <!-- 6 digit code - Text field top placeholder -->
     <string name="input_hint_form_blik_otp">รหัส 6 หลัก</string>
     <string name="input_hint_form_phone_number">หมายเลขโทรศัพท์</string>
     <string name="input_title_bank_details">ระบุรายละเอียดธนาคาร</string>
@@ -85,11 +97,15 @@
     <string name="label_failed">ล้มเหลว</string>
     <string name="last_four">•••• %d</string>
     <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
     <string name="lastNameErrorRequired">จำเป็นต้องมีนามสกุล</string>
+    <!-- The billing address Last name container view label -->
     <string name="lastNameLabel">นามสกุล</string>
+    <string name="loading_text">กำลังโหลด</string>
     <string name="manage">จัดการ</string>
     <string name="mastercard">มาสเตอร์การ์ด</string>
     <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">จำลองมุมมอง Klarna</string>
     <string name="multibancoAmount">จำนวน</string>
     <string name="multibancoCompleteDescription">โปรดชำระเงินที่ตู้ ATM หรือใช้บริการธนาคารออนไลน์</string>
     <string name="multibancoEntity">นิติบุคคล</string>
@@ -100,6 +116,7 @@
     <string name="multibancoTitleConditions">ชำระเงินให้เสร็จสมบูรณ์</string>
     <string name="name">ชื่อ</string>
     <string name="next">ถัดไป</string>
+    <!-- No additional fee - Universal Checkout section text -->
     <string name="no_additional_fee">ไม่มีค่าธรรมเนียมเพิ่มเติม</string>
     <string name="no_results">ไม่มีผลลัพธ์</string>
     <string name="no_results_for_query">ขออภัย ไม่พบผลลัพธ์\nที่ตรงกับ \"%s\"</string>
@@ -109,63 +126,77 @@
     <string name="pay_by_card">ชำระเงินด้วยบัตร</string>
     <string name="pay_specific_amount">ชำระ %s</string>
     <string name="pay_with">ชำระด้วย</string>
+    <string name="pay_with_ach">Pay with ACH</string>
     <string name="pay_with_card">ชำระด้วยบัตร</string>
     <string name="pay_with_crypto">ชำระด้วยคริปโต</string>
-    <string name="payment_method_added_message">"\n        ระบบเพิ่มวิธีชำระเงินของคุณ \n\n        เรียบร้อยแล้ว!\n    "</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        ระบบเพิ่มวิธีชำระเงินของคุณ 
+
+        เรียบร้อยแล้ว!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
     <string name="payment_method_blik_loading_placeholder">ชำระเงินของคุณในแอป Blik</string>
     <string name="payment_method_deletion_message">แน่ใจหรือว่าคุณต้องการลบวิธีชำระเงินนี้</string>
     <string name="payment_method_error">เลือกวิธีการชำระเงินอื่น</string>
     <string name="payment_method_icon">ไอคอนวิธีชำระเงิน</string>
-    <string name="payment_method_not_added_message">"\n        ไม่สามารถเพิ่มวิธีชำระเงินของคุณได้\n    "</string>
+    <string name="payment_method_not_added_message">"
+        ไม่สามารถเพิ่มวิธีชำระเงินของคุณได้
+    "</string>
     <string name="payment_method_xfers_description">อัปโหลดภาพหน้าจอในแอปธนาคารของคุณ</string>
     <string name="payment_method_xfers_title">สแกนหรือบันทึกเพื่อชำระเงิน</string>
     <string name="payment_request_completed_successfully">การชำระเงินเสร็จสมบูรณ์!</string>
     <string name="payment_request_unsuccessful">การชำระเงินของคุณไม่สำเร็จ</string>
     <string name="phone_code_search_hint">ค้นหารหัส</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
     <string name="pleaseTransferFunds">โปรดโอนเงินไปยังบัญชีธนาคาร DBS ที่ให้ไว้โดยใช้บัญชีธนาคารในสิงคโปร์ของคุณผ่าน FAST (แนะนำ), MEPS หรือ GIRO</string>
+    <!-- Postal code is required - Form Validation -->
     <string name="postalCodeErrorRequired">ต้องระบุรหัสไปรษณีย์</string>
+    <!-- The billing address postal code container view label -->
     <string name="postalCodeLabel">รหัสไปรษณีย์</string>
-    <string name="primer_test_header_description">This is a mocked flow for sandbox. Choose the result you want to test from the list below.</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">ป้อนรหัสรักษาความปลอดภัย %d หลักในบัตรของคุณเพื่อการชำระเงินที่ปลอดภัย</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">ป้อน CVV</string>
+    <string name="primer_payment_method_button_content_description">ชำระด้วย %s</string>
+    <string name="primer_test_header_description">นี่เป็นโฟลว์จำลองสำหรับแซนด์บ็อกซ์ เลือกผลลัพธ์ที่คุณต้องการทดสอบจากรายการด้านล่าง</string>
+    <string name="retry_button">Retry</string>
     <string name="save_this_card">บันทึกบัตรนี้</string>
     <string name="saved_payment_methods">วิธีชำระเงินที่บันทึก</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
     <string name="scanToPay">สแกนเพื่อชำระเงินหรือถ่ายภาพหน้าจอ</string>
     <string name="search_placeholder">ค้นหา</string>
     <string name="search_result">ผลการค้นหา</string>
     <string name="sepa">SEPA</string>
     <string name="sepa_core_description">หนังสือมอบอำนาจการหักบัญชีธนาคารหลัก SEPA</string>
-    <!-- An error message displayed when the State, Region or County field is not correct -->
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
     <string name="stateErrorRequired">จำเป็นต้องมีรัฐ ภูมิภาค หรือ มณฑล</string>
+    <!-- The billing address state container view label -->
     <string name="stateLabel">รัฐ / ภูมิภาค / มณฑล</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">สำเร็จ</string>
     <string name="success_text">สำเร็จ!</string>
     <string name="test_mail_com">test@mail.com</string>
     <string name="twoc_2p_button">ผ่อนชำระ</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
     <string name="uploadScreenshot">อัปโหลดภาพหน้าจอในแอปธนาคารของคุณ</string>
-    <string name="primer_payment_method_button_content_description">Pay with %s</string>
-    <string name="pay_with_ach">Pay with ACH</string>
-    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
-    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
-    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
-    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
-    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
-    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
-    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
-    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
-    <string name="stripe_ach_mandate_accept_button">Accept</string>
-    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
-    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
-    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
-    <string name="loading_text">Loading</string>
-    <string name="continue_button">ดำเนินการต่อไป</string>
-    <!-- CVV- CVV recapture explanation label -->
-    <string name="primer_cvv_recapture_explanation">ป้อนรหัสรักษาความปลอดภัย %d หลักในบัตรของคุณเพื่อการชำระเงินที่ปลอดภัย</string>
-    <!-- CVV - CVV recapture screen title -->
-    <string name="primer_cvv_recapture_title">ป้อน CVV</string>
-    <string name="retry_button">Retry</string>
-    <string name="choose_other_payment_method_button">Choose other payment method</string>
-    <string name="session_complete_payment_success_title">Payment authorized</string>
-    <string name="session_complete_payment_failure_title">Payment failed</string>
-    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
-
 </resources>
