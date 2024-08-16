@@ -1,3 +1,10 @@
+## 2.28.1 (2024-08-16)
+
+### Fix
+
+- **http-client**: Added X-Request-ID header to all requests (#671)
+- **analytics**: Added missing ANALYTICS_CONTEXT_TYPE_FIELD to CacheSourceAnalyticsContext (#672)
+
 ## 2.28.0 (2024-08-08)
 
 ### Feat
