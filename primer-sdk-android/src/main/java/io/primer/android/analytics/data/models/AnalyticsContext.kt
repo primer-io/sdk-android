@@ -276,6 +276,7 @@ internal data class CacheSourceAnalyticsContext(val source: ConfigurationSource)
         val serializer = JSONObjectSerializer<CacheSourceAnalyticsContext> { t ->
             JSONObject().apply {
                 put(CACHE_SOURCE_FIELD, t.source.name)
+                put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
             }
         }
 
