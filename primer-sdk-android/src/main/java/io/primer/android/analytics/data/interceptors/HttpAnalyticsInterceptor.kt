@@ -19,8 +19,11 @@ internal class HttpAnalyticsInterceptor :
     private val sharedFlow = MutableStateFlow<NetworkCallProperties?>(null)
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
         val id = UUID.randomUUID().toString()
+        val request = chain.request().newBuilder().addHeader(
+            name = X_REQUEST_ID_HEADER,
+            value = id
+        ).build()
         sharedFlow.tryEmit(
             NetworkCallProperties(
                 NetworkCallType.REQUEST_START,
@@ -68,4 +71,9 @@ internal class HttpAnalyticsInterceptor :
     }
 
     override fun execute(input: Unit) = sharedFlow.asStateFlow().filterNotNull()
+
+    private companion object {
+
+        const val X_REQUEST_ID_HEADER = "X-Request-ID"
+    }
 }
