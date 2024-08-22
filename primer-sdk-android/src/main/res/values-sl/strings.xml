@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Dodaj bančni račun</string>
+    <string name="add_card">Dodajte kartico</string>
+    <string name="add_new_payment_method">Dodaj način plačila</string>
+    <string name="additional_fees_may_apply">Morda boste morali plačati dodatna nadomestila</string>
+    <string name="addressLine1">1. vrstica naslova</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">1. vrstica naslova je obvezna</string>
+    <string name="addressLine2">2. vrstica naslova</string>
+    <string name="available_payment_methods">Razpoložljivi načini plačila</string>
+    <string name="bank_account">Bančni račun</string>
+    <string name="bank_selection_error_message">Banke ni bilo mogoče naložiti. Preverite povezavo in poskusite znova.</string>
+    <string name="bank_selection_hint">Iščite banke</string>
+    <string name="bank_selection_title">Izberite svojo banko</string>
+    <string name="bank_selection_try_again">Poskusite znova</string>
+    <string name="billingAddressLabel">Naslov za pošiljanje računa</string>
+    <!-- Navigation -->
+    <string name="cancel">Prekliči</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Podatki o kartici</string>
+    <string name="card_expiry">Datum poteka</string>
+    <string name="card_expiry_formatted">Potek (MM/LL)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Ime imetnika kartice</string>
+    <string name="card_name_on_card">Ime na kartici</string>
+    <string name="card_network_fallback">Kartica</string>
+    <string name="card_number">Številka kartice</string>
+    <string name="card_zip">Poštna številka</string>
+    <string name="check_icon">ikona kljukice</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Izberite način plačila</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Kraj je obvezen</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Kraj</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Dokončajte svoje plačilo</string>
+    <string name="completeYourPaymentInTheApp">Izvedite plačilo v %s</string>
+    <string name="confirm">Potrdi</string>
+    <string name="confirm_dd_mandate">Potrdi soglasje</string>
+    <string name="confirmToPayButtonTitle">Potrdite plačilo</string>
+    <string name="continue_button">Nadaljuj</string>
+    <string name="country_search_hint">Najdi državo</string>
+    <string name="country_select">Izberite državo</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Država je obvezna</string>
+    <string name="countryLabel">Država</string>
+    <string name="credit_debit_card">Kreditna/debetna kartica</string>
+    <string name="data_will_be_lost">Vaši podatki bodo izbrisani</string>
+    <string name="dd_cancel_message">Ali želite preklicati dodajanje bančnega računa?</string>
+    <string name="dd_mandate_error">Prosimo, preverite pravilnost vseh vaših podatkov</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        S podpisom tega mandatnega obrazca pooblaščate (A) %1$s da vaši banki pošlje navodila za obremenitev vašega računa, in (B) vašo banko, 
+        da obremeni vaš račun v skladu z navodili %1$s.
+    "</string>
+    <string name="delete">Izbriši</string>
+    <string name="done">Končaj</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Rok zapadlosti:</string>
+    <string name="edit">Uredi</string>
+    <string name="edit_saved_payment_methods">Uredi shranjene kartice</string>
+    <string name="email">E-pošta</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Vnesite vaš naslov</string>
+    <string name="enter_card_details">Vnesi podrobnosti kartice</string>
+    <string name="enter_email">Vnesite vašo e-pošto</string>
+    <string name="enter_name">Vnesite vaše ime</string>
+    <string name="error_default">Napaka!</string>
+    <string name="expires_12_21">Poteče 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">Bančno nakazilo FAST</string>
+    <string name="first_last_name">Ime in priimek</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Ime je obvezno</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Ime</string>
+    <string name="form_error_invalid">%1$s ni pravilno</string>
+    <string name="form_error_required">%1$s je obvezno</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">nazaj</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">ikona, ki prikazuje stanje</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Pridobite kodo iz svoje bančne aplikacije.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6 mestna koda</string>
+    <string name="input_hint_form_phone_number">Telefonska številka</string>
+    <string name="input_title_bank_details">Navedite bančne podatke</string>
+    <string name="input_title_phone_number">Vnesite svojo telefonsko številko</string>
+    <string name="john_doe">Janez Novak</string>
+    <string name="label_authorized">Pooblaščeno</string>
+    <string name="label_declined">Zavrnjeno</string>
+    <string name="label_failed">Ni uspelo</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Priimek je obvezen</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Priimek</string>
+    <string name="loading_text">Nalaganje</string>
+    <string name="manage">Upravljaj</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Navidezen pogled Klarna</string>
+    <string name="multibancoAmount">Znesek</string>
+    <string name="multibancoCompleteDescription">Plačilo opravite na bankomatu ali prek spletne banke.</string>
+    <string name="multibancoEntity">Entiteta</string>
+    <string name="multibancoPayment1Step">Plačilo opravite na bankomatu ali prek spletne banke.</string>
+    <string name="multibancoPayment2Step">Pojdite na bankomat Multibanco, izberite način plačila Multibanco in vnesite podatke o plačilu.</string>
+    <string name="multibancoPayment3Step">Za plačilo z bančnim nakazilom se prijavite v svoje spletno bančništvo in uporabite podatke o plačilu.</string>
+    <string name="multibancoReference">Sklic</string>
+    <string name="multibancoTitleConditions">Dokončajte svoje plačilo</string>
+    <string name="name">Ime</string>
+    <string name="next">Naprej</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Brez dodatnih nadomestil</string>
+    <string name="no_results">Ni rezultatov</string>
+    <string name="no_results_for_query">Oprostite, ni rezultatov,\nki bi se ujemali s/z »%s«</string>
+    <string name="other_ways_of_paying">Drugi načini plačila</string>
+    <string name="other_ways_to_pay">Drugi načini plačila</string>
+    <string name="pay">Plačaj</string>
+    <string name="pay_by_card">Plačajte s kartico</string>
+    <string name="pay_specific_amount">Plačaj %s</string>
+    <string name="pay_with">Plačajte z</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Plačajte s kartico</string>
+    <string name="pay_with_crypto">Plačajte s kriptovalutami</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Vaše plačilno sredstvo
+
+         je bilo uspešno dodano!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Izvedite plačilo v aplikaciji Blik</string>
+    <string name="payment_method_deletion_message">Ali ste prepričani, da želite izbrisati to plačilno sredstvo?</string>
+    <string name="payment_method_error">Izberite drug način plačila</string>
+    <string name="payment_method_icon">ikona plačilnega sredstva</string>
+    <string name="payment_method_not_added_message">"
+        Vašega plačilnega sredstva ni bilo mogoče dodati.
+    "</string>
+    <string name="payment_method_xfers_description">Naložite posnetek zaslona v svojo bančno aplikacijo.</string>
+    <string name="payment_method_xfers_title">Skenirajte ali shranite za plačilo</string>
+    <string name="payment_request_completed_successfully">Vaše plačilo je uspešno zaključeno!</string>
+    <string name="payment_request_unsuccessful">Vaše plačilo ni uspelo.</string>
+    <string name="phone_code_search_hint">Poiščite kodo</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Prenesite sredstva na navedeni bančni račun DBS z uporabo svojega bančnega računa s sedežem v Singapurju prek FAST (priporočljivo), MEPS ali GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Poštna številka je obvezna</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Poštna številka</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Za varno plačilo vnesite %d-mestno varnostno kodo na kartici.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Vnesite številko CVV</string>
+    <string name="primer_payment_method_button_content_description">Plačajte s/z %s</string>
+    <string name="primer_test_header_description">To je navidezni tok za peskovnik. Na spodnjem seznamu izberite rezultat, ki ga želite preskusiti.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Shranite to kartico</string>
+    <string name="saved_payment_methods">SHRANJEN NAČIN PLAČILA</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Skenirajte za plačilo ali naredite posnetek zaslona</string>
+    <string name="search_placeholder">Iskanje</string>
+    <string name="search_result">Rezultati iskanja</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">Soglasje za direktno obremenitev SEPA</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Obvezna je država, regija ali okrožje</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Država/regija/okrožje</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">uspeh</string>
+    <string name="success_text">Uspeh!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Plačajte na obroke</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Naložite posnetek zaslona v svojo bančno aplikacijo</string>
+</resources>

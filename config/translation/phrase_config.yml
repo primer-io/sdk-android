@@ -10,12 +10,21 @@
 
   pull:
     targets:
+      - file: ./primer-sdk-android/src/main/res/values-ca/strings.xml
+        params:
+          locale_id: Catalan
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
       - file: ./primer-sdk-android/src/main/res/values-da/strings.xml
         params:
           locale_id: Danish
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -24,7 +33,7 @@
           locale_id: German
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -33,7 +42,7 @@
           locale_id: Greek
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -42,7 +51,16 @@
           locale_id: Spanish
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-fi/strings.xml
+        params:
+          locale_id: Finnish
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -51,7 +69,25 @@
           locale_id: French
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-iw/strings.xml
+        params:
+          locale_id: Hebrew
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-in/strings.xml
+        params:
+          locale_id: Indonesian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -60,7 +96,25 @@
           locale_id: Italian
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-ko/strings.xml
+        params:
+          locale_id: Korean
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-lt/strings.xml
+        params:
+          locale_id: Lithuanian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -69,7 +123,7 @@
           locale_id: Malay
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -78,7 +132,7 @@
           locale_id: Norwegian
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -87,7 +141,7 @@
           locale_id: Dutch
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -96,7 +150,7 @@
           locale_id: Polish
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -105,7 +159,25 @@
           locale_id: Portuguese
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-sl/strings.xml
+        params:
+          locale_id: Slovenian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-b+sr+Latn/strings.xml
+        params:
+          locale_id: Serbian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -114,7 +186,7 @@
           locale_id: Swedish
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -123,7 +195,7 @@
           locale_id: Thai
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -132,7 +204,16 @@
           locale_id: Turkish
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./primer-sdk-android/src/main/res/values-uk/strings.xml
+        params:
+          locale_id: Ukrainian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -141,7 +222,7 @@
           locale_id: Chinese
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -150,7 +231,7 @@
           locale_id: Chinese-HongKong
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
 
@@ -159,6 +240,6 @@
           locale_id: Chinese-Taiwanese
           file_format: xml
           tags: android-sdk
-          encoding: UTF-16
+          encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
