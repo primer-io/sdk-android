@@ -3,6 +3,15 @@
 ### Feat
 
 - add more languages (#675)
+    - Finnish
+    - Korean
+    - Lithuanian
+    - Catalan
+    - Serbian
+    - Slovenian
+    - Ukranian
+    - Hebrew
+    - Indonesian
 
 ## 2.28.1 (2024-08-16)
 
