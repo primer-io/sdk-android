@@ -1,8 +1,8 @@
 ## 2.30.0 (2024-08-29)
 
 ### Feat
-
-- remove useless braces (#689)
+- Stripe ACH Drop-in implementation
+- Stripe ACH Headless implementation
 
 ## 2.29.0 (2024-08-23)
 
