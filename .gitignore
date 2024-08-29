@@ -5,7 +5,7 @@
 # IntelliJ
 *.iml
 .idea/
-
+.bundle/
 .DS_Store
 /build
 /captures
