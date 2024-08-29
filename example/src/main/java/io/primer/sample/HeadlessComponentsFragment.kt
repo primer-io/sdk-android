@@ -195,12 +195,12 @@ class HeadlessComponentsFragment : Fragment() {
                                     text = "Would you like to accept this mandate?",
                                     onOkClick = {
                                         lifecycleScope.launch {
-                                            (state.additionalInfo).onAcceptMandate.invoke()
+                                            state.additionalInfo.onAcceptMandate.invoke()
                                         }
                                     },
                                     onCancelClick = {
                                         lifecycleScope.launch {
-                                            (state.additionalInfo).onDeclineMandate.invoke()
+                                            state.additionalInfo.onDeclineMandate.invoke()
                                         }
                                     }
                                 )
