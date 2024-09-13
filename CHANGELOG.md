@@ -1,3 +1,9 @@
+## 2.30.1 (2024-09-13)
+
+### Fix
+
+- **ach**: uncomment ACH proguard rules (#700)
+
 ## 2.30.0 (2024-08-29)
 
 ### Feat
