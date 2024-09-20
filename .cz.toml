@@ -1,6 +1,6 @@
 [tool.commitizen]
 version_scheme = "semver"
-version = "2.30.1"
+version = "2.31.0"
 version_files = [
     "gradle.properties:VERSION_NAME"
 ]

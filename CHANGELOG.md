@@ -1,3 +1,10 @@
+## 2.31.0 (2024-09-20)
+
+### Feat
+
+- improve Spanish support for Stripe ACH (#656)
+- add support for raw strings in Stripe ACH mandates (#709)
+
 ## 2.30.1 (2024-09-13)
 
 ### Fix
