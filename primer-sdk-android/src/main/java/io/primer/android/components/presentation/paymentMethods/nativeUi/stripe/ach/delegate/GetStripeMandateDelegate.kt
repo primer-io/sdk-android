@@ -20,7 +20,7 @@ internal class GetStripeMandateDelegate(
         when (mandate) {
             is PrimerStripeOptions.MandateData.TemplateMandateData ->
                 resources.getString(R.string.stripe_ach_mandate_template_android, mandate.merchantName)
-
+            is PrimerStripeOptions.MandateData.FullMandateStringData -> mandate.value
             is PrimerStripeOptions.MandateData.FullMandateData -> resources.getString(mandate.value)
         }
     }

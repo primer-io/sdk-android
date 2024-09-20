@@ -190,8 +190,8 @@ class MainViewModel(
                 ),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
                 stripeOptions = PrimerStripeOptions(
-                    PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
-                    "pk_test_51O8zfQKUK6bXIdC2xPvSS6UvriE9kwpvttwB7H9PAzhNAZoGzLgiDOyd4WooozeWHxoRrKo6b2VjZYxNCMX3W7bk00rMDivjau"
+                    mandateData = PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
+                    publishableKey = "<replace_with_publishable_key>"
                 )
             ),
             uiOptions = _uiOptions.value ?: PrimerUIOptions(),

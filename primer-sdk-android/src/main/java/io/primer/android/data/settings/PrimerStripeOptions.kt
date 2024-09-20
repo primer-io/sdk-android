@@ -55,7 +55,30 @@ data class PrimerStripeOptions(
             }
         }
 
+        data class FullMandateStringData(val value: String) : MandateData {
+            constructor(parcel: Parcel) : this(parcel.readString().orEmpty())
+
+            override fun writeToParcel(parcel: Parcel, flags: Int) {
+                parcel.writeString(value)
+            }
+
+            override fun describeContents(): Int {
+                return 0
+            }
+
+            companion object CREATOR : Parcelable.Creator<FullMandateStringData> {
+                override fun createFromParcel(parcel: Parcel): FullMandateStringData {
+                    return FullMandateStringData(parcel)
+                }
+
+                override fun newArray(size: Int): Array<FullMandateStringData?> {
+                    return arrayOfNulls(size)
+                }
+            }
+        }
+
         data class FullMandateData(@StringRes val value: Int) : MandateData {
+
             constructor(parcel: Parcel) : this(parcel.readInt())
 
             override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -67,10 +90,10 @@ data class PrimerStripeOptions(
             }
 
             companion object CREATOR : Parcelable.Creator<FullMandateData> {
+
                 override fun createFromParcel(parcel: Parcel): FullMandateData {
                     return FullMandateData(parcel)
                 }
-
                 override fun newArray(size: Int): Array<FullMandateData?> {
                     return arrayOfNulls(size)
                 }
