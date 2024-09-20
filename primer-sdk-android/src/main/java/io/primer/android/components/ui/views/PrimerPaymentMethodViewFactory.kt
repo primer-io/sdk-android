@@ -29,7 +29,6 @@ internal class PrimerPaymentMethodViewFactory(
                     DynamicPaymentMethodTextViewCreator(
                         config.settings.uiOptions.theme,
                         displayMetadata as TextDisplayMetadata
-
                     ).create(context, container)
                 BaseDisplayMetadata.DisplayMetadataType.IMAGE ->
                     DynamicPaymentMethodImageViewCreator(

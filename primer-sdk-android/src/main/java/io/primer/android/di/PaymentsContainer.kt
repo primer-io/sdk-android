@@ -77,6 +77,7 @@ internal class PaymentsContainer(private val sdk: SdkContainer) : DependencyCont
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),
+                sdk.resolve(),
                 resolve(),
                 resolve(),
                 sdk.resolve(),
