@@ -4,11 +4,10 @@ import io.primer.android.components.domain.payments.paymentMethods.nolpay.valida
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayUnlinkOtpDataValidator
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
 import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
-import io.primer.android.di.DISdkComponent
 import io.primer.android.di.extension.resolve
 import kotlin.reflect.KClass
 
-internal class NolPayUnlinkDataValidatorRegistry : DISdkComponent {
+internal class NolPayUnlinkDataValidatorRegistry : NolPayValidatorRegistry {
 
     private val registry: Map<KClass<out NolPayUnlinkCollectableData>,
         NolPayDataValidator<NolPayUnlinkCollectableData>> =
@@ -18,7 +17,7 @@ internal class NolPayUnlinkDataValidatorRegistry : DISdkComponent {
                 NolPayUnlinkCardAndMobileNumberDataValidator(resolve())
         )
 
-    fun getValidator(data: NolPayCollectableData): NolPayDataValidator<NolPayCollectableData> =
+    override fun getValidator(data: NolPayCollectableData): NolPayDataValidator<NolPayCollectableData> =
         registry[data::class] ?: throw IllegalArgumentException(
             NOL_DATA_VALIDATOR_NOT_SUPPORTED_MESSAGE
         )

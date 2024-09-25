@@ -157,7 +157,8 @@ class KlarnaComponentTest {
         stepJob.cancel()
 
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         coVerify(exactly = 1) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
@@ -207,7 +208,8 @@ class KlarnaComponentTest {
             errorMapper.getPrimerError(exception)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         coVerify(exactly = 1) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
@@ -256,7 +258,8 @@ class KlarnaComponentTest {
             errorMapper.getPrimerError(exception)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         coVerify(exactly = 1) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
@@ -327,7 +330,8 @@ class KlarnaComponentTest {
             )
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         verify(exactly = 1) {
             KlarnaPaymentCategoryValidator.validate(listOf(paymentCategory), paymentCategory)
@@ -384,7 +388,8 @@ class KlarnaComponentTest {
             )
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         verify(exactly = 1) {
             KlarnaPaymentFinalizationValidator.validate(isFinalizationRequired = true)
@@ -406,7 +411,7 @@ class KlarnaComponentTest {
         initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
-        coEvery { validationErrorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
+        coEvery { validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>()) } just Runs
         mockkObject(KlarnaPaymentFinalizationValidator)
         component.isFinalizationRequired = false
         val validationError = mockk<PrimerValidationError>()
@@ -433,7 +438,7 @@ class KlarnaComponentTest {
             )
         }
         coVerify(exactly = 1) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(validationError)
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         assertEquals(emptyList<PrimerError>(), errors)
         assertEquals(
@@ -452,7 +457,7 @@ class KlarnaComponentTest {
         initComponent(isMockedFlow = false)
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
-        coEvery { validationErrorLoggingDelegate.logSdkAnalyticsErrors(any()) } just Runs
+        coEvery { validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>()) } just Runs
         mockkObject(KlarnaPaymentCategoryValidator)
         val validationError = mockk<PrimerValidationError>()
         every { KlarnaPaymentCategoryValidator.validate(any(), any()) } returns validationError
@@ -480,7 +485,7 @@ class KlarnaComponentTest {
             )
         }
         coVerify(exactly = 1) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(validationError)
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         coVerify(exactly = 0) {
             createKlarnaPaymentView.invoke(any(), any(), any(), any())
@@ -566,7 +571,8 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -653,7 +659,8 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -741,7 +748,8 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -834,7 +842,8 @@ class KlarnaComponentTest {
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())
@@ -929,7 +938,8 @@ class KlarnaComponentTest {
             errorLoggingDelegate.logSdkAnalyticsErrors(primerError)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())
@@ -1024,7 +1034,8 @@ class KlarnaComponentTest {
             baseErrorEventResolver.resolve(any(), any())
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         assertEquals(listOf<PrimerError>(primerError), errors)
         assertEquals(
@@ -1105,7 +1116,8 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         assertEquals(component.isFinalizationRequired, false)
         assertEquals(emptyList<PrimerError>(), errors)
@@ -1197,7 +1209,8 @@ class KlarnaComponentTest {
             klarnaTokenizationDelegate.tokenize(any(), any(), primerSessionIntent)
         }
         coVerify(exactly = 0) {
-            validationErrorLoggingDelegate.logSdkAnalyticsErrors(any())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerError>())
+            validationErrorLoggingDelegate.logSdkAnalyticsError(any<PrimerValidationError>())
         }
         verify(exactly = 0) {
             baseErrorEventResolver.resolve(any(), any())

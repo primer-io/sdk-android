@@ -1,52 +1,38 @@
 package io.primer.android.components.manager.nolPay.linkCard.component
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewModelScope
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.NolPayLinkDataValidatorRegistry
-import io.primer.android.components.manager.core.component.PrimerHeadlessCollectDataComponent
-import io.primer.android.components.manager.core.composable.PrimerHeadlessStartable
-import io.primer.android.components.manager.core.composable.PrimerHeadlessSteppable
-import io.primer.android.components.manager.core.composable.PrimerValidationStatus
+import io.primer.android.components.manager.nolPay.BaseNolPayComponent
 import io.primer.android.components.manager.nolPay.analytics.NolPayAnalyticsConstants
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.linkCard.di.NolPayLinkCardComponentProvider
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
-import io.primer.android.core.extensions.debounce
-import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.error.ErrorMapper
-import io.primer.android.domain.error.models.PrimerError
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
+@Suppress("LongParameterList")
 class NolPayLinkCardComponent internal constructor(
     private val linkPaymentCardDelegate: NolPayLinkPaymentCardDelegate,
-    private val validatorRegistry: NolPayLinkDataValidatorRegistry,
-    private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
-    private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
-    private val errorMapper: ErrorMapper,
+    validatorRegistry: NolPayLinkDataValidatorRegistry,
+    eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
+    errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
+    validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
+    errorMapper: ErrorMapper,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel(),
-    PrimerHeadlessStartable,
-    PrimerHeadlessCollectDataComponent<NolPayLinkCollectableData>,
-    PrimerHeadlessSteppable<NolPayLinkCardStep> {
-
-    private val _componentStep: MutableSharedFlow<NolPayLinkCardStep> = MutableSharedFlow()
-    override val componentStep: Flow<NolPayLinkCardStep> = _componentStep
-
-    private val _componentError: MutableSharedFlow<PrimerError> = MutableSharedFlow()
-    override val componentError: Flow<PrimerError> = _componentError
-
-    private val _componentValidationStatus:
-        MutableSharedFlow<PrimerValidationStatus<NolPayLinkCollectableData>> = MutableSharedFlow()
-    override val componentValidationStatus:
-        Flow<PrimerValidationStatus<NolPayLinkCollectableData>> = _componentValidationStatus
-
+) : BaseNolPayComponent<NolPayLinkCollectableData, NolPayLinkCardStep>(
+    validatorRegistry = validatorRegistry,
+    eventLoggingDelegate = eventLoggingDelegate,
+    errorLoggingDelegate = errorLoggingDelegate,
+    validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+    errorMapper = errorMapper
+) {
     private val _collectedData: MutableSharedFlow<NolPayLinkCollectableData> =
         MutableSharedFlow(replay = 1)
 
@@ -81,51 +67,6 @@ class NolPayLinkCardComponent internal constructor(
             }
         }
     }
-
-    private fun logSdkFunctionCalls(
-        methodName: String,
-        context: Map<String, String> = hashMapOf()
-    ) = viewModelScope.launch {
-        eventLoggingDelegate.logSdkAnalyticsEvent(
-            PaymentMethodType.NOL_PAY.name,
-            methodName,
-            context
-        )
-    }
-
-    private fun handleError(
-        throwable: Throwable
-    ) = viewModelScope.launch {
-        errorMapper.getPrimerError(throwable)
-            .also { error ->
-                _componentError.emit(error)
-            }.also { error ->
-                errorLoggingDelegate.logSdkAnalyticsErrors(error)
-            }
-    }
-
-    private val onCollectableDataUpdated: (NolPayLinkCollectableData) -> Unit =
-        viewModelScope.debounce { collectedData ->
-            _componentValidationStatus.emit(PrimerValidationStatus.Validating(collectedData))
-            val validationResult = validatorRegistry.getValidator(collectedData).validate(
-                collectedData
-            )
-            validationResult.onSuccess { errors ->
-                _componentValidationStatus.emit(
-                    when (errors.isEmpty()) {
-                        true -> PrimerValidationStatus.Valid(collectedData)
-                        false -> PrimerValidationStatus.Invalid(errors, collectedData)
-                    }
-                )
-            }.onFailure { throwable ->
-                _componentValidationStatus.emit(
-                    PrimerValidationStatus.Error(
-                        errorMapper.getPrimerError(throwable),
-                        collectedData
-                    )
-                )
-            }
-        }
 
     internal companion object {
         fun provideInstance(owner: ViewModelStoreOwner) =

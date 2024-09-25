@@ -18,6 +18,7 @@ import io.primer.android.components.manager.componentWithRedirect.component.Bank
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.componentWithRedirect.banks.delegate.BankIssuerTokenizationDelegate
 import io.primer.android.components.presentation.paymentMethods.componentWithRedirect.banks.delegate.GetBanksDelegate
 import io.primer.android.core.extensions.debounce
@@ -40,6 +41,7 @@ internal class DefaultBanksComponent constructor(
     private val bankIssuerTokenizationDelegate: BankIssuerTokenizationDelegate,
     private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
     private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
+    private val validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     private val errorMapper: ErrorMapper,
     private val savedStateHandle: SavedStateHandle,
     private val onFinished: () -> Unit
@@ -125,6 +127,7 @@ internal class DefaultBanksComponent constructor(
             PrimerValidationStatus.Validating(collectableData = filter)
         )
         if (banks == null) {
+            validationErrorLoggingDelegate.logSdkAnalyticsError(banksNotLoadedPrimerValidationError)
             _componentValidationStatus.emit(
                 PrimerValidationStatus.Invalid(
                     validationErrors = listOf(banksNotLoadedPrimerValidationError),
@@ -150,6 +153,7 @@ internal class DefaultBanksComponent constructor(
 
         _componentValidationStatus.emit(
             if (validationError != null) {
+                validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
                 PrimerValidationStatus.Invalid(
                     validationErrors = listOf(validationError),
                     collectableData = bankId

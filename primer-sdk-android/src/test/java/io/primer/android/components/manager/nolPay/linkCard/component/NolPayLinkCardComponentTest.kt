@@ -16,9 +16,10 @@ import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLin
 import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayLinkPaymentCardDelegate
-import io.primer.android.test.extensions.toListDuring
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.test.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -45,6 +46,9 @@ internal class NolPayLinkCardComponentTest {
     lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
 
     @RelaxedMockK
+    private lateinit var validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate
+
+    @RelaxedMockK
     lateinit var errorMapper: NolPayErrorMapper
 
     @RelaxedMockK
@@ -55,12 +59,13 @@ internal class NolPayLinkCardComponentTest {
     @BeforeEach
     fun setUp() {
         component = NolPayLinkCardComponent(
-            linkPaymentCardDelegate,
-            dataValidatorRegistry,
-            eventLoggingDelegate,
-            errorLoggingDelegate,
-            errorMapper,
-            savedStateHandle
+            linkPaymentCardDelegate = linkPaymentCardDelegate,
+            validatorRegistry = dataValidatorRegistry,
+            eventLoggingDelegate = eventLoggingDelegate,
+            errorLoggingDelegate = errorLoggingDelegate,
+            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+            errorMapper = errorMapper,
+            savedStateHandle = savedStateHandle
         )
     }
 
@@ -171,7 +176,10 @@ internal class NolPayLinkCardComponentTest {
             )
         }
 
-        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+        coVerify {
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
+            dataValidatorRegistry.getValidator(any()).validate(any())
+        }
     }
 
     @Test
@@ -196,7 +204,10 @@ internal class NolPayLinkCardComponentTest {
             )
         }
 
-        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+        coVerify {
+            validationErrorLoggingDelegate.logSdkAnalyticsError(errorMapper.getPrimerError(exception))
+            dataValidatorRegistry.getValidator(any()).validate(any())
+        }
     }
 
     @Test

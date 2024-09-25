@@ -24,12 +24,13 @@ internal class NolPayUnlinkCardComponentProvider : DISdkComponent {
                     extras: CreationExtras
                 ): T {
                     return NolPayUnlinkCardComponent(
-                        resolve(),
-                        resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
-                        resolve(),
-                        resolve(),
-                        resolve(NOL_PAY_ERROR_RESOLVER_NAME),
-                        extras.createSavedStateHandle()
+                        unlinkPaymentCardDelegate = resolve(),
+                        eventLoggingDelegate = resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
+                        errorLoggingDelegate = resolve(),
+                        validationErrorLoggingDelegate = resolve(),
+                        validatorRegistry = resolve(),
+                        errorMapper = resolve(NOL_PAY_ERROR_RESOLVER_NAME),
+                        savedStateHandle = extras.createSavedStateHandle()
                     ) as T
                 }
             }

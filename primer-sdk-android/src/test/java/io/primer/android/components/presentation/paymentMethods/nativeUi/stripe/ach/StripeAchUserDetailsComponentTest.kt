@@ -23,6 +23,7 @@ import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.analytics.StripeAchUserDetailsAnalyticsConstants
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.AchUserDetailsCollectableData
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.AchUserDetailsStep
@@ -65,6 +66,9 @@ class StripeAchUserDetailsComponentTest {
     @MockK
     private lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
 
+    @RelaxedMockK
+    private lateinit var validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate
+
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
 
@@ -100,6 +104,7 @@ class StripeAchUserDetailsComponentTest {
             stripeAchTokenizationDelegate = stripeAchTokenizationDelegate,
             eventLoggingDelegate = eventLoggingDelegate,
             errorLoggingDelegate = errorLoggingDelegate,
+            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
             errorEventResolver = baseErrorEventResolver,
             savedStateHandle = savedStateHandle,
             primerSettings = primerSettings,
@@ -115,6 +120,7 @@ class StripeAchUserDetailsComponentTest {
             stripeAchTokenizationDelegate,
             eventLoggingDelegate,
             errorLoggingDelegate,
+            validationErrorLoggingDelegate,
             errorMapper
         )
     }
@@ -373,6 +379,7 @@ class StripeAchUserDetailsComponentTest {
                 StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         verify {
             FirstNameValidator.validate(value = " ")
@@ -420,6 +427,7 @@ class StripeAchUserDetailsComponentTest {
                 StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         verify {
             LastNameValidator.validate(value = " ")
@@ -467,6 +475,7 @@ class StripeAchUserDetailsComponentTest {
                 StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         verify {
             EmailAddressValidator.validate(emailAddress = collectableData.value)
@@ -521,6 +530,7 @@ class StripeAchUserDetailsComponentTest {
                 StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         coVerify(exactly = 3) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
@@ -593,6 +603,7 @@ class StripeAchUserDetailsComponentTest {
                 StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         coVerify(exactly = 3) {
             eventLoggingDelegate.logSdkAnalyticsEvent(
@@ -665,6 +676,7 @@ class StripeAchUserDetailsComponentTest {
                 StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name
             )
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
         }
         coVerify(exactly = 3) {
             eventLoggingDelegate.logSdkAnalyticsEvent(

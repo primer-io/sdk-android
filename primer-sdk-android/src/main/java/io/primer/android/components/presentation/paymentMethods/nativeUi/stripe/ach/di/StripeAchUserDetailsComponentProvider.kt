@@ -30,6 +30,7 @@ internal object StripeAchUserDetailsComponentProvider : DISdkComponent {
                     PrimerPaymentMethodManagerCategory.NATIVE_UI.name
                 ),
                 errorLoggingDelegate = resolve(),
+                validationErrorLoggingDelegate = resolve(),
                 errorEventResolver = resolve(),
                 savedStateHandle = runCatching {
                     extras.createSavedStateHandle()

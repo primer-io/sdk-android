@@ -26,6 +26,7 @@ import io.primer.android.components.manager.banks.composable.BanksStep
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.componentWithRedirect.banks.delegate.BankIssuerTokenizationDelegate
 import io.primer.android.components.presentation.paymentMethods.componentWithRedirect.banks.delegate.GetBanksDelegate
 import io.primer.android.domain.error.ErrorMapper
@@ -63,6 +64,9 @@ class DefaultBanksComponentTest {
     @MockK
     private lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
 
+    @RelaxedMockK
+    private lateinit var validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate
+
     @MockK
     private lateinit var errorMapper: ErrorMapper
 
@@ -84,6 +88,7 @@ class DefaultBanksComponentTest {
             bankIssuerTokenizationDelegate = bankIssuerTokenizationDelegate,
             eventLoggingDelegate = eventLoggingDelegate,
             errorLoggingDelegate = errorLoggingDelegate,
+            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
             errorMapper = errorMapper,
             savedStateHandle = savedStateHandle,
             onFinished = onFinished
@@ -101,6 +106,7 @@ class DefaultBanksComponentTest {
             bankIssuerTokenizationDelegate,
             eventLoggingDelegate,
             errorLoggingDelegate,
+            validationErrorLoggingDelegate,
             errorMapper,
             onFinished
         )
@@ -215,8 +221,12 @@ class DefaultBanksComponentTest {
 
     @Test
     fun `updateCollectedData() should log event, debounce input, emit invalid status when called with query before bank list is loaded`() = runTest {
+        val validationError = PrimerValidationError(
+            errorId = BanksValidations.BANKS_NOT_LOADED_ERROR_ID,
+            description = "Banks need to be loaded before bank id can be collected.",
+            diagnosticsId = "uuid"
+        )
         coEvery { eventLoggingDelegate.logSdkAnalyticsEvent(any(), any()) } just Runs
-        val banks = mockk<List<IssuingBank>>()
         val collectableData = BanksCollectableData.Filter("query")
         val errors = mutableListOf<PrimerError>()
         val errorJob = component.componentError.collectIn(errors, this)
@@ -240,6 +250,9 @@ class DefaultBanksComponentTest {
                 paymentMethodType = paymentMethodType
             )
         }
+        coVerify {
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
+        }
         coVerify(exactly = 0) {
             getBanksDelegate.getBanks(query = any())
         }
@@ -247,15 +260,7 @@ class DefaultBanksComponentTest {
         assertEquals(
             listOf(
                 PrimerValidationStatus.Validating(collectableData),
-                PrimerValidationStatus.Invalid(
-                    listOf(
-                        PrimerValidationError(
-                            errorId = BanksValidations.BANKS_NOT_LOADED_ERROR_ID,
-                            description = "Banks need to be loaded before bank id can be collected."
-                        )
-                    ),
-                    collectableData
-                )
+                PrimerValidationStatus.Invalid(listOf(validationError), collectableData)
             ),
             validationStatuses
         )
@@ -342,6 +347,7 @@ class DefaultBanksComponentTest {
                     methodName = BanksAnalyticsConstants.BANKS_COLLECTED_DATA_METHOD,
                     paymentMethodType = paymentMethodType
                 )
+                validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
             }
             assertEquals(emptyList(), errors)
             assertEquals(

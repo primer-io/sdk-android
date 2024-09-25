@@ -284,7 +284,7 @@ class KlarnaComponent internal constructor(
                     collectableData = paymentOptions
                 ).also { invalidValidationStatus ->
                     invalidValidationStatus.validationErrors.forEach { error ->
-                        validationErrorLoggingDelegate.logSdkAnalyticsErrors(error)
+                        validationErrorLoggingDelegate.logSdkAnalyticsError(error)
                     }
                 }
             } else {
@@ -345,7 +345,7 @@ class KlarnaComponent internal constructor(
                     validationErrors = listOf(validationError),
                     collectableData = finalizePayment
                 ).also {
-                    validationErrorLoggingDelegate.logSdkAnalyticsErrors(validationError)
+                    validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
                 }
             }
         )

@@ -47,6 +47,7 @@ internal object BanksComponentProvider : DISdkComponent {
                     PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT.name
                 ),
                 errorLoggingDelegate = resolve(),
+                validationErrorLoggingDelegate = resolve(),
                 errorMapper = resolve(BanksContainer.BANKS_ERROR_RESOLVER_NAME),
                 savedStateHandle = runCatching {
                     extras.createSavedStateHandle()
