@@ -3,21 +3,43 @@ package io.primer.android.components.presentation.paymentMethods.analytics.deleg
 import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.analytics.domain.models.BaseContextParams
 import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.domain.error.models.PrimerError
 import kotlinx.coroutines.flow.collect
 
 internal class SdkAnalyticsValidationErrorLoggingDelegate(
     private val analyticsInteractor: AnalyticsInteractor
 ) {
-    suspend fun logSdkAnalyticsErrors(error: PrimerValidationError) = analyticsInteractor(
-        MessageAnalyticsParams(
-            messageType = MessageType.VALIDATION_FAILED,
-            message = error.description,
-            severity = Severity.WARN,
-            diagnosticsId = error.diagnosticsId,
-            context = ErrorContextParams(errorId = error.errorId)
-        )
-    ).collect()
+    suspend fun logSdkAnalyticsError(error: PrimerError) = logSdkAnalyticsError(
+        description = error.description,
+        diagnosticsId = error.diagnosticsId,
+        errorId = error.errorId,
+        context = error.context
+    )
+
+    suspend fun logSdkAnalyticsError(error: PrimerValidationError) = logSdkAnalyticsError(
+        description = error.description,
+        diagnosticsId = error.diagnosticsId,
+        errorId = error.errorId
+    )
+
+    private suspend fun logSdkAnalyticsError(
+        description: String,
+        diagnosticsId: String,
+        errorId: String,
+        context: BaseContextParams? = null
+    ) {
+        analyticsInteractor(
+            MessageAnalyticsParams(
+                messageType = MessageType.VALIDATION_FAILED,
+                message = description,
+                severity = Severity.WARN,
+                diagnosticsId = diagnosticsId,
+                context = context ?: ErrorContextParams(errorId = errorId)
+            )
+        ).collect()
+    }
 }

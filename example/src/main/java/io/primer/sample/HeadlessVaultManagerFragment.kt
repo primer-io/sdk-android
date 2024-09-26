@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager
 import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface
+import io.primer.android.domain.payments.additionalInfo.AchAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
@@ -28,6 +29,7 @@ import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.utils.showMandateDialog
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
@@ -136,21 +138,21 @@ class HeadlessVaultManagerFragment : Fragment() {
                             Log.d(TAG, "onAdditionalInfoReceived: $state.additionalInfo")
                         }
 
-//                        is AchAdditionalInfo.DisplayMandate -> {
-//                            requireContext().showMandateDialog(
-//                                text = "Would you like to accept this mandate?",
-//                                onOkClick = {
-//                                    lifecycleScope.launch {
-//                                        (state.additionalInfo).onAcceptMandate.invoke()
-//                                    }
-//                                },
-//                                onCancelClick = {
-//                                    lifecycleScope.launch {
-//                                        (state.additionalInfo).onDeclineMandate.invoke()
-//                                    }
-//                                }
-//                            )
-//                        }
+                        is AchAdditionalInfo.DisplayMandate -> {
+                            requireContext().showMandateDialog(
+                                text = "Would you like to accept this mandate?",
+                                onOkClick = {
+                                    lifecycleScope.launch {
+                                        (state.additionalInfo).onAcceptMandate.invoke()
+                                    }
+                                },
+                                onCancelClick = {
+                                    lifecycleScope.launch {
+                                        (state.additionalInfo).onDeclineMandate.invoke()
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
 

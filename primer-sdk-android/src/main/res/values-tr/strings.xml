@@ -1,160 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="pay">Öde</string>
-    <string name="pay_specific_amount">%s öde</string>
-    <string name="add_new_payment_method">Bir ödeme yöntemi ekleyin</string>
-    <string name="pay_by_card">Kart ile öde</string>
+    <string name="accept_button">Accept</string>
     <string name="add_bank_account">Banka hesabı ekle</string>
-    <string name="other_ways_to_pay">Diğer ödeme yolları</string>
-    <string name="edit_saved_payment_methods">Kaydedilen kartları düzenle</string>
-    <string name="edit">Düzenle</string>
-    <string name="done">Tamam</string>
-    <string name="delete">Sil</string>
     <string name="add_card">Kart ekle</string>
-    <string name="card_network_fallback">Kart</string>
-    <string name="success_text">Başarılı!</string>
-    <string name="bank_account">Banka Hesabı</string>
-    <string name="enter_card_details">Kart bilgilerini girin</string>
-    <string name="last_four">•••• %d</string>
-    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="add_new_payment_method">Bir ödeme yöntemi ekleyin</string>
+    <string name="additional_fees_may_apply">Ek ücret uygulanabilir</string>
+    <string name="addressLine1">Adres satırı 1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Adres satırı 1 zorunlu</string>
+    <string name="addressLine2">Adres satırı 2</string>
     <string name="available_payment_methods">Mevcut ödeme yöntemleri</string>
-    <string name="card_holder_name">Kart sahibinin adı</string>
-    <string name="card_number">Kart numarası</string>
-    <string name="card_expiry">Son kullanma tarihi</string>
+    <string name="bank_account">Banka Hesabı</string>
+    <string name="bank_selection_error_message">Banka yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin.</string>
+    <string name="bank_selection_hint">Banka ara</string>
+    <string name="bank_selection_title">Bankanızı seçin</string>
+    <string name="bank_selection_try_again">Tekrar deneyin</string>
+    <string name="billingAddressLabel">Fatura adresi</string>
+    <!-- Navigation -->
+    <string name="cancel">İptal</string>
+    <string name="cancel_payment_button">Cancel payment</string>
     <string name="card_cvv">CVV</string>
+    <string name="card_details">Kart bilgileri</string>
+    <string name="card_expiry">Son kullanma tarihi</string>
+    <string name="card_expiry_formatted">Son kullanma tarihi (AA/YY)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Kart sahibinin adı</string>
+    <string name="card_name_on_card">Karttaki ad</string>
+    <string name="card_network_fallback">Kart</string>
+    <string name="card_number">Kart numarası</string>
     <string name="card_zip">Posta kodu</string>
-    <string name="form_error_required">%1$s gereklidir</string>
-    <string name="form_error_invalid">%1$s geçersiz</string>
-    <string name="payment_method_error">Başka bir ödeme yöntemi seçin</string>
-    <string name="sepa_core_description">SEPA Temel Otomatik Ödeme Talimatı</string>
-    <string name="iban">IBAN</string>
+    <string name="check_icon">çek simgesi</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Ödeme yöntemini seç</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Şehir zorunlu</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Şehir</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Ödemeni tamamla</string>
+    <string name="completeYourPaymentInTheApp">Ödemeni %s içinde tamamla</string>
+    <string name="confirm">Teyit edin</string>
     <string name="confirm_dd_mandate">Talimatı onayla</string>
-    <string name="name">Ad</string>
+    <string name="confirmToPayButtonTitle">Ödemeyi onayla</string>
+    <string name="continue_button">Devam Et</string>
+    <string name="country_search_hint">Ülke bul</string>
+    <string name="country_select">Ülke seç</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Ülke gerekli</string>
+    <string name="countryLabel">Ülke</string>
+    <string name="credit_debit_card">Kredi/banka kartı</string>
+    <string name="data_will_be_lost">Verileriniz silinecektir</string>
+    <string name="dd_cancel_message">Banka hesabı eklemeyi iptal etmek mi istiyorsunuz?</string>
+    <string name="dd_mandate_error">Tüm bilgilerinizin doğru olduğundan emin olun</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Bu talimat formunu imzalayarak (A) %1$s kişisine bankanıza hesabınızdan ödeme alma talimatı gönderme ve (B) bankanıza da
+        %1$s kişisinden gelen talimatlar uyarınca hesabınızdan ödemeyi gerçekleştirme izni verirsiniz.
+    "</string>
+    <string name="delete">Sil</string>
+    <string name="done">Tamam</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Vade:</string>
+    <string name="edit">Düzenle</string>
+    <string name="edit_saved_payment_methods">Kaydedilen kartları düzenle</string>
     <string name="email">E-posta</string>
     <string name="email_address">Email address</string>
-    <string name="addressLine1">Adres satırı 1</string>
-    <string name="addressLine2">Adres satırı 2 (opsiyonel)</string>
-    <string name="cityLabel">Şehir</string>
-    <string name="stateLabel">Eyalet</string>
-    <string name="countryLabel">Ülke</string>
-    <string name="postalCodeLabel">Posta Kodu</string>
-    <string name="dd_mandate_error">Tüm bilgilerinizin doğru olduğundan emin olun</string>
-    <string name="dd_cancel_message">Banka hesabı eklemeyi iptal etmek mi istiyorsunuz?</string>
-    <string name="data_will_be_lost">Verileriniz silinecektir</string>
-    <string name="enter_name">Adınızı girin</string>
-    <string name="enter_email">E-postanızı girin</string>
     <string name="enter_address">Adresinizi girin</string>
-    <string name="first_last_name">İsim ve soyad</string>
-    <string name="firstNameLabel">İsim</string>
-    <string name="lastNameLabel">Soyad</string>
-    <string name="bank_selection_title">Bankanızı seçin</string>
-    <string name="bank_selection_hint">Banka ara</string>
-    <string name="bank_selection_error_message">Banka yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin.</string>
-    <string name="bank_selection_try_again">Tekrar deneyin</string>
-    <string name="cancel">İptal</string>
-    <string name="next">Sonraki</string>
-    <string name="confirm">Teyit edin</string>
-    <string name="go_back_description">geri dön</string>
-    <string name="dd_mandate_legal">\n        Bu talimat formunu imzalayarak (A) %1$s kişisine bankanıza hesabınızdan ödeme alma talimatı gönderme ve (B) bankanıza da\n        %1$s kişisinden gelen talimatlar uyarınca hesabınızdan ödemeyi gerçekleştirme izni verirsiniz.\n    </string>
-    <string name="mbway">Mb Way</string>
-    <string name="sepa">SEPA</string>
-    <string name="choose_payment_method">Ödeme yöntemini seç</string>
-    <string name="saved_payment_methods">KAYITLI ÖDEME YÖNTEMİ</string>
-    <string name="other_ways_of_paying">Diğer ödeme yöntemleri</string>
-    <string name="manage">Yönet</string>
-    <string name="mastercard">Mastercard</string>
-    <string name="john_doe">John Doe</string>
-    <string name="last_four_with_dots">•••• 1234</string>
-    <string name="expires_12_21">Son kullanma tarihi 12 / 21</string>
-    <string name="payment_method_icon">ödeme yöntemi simgesi</string>
-    <string name="test_mail_com">test@mail.com</string>
-    <string name="icon_showing_state">durumu gösteren simge</string>
-    <string name="check_icon">çek simgesi</string>
-    <string name="payment_method_deletion_message">Bu ödeme yöntemini silmek istediğinizden emin misiniz?</string>
-    <string name="credit_debit_card">Kredi/banka kartı</string>
-    <string name="payment_method_added_message">\n        Ödeme yönteminiz\n\n         başarıyla eklendi!\n    </string>
-    <string name="payment_request_completed_successfully">Ödemeniz başarıyla tamamlandı!</string>
-    <string name="payment_method_not_added_message">\n        Ödeme yönteminiz eklenemedi.\n    </string>
+    <string name="enter_card_details">Kart bilgilerini girin</string>
+    <string name="enter_email">E-postanızı girin</string>
+    <string name="enter_name">Adınızı girin</string>
     <string name="error_default">Hata!</string>
-    <string name="payment_request_unsuccessful">Ödemeniz başarısız oldu.</string>
+    <string name="expires_12_21">Son kullanma tarihi 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST Banka Transferi</string>
+    <string name="first_last_name">İsim ve soyad</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">İsim gerekli</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">İsim</string>
+    <string name="form_error_invalid">%1$s geçersiz</string>
+    <string name="form_error_required">%1$s gereklidir</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">geri dön</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">durumu gösteren simge</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
     <string name="input_description_otp">Bankacılık uygulamanızdan kodu alın.</string>
+    <!-- 6 digit code - Text field top placeholder -->
     <string name="input_hint_form_blik_otp">6 haneli kod</string>
-    <string name="input_title_phone_number">Telefon numaranızı giriniz</string>
     <string name="input_hint_form_phone_number">Telefon numarası</string>
-    <string name="payment_method_blik_loading_placeholder">Ödemenizi Blik uygulamasında tamamlayın</string>
-    <string name="completeYourPaymentInTheApp">Ödemenizi %sında tamamlayın</string>
     <string name="input_title_bank_details">Banka bilgilerini giriniz</string>
-    <string name="payment_method_xfers_title">Ödemek için tarayın ya da kaydedin</string>
-    <string name="payment_method_xfers_description">Ekran görüntüsünü bankacılık uygulamanızda yükleyin</string>
-    <string name="no_additional_fee">Ek ücret yok</string>
-    <string name="additional_fees_may_apply">Ek ücret uygulanabilir</string>
-    <string name="pay_with_crypto">Pay with crypto</string>
-    <string name="twoc_2p_button">Pay in installments</string>
-    <string name="pay_with">Pay with</string>
-    <string name="primer_test_header_description">This is a mocked flow for sandbox. Choose the result you want to test from the list below.</string>
+    <string name="input_title_phone_number">Telefon numaranızı giriniz</string>
+    <string name="john_doe">John Doe</string>
     <string name="label_authorized">Yetkilendirildi</string>
     <string name="label_declined">Reddedildi</string>
     <string name="label_failed">Başarısız</string>
-    <string name="country_search_hint">Bir ülke bul</string>
-    <string name="billingAddressLabel">Fatura adresi</string>
-    <string name="pay_with_card">Pay with card</string>
-    <string name="card_details">Card details</string>
-    <string name="postalCodeErrorRequired">Posta kodu zorunlu</string>
-    <string name="countryCodeErrorRequired">Ülke gerekli</string>
-    <string name="cityErrorRequired">Şehir zorunlu</string>
-    <string name="stateErrorRequired">Eyalet, Bölge ya da İlçe gerekli</string>
-    <string name="addressLine1ErrorRequired">Adres satırı 1 zorunlu</string>
-    <string name="firstNameErrorRequired">İsim gerekli</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
     <string name="lastNameErrorRequired">Soyadı gerekli</string>
-    <string name="completeYourPayment">Complete your payment</string>
-    <string name="dueAt">Due at</string>
-    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
-    <string name="fast_bank_transfer">FAST Bank Transfer</string>
-    <string name="scanToPay">Scan to pay or take a screenshot</string>
-    <string name="uploadScreenshot">Upload the screenshot in your banking app</string>
-    <string name="phone_code_search_hint">Find code</string>
-    <string name="search_result">Search results</string>
-    <string name="search_placeholder">Search</string>
-    <string name="country_select">Select country</string>
-    <string name="no_results">No results</string>
-    <string name="no_results_for_query">Sorry, no results\nfound that match “%s”</string>
-    <string name="confirmToPayButtonTitle">Confirm to pay</string>
-    <string name="multibancoTitleConditions">Complete your payment</string>
-    <string name="multibancoPayment1Step">Please make the payment at an ATM, or using online banking.</string>
-    <string name="multibancoPayment2Step">Go to a Multibanco ATM, select the Multibanco payment method and enter the payment details</string>
-    <string name="multibancoPayment3Step">Login to your online banking to pay by bank transfer using the payment details</string>
-    <string name="multibancoCompleteDescription">Please make the payment at an ATM, or using online banking.</string>
-    <string name="multibancoEntity">Entity</string>
-    <string name="multibancoReference">Reference</string>
-    <string name="multibancoAmount">Amount</string>
-    <string name="card_name_on_card">Name on card</string>
-    <string name="save_this_card">Save this card</string>
-    <string name="card_expiry_formatted">Expiry (MM/YY)</string>
-    <string name="primer_payment_method_button_content_description">Pay with %s</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Soyadı</string>
+    <string name="loading_text">Yükleniyor</string>
+    <string name="manage">Yönet</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Mock Klarna görüntüsü</string>
+    <string name="multibancoAmount">Tutar</string>
+    <string name="multibancoCompleteDescription">Lütfen ödemeyi ATM\'den veya internet bankacılığını kullanarak yapın.</string>
+    <string name="multibancoEntity">Varlık</string>
+    <string name="multibancoPayment1Step">Lütfen ödemeyi ATM\'den veya internet bankacılığını kullanarak yapın.</string>
+    <string name="multibancoPayment2Step">Bir Multibanco ATM\'sine git, Multibanco ödeme yöntemini seç ve ödeme bilgilerini gir</string>
+    <string name="multibancoPayment3Step">Ödeme bilgilerini kullanarak banka transferi yoluyla ödeme yapmak için internet bankacılığına giriş yap</string>
+    <string name="multibancoReference">Referans</string>
+    <string name="multibancoTitleConditions">Ödemeni tamamla</string>
+    <string name="name">Ad</string>
+    <string name="next">Sonraki</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Ek ücret yok</string>
+    <string name="no_results">Sonuç yok</string>
+    <string name="no_results_for_query">Üzgünüz, “%s” ile\neşleşen sonuç bulunamadı</string>
+    <string name="other_ways_of_paying">Diğer ödeme yöntemleri</string>
+    <string name="other_ways_to_pay">Diğer ödeme yolları</string>
+    <string name="pay">Öde</string>
+    <string name="pay_by_card">Kart ile öde</string>
+    <string name="pay_specific_amount">%s öde</string>
+    <string name="pay_with">Ödeme yöntemi</string>
     <string name="pay_with_ach">Pay with ACH</string>
-    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
-    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
-    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
-    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
-    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
-    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
-    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
-    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
-    <string name="stripe_ach_mandate_accept_button">Accept</string>
-    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
-    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
-    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
-    <string name="loading_text">Loading</string>
-    <string name="continue_button">Devam et</string>
+    <string name="pay_with_card">Kartla öde</string>
+    <string name="pay_with_crypto">Kripto ile öde</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Ödeme yönteminiz
+
+         başarıyla eklendi!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Ödemenizi Blik uygulamasında tamamlayın</string>
+    <string name="payment_method_deletion_message">Bu ödeme yöntemini silmek istediğinizden emin misiniz?</string>
+    <string name="payment_method_error">Başka bir ödeme yöntemi seçin</string>
+    <string name="payment_method_icon">ödeme yöntemi simgesi</string>
+    <string name="payment_method_not_added_message">"
+        Ödeme yönteminiz eklenemedi.
+    "</string>
+    <string name="payment_method_xfers_description">Ekran görüntüsünü bankacılık uygulamanızda yükleyin</string>
+    <string name="payment_method_xfers_title">Ödemek için tarayın ya da kaydedin</string>
+    <string name="payment_request_completed_successfully">Ödemeniz başarıyla tamamlandı!</string>
+    <string name="payment_request_unsuccessful">Ödemeniz başarısız oldu.</string>
+    <string name="phone_code_search_hint">Kodu bul</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Lütfen FAST (tercih edilen), MEPS veya GIRO ile Singapur merkezli banka hesabınızı kullanarak verilen DBS banka hesabına parayı transfer edin.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Posta kodu zorunlu</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Posta kodu</string>
     <!-- CVV- CVV recapture explanation label -->
     <string name="primer_cvv_recapture_explanation">Güvenli bir ödeme için kartınızdaki %d basamaklı güvenlik kodunu girin.</string>
     <!-- CVV - CVV recapture screen title -->
     <string name="primer_cvv_recapture_title">CVV gir</string>
+    <string name="primer_payment_method_button_content_description">%s ile öde</string>
+    <string name="primer_test_header_description">Bu, korumalı alan için örnek bir akıştır. Aşağıdaki listeden test etmek istediğin sonucu seç.</string>
     <string name="retry_button">Retry</string>
-    <string name="choose_other_payment_method_button">Choose other payment method</string>
-    <string name="session_complete_payment_success_title">Payment authorized</string>
-    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="save_this_card">Bu kartı kaydet</string>
+    <string name="saved_payment_methods">KAYITLI ÖDEME YÖNTEMİ</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Ödemek için tarayın ya da ekran görüntüsü alın</string>
+    <string name="search_placeholder">Ara</string>
+    <string name="search_result">Arama sonuçları</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA Temel Otomatik Ödeme Talimatı</string>
     <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
-
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Eyalet, Bölge ya da İlçe gerekli</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Eyalet / Bölge / İlçe</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">başarılı</string>
+    <string name="success_text">Başarılı!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Taksitle öde</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Ekran görüntüsünü bankacılık uygulamanızda yükleyin</string>
 </resources>

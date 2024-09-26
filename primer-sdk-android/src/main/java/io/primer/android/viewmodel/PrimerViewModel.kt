@@ -85,6 +85,7 @@ import kotlin.time.TimeSource
 @ExperimentalCoroutinesApi
 @Suppress("LongParameterList", "TooManyFunctions")
 internal class PrimerViewModel(
+    private val context: Context,
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
@@ -334,7 +335,7 @@ internal class PrimerViewModel(
             val isDarkMode = config.settings.uiOptions.theme.isDarkMode == true
             when (it.buttonMetadata?.text.isNullOrBlank()) {
                 true -> it.toImageDisplayMetadata(isDarkMode)
-                false -> it.toTextDisplayMetadata(isDarkMode)
+                false -> it.toTextDisplayMetadata(isDarkMode, context)
             }
         }
 

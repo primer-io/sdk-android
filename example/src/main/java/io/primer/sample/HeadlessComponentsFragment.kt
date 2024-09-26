@@ -22,6 +22,7 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
+import io.primer.android.domain.payments.additionalInfo.AchAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
 import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.sample.constants.PrimerHeadlessCallbacks
@@ -31,6 +32,7 @@ import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.klarna.KlarnaPaymentFragment.Companion.PRIMER_SESSION_INTENT_ARG
 import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.utils.showMandateDialog
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
@@ -182,27 +184,27 @@ class HeadlessComponentsFragment : Fragment() {
                                 )
                             }
 
-//                            is AchAdditionalInfo.ProvideActivityResultRegistry -> {
-//                                state.additionalInfo.provide(
-//                                    requireActivity().activityResultRegistry
-//                                )
-//                            }
-//
-//                            is AchAdditionalInfo.DisplayMandate -> {
-//                                requireContext().showMandateDialog(
-//                                    text = "Would you like to accept this mandate?",
-//                                    onOkClick = {
-//                                        lifecycleScope.launch {
-//                                            (state.additionalInfo).onAcceptMandate.invoke()
-//                                        }
-//                                    },
-//                                    onCancelClick = {
-//                                        lifecycleScope.launch {
-//                                            (state.additionalInfo).onDeclineMandate.invoke()
-//                                        }
-//                                    }
-//                                )
-//                            }
+                            is AchAdditionalInfo.ProvideActivityResultRegistry -> {
+                                state.additionalInfo.provide(
+                                    requireActivity().activityResultRegistry
+                                )
+                            }
+
+                            is AchAdditionalInfo.DisplayMandate -> {
+                                requireContext().showMandateDialog(
+                                    text = "Would you like to accept this mandate?",
+                                    onOkClick = {
+                                        lifecycleScope.launch {
+                                            state.additionalInfo.onAcceptMandate.invoke()
+                                        }
+                                    },
+                                    onCancelClick = {
+                                        lifecycleScope.launch {
+                                            state.additionalInfo.onDeclineMandate.invoke()
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
 

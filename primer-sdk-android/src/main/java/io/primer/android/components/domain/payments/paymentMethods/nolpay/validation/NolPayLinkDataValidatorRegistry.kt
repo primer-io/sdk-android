@@ -3,13 +3,12 @@ package io.primer.android.components.domain.payments.paymentMethods.nolpay.valid
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayLinkMobileNumberDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayLinkOtpDataValidator
 import io.primer.android.components.domain.payments.paymentMethods.nolpay.validation.validator.NolPayLinkTagDataValidator
-import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.components.manager.nolPay.core.composable.NolPayCollectableData
-import io.primer.android.di.DISdkComponent
+import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.di.extension.resolve
 import kotlin.reflect.KClass
 
-internal class NolPayLinkDataValidatorRegistry : DISdkComponent {
+internal class NolPayLinkDataValidatorRegistry : NolPayValidatorRegistry {
 
     private val registry:
         Map<KClass<out NolPayLinkCollectableData>,
@@ -20,7 +19,7 @@ internal class NolPayLinkDataValidatorRegistry : DISdkComponent {
             NolPayLinkCollectableData.NolPayTagData::class to NolPayLinkTagDataValidator()
         )
 
-    fun getValidator(data: NolPayCollectableData): NolPayDataValidator<NolPayCollectableData> =
+    override fun getValidator(data: NolPayCollectableData): NolPayDataValidator<NolPayCollectableData> =
         registry[data::class] ?: throw IllegalArgumentException(
             NOL_DATA_VALIDATOR_NOT_SUPPORTED_MESSAGE
         )

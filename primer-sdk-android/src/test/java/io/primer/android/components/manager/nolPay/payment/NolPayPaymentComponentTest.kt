@@ -16,10 +16,11 @@ import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaym
 import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.base.DefaultHeadlessManagerDelegate
 import io.primer.android.components.presentation.paymentMethods.nolpay.delegate.NolPayStartPaymentDelegate
-import io.primer.android.test.extensions.toListDuring
 import io.primer.android.data.configuration.models.PaymentMethodType
+import io.primer.android.test.extensions.toListDuring
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -49,6 +50,9 @@ internal class NolPayPaymentComponentTest {
     lateinit var errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate
 
     @RelaxedMockK
+    private lateinit var validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate
+
+    @RelaxedMockK
     lateinit var errorMapper: NolPayErrorMapper
 
     private lateinit var component: NolPayPaymentComponent
@@ -56,12 +60,13 @@ internal class NolPayPaymentComponentTest {
     @BeforeEach
     fun setUp() {
         component = NolPayPaymentComponent(
-            startPaymentDelegate,
-            headlessManagerDelegate,
-            eventLoggingDelegate,
-            errorLoggingDelegate,
-            dataValidatorRegistry,
-            errorMapper
+            startPaymentDelegate = startPaymentDelegate,
+            headlessManagerDelegate = headlessManagerDelegate,
+            eventLoggingDelegate = eventLoggingDelegate,
+            errorLoggingDelegate = errorLoggingDelegate,
+            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+            validatorRegistry = dataValidatorRegistry,
+            errorMapper = errorMapper
         )
     }
 
@@ -173,7 +178,10 @@ internal class NolPayPaymentComponentTest {
             )
         }
 
-        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+        coVerify {
+            validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
+            dataValidatorRegistry.getValidator(any()).validate(any())
+        }
     }
 
     @Test
@@ -197,7 +205,10 @@ internal class NolPayPaymentComponentTest {
             )
         }
 
-        coVerify { dataValidatorRegistry.getValidator(any()).validate(any()) }
+        coVerify {
+            validationErrorLoggingDelegate.logSdkAnalyticsError(errorMapper.getPrimerError(exception))
+            dataValidatorRegistry.getValidator(any()).validate(any())
+        }
     }
 
     @Test

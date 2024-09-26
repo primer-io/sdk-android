@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">은행 계좌 추가</string>
+    <string name="add_card">카드 추가</string>
+    <string name="add_new_payment_method">결제 수단 추가</string>
+    <string name="additional_fees_may_apply">추가 수수료가 적용될 수 있음</string>
+    <string name="addressLine1">주소 1번 줄</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">주소 1은 필수입니다</string>
+    <string name="addressLine2">주소 2번 줄</string>
+    <string name="available_payment_methods">이용 가능한 결제 수단</string>
+    <string name="bank_account">은행 계좌</string>
+    <string name="bank_selection_error_message">은행을 불러오지 못했습니다. 연결을 확인한 후 다시 시도해 주세요.</string>
+    <string name="bank_selection_hint">은행 검색</string>
+    <string name="bank_selection_title">은행 선택</string>
+    <string name="bank_selection_try_again">다시 시도</string>
+    <string name="billingAddressLabel">청구 주소</string>
+    <!-- Navigation -->
+    <string name="cancel">취소</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">카드 세부 정보</string>
+    <string name="card_expiry">만료일</string>
+    <string name="card_expiry_formatted">만료(MM/YY)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">카드 소지자 이름</string>
+    <string name="card_name_on_card">카드 소유자 이름</string>
+    <string name="card_network_fallback">카드</string>
+    <string name="card_number">카드 번호</string>
+    <string name="card_zip">우편번호</string>
+    <string name="check_icon">체크 아이콘</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">결제 수단 선택</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">시는 필수입니다</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">시</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">결제를 완료하세요.</string>
+    <string name="completeYourPaymentInTheApp">%s 이내에 결제를 완료하세요.</string>
+    <string name="confirm">확인</string>
+    <string name="confirm_dd_mandate">위임 확인</string>
+    <string name="confirmToPayButtonTitle">결제 확인하기</string>
+    <string name="continue_button">계속</string>
+    <string name="country_search_hint">국가 찾기</string>
+    <string name="country_select">국가 선택하기</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">국가는 필수입니다</string>
+    <string name="countryLabel">국가</string>
+    <string name="credit_debit_card">신용카드/체크카드</string>
+    <string name="data_will_be_lost">데이터가 삭제됩니다</string>
+    <string name="dd_cancel_message">은행 계좌 추가를 취소하시겠습니까?</string>
+    <string name="dd_mandate_error">모든 정보가 정확한지 확인해 주세요</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        이 위임 양식에 서명하면 (A) %1$s이(가) 귀하의 계좌에서 인출하도록 귀하의 은행에 요청을 보내고 (B) 귀하의 은행이 %1$s의 요청에 따라
+        귀하의 계좌에서 인출하는 것을 승인합니다.
+    "</string>
+    <string name="delete">삭제</string>
+    <string name="done">완료</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">마감 기한:</string>
+    <string name="edit">편집</string>
+    <string name="edit_saved_payment_methods">저장된 카드 편집</string>
+    <string name="email">이메일</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">주소 입력</string>
+    <string name="enter_card_details">카드 정보 입력</string>
+    <string name="enter_email">이메일 입력</string>
+    <string name="enter_name">이름 입력</string>
+    <string name="error_default">오류!</string>
+    <string name="expires_12_21">유효기간 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST 은행 이체</string>
+    <string name="first_last_name">이름과 성(姓)</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">이름은 필수입니다</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">이름</string>
+    <string name="form_error_invalid">%1$s은(는) 유효하지 않습니다</string>
+    <string name="form_error_required">%1$s은(는) 필수입니다</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">뒤로 가기</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">상태 표시 아이콘</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">금융 앱에서 코드를 받으세요.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6자리 코드</string>
+    <string name="input_hint_form_phone_number">전화번호</string>
+    <string name="input_title_bank_details">은행 정보 입력</string>
+    <string name="input_title_phone_number">전화번호 입력</string>
+    <string name="john_doe">홍길동</string>
+    <string name="label_authorized">승인됨</string>
+    <string name="label_declined">거부됨</string>
+    <string name="label_failed">실패</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">성은 필수입니다</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">성</string>
+    <string name="loading_text">로드 중</string>
+    <string name="manage">관리</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">MB WAY</string>
+    <string name="mock_klarna_view">모의 Klarna 보기</string>
+    <string name="multibancoAmount">금액</string>
+    <string name="multibancoCompleteDescription">현금인출기 또는 온라인 뱅킹을 통해 결제하세요.</string>
+    <string name="multibancoEntity">기업</string>
+    <string name="multibancoPayment1Step">현금인출기 또는 온라인 뱅킹을 통해 결제하세요.</string>
+    <string name="multibancoPayment2Step">Multibanco 현금인출기로 이동하여 Multibanco 결제 수단을 선택하고 결제 세부 정보를 입력합니다.</string>
+    <string name="multibancoPayment3Step">온라인 뱅킹에 로그인해서 결제 세부 정보를 사용하여 은행 송금으로 결제하세요.</string>
+    <string name="multibancoReference">참조</string>
+    <string name="multibancoTitleConditions">결제를 완료하세요.</string>
+    <string name="name">이름</string>
+    <string name="next">다음</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">추가 수수료 없음</string>
+    <string name="no_results">결과가 없습니다.</string>
+    <string name="no_results_for_query">죄송합니다. “%s”(와)과\n일치하는 결과가 없습니다.</string>
+    <string name="other_ways_of_paying">다른 결제 방식</string>
+    <string name="other_ways_to_pay">다른 결제 방법</string>
+    <string name="pay">결제</string>
+    <string name="pay_by_card">카드로 결제</string>
+    <string name="pay_specific_amount">%s 결제</string>
+    <string name="pay_with">다음으로 결제</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">카드로 결제하기</string>
+    <string name="pay_with_crypto">암호화폐로 결제</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        결제 수단 추가가 
+
+        완료되었습니다!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Blik 앱에서 결제 완료</string>
+    <string name="payment_method_deletion_message">이 결제 수단을 삭제하시겠습니까?</string>
+    <string name="payment_method_error">다른 결제 수단 선택</string>
+    <string name="payment_method_icon">결제 수단 아이콘</string>
+    <string name="payment_method_not_added_message">"
+        결제 수단을 추가하지 못했습니다.
+    "</string>
+    <string name="payment_method_xfers_description">금융 앱에서 스크린샷을 업로드하세요.</string>
+    <string name="payment_method_xfers_title">스캔 또는 저장하여 결제</string>
+    <string name="payment_request_completed_successfully">결제가 완료되었습니다!</string>
+    <string name="payment_request_unsuccessful">결제가 실패했습니다.</string>
+    <string name="phone_code_search_hint">코드 찾기</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">FAST(추천), MEPS 또는 GIRO를 통해 싱가포르 소재 은행의 계좌를 사용하여 제공된 DBS 은행 계좌로 자금을 이체해 주세요.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">우편번호는 필수입니다</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">우편번호</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">안전한 결제를 위해 카드에 있는 %d자리 보안 코드를 입력하세요.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">CVV 입력</string>
+    <string name="primer_payment_method_button_content_description">%s(으)로 결제</string>
+    <string name="primer_test_header_description">이것은 샌드박스를 위한 모의 처리 흐름입니다. 아래 목록에서 테스트할 결과를 선택하세요.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">이 카드 저장</string>
+    <string name="saved_payment_methods">저장된 결제 수단</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">스캔하여 결제 또는 스크린샷 촬영</string>
+    <string name="search_placeholder">검색하기</string>
+    <string name="search_result">검색 결과</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA 핵심 자동 이체 위임.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">도, 군 또는 구는 필수입니다</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">도/군/구</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">완료</string>
+    <string name="success_text">완료!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">할부로 결제하기</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">금융 앱에서 스크린샷을 업로드하세요</string>
+</resources>

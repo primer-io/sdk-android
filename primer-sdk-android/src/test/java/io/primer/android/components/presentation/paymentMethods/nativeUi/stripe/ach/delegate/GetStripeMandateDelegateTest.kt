@@ -37,6 +37,24 @@ class GetStripeMandateDelegateTest {
     }
 
     @Test
+    fun `invoke() should return full mandate string if it exists in Stripe options`() {
+        val fullMandate = mockk<PrimerStripeOptions.MandateData.FullMandateStringData> {
+            every { value } returns "full mandate"
+        }
+        every { primerSettings.paymentMethodOptions.stripeOptions.mandateData } returns fullMandate
+
+        val result = delegate.invoke()
+
+        Assertions.assertEquals(Result.success("full mandate"), result)
+        verify {
+            primerSettings.paymentMethodOptions.stripeOptions.mandateData
+        }
+        verify(exactly = 0) {
+            resources.getString(any())
+        }
+    }
+
+    @Test
     fun `invoke() should return full mandate if it exists in Stripe options`() {
         val fullMandate = mockk<PrimerStripeOptions.MandateData.FullMandateData> {
             every { value } returns 1

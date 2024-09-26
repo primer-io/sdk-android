@@ -24,12 +24,13 @@ internal class NolPayLinkCardComponentProvider : DISdkComponent {
                     extras: CreationExtras
                 ): T {
                     return NolPayLinkCardComponent(
-                        resolve(),
-                        resolve(),
-                        resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
-                        resolve(),
-                        resolve(NOL_PAY_ERROR_RESOLVER_NAME),
-                        extras.createSavedStateHandle()
+                        linkPaymentCardDelegate = resolve(),
+                        validatorRegistry = resolve(),
+                        eventLoggingDelegate = resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
+                        errorLoggingDelegate = resolve(),
+                        validationErrorLoggingDelegate = resolve(),
+                        errorMapper = resolve(NOL_PAY_ERROR_RESOLVER_NAME),
+                        savedStateHandle = extras.createSavedStateHandle()
                     ) as T
                 }
             }

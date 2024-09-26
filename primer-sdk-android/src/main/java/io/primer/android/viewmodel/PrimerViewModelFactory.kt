@@ -1,5 +1,6 @@
 package io.primer.android.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -22,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("LongParameterList")
 internal class PrimerViewModelFactory(
+    private val context: Context,
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
@@ -40,6 +42,7 @@ internal class PrimerViewModelFactory(
 
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return PrimerViewModel(
+            context,
             configurationInteractor,
             paymentMethodModulesInteractor,
             paymentMethodsImplementationInteractor,

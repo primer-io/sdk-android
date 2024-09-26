@@ -13,6 +13,7 @@ import io.primer.android.components.manager.ach.PrimerHeadlessAchComponent
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
+import io.primer.android.components.presentation.paymentMethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.analytics.StripeAchUserDetailsAnalyticsConstants
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.AchUserDetailsCollectableData
 import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.AchUserDetailsStep
@@ -39,6 +40,7 @@ class StripeAchUserDetailsComponent internal constructor(
     private val stripeAchTokenizationDelegate: StripeAchTokenizationDelegate,
     private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
     private val errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
+    private val validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     private val errorEventResolver: BaseErrorEventResolver,
     private val primerSettings: PrimerSettings,
     private val savedStateHandle: SavedStateHandle,
@@ -133,6 +135,7 @@ class StripeAchUserDetailsComponent internal constructor(
             if (validationError == null) {
                 PrimerValidationStatus.Valid(collectedData)
             } else {
+                validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
                 PrimerValidationStatus.Invalid(validationError, collectedData)
             }
         )

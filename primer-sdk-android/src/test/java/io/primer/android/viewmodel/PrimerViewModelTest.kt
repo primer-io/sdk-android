@@ -1,5 +1,7 @@
 package io.primer.android.viewmodel
 
+import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import com.jraska.livedata.test
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -23,6 +25,7 @@ import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.payment.PaymentMethodDescriptor
 import io.primer.android.payment.billing.BillingAddressValidator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
@@ -30,6 +33,9 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class PrimerViewModelTest {
+    @MockK
+    private lateinit var context: Context
+
     @MockK
     private lateinit var configurationInteractor: ConfigurationInteractor
 
@@ -74,6 +80,28 @@ class PrimerViewModelTest {
 
     @InjectMockKs
     private lateinit var viewModel: PrimerViewModel
+
+    @BeforeEach
+    fun setUp() {
+        viewModel = PrimerViewModel(
+            context = context,
+            configurationInteractor = configurationInteractor,
+            paymentMethodModulesInteractor = paymentMethodModulesInteractor,
+            paymentMethodsImplementationInteractor = paymentMethodsImplementationInteractor,
+            vaultedPaymentMethodsInteractor = vaultedPaymentMethodsInteractor,
+            analyticsInteractor = analyticsInteractor,
+            exchangeInteractor = exchangeInteractor,
+            vaultedPaymentMethodsDeleteInteractor = vaultedPaymentMethodsDeleteInteractor,
+            createPaymentInteractor = createPaymentInteractor,
+            resumePaymentInteractor = resumePaymentInteractor,
+            actionInteractor = actionInteractor,
+            fetchCurrencyFormatDataInteractor = fetchCurrencyFormatDataInteractor,
+            amountToCurrencyInteractor = amountToCurrencyInteractor,
+            config = config,
+            billingAddressValidator = billingAddressValidator,
+            savedStateHandle = SavedStateHandle()
+        )
+    }
 
     @Test
     fun `setSelectedPaymentMethodId() should clear selected payment method`() {

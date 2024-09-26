@@ -1,3 +1,44 @@
+## 2.31.0 (2024-09-20)
+
+### Feat
+
+- improve Spanish support for Stripe ACH (#656)
+- add support for raw strings in Stripe ACH mandates (#709)
+
+## 2.30.1 (2024-09-13)
+
+### Fix
+
+- **ach**: uncomment ACH proguard rules (#700)
+
+## 2.30.0 (2024-08-29)
+
+### Feat
+- Stripe ACH Drop-in implementation
+- Stripe ACH Headless implementation
+
+## 2.29.0 (2024-08-23)
+
+### Feat
+
+- add more languages (#675)
+    - Finnish
+    - Korean
+    - Lithuanian
+    - Catalan
+    - Serbian
+    - Slovenian
+    - Ukranian
+    - Hebrew
+    - Indonesian
+
+## 2.28.1 (2024-08-16)
+
+### Fix
+
+- **http-client**: Added X-Request-ID header to all requests (#671)
+- **analytics**: Added missing ANALYTICS_CONTEXT_TYPE_FIELD to CacheSourceAnalyticsContext (#672)
+
 ## 2.28.0 (2024-08-08)
 
 ### Feat

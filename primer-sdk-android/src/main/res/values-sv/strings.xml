@@ -1,160 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="pay">Betala</string>
-    <string name="pay_specific_amount">Betala %s</string>
-    <string name="add_new_payment_method">Lägg till en betalningsmetod</string>
-    <string name="pay_by_card">Betala med kort</string>
+    <string name="accept_button">Accept</string>
     <string name="add_bank_account">Lägg till bankkonto</string>
-    <string name="other_ways_to_pay">Andra sätt att betala</string>
-    <string name="edit_saved_payment_methods">Redigera sparade kort</string>
-    <string name="edit">Redigera</string>
-    <string name="done">Klart</string>
-    <string name="delete">Radera</string>
     <string name="add_card">Lägg till kort</string>
-    <string name="card_network_fallback">Kortbetalning</string>
-    <string name="success_text">Klart!</string>
-    <string name="bank_account">Bankkonto</string>
-    <string name="enter_card_details">Ange kortuppgifter</string>
-    <string name="last_four">•••• %d</string>
-    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="add_new_payment_method">Lägg till en betalningsmetod</string>
+    <string name="additional_fees_may_apply">Ytterligare avgifter kan tillkomma</string>
+    <string name="addressLine1">Adressrad 1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Adressrad 1 är obligatorisk</string>
+    <string name="addressLine2">Adressrad 2</string>
     <string name="available_payment_methods">Tillgängliga betalningsmetoder</string>
-    <string name="card_holder_name">Kortinnehavarens namn</string>
-    <string name="card_number">Kortnummer</string>
-    <string name="card_expiry">Giltighetsdatum</string>
+    <string name="bank_account">Bankkonto</string>
+    <string name="bank_selection_error_message">Det gick inte att ansluta till din bank. Kontrollera din internetanslutning och försök igen.</string>
+    <string name="bank_selection_hint">Sök bank</string>
+    <string name="bank_selection_title">Välj din bank</string>
+    <string name="bank_selection_try_again">Försök igen</string>
+    <string name="billingAddressLabel">Faktureringsadress</string>
+    <!-- Navigation -->
+    <string name="cancel">Avbryt</string>
+    <string name="cancel_payment_button">Cancel payment</string>
     <string name="card_cvv">CVV</string>
+    <string name="card_details">Kortuppgifter</string>
+    <string name="card_expiry">Giltighetsdatum</string>
+    <string name="card_expiry_formatted">Går ut (MM/ÅÅ)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Kortinnehavarens namn</string>
+    <string name="card_name_on_card">Namn på kortet</string>
+    <string name="card_network_fallback">Kortbetalning</string>
+    <string name="card_number">Kortnummer</string>
     <string name="card_zip">Postnummer</string>
-    <string name="form_error_required">%1$s krävs</string>
-    <string name="form_error_invalid">%1$s ogiltigt</string>
-    <string name="payment_method_error">Välj en annan betalningsmetod</string>
-    <string name="sepa_core_description">SEPA Core Direct Debit Fullmakt</string>
-    <string name="iban">IBAN</string>
+    <string name="check_icon">Ikon för kontroll</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Välj betalningsmetod</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Stad är obligatorisk</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Stad</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Slutför betalningen</string>
+    <string name="completeYourPaymentInTheApp">Slutför din betalning inom %s</string>
+    <string name="confirm">Bekräfta</string>
     <string name="confirm_dd_mandate">Bekräfta fullmakt</string>
-    <string name="name">Namn</string>
+    <string name="confirmToPayButtonTitle">Bekräfta för att betala</string>
+    <string name="continue_button">Gå vidare</string>
+    <string name="country_search_hint">Hitta land</string>
+    <string name="country_select">Välj land</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Land krävs</string>
+    <string name="countryLabel">Land</string>
+    <string name="credit_debit_card">Kredit/bankkort</string>
+    <string name="data_will_be_lost">Dina uppgifter raderas</string>
+    <string name="dd_cancel_message">Vill du avbryta registrering av bankkonto?</string>
+    <string name="dd_mandate_error">Kontrollera att alla dina uppgifter är korrekta</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Genom att underteckna denna fullmakt tillåter du (A) %1$s att skicka instruktioner till din bank för debitering av ditt konto och 
+(B) din bank att debitera ditt konto i enlighet med instruktionerna från %1$s.
+    "</string>
+    <string name="delete">Radera</string>
+    <string name="done">Klart</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Förfaller den</string>
+    <string name="edit">Redigera</string>
+    <string name="edit_saved_payment_methods">Redigera sparade kort</string>
     <string name="email">E-postadress</string>
     <string name="email_address">Email address</string>
-    <string name="addressLine1">Adressrad 1</string>
-    <string name="addressLine2">Adressrad 2 (ej obligatorisk)</string>
-    <string name="cityLabel">Stad</string>
-    <string name="stateLabel">Stat, region</string>
-    <string name="countryLabel">Land</string>
-    <string name="postalCodeLabel">Postnummer</string>
-    <string name="dd_mandate_error">Kontrollera att alla dina uppgifter är korrekta</string>
-    <string name="dd_cancel_message">Vill du avbryta registrering av bankkonto?</string>
-    <string name="data_will_be_lost">Dina uppgifter raderas</string>
-    <string name="enter_name">Ange ditt namn</string>
-    <string name="enter_email">Ange din e-postadress</string>
     <string name="enter_address">Ange din adress</string>
-    <string name="first_last_name">För- och efternamn</string>
-    <string name="firstNameLabel">Förnamn</string>
-    <string name="lastNameLabel">Efternamn</string>
-    <string name="bank_selection_title">Välj din bank</string>
-    <string name="bank_selection_hint">Sök bank</string>
-    <string name="bank_selection_error_message">Det gick inte att ansluta till din bank. Kontrollera din internetanslutning och försök igen.</string>
-    <string name="bank_selection_try_again">Försök igen</string>
-    <string name="cancel">Avbryt</string>
-    <string name="next">Nästa</string>
-    <string name="confirm">Bekräfta</string>
-    <string name="go_back_description">gå tillbaka</string>
-    <string name="dd_mandate_legal">\n        Genom att underteckna denna fullmakt tillåter du (A) %1$s att skicka instruktioner till din bank för debitering av ditt konto och \n(B) din bank att debitera ditt konto i enlighet med instruktionerna från %1$s.\n    </string>
-    <string name="mbway">Mb Way</string>
-    <string name="sepa">SEPA</string>
-    <string name="choose_payment_method">Välj betalningsmetod</string>
-    <string name="saved_payment_methods">SPARAD BETALNINGSMETOD</string>
-    <string name="other_ways_of_paying">Andra betalningsmetoder</string>
-    <string name="manage">Hantera</string>
-    <string name="mastercard">Mastercard</string>
-    <string name="john_doe">Jan Jansson</string>
-    <string name="last_four_with_dots">•••• 1234</string>
-    <string name="expires_12_21">Giltigt 12/21</string>
-    <string name="payment_method_icon">Ikon för betalningsmetod</string>
-    <string name="test_mail_com">test@mail.com</string>
-    <string name="icon_showing_state">Ikon för status</string>
-    <string name="check_icon">Ikon för kontroll</string>
-    <string name="payment_method_deletion_message">Är du säker på att du vill ta bort den här betalningsmetoden?</string>
-    <string name="credit_debit_card">Kredit/bankkort</string>
-    <string name="payment_method_added_message">\n        Din betalningsmetod\n\n        har lagts till!\n    </string>
-    <string name="payment_request_completed_successfully">Din betalning är genomförd!</string>
-    <string name="payment_method_not_added_message">\n        Din betalningsmetod kunde inte läggas till.\n    </string>
+    <string name="enter_card_details">Ange kortuppgifter</string>
+    <string name="enter_email">Ange din e-postadress</string>
+    <string name="enter_name">Ange ditt namn</string>
     <string name="error_default">Fel!</string>
-    <string name="payment_request_unsuccessful">Din betalning misslyckades.</string>
+    <string name="expires_12_21">Giltigt 12/21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST-banköverföring</string>
+    <string name="first_last_name">För- och efternamn</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Förnamn krävs</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Förnamn</string>
+    <string name="form_error_invalid">%1$s ogiltigt</string>
+    <string name="form_error_required">%1$s krävs</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">gå tillbaka</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">Ikon för status</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
     <string name="input_description_otp">Hämta numret från din bankapp.</string>
+    <!-- 6 digit code - Text field top placeholder -->
     <string name="input_hint_form_blik_otp">6-siffrig kod</string>
-    <string name="input_title_phone_number">Skriv in ditt telefonnummer</string>
     <string name="input_hint_form_phone_number">Telefonnummer</string>
-    <string name="payment_method_blik_loading_placeholder">Fullborda din betalning i Blik-appen</string>
-    <string name="completeYourPaymentInTheApp">Fullborda din betalning i %s-appen</string>
     <string name="input_title_bank_details">Lägg till bankuppgifter.</string>
-    <string name="payment_method_xfers_title">Skanna eller spara för att betala</string>
-    <string name="payment_method_xfers_description">Ladda upp skärmdumpen i din bankapp.</string>
-    <string name="no_additional_fee">Ingen extra avgift</string>
-    <string name="additional_fees_may_apply">Ytterligare avgifter kan tillkomma</string>
-    <string name="pay_with_crypto">Pay with crypto</string>
-    <string name="twoc_2p_button">Pay in installments</string>
-    <string name="pay_with">Pay with</string>
-    <string name="primer_test_header_description">This is a mocked flow for sandbox. Choose the result you want to test from the list below.</string>
+    <string name="input_title_phone_number">Skriv in ditt telefonnummer</string>
+    <string name="john_doe">Jan Jansson</string>
     <string name="label_authorized">Auktoriserad</string>
     <string name="label_declined">Nekad</string>
     <string name="label_failed">Misslyckades</string>
-    <string name="country_search_hint">Hitta ett land</string>
-    <string name="billingAddressLabel">Faktureringsadress</string>
-    <string name="pay_with_card">Pay with card</string>
-    <string name="card_details">Card details</string>
-    <string name="postalCodeErrorRequired">Postnummer är obligatoriskt</string>
-    <string name="countryCodeErrorRequired">Land krävs</string>
-    <string name="cityErrorRequired">Stad är obligatorisk</string>
-    <string name="stateErrorRequired">Stat, region eller län krävs</string>
-    <string name="addressLine1ErrorRequired">Adressrad 1 är obligatorisk</string>
-    <string name="firstNameErrorRequired">Förnamn krävs</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
     <string name="lastNameErrorRequired">Efternamn krävs</string>
-    <string name="completeYourPayment">Complete your payment</string>
-    <string name="dueAt">Due at</string>
-    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
-    <string name="fast_bank_transfer">FAST Bank Transfer</string>
-    <string name="scanToPay">Scan to pay or take a screenshot</string>
-    <string name="uploadScreenshot">Upload the screenshot in your banking app</string>
-    <string name="phone_code_search_hint">Find code</string>
-    <string name="search_result">Search results</string>
-    <string name="search_placeholder">Search</string>
-    <string name="country_select">Select country</string>
-    <string name="no_results">No results</string>
-    <string name="no_results_for_query">Sorry, no results\nfound that match “%s”</string>
-    <string name="confirmToPayButtonTitle">Confirm to pay</string>
-    <string name="multibancoTitleConditions">Complete your payment</string>
-    <string name="multibancoPayment1Step">Please make the payment at an ATM, or using online banking.</string>
-    <string name="multibancoPayment2Step">Go to a Multibanco ATM, select the Multibanco payment method and enter the payment details</string>
-    <string name="multibancoPayment3Step">Login to your online banking to pay by bank transfer using the payment details</string>
-    <string name="multibancoCompleteDescription">Please make the payment at an ATM, or using online banking.</string>
-    <string name="multibancoEntity">Entity</string>
-    <string name="multibancoReference">Reference</string>
-    <string name="multibancoAmount">Amount</string>
-    <string name="card_name_on_card">Name on card</string>
-    <string name="save_this_card">Save this card</string>
-    <string name="card_expiry_formatted">Expiry (MM/YY)</string>
-    <string name="primer_payment_method_button_content_description">Pay with %s</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Efternamn</string>
+    <string name="loading_text">Laddar</string>
+    <string name="manage">Hantera</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Falsk Klarna-vy</string>
+    <string name="multibancoAmount">Belopp</string>
+    <string name="multibancoCompleteDescription">Vänligen gör betalningen i en bankomat eller via internetbank.</string>
+    <string name="multibancoEntity">Enhet</string>
+    <string name="multibancoPayment1Step">Vänligen gör betalningen i en bankomat eller via internetbank.</string>
+    <string name="multibancoPayment2Step">Gå till en Multibanco-bankomat, välj betalsättet Multibanco och ange betalningsuppgifterna</string>
+    <string name="multibancoPayment3Step">Logga in på din internetbank för att betala via banköverföring med hjälp av betalningsuppgifterna</string>
+    <string name="multibancoReference">Referens</string>
+    <string name="multibancoTitleConditions">Slutför betalningen</string>
+    <string name="name">Namn</string>
+    <string name="next">Nästa</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Ingen extra avgift</string>
+    <string name="no_results">Ingen träff</string>
+    <string name="no_results_for_query">Beklagar, fick ingen\nträff som matchar “%s”</string>
+    <string name="other_ways_of_paying">Andra betalningsmetoder</string>
+    <string name="other_ways_to_pay">Andra sätt att betala</string>
+    <string name="pay">Betala</string>
+    <string name="pay_by_card">Betala med kort</string>
+    <string name="pay_specific_amount">Betala %s</string>
+    <string name="pay_with">Betala med</string>
     <string name="pay_with_ach">Pay with ACH</string>
-    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
-    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
-    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
-    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
-    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
-    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
-    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
-    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
-    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the bank account specified above for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
-    <string name="stripe_ach_mandate_accept_button">Accept</string>
-    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
-    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
-    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
-    <string name="loading_text">Loading</string>
-    <string name="continue_button">Fortsätt</string>
+    <string name="pay_with_card">Betala med kort</string>
+    <string name="pay_with_crypto">Betala med krypto</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Din betalningsmetod
+
+        har lagts till!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Fullborda din betalning i Blik-appen</string>
+    <string name="payment_method_deletion_message">Är du säker på att du vill ta bort den här betalningsmetoden?</string>
+    <string name="payment_method_error">Välj en annan betalningsmetod</string>
+    <string name="payment_method_icon">Ikon för betalningsmetod</string>
+    <string name="payment_method_not_added_message">"
+        Din betalningsmetod kunde inte läggas till.
+    "</string>
+    <string name="payment_method_xfers_description">Ladda upp skärmdumpen i din bankapp.</string>
+    <string name="payment_method_xfers_title">Skanna eller spara för att betala</string>
+    <string name="payment_request_completed_successfully">Din betalning är genomförd!</string>
+    <string name="payment_request_unsuccessful">Din betalning misslyckades.</string>
+    <string name="phone_code_search_hint">Hitta kod</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Var vänlig och överför medlen till angivet DBS-bankkonto med hjälp av ditt Singaporebaserade bankkonto via FAST (föredras), MEPS eller GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Postnummer är obligatoriskt</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Postnummer</string>
     <!-- CVV- CVV recapture explanation label -->
     <string name="primer_cvv_recapture_explanation">Ange den %d-siffriga säkerhetskoden på ditt kort för att genomföra en säker betalning.</string>
     <!-- CVV - CVV recapture screen title -->
     <string name="primer_cvv_recapture_title">Ange CVV</string>
+    <string name="primer_payment_method_button_content_description">Betala med  %s</string>
+    <string name="primer_test_header_description">Detta är ett simulerat flöde för sandlåda. Välj det resultat du vill testa från listan nedan.</string>
     <string name="retry_button">Retry</string>
-    <string name="choose_other_payment_method_button">Choose other payment method</string>
-    <string name="session_complete_payment_success_title">Payment authorized</string>
-    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="save_this_card">Spara det här kortet</string>
+    <string name="saved_payment_methods">SPARAD BETALNINGSMETOD</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Skanna för att betala eller gör en skärmdump</string>
+    <string name="search_placeholder">Sök</string>
+    <string name="search_result">Sökträffar</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA Core Direct Debit Fullmakt</string>
     <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
-
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Stat, region eller län krävs</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Stat/region/län</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">klart</string>
+    <string name="success_text">Klart!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Delbetala</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Ladda upp skärmdumpen i din bankapp</string>
 </resources>
