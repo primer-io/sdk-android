@@ -226,6 +226,46 @@ internal class ConfigurationDataResponseTest {
     }
 
     @Test
+    fun `'checkout-module-shipping-type' should be deserialized correctly`() {
+        assertEquals(
+            CheckoutModuleType.SHIPPING,
+            configurationDataResponse.checkoutModules[2].type
+        )
+    }
+
+    @Test
+    fun `'checkout-module-shipping-type-options' should be deserialized correctly`() {
+        assertEquals(
+            null,
+            configurationDataResponse.checkoutModules[2].options
+        )
+    }
+
+    @Test
+    fun `'checkout-module-shipping-type-shipping-options' should be deserialized correctly`() {
+        assertEquals(
+            ShippingOptions(
+                listOf(
+                    ShippingMethod(
+                        "Regular",
+                        "Regular",
+                        100,
+                        "Regular"
+                    ),
+                    ShippingMethod(
+                        "Next Business Day",
+                        "Get your stuff delivered next business day",
+                        200,
+                        "NextBusiness"
+                    )
+                ),
+                "NextBusiness"
+            ),
+            configurationDataResponse.checkoutModules[2].shippingOptions
+        )
+    }
+
+    @Test
     fun `'client-session-id' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ID,
@@ -510,7 +550,27 @@ internal class ConfigurationDataResponseTest {
                     "firstName":true,
                     "lastName":true
                  }
-              }
+              },
+              {
+                 "type": "SHIPPING",
+                 "options": {
+                     "shippingMethods": [
+                         {
+                             "name": "Regular",
+                             "description": "Regular",
+                             "amount": 100,
+                             "id": "Regular"
+                         },
+                         {
+                             "name": "Next Business Day",
+                             "description": "Get your stuff delivered next business day",
+                             "amount": 200,
+                             "id": "NextBusiness"
+                         }
+                     ],
+                     "selectedShippingMethod": "NextBusiness"
+                 }
+              },
            ],
            "clientSession":{
               "clientSessionId":"$CLIENT_SESSION_ID",

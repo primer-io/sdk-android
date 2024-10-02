@@ -22,7 +22,6 @@ import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.data.base.models.BasePaymentToken
-import io.primer.android.data.configuration.models.CheckoutModuleType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.payments.methods.models.PaymentMethodVaultTokenInternal
 import io.primer.android.data.payments.methods.models.toPaymentMethodVaultToken
@@ -51,7 +50,9 @@ import io.primer.android.domain.payments.resume.ResumePaymentInteractor
 import io.primer.android.domain.payments.resume.models.ResumeParams
 import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
+import io.primer.android.domain.session.models.CheckoutModule
 import io.primer.android.domain.session.models.ConfigurationParams
+import io.primer.android.domain.session.models.findFirstInstance
 import io.primer.android.events.CheckoutEvent
 import io.primer.android.events.EventBus
 import io.primer.android.model.MonetaryAmount
@@ -161,23 +162,16 @@ internal class PrimerViewModel(
     val showBillingFields: LiveData<Map<String, Boolean>?> by lazy {
         configurationInteractor(ConfigurationParams(CachePolicy.ForceCache))
             .map { configuration ->
-                val module =
-                    configuration.checkoutModules.find { m ->
-                        m.type == CheckoutModuleType.BILLING_ADDRESS
-                    }
-                module?.options
+                val billingAddress = configuration.checkoutModules.findFirstInstance<CheckoutModule.BillingAddress>()
+                billingAddress?.options
             }
             .asLiveData()
     }
 
-    val showCardInformation: LiveData<Map<String, Boolean>?> = _state.asFlow()
+    val showCardInformation: LiveData<CheckoutModule.CardInformation?> = _state.asFlow()
         .flatMapLatest { configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)) }
         .map { configuration ->
-            val module =
-                configuration.checkoutModules.find { m ->
-                    m.type == CheckoutModuleType.CARD_INFORMATION
-                }
-            module?.options
+            configuration.checkoutModules.findFirstInstance<CheckoutModule.CardInformation>()
         }
         .asLiveData()
 

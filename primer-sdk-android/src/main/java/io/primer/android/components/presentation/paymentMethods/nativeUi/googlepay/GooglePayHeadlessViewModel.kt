@@ -16,6 +16,7 @@ import io.primer.android.components.domain.Event
 import io.primer.android.components.domain.State
 import io.primer.android.components.domain.core.validation.ValidationResult
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.GooglePayConfigurationInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.GooglePayShippingMethodUpdateValidator
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.validation.GooglePayValidationRulesResolver
 import io.primer.android.components.presentation.NativeUIHeadlessViewModel
 import io.primer.android.components.ui.activity.GooglePayActivityLauncherParams
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 
 internal class GooglePayHeadlessViewModel(
     private val configurationInteractor: GooglePayConfigurationInteractor,
+    private val googlePayShippingMethodUpdateValidator: GooglePayShippingMethodUpdateValidator,
     private val tokenizationInteractor: TokenizationInteractor,
     private val actionInteractor: ActionInteractor,
     private val validationRulesResolver: GooglePayValidationRulesResolver,
@@ -59,9 +61,9 @@ internal class GooglePayHeadlessViewModel(
         onEvent(GooglePayEvent.OnOpenHeadlessScreen)
     }
 
-    override fun onEvent(e: Event) {
-        val validTransition = stateMachine.transition(e) as? StateMachine.Transition.Valid
-            ?: throw IllegalStateException("Invalid transition for event $e")
+    override fun onEvent(event: Event) {
+        val validTransition = stateMachine.transition(event) as? StateMachine.Transition.Valid
+            ?: throw IllegalStateException("Invalid transition for event $event")
 
         currentState = validTransition.toState
 
@@ -70,24 +72,24 @@ internal class GooglePayHeadlessViewModel(
             -> _startActivityEvent.postValue(GooglePayActivityLauncherParams())
 
             validTransition.sideEffect is GooglePaySideEffect.NavigateToGooglePay &&
-                e is GooglePayEvent.StartRedirect -> {
-                onRedirect(e.activity)
+                event is GooglePayEvent.StartRedirect -> {
+                onRedirect(event.activity)
             }
+
             validTransition.sideEffect is GooglePaySideEffect.HandleResult &&
-                e is BaseEvent.OnResult
+                event is BaseEvent.OnResult
             -> {
-                when (e.resultCode) {
+                when (event.resultCode) {
                     Activity.RESULT_OK -> {
                         onEvent(
                             GooglePayEvent.OnTokenizeStart(
-                                e.intent?.let {
-                                    PaymentData.getFromIntent(
-                                        it
-                                    )
+                                event.intent?.let {
+                                    PaymentData.getFromIntent(it)
                                 }
                             )
                         )
                     }
+
                     Activity.RESULT_CANCELED -> {
                         baseErrorEventResolver.resolve(
                             PaymentMethodCancelledException(PaymentMethodType.GOOGLE_PAY.name),
@@ -95,8 +97,9 @@ internal class GooglePayHeadlessViewModel(
                         )
                         onEvent(GooglePayEvent.OnCancel)
                     }
+
                     AutoResolveHelper.RESULT_ERROR -> {
-                        AutoResolveHelper.getStatusFromIntent(e.intent)?.let {
+                        AutoResolveHelper.getStatusFromIntent(event.intent)?.let {
                             baseErrorEventResolver.resolve(
                                 GooglePayException(it),
                                 ErrorMapperType.GOOGLE_PAY
@@ -106,16 +109,20 @@ internal class GooglePayHeadlessViewModel(
                     }
                 }
             }
+
             validTransition.sideEffect is GooglePaySideEffect.Tokenize &&
-                e is GooglePayEvent.OnTokenizeStart -> {
-                tokenize(e.paymentData)
+                event is GooglePayEvent.OnTokenizeStart -> {
+                tokenize(event.paymentData)
             }
+
             validTransition.sideEffect is GooglePaySideEffect.HandleCancel -> {
                 _finishActivityEvent.postValue(Unit)
             }
+
             validTransition.sideEffect is GooglePaySideEffect.HandleError -> {
                 _finishActivityEvent.postValue(Unit)
             }
+
             validTransition.sideEffect is GooglePaySideEffect.HandleFinished -> {
                 _finishActivityEvent.postValue(Unit)
             }
@@ -123,17 +130,21 @@ internal class GooglePayHeadlessViewModel(
     }
 
     private fun onRedirect(activity: Activity) = viewModelScope.launch {
-        configurationInteractor.execute(None()).catch { GooglePayEvent.OnError }.collect {
-            GooglePayFacadeFactory().create(activity, it.environment, logReporter).pay(
+        configurationInteractor.execute(None()).catch { GooglePayEvent.OnError }.collect { configuration ->
+            GooglePayFacadeFactory().create(activity, configuration.environment, logReporter).pay(
                 activity,
-                it.gatewayMerchantId,
-                it.merchantName,
-                it.totalPrice,
-                it.countryCode,
-                it.currencyCode,
-                it.allowedCardNetworks,
-                it.allowedCardAuthMethods,
-                it.billingAddressRequired
+                configuration.gatewayMerchantId,
+                configuration.merchantName,
+                configuration.totalPrice,
+                configuration.countryCode,
+                configuration.currencyCode,
+                configuration.allowedCardNetworks,
+                configuration.allowedCardAuthMethods,
+                configuration.billingAddressRequired,
+                configuration.shippingOptions,
+                configuration.shippingAddressParameters,
+                configuration.requireShippingMethod,
+                configuration.emailAddressRequired
             )
         }
     }
@@ -150,10 +161,10 @@ internal class GooglePayHeadlessViewModel(
                 }
             }.catch {
                 baseErrorEventResolver.resolve(it, ErrorMapperType.DEFAULT)
-            }
-                .flatMapLatest {
-                    configurationInteractor.execute(None()).flatMapLatest { configuration ->
-                        handleBillingAddressCapture(paymentData).flatMapLatest {
+            }.flatMapLatest {
+                configurationInteractor(None()).flatMapLatest { configuration ->
+                    handlePaymentDataUpdate(paymentData).flatMapLatest {
+                        handleShippingMethodIdUpdate(paymentData).flatMapLatest {
                             tokenizationInteractor.executeV2(
                                 TokenizationParamsV2(
                                     GooglePayPaymentInstrumentParams(
@@ -167,19 +178,28 @@ internal class GooglePayHeadlessViewModel(
                             )
                         }
                     }
-                }.catch { onEvent(GooglePayEvent.OnError) }.collect {
-                    onEvent(GooglePayEvent.OnTokenized)
                 }
+            }.catch {
+                onEvent(GooglePayEvent.OnError)
+            }.collect {
+                onEvent(GooglePayEvent.OnTokenized)
+            }
         }
 
-    private fun handleBillingAddressCapture(
-        paymentData: PaymentData?
-    ): Flow<Unit> {
-        val googlePayBillingAddressMapper = GooglePayBillingAddressMapper()
-        val action = googlePayBillingAddressMapper.mapToClientSessionUpdateParams(paymentData)
+    private fun handlePaymentDataUpdate(paymentData: PaymentData?): Flow<Unit> {
+        val action = paymentData.mapToMultipleActionUpdateParams()
         return action?.let {
-            actionInteractor(action).map { Unit }.catch { emit(Unit) }
+            actionInteractor(action).map { Unit }
         } ?: flowOf(Unit)
+    }
+
+    private fun handleShippingMethodIdUpdate(paymentData: PaymentData?): Flow<Unit> {
+        val action = paymentData.mapToShippingOptionIdParams()
+        when {
+            action == null -> return flowOf(Unit)
+            else -> return googlePayShippingMethodUpdateValidator(action)
+                .flatMapLatest { actionInteractor(action).map { } }
+        }
     }
 
     companion object : DISdkComponent {
@@ -190,6 +210,7 @@ internal class GooglePayHeadlessViewModel(
                 extras: CreationExtras
             ): T {
                 return GooglePayHeadlessViewModel(
+                    resolve(),
                     resolve(),
                     resolve(),
                     resolve(),

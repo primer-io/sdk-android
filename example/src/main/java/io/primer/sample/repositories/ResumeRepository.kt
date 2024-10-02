@@ -28,7 +28,6 @@ class ResumeRepository(private val apiKeyDataSource: ApiKeyDataSource) {
             body,
             PrimerRoutes.buildResumePaymentsUrl(id),
             environment,
-            true,
             apiKey = apiKeyDataSource.getApiKey(environment.type())
         )
         client.newCall(request).enqueue(object : Callback {

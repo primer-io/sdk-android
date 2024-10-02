@@ -13,6 +13,7 @@ import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
 import io.primer.android.domain.tokenization.models.TokenizationParamsV2
@@ -53,7 +54,7 @@ class StripeAchTokenizationDelegateTest {
 
     @Test
     fun `invoke() should perform tokenization via interactor, select payment method and return success when interactor calls succeed and integration type is Headless`() = runTest {
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         every { paymentMethodModulesInteractor.getPaymentMethodDescriptors() } returns listOf(
             mockk {
@@ -124,7 +125,7 @@ class StripeAchTokenizationDelegateTest {
 
     @Test
     fun `invoke() should return failure when there are no descriptors for Stripe ACH`() = runTest {
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         every { paymentMethodModulesInteractor.getPaymentMethodDescriptors() } returns listOf(
             mockk {
@@ -152,7 +153,7 @@ class StripeAchTokenizationDelegateTest {
     @Test
     fun `invoke() should return failure when the action interactor call fails`() = runTest {
         val exception = Exception()
-        every { actionInteractor(any()) } returns flow { throw exception }
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns flow { throw exception }
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
 
         val result = delegate.invoke().exceptionOrNull()
@@ -173,7 +174,7 @@ class StripeAchTokenizationDelegateTest {
 
     @Test
     fun `invoke() should return failure when the tokenization interactor call fails`() = runTest {
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         every { paymentMethodModulesInteractor.getPaymentMethodDescriptors() } returns listOf(
             mockk {

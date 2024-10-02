@@ -1,13 +1,12 @@
 package io.primer.android.components.domain.inputs
 
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.components.domain.payments.repository.CheckoutModuleRepository
-import io.primer.android.data.configuration.models.CheckoutModuleType
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.domain.base.BaseErrorEventResolver
 import io.primer.android.domain.error.ErrorMapperType
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.domain.session.models.isCardHolderNameEnabled
 
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
@@ -19,11 +18,8 @@ internal class PaymentInputTypesInteractor(
         try {
             return when (paymentMethodType) {
                 PaymentMethodType.PAYMENT_CARD.name -> {
-                    val billingAddressesFields =
-                        checkoutModuleRepository.getCheckoutModuleOptions(
-                            CheckoutModuleType.BILLING_ADDRESS
-                        ).let { configs ->
-                            val addressFields = mutableListOf<PrimerInputElementType>()
+                    val billingAddressesFields = checkoutModuleRepository.getBillingAddress().let {
+                        val addressFields = mutableListOf<PrimerInputElementType>()
 //                            configs?.needAdd(PrimerInputElementType.POSTAL_CODE)?.let { field ->
 //                                addressFields.add(field)
 //                            }
@@ -51,28 +47,21 @@ internal class PaymentInputTypesInteractor(
 //                            configs?.needAdd(PrimerInputElementType.LAST_NAME)?.let { field ->
 //                                addressFields.add(field)
 //                            }
-                            addressFields
-                        }
+                        addressFields
+                    }
 
-                    val cardName =
-                        checkoutModuleRepository.getCheckoutModuleOptions(
-                            CheckoutModuleType.CARD_INFORMATION
-                        ).let { configs ->
-                            val containsCardholders =
-                                configs?.via(PrimerInputElementType.ALL) ?: configs?.via(
-                                    PrimerInputElementType.CARDHOLDER_NAME
-                                )
-                            if (containsCardholders == null || containsCardholders) {
-                                PrimerInputElementType.CARDHOLDER_NAME
-                            } else { null }
-                        }
+                    val cardHolderName = if (checkoutModuleRepository.getCardInformation().isCardHolderNameEnabled()) {
+                        PrimerInputElementType.CARDHOLDER_NAME
+                    } else {
+                        null
+                    }
 
                     listOf(
                         PrimerInputElementType.CARD_NUMBER,
                         PrimerInputElementType.EXPIRY_DATE,
                         PrimerInputElementType.CVV
                     )
-                        .plus(cardName)
+                        .plus(cardHolderName)
                         .plus(billingAddressesFields)
                         .filterNotNull()
                 }

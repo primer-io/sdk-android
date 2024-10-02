@@ -4,7 +4,7 @@ import io.primer.android.PaymentMethod
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.google.GooglePayFacade
 
-internal class GooglePayPaymentMethodChecker constructor(
+internal class GooglePayPaymentMethodChecker(
     private val googlePayFacade: GooglePayFacade
 ) : PaymentMethodChecker {
 

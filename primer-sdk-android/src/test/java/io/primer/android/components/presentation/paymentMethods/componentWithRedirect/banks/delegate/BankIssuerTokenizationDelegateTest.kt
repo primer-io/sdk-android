@@ -11,6 +11,7 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.deeplink.async.AsyncPaymentMethodDeeplinkInteractor
 import io.primer.android.domain.payments.methods.PaymentMethodModulesInteractor
 import io.primer.android.domain.tokenization.TokenizationInteractor
@@ -93,7 +94,7 @@ class BankIssuerTokenizationDelegateTest {
 
     @Test
     fun `tokenize() should return Unit when interactors succeed`() = runTest {
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every {
             paymentMethodModulesInteractor.getPaymentMethodDescriptors()
         } returns paymentMethodDescriptors
@@ -131,7 +132,7 @@ class BankIssuerTokenizationDelegateTest {
     @Test
     fun `tokenize() should return exception when the action interactor fails`() = runTest {
         val exception = Exception()
-        every { actionInteractor(any()) } returns flow { throw exception }
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns flow { throw exception }
 
         val result = delegate.tokenize(issuerBankId)
 
@@ -149,7 +150,7 @@ class BankIssuerTokenizationDelegateTest {
     @Test
     fun `tokenize() should return exception when the payment method modules interactor fails`() = runTest {
         val exception = Exception()
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every {
             paymentMethodModulesInteractor.getPaymentMethodDescriptors()
         } throws exception
@@ -171,7 +172,7 @@ class BankIssuerTokenizationDelegateTest {
     @Test
     fun `tokenize() should return exception when the deeplink interactor fails`() = runTest {
         val exception = Exception()
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every {
             paymentMethodModulesInteractor.getPaymentMethodDescriptors()
         } returns paymentMethodDescriptors
@@ -195,7 +196,7 @@ class BankIssuerTokenizationDelegateTest {
     @Test
     fun `tokenize() should return exception when the tokenization interactor fails`() = runTest {
         val exception = Exception()
-        every { actionInteractor(any()) } returns emptyFlow()
+        every { actionInteractor(any<BaseActionUpdateParams>()) } returns emptyFlow()
         every {
             paymentMethodModulesInteractor.getPaymentMethodDescriptors()
         } returns paymentMethodDescriptors

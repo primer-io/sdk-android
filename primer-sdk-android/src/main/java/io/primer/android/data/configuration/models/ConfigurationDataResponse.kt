@@ -89,6 +89,12 @@ internal data class ConfigurationDataResponse(
                             primitiveKey(OrderDataResponse.LineItemDataResponse.TAX_CODE_FIELD)
                         }
                         primitiveKey(OrderDataResponse.FEES_FIELD)
+                        nonPrimitiveKey(OrderDataResponse.SHIPPING_FIELD) {
+                            primitiveKey(OrderDataResponse.ShippingDataResponse.AMOUNT_FIELD)
+                            primitiveKey(OrderDataResponse.ShippingDataResponse.METHOD_ID_FIELD)
+                            primitiveKey(OrderDataResponse.ShippingDataResponse.METHOD_NAME_FIELD)
+                            primitiveKey(OrderDataResponse.ShippingDataResponse.METHOD_DESCRIPTION_FIELD)
+                        }
                     }
                     nonPrimitiveKey(ClientSessionDataResponse.PAYMENT_METHOD_DATA_FIELD) {
                         primitiveKey(

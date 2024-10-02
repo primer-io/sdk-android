@@ -143,14 +143,6 @@
             </RadioGroup>
 
             <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/useLegacyWorkflows"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:checked="true"
-                android:text="@string/workflows_settings" />
-
-            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/disableInitScreen"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="10dp"

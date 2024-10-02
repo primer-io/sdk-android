@@ -12,13 +12,15 @@ import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
+import io.primer.android.domain.session.models.CheckoutModule
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal class GooglePayFacade constructor(
+internal class GooglePayFacade(
     private val paymentsClient: PaymentsClient,
     private val logReporter: LogReporter
 ) {
@@ -131,7 +133,11 @@ internal class GooglePayFacade constructor(
         currencyCode: String,
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean
+        billingAddressRequired: Boolean,
+        shippingOptions: CheckoutModule.Shipping?,
+        shippingAddressParameters: PrimerGoogleShippingAddressParameters?,
+        requireShippingMethod: Boolean,
+        emailAddressRequired: Boolean
     ) {
         val request = buildPaymentRequest(
             gatewayMerchantId = gatewayMerchantId,
@@ -141,7 +147,11 @@ internal class GooglePayFacade constructor(
             currencyCode = currencyCode,
             allowedCardNetworks = allowedCardNetworks,
             allowedCardAuthMethods = allowedCardAuthMethods,
-            billingAddressRequired = billingAddressRequired
+            billingAddressRequired = billingAddressRequired,
+            shippingOptions = shippingOptions,
+            shippingAddressParameters = shippingAddressParameters,
+            requireShippingMethod = requireShippingMethod,
+            emailAddressRequired = emailAddressRequired
         )
         pay(activity, request)
     }
@@ -154,7 +164,11 @@ internal class GooglePayFacade constructor(
         currencyCode: String,
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean
+        billingAddressRequired: Boolean,
+        shippingOptions: CheckoutModule.Shipping?,
+        shippingAddressParameters: PrimerGoogleShippingAddressParameters?,
+        requireShippingMethod: Boolean,
+        emailAddressRequired: Boolean
     ): JSONObject {
         val gatewayParams = JSONObject(
             mapOf(
@@ -182,10 +196,41 @@ internal class GooglePayFacade constructor(
             put("currencyCode", currencyCode)
         }
 
+        val shippingOptionParametersObject = shippingOptions?.let {
+            JSONObject().apply {
+                put("defaultSelectedOptionId", shippingOptions.selectedMethod)
+                put(
+                    "shippingOptions",
+                    JSONArray(
+                        shippingOptions.shippingMethods.map { shippingMethod ->
+                            JSONObject().apply {
+                                put("id", shippingMethod.id)
+                                put("label", shippingMethod.name)
+                                put("description", shippingMethod.description)
+                            }
+                        }
+                    )
+                )
+            }
+        }
+
+        val shippingAddressParametersObject = shippingAddressParameters?.let {
+            JSONObject().apply {
+                put("phoneNumberRequired", it.phoneNumberRequired)
+            }
+        }
+
         return JSONObject(baseRequest.toString()).apply {
             put("allowedPaymentMethods", JSONArray().put(cardPaymentMethod))
             put("transactionInfo", transactionInfo)
-            put("shippingAddressRequired", false)
+
+            put("shippingOptionRequired", requireShippingMethod)
+            putOpt("shippingOptionParameters", shippingOptionParametersObject)
+
+            put("shippingAddressRequired", shippingAddressParameters != null)
+            putOpt("shippingAddressParameters", shippingAddressParametersObject)
+
+            put("emailRequired", emailAddressRequired)
 
             merchantName?.let {
                 put("merchantInfo", JSONObject().put("merchantName", merchantName))

@@ -28,7 +28,6 @@ class PaymentsRepository(private val apiKeyDataSource: ApiKeyDataSource) {
                 body,
                 PrimerRoutes.payments,
                 environment,
-                true,
                 apiKey = apiKeyDataSource.getApiKey(environment.type())
             )
         client.newCall(request).enqueue(object : Callback {

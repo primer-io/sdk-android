@@ -2,6 +2,7 @@ package io.primer.android.data.configuration.models
 
 import io.primer.android.data.payments.displayMetadata.model.IconDisplayMetadata
 import io.primer.android.domain.session.models.Configuration
+import io.primer.android.domain.session.models.toCheckoutModule
 
 internal data class ConfigurationData(
     val pciUrl: String,
