@@ -1,3 +1,9 @@
+## 2.32.0 (2024-10-02)
+
+### Feat
+
+- **google-pay**: enable capture of shipping address and shipping methods (#681)
+
 ## 2.31.0 (2024-09-20)
 
 ### Feat
