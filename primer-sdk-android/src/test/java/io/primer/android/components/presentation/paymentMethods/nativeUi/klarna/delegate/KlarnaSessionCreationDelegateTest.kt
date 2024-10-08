@@ -17,6 +17,7 @@ import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.models.PrimerFee
 import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
@@ -68,7 +69,7 @@ class KlarnaSessionCreationDelegateTest {
     @Test
     fun `createSession() should return session emitted by session interactor when called and SURCHARGE fee exists and integration type is HEADLESS`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        every { actionInteractor.invoke(any()) } returns flowOf(
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(
             mockk<ClientSessionData> {
                 every { clientSession.fees } returns listOf(
                     PrimerFee(type = "SURCHARGE", amount = 140)
@@ -117,7 +118,7 @@ class KlarnaSessionCreationDelegateTest {
     @Test
     fun `createSession() should return session emitted by session interactor when called and SURCHARGE fee doesn't exist and integration type is HEADLESS`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        every { actionInteractor.invoke(any()) } returns flowOf(
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(
             mockk<ClientSessionData> {
                 every { clientSession.fees } returns listOf(
                     PrimerFee(type = "not a surcharge", amount = 140)
@@ -166,7 +167,7 @@ class KlarnaSessionCreationDelegateTest {
     @Test
     fun `createSession() should return error emitted by session interactor when called and integration type is HEADLESS`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        every { actionInteractor.invoke(any()) } returns flowOf(
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(
             mockk<ClientSessionData> {
                 every { clientSession.fees } returns emptyList()
             }
@@ -212,7 +213,7 @@ class KlarnaSessionCreationDelegateTest {
     fun `createSession() should return error emitted by action interactor when called and integration type is HEADLESS`() = runTest {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         val exception = Exception()
-        every { actionInteractor.invoke(any()) } returns flow { throw exception }
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flow { throw exception }
         coEvery { klarnaSessionInteractor.invoke(any()) } returns Result.success(mockk())
 
         val result = delegate.createSession(primerSessionIntent).exceptionOrNull()

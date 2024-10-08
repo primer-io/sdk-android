@@ -25,7 +25,15 @@ data class PrimerCustomer(
 )
 
 data class PrimerOrder(
-    val countryCode: CountryCode?
+    val countryCode: CountryCode?,
+    val shipping: PrimerShipping?
+)
+
+data class PrimerShipping(
+    val amount: Int?,
+    val methodId: String?,
+    val methodName: String?,
+    val methodDescription: String?
 )
 
 data class PrimerLineItem(

@@ -11,9 +11,11 @@ import io.primer.android.data.configuration.datasource.GlobalConfigurationCacheD
 import io.primer.android.data.configuration.datasource.LocalConfigurationDataSource
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.utils.PrimerSessionConstants
+import io.primer.android.domain.ClientSessionData
 import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.action.repository.ActionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -28,13 +30,13 @@ internal class ActionDataRepository(
     private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() }
 ) : ActionRepository {
 
-    override fun updateClientActions(params: BaseActionUpdateParams) =
-        localConfigurationDataSource.get()
-            .flatMapLatest {
+    override fun updateClientActions(params: List<BaseActionUpdateParams>): Flow<ClientSessionData> {
+        return localConfigurationDataSource.get()
+            .flatMapLatest { config ->
                 remoteActionDataSource.execute(
                     BaseRemoteRequest(
-                        it,
-                        ClientSessionActionsDataRequest(params.toActionData())
+                        config,
+                        ClientSessionActionsDataRequest(params.flatMap { it.toActionData() })
                     )
                 )
             }.onEach { configurationResponse ->
@@ -48,12 +50,17 @@ internal class ActionDataRepository(
                         clientToken = primerConfig.clientTokenBase64.orEmpty()
                     ) to configurationResponse.body
                 )
-            }.mapLatest { primerResponse -> primerResponse.body }.flatMapLatest { configuration ->
+            }.mapLatest { primerResponse -> primerResponse.body }
+            .flatMapLatest { configurationResponse ->
                 localConfigurationDataSource.get().map { localConfiguration ->
                     localConfigurationDataSource.update(
                         localConfiguration
-                            .copy(clientSession = configuration.clientSession)
+                            .copy(
+                                clientSession = configurationResponse.clientSession,
+                                checkoutModules = configurationResponse.checkoutModules
+                            )
                     )
-                }.mapLatest { requireNotNull(configuration.clientSession).toClientSessionData() }
+                }.mapLatest { requireNotNull(configurationResponse.clientSession).toClientSessionData() }
             }
+    }
 }

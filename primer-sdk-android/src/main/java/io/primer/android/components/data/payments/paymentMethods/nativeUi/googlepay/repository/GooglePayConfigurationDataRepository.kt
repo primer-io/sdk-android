@@ -8,6 +8,8 @@ import io.primer.android.data.configuration.datasource.LocalConfigurationDataSou
 import io.primer.android.data.configuration.models.Environment
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.domain.session.models.CheckoutModule
+import io.primer.android.domain.session.models.findFirstInstance
 import io.primer.android.payment.google.GooglePay
 import io.primer.android.payment.google.GooglePayFacade
 import io.primer.android.utils.PaymentUtils
@@ -24,29 +26,36 @@ internal class GooglePayConfigurationDataRepository(
             val paymentMethodConfig =
                 localConfigurationDataSource.getConfiguration().paymentMethods
                     .first { it.type == PaymentMethodType.GOOGLE_PAY.name }
+            val shippingOptions = localConfigurationDataSource.getConfiguration().toConfiguration()
+                .checkoutModules.findFirstInstance<CheckoutModule.Shipping>()
             val allowedCardNetworks = localConfigurationDataSource.getConfiguration().clientSession
                 .paymentMethod?.orderedAllowedCardNetworks.orEmpty().intersect(
                     GooglePay.allowedCardNetworks
                 ).toList().map { type -> type.name }
+            val googlePayOptions = settings.paymentMethodOptions.googlePayOptions
             emit(
                 GooglePayConfiguration(
-                    getGooglePayEnvironment(
+                    environment = getGooglePayEnvironment(
                         localConfigurationDataSource.getConfiguration().environment
                     ),
-                    requireNotNullCheck(
+                    gatewayMerchantId = requireNotNullCheck(
                         paymentMethodConfig.options?.merchantId,
                         GooglePayIllegalValueKey.MERCHANT_ID
                     ),
-                    settings.paymentMethodOptions.googlePayOptions.merchantName,
-                    PaymentUtils.minorToAmount(
+                    merchantName = googlePayOptions.merchantName,
+                    totalPrice = PaymentUtils.minorToAmount(
                         settings.currentAmount,
                         Currency.getInstance(settings.currency)
                     ).toString(),
-                    settings.order.countryCode.toString(),
-                    settings.currency,
-                    allowedCardNetworks,
-                    allowedCardAuthMethods,
-                    settings.paymentMethodOptions.googlePayOptions.captureBillingAddress
+                    countryCode = settings.order.countryCode.toString(),
+                    currencyCode = settings.currency,
+                    allowedCardNetworks = allowedCardNetworks,
+                    allowedCardAuthMethods = allowedCardAuthMethods,
+                    billingAddressRequired = googlePayOptions.captureBillingAddress,
+                    shippingOptions = shippingOptions,
+                    shippingAddressParameters = googlePayOptions.shippingAddressParameters,
+                    requireShippingMethod = googlePayOptions.requireShippingMethod,
+                    emailAddressRequired = googlePayOptions.emailAddressRequired
                 )
             )
         }

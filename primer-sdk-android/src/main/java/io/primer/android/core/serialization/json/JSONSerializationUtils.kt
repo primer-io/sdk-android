@@ -1,5 +1,7 @@
 package io.primer.android.core.serialization.json
 
+import org.json.JSONObject
+
 internal object JSONSerializationUtils {
 
     private const val SERIALIZER_FIELD_NAME = "serializer"
@@ -67,5 +69,25 @@ internal object JSONSerializationUtils {
             "Deserializer is not of the type JSONObjectDeserializer"
         }
         return field[null] as JSONObjectDeserializer<T>
+    }
+
+    @Throws(
+        IllegalStateException::class,
+        NoSuchFieldException::class,
+        IllegalAccessException::class
+    )
+    inline fun <reified T : JSONDeserializable> JSONObject.deserialize(): T {
+        return getJsonObjectDeserializer<T>().deserialize(this)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Throws(
+        IllegalStateException::class,
+        NoSuchFieldException::class,
+        IllegalAccessException::class
+    )
+    inline fun <reified T : JSONObjectSerializable> T.serialize(): JSONObject {
+        val serializer = getJsonObjectSerializer<T>()
+        return serializer.serialize(this)
     }
 }

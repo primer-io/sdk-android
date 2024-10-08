@@ -40,7 +40,6 @@ class MerchantSettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureFlowToggleViews()
-        configureWorkflowsViews()
         configureClientTokenTextField()
         configureCustomerIdTextField()
         configureCountryTextField()
@@ -199,12 +198,6 @@ class MerchantSettingsFragment : Fragment() {
                 R.id.paymentHandlingAuto -> viewModel.setPaymentHandling(PrimerPaymentHandling.AUTO)
                 R.id.paymentHandlingManual -> viewModel.setPaymentHandling(PrimerPaymentHandling.MANUAL)
             }
-        }
-    }
-
-    private fun configureWorkflowsViews() {
-        binding.useLegacyWorkflows.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setUseLegacyWorkflows(isChecked)
         }
     }
 

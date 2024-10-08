@@ -2,6 +2,7 @@ package io.primer.android.di
 
 import io.primer.android.components.data.payments.paymentMethods.nativeUi.googlepay.repository.GooglePayConfigurationDataRepository
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.GooglePayConfigurationInteractor
+import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.GooglePayShippingMethodUpdateValidator
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.repository.GooglePayConfigurationRepository
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.validation.GooglePayValidPaymentDataMethodRule
 import io.primer.android.components.domain.payments.paymentMethods.nativeUi.googlepay.validation.GooglePayValidationRulesResolver
@@ -28,6 +29,13 @@ internal class GooglePayContainer(private val sdk: SdkContainer) : DependencyCon
         registerSingleton {
             GooglePayValidationRulesResolver(
                 resolve()
+            )
+        }
+
+        registerSingleton {
+            GooglePayShippingMethodUpdateValidator(
+                resolve(),
+                sdk.resolve()
             )
         }
     }

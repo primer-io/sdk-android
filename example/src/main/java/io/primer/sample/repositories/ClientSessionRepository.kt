@@ -24,7 +24,6 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
         currency: String,
         environment: String,
         metadata: String?,
-        useNewWorkflows: Boolean?,
         captureVaultedCardCvv: Boolean,
         callback: (token: String?) -> Unit,
     ) {
@@ -41,7 +40,6 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
             body,
             PrimerRoutes.clientSession,
             environment,
-            useNewWorkflows!!,
             apiKeyDataSource.getApiKey(environment.type())
         )
         client.cache?.delete()

@@ -10,16 +10,20 @@ import io.mockk.mockk
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.action.models.ActionUpdateBillingAddressParams
 import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
+import io.primer.android.domain.action.models.ActionUpdateEmailAddressParams
+import io.primer.android.domain.action.models.ActionUpdateMobileNumberParams
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
+import io.primer.android.domain.action.models.ActionUpdateShippingAddressParams
+import io.primer.android.domain.action.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.repository.ConfigurationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -42,16 +46,16 @@ class ActionUpdateFilterTest {
 
     @Test
     fun `filter() should return 'false' when called with ActionUpdateCustomerDetailsParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateCustomerDetailsParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateCustomerDetailsParams>())
 
-        assertEquals(listOf(false), result)
+        assertFalse(result)
     }
 
     @Test
     fun `filter() should return 'false' when called with ActionUpdateBillingAddressParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateBillingAddressParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateBillingAddressParams>())
 
-        assertEquals(listOf(false), result)
+        assertFalse(result)
     }
 
     @Test
@@ -61,9 +65,9 @@ class ActionUpdateFilterTest {
         } returns flowOf(mockk())
         every { config.intent.paymentMethodIntent.isVault } returns true
 
-        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
 
-        assertEquals(listOf(true), result)
+        assertTrue(result)
         coVerify {
             configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
@@ -83,9 +87,9 @@ class ActionUpdateFilterTest {
         )
         every { config.intent.paymentMethodIntent.isVault } returns false
 
-        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
 
-        assertEquals(listOf(true), result)
+        assertTrue(result)
         coVerify {
             configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
@@ -105,9 +109,9 @@ class ActionUpdateFilterTest {
         )
         every { config.intent.paymentMethodIntent.isVault } returns false
 
-        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
 
-        assertEquals(listOf(false), result)
+        assertFalse(result)
         coVerify {
             configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
@@ -121,9 +125,9 @@ class ActionUpdateFilterTest {
         } returns flowOf(mockk())
         every { config.intent.paymentMethodIntent.isVault } returns true
 
-        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
 
-        assertEquals(listOf(true), result)
+        assertTrue(result)
         coVerify {
             configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
@@ -143,9 +147,9 @@ class ActionUpdateFilterTest {
         )
         every { config.intent.paymentMethodIntent.isVault } returns false
 
-        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
 
-        assertEquals(listOf(true), result)
+        assertTrue(result)
         coVerify {
             configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
@@ -165,12 +169,40 @@ class ActionUpdateFilterTest {
         )
         every { config.intent.paymentMethodIntent.isVault } returns false
 
-        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>()).toList()
+        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
 
-        assertEquals(listOf(false), result)
+        assertFalse(result)
         coVerify {
             configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
             config.intent.paymentMethodIntent.isVault
         }
+    }
+
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateMobileNumberParams`() = runTest {
+        val result = filter.filter(mockk<ActionUpdateMobileNumberParams>())
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateShippingAddressParams`() = runTest {
+        val result = filter.filter(mockk<ActionUpdateShippingAddressParams>())
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateShippingOptionIdParams`() = runTest {
+        val result = filter.filter(mockk<ActionUpdateShippingOptionIdParams>())
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateEmailAddressParams`() = runTest {
+        val result = filter.filter(mockk<ActionUpdateEmailAddressParams>())
+
+        assertFalse(result)
     }
 }

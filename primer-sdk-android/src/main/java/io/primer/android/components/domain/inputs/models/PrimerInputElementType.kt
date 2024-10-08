@@ -30,8 +30,8 @@ enum class PrimerInputElementType(val field: String) {
     }
 }
 
-internal fun Map<String, Boolean>?.via(type: PrimerInputElementType): Boolean? {
-    return this?.get(type.field)
+internal fun Map<String, Boolean>?.isEnabled(type: PrimerInputElementType): Boolean {
+    return this?.get(type.field) == true
 }
 
 internal fun <T : Any> JSONObject.putFor(type: PrimerInputElementType, value: T) {

@@ -13,7 +13,7 @@ import io.primer.android.payment.SelectedPaymentMethodManagerBehaviour
 import io.primer.android.payment.VaultCapability
 import io.primer.android.ui.payment.LoadingState
 
-internal class GooglePayDescriptor constructor(
+internal class GooglePayDescriptor(
     val options: GooglePay,
     localConfig: PrimerConfig,
     config: PaymentMethodConfigDataResponse

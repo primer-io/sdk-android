@@ -2,13 +2,14 @@ package io.primer.android.data.configuration.models
 
 import io.primer.android.core.serialization.json.JSONDeserializable
 import io.primer.android.core.serialization.json.JSONObjectDeserializer
-import io.primer.android.core.serialization.json.JSONSerializationUtils
+import io.primer.android.core.serialization.json.JSONSerializationUtils.deserialize
 import io.primer.android.core.serialization.json.extensions.optNullableInt
 import io.primer.android.core.serialization.json.extensions.optNullableString
 import io.primer.android.core.serialization.json.extensions.sequence
 import io.primer.android.domain.action.models.PrimerFee
 import io.primer.android.domain.action.models.PrimerLineItem
 import io.primer.android.domain.action.models.PrimerOrder
+import io.primer.android.domain.action.models.PrimerShipping
 import org.json.JSONObject
 
 internal data class OrderDataResponse(
@@ -18,7 +19,8 @@ internal data class OrderDataResponse(
     val totalOrderAmount: Int? = null,
     var countryCode: CountryCode? = null,
     var lineItems: List<LineItemDataResponse> = emptyList(),
-    val fees: List<FeeDataResponse> = listOf()
+    val fees: List<FeeDataResponse> = listOf(),
+    val shipping: ShippingDataResponse? = null
 ) : JSONDeserializable {
 
     data class LineItemDataResponse(
@@ -89,7 +91,39 @@ internal data class OrderDataResponse(
         }
     }
 
-    fun toOrder() = PrimerOrder(countryCode)
+    data class ShippingDataResponse(
+        val amount: Int? = null,
+        val methodId: String? = null,
+        val methodName: String? = null,
+        val methodDescription: String? = null
+    ) : JSONDeserializable {
+
+        fun toShippingData() = PrimerShipping(
+            amount = this.amount,
+            methodId = this.methodId,
+            methodName = this.methodName,
+            methodDescription = this.methodDescription
+        )
+
+        companion object {
+            const val AMOUNT_FIELD = "amount"
+            const val METHOD_ID_FIELD = "methodId"
+            const val METHOD_NAME_FIELD = "methodName"
+            const val METHOD_DESCRIPTION_FIELD = "methodDescription"
+
+            @JvmField
+            val deserializer = JSONObjectDeserializer { t ->
+                ShippingDataResponse(
+                    t.optNullableInt(AMOUNT_FIELD),
+                    t.optNullableString(METHOD_ID_FIELD),
+                    t.optNullableString(METHOD_NAME_FIELD),
+                    t.optNullableString(METHOD_DESCRIPTION_FIELD)
+                )
+            }
+        }
+    }
+
+    fun toOrder() = PrimerOrder(countryCode, shipping?.toShippingData())
 
     fun toFees() = fees.map { PrimerFee(type = it.type, amount = it.amount) }
 
@@ -101,6 +135,7 @@ internal data class OrderDataResponse(
         const val COUNTRY_CODE_FIELD = "countryCode"
         const val LINE_ITEMS_FIELD = "lineItems"
         const val FEES_FIELD = "fees"
+        const val SHIPPING_FIELD = "shipping"
 
         @JvmField
         val deserializer = JSONObjectDeserializer { t ->
@@ -111,13 +146,12 @@ internal data class OrderDataResponse(
                 t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
                 t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
                 t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
-                    JSONSerializationUtils.getJsonObjectDeserializer<LineItemDataResponse>()
-                        .deserialize(it)
+                    it.deserialize<LineItemDataResponse>()
                 }?.toList().orEmpty(),
                 t.optJSONArray(FEES_FIELD)?.sequence<JSONObject>()?.map {
-                    JSONSerializationUtils.getJsonObjectDeserializer<FeeDataResponse>()
-                        .deserialize(it)
-                }?.toList().orEmpty()
+                    it.deserialize<FeeDataResponse>()
+                }?.toList().orEmpty(),
+                t.optJSONObject(SHIPPING_FIELD)?.deserialize()
             )
         }
     }

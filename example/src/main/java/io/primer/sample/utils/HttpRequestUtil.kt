@@ -28,7 +28,6 @@ class HttpRequestUtil {
             body: ExampleAppRequestBody,
             uri: String,
             environment: String,
-            useNewWorkflows: Boolean = false,
             apiKey: String? = null
         ): Request {
             val mimeType = "application/json".toMediaType()
@@ -41,7 +40,6 @@ class HttpRequestUtil {
                 .url(uri)
                 .header("X-Api-Version", "2.2")
                 .header("environment", environment)
-                .header("Legacy-Workflows", useNewWorkflows.toString())
                 .post(reqBody)
             if (!apiKey.isNullOrBlank()) requestBuilder.addHeader("X-Api-Key", apiKey)
             return requestBuilder.build()

@@ -29,7 +29,6 @@ import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.domain.inputs.models.via
 import io.primer.android.components.ui.assets.ImageColor
 import io.primer.android.data.configuration.models.PaymentMethodType
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -38,6 +37,7 @@ import io.primer.android.di.extension.inject
 import io.primer.android.di.extension.viewModel
 import io.primer.android.domain.action.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.domain.action.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.domain.session.models.isCardHolderNameEnabled
 import io.primer.android.model.MonetaryAmount
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
@@ -111,7 +111,7 @@ internal class CardFormFragment : BaseFragment() {
         }
 
         primerViewModel.showCardInformation.observe(viewLifecycleOwner) { cardInformation ->
-            displayAvailableCardFields(cardInformation)
+            displayAvailableCardFields(cardInformation?.options)
 
             renderInputFields()
             renderCardNumberInput()
@@ -120,7 +120,7 @@ internal class CardFormFragment : BaseFragment() {
             /**
              * Handle for holder name into @see [io.primer.android.payment.card.CreditCard] model
              */
-            tokenizationViewModel.setCardHasFields(cardInformation)
+            tokenizationViewModel.setCardHasFields(cardInformation?.options)
 
             validateAndShowErrorFields()
         }
@@ -562,17 +562,10 @@ internal class CardFormFragment : BaseFragment() {
                     FieldFocuser.focus(cardInputFields[PrimerInputElementType.CVV])
 
                 PrimerInputElementType.CVV -> {
-                    val containsCardholderName =
-                        primerViewModel.showCardInformation.value.let { options ->
-                            options.via(PrimerInputElementType.ALL) ?: options.via(
-                                PrimerInputElementType.CARDHOLDER_NAME
-                            )
-                        }
-                    when {
-                        containsCardholderName == null || containsCardholderName ->
-                            takeFocusCardholderName()
-
-                        else -> binding.billingAddressForm.findNextFocus()
+                    if (primerViewModel.showCardInformation.value.isCardHolderNameEnabled()) {
+                        takeFocusCardholderName()
+                    } else {
+                        binding.billingAddressForm.findNextFocus()
                     }
                 }
 
@@ -581,17 +574,8 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    private fun takeFocusCardholderName() {
-        val containsCardholderName =
-            primerViewModel.showCardInformation.value.let { options ->
-                options.via(PrimerInputElementType.ALL) ?: options.via(
-                    PrimerInputElementType.CARDHOLDER_NAME
-                )
-            }
-        if (containsCardholderName == null || containsCardholderName) {
-            FieldFocuser.focus(cardInputFields[PrimerInputElementType.CARDHOLDER_NAME])
-        }
-    }
+    private fun takeFocusCardholderName() =
+        FieldFocuser.focus(cardInputFields[PrimerInputElementType.CARDHOLDER_NAME])
 
     private fun setValidationErrors() {
         val tokenizationStatus = tokenizationViewModel.tokenizationStatus.value

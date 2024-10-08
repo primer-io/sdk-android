@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.domain.action.ActionInteractor
 import io.primer.android.domain.action.models.ActionUpdateCustomerDetailsParams
+import io.primer.android.domain.action.models.BaseActionUpdateParams
 import io.primer.android.domain.session.CachePolicy
 import io.primer.android.domain.session.ConfigurationInteractor
 import io.primer.android.domain.session.models.ConfigurationParams
@@ -42,7 +43,7 @@ class StripeAchClientSessionPatchDelegateTest {
     @Test
     fun `invoke() should not patch client session if first name, last name and email address are not changed`() = runTest {
         stubConfigurationInteractor()
-        every { actionInteractor.invoke(any()) } returns flowOf(mockk())
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(mockk())
 
         val result = delegate.invoke(
             firstName = "john",
@@ -55,14 +56,14 @@ class StripeAchClientSessionPatchDelegateTest {
             configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify(exactly = 0) {
-            actionInteractor.invoke(any())
+            actionInteractor.invoke(any<BaseActionUpdateParams>())
         }
     }
 
     @Test
     fun `invoke() should patch client session if first name is changed`() = runTest {
         stubConfigurationInteractor()
-        every { actionInteractor.invoke(any()) } returns flowOf(mockk())
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(mockk())
 
         val result = delegate.invoke(
             firstName = "johnny",
@@ -88,7 +89,7 @@ class StripeAchClientSessionPatchDelegateTest {
     @Test
     fun `invoke() should patch client session if last name is changed`() = runTest {
         stubConfigurationInteractor()
-        every { actionInteractor.invoke(any()) } returns flowOf(mockk())
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(mockk())
 
         val result = delegate.invoke(
             firstName = "john",
@@ -114,7 +115,7 @@ class StripeAchClientSessionPatchDelegateTest {
     @Test
     fun `invoke() should patch client session if email address is changed`() = runTest {
         stubConfigurationInteractor()
-        every { actionInteractor.invoke(any()) } returns flowOf(mockk())
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flowOf(mockk())
 
         val result = delegate.invoke(
             firstName = "john",
@@ -152,14 +153,14 @@ class StripeAchClientSessionPatchDelegateTest {
             configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
         }
         coVerify(exactly = 0) {
-            actionInteractor.invoke(any())
+            actionInteractor.invoke(any<BaseActionUpdateParams>())
         }
     }
 
     @Test
     fun `invoke() should return error if action interactor call fails`() = runTest {
         stubConfigurationInteractor()
-        every { actionInteractor.invoke(any()) } returns flow { throw Exception() }
+        every { actionInteractor.invoke(any<BaseActionUpdateParams>()) } returns flow { throw Exception() }
 
         val result = delegate.invoke(
             firstName = "john",

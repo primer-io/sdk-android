@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface ActionRepository {
 
-    fun updateClientActions(params: BaseActionUpdateParams): Flow<ClientSessionData>
+    fun updateClientActions(params: List<BaseActionUpdateParams>): Flow<ClientSessionData>
 }

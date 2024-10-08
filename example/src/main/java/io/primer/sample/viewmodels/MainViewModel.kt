@@ -15,6 +15,7 @@ import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
+import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
@@ -150,9 +151,6 @@ class MainViewModel(
         paymentHandling
     )
 
-    private val _legacyWorkflows: MutableLiveData<Boolean> = MutableLiveData(true)
-    fun setUseLegacyWorkflows(useNewWorkflows: Boolean): Unit = _legacyWorkflows.postValue(useNewWorkflows)
-
     private val _uiOptions: MutableLiveData<PrimerUIOptions> =
         MutableLiveData(PrimerUIOptions(theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration)))
 
@@ -187,7 +185,12 @@ class MainViewModel(
                 ),
                 googlePayOptions = PrimerGooglePayOptions(
                     captureBillingAddress = true,
-                    existingPaymentMethodRequired = true
+                    shippingAddressParameters = PrimerGoogleShippingAddressParameters(
+                        phoneNumberRequired = true
+                    ),
+                    existingPaymentMethodRequired = false,
+                    emailAddressRequired = true,
+                    requireShippingMethod = true
                 ),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
                 stripeOptions = PrimerStripeOptions(
@@ -219,7 +222,6 @@ class MainViewModel(
         countryRepository.getCurrency(),
         environment.value?.environment ?: throw Error("no environment set!"),
         metadata.value,
-        _legacyWorkflows.value,
         _captureVaultedCardCvv.value ?: false
     ) { t ->
         viewModelScope.launch {
