@@ -8,9 +8,10 @@
     <ImageView
         android:id="@+id/icon"
         android:layout_width="24dp"
-        android:alpha="0.5"
         android:layout_height="24dp"
         android:layout_marginStart="@dimen/extra_small_padding"
+        android:alpha="0.5"
+        android:contentDescription="@null"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,12 +20,14 @@
         android:id="@+id/name"
         style="@style/Primer.Text.Small"
         android:layout_width="0dp"
-        android:alpha="0.5"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/medium_large_padding"
+        android:alpha="0.5"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textIsSelectable="false"
         app:drawableEndCompat="@drawable/ic_arrow_right"
+        app:drawableTint="@color/primer_bank_selection_arrow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent" />

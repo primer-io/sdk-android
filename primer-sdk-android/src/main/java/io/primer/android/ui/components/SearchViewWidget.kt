@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import io.primer.android.R
 import io.primer.android.di.DISdkComponent
@@ -53,15 +54,19 @@ internal class SearchViewWidget(
             false
         }
 
-        val roundedBackground = GradientDrawable()
-        roundedBackground.cornerRadius = theme.searchInput.cornerRadius.getDimension(context)
-        roundedBackground.setColor(
-            theme.searchInput.backgroundColor.getColor(
-                context,
-                theme.isDarkMode
+        background = GradientDrawable().apply {
+            cornerRadius = theme.searchInput.cornerRadius.getDimension(context)
+            setStroke(
+                resources.getDimensionPixelSize(R.dimen.primer_bank_search_input_border_width),
+                ContextCompat.getColor(this@SearchViewWidget.context, R.color.primer_bank_search_input_border)
             )
-        )
-        background = roundedBackground
+            setColor(
+                theme.searchInput.backgroundColor.getColor(
+                    context = context,
+                    isDarkMode = theme.isDarkMode
+                )
+            )
+        }
 
         maxLines = 1
         inputType = EditorInfo.TYPE_CLASS_TEXT

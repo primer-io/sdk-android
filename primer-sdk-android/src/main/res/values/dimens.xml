@@ -65,21 +65,25 @@
     <dimen name="primer_subtitle_fontsize">14sp</dimen>
     <dimen name="primer_system_text_fontsize">@dimen/primer_subtitle_fontsize</dimen>
 
-    <!--  custom colors for payment method buttons in universal checkout -->
+    <!--  custom dimens for payment method buttons in universal checkout -->
     <dimen name="primer_payment_method_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
     <dimen name="primer_payment_method_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
     <dimen name="primer_payment_method_button_border_width">1dp</dimen>
 
-    <!--  custom colors for main buttons ("PAY", "NEXT", etc.) in universal checkout -->
+    <!--  custom dimens for main buttons ("PAY", "NEXT", etc.) in universal checkout -->
     <dimen name="primer_main_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
     <dimen name="primer_main_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
     <dimen name="primer_main_button_border_width">0dp</dimen>
 
-    <!--  custom colors for text inputs in universal checkout -->
+    <!--  custom dimens for text inputs in universal checkout -->
     <dimen name="primer_input_corner_radius">@dimen/primer_default_corner_radius</dimen>
     <dimen name="primer_input_fontsize">@dimen/primer_default_fontsize</dimen>
     <dimen name="primer_search_input_fontsize">@dimen/primer_text_size_sm</dimen>
     <dimen name="primer_input_border_width">1dp</dimen>
+
+    <!--  custom dimens for bank selector -->
+    <dimen name="primer_bank_selection_divider_height">0.5dp</dimen>
+    <dimen name="primer_bank_search_input_border_width">0.5dp</dimen>
 
     <!-- Dummy APM actions -->
     <dimen name="primer_decision_radio_button_height">48dp</dimen>

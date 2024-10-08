@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  custom colors for bank selector -->
+    <color name="primer_bank_selection_divider">#DBDBDB</color>
+    <color name="primer_bank_selection_arrow">#FFFFFF</color>
+    <color name="primer_bank_selection_logo_tint">#FFFFFF</color>
+    <color name="primer_bank_search_input_border">@android:color/transparent</color>
+    <color name="primer_bank_search_icon">@android:color/white</color>
+
+</resources>

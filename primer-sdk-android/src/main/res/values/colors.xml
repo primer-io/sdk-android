@@ -86,11 +86,17 @@
     <color name="primer_search_input_text">@color/primer_secondary</color>
     <color name="primer_search_input_cursor">@color/primer_primary</color>
 
+    <color name="primer_pay_button_background">#007AFF</color>
+
+<!--    // Add icon color -->
     <!--  custom colors for bank selector -->
     <color name="primer_bank_selection_divider">#DBDBDB</color>
+    <color name="primer_bank_selection_arrow">#000000</color>
+    <color name="primer_bank_selection_logo_tint">#000000</color>
+    <color name="primer_bank_search_input_border">@android:color/transparent</color>
+    <color name="primer_bank_search_icon">@android:color/black</color>
     <color name="primer_bank_selection_placeholder_color">#E5E5EA</color>
     <color name="primer_bank_selection_search_background">#08242A2F</color>
-    <color name="primer_pay_button_background">#007AFF</color>
 
     <!-- Dummy APM selector -->
     <color name="primer_dummy_apm_checked_border">#3A83F9</color>
