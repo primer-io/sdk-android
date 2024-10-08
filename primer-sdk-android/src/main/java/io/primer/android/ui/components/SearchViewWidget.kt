@@ -57,8 +57,8 @@ internal class SearchViewWidget(
         background = GradientDrawable().apply {
             cornerRadius = theme.searchInput.cornerRadius.getDimension(context)
             setStroke(
-                resources.getDimensionPixelSize(R.dimen.primer_bank_search_input_border_width),
-                ContextCompat.getColor(this@SearchViewWidget.context, R.color.primer_bank_search_input_border)
+                resources.getDimensionPixelSize(R.dimen.primer_input_border_width),
+                ContextCompat.getColor(this@SearchViewWidget.context, R.color.primer_search_input_border)
             )
             setColor(
                 theme.searchInput.backgroundColor.getColor(

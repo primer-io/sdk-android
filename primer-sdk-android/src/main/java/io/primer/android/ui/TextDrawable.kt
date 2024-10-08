@@ -5,13 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.Paint
-
-import android.util.TypedValue
-
 import android.graphics.Paint.Align
-
-import android.graphics.drawable.Drawable
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_SP
 import io.primer.android.R
 
@@ -48,7 +45,7 @@ internal class TextDrawable(private val res: Resources, private val text: String
     private fun drawCircle(canvas: Canvas) {
         val rect = RectF(bounds)
         val borderPaint = Paint()
-        borderPaint.color = res.getColor(R.color.primer_bank_selection_placeholder_color)
+        borderPaint.color = res.getColor(R.color.primer_image_placeholder)
         canvas.drawCircle(rect.centerX(), rect.centerY(), rect.height() / 2, borderPaint)
     }
 

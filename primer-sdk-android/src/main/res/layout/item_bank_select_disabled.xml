@@ -27,7 +27,7 @@
         android:maxLines="1"
         android:textIsSelectable="false"
         app:drawableEndCompat="@drawable/ic_arrow_right"
-        app:drawableTint="@color/primer_bank_selection_arrow"
+        app:drawableTint="@color/primer_icon_tint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent" />
