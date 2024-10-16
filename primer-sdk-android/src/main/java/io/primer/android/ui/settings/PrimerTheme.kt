@@ -237,19 +237,19 @@ data class PrimerTheme internal constructor(
             val styledPaymentMethodButtonBorder = BorderTheme(
                 defaultColor = ResourceColor.valueOf(
                     default = paymentMethodButton?.border?.defaultColor ?: disabledColor
-                    ?: R.color.primer_payment_method_button_border
+                        ?: R.color.primer_payment_method_button_border
                 ),
                 selectedColor = ResourceColor.valueOf(
                     default = paymentMethodButton?.border?.selectedColor ?: primaryColor
-                    ?: R.color.primer_payment_method_button_border_selected
+                        ?: R.color.primer_payment_method_button_border_selected
                 ),
                 errorColor = ResourceColor.valueOf(
                     default = paymentMethodButton?.border?.errorColor ?: errorColor
-                    ?: R.color.primer_payment_method_button_border_error
+                        ?: R.color.primer_payment_method_button_border_error
                 ),
                 width = ResourceDimension.valueOf(
                     default = paymentMethodButton?.border?.width ?: defaultBorder?.width
-                    ?: R.dimen.primer_payment_method_button_border_width
+                        ?: R.dimen.primer_payment_method_button_border_width
                 )
             )
 
@@ -271,17 +271,17 @@ data class PrimerTheme internal constructor(
                 ),
                 disabledColor = ResourceColor.valueOf(
                     default = paymentMethodButton?.disabledColor ?: disabledColor
-                    ?: R.color.primer_payment_method_button_disabled
+                        ?: R.color.primer_payment_method_button_disabled
                 ),
                 errorColor = ResourceColor.valueOf(
                     default = paymentMethodButton?.errorColor ?: errorColor
-                    ?: R.color.primer_payment_method_button_error
+                        ?: R.color.primer_payment_method_button_error
                 ),
                 border = styledPaymentMethodButtonBorder,
                 text = styledPaymentMethodButtonText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = paymentMethodButton?.cornerRadius ?: defaultCornerRadius
-                    ?: R.dimen.primer_payment_method_button_corner_radius
+                        ?: R.dimen.primer_payment_method_button_corner_radius
                 )
             )
 
@@ -323,7 +323,7 @@ data class PrimerTheme internal constructor(
                 text = styledMainButtonText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = mainButton?.cornerRadius ?: defaultCornerRadius
-                    ?: R.dimen.primer_main_button_corner_radius
+                        ?: R.dimen.primer_main_button_corner_radius
                 )
             )
 
@@ -438,7 +438,7 @@ data class PrimerTheme internal constructor(
                 ),
                 height = ResourceDimension.valueOf(
                     divider?.height ?: R.dimen.primer_divider_height
-                ),
+                )
             )
 
             return PrimerTheme(
@@ -983,11 +983,11 @@ internal data class SearchInputTheme(
 
 internal data class DividerTheme(
     val backgroundColor: ColorData,
-    val height: DimensionData,
+    val height: DimensionData
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         backgroundColor = parcel.readParcelable<ColorData>()!!,
-        height = parcel.readParcelable<DimensionData>()!!,
+        height = parcel.readParcelable<DimensionData>()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
