@@ -13,7 +13,6 @@ data class PrimerTheme internal constructor(
     internal val primaryColor: ColorData,
     internal val backgroundColor: ColorData,
     internal val splashColor: ColorData,
-    internal val iconColor: ColorData,
     internal val defaultCornerRadius: DimensionData,
     internal val bottomSheetCornerRadius: DimensionData,
     internal val titleText: TextTheme,
@@ -38,8 +37,6 @@ data class PrimerTheme internal constructor(
         backgroundColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_background),
 
         splashColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_disabled),
-
-        iconColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_icon_tint),
 
         defaultCornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius),
         bottomSheetCornerRadius = ResourceDimension.valueOf(R.dimen.primer_bottom_sheet_corner_radius),
@@ -168,7 +165,6 @@ data class PrimerTheme internal constructor(
             @ColorRes primaryColor: Int? = null,
             @ColorRes backgroundColor: Int? = null,
             @ColorRes disabledColor: Int? = null,
-            @ColorRes iconColor: Int? = null,
             @ColorRes errorColor: Int? = null,
             @DimenRes defaultCornerRadius: Int? = null,
             @DimenRes bottomSheetCornerRadius: Int? = null,
@@ -194,9 +190,6 @@ data class PrimerTheme internal constructor(
             )
             val styledDisabledColor = ResourceColor.valueOf(
                 default = disabledColor ?: R.color.primer_disabled
-            )
-            val styledIconColor = ResourceColor.valueOf(
-                default = iconColor ?: R.color.primer_icon_tint
             )
 
             val styledCornerRadius = ResourceDimension.valueOf(
@@ -446,7 +439,6 @@ data class PrimerTheme internal constructor(
                 primaryColor = styledPrimaryColor,
                 backgroundColor = styledBackgroundColor,
                 splashColor = styledDisabledColor,
-                iconColor = styledIconColor,
                 defaultCornerRadius = styledCornerRadius,
                 bottomSheetCornerRadius = styledBottomSheetCornerRadius,
                 titleText = styledTitleText,
@@ -480,8 +472,7 @@ data class PrimerTheme internal constructor(
             disabledColor: String? = null,
             errorColor: String? = null,
             bordersColor: String? = null,
-            searchInputBorderColor: String? = null,
-            iconColor: String? = null
+            searchInputBorderColor: String? = null
         ): PrimerTheme {
             println(
                 "mainColor: $mainColor, \n" +
@@ -503,10 +494,6 @@ data class PrimerTheme internal constructor(
             val styledDisabledColor = disabledColor?.let {
                 DynamicColor.valueOf(default = it)
             } ?: ResourceColor.valueOf(R.color.primer_disabled)
-
-            val styledIconColor = iconColor?.let {
-                DynamicColor.valueOf(default = it)
-            } ?: ResourceColor.valueOf(R.color.primer_icon_tint)
 
             val styledCornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
 
@@ -710,7 +697,6 @@ data class PrimerTheme internal constructor(
                 primaryColor = styledPrimaryColor,
                 backgroundColor = styledBackgroundColor,
                 splashColor = styledDisabledColor,
-                iconColor = styledIconColor,
                 defaultCornerRadius = styledCornerRadius,
                 bottomSheetCornerRadius = styledBottomSheetCornerRadius,
                 titleText = styledTitleText,
@@ -735,7 +721,6 @@ data class PrimerTheme internal constructor(
         parcel.writeParcelable(primaryColor, flags)
         parcel.writeParcelable(backgroundColor, flags)
         parcel.writeParcelable(splashColor, flags)
-        parcel.writeParcelable(iconColor, flags)
         parcel.writeParcelable(titleText, flags)
         parcel.writeParcelable(amountLabelText, flags)
         parcel.writeParcelable(subtitleText, flags)
