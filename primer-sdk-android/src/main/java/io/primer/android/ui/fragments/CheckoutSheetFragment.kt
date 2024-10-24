@@ -107,4 +107,9 @@ internal class CheckoutSheetFragment :
             }
         }
     }
+
+    fun disableDismiss(disabled: Boolean) {
+        dialog?.setCancelable(disabled.not())
+        dialog?.setCanceledOnTouchOutside(disabled.not())
+    }
 }

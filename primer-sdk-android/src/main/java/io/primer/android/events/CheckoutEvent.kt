@@ -231,4 +231,6 @@ internal sealed class CheckoutEvent(
 
     class HucMetadataChanged(val metadata: PrimerPaymentMethodMetadata) :
         CheckoutEvent(CheckoutEventType.HUC_METADATA_CHANGED)
+
+    data object DisableDialogDismiss : CheckoutEvent(CheckoutEventType.DISABLE_DIALOG_DISMISS)
 }
