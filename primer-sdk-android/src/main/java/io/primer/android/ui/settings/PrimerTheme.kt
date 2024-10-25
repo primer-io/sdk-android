@@ -24,6 +24,7 @@ data class PrimerTheme internal constructor(
     internal val defaultText: TextTheme,
     internal val errorText: TextTheme,
     internal val input: InputTheme,
+    internal val divider: DividerTheme,
     internal val searchInput: SearchInputTheme,
     internal val windowMode: WindowMode,
     internal val inputMode: InputMode
@@ -121,9 +122,9 @@ data class PrimerTheme internal constructor(
             ),
             cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
         ),
-
         searchInput = parcel.readParcelable<SearchInputTheme>() ?: SearchInputTheme(
             backgroundColor = ResourceColor.valueOf(R.color.primer_search_input_background),
+            borderColor = ResourceColor.valueOf(R.color.primer_search_input_border),
             text = TextTheme(
                 defaultColor = ResourceColor.valueOf(R.color.primer_search_input_text),
                 fontSize = ResourceDimension.valueOf(R.dimen.primer_search_input_fontsize)
@@ -133,6 +134,10 @@ data class PrimerTheme internal constructor(
                 fontSize = ResourceDimension.valueOf(R.dimen.primer_search_input_fontsize)
             ),
             cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+        ),
+        divider = parcel.readParcelable<DividerTheme>() ?: DividerTheme(
+            backgroundColor = ResourceColor.valueOf(R.color.primer_divider),
+            height = ResourceDimension.valueOf(R.dimen.primer_divider_height)
         ),
         windowMode = WindowMode.BOTTOM_SHEET,
         inputMode = InputMode.OUTLINED
@@ -175,6 +180,7 @@ data class PrimerTheme internal constructor(
             errorText: TextThemeData? = null,
             input: InputThemeData? = null,
             searchInput: SearchInputThemeData? = null,
+            divider: DividerThemeData? = null,
             inputMode: InputMode = InputMode.OUTLINED
         ): PrimerTheme {
             val styledPrimaryColor = ResourceColor.valueOf(
@@ -413,10 +419,22 @@ data class PrimerTheme internal constructor(
                 backgroundColor = ResourceColor.valueOf(
                     default = searchInput?.backgroundColor ?: backgroundColor ?: R.color.primer_search_input_background
                 ),
+                borderColor = ResourceColor.valueOf(
+                    default = searchInput?.borderColor ?: R.color.primer_search_input_border
+                ),
                 text = styledSearchInputText,
                 hintText = styledSearchHintInputText,
                 cornerRadius = ResourceDimension.valueOf(
                     default = searchInput?.cornerRadius ?: defaultCornerRadius ?: R.dimen.primer_default_corner_radius
+                )
+            )
+
+            val dividerTheme = DividerTheme(
+                backgroundColor = ResourceColor.valueOf(
+                    divider?.backgroundColor ?: R.color.primer_divider
+                ),
+                height = ResourceDimension.valueOf(
+                    divider?.height ?: R.dimen.primer_divider_height
                 )
             )
 
@@ -437,6 +455,7 @@ data class PrimerTheme internal constructor(
                 errorText = styledErrorText,
                 input = styledInput,
                 searchInput = searchInputTheme,
+                divider = dividerTheme,
                 windowMode = WindowMode.BOTTOM_SHEET,
                 inputMode = inputMode
             )
@@ -452,10 +471,12 @@ data class PrimerTheme internal constructor(
             isDarkMode: Boolean? = null,
             mainColor: String? = null,
             backgroundColor: String? = null,
+            dividerColor: String? = null,
             textColor: String? = null,
             disabledColor: String? = null,
             errorColor: String? = null,
-            bordersColor: String? = null
+            bordersColor: String? = null,
+            searchInputBorderColor: String? = null
         ): PrimerTheme {
             println(
                 "mainColor: $mainColor, \n" +
@@ -663,9 +684,20 @@ data class PrimerTheme internal constructor(
                     backgroundColor != null -> DynamicColor.valueOf(default = backgroundColor)
                     else -> ResourceColor.valueOf(R.color.primer_search_input_background)
                 },
+                borderColor = when {
+                    searchInputBorderColor != null -> DynamicColor.valueOf(default = searchInputBorderColor)
+                    else -> ResourceColor.valueOf(R.color.primer_search_input_border)
+                },
                 text = styledSearchInputText,
                 hintText = styledSearchHintInputText,
                 cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+            )
+
+            val dividerTheme = DividerTheme(
+                backgroundColor = dividerColor?.let {
+                    DynamicColor.valueOf(default = it)
+                } ?: ResourceColor.valueOf(R.color.primer_divider),
+                height = ResourceDimension.valueOf(R.dimen.primer_divider_height)
             )
 
             return PrimerTheme(
@@ -685,6 +717,7 @@ data class PrimerTheme internal constructor(
                 errorText = styledErrorText,
                 input = styledInput,
                 searchInput = searchInputTheme,
+                divider = dividerTheme,
                 windowMode = WindowMode.BOTTOM_SHEET,
                 inputMode = InputMode.OUTLINED
             )
@@ -706,6 +739,7 @@ data class PrimerTheme internal constructor(
         parcel.writeParcelable(errorText, flags)
         parcel.writeParcelable(input, flags)
         parcel.writeParcelable(searchInput, flags)
+        parcel.writeParcelable(divider, flags)
     }
 
     override fun describeContents(): Int {
@@ -747,9 +781,15 @@ data class InputThemeData(
 
 data class SearchInputThemeData(
     @ColorRes val backgroundColor: Int? = null,
+    @ColorRes val borderColor: Int? = null,
     val text: TextThemeData? = null,
     val hintText: TextThemeData? = null,
     @DimenRes val cornerRadius: Int? = null
+)
+
+data class DividerThemeData(
+    @ColorRes val backgroundColor: Int? = null,
+    @DimenRes val height: Int? = null
 )
 
 // Internal models
@@ -902,12 +942,14 @@ internal data class InputTheme(
 
 internal data class SearchInputTheme(
     val backgroundColor: ColorData,
+    val borderColor: ColorData,
     val cornerRadius: DimensionData,
     val text: TextTheme,
     val hintText: TextTheme
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         backgroundColor = parcel.readParcelable<ColorData>()!!,
+        borderColor = parcel.readParcelable<ColorData>()!!,
         cornerRadius = parcel.readParcelable<DimensionData>()!!,
         text = parcel.readParcelable<TextTheme>()!!,
         hintText = parcel.readParcelable<TextTheme>()!!
@@ -915,6 +957,7 @@ internal data class SearchInputTheme(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(borderColor, flags)
         parcel.writeParcelable(cornerRadius, flags)
         parcel.writeParcelable(text, flags)
         parcel.writeParcelable(hintText, flags)
@@ -930,6 +973,35 @@ internal data class SearchInputTheme(
         }
 
         override fun newArray(size: Int): Array<SearchInputTheme?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
+
+internal data class DividerTheme(
+    val backgroundColor: ColorData,
+    val height: DimensionData
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        backgroundColor = parcel.readParcelable<ColorData>()!!,
+        height = parcel.readParcelable<DimensionData>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(height, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<DividerTheme> {
+        override fun createFromParcel(parcel: Parcel): DividerTheme {
+            return DividerTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<DividerTheme?> {
             return arrayOfNulls(size)
         }
     }

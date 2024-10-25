@@ -27,6 +27,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:contentDescription="@string/go_back_description"
+            app:tint="@color/primer_icon_tint"
             tools:layout_height="50dp" />
 
         <TextView
@@ -49,7 +50,8 @@
             android:drawableEnd="@drawable/ic_search"
             android:hint="@string/bank_selection_hint"
             android:paddingHorizontal="@dimen/medium_padding"
-            android:paddingVertical="@dimen/medium_padding" />
+            android:paddingVertical="@dimen/medium_padding"
+            app:drawableTint="@color/primer_icon_tint" />
 
         <View
             android:id="@+id/choose_bank_divider_top"

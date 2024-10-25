@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primer_divider">#DBDBDB</color>
+    <color name="primer_icon_tint">#FFFFFF</color>
+    <color name="primer_search_input_border">@android:color/transparent</color>
+    <color name="primer_image_placeholder">#E5E5EA</color>
+</resources>

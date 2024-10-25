@@ -10,6 +10,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="@dimen/extra_small_padding"
+        android:contentDescription="@null"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,6 +23,7 @@
         android:layout_marginHorizontal="@dimen/medium_large_padding"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textIsSelectable="false"
         app:layout_constraintEnd_toStartOf="@id/progress_bar"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent" />

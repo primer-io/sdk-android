@@ -81,23 +81,23 @@
     <color name="primer_input_cursor">@color/primer_primary</color>
 
     <!--  custom colors for search text inputs in universal checkout -->
-    <color name="primer_search_input_background">@color/primer_bank_selection_search_background
-    </color>
+    <color name="primer_search_input_background">#08242A2F</color>
     <color name="primer_search_input_text">@color/primer_secondary</color>
     <color name="primer_search_input_cursor">@color/primer_primary</color>
 
-    <!--  custom colors for bank selector -->
-    <color name="primer_bank_selection_divider">#DBDBDB</color>
-    <color name="primer_bank_selection_placeholder_color">#E5E5EA</color>
-    <color name="primer_bank_selection_search_background">#08242A2F</color>
     <color name="primer_pay_button_background">#007AFF</color>
+
+    <color name="primer_divider">#DBDBDB</color>
+    <color name="primer_icon_tint">#000000</color>
+    <color name="primer_search_input_border">@android:color/transparent</color>
+    <color name="primer_image_placeholder">#E5E5EA</color>
 
     <!-- Dummy APM selector -->
     <color name="primer_dummy_apm_checked_border">#3A83F9</color>
     <color name="primer_dummy_apm_light_unchecked_border">#E5E5EA</color>
 
-    <!-- curom folors for search text inputs in country selection screen -->
-    <color name="primer_country_selection_divider">#DBDBDB</color>
+    <!-- custom color for search text inputs in country selection screen -->
+    <color name="primer_country_selection_divider">@color/primer_divider</color>
 
     <color name="primer_body">#75757B</color>
 
