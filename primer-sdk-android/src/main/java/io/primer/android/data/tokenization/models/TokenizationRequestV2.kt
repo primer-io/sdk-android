@@ -41,6 +41,7 @@ import io.primer.android.domain.tokenization.models.paymentInstruments.nolpay.No
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalCheckoutPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.paypal.PaypalVaultPaymentInstrumentParams
 import io.primer.android.domain.tokenization.models.paymentInstruments.stripe.ach.StripeAchPaymentInstrumentParams
+import io.primer.android.payment.async.adyen.vipps.helpers.PlatformResolver
 import org.json.JSONObject
 
 internal abstract class TokenizationRequestV2 : JSONObjectSerializable {
@@ -129,12 +130,16 @@ internal fun BasePaymentInstrumentParams.toPaymentInstrumentData(): PaymentInstr
             )
         }
 
-        is WebRedirectPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
-            paymentMethodType,
-            paymentMethodConfigId,
-            WebRedirectSessionInfoDataRequest(locale, redirectionUrl),
-            type
-        )
+        is WebRedirectPaymentInstrumentParams -> {
+            val platform = PlatformResolver.getPlatform(paymentMethodType)
+
+            AsyncPaymentInstrumentDataRequest(
+                paymentMethodType,
+                paymentMethodConfigId,
+                WebRedirectSessionInfoDataRequest(locale, redirectionUrl, platform),
+                type
+            )
+        }
 
         is AdyenBlikPaymentInstrumentParams -> AsyncPaymentInstrumentDataRequest(
             paymentMethodType,
