@@ -18,7 +18,7 @@ class ThemeList {
             }
         }
 
-        val darkTheme = PrimerTheme.build(
+        private val darkTheme = PrimerTheme.build(
             isDarkMode = true,
             primaryColor = R.color.apple_dark_6,
             backgroundColor = R.color.apple_dark_4,
@@ -26,6 +26,7 @@ class ThemeList {
             defaultCornerRadius = R.dimen.sheet_corner_radius,
             bottomSheetCornerRadius = R.dimen.sheet_corner_radius,
             input = InputThemeData(
+                cursorColor = R.color.apple_dark_6,
                 border = BorderThemeData(
                     defaultColor = R.color.apple_dark_1,
                 ),
@@ -67,6 +68,7 @@ class ThemeList {
             disabledColor = R.color.tropical_8,
             bottomSheetCornerRadius = R.dimen.sheet_corner_radius,
             input = InputThemeData(
+                cursorColor = R.color.tropical_10,
                 border = BorderThemeData(
                     defaultColor = R.color.tropical_3,
                 ),

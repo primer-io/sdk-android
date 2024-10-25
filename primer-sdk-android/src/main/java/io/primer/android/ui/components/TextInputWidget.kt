@@ -2,10 +2,12 @@ package io.primer.android.ui.components
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Build
 import android.text.InputFilter
 import android.text.Spanned
 import android.util.AttributeSet
 import android.util.TypedValue
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputLayout
 import io.primer.android.di.DISdkComponent
@@ -67,6 +69,8 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                 BOX_BACKGROUND_FILLED
             }
         }
+
+        setCursorColor(theme.input.cursorColor.getColor(context, theme.isDarkMode))
     }
 
     internal fun setupEditTextTheme(withTextPrefix: Boolean = false) {
@@ -126,6 +130,30 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
 
         editText?.apply {
             filters = filters.plus(customFilters)
+        }
+    }
+
+    private fun setCursorColor(color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ColorStateList.valueOf(color).let {
+                cursorColor = it
+                cursorErrorColor = it
+            }
+        } else {
+            val cursorDrawableRes = TextInputWidget::class.java.getDeclaredField("mCursorDrawableRes")
+            cursorDrawableRes.isAccessible = true
+            val drawableResId = cursorDrawableRes.getInt(this)
+
+            val editorField = TextInputWidget::class.java.getDeclaredField("mEditor")
+            editorField.isAccessible = true
+            val editor = editorField.get(this)
+
+            val drawable = AppCompatResources.getDrawable(context, drawableResId)
+            drawable?.setTint(color)
+
+            val cursorDrawable = editor.javaClass.getDeclaredField("mCursorDrawable")
+            cursorDrawable.isAccessible = true
+            cursorDrawable.set(editor, arrayOf(drawable, drawable))
         }
     }
 

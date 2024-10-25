@@ -105,6 +105,7 @@ data class PrimerTheme internal constructor(
 
         input = parcel.readParcelable<InputTheme>() ?: InputTheme(
             backgroundColor = ResourceColor.valueOf(R.color.primer_input_background),
+            cursorColor = ResourceColor.valueOf(R.color.primer_input_cursor),
             border = BorderTheme(
                 defaultColor = ResourceColor.valueOf(R.color.primer_input_border),
                 selectedColor = ResourceColor.valueOf(R.color.primer_input_border_selected),
@@ -384,6 +385,9 @@ data class PrimerTheme internal constructor(
                 backgroundColor = ResourceColor.valueOf(
                     default = input?.backgroundColor ?: backgroundColor ?: R.color.primer_input_background
                 ),
+                cursorColor = ResourceColor.valueOf(
+                    default = input?.cursorColor ?: R.color.primer_input_cursor
+                ),
                 border = styledInputBorder,
                 text = styledInputText,
                 hintText = styledHintInputText,
@@ -647,6 +651,10 @@ data class PrimerTheme internal constructor(
                     backgroundColor != null -> DynamicColor.valueOf(default = backgroundColor)
                     else -> ResourceColor.valueOf(R.color.primer_input_background)
                 },
+                cursorColor = when {
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_cursor)
+                },
                 border = styledInputBorder,
                 text = styledInputText,
                 hintText = styledHintInputText,
@@ -764,6 +772,7 @@ data class BorderThemeData(
 
 data class InputThemeData(
     @ColorRes val backgroundColor: Int? = null,
+    @ColorRes val cursorColor: Int? = null,
     val text: TextThemeData? = null,
     val hintText: TextThemeData? = null,
     val border: BorderThemeData? = null,
@@ -892,6 +901,7 @@ internal data class BorderTheme(
 
 internal data class InputTheme(
     val backgroundColor: ColorData,
+    val cursorColor: ColorData,
     val cornerRadius: DimensionData,
     val text: TextTheme,
     val hintText: TextTheme,
@@ -899,6 +909,7 @@ internal data class InputTheme(
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         backgroundColor = parcel.readParcelable<ColorData>()!!,
+        cursorColor = parcel.readParcelable<ColorData>()!!,
         cornerRadius = parcel.readParcelable<DimensionData>()!!,
         text = parcel.readParcelable<TextTheme>()!!,
         hintText = parcel.readParcelable<TextTheme>()!!,
@@ -907,6 +918,7 @@ internal data class InputTheme(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(cursorColor, flags)
         parcel.writeParcelable(cornerRadius, flags)
         parcel.writeParcelable(text, flags)
         parcel.writeParcelable(hintText, flags)

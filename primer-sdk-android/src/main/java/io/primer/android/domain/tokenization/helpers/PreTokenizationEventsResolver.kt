@@ -30,6 +30,9 @@ internal class PreTokenizationEventsResolver(
                             paymentMethodType
                         )
                     )
+                    eventDispatcher.dispatchEvent(
+                        CheckoutEvent.DisableDialogDismiss
+                    )
                     continuation.resume(Unit)
                 }
 
@@ -40,6 +43,9 @@ internal class PreTokenizationEventsResolver(
                                 CheckoutEvent.TokenizationStarted(
                                     paymentMethodType
                                 )
+                            )
+                            eventDispatcher.dispatchEvent(
+                                CheckoutEvent.DisableDialogDismiss
                             )
                             continuation.resume(Unit)
                         }

@@ -122,6 +122,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
     }
 
     private val checkoutEventObserver = Observer<CheckoutEvent> {
+
+        sheet.disableDismiss((it is CheckoutEvent.DisableDialogDismiss))
+
         when (it) {
             is CheckoutEvent.DismissInternal -> {
                 onExit(it.data)
@@ -370,7 +373,8 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                 is CheckoutEvent.DismissInternal,
                 is CheckoutEvent.ShowSuccess,
                 is CheckoutEvent.ShowError,
-                is CheckoutEvent.OnAdditionalInfoReceived
+                is CheckoutEvent.OnAdditionalInfoReceived,
+                is CheckoutEvent.DisableDialogDismiss
                 -> primerViewModel.setCheckoutEvent(it)
 
                 else -> Unit

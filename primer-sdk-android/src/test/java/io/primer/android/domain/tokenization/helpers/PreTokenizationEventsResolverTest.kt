@@ -5,20 +5,19 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.data.configuration.models.PaymentMethodType
-import io.primer.android.events.CheckoutEvent
-import io.primer.android.events.CheckoutEventType
-import io.primer.android.events.EventDispatcher
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.data.settings.internal.PrimerIntent
+import io.primer.android.events.CheckoutEvent
+import io.primer.android.events.CheckoutEventType
+import io.primer.android.events.EventDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -55,15 +54,16 @@ internal class PreTokenizationEventsResolverTest {
             tokenizationEventsResolver.resolve(paymentMethodType.name)
         }
 
-        val event = slot<CheckoutEvent>()
+        val events = mutableListOf<CheckoutEvent>()
 
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { eventDispatcher.dispatchEvent(capture(events)) }
 
-        assertEquals(CheckoutEventType.TOKENIZE_STARTED, event.captured.type)
+        assertTrue(events.any { it.type == CheckoutEventType.TOKENIZE_STARTED })
+        assertTrue(events.any { it.type == CheckoutEventType.DISABLE_DIALOG_DISMISS })
     }
 
     @Test
-    fun `resolve() should dispatch TOKENIZE_STARTED type when payment handling is MANUAL`() {
+    fun `resolve() should dispatch TOKENIZE_STARTED and DISABLE_DIALOG_DISMISS type when payment handling is MANUAL`() {
         val paymentMethodType = mockk<PaymentMethodType>(relaxed = true)
 
         every { config.settings.paymentHandling }.returns(PrimerPaymentHandling.MANUAL)
@@ -72,10 +72,11 @@ internal class PreTokenizationEventsResolverTest {
             tokenizationEventsResolver.resolve(paymentMethodType.name)
         }
 
-        val event = slot<CheckoutEvent>()
+        val events = mutableListOf<CheckoutEvent>()
 
-        verify { eventDispatcher.dispatchEvent(capture(event)) }
+        verify { eventDispatcher.dispatchEvent(capture(events)) }
 
-        assertEquals(CheckoutEventType.TOKENIZE_STARTED, event.captured.type)
+        assertTrue(events.any { it.type == CheckoutEventType.TOKENIZE_STARTED })
+        assertTrue(events.any { it.type == CheckoutEventType.DISABLE_DIALOG_DISMISS })
     }
 }
