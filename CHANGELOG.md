@@ -1,4 +1,4 @@
-## 2.33.0 (2024-10-25)
+## 2.32.0 (2024-10-28)
 
 ### Feat
 
@@ -11,13 +11,6 @@
 
 - disable dialog dismiss when payment is processing (#745)
 - using cursorColor from theme (#744)
-- lint issues
-
-## 2.32.0 (2024-10-02)
-
-### Feat
-
-- **google-pay**: enable capture of shipping address and shipping methods (#681)
 
 ## 2.31.0 (2024-09-20)
 
