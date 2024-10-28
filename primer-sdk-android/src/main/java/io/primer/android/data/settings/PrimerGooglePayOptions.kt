@@ -3,7 +3,6 @@ package io.primer.android.data.settings
 import android.os.Parcel
 import android.os.Parcelable
 import io.primer.android.ExperimentalPrimerApi
-import io.primer.android.extensions.readParcelable
 
 enum class GooglePayButtonStyle {
     WHITE,
@@ -22,20 +21,20 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
     ),
     var buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
     var captureBillingAddress: Boolean = false,
-    val existingPaymentMethodRequired: Boolean = false,
-    val shippingAddressParameters: PrimerGoogleShippingAddressParameters? = null,
-    val requireShippingMethod: Boolean = false,
-    val emailAddressRequired: Boolean = false
+    val existingPaymentMethodRequired: Boolean = false
+//    val shippingAddressParameters: PrimerGoogleShippingAddressParameters? = null,
+//    val requireShippingMethod: Boolean = false,
+//    val emailAddressRequired: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         merchantName = parcel.readString(),
         allowedCardNetworks = parcel.createStringArrayList().orEmpty(),
         buttonStyle = GooglePayButtonStyle.valueOf(parcel.readString().orEmpty()),
         captureBillingAddress = parcel.readByte() != 0.toByte(),
-        existingPaymentMethodRequired = parcel.readByte() != 0.toByte(),
-        shippingAddressParameters = parcel.readParcelable<PrimerGoogleShippingAddressParameters>(),
-        requireShippingMethod = parcel.readByte() != 0.toByte(),
-        emailAddressRequired = parcel.readByte() != 0.toByte()
+        existingPaymentMethodRequired = parcel.readByte() != 0.toByte()
+//        shippingAddressParameters = parcel.readParcelable<PrimerGoogleShippingAddressParameters>(),
+//        requireShippingMethod = parcel.readByte() != 0.toByte(),
+//        emailAddressRequired = parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -44,9 +43,9 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         parcel.writeString(buttonStyle.name)
         parcel.writeByte(if (captureBillingAddress) 1 else 0)
         parcel.writeByte(if (existingPaymentMethodRequired) 1 else 0)
-        parcel.writeParcelable(shippingAddressParameters, flags)
-        parcel.writeByte(if (requireShippingMethod) 1 else 0)
-        parcel.writeByte(if (emailAddressRequired) 1 else 0)
+//        parcel.writeParcelable(shippingAddressParameters, flags)
+//        parcel.writeByte(if (requireShippingMethod) 1 else 0)
+//        parcel.writeByte(if (emailAddressRequired) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -75,7 +74,7 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
 }
 
 @ExperimentalPrimerApi
-data class PrimerGoogleShippingAddressParameters(
+internal data class PrimerGoogleShippingAddressParameters(
     val phoneNumberRequired: Boolean = false
 ) : Parcelable {
 

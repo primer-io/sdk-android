@@ -91,7 +91,7 @@ internal data class OrderDataResponse(
         }
     }
 
-    data class ShippingDataResponse(
+    internal data class ShippingDataResponse(
         val amount: Int? = null,
         val methodId: String? = null,
         val methodName: String? = null,
@@ -123,7 +123,7 @@ internal data class OrderDataResponse(
         }
     }
 
-    fun toOrder() = PrimerOrder(countryCode, shipping?.toShippingData())
+    fun toOrder() = PrimerOrder(countryCode)
 
     fun toFees() = fees.map { PrimerFee(type = it.type, amount = it.amount) }
 

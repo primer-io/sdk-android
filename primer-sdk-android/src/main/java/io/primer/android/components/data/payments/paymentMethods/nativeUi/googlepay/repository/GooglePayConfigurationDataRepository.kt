@@ -52,10 +52,14 @@ internal class GooglePayConfigurationDataRepository(
                     allowedCardNetworks = allowedCardNetworks,
                     allowedCardAuthMethods = allowedCardAuthMethods,
                     billingAddressRequired = googlePayOptions.captureBillingAddress,
-                    shippingOptions = shippingOptions,
-                    shippingAddressParameters = googlePayOptions.shippingAddressParameters,
-                    requireShippingMethod = googlePayOptions.requireShippingMethod,
-                    emailAddressRequired = googlePayOptions.emailAddressRequired
+                    shippingOptions = null,
+                    shippingAddressParameters = null,
+                    requireShippingMethod = false,
+                    emailAddressRequired = false
+//                    shippingOptions = shippingOptions,
+//                    shippingAddressParameters = googlePayOptions.shippingAddressParameters,
+//                    requireShippingMethod = googlePayOptions.requireShippingMethod,
+//                    emailAddressRequired = googlePayOptions.emailAddressRequired
                 )
             )
         }

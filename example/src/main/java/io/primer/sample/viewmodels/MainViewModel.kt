@@ -15,7 +15,6 @@ import io.primer.android.PrimerCheckoutListener
 import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
-import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
@@ -185,12 +184,12 @@ class MainViewModel(
                 ),
                 googlePayOptions = PrimerGooglePayOptions(
                     captureBillingAddress = true,
-                    shippingAddressParameters = PrimerGoogleShippingAddressParameters(
-                        phoneNumberRequired = true
-                    ),
                     existingPaymentMethodRequired = false,
-                    emailAddressRequired = true,
-                    requireShippingMethod = true
+//                    shippingAddressParameters = PrimerGoogleShippingAddressParameters(
+//                        phoneNumberRequired = true
+//                    ),
+//                    emailAddressRequired = true,
+//                    requireShippingMethod = true
                 ),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
                 stripeOptions = PrimerStripeOptions(
