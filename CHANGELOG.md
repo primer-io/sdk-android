@@ -1,3 +1,19 @@
+## 2.33.1 (2024-11-13)
+
+### Feat
+
+- fallback to platform WEB if adyen app is not installed (#749)
+- extend PrimerTheme with support for theming icons, dividers
+- use generic names for colors and dimens
+- support customizing ui elements in Adyen iDeal
+
+### Fix
+
+- Fixed crash for ADYEN_BLIK in standalone mode, removed headless conditions in drop-in (#770)
+- disable dialog dismiss when payment is processing (#745)
+- using cursorColor from theme (#744)
+- lint issues
+
 ## 2.32.0 (2024-10-28)
 
 ### Feat
