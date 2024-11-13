@@ -1,3 +1,9 @@
+## 2.32.1 (2024-11-13)
+
+### Fix
+
+- Fixed crash for ADYEN_BLIK in standalone mode, removed headless conditions in drop-in (#770)
+
 ## 2.32.0 (2024-10-28)
 
 ### Feat
