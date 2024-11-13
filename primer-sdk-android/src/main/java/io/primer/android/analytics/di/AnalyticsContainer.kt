@@ -61,7 +61,9 @@ internal class AnalyticsContainer(private val sdk: SdkContainer) : DependencyCon
                 DeviceIdDataSource(sdk.resolve()),
                 sdk.resolve(),
                 NetworkTypeDataSource(sdk.resolve()),
-                UncaughtHandlerDataSource(Thread.getDefaultUncaughtExceptionHandler()),
+                UncaughtHandlerDataSource().also {
+                    Thread.setDefaultUncaughtExceptionHandler(it)
+                },
                 sdk.resolve(),
                 sdk.resolve(),
                 sdk.resolve(),

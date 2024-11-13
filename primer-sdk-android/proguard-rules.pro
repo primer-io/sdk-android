@@ -354,6 +354,10 @@
     *;
 }
 
+-keep class io.primer.android.components.manager.nolPay.BaseNolPayComponent {
+    public *;
+}
+
 -keep class io.primer.android.components.manager.nolPay.core.** {
     public *;
 }

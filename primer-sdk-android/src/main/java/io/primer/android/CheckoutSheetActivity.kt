@@ -209,7 +209,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
             is CheckoutEvent.StartAsyncFlow -> {
                 when (it.clientTokenIntent) {
                     ClientTokenIntent.ADYEN_BLIK_REDIRECTION.name -> {
-                        sheet.popBackStackToRoot()
+                        if (config.isStandalonePaymentMethod.not()) sheet.popBackStackToRoot()
                         openFragment(
                             PaymentMethodStatusFragment.newInstance(
                                 it.statusUrl,
@@ -381,9 +381,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
             }
         }
 
-        if (config.settings.fromHUC.not()) {
-            openSheet()
-        }
+        openSheet()
     }
 
     override suspend fun handleAchMandateAction(isAccepted: Boolean) {
@@ -401,12 +399,10 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
 
     override fun onStart() {
         super.onStart()
-        if (config.settings.fromHUC.not()) {
-            val fragments = sheet.childFragmentManager.fragments
-            val descriptor = primerViewModel.selectedPaymentMethod.value
-            if (fragments.isEmpty() && descriptor != null) {
-                sheet.dialog?.hide()
-            }
+        val fragments = sheet.childFragmentManager.fragments
+        val descriptor = primerViewModel.selectedPaymentMethod.value
+        if (fragments.isEmpty() && descriptor != null) {
+            sheet.dialog?.hide()
         }
     }
 
@@ -433,10 +429,6 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
     }
 
     private fun openFragment(behaviour: NewFragmentBehaviour) {
-        if (config.settings.fromHUC) {
-            return
-        }
-
         behaviour.execute(sheet)
         sheet.dialog?.show()
     }
