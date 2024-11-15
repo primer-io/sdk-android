@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.activity.ComponentDialog
 import androidx.activity.addCallback
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -109,7 +111,30 @@ internal class CheckoutSheetFragment :
     }
 
     fun disableDismiss(disabled: Boolean) {
-        dialog?.setCancelable(disabled.not())
-        dialog?.setCanceledOnTouchOutside(disabled.not())
+        dialog?.apply {
+            setCancelable(!disabled)
+            setCanceledOnTouchOutside(!disabled)
+
+            setOnKeyListener(
+                if (disabled) {
+                    { _, keyCode, event ->
+                        keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP
+                    }
+                } else {
+                    null
+                }
+            )
+
+            window?.apply {
+                if (disabled) {
+                    setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                } else {
+                    clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                }
+            }
+        }
     }
 }
