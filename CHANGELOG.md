@@ -1,3 +1,9 @@
+## 2.32.2 (2024-11-15)
+
+### Fix
+
+- disable dismiss also when clicking back buttons (#772)
+
 ## 2.32.1 (2024-11-13)
 
 ### Fix
