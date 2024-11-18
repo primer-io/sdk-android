@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 coroutines = "1.8.0"
 ktx = "1.13.1"
 appcompat = "1.6.1"
@@ -90,6 +90,7 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 
 [plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

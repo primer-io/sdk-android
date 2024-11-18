@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
+    id "org.jetbrains.kotlin.plugin.compose"
 }
 
 repositories {
@@ -67,6 +68,7 @@ android {
     buildFeatures {
         viewBinding true
         buildConfig true
+        compose true
     }
     testOptions {
         unitTests {
@@ -80,7 +82,12 @@ android {
 
 dependencies {
     implementation project(':drop-in')
+    implementation(platform("androidx.compose:compose-bom:2024.10.01"))
     implementation libs.kotlin.stdlib
+    implementation 'androidx.activity:activity-compose:1.9.2'
+    implementation 'androidx.compose.material3:material3'
+    // Optional - Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5'
     implementation libs.android.ktx
     implementation libs.android.appcompat
     implementation libs.android.material
@@ -99,6 +106,7 @@ dependencies {
     implementation libs.primer.ipay88
     implementation libs.primer.nol.pay
     implementation libs.primer.stripe
+    implementation project(':ui-components')
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
     testImplementation "junit:junit:4.13.2"

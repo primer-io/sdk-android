@@ -6,8 +6,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.core.os.bundleOf
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,6 +34,8 @@ import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAss
 import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
 import io.primer.android.components.ui.assets.PrimerPaymentMethodNativeView
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
+import io.primer.android.components.SdkUninitializedException
+import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
 import io.primer.android.stripe.ach.api.additionalInfo.AchAdditionalInfo
 import io.primer.android.vouchers.multibanco.MultibancoCheckoutAdditionalInfo
@@ -31,13 +43,16 @@ import io.primer.sample.databinding.FragmentHeadlessBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
-import io.primer.sample.klarna.KlarnaPaymentFragment.Companion.PRIMER_SESSION_INTENT_ARG
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.utils.showMandateDialog
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
 import io.primer.sample.viewmodels.UiState
+import io.primer.ui_components.PrimerPaymentMethodButtonComponent
+import io.primer.ui_components.PrimerPaymentMethodComponent
+import io.primer.ui_components.PrimerPaymentMethodDynamicComponent
+import io.primer.ui_components.hasCustomUi
 import kotlinx.coroutines.launch
 
 class HeadlessComponentsFragment : Fragment() {
@@ -255,82 +270,181 @@ class HeadlessComponentsFragment : Fragment() {
         binding.typeButtonGroup.check(binding.checkout.id)
     }
 
-    private fun setupPaymentMethod(paymentMethodTypes: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
-        binding.pmView.removeAllViews()
-        paymentMethodTypes.forEach {
-            addPaymentMethodView(it.paymentMethodType, it.paymentMethodManagerCategories)
+    private fun setupPaymentMethod(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
+        binding.composeView.setContent {
+            var selectedPaymentMethod by remember { mutableStateOf<PrimerHeadlessUniversalCheckoutPaymentMethod?>(null) }
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                paymentMethods.forEach { paymentMethod ->
+                    if (selectedPaymentMethod == paymentMethod) {
+                        PaymentMethodUi(paymentMethod = paymentMethod)
+                    } else {
+                        PaymentMethodButton(
+                            paymentMethod = paymentMethod,
+                            onMethodSelected = { selectedPaymentMethod = it })
+                    }
+                }
+
+//                PrimerPaymentFlowComponent(
+//                    paymentMethods = paymentMethods,
+//                    onPaymentMethodSelected = {
+//                        println(it)
+//                    }, customContent = {
+//                        when (it.paymentMethodType) {
+//                            "KLARNA" -> {
+//                                Text(text = "Pay with klarna")
+//                            }
+//                        }
+//                    }, modifier = Modifier.fillMaxWidth()
+//                )
+            }
         }
     }
 
-    private fun addPaymentMethodView(
-        paymentMethodType: String,
-        managerCategories: List<PrimerPaymentMethodManagerCategory>
+    @Composable
+    private fun PaymentMethodButton(
+        paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod,
+        onMethodSelected: (PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit
     ) {
-        val pmViewGroup = (binding.pmView as ViewGroup)
-        runCatching {
-            PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodResource(
-                requireContext(),
-                paymentMethodType
+        Column(modifier = Modifier.fillMaxWidth()) {
+            PrimerPaymentMethodButtonComponent(
+                paymentMethod = paymentMethod,
+                onMethodSelected = onMethodSelected,
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.9f)
+                    .align(alignment = Alignment.CenterHorizontally)
             )
-        }.fold(onSuccess = { asset ->
-            pmViewGroup.addView(when (asset) {
-                is PrimerPaymentMethodAsset -> {
-                    ImageButton(context).apply {
-                        asset.paymentMethodBackgroundColor.colored?.let {
-                            setBackgroundColor(it)
-                        }
-
-                        setImageDrawable(
-                            asset.paymentMethodLogo.colored
-                        )
-
-                        contentDescription = "Pay with ${asset.paymentMethodName}"
-                    }
-                }
-
-                is PrimerPaymentMethodNativeView -> asset.createView(
-                    requireContext()
-                )
-            }.apply {
-                minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
-
-                setOnClickListener {
-                    when {
-                        paymentMethodType == "NOL_PAY" ->
-                            findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_NolPayFragment)
-
-                        managerCategories.contains(PrimerPaymentMethodManagerCategory.RAW_DATA) ->
-                            findNavController().navigate(
-                                R.id.action_HeadlessComponentsFragment_to_HeadlessRawFragment,
-                                Bundle().apply {
-                                    putString(
-                                        HeadlessRawFragment.PAYMENT_METHOD_TYPE_EXTRA,
-                                        paymentMethodType
-                                    )
-                                }
-                            )
-
-                        paymentMethodType == "ADYEN_IDEAL" || paymentMethodType == "ADYEN_DOTPAY" ->
-                            findNavController().navigate(
-                                R.id.action_HeadlessComponentsFragment_to_AdyenBankSelectionFragment,
-                                bundleOf("paymentMethodType" to paymentMethodType)
-                            )
-
-                        paymentMethodType == "KLARNA" ->
-                            findNavController().navigate(
-                                R.id.action_HeadlessComponentsFragment_to_KlarnaFragment,
-                                bundleOf(PRIMER_SESSION_INTENT_ARG to getPrimerSessionIntent())
-                            )
-
-                        paymentMethodType == "STRIPE_ACH" ->
-                            findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_StripeAchFragment)
-
-                        else -> onPaymentMethodSelected(paymentMethodType)
-                    }
-                }
-            })
-        }, onFailure = { Log.e(TAG, it.message.orEmpty()) })
+        }
     }
+
+    @Composable
+    private fun PaymentMethodUi(paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod) {
+        when (paymentMethod.hasCustomUi()) {
+            true -> CustomUiPaymentMethod(paymentMethod = paymentMethod)
+            false -> RedirectPaymentMethod(paymentMethod = paymentMethod)
+        }
+    }
+
+    @Composable
+    private fun CustomUiPaymentMethod(paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod) {
+        val component = remember {
+            PrimerPaymentMethodComponent.provideInstance(
+                owner = requireActivity(),
+                paymentMethodType = paymentMethod.paymentMethodType,
+                getPrimerSessionIntent()
+            )
+        }
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            PrimerPaymentMethodDynamicComponent(
+                component = component,
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .align(alignment = Alignment.CenterHorizontally),
+                topContent = {
+                    CustomContent(component = component)
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun RedirectPaymentMethod(paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod) {
+        remember {
+            PrimerPaymentMethodComponent.provideInstance(
+                owner = requireActivity(),
+                paymentMethodType = paymentMethod.paymentMethodType,
+                getPrimerSessionIntent()
+            ).also {
+                it.start()
+            }
+        }
+    }
+
+    @Composable
+    private fun CustomContent(component: KlarnaComponent) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Custom form or inputs
+            TextField(
+                value = "",
+                onValueChange = { /* Handle input */ },
+                Modifier
+                    .fillMaxWidth(0.9f)
+                    .align(Alignment.CenterHorizontally),
+                placeholder = {
+                    Text(text = "I'm not sure what my purpose is")
+                }
+            )
+            OutlinedButton(
+                onClick = {
+                    component.submit()
+                },
+                Modifier
+                    .fillMaxWidth(0.9f)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = "Submit")
+            }
+        }
+    }
+
+    @Composable
+    fun PrimerPaymentFlowComponent(
+        paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
+        onPaymentMethodSelected: (PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit,
+        customContent: @Composable (selectedMethod: PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        // Keep track of the selected payment method
+        var selectedPaymentMethod by remember { mutableStateOf<PrimerHeadlessUniversalCheckoutPaymentMethod?>(null) }
+
+        // Render the payment method buttons
+        Column(modifier = modifier) {
+            paymentMethods.forEach { paymentMethod ->
+                if (selectedPaymentMethod == paymentMethod) {
+                    customContent(paymentMethod)
+                    PaymentMethodUi(paymentMethod = paymentMethod)
+                } else {
+                    PrimerPaymentMethodButtonComponent(
+                        paymentMethod = paymentMethod,
+                        onMethodSelected = { selectedMethod ->
+                            selectedPaymentMethod = selectedMethod
+                            onPaymentMethodSelected(selectedMethod) // Call the callback
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+                @Composable
+                fun PrimerPaymentFlowComponent(
+                    paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
+                    onPaymentMethodSelected: (PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit,
+                    customContent: @Composable (selectedMethod: PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit,
+                    modifier: Modifier = Modifier
+                ) {
+                    // Keep track of the selected payment method
+                    var selectedPaymentMethod by remember { mutableStateOf<PrimerHeadlessUniversalCheckoutPaymentMethod?>(null) }
+
+                    // Render the payment method buttons
+                    Column(modifier = modifier) {
+                        paymentMethods.forEach { paymentMethod ->
+                            if (selectedPaymentMethod == paymentMethod) {
+                                customContent(paymentMethod)
+                                PaymentMethodUi(paymentMethod = paymentMethod)
+                            } else {
+                                PrimerPaymentMethodButtonComponent(
+                                    paymentMethod = paymentMethod,
+                                    onMethodSelected = { selectedMethod ->
+                                        selectedPaymentMethod = selectedMethod
+                                        onPaymentMethodSelected(selectedMethod) // Call the callback
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
 
     private fun showLoading(message: String? = null) {
         binding.progressLayout.progressText.text = message

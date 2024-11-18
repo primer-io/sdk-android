@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlin.math.pow
 
+// TODO TWS: fix
 class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -141,30 +142,30 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         isValid: Boolean,
         errors: List<PrimerInputValidationError>
     ) {
-        binding.pmView.children.iterator().forEach { parent ->
-            (parent as ViewGroup).children.iterator().forEach {
-                PrimerInputElementType.entries.forEach { type ->
-                    it.findViewWithTag<TextInputLayout>(type)?.error = null
-                }
-            }
-        }
-        errors.forEach { validationError ->
-            binding.pmView.children.iterator().forEach { parent ->
-                (parent as ViewGroup).children.iterator().forEach {
-                    it.findViewWithTag<TextInputLayout>(validationError.inputElementType)?.error =
-                        validationError.description
-                }
-            }
-        }
+//        binding.pmView.children.iterator().forEach { parent ->
+//            (parent as ViewGroup).children.iterator().forEach {
+//                PrimerInputElementType.entries.forEach { type ->
+//                    it.findViewWithTag<TextInputLayout>(type)?.error = null
+//                }
+//            }
+//        }
+//        errors.forEach { validationError ->
+//            binding.pmView.children.iterator().forEach { parent ->
+//                (parent as ViewGroup).children.iterator().forEach {
+//                    it.findViewWithTag<TextInputLayout>(validationError.inputElementType)?.error =
+//                        validationError.description
+//                }
+//            }
+//        }
         binding.nextButton.isEnabled = isValid
     }
 
     override fun onMetadataChanged(metadata: PrimerPaymentMethodMetadata) {
-        when (metadata) {
-            is PrimerBancontactCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
-                PrimerInputElementType.CARD_NUMBER
-            ).prefixText = metadata.cardNetwork.name
-        }
+//        when (metadata) {
+//            is PrimerBancontactCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
+//                PrimerInputElementType.CARD_NUMBER
+//            ).prefixText = metadata.cardNetwork.name
+//        }
     }
 
     override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
@@ -424,11 +425,11 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             }
         }
 
-        val viewGroup = (binding.pmView as ViewGroup)
-        viewGroup.removeAllViews()
-        inputElements.forEach {
-            viewGroup.addView(it)
-        }
+//        val viewGroup = (binding.pmView as ViewGroup)
+//        viewGroup.removeAllViews()
+//        inputElements.forEach {
+//            viewGroup.addView(it)
+//        }
     }
 
     private fun showLoading(message: String? = null) {
@@ -461,59 +462,60 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     }
 
     private fun getRawData(paymentMethodType: String): PrimerRawData {
-        return when (paymentMethodType) {
-            "PAYMENT_CARD" -> PrimerCardData(
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.CARD_NUMBER
-                ).editText?.text.toString().trim(),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.EXPIRY_DATE
-                ).editText?.text.toString().trim(),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.CVV
-                ).editText?.text.toString().trim(),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.CARDHOLDER_NAME
-                )?.editText?.text.toString().trim(),
-                (cardNumberInputBinding.cardNetworksSelectionView.let { cardNetworkBinding ->
-                    cardNetworkBinding.children.firstOrNull { child ->
-                        child.id == cardNetworkBinding.checkedRadioButtonId
-                    }
-                }?.tag as? PrimerCardNetwork)?.network
-            )
-
-            "ADYEN_BANCONTACT_CARD" -> PrimerBancontactCardData(
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.CARD_NUMBER
-                ).editText?.text.toString().trim(),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.EXPIRY_DATE
-                ).editText?.text.toString().trim(),
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.CARDHOLDER_NAME
-                ).editText?.text.toString().trim(),
-            )
-
-            "XENDIT_OVO" -> PrimerPhoneNumberData(
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.PHONE_NUMBER
-                ).editText?.text.toString()
-            )
-
-            "ADYEN_MBWAY" -> PrimerPhoneNumberData(
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.PHONE_NUMBER
-                ).editText?.text.toString()
-            )
-
-            "ADYEN_BLIK" -> PrimerOtpData(
-                binding.pmView.findViewWithTag<TextInputLayout>(
-                    PrimerInputElementType.OTP_CODE
-                ).editText?.text.toString()
-            )
-
-            else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
-        }
+//        return when (paymentMethodType) {
+//            "PAYMENT_CARD" -> PrimerCardData(
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.CARD_NUMBER
+//                ).editText?.text.toString().trim(),
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.EXPIRY_DATE
+//                ).editText?.text.toString().trim(),
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.CVV
+//                ).editText?.text.toString().trim(),
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.CARDHOLDER_NAME
+//                )?.editText?.text.toString().trim(),
+//                (cardNumberInputBinding.cardNetworksSelectionView.let { cardNetworkBinding ->
+//                    cardNetworkBinding.children.firstOrNull { child ->
+//                        child.id == cardNetworkBinding.checkedRadioButtonId
+//                    }
+//                }?.tag as? PrimerCardNetwork)?.network
+//            )
+//
+//            "ADYEN_BANCONTACT_CARD" -> PrimerBancontactCardData(
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.CARD_NUMBER
+//                ).editText?.text.toString().trim(),
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.EXPIRY_DATE
+//                ).editText?.text.toString().trim(),
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.CARDHOLDER_NAME
+//                ).editText?.text.toString().trim(),
+//            )
+//
+//            "XENDIT_OVO" -> PrimerPhoneNumberData(
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.PHONE_NUMBER
+//                ).editText?.text.toString()
+//            )
+//
+//            "ADYEN_MBWAY" -> PrimerPhoneNumberData(
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.PHONE_NUMBER
+//                ).editText?.text.toString()
+//            )
+//
+//            "ADYEN_BLIK" -> PrimerOtpData(
+//                binding.pmView.findViewWithTag<TextInputLayout>(
+//                    PrimerInputElementType.OTP_CODE
+//                ).editText?.text.toString()
+//            )
+//
+//            else -> throw IllegalArgumentException("Unsupported payment method type $paymentMethodType")
+//        }
+        throw IllegalStateException()
     }
 
     private fun setupManager(paymentMethodType: String) {
