@@ -32,10 +32,14 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         runIfNotFinishing {
-            val params = getLauncherParams() ?: return@runIfNotFinishing
+            val params = getLauncherParams() ?: run {
+                finish()
+                return@runIfNotFinishing
+            }
             savedInstanceState?.let {
                 intent.putExtra(LAUNCHED_BROWSER_KEY, it.getBoolean(LAUNCHED_BROWSER_KEY))
             }
+
             val implementationType = paymentMethodModulesInteractor.getPaymentMethodDescriptors()
                 .first { it.config.type == params.paymentMethodType }.config.implementationType
 
@@ -104,7 +108,7 @@ internal class HeadlessActivity : BaseCheckoutActivity() {
 
     private fun getLauncherParams() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         intent.getSerializableExtra(PARAMS_KEY, PaymentMethodLauncherParams::class.java)
-    } else { intent.getSerializableExtra(PARAMS_KEY) as PaymentMethodLauncherParams }
+    } else { intent.getSerializableExtra(PARAMS_KEY) as? PaymentMethodLauncherParams }
 
     private fun startRedirect(params: PaymentMethodRedirectLauncherParams) {
         when (params) {
