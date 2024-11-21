@@ -1,3 +1,9 @@
+## 2.32.3 (2024-11-21)
+
+### Fix
+
+- fixed crash occuring when Headless proxy was called from deeplin… (#776)
+
 ## 2.32.2 (2024-11-15)
 
 ### Fix
