@@ -1,3 +1,9 @@
+## 2.32.4 (2024-11-26)
+
+### Fix
+
+- Fixed 3DS crashes in case of configuration changes (#781)
+
 ## 2.32.3 (2024-11-21)
 
 ### Fix
