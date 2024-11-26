@@ -24,7 +24,6 @@ import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsVaultParams
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 internal class ThreeDsViewModel(
@@ -71,9 +70,6 @@ internal class ThreeDsViewModel(
         runIfChallengeNotInProgress {
             viewModelScope.launch {
                 threeDsInteractor.authenticateSdk()
-                    .onStart {
-                        challengeInProgress = true
-                    }
                     .catch { throwable ->
                         _threeDsErrorEvent.postValue(throwable)
                     }.collect { transaction ->
