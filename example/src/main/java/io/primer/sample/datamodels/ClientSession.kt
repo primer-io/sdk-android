@@ -166,7 +166,8 @@ interface ClientSession : ExampleAppRequestBody {
                             "MASTERCARD",
                             "CARTES_BANCAIRES",
                             "VISA",
-                            "AMEX"
+                            "AMEX",
+                            "OTHER"
                         )
                     ),
                 )

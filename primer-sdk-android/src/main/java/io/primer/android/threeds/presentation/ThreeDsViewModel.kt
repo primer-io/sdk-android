@@ -23,6 +23,8 @@ import io.primer.android.threeds.domain.models.ThreeDsCheckoutParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import io.primer.android.threeds.domain.models.ThreeDsVaultParams
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 internal class ThreeDsViewModel(
@@ -30,6 +32,9 @@ internal class ThreeDsViewModel(
     analyticsInteractor: AnalyticsInteractor,
     private val config: PrimerConfig
 ) : BaseViewModel(analyticsInteractor) {
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var challengeInProgress: Boolean = false
 
     private val _threeDsInitEvent = MutableLiveData<Unit>()
     val threeDsInitEvent: LiveData<Unit> = _threeDsInitEvent
@@ -63,33 +68,39 @@ internal class ThreeDsViewModel(
     }
 
     fun performAuthorization() {
-        viewModelScope.launch {
-            threeDsInteractor.authenticateSdk()
-                .catch { throwable ->
-                    _threeDsErrorEvent.postValue(throwable)
-                }.collect { transaction ->
-                    threeDsInteractor.beginRemoteAuth(
-                        getThreeDsParams(transaction.authenticationRequestParameters)
-                    )
-                        .catch { throwable ->
-                            _threeDsErrorEvent.postValue(throwable)
-                            transaction.close()
-                        }
-                        .collect { result ->
-                            when (result.authentication.responseCode) {
-                                ResponseCode.CHALLENGE -> _challengeRequiredEvent.postValue(
-                                    ThreeDsEventData.ChallengeRequiredData(
-                                        transaction,
-                                        result
+        runIfChallengeNotInProgress {
+            viewModelScope.launch {
+                threeDsInteractor.authenticateSdk()
+                    .onStart {
+                        challengeInProgress = true
+                    }
+                    .catch { throwable ->
+                        _threeDsErrorEvent.postValue(throwable)
+                    }.collect { transaction ->
+                        threeDsInteractor.beginRemoteAuth(
+                            getThreeDsParams(transaction.authenticationRequestParameters)
+                        )
+                            .catch { throwable ->
+                                _threeDsErrorEvent.postValue(throwable)
+                                transaction.close()
+                            }
+                            .collect { result ->
+                                when (result.authentication.responseCode) {
+                                    ResponseCode.CHALLENGE -> _challengeRequiredEvent.postValue(
+                                        ThreeDsEventData.ChallengeRequiredData(
+                                            transaction,
+                                            result
+                                        )
                                     )
-                                )
-                                else -> {
-                                    _threeDsFinishedEvent.postValue(Unit)
-                                    transaction.close()
+
+                                    else -> {
+                                        _threeDsFinishedEvent.postValue(Unit)
+                                        transaction.close()
+                                    }
                                 }
                             }
-                        }
-                }
+                    }
+            }
         }
     }
 
@@ -98,19 +109,22 @@ internal class ThreeDsViewModel(
         transaction: Transaction,
         authData: BeginAuthResponse
     ) {
-        logThreeDsScreenPresented()
-        viewModelScope.launch {
-            threeDsInteractor.performChallenge(
-                activity,
-                transaction,
-                authData
-            ).catch { throwable ->
-                logThreeDsScreenDismissed()
-                _threeDsErrorEvent.postValue(throwable)
-                transaction.close()
-            }.collect {
-                logThreeDsScreenDismissed()
-                _threeDsStatusChangedEvent.postValue(it)
+        runIfChallengeNotInProgress {
+            challengeInProgress = true
+            logThreeDsScreenPresented()
+            viewModelScope.launch {
+                threeDsInteractor.performChallenge(
+                    activity,
+                    transaction,
+                    authData
+                ).catch { throwable ->
+                    logThreeDsScreenDismissed()
+                    _threeDsErrorEvent.postValue(throwable)
+                    transaction.close()
+                }.onCompletion { challengeInProgress = false }.collect {
+                    logThreeDsScreenDismissed()
+                    _threeDsStatusChangedEvent.postValue(it)
+                }
             }
         }
     }
@@ -163,6 +177,7 @@ internal class ThreeDsViewModel(
                     authenticationRequestParameters,
                     ChallengePreference.NO_PREFERENCE
                 )
+
                 false -> ThreeDsVaultParams(
                     authenticationRequestParameters,
                     config,
@@ -186,4 +201,8 @@ internal class ThreeDsViewModel(
             Place.`3DS_VIEW`
         )
     )
+
+    private fun runIfChallengeNotInProgress(block: () -> Unit) = challengeInProgress.takeIf { it.not() }?.run {
+        block()
+    }
 }

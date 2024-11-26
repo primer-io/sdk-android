@@ -20,14 +20,17 @@ internal class ThreeDsActivity : BaseCheckoutActivity() {
 
     private val viewModel: ThreeDsViewModel
         by viewModel<ThreeDsViewModel, ThreeDsViewModelFactory>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_primer_progress)
         DISdkContext.sdkContainer?.let { it.registerContainer(ThreeDsContainer(it)) }
         setupViews()
         setupObservers()
-        logAnalyticsViewed()
-        viewModel.startThreeDsFlow()
+        if (savedInstanceState == null) {
+            logAnalyticsViewed()
+            viewModel.startThreeDsFlow()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {

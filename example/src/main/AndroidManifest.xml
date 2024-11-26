@@ -20,6 +20,7 @@
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.MyApplication.NoActionBar"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

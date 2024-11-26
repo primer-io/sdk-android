@@ -188,6 +188,23 @@ class ThreeDsViewModelTest {
     }
 
     @Test
+    fun `performChallenge() should not run in case challenge is in progress`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val response = mockk<BeginAuthResponse>(relaxed = true)
+
+        viewModel.challengeInProgress = true
+
+        runTest {
+            viewModel.performChallenge(activity, transaction, response)
+        }
+
+        verify(exactly = 0) {
+            threeDsInteractor.performChallenge(any(), any(), any())
+        }
+    }
+
+    @Test
     fun `performChallenge() should receive challenge status event when interactor performChallenge() was success`() {
         val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)

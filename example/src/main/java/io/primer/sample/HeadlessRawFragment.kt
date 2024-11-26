@@ -22,6 +22,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -60,7 +61,9 @@ import io.primer.sample.databinding.InputViewBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
+import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
+import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
 import io.primer.sample.viewmodels.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,7 +75,7 @@ import kotlin.math.pow
 class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
 
     private val viewModel: MainViewModel by activityViewModels()
-    private val headlessManagerViewModel: HeadlessManagerViewModel by activityViewModels()
+    private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
 
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 
@@ -98,6 +101,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
 
         headlessManagerViewModel.transactionState.observe(viewLifecycleOwner) { state ->
             val message = when (state) {
@@ -222,6 +226,12 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 }
             }
         }
+    }
+    private fun initViewModel() {
+        headlessManagerViewModel = ViewModelProvider(
+            requireActivity(),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+        )[HeadlessManagerViewModel::class.java]
     }
 
     @SuppressLint("NewApi")
