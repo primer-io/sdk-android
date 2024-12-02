@@ -241,22 +241,24 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
             return
         }
 
-        addTimerDurationEvent(TimerType.START)
+        runIfNotFinishing {
+            addTimerDurationEvent(TimerType.START)
 
-        primerViewModel.fetchConfiguration()
+            primerViewModel.fetchConfiguration()
 
-        sheet = CheckoutSheetFragment.newInstance()
-        primerViewModel.viewStatus.observe(this, viewStatusObserver)
-        primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
-        primerViewModel.paymentMethodBehaviour.observe(
-            this,
-            paymentMethodBehaviourObserver,
-        )
-        primerViewModel.navigateActionEvent.observe(this, actionNavigateObserver)
+            sheet = CheckoutSheetFragment.newInstance()
+            primerViewModel.viewStatus.observe(this, viewStatusObserver)
+            primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
+            primerViewModel.paymentMethodBehaviour.observe(
+                this,
+                paymentMethodBehaviourObserver,
+            )
+            primerViewModel.navigateActionEvent.observe(this, actionNavigateObserver)
 
-        lifecycleScope.launch { collectCheckoutAdditionalInfo() }
+            lifecycleScope.launch { collectCheckoutAdditionalInfo() }
 
-        openSheet()
+            openSheet()
+        }
     }
 
     private suspend fun collectCheckoutAdditionalInfo() {

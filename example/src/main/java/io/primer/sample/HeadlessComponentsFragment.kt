@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -49,6 +52,8 @@ import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
 import io.primer.sample.viewmodels.UiState
+import io.primer.ui_components.PaymentBottomSheetFlow
+import io.primer.ui_components.PaymentEvent
 import io.primer.ui_components.PrimerPaymentMethodButtonComponent
 import io.primer.ui_components.PrimerPaymentMethodComponent
 import io.primer.ui_components.PrimerPaymentMethodDynamicComponent
@@ -121,7 +126,7 @@ class HeadlessComponentsFragment : Fragment() {
     private fun observePaymentMethodsLoaded() {
         headlessManagerViewModel.paymentMethodsLoaded.observe(viewLifecycleOwner) {
             binding.typeButtonGroup.isVisible = true
-            setupPaymentMethod(it)
+            setupPaymentMethod()
             hideLoading()
         }
     }
@@ -270,20 +275,57 @@ class HeadlessComponentsFragment : Fragment() {
         binding.typeButtonGroup.check(binding.checkout.id)
     }
 
-    private fun setupPaymentMethod(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
+    private fun setupPaymentMethod() {
         binding.composeView.setContent {
             var selectedPaymentMethod by remember { mutableStateOf<PrimerHeadlessUniversalCheckoutPaymentMethod?>(null) }
 
             Column(modifier = Modifier.fillMaxWidth()) {
-                paymentMethods.forEach { paymentMethod ->
-                    if (selectedPaymentMethod == paymentMethod) {
-                        PaymentMethodUi(paymentMethod = paymentMethod)
-                    } else {
-                        PaymentMethodButton(
-                            paymentMethod = paymentMethod,
-                            onMethodSelected = { selectedPaymentMethod = it })
+//                paymentMethods.forEach { paymentMethod ->
+//                    if (selectedPaymentMethod == paymentMethod) {
+//                        PaymentMethodUi(paymentMethod = paymentMethod)
+//                    } else {
+//                        PaymentMethodButton(
+//                            paymentMethod = paymentMethod,
+//                            onMethodSelected = { selectedPaymentMethod = it })
+//                    }
+//                }
+//                PaymentMethodList(onPaymentMethodSelected = {}) {
+//                    // Custom UI for payment methods
+//                    paymentMethods.forEach { method ->
+//                        Text(method.paymentMethodName.orEmpty()) // Example rendering
+//                    }
+//                    Text(text = "uu")
+//                }
+
+
+                PaymentBottomSheetFlow(onEvent = {}) {
+                    val myOnPaymentMethodSelected: (PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit = remember {
+                        {
+                            println("semirz" + it)
+                        }
+                    }
+                    Column {
+                        Text(text = "ado")
+                        PaymentMethodList(myOnPaymentMethodSelected) {
+                            // Custom UI for payment methods
+                            LazyRow {
+                                items(paymentMethods) { method ->
+                                    Button(onClick = { myOnPaymentMethodSelected(method) }) {
+                                        Text(method.paymentMethodName.orEmpty())
+                                        Text(text = "link")
+                                    }
+                                }
+                            }
+                            Text(text = "uu")
+                        }
+
+
                     }
                 }
+            }
+
+        }
+    }
 
 //                PrimerPaymentFlowComponent(
 //                    paymentMethods = paymentMethods,
@@ -297,9 +339,6 @@ class HeadlessComponentsFragment : Fragment() {
 //                        }
 //                    }, modifier = Modifier.fillMaxWidth()
 //                )
-            }
-        }
-    }
 
     @Composable
     private fun PaymentMethodButton(
@@ -455,7 +494,7 @@ class HeadlessComponentsFragment : Fragment() {
         binding.progressLayout.progressLayoutRoot.isVisible = false
     }
 
-    private fun onPaymentMethodSelected(paymentMethodType: String) {
+    private fun onPaymentMethodSelectedx(paymentMethodType: String) {
         callbacks.clear()
         checkoutDataWithError = null
         try {
