@@ -15,6 +15,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,36 +28,38 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
+import io.primer.android.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
 import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.klarna.api.composable.KlarnaPaymentCollectableData
 import io.primer.android.klarna.api.composable.KlarnaPaymentStep
 import io.primer.android.klarna.api.ui.PrimerKlarnaPaymentView
 import io.primer.android.klarna.implementation.session.domain.models.KlarnaPaymentCategory
+import kotlinx.coroutines.cancelChildren
 
 fun PrimerHeadlessUniversalCheckoutPaymentMethod.hasCustomUi() = this.paymentMethodManagerCategories.any {
     it != PrimerPaymentMethodManagerCategory.NATIVE_UI
 }
 
 @Composable
-fun PrimerRedirectPaymentComponent(
-    paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod,
-    component: KlarnaComponent,
-    modifier: Modifier = Modifier
-) {
-    PrimerPaymentMethodButtonComponent(paymentMethod = paymentMethod, onMethodSelected = {}, modifier = modifier)
-    component.start()
-}
-
-@Composable
 fun PrimerPaymentMethodDynamicComponent(
-    component: KlarnaComponent,
     modifier: Modifier = Modifier,
-    topContent: @Composable () -> Unit = {},
-    bottomContent: @Composable () -> Unit = {},
+    flowController: PaymentFlowViewModel,
+    onStateChanged: @Composable (PaymentFlowScopeY.PaymentMethodScope) -> Unit
 ) {
+
+    val component: KlarnaComponent = PrimerHeadlessUniversalCheckoutKlarnaManager(
+        viewModelStoreOwner = LocalViewModelStoreOwner.current ?: error("...")
+    ).provideKlarnaComponent(
+        primerSessionIntent = PrimerSessionIntent.CHECKOUT
+    )
+
     val steps by component.componentStep.collectAsStateWithLifecycle(null)
     val context = LocalContext.current
 
@@ -66,47 +69,50 @@ fun PrimerPaymentMethodDynamicComponent(
         component.start()
     }
 
+    component.addCloseable {
+        println("semirz")
+    }
+
+
     Column {
+        when (val step = steps) {
+            is KlarnaPaymentStep.PaymentSessionAuthorized ->
+                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Initializing)
 
-            when (val step = steps) {
-                is KlarnaPaymentStep.PaymentSessionAuthorized -> {
-                    CircularProgressIndicator(modifier = modifier.align(Alignment.CenterHorizontally))
-                }
-
-                is KlarnaPaymentStep.PaymentSessionCreated -> {
-                    RadioGroupExample(
-                        options = step.paymentCategories.map { it.name },
-                        modifier = modifier
-                    ) { selected ->
-                        component.updateCollectedData(
-                            KlarnaPaymentCollectableData.PaymentOptions(
-                                context = context,
-                                paymentCategory = step.paymentCategories.first { it.name == selected },
-                                returnIntentUrl = "primer://io.primer"
-                            )
+            is KlarnaPaymentStep.PaymentSessionCreated -> {
+                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Rendered)
+                RadioGroupExample(
+                    options = step.paymentCategories.map { it.name },
+                    modifier = modifier
+                ) { selected ->
+                    component.updateCollectedData(
+                        KlarnaPaymentCollectableData.PaymentOptions(
+                            context = context,
+                            paymentCategory = step.paymentCategories.first { it.name == selected },
+                            returnIntentUrl = "primer://io.primer"
                         )
-                    }.also {
-                        paymentCategories = step.paymentCategories
-                    }
-                    topContent()
+                    )
+                }.also {
+                    paymentCategories = step.paymentCategories
                 }
+            }
 
-                KlarnaPaymentStep.PaymentSessionFinalized -> CircularProgressIndicator()
-                is KlarnaPaymentStep.PaymentViewLoaded -> {
-                    RadioGroupExample(options = paymentCategories.map { it.name }, modifier = modifier) { selected ->
-                        component.updateCollectedData(
-                            KlarnaPaymentCollectableData.PaymentOptions(
-                                context = context,
-                                paymentCategory = paymentCategories.first { it.name == selected },
-                                returnIntentUrl = "primer://io.primer"
-                            )
+            KlarnaPaymentStep.PaymentSessionFinalized -> flowController.updateState(false)
+            is KlarnaPaymentStep.PaymentViewLoaded -> {
+                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Rendered)
+                RadioGroupExample(options = paymentCategories.map { it.name }, modifier = modifier) { selected ->
+                    component.updateCollectedData(
+                        KlarnaPaymentCollectableData.PaymentOptions(
+                            context = context,
+                            paymentCategory = paymentCategories.first { it.name == selected },
+                            returnIntentUrl = "primer://io.primer"
                         )
-                    }
-                    CustomViewInComposable(step.paymentView)
-                    topContent()
+                    )
                 }
+                CustomViewInComposable(step.paymentView)
+            }
 
-                null -> CircularProgressIndicator()
+            null -> onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Initializing)
         }
     }
 }

@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <color name="bank_transfer">#0054A6</color>
+    <color name="primer_amount">@color/primer_secondary</color>
+    <color name="primer_android_dark_gray">#8E8E93</color>
+    <color name="primer_android_red">#FFFF1744</color>
+    <color name="primer_app_background">#FFFFFFFF</color>
+    <color name="primer_app_danger">#FFEB001B</color>
+    <color name="primer_app_primary">#FF2C98F0</color>
+    <color name="primer_app_primary_muted">#402C98F0</color>
+    <color name="primer_background">@color/primer_app_background</color>
+    <color name="primer_body">#75757B</color>
+    <color name="primer_border_color">#FFBEC2C4</color>
+    <color name="primer_button_primary">#3A83F9</color>
+    <color name="primer_button_primary_disabled">#F1F1F4</color>
+    <color name="primer_button_primary_disabled_text_color">#BEBEBE</color>
+    <color name="primer_button_primary_text_color">@android:color/white</color>
+    <color name="primer_country_selection_divider">@color/primer_divider</color>
+    <color name="primer_default_text">@color/primer_secondary</color>
+    <color name="primer_disabled">#8FBEC2C4</color>
+    <color name="primer_divider">#DBDBDB</color>
+    <color name="primer_dummy_apm_checked_border">#3A83F9</color>
+    <color name="primer_dummy_apm_light_unchecked_border">#E5E5EA</color>
+    <color name="primer_error">@color/primer_android_red</color>
+    <color name="primer_hint">#E1DEDA</color>
+    <color name="primer_icon_tint">#000000</color>
+    <color name="primer_image_placeholder">#E5E5EA</color>
+    <color name="primer_input_background">@color/primer_background</color>
+    <color name="primer_input_border">@color/primer_hint</color>
+    <color name="primer_input_border_error">@color/primer_error</color>
+    <color name="primer_input_border_selected">@color/primer_primary</color>
+    <color name="primer_input_cursor">@color/primer_primary</color>
+    <color name="primer_input_placeholder">#8A000000</color>
+    <color name="primer_input_text">@color/primer_secondary</color>
+    <color name="primer_item_background">#FFC6C6C8</color>
+    <color name="primer_main_button">@color/primer_primary</color>
+    <color name="primer_main_button_border">@color/primer_disabled</color>
+    <color name="primer_main_button_border_error">@color/primer_error</color>
+    <color name="primer_main_button_border_selected">@color/primer_primary</color>
+    <color name="primer_main_button_disabled">@color/primer_disabled</color>
+    <color name="primer_main_button_error">@color/primer_error</color>
+    <color name="primer_main_button_text">@android:color/white</color>
+    <color name="primer_pay_button_background">#007AFF</color>
+    <color name="primer_payment_method_button">@color/primer_background</color>
+    <color name="primer_payment_method_button_border">@color/primer_disabled</color>
+    <color name="primer_payment_method_button_border_error">@color/primer_error</color>
+    <color name="primer_payment_method_button_border_selected">@color/primer_primary</color>
+    <color name="primer_payment_method_button_disabled">@color/primer_background</color>
+    <color name="primer_payment_method_button_error">@color/primer_disabled</color>
+    <color name="primer_payment_method_button_text">@color/primer_secondary</color>
+    <color name="primer_primary">@color/primer_app_primary</color>
+    <color name="primer_search_input_background">#08242A2F</color>
+    <color name="primer_search_input_border">@android:color/transparent</color>
+    <color name="primer_search_input_cursor">@color/primer_primary</color>
+    <color name="primer_search_input_text">@color/primer_secondary</color>
+    <color name="primer_secondary">@android:color/black</color>
+    <color name="primer_subtitle">#808080</color>
+    <color name="primer_system_text">@color/primer_primary</color>
+    <color name="primer_text_color_default">@android:color/black</color>
+    <color name="primer_text_color_muted">#808080</color>
+    <color name="primer_title">@color/primer_secondary</color>
+    <color name="primer_underline_color">#6B000000</color>
+    <dimen name="elevation_selected">5dp</dimen>
+    <dimen name="elevation_unselected">0dp</dimen>
+    <dimen name="extra_small_padding">2dp</dimen>
+    <dimen name="large_padding">16dp</dimen>
+    <dimen name="large_vertical_margin">16dp</dimen>
+    <dimen name="loading_height">300dp</dimen>
+    <dimen name="medium_large_padding">10dp</dimen>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="medium_vertical_margin">4dp</dimen>
+    <dimen name="medium_vertical_margin2">8dp</dimen>
+    <dimen name="pay_button_height">40dp</dimen>
+    <dimen name="primer_amount_label_fontsize">34sp</dimen>
+    <dimen name="primer_bottom_sheet_corner_radius">0dp</dimen>
+    <dimen name="primer_bottom_sheet_header_height">56dp</dimen>
+    <dimen name="primer_button_elevation">2dp</dimen>
+    <dimen name="primer_button_padding_horiz">16dp</dimen>
+    <dimen name="primer_checkout_sheet_padding_horiz">14dp</dimen>
+    <dimen name="primer_checkout_sheet_padding_vert">22dp</dimen>
+    <dimen name="primer_decision_radio_button_height">48dp</dimen>
+    <dimen name="primer_default_border_width">1dp</dimen>
+    <dimen name="primer_default_corner_radius">4dp</dimen>
+    <dimen name="primer_default_fontsize">18sp</dimen>
+    <dimen name="primer_divider_height">0.5dp</dimen>
+    <dimen name="primer_form_title_margin">28dp</dimen>
+    <dimen name="primer_input_border_width">1dp</dimen>
+    <dimen name="primer_input_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_input_fontsize">@dimen/primer_default_fontsize</dimen>
+    <dimen name="primer_input_spacing_error_vert">7dp</dimen>
+    <dimen name="primer_input_spacing_horiz">28dp</dimen>
+    <dimen name="primer_input_spacing_vert">11dp</dimen>
+    <dimen name="primer_list_margin">16dp</dimen>
+    <dimen name="primer_main_button_border_width">0dp</dimen>
+    <dimen name="primer_main_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_main_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
+    <dimen name="primer_pay_button_height">40dp</dimen>
+    <dimen name="primer_payment_method_button_border_width">1dp</dimen>
+    <dimen name="primer_payment_method_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_payment_method_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
+    <dimen name="primer_payment_method_preview_button_height">48dp</dimen>
+    <dimen name="primer_progress_indicator_size">40dp</dimen>
+    <dimen name="primer_search_input_fontsize">@dimen/primer_text_size_sm</dimen>
+    <dimen name="primer_selector_padding">12dp</dimen>
+    <dimen name="primer_subtitle_fontsize">14sp</dimen>
+    <dimen name="primer_system_text_fontsize">@dimen/primer_subtitle_fontsize</dimen>
+    <dimen name="primer_text_size_button">14sp</dimen>
+    <dimen name="primer_text_size_md">18sp</dimen>
+    <dimen name="primer_text_size_s">12sp</dimen>
+    <dimen name="primer_text_size_sm">16sp</dimen>
+    <dimen name="primer_text_size_title">20sp</dimen>
+    <dimen name="primer_text_size_xs">10sp</dimen>
+    <dimen name="primer_title_fontsize">20sp</dimen>
+    <dimen name="primer_underlined_input_padding_bottom">4dp</dimen>
+    <dimen name="primer_underlined_input_padding_horizontal">12dp</dimen>
+    <dimen name="primer_underlined_input_padding_top">4dp</dimen>
+    <dimen name="small_padding">4dp</dimen>
+    <dimen name="x_medium_vertical_margin">12dp</dimen>
+    <dimen name="xl_vertical_margin">24dp</dimen>
+    <dimen name="xxl_vertical_margin">28dp</dimen>
+    <dimen name="xxxl_vertical_margin">32dp</dimen>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Add bank account</string>
+    <string name="add_card">Add card</string>
+    <string name="add_new_payment_method">Add a payment method</string>
+    <string name="additional_fees_may_apply">Additional fees may apply</string>
+    <string name="addressLine1">Address line 1</string>
+    <string name="addressLine1ErrorRequired">Address line 1 is required</string>
+    <string name="addressLine2">Address line 2 (optional)</string>
+    <string name="available_payment_methods">Available payment methods</string>
+    <string name="bank_account">Bank Account</string>
+    <string name="bank_selection_error_message">Failed to load bank. Check your connection and try again.</string>
+    <string name="bank_selection_hint">Search banks</string>
+    <string name="bank_selection_title">Choose your bank</string>
+    <string name="bank_selection_try_again">Try again</string>
+    <string name="billingAddressLabel">Billing address</string>
+    <string name="cancel">Cancel</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Card details</string>
+    <string name="card_expiry">Expiry date</string>
+    <string name="card_expiry_formatted">Expiry (MM/YY)</string>
+    <string name="card_holder_name">Cardholder name</string>
+    <string name="card_name_on_card">Name on card</string>
+    <string name="card_network_fallback">Card</string>
+    <string name="card_number">Card number</string>
+    <string name="card_zip">Zip code</string>
+    <string name="check_icon">check icon</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Choose payment method</string>
+    <string name="cityErrorRequired">City is required</string>
+    <string name="cityLabel">City</string>
+    <string name="completeYourPayment">Complete your payment</string>
+    <string name="completeYourPaymentInTheApp">Complete your payment in %s</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirmToPayButtonTitle">Confirm to pay</string>
+    <string name="confirm_dd_mandate">Confirm mandate</string>
+    <string name="continue_button">Continue</string>
+    <string name="countryCodeErrorRequired">Country is required</string>
+    <string name="countryLabel">Country</string>
+    <string name="country_search_hint">Find country</string>
+    <string name="country_select">Select country</string>
+    <string name="credit_debit_card">Credit/debit card</string>
+    <string name="data_will_be_lost">Your data will be erased</string>
+    <string name="dd_cancel_message">Do you want to cancel adding a bank account?</string>
+    <string name="dd_mandate_error">Please check that all of your information is correct</string>
+    <string name="dd_mandate_legal">
+        By signing this mandate form, you authorise (A) %1$s to send instructions to your bank to debit your account and (B) your bank to
+        debit your account in accordance with the instructions from %1$s.
+    </string>
+    <string name="delete">Delete</string>
+    <string name="done">Done</string>
+    <string name="dueAt">Due at</string>
+    <string name="edit">Edit</string>
+    <string name="edit_saved_payment_methods">Edit saved cards</string>
+    <string name="email">Email</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Enter your address</string>
+    <string name="enter_card_details">Enter card details</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="error_default">Error!</string>
+    <string name="expires_12_21">Expires 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST Bank Transfer</string>
+    <string name="firstNameErrorRequired">First Name is required</string>
+    <string name="firstNameLabel">First name</string>
+    <string name="first_last_name">First and last name</string>
+    <string name="form_error_invalid">%1$s is invalid</string>
+    <string name="form_error_required">%1$s is required</string>
+    <string name="go_back_description">go back</string>
+    <string name="googlepay_button_content_description">Google Pay</string>
+    <string name="googlepay_buy_with_button_content_description">Buy with Google Pay</string>
+    <string description="Donate button text for Google Pay [CHAR LIMIT=100]" name="googlepay_donate_with_button_content_description">Donate with Google Pay</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">icon showing state</string>
+    <string name="input_description_otp">Get the code from your banking app.</string>
+    <string name="input_hint_form_blik_otp">6 digit code</string>
+    <string name="input_hint_form_phone_number">Phone number</string>
+    <string name="input_title_bank_details">Provide bank details</string>
+    <string name="input_title_phone_number">Type your phone number</string>
+    <string name="john_doe">John Doe</string>
+    <string name="label_authorized">Authorized</string>
+    <string name="label_declined">Declined</string>
+    <string name="label_failed">Failed</string>
+    <string name="lastNameErrorRequired">Last Name is required</string>
+    <string name="lastNameLabel">Last name</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <string name="loading_text">Loading</string>
+    <string name="manage">Manage</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">MbWay</string>
+    <string name="mock_klarna_view" translatable="false">Mock Klarna view</string>
+    <string name="multibancoAmount">Amount</string>
+    <string name="multibancoCompleteDescription">Please make the payment at an ATM, or using online banking.</string>
+    <string name="multibancoEntity">Entity</string>
+    <string name="multibancoPayment1Step">Please make the payment at an ATM, or using online banking.</string>
+    <string name="multibancoPayment2Step">Go to a Multibanco ATM, select the Multibanco payment method and enter the payment details</string>
+    <string name="multibancoPayment3Step">Login to your online banking to pay by bank transfer using the payment details</string>
+    <string name="multibancoReference">Reference</string>
+    <string name="multibancoTitleConditions">Complete your payment</string>
+    <string name="name">Name</string>
+    <string name="next">Next</string>
+    <string name="no_additional_fee">No additional fee</string>
+    <string name="no_results">No results</string>
+    <string name="no_results_for_query">Sorry, no results\nfound that match “%s”</string>
+    <string name="other_ways_of_paying">Other ways of paying</string>
+    <string name="other_ways_to_pay">Other ways to pay</string>
+    <string name="pay">Pay</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="pay_by_card">Pay by card</string>
+    <string name="pay_specific_amount">Pay %s</string>
+    <string name="pay_with">Pay with</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Pay with card</string>
+    <string name="pay_with_crypto">Pay with crypto</string>
+    <string name="payment_method_added_message">Your payment method \nwas successfully added!</string>
+    <string name="payment_method_blik_loading_placeholder">Complete your payment in Blik app</string>
+    <string name="payment_method_deletion_message">Are you sure you want to delete this payment method?</string>
+    <string name="payment_method_error">Choose another payment method</string>
+    <string name="payment_method_icon">payment method icon</string>
+    <string name="payment_method_not_added_message">Your payment method couldn\'t be added.</string>
+    <string name="payment_method_xfers_description">Upload the screenshot in your banking app.</string>
+    <string name="payment_method_xfers_title">Scan or save to pay</string>
+    <string name="payment_request_completed_successfully">Your payment completed successfully!</string>
+    <string name="payment_request_unsuccessful">Your payment was unsuccessful.</string>
+    <string name="phone_code_search_hint">Find code</string>
+    <string name="pleaseTransferFunds">Please Transfer funds to the provided DBS bank account using your Singapore based bank account via FAST (preferred), MEPS or GIRO.</string>
+    <string name="postalCodeErrorRequired">Postal code is required</string>
+    <string name="postalCodeLabel">Postal code</string>
+    <string name="primer_cvv_recapture_explanation">Input the %d digit security code on your card for a secure payment.</string>
+    <string name="primer_cvv_recapture_title">Enter CVV</string>
+    <string name="primer_payment_method_button_content_description">Pay with %s</string>
+    <string name="primer_test_header_description">This is a mocked flow for sandbox. Choose the result you want to test from the list below.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Save this card</string>
+    <string name="saved_payment_methods">SAVED PAYMENT METHOD</string>
+    <string name="scanToPay">Scan to pay or take a screenshot</string>
+    <string name="search_placeholder">Search</string>
+    <string name="search_result">Search results</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA Core Direct Debit Mandate.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <string name="stateErrorRequired">State, Region or County is required</string>
+    <string name="stateLabel">State / Region / County</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">success</string>
+    <string name="success_text">Success!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Pay in installments</string>
+    <string name="uploadScreenshot">Upload the screenshot in your banking app</string>
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/primer_app_primary</item>
+    </style>
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/primer_android_red</item>
+    </style>
+    <style name="Primer"/>
+    <style name="Primer.AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+    <style name="Primer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="Primer.BottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/Primer.BottomSheetModal</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+    </style>
+    <style name="Primer.BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+    <style name="Primer.Button"/>
+    <style name="Primer.Button.Overlay">
+        <item name="colorPrimary">@color/primer_button_primary</item>
+    </style>
+    <style name="Primer.Button.Text">
+        <item name="borderWidth">0dp</item>
+        <item name="backgroundColor">@android:color/transparent</item>
+        <item name="android:textColor">@color/primer_app_primary</item>
+        <item name="textAllCaps">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+    <style name="Primer.Button.Text.Danger" parent="Primer.Button.Text">
+        <item name="android:textColor">@color/primer_app_danger</item>
+    </style>
+    <style name="Primer.Button.Text.Primary" parent="Primer.Button.Text">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="lineHeight">24sp</item>
+        <item name="android:textSize">@dimen/primer_text_size_button</item>
+    </style>
+    <style name="Primer.Button.Text.Secondary">
+        <item name="lineHeight">24dp</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="borderWidth">0dp</item>
+        <item name="backgroundColor">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/text_button_primary_color</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="Primer.FormInput.Input" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorControlActivated">@color/primer_app_primary</item>
+    </style>
+    <style name="Primer.FormInput.Outbox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
+    </style>
+    <style name="Primer.FormInput.Outbox.Input" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorControlActivated">@color/primer_app_primary</item>
+        <item name="android:paddingVertical" ns1:targetApi="o">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="Primer.FormInput.SubTitle" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    <style name="Primer.NewButton" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/Primer.Button.Overlay</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Primer.NewButton</item>
+    </style>
+    <style name="Primer.NewButton.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="materialThemeOverlay">@style/Primer.Button.Overlay</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="strokeColor">@color/primer_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Primer.NewButton.Bold</item>
+    </style>
+    <style name="Primer.NewButton.Pay" parent="Primer.NewButton.Primary">
+        <item name="android:textAppearance">@style/TextAppearance.Primer.NewButton.Pay</item>
+        <item name="cornerRadius">@dimen/primer_default_corner_radius</item>
+    </style>
+    <style name="Primer.NewButton.Primary">
+        <item name="android:textColor">@color/button_primary_text_color</item>
+        <item name="backgroundTint">@color/button_primary_color</item>
+    </style>
+    <style name="Primer.ProgressIndicator"/>
+    <style name="Primer.ProgressIndicator.Circular" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="indicatorColor">?colorPrimary</item>
+        <item name="showAnimationBehavior">inward</item>
+        <item name="hideAnimationBehavior">outward</item>
+        <item name="showDelay">0</item>
+        <item name="minHideDelay">30</item>
+        <item name="indicatorSize">28dp</item>
+        <item name="indicatorInset">4dp</item>
+        <item name="indicatorDirectionCircular">clockwise</item>
+    </style>
+    <style name="Primer.ProgressIndicator.Circular.Small" parent="Widget.MaterialComponents.CircularProgressIndicator.Small"/>
+    <style name="Primer.RadioButton" parent="Primer.Button.Text">
+        <item name="android:button">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/primer_default_text</item>
+        <item name="android:minHeight">@dimen/primer_decision_radio_button_height</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:paddingHorizontal" ns1:targetApi="o">12dp</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:background">@drawable/selector_dummy_radio_button</item>
+        <item name="background">@drawable/selector_dummy_radio_button</item>
+        <item name="textAllCaps">false</item>
+    </style>
+    <style name="Primer.Text">
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/primer_text_color_default</item>
+        <item name="android:textSize">@dimen/primer_text_size_md</item>
+        <item name="fontWeight">400</item>
+    </style>
+    <style name="Primer.Text.Body">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="lineHeight">24dp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="Primer.Text.Description" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_subtitle_fontsize</item>
+        <item name="lineHeight">20dp</item>
+    </style>
+    <style name="Primer.Text.ExtraSmall" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_s</item>
+    </style>
+    <style name="Primer.Text.FormLabelSmall">
+        <item name="android:textColor">@color/primer_text_color_muted</item>
+        <item name="android:textSize">@dimen/primer_text_size_s</item>
+    </style>
+    <style name="Primer.Text.Large" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_title</item>
+    </style>
+    <style name="Primer.Text.NewTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="lineHeight">28dp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="Primer.Text.Small" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_sm</item>
+    </style>
+    <style name="Primer.Text.Small.Body" parent="Primer.Text.Small">
+        <item name="android:textColor">@color/primer_body</item>
+    </style>
+    <style name="Primer.Text.Small.Muted" parent="Primer.Text.Small">
+        <item name="android:textColor">@color/primer_text_color_muted</item>
+    </style>
+    <style name="Primer.Text.SmallPrint" parent="Primer.Text">
+        <item name="android:textColor">@color/primer_text_color_muted</item>
+        <item name="android:textSize">@dimen/primer_text_size_xs</item>
+    </style>
+    <style name="Primer.Text.SubTitle" parent="Primer.Text">
+        <item name="android:textSize">@dimen/primer_text_size_sm</item>
+    </style>
+    <style name="Primer.Text.Title" parent="Primer.Text.Large">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">roboto_medium</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="Primer.Text.Title.Small" parent="Primer.Text.Large">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="TextAppearance.Primer" parent="Primer.Text"/>
+    <style name="TextAppearance.Primer.NewButton">
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="fontWeight">500</item>
+    </style>
+    <style name="TextAppearance.Primer.NewButton.Bold">
+        <item name="android:textSize">@dimen/primer_text_size_sm</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="fontWeight">700</item>
+    </style>
+    <style name="TextAppearance.Primer.NewButton.Pay">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="fontWeight">700</item>
+    </style>
+    <style name="Theme.AppCompat.PrimerUniversalCheckout" parent="Theme.MaterialComponents">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@color/primer_app_primary</item>
+        <item name="bottomSheetDialogTheme">@style/Primer.BottomSheet</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Primer.NewButton</item>
+        <item name="android:colorControlActivated">@color/primer_input_cursor</item>
+    </style>
+    <style name="Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" parent="Theme.AppCompat.PrimerUniversalCheckout">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+    <style name="Theme.AppCompat.PrimerUniversalCheckout.TextInput">
+        <item name="colorPrimary">@color/primer_android_red</item>
+    </style>
+    <style name="Theme.AppCompat.PrimerUniversalCheckout.WhiteAccent">
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+    <style name="Theme.AppCompat.WebView" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+    </style>
+    <style name="primer_title">
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="fontWeight">600</item>
+    </style>
+    <declare-styleable name="ButtonPrimary">
+        <attr format="string" name="buttonText"/>
+    </declare-styleable>
+</resources>

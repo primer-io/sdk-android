@@ -1,0 +1,17 @@
+<io.primer.android.ui.components.ButtonDefaultLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/payment_method_parent"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/primer_payment_method_preview_button_height"
+    android:background="@drawable/button_light"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:minHeight="@dimen/primer_payment_method_preview_button_height"
+    android:orientation="horizontal"
+    android:paddingVertical="2dp">
+
+    <ImageView
+        android:id="@+id/payment_method_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</io.primer.android.ui.components.ButtonDefaultLayout>

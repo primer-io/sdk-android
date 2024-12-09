@@ -1,0 +1,232 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:tools="http://schemas.android.com/tools"
+4    package="io.primer.android" >
+5
+6    <uses-sdk android:minSdkVersion="21" />
+7
+8    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+8-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:5:5-79
+8-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:5:22-76
+9    <uses-permission android:name="android.permission.INTERNET" />
+9-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:6:5-67
+9-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:6:22-64
+10
+11    <queries>
+11-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:8:5-21:15
+12        <intent>
+12-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:9:9-12:18
+13            <action android:name="android.intent.action.VIEW" />
+13-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:13-65
+13-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:21-62
+14
+15            <data android:scheme="https" />
+15-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:13-44
+15-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:19-41
+16        </intent>
+17        <intent>
+17-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:13:9-16:18
+18            <action android:name="android.intent.action.VIEW" />
+18-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:13-65
+18-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:21-62
+19
+20            <data android:scheme="vipps" />
+20-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:13-44
+20-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:19-41
+21        </intent>
+22        <intent>
+22-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:17:9-20:18
+23            <action android:name="android.intent.action.VIEW" />
+23-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:13-65
+23-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:21-62
+24
+25            <data android:scheme="vippsmt" />
+25-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:13-44
+25-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:19-41
+26        </intent>
+27    </queries>
+28
+29    <application>
+29-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:22:5-114:19
+30        <activity
+30-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:5:9-14:20
+31            android:name="io.primer.android.DebugActivity"
+31-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:6:13-42
+32            android:exported="true"
+32-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:7:13-36
+33            android:label="Debug"
+33-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:8:13-34
+34            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout" >
+34-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:9:13-75
+35            <intent-filter>
+35-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:10:13-13:29
+36                <action android:name="android.intent.action.MAIN" />
+36-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:11:17-69
+36-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:11:25-66
+37
+38                <category android:name="android.intent.category.LAUNCHER" />
+38-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:12:17-77
+38-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/debug/AndroidManifest.xml:12:27-74
+39            </intent-filter>
+40        </activity>
+41
+42        <meta-data
+42-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:24:9-26:36
+43            android:name="com.google.android.gms.wallet.api.enabled"
+43-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:25:13-69
+44            android:value="true" />
+44-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:26:13-33
+45        <meta-data
+45-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:28:9-30:48
+46            android:name="parentApplicationId"
+46-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:29:13-47
+47            android:value="${applicationId}" />
+47-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:30:13-45
+48
+49        <activity
+49-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:32:9-37:58
+50            android:name="io.primer.android.CheckoutSheetActivity"
+50-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:33:13-50
+51            android:exported="true"
+51-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:34:13-36
+52            android:label=""
+52-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:35:13-29
+53            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"
+53-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:36:13-75
+54            android:windowSoftInputMode="adjustResize" />
+54-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:37:13-55
+55        <activity
+55-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:39:9-42:62
+56            android:name="io.primer.android.ui.base.webview.WebViewActivity"
+56-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:40:13-60
+57            android:label=""
+57-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:41:13-29
+58            android:theme="@style/Theme.AppCompat.WebView" />
+58-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:42:13-59
+59        <activity
+59-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:44:9-47:62
+60            android:name="io.primer.android.ui.payment.async.AsyncPaymentMethodWebViewActivity"
+60-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:45:13-79
+61            android:label=""
+61-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:46:13-29
+62            android:theme="@style/Theme.AppCompat.WebView" />
+62-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:47:13-59
+63        <activity
+63-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:49:9-52:62
+64            android:name="io.primer.android.ui.payment.processor3ds.Processor3dsWebViewActivity"
+64-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:50:13-80
+65            android:label=""
+65-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:51:13-29
+66            android:theme="@style/Theme.AppCompat.WebView" />
+66-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:52:13-59
+67        <activity
+67-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:53:9-70:20
+68            android:name="io.primer.android.ui.deeplink.async.AsyncPaymentMethodDeeplinkActivity"
+68-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:54:13-81
+69            android:exported="true"
+69-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:55:13-36
+70            android:label=""
+70-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:56:13-29
+71            android:launchMode="singleTask"
+71-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:57:13-44
+72            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" >
+72-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:58:13-90
+73            <intent-filter>
+73-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:59:13-69:29
+74                <action android:name="android.intent.action.VIEW" />
+74-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:13-65
+74-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:21-62
+75
+76                <category android:name="android.intent.category.DEFAULT" />
+76-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:62:17-76
+76-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:62:27-73
+77                <category android:name="android.intent.category.BROWSABLE" />
+77-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:63:17-78
+77-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:63:27-75
+78
+79                <data
+79-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:13-44
+80                    android:host="requestor.${applicationId}"
+81                    android:pathPrefix="/async"
+82                    android:scheme="primer" />
+82-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:19-41
+83            </intent-filter>
+84        </activity>
+85        <activity
+85-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:72:9-77:93
+86            android:name="io.primer.android.threeds.ui.ThreeDsActivity"
+86-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:73:13-55
+87            android:exported="true"
+87-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:74:13-36
+88            android:label=""
+88-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:75:13-29
+89            android:launchMode="singleTask"
+89-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:76:13-44
+90            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" />
+90-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:77:13-90
+91        <activity
+91-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:79:9-96:20
+92            android:name="io.primer.android.components.ui.activity.HeadlessActivity"
+92-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:80:13-68
+93            android:exported="true"
+93-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:81:13-36
+94            android:label=""
+94-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:82:13-29
+95            android:launchMode="singleTask"
+95-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:83:13-44
+96            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout" >
+96-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:84:13-75
+97            <intent-filter>
+97-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:85:13-95:29
+98                <data
+98-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:13-44
+99                    android:host="requestor.${applicationId}"
+100                    android:pathPrefix="/paypal"
+101                    android:scheme="primer" />
+101-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:11:19-41
+102
+103                <action android:name="android.intent.action.VIEW" />
+103-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:13-65
+103-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:10:21-62
+104
+105                <category android:name="android.intent.category.BROWSABLE" />
+105-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:63:17-78
+105-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:63:27-75
+106                <category android:name="android.intent.category.DEFAULT" />
+106-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:62:17-76
+106-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:62:27-73
+107            </intent-filter>
+108        </activity>
+109        <activity
+109-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:98:9-103:62
+110            android:name="io.primer.android.ui.mock.PaymentMethodMockActivity"
+110-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:99:13-62
+111            android:exported="false"
+111-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:100:13-37
+112            android:label=""
+112-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:101:13-29
+113            android:launchMode="singleTask"
+113-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:102:13-44
+114            android:theme="@style/Theme.AppCompat.WebView" />
+114-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:103:13-59
+115
+116        <provider
+116-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:105:9-113:20
+117            android:name="androidx.startup.InitializationProvider"
+117-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:106:13-67
+118            android:authorities="${applicationId}.androidx-startup"
+118-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:107:13-68
+119            android:exported="false"
+119-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:108:13-37
+120            tools:node="merge" >
+120-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:109:13-31
+121            <meta-data
+121-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:110:13-112:52
+122                android:name="io.primer.android.analytics.AnalyticsInitializer"
+122-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:111:17-80
+123                android:value="androidx.startup" />
+123-->/Users/semirp/primer-sdk-android/primer-sdk-android/src/main/AndroidManifest.xml:112:17-49
+124        </provider>
+125    </application>
+126
+127</manifest>

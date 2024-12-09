@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:theme="@style/Theme.AppCompat.PrimerUniversalCheckout">
+
+    <TextView
+        android:id="@+id/tvTitleBillingAddress"
+        style="@style/Primer.FormInput.SubTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+        android:text="@string/billingAddressLabel"
+        tools:textColor="@android:color/black" />
+
+    <io.primer.android.ui.components.TextInputWidget
+        android:id="@+id/card_form_country_code"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+        android:layout_weight="1"
+        android:hint="@string/countryLabel"
+        app:endIconDrawable="@drawable/ic_input_drop_down"
+        app:endIconMode="dropdown_menu"
+        app:endIconTint="@android:color/black"
+        app:errorEnabled="false"
+        app:errorIconDrawable="@null"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Caption">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/card_form_country_code_input"
+            style="@style/Primer.FormInput.Outbox.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:maxLines="1"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck"
+            tools:text="@string/countryLabel"
+            tools:textColor="@android:color/black" />
+
+    </io.primer.android.ui.components.TextInputWidget>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/card_form_first_name"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:layout_weight="1"
+            android:hint="@string/firstNameLabel"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null"
+            app:hintTextAppearance="@style/TextAppearance.AppCompat.Caption">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_first_name_input"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:maxLines="1"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                tools:text="Tester"
+                tools:textColor="@android:color/black" />
+
+        </io.primer.android.ui.components.TextInputWidget>
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/card_form_last_name"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:layout_weight="1"
+            android:hint="@string/lastNameLabel"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_last_name_input"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:maxLines="1"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                tools:text="Tester"
+                tools:textColor="@android:color/black" />
+
+        </io.primer.android.ui.components.TextInputWidget>
+
+    </LinearLayout>
+
+    <io.primer.android.ui.components.TextInputWidget
+        android:id="@+id/card_form_address_line1"
+        style="@style/Primer.FormInput.Outbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+        android:layout_weight="1"
+        android:hint="@string/addressLine1"
+        app:errorEnabled="false"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/card_form_address_line1_input"
+            style="@style/Primer.FormInput.Outbox.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            tools:text="Address line 1"
+            tools:textColor="@android:color/black" />
+
+    </io.primer.android.ui.components.TextInputWidget>
+
+    <io.primer.android.ui.components.TextInputWidget
+        android:id="@+id/card_form_address_line2"
+        style="@style/Primer.FormInput.Outbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+        android:layout_weight="1"
+        android:hint="@string/addressLine2"
+        app:errorEnabled="false"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/card_form_address_line2_input"
+            style="@style/Primer.FormInput.Outbox.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+            tools:text="Address line 2"
+            tools:textColor="@android:color/black" />
+
+    </io.primer.android.ui.components.TextInputWidget>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/card_form_postal_code"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:layout_weight="1"
+            android:hint="@string/postalCodeLabel"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_postal_code_input"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:maxLength="11"
+                android:maxLines="1"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                tools:text="Postal Code"
+                tools:textColor="@android:color/black" />
+
+        </io.primer.android.ui.components.TextInputWidget>
+
+        <io.primer.android.ui.components.TextInputWidget
+            android:id="@+id/card_form_city"
+            style="@style/Primer.FormInput.Outbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+            android:layout_weight="1"
+            android:hint="@string/cityLabel"
+            app:errorEnabled="false"
+            app:errorIconDrawable="@null">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_form_city_input"
+                style="@style/Primer.FormInput.Outbox.Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:maxLines="1"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                tools:text="City"
+                tools:textColor="@android:color/black" />
+
+        </io.primer.android.ui.components.TextInputWidget>
+
+    </LinearLayout>
+
+    <io.primer.android.ui.components.TextInputWidget
+        android:id="@+id/card_form_region"
+        style="@style/Primer.FormInput.Outbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="@dimen/primer_input_spacing_vert"
+        android:layout_weight="1"
+        android:hint="@string/stateLabel"
+        app:errorEnabled="false"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/card_form_region_input"
+            style="@style/Primer.FormInput.Outbox.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+            tools:text="@string/stateLabel"
+            tools:textColor="@android:color/black" />
+
+    </io.primer.android.ui.components.TextInputWidget>
+
+</LinearLayout>

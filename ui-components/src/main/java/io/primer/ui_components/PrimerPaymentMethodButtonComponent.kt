@@ -14,9 +14,9 @@ import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAss
 
 @Composable
 fun PrimerPaymentMethodButtonComponent(
+    modifier: Modifier = Modifier,
     paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod,
     onMethodSelected: (PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val asset = PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
         context = LocalContext.current,
