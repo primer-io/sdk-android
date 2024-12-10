@@ -8,8 +8,11 @@ internal object PrimerDropInCallbacks {
 
     const val ON_BEFORE_PAYMENT_CREATED = "onBeforePaymentCreated(paymentMethodData, decisionHandler)"
     const val ON_FAILED_WITH_CHECKOUT_DATA = "onFailed(error, checkoutData?, errorHandler?)"
+    const val ON_FAILED_WITHOUT_CHECKOUT_DATA = "onFailed(error, errorHandler?)"
     const val ON_CHECKOUT_COMPLETED = "onCheckoutCompleted(checkoutData)"
     const val ON_TOKENIZE_SUCCESS = "onTokenizeSuccess(paymentMethodTokenData, decisionHandler)"
+    const val ON_RESUME_SUCCESS = "onResumeSuccess(paymentMethodTokenData, decisionHandler)"
+    const val ON_RESUME_PENDING = "onResumePending(paymentMethodTokenData)"
     const val ON_BEFORE_CLIENT_SESSION_UPDATED = "onBeforeClientSessionUpdated()"
     const val ON_CLIENT_SESSION_UPDATED = "onClientSessionUpdated(clientSession)"
 

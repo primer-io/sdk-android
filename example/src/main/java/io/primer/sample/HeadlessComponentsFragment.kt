@@ -22,16 +22,16 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
-import io.primer.android.domain.payments.additionalInfo.AchAdditionalInfo
-import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
-import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
-import io.primer.sample.constants.PrimerHeadlessCallbacks
+import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
+import io.primer.android.stripe.ach.api.additionalInfo.AchAdditionalInfo
+import io.primer.android.vouchers.multibanco.MultibancoCheckoutAdditionalInfo
 import io.primer.sample.databinding.FragmentHeadlessBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.klarna.KlarnaPaymentFragment.Companion.PRIMER_SESSION_INTENT_ARG
 import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.utils.showMandateDialog
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 
 class HeadlessComponentsFragment : Fragment() {
 
-    private val callbacks: ArrayList<String> = arrayListOf()
+    private val callbacks get() = headlessManagerViewModel.callbacks
     private var checkoutDataWithError: CheckoutDataWithError? = null
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -83,7 +83,7 @@ class HeadlessComponentsFragment : Fragment() {
     private fun initViewModel() {
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
         )[HeadlessManagerViewModel::class.java]
     }
 
@@ -117,32 +117,30 @@ class HeadlessComponentsFragment : Fragment() {
                     is UiState.InitializingHeadless -> showLoading("Initializing Headless.")
                     is UiState.InitializedHeadless -> hideLoading()
                     is UiState.TokenizationStarted -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
                         showLoading("Tokenization started ${state.paymentMethodType}")
                     }
 
                     is UiState.PreparationStarted -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
                         showLoading("Preparation started ${state.paymentMethodType}")
                     }
 
                     is UiState.PaymentMethodShowed -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_PAYMENT_METHOD_SHOWED)
                         showLoading("Presented ${state.paymentMethodType}")
                     }
 
                     is UiState.TokenizationSuccessReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZE_SUCCESS)
                         if (state.paymentMethodTokenData.isVaulted) {
                             hideLoading()
                             navigateToResultScreen()
                         } else {
                             showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
                             headlessManagerViewModel.createPayment(
-                                state.paymentMethodTokenData,
-                                requireNotNull(viewModel.environment.value),
-                                viewModel.descriptor.value.orEmpty(),
-                                state.decisionHandler
+                                paymentMethod = state.paymentMethodTokenData,
+                                environment = requireNotNull(viewModel.environment.value),
+                                descriptor = viewModel.descriptor.value.orEmpty(),
+                                vaultOnSuccess = viewModel.vaultOnSuccess,
+                                vaultOnAgreement = viewModel.vaultOnAgreement,
+                                completion = state.decisionHandler
                             )
                         }
                     }
@@ -174,9 +172,9 @@ class HeadlessComponentsFragment : Fragment() {
                     is UiState.AdditionalInfoReceived -> {
                         hideLoading()
                         when (state.additionalInfo) {
-                            is PromptPayCheckoutAdditionalInfo -> {
+                            is QrCodeCheckoutAdditionalInfo -> {
                                 AlertDialog.Builder(context)
-                                    .setMessage("PromptPay: $state.additionalInfo")
+                                    .setMessage("QrCode: ${state.additionalInfo}")
                                     .setPositiveButton("OK") { d, _ -> d.dismiss() }.show()
                                 Log.d(
                                     TAG,
@@ -195,12 +193,12 @@ class HeadlessComponentsFragment : Fragment() {
                                     text = "Would you like to accept this mandate?",
                                     onOkClick = {
                                         lifecycleScope.launch {
-                                            state.additionalInfo.onAcceptMandate.invoke()
+                                            state.additionalInfo.onAcceptMandate()
                                         }
                                     },
                                     onCancelClick = {
                                         lifecycleScope.launch {
-                                            state.additionalInfo.onDeclineMandate.invoke()
+                                            state.additionalInfo.onDeclineMandate()
                                         }
                                     }
                                 )
@@ -209,21 +207,20 @@ class HeadlessComponentsFragment : Fragment() {
                     }
 
                     is UiState.BeforePaymentCreateReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
+                        /* no-op */
                     }
 
                     is UiState.BeforeClientSessionUpdateReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
+                        /* no-op */
                     }
 
                     is UiState.ClientSessionUpdatedReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
+                        /* no-op */
                     }
 
                     is UiState.ShowError -> {
                         checkoutDataWithError =
                             CheckoutDataWithError(state.payment, state.error.toMappedError())
-                        callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
                         hideLoading()
                         navigateToResultScreen()
                     }
@@ -231,10 +228,11 @@ class HeadlessComponentsFragment : Fragment() {
                     is UiState.CheckoutCompleted -> {
                         checkoutDataWithError =
                             CheckoutDataWithError(state.checkoutData.payment)
-                        callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
                         hideLoading()
                         navigateToResultScreen()
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -374,7 +372,7 @@ class HeadlessComponentsFragment : Fragment() {
                 )
                 putStringArrayList(
                     MerchantResultFragment.INVOKED_CALLBACKS_KEY,
-                    callbacks
+                    ArrayList(callbacks)
                 )
                 putString(
                     MerchantResultFragment.PAYMENT_RESPONSE_KEY,

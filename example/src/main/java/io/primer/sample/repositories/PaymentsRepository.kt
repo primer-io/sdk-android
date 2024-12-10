@@ -25,9 +25,9 @@ class PaymentsRepository(private val apiKeyDataSource: ApiKeyDataSource) {
     ) {
         val request =
             HttpRequestUtil.generateRequest(
-                body,
-                PrimerRoutes.payments,
-                environment,
+                body = body,
+                uri = PrimerRoutes.payments,
+                environment = environment,
                 apiKey = apiKeyDataSource.getApiKey(environment.type())
             )
         client.newCall(request).enqueue(object : Callback {

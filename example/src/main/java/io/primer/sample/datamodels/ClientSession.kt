@@ -35,7 +35,9 @@ interface ClientSession : ExampleAppRequestBody {
                 countryCode: String,
                 currency: String,
                 metadata: String?,
-                captureVaultedCardCvv: Boolean
+                captureVaultedCardCvv: Boolean,
+                vaultOnSuccess: Boolean?,
+                vaultOnAgreement: Boolean?
             ): Request {
                 var metadataMap: MutableMap<String, Any>? = null
                 if (!metadata.isNullOrEmpty() && metadata.contains(":")) {
@@ -100,15 +102,16 @@ interface ClientSession : ExampleAppRequestBody {
                         nationalDocumentId = "9011211234567",
                     ),
                     paymentMethod = PaymentMethod(
+                        paymentType = PaymentMethodPayload.PaymentType.FIRST_PAYMENT,
                         options = PaymentMethodOptionGroup(
                             PAYPAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 50,
+                                    amount = 0,
                                 )
                             ),
                             GOOGLE_PAY = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 60,
+                                    amount = 0,
                                 )
                             ),
                             ADYEN_SOFORT = PaymentMethodOption(
@@ -118,7 +121,7 @@ interface ClientSession : ExampleAppRequestBody {
                             ),
                             ADYEN_IDEAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 120,
+                                    amount = 0,
                                 )
                             ),
                             ADYEN_GIROPAY = PaymentMethodOption(
@@ -156,6 +159,11 @@ interface ClientSession : ExampleAppRequestBody {
                                             amount = 0,
                                         )
                                     ),
+                                    VISA = NetworkOption(
+                                        surcharge = SurchargeOption(
+                                            amount = 100,
+                                        )
+                                    ),
                                 ),
                                 captureVaultedCardCvv = captureVaultedCardCvv
                             ),
@@ -168,7 +176,9 @@ interface ClientSession : ExampleAppRequestBody {
                             "VISA",
                             "AMEX",
                             "OTHER"
-                        )
+                        ),
+                        vaultOnSuccess = vaultOnSuccess,
+                        vaultOnAgreement = vaultOnAgreement
                     ),
                 )
             }
@@ -232,9 +242,11 @@ interface ClientSession : ExampleAppRequestBody {
     @Keep
     data class PaymentMethod(
         val vaultOnSuccess: Boolean? = null,
+        val vaultOnAgreement: Boolean? = null,
         val options: PaymentMethodOptionGroup,
         val descriptor: String,
-        val orderedAllowedCardNetworks: List<String>
+        val orderedAllowedCardNetworks: List<String>,
+        val paymentType: PaymentMethodPayload.PaymentType
     )
 
     @Keep

@@ -6,6 +6,7 @@ enum class PrimerEnv(val environment: String) {
     Sandbox("sandbox"),
     Staging("staging"),
     Dev("dev"),
+    SandboxE2ETest("sandbox_e2e_tests"),
 }
 
-fun String.type(): PrimerEnv = PrimerEnv.values().first { it.environment == this }
+fun String.type(): PrimerEnv = PrimerEnv.entries.first { it.environment == this }

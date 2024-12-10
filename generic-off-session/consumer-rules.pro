@@ -1,0 +1,1 @@
+-keep class * implements io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComposerProvider$Factory { *; }

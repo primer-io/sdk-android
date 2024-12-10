@@ -13,14 +13,16 @@ data class TransactionRequest(
             paymentMethod: String,
             descriptor: String,
             paymentType: PaymentMethodPayload.PaymentType = PaymentMethodPayload.PaymentType.FIRST_PAYMENT,
-            vaultOnSuccess: Boolean = true
+            vaultOnSuccess: Boolean? = null,
+            vaultOnAgreement: Boolean? = null
         ): TransactionRequest {
             return TransactionRequest(
-                paymentMethod,
-                PaymentMethodPayload(
-                    descriptor,
-                    paymentType,
-                    vaultOnSuccess
+                paymentMethodToken = paymentMethod,
+                paymentMethod = PaymentMethodPayload(
+                    descriptor = descriptor,
+                    paymentType = paymentType,
+                    vaultOnSuccess = vaultOnSuccess,
+                    vaultOnAgreement = vaultOnAgreement
                 )
             )
         }

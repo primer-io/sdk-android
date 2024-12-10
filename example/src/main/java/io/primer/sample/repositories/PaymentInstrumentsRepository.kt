@@ -1,5 +1,6 @@
 package io.primer.sample.repositories
 
+import android.app.Application
 import com.google.gson.GsonBuilder
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.sample.constants.PrimerRoutes

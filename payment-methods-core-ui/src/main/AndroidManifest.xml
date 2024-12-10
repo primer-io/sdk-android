@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name="io.primer.paymentMethodCoreUi.core.ui.HeadlessActivity"
+            android:exported="true"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.WebView">
+            <intent-filter>
+                <data
+                    android:host="requestor.${applicationId}"
+                    android:pathPrefix="/paypal"
+                    android:scheme="primer" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity"
+            android:label=""
+            android:theme="@style/Theme.AppCompat.WebView" />
+
+        <activity
+            android:name="io.primer.paymentMethodCoreUi.core.ui.mock.PaymentMethodMockActivity"
+            android:exported="false"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.WebView" />
+    </application>
+</manifest>

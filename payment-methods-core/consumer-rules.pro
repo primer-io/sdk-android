@@ -1,0 +1,1 @@
+-keep class * implements io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationHandlerFactory { *; }

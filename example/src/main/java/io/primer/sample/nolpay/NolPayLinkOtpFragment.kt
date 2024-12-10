@@ -11,12 +11,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
-import io.primer.android.components.manager.nolPay.linkCard.component.NolPayLinkCardComponent
-import io.primer.android.components.manager.nolPay.linkCard.composable.NolPayLinkCollectableData
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.linkCard.component.NolPayLinkCardComponent
+import io.primer.android.nolpay.api.manager.linkCard.composable.NolPayLinkCollectableData
 import io.primer.sample.databinding.FragmentNolPayUnlinkOtpBinding
 import kotlinx.coroutines.flow.collectLatest
-
 
 class NolPayLinkOtpFragment : Fragment() {
 

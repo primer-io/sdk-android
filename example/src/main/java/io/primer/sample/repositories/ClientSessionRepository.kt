@@ -1,5 +1,6 @@
 package io.primer.sample.repositories
 
+import android.app.Application
 import com.google.gson.GsonBuilder
 import io.primer.sample.constants.PrimerRoutes
 import io.primer.sample.datamodels.ClientSession
@@ -13,7 +14,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
+class ClientSessionRepository(
+    private val apiKeyDataSource: ApiKeyDataSource
+) {
 
     fun fetch(
         client: OkHttpClient,
@@ -25,16 +28,20 @@ class ClientSessionRepository(private val apiKeyDataSource: ApiKeyDataSource) {
         environment: String,
         metadata: String?,
         captureVaultedCardCvv: Boolean,
+        vaultOnSuccess: Boolean? = null,
+        vaultOnAgreement: Boolean? = null,
         callback: (token: String?) -> Unit,
     ) {
         val body = ClientSession.Request.build(
-            customerId,
-            orderId,
-            amount,
-            countryCode,
-            currency,
-            metadata,
-            captureVaultedCardCvv
+            customerId = customerId,
+            orderId = orderId,
+            amount = amount,
+            countryCode = countryCode,
+            currency = currency,
+            metadata = metadata,
+            captureVaultedCardCvv = captureVaultedCardCvv,
+            vaultOnSuccess = vaultOnSuccess,
+            vaultOnAgreement = vaultOnAgreement
         )
         val request = HttpRequestUtil.generateRequest(
             body,

@@ -1,5 +1,6 @@
 package io.primer.sample.viewmodels
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -12,7 +13,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
-import io.primer.android.completion.PrimerResumeDecisionHandler
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
 import io.primer.android.data.settings.PrimerKlarnaOptions
@@ -52,7 +52,8 @@ class MainViewModel(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
     private val apiKeyDataSource: ApiKeyDataSource,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val application: Application
 ) : ViewModel() {
 
     private val clientSessionRepository = ClientSessionRepository(apiKeyDataSource)
@@ -87,10 +88,6 @@ class MainViewModel(
     fun setClientToken(token: String?) = _clientToken.postValue(token.takeIf {
         it.isNullOrBlank().not()
     })
-
-    private val _payAfterVaulting = MutableLiveData<Boolean>()
-    val payAfterVaulting: LiveData<Boolean> = _payAfterVaulting
-    fun setPayAfterVaulting(payAfterVault: Boolean) = _payAfterVaulting.postValue(payAfterVault)
 
     private val _customerId: MutableLiveData<String> = MutableLiveData<String>("customer8")
     val customerId: LiveData<String> = _customerId
@@ -139,6 +136,22 @@ class MainViewModel(
         captureVaultedCardCvv
     )
 
+    var vaultOnSuccess: Boolean? = null
+        private set
+
+    var vaultOnAgreement: Boolean? = null
+        private set
+
+    fun setVaultOnSuccess(isEnabled: Boolean) {
+        if (!isEnabled && vaultOnSuccess == null) return
+        vaultOnSuccess = isEnabled
+    }
+
+    fun setVaultOnAgreement(isEnabled: Boolean) {
+        if (!isEnabled && vaultOnAgreement == null) return
+        vaultOnAgreement = isEnabled
+    }
+
     val countryCode: MutableLiveData<AppCountryCode> = MutableLiveData(AppCountryCode.DE)
 
     private val _transactionState: MutableLiveData<TransactionState> =
@@ -151,7 +164,13 @@ class MainViewModel(
     )
 
     private val _uiOptions: MutableLiveData<PrimerUIOptions> =
-        MutableLiveData(PrimerUIOptions(theme = ThemeList.themeBySystem(contextRef.get()?.resources?.configuration)))
+        MutableLiveData(
+            PrimerUIOptions(
+                theme = ThemeList.themeBySystem(
+                    contextRef.get()?.resources?.configuration
+                )
+            )
+        )
 
     fun setInitScreenUiOptions(enabled: Boolean): Unit = _uiOptions.postValue(
         _uiOptions.value?.copy(isInitScreenEnabled = enabled)
@@ -213,15 +232,17 @@ class MainViewModel(
     }
 
     fun fetchClientSession() = clientSessionRepository.fetch(
-        client,
-        customerId.value.orEmpty(),
-        UUID.randomUUID().toString(),
-        amount.value!!,
-        countryRepository.getCountry().name,
-        countryRepository.getCurrency(),
-        environment.value?.environment ?: throw Error("no environment set!"),
-        metadata.value,
-        _captureVaultedCardCvv.value ?: false
+        client = client,
+        customerId = customerId.value.orEmpty(),
+        orderId = UUID.randomUUID().toString(),
+        amount = amount.value!!,
+        countryCode = countryRepository.getCountry().name,
+        currency = countryRepository.getCurrency(),
+        environment = environment.value?.environment ?: throw Error("no environment set!"),
+        metadata = metadata.value,
+        vaultOnSuccess = vaultOnSuccess,
+        vaultOnAgreement = vaultOnAgreement,
+        captureVaultedCardCvv = _captureVaultedCardCvv.value ?: false
     ) { t ->
         viewModelScope.launch {
             withContext(Dispatchers.Main) {
@@ -232,14 +253,16 @@ class MainViewModel(
 
     fun createPayment(
         paymentMethod: PrimerPaymentMethodTokenData,
-        completion: PrimerResumeDecisionHandler? = null
+        completion: io.primer.android.completion.PrimerResumeDecisionHandler? = null
     ) {
         _transactionId.postValue(null)
 
         val environment = environment.value!!.environment
         val body = TransactionRequest.create(
-            paymentMethod.token,
-            descriptor.value.orEmpty()
+            paymentMethod = paymentMethod.token,
+            descriptor = descriptor.value.orEmpty(),
+            vaultOnSuccess = vaultOnSuccess,
+            vaultOnAgreement = vaultOnAgreement,
         )
 
         paymentsRepository.create(
@@ -277,7 +300,7 @@ class MainViewModel(
         }
     }
 
-    fun resumePayment(token: String, completion: PrimerResumeDecisionHandler? = null) {
+    fun resumePayment(token: String, completion: io.primer.android.completion.PrimerResumeDecisionHandler? = null) {
         val environment = environment.value!!.environment
         val body = ResumePaymentRequest(
             token

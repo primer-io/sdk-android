@@ -16,15 +16,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.components.domain.payments.paymentMethods.nativeUi.klarna.models.KlarnaPaymentCategory
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
-import io.primer.android.components.manager.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
-import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.composable.KlarnaComponent
-import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.KlarnaPaymentCollectableData
-import io.primer.android.components.presentation.paymentMethods.nativeUi.klarna.models.KlarnaPaymentStep
+import io.primer.android.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
+import io.primer.android.klarna.api.component.KlarnaComponent
+import io.primer.android.klarna.api.composable.KlarnaPaymentCollectableData
+import io.primer.android.klarna.api.composable.KlarnaPaymentStep
+import io.primer.android.klarna.implementation.session.domain.models.KlarnaPaymentCategory
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentKlarnaBinding
 import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.UiState
@@ -35,7 +36,7 @@ class KlarnaPaymentFragment : Fragment() {
     private val headlessManagerViewModel by lazy {
         ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication())
         )[HeadlessManagerViewModel::class.java]
     }
 
@@ -178,7 +179,7 @@ class KlarnaPaymentFragment : Fragment() {
             when (state) {
                 is UiState.ShowError,
                 is UiState.TokenizationSuccessReceived,
-                is UiState.CheckoutCompleted-> {
+                is UiState.CheckoutCompleted -> {
                     findNavController().navigate(
                         R.id.action_KlarnaFragment_to_HeadlessFragment
                     )

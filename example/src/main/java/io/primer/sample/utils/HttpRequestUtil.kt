@@ -38,7 +38,7 @@ class HttpRequestUtil {
             val reqBody = json.toRequestBody(mimeType)
             val requestBuilder = Request.Builder()
                 .url(uri)
-                .header("X-Api-Version", "2.2")
+                .header("X-Api-Version", "2.4")
                 .header("environment", environment)
                 .post(reqBody)
             if (!apiKey.isNullOrBlank()) requestBuilder.addHeader("X-Api-Key", apiKey)

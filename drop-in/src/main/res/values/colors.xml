@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primer_pay_button_background">#007AFF</color>
+    <color name="primer_app_danger">#FFEB001B</color>
+
+    <!-- Processor test selector -->
+    <color name="primer_processor_test_checked_border">#3A83F9</color>
+    <color name="primer_processor_test_light_unchecked_border">#E5E5EA</color>
+
+    <color name="primer_image_placeholder">#E5E5EA</color>
+
+    <!-- custom color for search text inputs in country selection screen -->
+    <color name="primer_country_selection_divider">@color/primer_divider</color>
+
+    <color name="primer_body">#75757B</color>
+    <color name="primer_icon_tint">#000000</color>
+</resources>

@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource),
+            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource, application),
         )[MainViewModel::class.java]
 
         settingsViewModel = ViewModelProvider(
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             || super.onSupportNavigateUp()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         mainViewModel.setTag(intent)
     }

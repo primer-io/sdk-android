@@ -1,5 +1,6 @@
 package io.primer.sample.viewmodels
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -17,10 +18,11 @@ import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.domain.payments.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.sample.constants.PrimerHeadlessCallbacks
 import io.primer.sample.datamodels.PrimerEnv
 import io.primer.sample.datamodels.ResumePaymentRequest
 import io.primer.sample.datamodels.TransactionRequest
@@ -35,10 +37,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 class HeadlessManagerViewModel(
     apiKeyDataSource: ApiKeyDataSource,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val application: Application
 ) : ViewModel(),
     PrimerHeadlessUniversalCheckoutListener,
     PrimerHeadlessUniversalCheckoutUiListener {
+
+    val callbacks = mutableListOf<String>()
 
     private val headlessUniversalCheckout: PrimerHeadlessUniversalCheckoutInterface =
         PrimerHeadlessUniversalCheckout.current
@@ -95,14 +100,18 @@ class HeadlessManagerViewModel(
         paymentMethod: PrimerPaymentMethodTokenData,
         environment: PrimerEnv,
         descriptor: String?,
+        vaultOnSuccess: Boolean?,
+        vaultOnAgreement: Boolean?,
         completion: PrimerHeadlessUniversalCheckoutResumeDecisionHandler? = null
     ) {
         _transactionId.postValue(null)
 
         val environment = environment.environment
         val body = TransactionRequest.create(
-            paymentMethod.token,
-            descriptor.orEmpty()
+            paymentMethod = paymentMethod.token,
+            descriptor = descriptor.orEmpty(),
+            vaultOnSuccess = vaultOnSuccess,
+            vaultOnAgreement = vaultOnAgreement
         )
 
         paymentsRepository.create(
@@ -164,6 +173,8 @@ class HeadlessManagerViewModel(
     }
 
     override fun onTokenizationStarted(paymentMethodType: String) {
+        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
+        Log.d(TAG, "onTokenizationStarted - $paymentMethodType")
         _uiState.value = UiState.TokenizationStarted(paymentMethodType)
     }
 
@@ -171,6 +182,8 @@ class HeadlessManagerViewModel(
         paymentMethodTokenData: PrimerPaymentMethodTokenData,
         decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
     ) {
+        Log.d(TAG, "onTokenizeSuccess - $paymentMethodTokenData")
+        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZE_SUCCESS)
         _uiState.postValue(
             UiState.TokenizationSuccessReceived(paymentMethodTokenData, decisionHandler)
         )
@@ -180,16 +193,22 @@ class HeadlessManagerViewModel(
         resumeToken: String,
         decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
     ) {
+        Log.d(TAG, "onCheckoutResume - $resumeToken")
+        callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_RESUME)
         _uiState.postValue(UiState.ResumePaymentReceived(resumeToken, decisionHandler))
     }
 
     override fun onResumePending(additionalInfo: PrimerCheckoutAdditionalInfo) {
         super.onResumePending(additionalInfo)
+        Log.d(TAG, "onResumePending - $additionalInfo")
+        callbacks.add(PrimerHeadlessCallbacks.ON_RESUME_PENDING)
         _uiState.value = UiState.ResumePendingReceived(additionalInfo)
     }
 
     override fun onCheckoutAdditionalInfoReceived(additionalInfo: PrimerCheckoutAdditionalInfo) {
         super.onCheckoutAdditionalInfoReceived(additionalInfo)
+        Log.d(TAG, "onCheckoutAdditionalInfoReceived - $additionalInfo")
+        callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_ADDITIONAL_INFO_RECEIVED)
         _uiState.value = UiState.AdditionalInfoReceived(additionalInfo)
     }
 
@@ -197,40 +216,53 @@ class HeadlessManagerViewModel(
         paymentMethodData: PrimerPaymentMethodData,
         createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) {
-        super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
+        Log.d(TAG, "onBeforePaymentCreated - $paymentMethodData")
+        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
         _uiState.value = UiState.BeforePaymentCreateReceived(paymentMethodData)
+        super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
     }
 
     override fun onFailed(error: PrimerError) {
+        Log.d(TAG, "onFailed - $error")
+        callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITHOUT_CHECKOUT_DATA)
         _uiState.value = UiState.ShowError(null, error)
     }
 
     override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
+        Log.d(TAG, "onFailed - $error - $checkoutData")
+        callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
         _uiState.value = UiState.ShowError(checkoutData?.payment, error)
     }
 
     override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
-        Log.d(TAG, "onCheckoutCompleted")
+        Log.d(TAG, "onCheckoutCompleted - $checkoutData")
+        callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
         _uiState.value = UiState.CheckoutCompleted(checkoutData)
     }
 
     override fun onBeforeClientSessionUpdated() {
         super.onBeforeClientSessionUpdated()
         Log.d(TAG, "onBeforeClientSessionUpdated")
+        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
         _uiState.value = UiState.BeforeClientSessionUpdateReceived
     }
 
     override fun onClientSessionUpdated(clientSession: PrimerClientSession) {
         super.onClientSessionUpdated(clientSession)
         Log.d(TAG, "onClientSessionUpdated")
+        callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
         _uiState.value = UiState.ClientSessionUpdatedReceived(clientSession)
     }
 
     override fun onPreparationStarted(paymentMethodType: String) {
+        Log.d(TAG, "onPreparationStarted - $paymentMethodType")
+        callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
         _uiState.value = UiState.PreparationStarted(paymentMethodType)
     }
 
     override fun onPaymentMethodShowed(paymentMethodType: String) {
+        Log.d(TAG, "onPaymentMethodShowed - $paymentMethodType")
+        callbacks.add(PrimerHeadlessCallbacks.ON_PAYMENT_METHOD_SHOWED)
         _uiState.value = UiState.PaymentMethodShowed(paymentMethodType)
     }
 
@@ -241,7 +273,7 @@ class HeadlessManagerViewModel(
     }
 
     companion object {
-        private val TAG = this::class.simpleName
+        private val TAG = HeadlessManagerViewModel::class.simpleName
         private const val IS_LAUNCHED_KEY = "LAUNCHED"
     }
 }

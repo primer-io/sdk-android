@@ -8,7 +8,7 @@
 
 ### Fix
 
-- fixed crash occuring when Headless proxy was called from deeplin… (#776)
+- fixed crash occurring when Headless proxy was called from deeplin… (#776)
 
 ## 2.32.2 (2024-11-15)
 

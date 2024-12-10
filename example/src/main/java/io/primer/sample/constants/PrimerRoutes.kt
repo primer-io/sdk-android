@@ -1,20 +1,15 @@
 package io.primer.sample.constants
 
-class PrimerRoutes {
+object PrimerRoutes {
+    private const val ROOT = "https://us-central1-primerdemo-8741b.cloudfunctions.net/api"
 
-    companion object {
+    val clientToken: String get() = "$ROOT/clientToken"
 
-        private const val root: String =
-                "https://us-central1-primerdemo-8741b.cloudfunctions.net/api"
+    val clientSession: String get() = "$ROOT/client-session"
 
-        const val clientToken: String = "$root/clientToken"
+    val payments: String get() = "$ROOT/payments"
 
-        const val clientSession: String = "$root/client-session"
+    fun buildResumePaymentsUrl(id: String) = "$ROOT/payments/${id}/resume"
 
-        const val payments: String = "$root/payments"
-
-        fun buildResumePaymentsUrl(id: String) = "$root/payments/${id}/resume"
-
-        fun buildPaymentInstrumentsUrl(customerId: String) = "$root/payment-instruments?customer_id=${customerId}"
-    }
+    fun buildPaymentInstrumentsUrl(customerId: String) = "$ROOT/payment-instruments?customer_id=${customerId}"
 }

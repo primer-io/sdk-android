@@ -11,9 +11,6 @@ repositories {
     maven {
         url "https://x.klarnacdn.net/mobile-sdk/"
     }
-    maven { // TODO TWS: remove before release
-        url "https://s01.oss.sonatype.org/content/repositories/staging/"
-    }
     jcenter()
 }
 
@@ -23,7 +20,7 @@ android {
         applicationId "io.primer.sample"
         compileSdk 34
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 4
         versionName "1.0"
 
@@ -82,8 +79,7 @@ android {
 }
 
 dependencies {
-    implementation project(":primer-sdk-android")
-
+    implementation project(':drop-in')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.23"
     implementation libs.android.ktx
     implementation libs.android.appcompat
@@ -102,15 +98,12 @@ dependencies {
     implementation libs.primer.klarna
     implementation libs.primer.ipay88
     implementation libs.primer.nol.pay
+    implementation libs.primer.stripe
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
-
     testImplementation "junit:junit:4.13.2"
-
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
-
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
 
-    implementation libs.primer.stripe
 }

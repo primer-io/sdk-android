@@ -1,15 +1,16 @@
 [versions]
 kotlin = "1.9.24"
 coroutines = "1.8.0"
-ktx = "1.13.0"
+ktx = "1.13.1"
 appcompat = "1.6.1"
 fragment = "1.6.2"
 constraint-layout = "2.1.4"
 material = "1.10.0"
-startup = "1.1.1"
+startup = "1.2.0"
 lifecycle = "2.7.0"
 
-googleWallet = "19.3.0"
+googleWallet = "19.4.0"
+browser = "1.8.0"
 
 okhttp = "4.12.0"
 
@@ -17,8 +18,7 @@ primer-3ds = "1.5.0"
 primer-klarna = "1.0.4"
 primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
-primer-stripe = "1.0.0"
-stripe = "20.48.1"
+primer-stripe = "1.1.0"
 
 junit5 = "5.11.0-M2"
 androidJunit5TestRunner = "1.3.0"
@@ -32,11 +32,15 @@ androidGradlePlugin = "8.1.4"
 detekt = "1.16.0"
 sonarqube = "5.0.0.4638"
 dexcount = "4.0.0"
-kover = "0.7.6"
+kover = "0.8.0"
 ktlint = "11.6.1"
 junit5Plugin = "1.9.3.0"
 mavenPublish = "0.29.0"
 navigationFragmentKtx = "2.7.7"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.1.5"
+espresso-core = "3.5.1"
+activityKtx = "1.9.2"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
@@ -63,8 +67,6 @@ primer-klarna = { group = "io.primer", name = "klarna-android", version.ref = "p
 primer-ipay88 = { group = "io.primer", name = "ipay88-my-android", version.ref = "primer-ipay88" }
 primer-nol-pay = { group = "io.primer", name = "nol-pay-android", version.ref = "primer-nol-pay" }
 primer-stripe = { group = "io.primer", name = "stripe-android", version.ref = "primer-stripe" }
-stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripe" }
-stripe-financial-connections = { module = "com.stripe:financial-connections", version.ref = "stripe" }
 
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
@@ -79,7 +81,13 @@ kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 json = { group = "org.json", name = "json", version.ref = "json" }
 livedata-testing = { group = "com.jraska.livedata", name = "testing-ktx", version.ref = "liveDataTesting" }
 arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version = "2.7.0" }
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

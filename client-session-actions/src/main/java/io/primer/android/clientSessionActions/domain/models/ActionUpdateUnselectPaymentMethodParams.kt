@@ -1,0 +1,3 @@
+package io.primer.android.clientSessionActions.domain.models
+
+object ActionUpdateUnselectPaymentMethodParams : BaseActionUpdateParams

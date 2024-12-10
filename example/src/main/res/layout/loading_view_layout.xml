@@ -8,13 +8,23 @@
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
-        android:id="@+id/progress_text"
-        style="@style/Primer.Text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/progress_bar" />
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/progress_text"
+            style="@style/Primer.Text"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="false" />
+    </ScrollView>
 
     <ProgressBar
         android:id="@+id/progress_bar"

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Lisää pankkitili</string>
+    <string name="add_card">Lisää kortti</string>
+    <string name="add_new_payment_method">Lisää maksutapa</string>
+    <string name="additional_fees_may_apply">Lisämaksuja saatetaan periä</string>
+    <string name="addressLine1">Osoiterivi 1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Osoiterivi 1 vaaditaan</string>
+    <string name="addressLine2">Osoiterivi 1</string>
+    <string name="available_payment_methods">Saatavilla olevat maksutavat</string>
+    <string name="bank_account">Pankkitili</string>
+    <string name="bank_selection_error_message">Pankin lataaminen epäonnistui. Tarkista internet-yhteytesi ja yritä uudelleen.</string>
+    <string name="bank_selection_hint">Etsi pankkeja</string>
+    <string name="bank_selection_title">Valitse pankkisi</string>
+    <string name="bank_selection_try_again">Yritä uudelleen</string>
+    <string name="billingAddressLabel">Laskutusosoite</string>
+    <!-- Navigation -->
+    <string name="cancel">Peruuta</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Kortin tiedot</string>
+    <string name="card_expiry">Vanhenemispäivä</string>
+    <string name="card_expiry_formatted">Viimeinen voimassaoloaika (KK/VV)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Kortinhatijan nimi</string>
+    <string name="card_name_on_card">Kortissa oleva nimi</string>
+    <string name="card_network_fallback">Kortti</string>
+    <string name="card_number">Kortin numero</string>
+    <string name="card_zip">Postinumero</string>
+    <string name="check_icon">tarkistuskuvake</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Valitse maksutapa</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Kaupunki vaaditaan</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Paikkakunta</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Suorita maksusi loppuun</string>
+    <string name="completeYourPaymentInTheApp">Suorita maksusi %s</string>
+    <string name="confirm">Vahvista</string>
+    <string name="confirm_dd_mandate">Vahvista valtakirja</string>
+    <string name="confirmToPayButtonTitle">Vahvista maksaaksesi</string>
+    <string name="continue_button">Jatka</string>
+    <string name="country_search_hint">Etsi maa</string>
+    <string name="country_select">Valitse maa</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Maa on pakollinen</string>
+    <string name="countryLabel">Maa</string>
+    <string name="credit_debit_card">Luotto- tai pankkikortti</string>
+    <string name="data_will_be_lost">Tietosi poistetaan</string>
+    <string name="dd_cancel_message">Haluatko peruuttaa pankkitilin lisäämisen?</string>
+    <string name="dd_mandate_error">Varmista kaikkien tietojesi olevan oikein</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Allekirjoittamalla tämän valtuutuslomakkeen valtuutat, että (A) %1$s saa lähettää pankkillesi ohjeet tilisi veloitukseen ja (B) pankkisi
+        veloittaa tiliäsi lähettäjän %1$s ohjeiden mukaan.
+    "</string>
+    <string name="delete">Poista</string>
+    <string name="done">Valmis</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Erääntyy</string>
+    <string name="edit">Muokkaa</string>
+    <string name="edit_saved_payment_methods">Muokkaa tallennettuja kortteja</string>
+    <string name="email">Sähköposti</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Syötä osoitteesi</string>
+    <string name="enter_card_details">Syötä kortin tiedot</string>
+    <string name="enter_email">Syötä sähköpostiosoitteesi</string>
+    <string name="enter_name">Syötä nimesi</string>
+    <string name="error_default">Virhe!</string>
+    <string name="expires_12_21">Voimassaolo päättyy 12/21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST-pankkisiirto</string>
+    <string name="first_last_name">Etu- ja sukunimi</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Etunimi on pakollinen</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Etunimi</string>
+    <string name="form_error_card_type_not_supported">Tukematon korttityyppi</string>
+    <string name="form_error_invalid">%1$s on virheellinen</string>
+    <string name="form_error_required">%1$s vaaditaan</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">mene takaisin</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">tilan näyttävä kuvake</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Hae koodi pankkisovelluksestasi.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6-numeroinen koodi</string>
+    <string name="input_hint_form_phone_number">Puhelinnumero</string>
+    <string name="input_title_bank_details">Anna pankkitiedot</string>
+    <string name="input_title_phone_number">Kirjoita puhelinnumerosi</string>
+    <string name="john_doe">Matti Meikäläinen</string>
+    <string name="label_authorized">Valtuutettu</string>
+    <string name="label_declined">Hylätty</string>
+    <string name="label_failed">Epäonnistui</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Sukunimi on pakollinen</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Sukunimi</string>
+    <string name="loading_text">Ladataan</string>
+    <string name="manage">Hallinnoi</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Klarnan mallinäkymä</string>
+    <string name="multibancoAmount">Summa</string>
+    <string name="multibancoCompleteDescription">Suorita maksu pankkiautomaatilla tai verkkopankissa.</string>
+    <string name="multibancoEntity">Entiteetti</string>
+    <string name="multibancoPayment1Step">Suorita maksu pankkiautomaatilla tai verkkopankissa.</string>
+    <string name="multibancoPayment2Step">Mene Multibancon pankkiautomaatille, valitse Multibanco-maksutapa ja syötä maksutiedot</string>
+    <string name="multibancoPayment3Step">Kirjaudu verkkopankkiisi maksaaksesi pankkisiirrolla käyttäen maksutietoja</string>
+    <string name="multibancoReference">Viite</string>
+    <string name="multibancoTitleConditions">Suorita maksusi loppuun</string>
+    <string name="name">Nimi</string>
+    <string name="next">Seuraava</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Ei lisämaksua</string>
+    <string name="no_results">Ei tuloksia</string>
+    <string name="no_results_for_query">Hakua %s vastaavia tuloksia ei valitettavasti löytynyt</string>
+    <string name="other_ways_of_paying">Muita maksutapoja</string>
+    <string name="other_ways_to_pay">Muut maksutavat</string>
+    <string name="pay">Maksa</string>
+    <string name="pay_by_card">Maksa kortilla</string>
+    <string name="pay_specific_amount">Maksa %s</string>
+    <string name="pay_with">Maksa menetelmällä</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Maksa kortilla</string>
+    <string name="pay_with_crypto">Maksa kryptovaluutalla</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Maksutapasi 
+
+        lisääminen onnistui!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Suorita maksu Blik-sovelluksessa</string>
+    <string name="payment_method_deletion_message">Haluatko varmasti poistaa tämän maksutavan?</string>
+    <string name="payment_method_error">Valitse toinen maksutapa</string>
+    <string name="payment_method_icon">maksutavan kuvake</string>
+    <string name="payment_method_not_added_message">"
+        Maksutapaasi ei onnistuttu lisäämään.
+    "</string>
+    <string name="payment_method_xfers_description">Lataa kuvakaappaus pankkisovellukseesi.</string>
+    <string name="payment_method_xfers_title">Skannaa maksaaksesi tai ota ruutukaappaus</string>
+    <string name="payment_request_completed_successfully">Maksusi suorittaminen onnistui!</string>
+    <string name="payment_request_unsuccessful">Maksusi ei onnistunut.</string>
+    <string name="phone_code_search_hint">Etsi koodi</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Siirrä varat annetulle DBS:n pankkitilille käyttämällä Singaporessa sijaitsevaa pankkitiliäsi jollakin seuraavista menetelmistä: FAST (suositeltava), MEPS tai GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Postinumero vaaditaan</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Postinumero</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Syötä korttisi %d-numeroinen turvakoodi turvallista maksua varten.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Syötä CVV-numero</string>
+    <string name="primer_payment_method_button_content_description">Käytä maksutapaa %s</string>
+    <string name="primer_test_header_description">Tämä on hiekkalaatikkoon tarkoitettu mallinnettu vuo. Valitse alla olevasta luettelosta tulos, jota haluat testata.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Tallenna tämä kortti</string>
+    <string name="saved_payment_methods">TALLENNETTU MAKSUTAPA</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Skannaa maksaaksesi tai ota ruutukaappaus</string>
+    <string name="search_placeholder">Hae</string>
+    <string name="search_result">Hakutulokset</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA Core -suoraveloitusvaltakirja</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Osavaltio, alue tai maakunta on pakollinen</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Osavaltio/alue/maakunta</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">onnistui</string>
+    <string name="success_text">Onnistui!</string>
+    <string name="test_mail_com">kokeilu@sahkoposti.fi</string>
+    <string name="twoc_2p_button">Maksa erissä</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Lataa ruutukaappaus pankkisovellukseesi</string>
+</resources>

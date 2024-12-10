@@ -1,5 +1,6 @@
 package io.primer.sample.viewmodels
 
+import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,14 +14,16 @@ class MainViewModelFactory(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
     private val apiKeyDataSource: ApiKeyDataSource,
+    private val application: Application
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return MainViewModel(
-            contextRef,
-            countryRepository,
-            apiKeyDataSource,
-            extras.createSavedStateHandle()
+            contextRef = contextRef,
+            countryRepository = countryRepository,
+            apiKeyDataSource = apiKeyDataSource,
+            savedStateHandle = extras.createSavedStateHandle(),
+            application = application
         ) as T
     }
 }

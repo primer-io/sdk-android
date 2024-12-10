@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primer_border_color">#FFBEC2C4</color>
+    <color name="primer_item_background">#FFC6C6C8</color>
+    <color name="primer_underline_color">#6B000000</color>
+    <color name="primer_text_color_default">@android:color/black</color>
+    <color name="primer_text_color_muted">#808080</color>
+    <color name="primer_input_placeholder">#8A000000</color>
+    <color name="primer_app_background">#FFFFFFFF</color>
+    <color name="primer_app_primary">#FF2C98F0</color>
+    <color name="primer_android_red">#FFFF1744</color>
+    <color name="primer_android_dark_gray">#8E8E93</color>
+
+    <color name="primer_button_primary">#3A83F9</color>
+    <color name="primer_button_primary_text_color">@android:color/white</color>
+    <color name="primer_button_primary_disabled_text_color">#BEBEBE</color>
+    <color name="primer_button_primary_disabled">#F1F1F4</color>
+    <color name="primer_secondary">@android:color/black</color>
+
+    <color name="bank_transfer">#0054A6</color>
+
+    <!--  PRIMER THEME  -->
+    <!--  override these values for custom theming  -->
+
+    <!--  primary color for buttons, borders, etc. -->
+    <color name="primer_primary">@color/primer_app_primary</color>
+
+    <!--  default color for SDK background -->
+    <color name="primer_background">@color/primer_app_background</color>
+
+    <!--  default color for disabled borders, buttons, etc. -->
+    <color name="primer_disabled">#8FBEC2C4</color>
+
+    <!--  custom color resource for placeholders/hints text -->
+    <color name="primer_hint">#E1DEDA</color>
+
+    <!--  default color for errors -->
+    <color name="primer_error">@color/primer_android_red</color>
+
+    <!--  default color for all text views -->
+    <color name="primer_default_text">@color/primer_secondary</color>
+
+    <!--  custom color resource for title text -->
+    <color name="primer_title">@color/primer_secondary</color>
+
+    <!--  custom color resource for subtitle text -->
+    <color name="primer_subtitle">#808080</color>
+
+    <!--  custom color for system text and links -->
+    <color name="primer_system_text">@color/primer_primary</color>
+
+    <!--  custom color for amount label in universal checkout -->
+    <color name="primer_amount">@color/primer_secondary</color>
+
+    <!--  custom colors for payment method buttons in universal checkout -->
+    <color name="primer_payment_method_button_border">@color/primer_disabled</color>
+    <color name="primer_payment_method_button_border_selected">@color/primer_primary</color>
+    <color name="primer_payment_method_button_border_error">@color/primer_error</color>
+    <color name="primer_payment_method_button_text">@color/primer_secondary</color>
+    <color name="primer_payment_method_button">@color/primer_background</color>
+    <color name="primer_payment_method_button_disabled">@color/primer_background</color>
+    <color name="primer_payment_method_button_error">@color/primer_disabled</color>
+
+    <!--  custom colors for main buttons ("PAY", "NEXT", etc.) in universal checkout -->
+    <color name="primer_main_button_border">@color/primer_disabled</color>
+    <color name="primer_main_button_border_error">@color/primer_error</color>
+    <color name="primer_main_button_text">@android:color/white</color>
+    <color name="primer_main_button">@color/primer_primary</color>
+
+    <!--  custom colors for text inputs in universal checkout -->
+    <color name="primer_input_border">@color/primer_hint</color>
+    <color name="primer_input_border_selected">@color/primer_primary</color>
+    <color name="primer_input_border_error">@color/primer_error</color>
+    <color name="primer_input_background">@color/primer_background</color>
+    <color name="primer_input_text">@color/primer_secondary</color>
+    <color name="primer_input_cursor">@color/primer_primary</color>
+
+    <color name="primer_bank_selection_search_background">#08242A2F</color>
+    <color name="primer_search_input_background">@color/primer_bank_selection_search_background</color>
+    <color name="primer_search_input_text">@color/primer_secondary</color>
+    <color name="primer_search_input_cursor">@color/primer_primary</color>
+
+    <color name="primer_search_input_border">@android:color/transparent</color>
+    <color name="primer_divider">#DBDBDB</color>
+</resources>

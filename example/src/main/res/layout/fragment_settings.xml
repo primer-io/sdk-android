@@ -173,6 +173,22 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/tvTitleCheckoutVaulting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/checkout_vaulting_type" />
+
+            <Spinner
+                android:id="@+id/dropDownCheckoutVaultingType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+            <TextView
                 android:id="@+id/tvTitleEnv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

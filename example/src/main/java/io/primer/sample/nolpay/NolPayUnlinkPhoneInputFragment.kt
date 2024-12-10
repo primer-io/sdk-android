@@ -11,9 +11,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
-import io.primer.android.components.manager.nolPay.unlinkCard.component.NolPayUnlinkCardComponent
-import io.primer.android.components.manager.nolPay.unlinkCard.composable.NolPayUnlinkCollectableData
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.unlinkCard.component.NolPayUnlinkCardComponent
+import io.primer.android.nolpay.api.manager.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.databinding.FragmentNolPayPhoneFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +44,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
             unlinkCardComponent.updateCollectedData(
                 NolPayUnlinkCollectableData.NolPayCardAndPhoneData(
                     requireParentFragment().requireParentFragment().requireArguments()
-                        ?.getSerializable(
+                        .getSerializable(
                             NolFragment.NOL_CARD_KEY
                         ) as PrimerNolPaymentCard,
                     it.toString(),

@@ -15,14 +15,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.primer.android.R
+import io.primer.android.components.componentWithRedirect.PrimerHeadlessUniversalCheckoutComponentWithRedirectManager
 import io.primer.android.components.manager.banks.composable.BanksCollectableData
 import io.primer.android.components.manager.banks.composable.BanksStep
-import io.primer.android.components.manager.componentWithRedirect.PrimerHeadlessUniversalCheckoutComponentWithRedirectManager
 import io.primer.android.components.manager.componentWithRedirect.component.BanksComponent
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.sample.databinding.FragmentAdyenBankSelectionBinding
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.utils.ImageLoader
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.UiState
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 class AdyenBankSelectionFragment : Fragment() {
 
     private val headlessManagerViewModel by activityViewModels<HeadlessManagerViewModel> {
-        HeadlessManagerViewModelFactory(AppApiKeyRepository())
+        HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication())
     }
 
     private val imageLoader by lazy { ImageLoader() }
@@ -66,7 +67,6 @@ class AdyenBankSelectionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupListeners()
-
         setupObservers()
         loadData()
     }

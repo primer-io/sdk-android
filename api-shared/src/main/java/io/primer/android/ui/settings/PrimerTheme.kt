@@ -1,0 +1,1147 @@
+package io.primer.android.ui.settings
+
+import android.os.Parcel
+import android.os.Parcelable
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.RestrictTo
+import io.primer.android.apiShared.R
+import io.primer.android.core.data.serialization.json.JSONObjectSerializable
+import io.primer.android.core.data.serialization.json.JSONObjectSerializer
+import io.primer.android.core.extensions.readParcelable
+import io.primer.android.data.settings.ColorData
+import io.primer.android.data.settings.DimensionData
+import io.primer.android.data.settings.DynamicColor
+import io.primer.android.data.settings.ResourceColor
+import io.primer.android.data.settings.ResourceDimension
+import org.json.JSONObject
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+data class PrimerTheme internal constructor(
+    val isDarkMode: Boolean?,
+    val primaryColor: ColorData,
+    val backgroundColor: ColorData,
+    val splashColor: ColorData,
+    val defaultCornerRadius: DimensionData,
+    val bottomSheetCornerRadius: DimensionData,
+    val titleText: TextTheme,
+    val amountLabelText: TextTheme,
+    val subtitleText: TextTheme,
+    val paymentMethodButton: ButtonTheme,
+    val mainButton: ButtonTheme,
+    val systemText: TextTheme,
+    val defaultText: TextTheme,
+    val errorText: TextTheme,
+    val input: InputTheme,
+    val divider: DividerTheme,
+    val searchInput: SearchInputTheme,
+    val windowMode: WindowMode,
+    val inputMode: InputMode
+) : Parcelable, JSONObjectSerializable {
+
+    constructor(parcel: Parcel) : this(
+        isDarkMode = parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+        primaryColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_primary),
+
+        backgroundColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_background),
+
+        splashColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_disabled),
+
+        defaultCornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius),
+        bottomSheetCornerRadius = ResourceDimension.valueOf(R.dimen.primer_bottom_sheet_corner_radius),
+
+        titleText = parcel.readParcelable<TextTheme>() ?: TextTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_title),
+            fontSize = ResourceDimension.valueOf(R.dimen.primer_title_fontsize)
+        ),
+
+        amountLabelText = parcel.readParcelable<TextTheme>() ?: TextTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_amount),
+            fontSize = ResourceDimension.valueOf(R.dimen.primer_amount_label_fontsize)
+        ),
+
+        subtitleText = parcel.readParcelable<TextTheme>() ?: TextTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_subtitle),
+            fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize)
+        ),
+
+        paymentMethodButton = parcel.readParcelable<ButtonTheme>() ?: ButtonTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_payment_method_button),
+            disabledColor = ResourceColor.valueOf(R.color.primer_payment_method_button_disabled),
+            errorColor = ResourceColor.valueOf(R.color.primer_payment_method_button_error),
+            border = BorderTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_payment_method_button_border),
+                selectedColor = ResourceColor.valueOf(R.color.primer_payment_method_button_border_selected),
+                errorColor = ResourceColor.valueOf(R.color.primer_payment_method_button_border_error),
+                width = ResourceDimension.valueOf(R.dimen.primer_payment_method_button_border_width)
+            ),
+            text = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_payment_method_button_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_payment_method_button_fontsize)
+            ),
+            cornerRadius = ResourceDimension.valueOf(R.dimen.primer_payment_method_button_corner_radius)
+        ),
+        mainButton = parcel.readParcelable<ButtonTheme>() ?: ButtonTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_main_button),
+            disabledColor = ResourceColor.valueOf(R.color.primer_disabled),
+            errorColor = ResourceColor.valueOf(R.color.primer_error),
+            border = BorderTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_disabled),
+                selectedColor = ResourceColor.valueOf(R.color.primer_primary),
+                errorColor = ResourceColor.valueOf(R.color.primer_error),
+                width = ResourceDimension.valueOf(R.dimen.primer_main_button_border_width)
+            ),
+            text = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_main_button_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize)
+            ),
+            cornerRadius = ResourceDimension.valueOf(R.dimen.primer_main_button_corner_radius)
+        ),
+
+        systemText = parcel.readParcelable<TextTheme>() ?: TextTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_system_text),
+            fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize)
+        ),
+        defaultText = parcel.readParcelable<TextTheme>() ?: TextTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_default_text),
+            fontSize = ResourceDimension.valueOf(R.dimen.primer_default_fontsize)
+        ),
+
+        errorText = parcel.readParcelable<TextTheme>() ?: TextTheme(
+            defaultColor = ResourceColor.valueOf(R.color.primer_error),
+            fontSize = ResourceDimension.valueOf(R.dimen.primer_text_size_sm)
+        ),
+
+        input = parcel.readParcelable<InputTheme>() ?: InputTheme(
+            backgroundColor = ResourceColor.valueOf(R.color.primer_input_background),
+            cursorColor = ResourceColor.valueOf(R.color.primer_input_cursor),
+            border = BorderTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_input_border),
+                selectedColor = ResourceColor.valueOf(R.color.primer_input_border_selected),
+                errorColor = ResourceColor.valueOf(R.color.primer_input_border_error),
+                width = ResourceDimension.valueOf(R.dimen.primer_input_border_width)
+            ),
+            text = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_input_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_input_fontsize)
+            ),
+            hintText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_subtitle),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_input_fontsize)
+            ),
+            cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+        ),
+        searchInput = parcel.readParcelable<SearchInputTheme>() ?: SearchInputTheme(
+            backgroundColor = ResourceColor.valueOf(R.color.primer_search_input_background),
+            borderColor = ResourceColor.valueOf(R.color.primer_search_input_border),
+            text = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_search_input_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_search_input_fontsize)
+            ),
+            hintText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_subtitle),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_search_input_fontsize)
+            ),
+            cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+        ),
+        divider = parcel.readParcelable<DividerTheme>() ?: DividerTheme(
+            backgroundColor = ResourceColor.valueOf(R.color.primer_divider),
+            height = ResourceDimension.valueOf(R.dimen.primer_divider_height)
+        ),
+        windowMode = WindowMode.BOTTOM_SHEET,
+        inputMode = InputMode.OUTLINED
+    )
+
+    enum class WindowMode { BOTTOM_SHEET, FULL_HEIGHT }
+
+    enum class InputMode { UNDERLINED, OUTLINED }
+
+    companion object CREATOR : Parcelable.Creator<PrimerTheme> {
+        override fun createFromParcel(parcel: Parcel): PrimerTheme {
+            return PrimerTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<PrimerTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val IS_DARK_MODE_FIELD = "isDarkMode"
+        private const val PRIMARY_COLOR_FIELD = "primaryColor"
+        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
+        private const val SPLASH_COLOR_FIELD = "splashColor"
+        private const val DEFAULT_CORNER_RADIUS_FIELD = "defaultCornerRadius"
+        private const val BOTTOM_SHEET_CORNER_RADIUS_FIELD = "bottomSheetCornerRadius"
+        private const val TITLE_TEXT_FIELD = "titleText"
+        private const val AMOUNT_LABEL_TEXT_FIELD = "amountLabelText"
+        private const val SUBTITLE_TEXT_FIELD = "subtitleText"
+        private const val PAYMENT_METHOD_BUTTON_FIELD = "paymentMethodButton"
+        private const val MAIN_BUTTON_FIELD = "mainButton"
+        private const val SYSTEM_TEXT_FIELD = "systemText"
+        private const val DEFAULT_TEXT_FIELD = "defaultText"
+        private const val ERROR_TEXT_FIELD = "errorText"
+        private const val INPUT_FIELD = "input"
+        private const val DIVIDER_FIELD = "divider"
+        private const val SEARCH_INPUT_FIELD = "searchInput"
+        private const val WINDOW_MODE_FIELD = "windowMode"
+        private const val INPUT_MODE_FIELD = "inputMode"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<PrimerTheme> { primerTheme ->
+            JSONObject().apply {
+                put(IS_DARK_MODE_FIELD, primerTheme.isDarkMode)
+                put(PRIMARY_COLOR_FIELD, ColorData.serializer.serialize(primerTheme.primaryColor))
+                put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(primerTheme.backgroundColor))
+                put(SPLASH_COLOR_FIELD, ColorData.serializer.serialize(primerTheme.splashColor))
+                put(DEFAULT_CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(primerTheme.defaultCornerRadius))
+                put(
+                    BOTTOM_SHEET_CORNER_RADIUS_FIELD,
+                    DimensionData.serializer.serialize(primerTheme.bottomSheetCornerRadius)
+                )
+                put(TITLE_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.titleText))
+                put(AMOUNT_LABEL_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.amountLabelText))
+                put(SUBTITLE_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.subtitleText))
+                put(PAYMENT_METHOD_BUTTON_FIELD, ButtonTheme.serializer.serialize(primerTheme.paymentMethodButton))
+                put(MAIN_BUTTON_FIELD, ButtonTheme.serializer.serialize(primerTheme.mainButton))
+                put(SYSTEM_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.systemText))
+                put(DEFAULT_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.defaultText))
+                put(ERROR_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.errorText))
+                put(INPUT_FIELD, InputTheme.serializer.serialize(primerTheme.input))
+                put(DIVIDER_FIELD, DividerTheme.serializer.serialize(primerTheme.divider))
+                put(SEARCH_INPUT_FIELD, SearchInputTheme.serializer.serialize(primerTheme.searchInput))
+                put(WINDOW_MODE_FIELD, primerTheme.windowMode.name)
+                put(INPUT_MODE_FIELD, primerTheme.inputMode.name)
+            }
+        }
+
+        /**
+         * Style the Primer SDK using Android XML resources
+         * */
+        @Suppress("LongParameterList")
+        @JvmStatic
+        fun build(
+            isDarkMode: Boolean? = null,
+            @ColorRes primaryColor: Int? = null,
+            @ColorRes backgroundColor: Int? = null,
+            @ColorRes disabledColor: Int? = null,
+            @ColorRes errorColor: Int? = null,
+            @DimenRes defaultCornerRadius: Int? = null,
+            @DimenRes bottomSheetCornerRadius: Int? = null,
+            defaultBorder: BorderThemeData? = null,
+            defaultText: TextThemeData? = null,
+            titleText: TextThemeData? = null,
+            amountLabelText: TextThemeData? = null,
+            subtitleText: TextThemeData? = null,
+            paymentMethodButton: ButtonThemeData? = null,
+            mainButton: ButtonThemeData? = null,
+            systemButton: TextThemeData? = null,
+            errorText: TextThemeData? = null,
+            input: InputThemeData? = null,
+            searchInput: SearchInputThemeData? = null,
+            divider: DividerThemeData? = null,
+            inputMode: InputMode = InputMode.OUTLINED
+        ): PrimerTheme {
+            val styledPrimaryColor = ResourceColor.valueOf(
+                default = primaryColor ?: R.color.primer_primary
+            )
+            val styledBackgroundColor = ResourceColor.valueOf(
+                default = backgroundColor ?: R.color.primer_background
+            )
+            val styledDisabledColor = ResourceColor.valueOf(
+                default = disabledColor ?: R.color.primer_disabled
+            )
+
+            val styledCornerRadius = ResourceDimension.valueOf(
+                default = defaultCornerRadius ?: R.dimen.primer_default_corner_radius
+            )
+
+            val styledBottomSheetCornerRadius = ResourceDimension.valueOf(
+                default = bottomSheetCornerRadius ?: R.dimen.primer_bottom_sheet_corner_radius
+            )
+
+            val styledTitleText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = titleText?.defaultColor ?: defaultText?.defaultColor ?: R.color.primer_title
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = titleText?.fontsize ?: R.dimen.primer_title_fontsize
+                )
+            )
+
+            val styledAmountLabelText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = amountLabelText?.defaultColor ?: defaultText?.defaultColor ?: R.color.primer_amount
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = amountLabelText?.fontsize ?: R.dimen.primer_amount_label_fontsize
+                )
+            )
+
+            val styledSubtitleText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = subtitleText?.defaultColor ?: R.color.primer_subtitle
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = subtitleText?.fontsize ?: R.dimen.primer_subtitle_fontsize
+                )
+            )
+
+            val styledPaymentMethodButtonBorder = BorderTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.border?.defaultColor ?: disabledColor
+                        ?: R.color.primer_payment_method_button_border
+                ),
+                selectedColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.border?.selectedColor ?: primaryColor
+                        ?: R.color.primer_payment_method_button_border_selected
+                ),
+                errorColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.border?.errorColor ?: errorColor
+                        ?: R.color.primer_payment_method_button_border_error
+                ),
+                width = ResourceDimension.valueOf(
+                    default = paymentMethodButton?.border?.width ?: defaultBorder?.width
+                        ?: R.dimen.primer_payment_method_button_border_width
+                )
+            )
+
+            val styledPaymentMethodButtonText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.text?.defaultColor
+                        ?: R.color.primer_payment_method_button_text
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = paymentMethodButton?.text?.fontsize
+                        ?: R.dimen.primer_payment_method_button_fontsize
+                )
+            )
+
+            val styledPaymentMethodButton = ButtonTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.defaultColor
+                        ?: R.color.primer_payment_method_button
+                ),
+                disabledColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.disabledColor ?: disabledColor
+                        ?: R.color.primer_payment_method_button_disabled
+                ),
+                errorColor = ResourceColor.valueOf(
+                    default = paymentMethodButton?.errorColor ?: errorColor
+                        ?: R.color.primer_payment_method_button_error
+                ),
+                border = styledPaymentMethodButtonBorder,
+                text = styledPaymentMethodButtonText,
+                cornerRadius = ResourceDimension.valueOf(
+                    default = paymentMethodButton?.cornerRadius ?: defaultCornerRadius
+                        ?: R.dimen.primer_payment_method_button_corner_radius
+                )
+            )
+
+            val styledMainButtonBorder = BorderTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = mainButton?.border?.defaultColor ?: disabledColor ?: R.color.primer_disabled
+                ),
+                selectedColor = ResourceColor.valueOf(
+                    default = mainButton?.border?.selectedColor ?: primaryColor ?: R.color.primer_primary
+                ),
+                errorColor = ResourceColor.valueOf(
+                    default = mainButton?.border?.errorColor ?: errorColor ?: R.color.primer_error
+                ),
+                width = ResourceDimension.valueOf(
+                    default = mainButton?.border?.width ?: R.dimen.primer_main_button_border_width
+                )
+            )
+
+            val styledMainButtonText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = mainButton?.text?.defaultColor ?: R.color.primer_main_button_text
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = mainButton?.text?.fontsize ?: R.dimen.primer_subtitle_fontsize
+                )
+            )
+
+            val styledMainButton = ButtonTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = mainButton?.defaultColor ?: primaryColor ?: R.color.primer_main_button
+                ),
+                disabledColor = ResourceColor.valueOf(
+                    default = mainButton?.disabledColor ?: disabledColor ?: R.color.primer_disabled
+                ),
+                errorColor = ResourceColor.valueOf(
+                    default = mainButton?.errorColor ?: errorColor ?: R.color.primer_error
+                ),
+                border = styledMainButtonBorder,
+                text = styledMainButtonText,
+                cornerRadius = ResourceDimension.valueOf(
+                    default = mainButton?.cornerRadius ?: defaultCornerRadius
+                        ?: R.dimen.primer_main_button_corner_radius
+                )
+            )
+
+            val styledSystemText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = systemButton?.defaultColor ?: primaryColor ?: R.color.primer_system_text
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = systemButton?.fontsize ?: R.dimen.primer_subtitle_fontsize
+                )
+            )
+
+            val styledDefaultText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = defaultText?.defaultColor ?: R.color.primer_default_text
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = defaultText?.fontsize ?: R.dimen.primer_default_fontsize
+                )
+            )
+
+            val styledErrorText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = errorText?.defaultColor ?: R.color.primer_error
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = errorText?.fontsize ?: R.dimen.primer_text_size_sm
+                )
+            )
+
+            val styledInputBorder = BorderTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = input?.border?.defaultColor ?: primaryColor ?: R.color.primer_input_border
+                ),
+                selectedColor = ResourceColor.valueOf(
+                    default = input?.border?.selectedColor ?: primaryColor ?: R.color.primer_input_border_selected
+                ),
+                errorColor = ResourceColor.valueOf(
+                    default = input?.border?.errorColor ?: errorColor ?: R.color.primer_input_border_error
+                ),
+                width = ResourceDimension.valueOf(
+                    default = input?.border?.width ?: defaultBorder?.width ?: R.dimen.primer_input_border_width
+                )
+            )
+
+            val styledInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = input?.text?.defaultColor ?: R.color.primer_input_text
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = input?.text?.fontsize ?: R.dimen.primer_input_fontsize
+                )
+            )
+
+            val styledHintInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = input?.hintText?.defaultColor ?: R.color.primer_subtitle
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = input?.hintText?.fontsize ?: R.dimen.primer_input_fontsize
+                )
+            )
+
+            val styledInput = InputTheme(
+                backgroundColor = ResourceColor.valueOf(
+                    default = input?.backgroundColor ?: backgroundColor ?: R.color.primer_input_background
+                ),
+                cursorColor = ResourceColor.valueOf(
+                    default = input?.cursorColor ?: R.color.primer_input_cursor
+                ),
+                border = styledInputBorder,
+                text = styledInputText,
+                hintText = styledHintInputText,
+                cornerRadius = ResourceDimension.valueOf(
+                    default = input?.cornerRadius ?: defaultCornerRadius ?: R.dimen.primer_default_corner_radius
+                )
+            )
+
+            val styledSearchInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = searchInput?.text?.defaultColor ?: R.color.primer_search_input_text
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = searchInput?.text?.fontsize ?: R.dimen.primer_search_input_fontsize
+                )
+            )
+
+            val styledSearchHintInputText = TextTheme(
+                defaultColor = ResourceColor.valueOf(
+                    default = searchInput?.hintText?.defaultColor ?: R.color.primer_subtitle
+                ),
+                fontSize = ResourceDimension.valueOf(
+                    default = searchInput?.hintText?.fontsize
+                        ?: R.dimen.primer_search_input_fontsize
+                )
+            )
+
+            val searchInputTheme = SearchInputTheme(
+                backgroundColor = ResourceColor.valueOf(
+                    default = searchInput?.backgroundColor ?: backgroundColor ?: R.color.primer_search_input_background
+                ),
+                borderColor = ResourceColor.valueOf(
+                    default = searchInput?.borderColor ?: R.color.primer_search_input_border
+                ),
+                text = styledSearchInputText,
+                hintText = styledSearchHintInputText,
+                cornerRadius = ResourceDimension.valueOf(
+                    default = searchInput?.cornerRadius ?: defaultCornerRadius ?: R.dimen.primer_default_corner_radius
+                )
+            )
+
+            val dividerTheme = DividerTheme(
+                backgroundColor = ResourceColor.valueOf(
+                    divider?.backgroundColor ?: R.color.primer_divider
+                ),
+                height = ResourceDimension.valueOf(
+                    divider?.height ?: R.dimen.primer_divider_height
+                )
+            )
+
+            return PrimerTheme(
+                isDarkMode = isDarkMode,
+                primaryColor = styledPrimaryColor,
+                backgroundColor = styledBackgroundColor,
+                splashColor = styledDisabledColor,
+                defaultCornerRadius = styledCornerRadius,
+                bottomSheetCornerRadius = styledBottomSheetCornerRadius,
+                titleText = styledTitleText,
+                amountLabelText = styledAmountLabelText,
+                subtitleText = styledSubtitleText,
+                paymentMethodButton = styledPaymentMethodButton,
+                mainButton = styledMainButton,
+                systemText = styledSystemText,
+                defaultText = styledDefaultText,
+                errorText = styledErrorText,
+                input = styledInput,
+                searchInput = searchInputTheme,
+                divider = dividerTheme,
+                windowMode = WindowMode.BOTTOM_SHEET,
+                inputMode = inputMode
+            )
+        }
+
+        /**
+         * Style the Primer SDK using React Native
+         */
+        @Suppress("LongParameterList")
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        @JvmStatic
+        fun buildWithDynamicValues(
+            isDarkMode: Boolean? = null,
+            mainColor: String? = null,
+            backgroundColor: String? = null,
+            dividerColor: String? = null,
+            textColor: String? = null,
+            disabledColor: String? = null,
+            errorColor: String? = null,
+            bordersColor: String? = null,
+            searchInputBorderColor: String? = null
+        ): PrimerTheme {
+            val styledPrimaryColor = mainColor?.let {
+                DynamicColor.valueOf(default = it)
+            } ?: ResourceColor.valueOf(R.color.primer_primary)
+
+            val styledBackgroundColor = backgroundColor?.let {
+                DynamicColor.valueOf(default = it)
+            } ?: ResourceColor.valueOf(R.color.primer_background)
+
+            val styledDisabledColor = disabledColor?.let {
+                DynamicColor.valueOf(default = it)
+            } ?: ResourceColor.valueOf(R.color.primer_disabled)
+
+            val styledCornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+
+            val styledBottomSheetCornerRadius = ResourceDimension.valueOf(R.dimen.primer_bottom_sheet_corner_radius)
+
+            val styledTitleText = TextTheme(
+                defaultColor = mainColor?.let {
+                    DynamicColor.valueOf(default = it)
+                } ?: ResourceColor.valueOf(R.color.primer_title),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_title_fontsize)
+            )
+
+            val styledAmountLabelText = TextTheme(
+                defaultColor = mainColor?.let {
+                    DynamicColor.valueOf(default = it)
+                } ?: ResourceColor.valueOf(R.color.primer_amount),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_amount_label_fontsize)
+            )
+
+            val styledSubtitleText = TextTheme(
+                defaultColor = mainColor?.let {
+                    DynamicColor.valueOf(default = it)
+                } ?: ResourceColor.valueOf(R.color.primer_subtitle),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize)
+            )
+
+            val styledPaymentMethodButtonBorder = BorderTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_payment_method_button_border),
+                selectedColor = ResourceColor.valueOf(R.color.primer_payment_method_button_border_selected),
+                errorColor = ResourceColor.valueOf(R.color.primer_payment_method_button_border_error),
+                width = ResourceDimension.valueOf(R.dimen.primer_payment_method_button_border_width)
+            )
+
+            val styledPaymentMethodButtonText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_payment_method_button_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_payment_method_button_fontsize)
+            )
+
+            val styledPaymentMethodButton = ButtonTheme(
+                defaultColor =
+                ResourceColor.valueOf(R.color.primer_payment_method_button),
+                disabledColor = when {
+                    disabledColor != null -> DynamicColor.valueOf(default = disabledColor)
+                    else -> ResourceColor.valueOf(R.color.primer_payment_method_button_disabled)
+                },
+                errorColor = when {
+                    errorColor != null -> DynamicColor.valueOf(default = errorColor)
+                    else -> ResourceColor.valueOf(R.color.primer_payment_method_button_error)
+                },
+                border = styledPaymentMethodButtonBorder,
+                text = styledPaymentMethodButtonText,
+                cornerRadius = ResourceDimension.valueOf(R.dimen.primer_payment_method_button_corner_radius)
+            )
+
+            val styledMainButtonBorder = BorderTheme(
+                defaultColor = when {
+                    bordersColor != null -> DynamicColor.valueOf(default = bordersColor)
+                    else -> ResourceColor.valueOf(R.color.primer_disabled)
+                },
+                selectedColor = when {
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_primary)
+                },
+                errorColor = when {
+                    errorColor != null -> DynamicColor.valueOf(default = errorColor)
+                    else -> ResourceColor.valueOf(R.color.primer_error)
+                },
+                width = ResourceDimension.valueOf(R.dimen.primer_main_button_border_width)
+            )
+
+            val styledMainButtonText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_main_button_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize)
+            )
+
+            val styledMainButton = ButtonTheme(
+                defaultColor = when {
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_main_button)
+                },
+                disabledColor = when {
+                    disabledColor != null -> DynamicColor.valueOf(default = disabledColor)
+                    else -> ResourceColor.valueOf(R.color.primer_disabled)
+                },
+                errorColor = when {
+                    errorColor != null -> DynamicColor.valueOf(default = errorColor)
+                    else -> ResourceColor.valueOf(R.color.primer_error)
+                },
+                border = styledMainButtonBorder,
+                text = styledMainButtonText,
+                cornerRadius = ResourceDimension.valueOf(R.dimen.primer_main_button_corner_radius)
+            )
+
+            val styledSystemText = TextTheme(
+                defaultColor = when {
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_system_text)
+                },
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize)
+            )
+
+            val styledDefaultText = TextTheme(
+                defaultColor = ResourceColor.valueOf(R.color.primer_default_text),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_default_fontsize)
+            )
+
+            val styledErrorText = TextTheme(
+                defaultColor = errorColor?.let { DynamicColor.valueOf(it) }
+                    ?: ResourceColor.valueOf(R.color.primer_error),
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_text_size_sm)
+            )
+
+            val styledInputBorder = BorderTheme(
+                defaultColor = when {
+                    bordersColor != null -> DynamicColor.valueOf(default = bordersColor)
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_border)
+                },
+                selectedColor = when {
+                    bordersColor != null -> DynamicColor.valueOf(default = bordersColor)
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_border_selected)
+                },
+                errorColor = when {
+                    errorColor != null -> DynamicColor.valueOf(default = errorColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_border_error)
+                },
+                width = ResourceDimension.valueOf(R.dimen.primer_input_border_width)
+            )
+
+            val styledInputText = TextTheme(
+                defaultColor = when {
+                    textColor != null -> DynamicColor.valueOf(textColor)
+                    mainColor != null -> DynamicColor.valueOf(mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_text)
+                },
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_input_fontsize)
+            )
+
+            val styledHintInputText = TextTheme(
+                defaultColor = when {
+                    textColor != null -> DynamicColor.valueOf(textColor)
+                    mainColor != null -> DynamicColor.valueOf(mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_subtitle)
+                },
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_input_fontsize)
+            )
+
+            val styledInput = InputTheme(
+                backgroundColor = when {
+                    backgroundColor != null -> DynamicColor.valueOf(default = backgroundColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_background)
+                },
+                cursorColor = when {
+                    mainColor != null -> DynamicColor.valueOf(default = mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_input_cursor)
+                },
+                border = styledInputBorder,
+                text = styledInputText,
+                hintText = styledHintInputText,
+                cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+            )
+
+            val styledSearchInputText = TextTheme(
+                defaultColor = when {
+                    textColor != null -> DynamicColor.valueOf(textColor)
+                    mainColor != null -> DynamicColor.valueOf(mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_search_input_text)
+                },
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_search_input_fontsize)
+            )
+
+            val styledSearchHintInputText = TextTheme(
+                defaultColor = when {
+                    textColor != null -> DynamicColor.valueOf(textColor)
+                    mainColor != null -> DynamicColor.valueOf(mainColor)
+                    else -> ResourceColor.valueOf(R.color.primer_subtitle)
+                },
+                fontSize = ResourceDimension.valueOf(R.dimen.primer_search_input_fontsize)
+            )
+
+            val searchInputTheme = SearchInputTheme(
+                backgroundColor = when {
+                    backgroundColor != null -> DynamicColor.valueOf(default = backgroundColor)
+                    else -> ResourceColor.valueOf(R.color.primer_search_input_background)
+                },
+                borderColor = when {
+                    searchInputBorderColor != null -> DynamicColor.valueOf(default = searchInputBorderColor)
+                    else -> ResourceColor.valueOf(R.color.primer_search_input_border)
+                },
+                text = styledSearchInputText,
+                hintText = styledSearchHintInputText,
+                cornerRadius = ResourceDimension.valueOf(R.dimen.primer_default_corner_radius)
+            )
+
+            val dividerTheme = DividerTheme(
+                backgroundColor = dividerColor?.let {
+                    DynamicColor.valueOf(default = it)
+                } ?: ResourceColor.valueOf(R.color.primer_divider),
+                height = ResourceDimension.valueOf(R.dimen.primer_divider_height)
+            )
+
+            return PrimerTheme(
+                isDarkMode = isDarkMode,
+                primaryColor = styledPrimaryColor,
+                backgroundColor = styledBackgroundColor,
+                splashColor = styledDisabledColor,
+                defaultCornerRadius = styledCornerRadius,
+                bottomSheetCornerRadius = styledBottomSheetCornerRadius,
+                titleText = styledTitleText,
+                amountLabelText = styledAmountLabelText,
+                subtitleText = styledSubtitleText,
+                paymentMethodButton = styledPaymentMethodButton,
+                mainButton = styledMainButton,
+                systemText = styledSystemText,
+                defaultText = styledDefaultText,
+                errorText = styledErrorText,
+                input = styledInput,
+                searchInput = searchInputTheme,
+                divider = dividerTheme,
+                windowMode = WindowMode.BOTTOM_SHEET,
+                inputMode = InputMode.OUTLINED
+            )
+        }
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeValue(isDarkMode)
+        parcel.writeParcelable(primaryColor, flags)
+        parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(splashColor, flags)
+        parcel.writeParcelable(titleText, flags)
+        parcel.writeParcelable(amountLabelText, flags)
+        parcel.writeParcelable(subtitleText, flags)
+        parcel.writeParcelable(paymentMethodButton, flags)
+        parcel.writeParcelable(mainButton, flags)
+        parcel.writeParcelable(systemText, flags)
+        parcel.writeParcelable(defaultText, flags)
+        parcel.writeParcelable(errorText, flags)
+        parcel.writeParcelable(input, flags)
+        parcel.writeParcelable(searchInput, flags)
+        parcel.writeParcelable(divider, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+}
+
+// Developer models
+
+data class ButtonThemeData(
+    @ColorRes val defaultColor: Int? = null,
+    @ColorRes val disabledColor: Int? = null,
+    @ColorRes val errorColor: Int? = null,
+    val text: TextThemeData? = null,
+    val border: BorderThemeData? = null,
+    @DimenRes val cornerRadius: Int? = null
+)
+
+data class TextThemeData(
+    @ColorRes val defaultColor: Int? = null,
+    @DimenRes val fontsize: Int? = null
+)
+
+data class BorderThemeData(
+    @ColorRes val defaultColor: Int? = null,
+    @ColorRes val selectedColor: Int? = null,
+    @ColorRes val errorColor: Int? = null,
+    @DimenRes val width: Int? = null
+)
+
+data class InputThemeData(
+    @ColorRes val backgroundColor: Int? = null,
+    @ColorRes val cursorColor: Int? = null,
+    val text: TextThemeData? = null,
+    val hintText: TextThemeData? = null,
+    val border: BorderThemeData? = null,
+    @DimenRes val cornerRadius: Int? = null
+)
+
+data class SearchInputThemeData(
+    @ColorRes val backgroundColor: Int? = null,
+    @ColorRes val borderColor: Int? = null,
+    val text: TextThemeData? = null,
+    val hintText: TextThemeData? = null,
+    @DimenRes val cornerRadius: Int? = null
+)
+
+data class DividerThemeData(
+    @ColorRes val backgroundColor: Int? = null,
+    @DimenRes val height: Int? = null
+)
+
+// Internal models
+data class ButtonTheme(
+    val defaultColor: ColorData,
+    val disabledColor: ColorData,
+    val errorColor: ColorData,
+    val text: TextTheme,
+    val border: BorderTheme,
+    val cornerRadius: DimensionData
+) : Parcelable, JSONObjectSerializable {
+    constructor(parcel: Parcel) : this(
+        defaultColor = parcel.readParcelable<ColorData>()!!,
+        disabledColor = parcel.readParcelable<ColorData>()!!,
+        errorColor = parcel.readParcelable<ColorData>()!!,
+        text = parcel.readParcelable<TextTheme>()!!,
+        border = parcel.readParcelable<BorderTheme>()!!,
+        cornerRadius = parcel.readParcelable<DimensionData>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(defaultColor, flags)
+        parcel.writeParcelable(disabledColor, flags)
+        parcel.writeParcelable(errorColor, flags)
+        parcel.writeParcelable(text, flags)
+        parcel.writeParcelable(border, flags)
+        parcel.writeParcelable(cornerRadius, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<ButtonTheme> {
+        override fun createFromParcel(parcel: Parcel): ButtonTheme {
+            return ButtonTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<ButtonTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val DEFAULT_COLOR_FIELD = "defaultColor"
+        private const val DISABLED_COLOR_FIELD = "disabledColor"
+        private const val ERROR_COLOR_FIELD = "errorColor"
+        private const val TEXT_FIELD = "text"
+        private const val BORDER_FIELD = "border"
+        private const val CORNER_RADIUS_FIELD = "cornerRadius"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<ButtonTheme> { buttonTheme ->
+            JSONObject().apply {
+                put(DEFAULT_COLOR_FIELD, ColorData.serializer.serialize(buttonTheme.defaultColor))
+                put(DISABLED_COLOR_FIELD, ColorData.serializer.serialize(buttonTheme.disabledColor))
+                put(ERROR_COLOR_FIELD, ColorData.serializer.serialize(buttonTheme.errorColor))
+                put(TEXT_FIELD, TextTheme.serializer.serialize(buttonTheme.text))
+                put(BORDER_FIELD, BorderTheme.serializer.serialize(buttonTheme.border))
+                put(CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(buttonTheme.cornerRadius))
+            }
+        }
+    }
+}
+
+data class TextTheme(
+    val defaultColor: ColorData,
+    val fontSize: DimensionData
+) : Parcelable, JSONObjectSerializable {
+    constructor(parcel: Parcel) : this(
+        defaultColor = parcel.readParcelable<ColorData>()!!,
+        fontSize = parcel.readParcelable<DimensionData>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(defaultColor, flags)
+        parcel.writeParcelable(fontSize, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<TextTheme> {
+        override fun createFromParcel(parcel: Parcel): TextTheme {
+            return TextTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TextTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val DEFAULT_COLOR_FIELD = "defaultColor"
+        private const val FONT_SIZE_FIELD = "fontSize"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<TextTheme> { t ->
+            JSONObject().apply {
+                put(DEFAULT_COLOR_FIELD, ColorData.serializer.serialize(t.defaultColor))
+                put(FONT_SIZE_FIELD, DimensionData.serializer.serialize(t.fontSize))
+            }
+        }
+    }
+}
+
+data class BorderTheme(
+    val defaultColor: ColorData,
+    val selectedColor: ColorData,
+    val errorColor: ColorData,
+    val width: DimensionData
+) : Parcelable, JSONObjectSerializable {
+    constructor(parcel: Parcel) : this(
+        defaultColor = parcel.readParcelable<ColorData>()!!,
+        selectedColor = parcel.readParcelable<ColorData>()!!,
+        errorColor = parcel.readParcelable<ColorData>()!!,
+        width = parcel.readParcelable<DimensionData>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(defaultColor, flags)
+        parcel.writeParcelable(selectedColor, flags)
+        parcel.writeParcelable(errorColor, flags)
+        parcel.writeParcelable(width, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<BorderTheme> {
+        override fun createFromParcel(parcel: Parcel): BorderTheme {
+            return BorderTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<BorderTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val DEFAULT_COLOR_FIELD = "defaultColor"
+        private const val SELECTED_COLOR_FIELD = "selectedColor"
+        private const val ERROR_COLOR_FIELD = "errorColor"
+        private const val WIDTH_FIELD = "width"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<BorderTheme> { borderTheme ->
+            JSONObject().apply {
+                put(DEFAULT_COLOR_FIELD, ColorData.serializer.serialize(borderTheme.defaultColor))
+                put(SELECTED_COLOR_FIELD, ColorData.serializer.serialize(borderTheme.selectedColor))
+                put(ERROR_COLOR_FIELD, ColorData.serializer.serialize(borderTheme.errorColor))
+                put(WIDTH_FIELD, DimensionData.serializer.serialize(borderTheme.width))
+            }
+        }
+    }
+}
+
+data class InputTheme(
+    val backgroundColor: ColorData,
+    val cursorColor: ColorData,
+    val cornerRadius: DimensionData,
+    val text: TextTheme,
+    val hintText: TextTheme,
+    val border: BorderTheme
+) : Parcelable, JSONObjectSerializable {
+    constructor(parcel: Parcel) : this(
+        backgroundColor = parcel.readParcelable<ColorData>()!!,
+        cursorColor = parcel.readParcelable<ColorData>()!!,
+        cornerRadius = parcel.readParcelable<DimensionData>()!!,
+        text = parcel.readParcelable<TextTheme>()!!,
+        hintText = parcel.readParcelable<TextTheme>()!!,
+        border = parcel.readParcelable<BorderTheme>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(cursorColor, flags)
+        parcel.writeParcelable(cornerRadius, flags)
+        parcel.writeParcelable(text, flags)
+        parcel.writeParcelable(hintText, flags)
+        parcel.writeParcelable(border, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<InputTheme> {
+        override fun createFromParcel(parcel: Parcel): InputTheme {
+            return InputTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<InputTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
+        private const val CURSOR_COLOR_FIELD = "cursorColor"
+        private const val CORNER_RADIUS_FIELD = "cornerRadius"
+        private const val TEXT_FIELD = "text"
+        private const val HINT_TEXT_FIELD = "hintText"
+        private const val BORDER_FIELD = "border"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<InputTheme> { inputTheme ->
+            JSONObject().apply {
+                put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(inputTheme.backgroundColor))
+                put(CURSOR_COLOR_FIELD, ColorData.serializer.serialize(inputTheme.cursorColor))
+                put(CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(inputTheme.cornerRadius))
+                put(TEXT_FIELD, TextTheme.serializer.serialize(inputTheme.text))
+                put(HINT_TEXT_FIELD, TextTheme.serializer.serialize(inputTheme.hintText))
+                put(BORDER_FIELD, BorderTheme.serializer.serialize(inputTheme.border))
+            }
+        }
+    }
+}
+
+data class SearchInputTheme(
+    val backgroundColor: ColorData,
+    val borderColor: ColorData,
+    val cornerRadius: DimensionData,
+    val text: TextTheme,
+    val hintText: TextTheme
+) : Parcelable, JSONObjectSerializable {
+    constructor(parcel: Parcel) : this(
+        backgroundColor = parcel.readParcelable<ColorData>()!!,
+        borderColor = parcel.readParcelable<ColorData>()!!,
+        cornerRadius = parcel.readParcelable<DimensionData>()!!,
+        text = parcel.readParcelable<TextTheme>()!!,
+        hintText = parcel.readParcelable<TextTheme>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(borderColor, flags)
+        parcel.writeParcelable(cornerRadius, flags)
+        parcel.writeParcelable(text, flags)
+        parcel.writeParcelable(hintText, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<SearchInputTheme> {
+        override fun createFromParcel(parcel: Parcel): SearchInputTheme {
+            return SearchInputTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SearchInputTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
+        private const val BORDER_COLOR_FIELD = "borderColor"
+        private const val CORNER_RADIUS_FIELD = "cornerRadius"
+        private const val TEXT_FIELD = "text"
+        private const val HINT_TEXT_FIELD = "hintText"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<SearchInputTheme> { searchInputTheme ->
+            JSONObject().apply {
+                put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(searchInputTheme.backgroundColor))
+                put(BORDER_COLOR_FIELD, ColorData.serializer.serialize(searchInputTheme.borderColor))
+                put(CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(searchInputTheme.cornerRadius))
+                put(TEXT_FIELD, TextTheme.serializer.serialize(searchInputTheme.text))
+                put(HINT_TEXT_FIELD, TextTheme.serializer.serialize(searchInputTheme.hintText))
+            }
+        }
+    }
+}
+
+data class DividerTheme(
+    val backgroundColor: ColorData,
+    val height: DimensionData
+) : Parcelable, JSONObjectSerializable {
+    constructor(parcel: Parcel) : this(
+        backgroundColor = parcel.readParcelable<ColorData>()!!,
+        height = parcel.readParcelable<DimensionData>()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(backgroundColor, flags)
+        parcel.writeParcelable(height, flags)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<DividerTheme> {
+        override fun createFromParcel(parcel: Parcel): DividerTheme {
+            return DividerTheme(parcel)
+        }
+
+        override fun newArray(size: Int): Array<DividerTheme?> {
+            return arrayOfNulls(size)
+        }
+
+        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
+        private const val HEIGHT_FIELD = "height"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<DividerTheme> { dividerTheme ->
+            JSONObject().apply {
+                put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(dividerTheme.backgroundColor))
+                put(HEIGHT_FIELD, DimensionData.serializer.serialize(dividerTheme.height))
+            }
+        }
+    }
+}

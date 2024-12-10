@@ -1,0 +1,77 @@
+package io.primer.android.paymentmethods.common.data.model
+
+import androidx.annotation.RestrictTo
+
+enum class PaymentMethodType(
+    val intents: Array<ClientTokenIntent>? = null
+) {
+    PAYMENT_CARD(
+        arrayOf(
+            ClientTokenIntent.`3DS_AUTHENTICATION`,
+            ClientTokenIntent.PROCESSOR_3DS
+        )
+    ),
+    KLARNA,
+    PRIMER_TEST_KLARNA,
+    GOOGLE_PAY(ClientTokenIntent.`3DS_AUTHENTICATION`),
+    PAYPAL,
+    PRIMER_TEST_PAYPAL,
+    PAY_NL_IDEAL(ClientTokenIntent.PAY_NL_IDEAL_REDIRECTION),
+    PAY_NL_PAYCONIQ(ClientTokenIntent.PAY_NL_PAYCONIQ_REDIRECTION),
+    PAY_NL_GIROPAY(ClientTokenIntent.PAY_NL_GIROPAY_REDIRECTION),
+    PAY_NL_P24(ClientTokenIntent.PAY_NL_P24_REDIRECTION),
+    PAY_NL_EPS(ClientTokenIntent.PAY_NL_EPS_REDIRECTION),
+    HOOLAH(ClientTokenIntent.HOOLAH_REDIRECTION),
+    ADYEN_TWINT(ClientTokenIntent.ADYEN_TWINT_REDIRECTION),
+    ADYEN_SOFORT(ClientTokenIntent.ADYEN_SOFORT_REDIRECTION),
+    ADYEN_GIROPAY(ClientTokenIntent.ADYEN_GIROPAY_REDIRECTION),
+    PRIMER_TEST_SOFORT,
+    ADYEN_TRUSTLY(ClientTokenIntent.ADYEN_TRUSTLY_REDIRECTION),
+    ADYEN_ALIPAY(ClientTokenIntent.ADYEN_ALIPAY_REDIRECTION),
+    ADYEN_VIPPS(ClientTokenIntent.ADYEN_VIPPS_REDIRECTION),
+    ADYEN_MOBILEPAY(ClientTokenIntent.ADYEN_MOBILEPAY_REDIRECTION),
+    ADYEN_IDEAL(ClientTokenIntent.ADYEN_IDEAL_REDIRECTION),
+    ADYEN_DOTPAY(ClientTokenIntent.ADYEN_DOTPAY_REDIRECTION),
+    ADYEN_BLIK(ClientTokenIntent.ADYEN_BLIK_REDIRECTION),
+    ADYEN_MBWAY(ClientTokenIntent.ADYEN_MBWAY_REDIRECTION),
+    ADYEN_INTERAC(ClientTokenIntent.ADYEN_INTERAC_REDIRECTION),
+    ADYEN_PAYTRAIL(ClientTokenIntent.ADYEN_PAYTRAIL_REDIRECTION),
+    ADYEN_PAYSHOP(ClientTokenIntent.ADYEN_PAYSHOP_REDIRECTION),
+    ADYEN_BANCONTACT_CARD(ClientTokenIntent.ADYEN_BANCONTACT_CARD_REDIRECTION),
+    MOLLIE_BANCONTACT(ClientTokenIntent.MOLLIE_BANCONTACT_REDIRECTION),
+    MOLLIE_IDEAL(ClientTokenIntent.MOLLIE_IDEAL_REDIRECTION),
+    MOLLIE_P24(ClientTokenIntent.MOLLIE_P24_REDIRECTION),
+    MOLLIE_GIROPAY(ClientTokenIntent.MOLLIE_GIROPAY_REDIRECTION),
+    MOLLIE_EPS(ClientTokenIntent.MOLLIE_EPS_REDIRECTION),
+    BUCKAROO_GIROPAY(ClientTokenIntent.BUCKAROO_GIROPAY_REDIRECTION),
+    BUCKAROO_SOFORT(ClientTokenIntent.BUCKAROO_SOFORT_REDIRECTION),
+    BUCKAROO_IDEAL(ClientTokenIntent.BUCKAROO_IDEAL_REDIRECTION),
+    BUCKAROO_EPS(ClientTokenIntent.BUCKAROO_EPS_REDIRECTION),
+    BUCKAROO_BANCONTACT(ClientTokenIntent.BUCKAROO_BANCONTACT_REDIRECTION),
+    ATOME(ClientTokenIntent.ATOME_REDIRECTION),
+    XFERS_PAYNOW(ClientTokenIntent.XFERS_PAYNOW_REDIRECTION),
+    TWOC2P(ClientTokenIntent.TWOC2P_REDIRECTION),
+    OPENNODE(ClientTokenIntent.OPENNODE_REDIRECTION),
+    RAPYD_GCASH(ClientTokenIntent.RAPYD_GCASH_REDIRECTION),
+    RAPYD_GRABPAY(ClientTokenIntent.RAPYD_GRABPAY_REDIRECTION),
+    RAPYD_POLI(ClientTokenIntent.RAPYD_POLI_REDIRECTION),
+    RAPYD_FAST(ClientTokenIntent.RAPYD_FAST_REDIRECTION),
+    RAPYD_PROMPTPAY(ClientTokenIntent.RAPYD_PROMPTPAY_REDIRECTION),
+    XENDIT_OVO(ClientTokenIntent.XENDIT_OVO_REDIRECTION),
+    ADYEN_MULTIBANCO(ClientTokenIntent.PAYMENT_METHOD_VOUCHER),
+    OMISE_PROMPTPAY(ClientTokenIntent.OMISE_PROMPTPAY_REDIRECTION),
+    XENDIT_RETAIL_OUTLETS(ClientTokenIntent.PAYMENT_METHOD_VOUCHER),
+    IPAY88_CARD(ClientTokenIntent.IPAY88_CARD_REDIRECTION),
+    NOL_PAY,
+    STRIPE_ACH(ClientTokenIntent.STRIPE_ACH_REDIRECTION),
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    UNKNOWN;
+
+    companion object {
+        fun safeValueOf(type: String?) = PaymentMethodType.entries.find { type == it.name }
+            ?: UNKNOWN
+    }
+
+    constructor(intent: ClientTokenIntent) : this(arrayOf(intent))
+}

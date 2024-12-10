@@ -17,19 +17,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.GsonBuilder
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
-import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager
 import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface
-import io.primer.android.domain.payments.additionalInfo.AchAdditionalInfo
-import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
-import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
-import io.primer.sample.constants.PrimerHeadlessCallbacks
+import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
+import io.primer.android.vouchers.multibanco.MultibancoCheckoutAdditionalInfo
 import io.primer.sample.databinding.FragmentVaultManagerBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.repositories.AppApiKeyRepository
-import io.primer.sample.utils.showMandateDialog
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
@@ -38,7 +35,7 @@ import kotlinx.coroutines.launch
 
 class HeadlessVaultManagerFragment : Fragment() {
 
-    private val callbacks: ArrayList<String> = arrayListOf()
+    private val callbacks get() = headlessManagerViewModel.callbacks
     private var checkoutDataWithError: CheckoutDataWithError? = null
 
     private val viewModel: MainViewModel by activityViewModels()
@@ -61,9 +58,8 @@ class HeadlessVaultManagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         headlessManagerViewModel = ViewModelProvider(
             this,
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
         )[HeadlessManagerViewModel::class.java]
-
         viewModel.clientToken.observe(viewLifecycleOwner) { token ->
             if (headlessManagerViewModel.isLaunched != true) {
                 token?.let {
@@ -87,12 +83,10 @@ class HeadlessVaultManagerFragment : Fragment() {
                 is UiState.InitializingHeadless -> showLoading("Initializing Headless.")
                 is UiState.InitializedHeadless -> hideLoading()
                 is UiState.TokenizationStarted -> {
-                    callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
                     showLoading("Tokenization started ${state.paymentMethodType}")
                 }
 
                 is UiState.PreparationStarted -> {
-                    callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
                     showLoading("Preparation started ${state.paymentMethodType}")
                 }
 
@@ -100,10 +94,12 @@ class HeadlessVaultManagerFragment : Fragment() {
                 is UiState.TokenizationSuccessReceived -> {
                     showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
                     headlessManagerViewModel.createPayment(
-                        state.paymentMethodTokenData,
-                        requireNotNull(viewModel.environment.value),
-                        viewModel.descriptor.value.orEmpty(),
-                        state.decisionHandler
+                        paymentMethod = state.paymentMethodTokenData,
+                        environment = requireNotNull(viewModel.environment.value),
+                        descriptor = viewModel.descriptor.value.orEmpty(),
+                        vaultOnSuccess = viewModel.vaultOnSuccess,
+                        vaultOnAgreement = viewModel.vaultOnAgreement,
+                        completion = state.decisionHandler
                     )
                 }
 
@@ -131,57 +127,41 @@ class HeadlessVaultManagerFragment : Fragment() {
                 is UiState.AdditionalInfoReceived -> {
                     hideLoading()
                     when (state.additionalInfo) {
-                        is PromptPayCheckoutAdditionalInfo -> {
+                        is QrCodeCheckoutAdditionalInfo -> {
                             AlertDialog.Builder(context)
-                                .setMessage("PromptPay: $state.additionalInfo")
+                                .setMessage("QrCode: ${state.additionalInfo}")
                                 .setPositiveButton("OK") { d, _ -> d.dismiss() }.show()
                             Log.d(TAG, "onAdditionalInfoReceived: $state.additionalInfo")
-                        }
-
-                        is AchAdditionalInfo.DisplayMandate -> {
-                            requireContext().showMandateDialog(
-                                text = "Would you like to accept this mandate?",
-                                onOkClick = {
-                                    lifecycleScope.launch {
-                                        (state.additionalInfo).onAcceptMandate.invoke()
-                                    }
-                                },
-                                onCancelClick = {
-                                    lifecycleScope.launch {
-                                        (state.additionalInfo).onDeclineMandate.invoke()
-                                    }
-                                }
-                            )
                         }
                     }
                 }
 
                 is UiState.BeforePaymentCreateReceived -> {
-                    callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
+                    /* no-op */
                 }
 
                 is UiState.BeforeClientSessionUpdateReceived -> {
-                    callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
+                    /* no-op */
                 }
 
                 is UiState.ClientSessionUpdatedReceived -> {
-                    callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
+                    /* no-op */
                 }
 
                 is UiState.ShowError -> {
                     checkoutDataWithError =
                         CheckoutDataWithError(state.payment, state.error.toMappedError())
-                    callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
                     hideLoading()
                     navigateToResultScreen()
                 }
 
                 is UiState.CheckoutCompleted -> {
                     checkoutDataWithError = CheckoutDataWithError(state.checkoutData.payment)
-                    callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
                     hideLoading()
                     navigateToResultScreen()
                 }
+
+                else -> {}
             }
         }
 
@@ -230,7 +210,9 @@ class HeadlessVaultManagerFragment : Fragment() {
                         true -> vaultManager.startPaymentFlow(vaultedPaymentMethodId)
                         false -> vaultManager.startPaymentFlow(
                             vaultedPaymentMethodId,
-                            PrimerVaultedCardAdditionalData(cvvInput.text.toString())
+                            PrimerVaultedCardAdditionalData(
+                                cvvInput.text.toString()
+                            )
                         )
                     }
                 }
@@ -244,7 +226,8 @@ class HeadlessVaultManagerFragment : Fragment() {
     }
 
     private fun setupVaultedPaymentMethods() {
-        vaultManager = PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
+        vaultManager =
+            io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
         lifecycleScope.launch {
             showLoading("Loading vaulted payment methods.")
 
@@ -296,10 +279,11 @@ class HeadlessVaultManagerFragment : Fragment() {
                 val billingAddress = vaultedPaymentMethod.paymentInstrumentData.sessionData?.billingAddress
                 suffix = billingAddress?.email.orEmpty()
             }
+
             "STRIPE_ACH" -> {
                 val bankName = vaultedPaymentMethod.paymentInstrumentData.bankName ?: "-"
                 suffix = "($bankName)"
-                val lastFour = vaultedPaymentMethod.paymentInstrumentData.last4Digits
+                val lastFour = vaultedPaymentMethod.paymentInstrumentData.accountNumberLast4Digits
                 if (lastFour != null) {
                     suffix += " ••••$lastFour"
                 }
@@ -328,7 +312,7 @@ class HeadlessVaultManagerFragment : Fragment() {
                 )
                 putStringArrayList(
                     MerchantResultFragment.INVOKED_CALLBACKS_KEY,
-                    callbacks
+                    ArrayList(callbacks)
                 )
                 putString(
                     MerchantResultFragment.PAYMENT_RESPONSE_KEY,

@@ -6,8 +6,48 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
 
-include ':primer-sdk-android'
+
+include ':drop-in'
 include ':example'
 
 rootProject.name = "Primer"
+include ':arch-core'
+include ':logging'
+include ':analytics'
+include ':bancontact-card'
+include ':configuration'
+include ':payment-methods-core'
+include ':web-redirect'
+include ':api-shared'
+include ':payments-core'
+include ':errors-core'
+include ':google-pay'
+include ':nol-pay'
+include ':ipay88'
+include ':klarna'
+include ':phone-metadata'
+include ':client-session-actions'
+include ':payment-methods-core-ui'
+include ':client-token-core'
+include ':paypal'
+include ':threeds'
+include ':headless-core'
+include ':headless-vault-manager'
+include ':payment-card'
+include ':payment-card-shared'
+include ':processor-3ds'
+include ':generic-off-session'
+include ':stripe-ach'
+include ':banks-component'
+include ':web-redirect-shared'
+include ':custom-tabs'
+include ':primer-sandbox-processor'

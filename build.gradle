@@ -8,11 +8,36 @@ plugins {
     alias libs.plugins.android.library apply false
     alias libs.plugins.kotlin.android apply false
     alias libs.plugins.detekt
-    alias libs.plugins.sonarqube apply false
+    alias libs.plugins.sonarqube
     alias libs.plugins.dexcount
     alias libs.plugins.kover apply false
     alias libs.plugins.ktlint apply false
     alias libs.plugins.junit5 apply false
-    alias libs.plugins.maven.publish
+    alias libs.plugins.maven.publish apply false
     alias libs.plugins.google.secrets apply false
+
+    // todo remove me
+    id 'com.savvasdalkitsis.module-dependency-graph' version '0.10'
 }
+
+subprojects { subproject ->
+    afterEvaluate {
+        def androidLibraryPluginName = 'com.android.library'
+        if (subproject.plugins.hasPlugin(androidLibraryPluginName)) {
+            subproject.apply {
+                from("$rootDir/tooling/publish.gradle")
+            }
+            subproject.apply {
+                from("$rootDir/tooling/coverage/kover.gradle")
+            }
+            subproject.apply {
+                from("$rootDir/tooling/code-analysis/static-analysis.gradle")
+            }
+            subproject.apply {
+                from("$rootDir/tooling/code-analysis/lint.gradle")
+            }
+        }
+    }
+}
+
+apply from: "$rootDir/tooling/code-analysis/sonar.gradle"

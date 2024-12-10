@@ -1,0 +1,73 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.junit5
+    alias libs.plugins.dexcount
+}
+
+apply from: "$rootDir/tooling/android-common.gradle"
+
+android {
+    namespace 'io.primer.android'
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled false
+
+            consumerProguardFiles 'consumer-rules.pro'
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    kotlinOptions {
+        freeCompilerArgs += ['-Xjvm-default=all', '-Xcontext-receivers']
+    }
+}
+
+dependencies {
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlin.coroutines
+    implementation libs.android.ktx
+    implementation libs.android.appcompat
+
+    implementation libs.android.material
+    implementation libs.android.constraintlayout
+
+    implementation libs.android.fragment
+
+    implementation libs.android.lifecycle.livedata.ktx
+    implementation libs.android.lifecycle.runtime.ktx
+    implementation libs.android.lifecycle.viewmodel.state
+    implementation libs.android.lifecycle.viewmodel.ktx
+
+    api project(':headless-core')
+    implementation project(':headless-vault-manager')
+    implementation project(':primer-sandbox-processor')
+}
+
+repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+}
+
+subprojects {
+    tasks.withType(Javadoc).all { enabled = false }
+}
+
+dexcount {
+    format = com.getkeepsafe.dexcount.OutputFormat.JSON
+    includeClasses = false
+    orderByMethodCount = true
+    maxTreeDepth = 5
+}

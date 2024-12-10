@@ -9,10 +9,9 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.PrimerHeadlessUniversalCheckoutNolPayManager
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayBinding

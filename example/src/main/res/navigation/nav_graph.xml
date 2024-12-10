@@ -108,7 +108,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
         <action
-            android:id="@+id/action_FirstFragment_to_ThirdFragment"
+            android:id="@+id/action_FirstFragment_to_HeadlessComponentsFragment"
             app:destination="@id/HeadlessComponentsFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
@@ -207,7 +207,6 @@
         <action
             android:id="@+id/action_AdyenBankSelectionFragment_to_HeadlessFragment"
             app:destination="@id/HeadlessComponentsFragment"
-            app:launchSingleTop="true"
             app:popUpTo="@id/HeadlessComponentsFragment"
             app:popUpToInclusive="false" />
         <argument

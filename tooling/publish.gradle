@@ -1,0 +1,21 @@
+apply plugin: "com.vanniktech.maven.publish"
+
+def excludedTasks = Arrays.asList("javaSourcesJar", "javaDocReleaseGeneration")
+tasks.configureEach { task ->
+    if (excludedTasks.stream().any { task.name.contains(it) }) {
+        task.enabled = false
+    }
+}
+
+mavenPublishing {
+    final version = project.findProperty("VERSION_NAME") as String
+    final groupId = project.findProperty("GROUP") as String
+    final artifactId = project.findProperty("POM_ARTIFACT_ID")
+    final artifactDescription = project.findProperty("POM_DESCRIPTION")
+
+    coordinates(groupId, artifactId, version)
+
+    pom {
+        description.set(artifactDescription)
+    }
+}

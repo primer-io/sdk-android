@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name="io.primer.android.threeds.ui.ThreeDsActivity"
+            android:exported="true"
+            android:label=""
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" />
+    </application>
+</manifest>

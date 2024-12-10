@@ -1,0 +1,64 @@
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+android {
+    compileSdk 34
+    buildToolsVersion "34.0.0"
+
+    defaultConfig {
+        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
+        minSdkVersion 21
+        targetSdkVersion 34
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+
+    buildTypes.forEach {
+        it.buildConfigField("String", "SDK_VERSION_STRING", "\"${project.findProperty("VERSION_NAME")}\"")
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = projectJvmTarget
+        targetCompatibility = projectJvmTarget
+    }
+
+    kotlinOptions {
+        jvmTarget = projectJvmTarget.toString()
+    }
+
+    testOptions {
+        execution = 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        unitTests.all {
+            useJUnitPlatform()
+        }
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    testRuntimeOnly(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+
+    testImplementation(libs.mockk) {
+        exclude group: "org.slf4j", module: "slf4j-log4j12"
+    }
+
+    testImplementation libs.arch.core
+
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.livedata.testing)
+    testImplementation(libs.json)
+
+    androidTestImplementation(libs.mockk.android)
+    androidTestRuntimeOnly(libs.junit.test.runner)
+}

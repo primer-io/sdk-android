@@ -11,12 +11,17 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.sample.databinding.FragmentSettingsBinding
 import io.primer.sample.datamodels.PrimerEnv
+import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.utils.HideKeyboardFocusChangeListener
 import io.primer.sample.utils.MoneyTextWatcher
+import io.primer.sample.utils.requireApplication
+import io.primer.sample.viewmodels.HeadlessManagerViewModel
+import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
 import io.primer.sample.viewmodels.SettingsViewModel
 
@@ -27,6 +32,16 @@ class MerchantSettingsFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
     private val settingsViewModel: SettingsViewModel by activityViewModels()
+    private lateinit var headlessManagerViewModel: HeadlessManagerViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        headlessManagerViewModel = ViewModelProvider(
+            requireActivity(),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
+        )[HeadlessManagerViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +64,7 @@ class MerchantSettingsFragment : Fragment() {
         configureCVVRecaptureViews()
         configureEnvSetup()
         configureNextButton()
+        configureCheckoutVaultingDropDown()
         configureEnvDropDown()
 
         viewModel.canLaunchPrimer.observe(viewLifecycleOwner) { canLaunch ->
@@ -65,6 +81,7 @@ class MerchantSettingsFragment : Fragment() {
                 PrimerEnv.Dev -> binding.dropDownEnvironment.setSelection(ENV_DEV_ID)
                 PrimerEnv.Staging -> binding.dropDownEnvironment.setSelection(ENV_STAGING_ID)
                 PrimerEnv.Production -> binding.dropDownEnvironment.setSelection(ENV_PROD_ID)
+                PrimerEnv.SandboxE2ETest -> binding.dropDownEnvironment.setSelection(ENV_SANDBOX_E2E_TEST_ID)
             }
         }
         viewModel.apiKeyLiveData.observe(viewLifecycleOwner) { apiKey ->
@@ -76,6 +93,38 @@ class MerchantSettingsFragment : Fragment() {
                 flow == MainViewModel.SelectedFlow.CLIENT_TOKEN
         }
     }
+
+    private fun configureCheckoutVaultingDropDown() {
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.checkout_vaulting_type,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.dropDownCheckoutVaultingType.adapter = adapter
+        }
+        binding.dropDownCheckoutVaultingType.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    when (position) {
+                        CHECKOUT_NO_VAULTING -> {
+                            viewModel.setVaultOnSuccess(false)
+                            viewModel.setVaultOnAgreement(false)
+                        }
+                        CHECKOUT_VAULT_ON_AGREEMENT -> viewModel.setVaultOnAgreement(true)
+                        CHECKOUT_VAULT_ON_SUCCESS -> viewModel.setVaultOnSuccess(true)
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            }
+    }
+
 
     private fun configureEnvDropDown() {
         ArrayAdapter.createFromResource(
@@ -99,6 +148,7 @@ class MerchantSettingsFragment : Fragment() {
                         ENV_DEV_ID -> viewModel.setCurrentEnv(PrimerEnv.Dev)
                         ENV_STAGING_ID -> viewModel.setCurrentEnv(PrimerEnv.Staging)
                         ENV_PROD_ID -> viewModel.setCurrentEnv(PrimerEnv.Production)
+                        ENV_SANDBOX_E2E_TEST_ID -> viewModel.setCurrentEnv(PrimerEnv.SandboxE2ETest)
                     }
                 }
 
@@ -203,12 +253,15 @@ class MerchantSettingsFragment : Fragment() {
 
     private fun configureNextButton() {
         binding.vaultManagerButton.setOnClickListener {
+            headlessManagerViewModel.callbacks.clear()
             findNavController().navigate(R.id.action_FirstFragment_to_VaultManagerFragment)
         }
         binding.headlessCheckoutButton.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment)
+            headlessManagerViewModel.callbacks.clear()
+            findNavController().navigate(R.id.action_FirstFragment_to_HeadlessComponentsFragment)
         }
         binding.universalCheckoutButton.setOnClickListener {
+            headlessManagerViewModel.callbacks.clear()
             findNavController().navigate(R.id.action_MerchantSettingsFragment_to_MerchantCheckoutFragment)
         }
     }
@@ -225,5 +278,10 @@ class MerchantSettingsFragment : Fragment() {
         private const val ENV_DEV_ID = 1
         private const val ENV_STAGING_ID = 2
         private const val ENV_PROD_ID = 3
+        private const val ENV_SANDBOX_E2E_TEST_ID = 4
+
+        private const val CHECKOUT_NO_VAULTING = 0
+        private const val CHECKOUT_VAULT_ON_AGREEMENT = 1
+        private const val CHECKOUT_VAULT_ON_SUCCESS = 2
     }
 }

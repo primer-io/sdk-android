@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
-import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
-import io.primer.android.components.manager.nolPay.nfc.component.NolPayNfcComponent
+import io.primer.android.nolpay.api.manager.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.nfc.component.NolPayNfcComponent
+import io.primer.android.nolpay.api.manager.payment.component.NolPayPaymentComponent
+import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentCollectableData
 import io.primer.sample.databinding.FragmentNolCardLinkScanTagBinding
 import io.primer.sample.viewmodels.MainViewModel
 

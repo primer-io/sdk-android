@@ -24,7 +24,7 @@ class MerchantResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.status.text =
-            PaymentStatus.values()[requireArguments().getInt(PAYMENT_STATUS_KEY)].name
+            PaymentStatus.entries[requireArguments().getInt(PAYMENT_STATUS_KEY)].name
         val callbacks = requireArguments().getStringArrayList(INVOKED_CALLBACKS_KEY)
         binding.logs.text = JSONArray(callbacks).toString()
         binding.paymentResponse.text = requireArguments().getString(PAYMENT_RESPONSE_KEY)

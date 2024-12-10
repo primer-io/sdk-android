@@ -1,0 +1,31 @@
+apply plugin: 'org.jetbrains.kotlinx.kover'
+
+kover {
+    reports {
+        filters {
+            total {
+                excludes {
+                    // excluding DI, widgets, views related packages
+                    packages("*.di*", "*.widgets*, *.views*")
+                    packages("*.implementation.configuration.domain*")
+                    packages("*.implementation.tokenization.data.repository*")
+                    packages("*.data.datasource*")
+                    packages("*.implementation.tokenization.domain*")
+                    classes(
+                            // excluding UI related classes
+                            "*Fragment*",
+                            "*Activity*",
+                            // excluding BuildConfig generated classes
+                            "*BuildConfig*",
+                            // exclude provider factories
+                            "*ComposerProviderFactory*",
+                            // exclude payment method modules
+                            "*Module*",
+                            // exclude ViewModel factories
+                            "*ViewModelFactory*",
+                    )
+                }
+            }
+        }
+    }
+}

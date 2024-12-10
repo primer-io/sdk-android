@@ -13,16 +13,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import io.primer.android.components.manager.ach.PrimerHeadlessUniversalCheckoutAchManager
-import io.primer.android.components.manager.core.composable.PrimerCollectableData
+import io.primer.android.components.ach.PrimerHeadlessUniversalCheckoutAchManager
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
-import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.StripeAchUserDetailsComponent
-import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.AchUserDetailsCollectableData
-import io.primer.android.components.presentation.paymentMethods.nativeUi.stripe.ach.composable.AchUserDetailsStep
+import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
+import io.primer.android.stripe.ach.api.component.StripeAchUserDetailsComponent
+import io.primer.android.stripe.ach.api.composable.AchUserDetailsCollectableData
+import io.primer.android.stripe.ach.api.composable.AchUserDetailsStep
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentStripeAchBinding
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.utils.hideKeyboard
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.UiState
@@ -35,7 +36,7 @@ class StripeAchFragment : Fragment() {
     private val headlessManagerViewModel by lazy {
         ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
         )[HeadlessManagerViewModel::class.java]
     }
 

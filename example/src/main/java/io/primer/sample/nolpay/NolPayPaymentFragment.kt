@@ -5,24 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentCollectableData
-import io.primer.android.components.manager.nolPay.payment.component.NolPayPaymentComponent
-import io.primer.android.components.manager.nolPay.payment.composable.NolPayPaymentStep
-import io.primer.android.components.manager.nolPay.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.PrimerHeadlessUniversalCheckoutNolPayManager
+import io.primer.android.nolpay.api.manager.payment.component.NolPayPaymentComponent
+import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentCollectableData
+import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentStep
 import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayPaymentBinding
 import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
-import io.primer.sample.viewmodels.MainViewModel
 import io.primer.sample.viewmodels.UiState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -46,7 +45,7 @@ class NolPayPaymentFragment : Fragment() {
 
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
         )[HeadlessManagerViewModel::class.java]
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {

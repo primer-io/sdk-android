@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name="io.primer.android.webRedirectShared.implementation.composer.ui.activity.WebRedirectActivity"
+            android:exported="true"
+            android:label=""
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.WebView">
+            <intent-filter>
+                <data
+                    android:host="requestor.${applicationId}"
+                    android:pathPrefix="/async"
+                    android:scheme="primer" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

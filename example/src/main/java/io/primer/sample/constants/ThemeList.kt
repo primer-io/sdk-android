@@ -20,6 +20,7 @@ class ThemeList {
 
         private val darkTheme = PrimerTheme.build(
             isDarkMode = true,
+            defaultText = TextThemeData(defaultColor = R.color.white),
             primaryColor = R.color.apple_dark_6,
             backgroundColor = R.color.apple_dark_4,
             disabledColor = R.color.apple_dark_3,
@@ -31,7 +32,7 @@ class ThemeList {
                     defaultColor = R.color.apple_dark_1,
                 ),
                 text = TextThemeData(
-                    defaultColor = R.color.apple_dark_5,
+                    defaultColor = R.color.white,
                     fontsize = R.dimen.primer_title_fontsize
                 )
             ),

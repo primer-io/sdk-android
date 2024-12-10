@@ -1,0 +1,155 @@
+sonarqube {
+    properties {
+        property 'sonar.projectKey', 'primer-io_primer-sdk-android'
+        property 'sonar.organization', 'primerio'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.java.coveragePlugin', 'kover'
+        property 'sonar.language', 'kotlin'
+        property 'sonar.sources', 'src/main/'
+        property 'sonar.tests', 'src/test/'
+        property 'sonar.exclusions', '**/example/**/*,'
+        property 'sonar.coverage.exclusions', '**/example/**/*,'
+    }
+}
+
+subprojects { subproject ->
+    afterEvaluate {
+        def androidLibraryPluginName = 'com.android.library'
+        if (subproject.plugins.hasPlugin(androidLibraryPluginName)) {
+            apply plugin: 'org.sonarqube'
+
+            def sonarExclusions = [
+                    '**/di/**/*',
+                    '**/analytics/**/*',
+                    '**/build/**',
+                    '**/generated/**',
+                    '**/implementation/configuration/domain/*',
+                    '**/implementation/tokenization/data/repository/*',
+                    '**/data/datasource/*',
+                    '**/implementation/tokenization/domain/*',
+                    '**/*.json',
+                    '**/*Test*.*'
+            ]
+
+            def coverageExclusions = [
+                    '**/di/**/*',
+                    '**/analytics/**/*',
+                    '**/widgets/**/*',
+                    '**/views/**/*',
+                    '**/implementation/configuration/domain/*',
+                    '**/implementation/tokenization/data/repository/*',
+                    '**/data/datasource/*',
+                    '**/implementation/tokenization/domain/*',
+                    '**/*Fragment.*',
+                    '**/*Fragment$*.*',
+                    '**/*Activity.*',
+                    '**/*Activity$*.*',
+                    '**/BuildConfig.*',
+                    '**/*Module.*',
+                    '**/*ComposerProviderFactory.*',
+                    '**/*ViewModelFactory.*',
+                    '**/*ViewHolder$*.*',
+                    '**/*ViewHolder.*',
+                    '**/*Adapter$*.*',
+                    '**/*Adapter.*',
+                    '**/*Behavior.*',
+                    '**/*Dialog.*',
+                    // view bindings
+                    '**/databinding/**',
+                    '**/binding/**',
+                    '**/*Test*.*',
+            ]
+
+            sonarqube {
+                properties {
+                    property 'sonar.coverage.jacoco.xmlReportPaths', "${project.buildDir}/reports/kover/reportRelease.xml"
+                    property 'sonar.exclusions', sonarExclusions.join(', ')
+                    property 'sonar.coverage.exclusions', coverageExclusions.join(', ')
+                }
+            }
+        }
+    }
+}
+sonarqube {
+    properties {
+        property 'sonar.projectKey', 'primer-io_primer-sdk-android'
+        property 'sonar.organization', 'primerio'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.java.coveragePlugin', 'kover'
+        property 'sonar.language', 'kotlin'
+        property 'sonar.exclusions', '**/example/**/*,'
+        property 'sonar.coverage.exclusions', '**/example/**/*,'
+    }
+}
+
+subprojects { subproject ->
+    afterEvaluate {
+        def androidLibraryPluginName = 'com.android.library'
+        if (subproject.plugins.hasPlugin(androidLibraryPluginName)) {
+            apply plugin: 'org.sonarqube'
+
+            def sonarExclusions = [
+                    'src/test/**/*',
+                    '**/di/**/*',
+                    '**/analytics/**/*',
+                    '**/build/**',
+                    '**/generated/**',
+                    '**/implementation/configuration/domain/*',
+                    '**/implementation/tokenization/data/repository/*',
+                    '**/data/datasource/*',
+                    '**/implementation/tokenization/domain/*',
+                    '**/*.json'
+            ]
+
+            def coverageExclusions = [
+                    '**/di/**/*',
+                    '**/analytics/**/*',
+                    '**/widgets/**/*',
+                    '**/views/**/*',
+                    '**/implementation/configuration/domain/*',
+                    '**/implementation/tokenization/data/repository/*',
+                    '**/data/datasource/*',
+                    '**/implementation/tokenization/domain/*',
+                    '**/*Fragment.*',
+                    '**/*Fragment$*.*',
+                    '**/*Activity.*',
+                    '**/*Activity$*.*',
+                    '**/BuildConfig.*',
+                    '**/*Module.*',
+                    '**/*ComposerProviderFactory.*',
+                    '**/*ViewModelFactory.*',
+                    '**/*ViewHolder$*.*',
+                    '**/*ViewHolder.*',
+                    '**/*Adapter$*.*',
+                    '**/*Adapter.*',
+                    '**/*Behavior.*',
+                    '**/*Dialog.*',
+                    // view bindings
+                    '**/databinding/**',
+                    '**/binding/**',
+                    '**/*Test*.*',
+                    // Res and Assets
+                    "**/res/**/*.*",
+                    "**/assets/**/*.*",
+                    // Auto-Generated
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/*Manifest.*',
+                    'android/**/*.*',
+                    'androidx/**/*.*',
+            ]
+
+            sonarqube {
+                properties {
+                    property 'sonar.sources', 'src/'
+                    property 'sonar.tests', 'src/'
+                    property 'sonar.coverage.jacoco.xmlReportPaths', "${project.buildDir}/reports/kover/reportRelease.xml"
+                    property 'sonar.exclusions', sonarExclusions.join(', ')
+                    property 'sonar.coverage.exclusions', coverageExclusions.join(', ')
+                    property 'sonar.test.inclusions', 'src/test/**/*'
+                }
+            }
+        }
+    }
+}

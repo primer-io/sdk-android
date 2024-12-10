@@ -1,3 +1,0 @@
-package io.primer.android.components.domain.payments.vault
-
-interface PrimerVaultedPaymentMethodAdditionalData

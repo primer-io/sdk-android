@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatRadioButton
@@ -29,32 +28,30 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.GsonBuilder
+import io.primer.android.PrimerRetailerData
+import io.primer.android.RetailOutletsList
+import io.primer.android.bancontact.PrimerBancontactCardData
+import io.primer.android.bancontact.implementation.metadata.domain.model.PrimerBancontactCardMetadata
 import io.primer.android.components.SdkUninitializedException
-import io.primer.android.components.domain.core.models.PrimerRawData
-import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardData
-import io.primer.android.components.domain.core.models.bancontact.PrimerBancontactCardMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
-import io.primer.android.components.domain.core.models.otp.PrimerOtpCodeData
-import io.primer.android.components.domain.core.models.phoneNumber.PrimerPhoneNumberData
-import io.primer.android.components.domain.core.models.retailOutlet.PrimerRetailerData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
-import io.primer.android.data.payments.configure.PrimerInitializationData
-import io.primer.android.data.payments.configure.retailOutlets.RetailOutletsList
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
-import io.primer.android.domain.payments.additionalInfo.MultibancoCheckoutAdditionalInfo
-import io.primer.android.domain.payments.additionalInfo.PromptPayCheckoutAdditionalInfo
-import io.primer.android.domain.payments.additionalInfo.XenditCheckoutVoucherAdditionalInfo
-import io.primer.android.ui.CardNetwork
-import io.primer.sample.constants.PrimerHeadlessCallbacks
+import io.primer.android.otp.PrimerOtpData
+import io.primer.android.paymentmethods.PrimerInitializationData
+import io.primer.android.paymentmethods.PrimerRawData
+import io.primer.android.phoneNumber.PrimerPhoneNumberData
+import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
+import io.primer.android.vouchers.multibanco.MultibancoCheckoutAdditionalInfo
+import io.primer.android.vouchers.retailOutlets.XenditCheckoutVoucherAdditionalInfo
 import io.primer.sample.databinding.CardNumberInputViewBinding
 import io.primer.sample.databinding.FragmentHeadlessBinding
 import io.primer.sample.databinding.InputViewBinding
@@ -62,6 +59,7 @@ import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.repositories.AppApiKeyRepository
+import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
@@ -85,7 +83,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     private var _cardNumberInputBinding: CardNumberInputViewBinding? = null
     private val cardNumberInputBinding get() = requireNotNull(_cardNumberInputBinding)
 
-    private val callbacks: ArrayList<String> = arrayListOf()
+    private val callbacks get() = headlessManagerViewModel.callbacks
     private var checkoutDataWithError: CheckoutDataWithError? = null
 
     private val rawDataFlow = MutableStateFlow<PrimerRawData?>(null)
@@ -120,6 +118,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
 
         binding.nextButton.setOnClickListener {
             rawDataManager.submit()
+            binding.nextButton.isEnabled = false
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -145,7 +144,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     ) {
         binding.pmView.children.iterator().forEach { parent ->
             (parent as ViewGroup).children.iterator().forEach {
-                PrimerInputElementType.values().forEach { type ->
+                PrimerInputElementType.entries.forEach { type ->
                     it.findViewWithTag<TextInputLayout>(type)?.error = null
                 }
             }
@@ -230,7 +229,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
     private fun initViewModel() {
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository(), application = requireApplication()),
         )[HeadlessManagerViewModel::class.java]
     }
 
@@ -242,32 +241,30 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     is UiState.InitializingHeadless -> showLoading("Initializing Headless.")
                     is UiState.InitializedHeadless -> hideLoading()
                     is UiState.TokenizationStarted -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZATION_STARTED)
                         showLoading("Tokenization started ${state.paymentMethodType}")
                     }
 
                     is UiState.PreparationStarted -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_PREPARATION_STARTED)
                         showLoading("Preparation started ${state.paymentMethodType}")
                     }
 
                     is UiState.PaymentMethodShowed -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_PAYMENT_METHOD_SHOWED)
                         showLoading("Presented ${state.paymentMethodType}")
                     }
 
                     is UiState.TokenizationSuccessReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_TOKENIZE_SUCCESS)
                         if (state.paymentMethodTokenData.isVaulted) {
                             hideLoading()
                             navigateToResultScreen()
                         } else {
                             showLoading("Tokenization success ${state.paymentMethodTokenData}. Creating payment.")
                             headlessManagerViewModel.createPayment(
-                                state.paymentMethodTokenData,
-                                requireNotNull(viewModel.environment.value),
-                                viewModel.descriptor.value.orEmpty(),
-                                state.decisionHandler
+                                paymentMethod = state.paymentMethodTokenData,
+                                environment = requireNotNull(viewModel.environment.value),
+                                descriptor = viewModel.descriptor.value.orEmpty(),
+                                vaultOnSuccess = viewModel.vaultOnSuccess,
+                                vaultOnAgreement = viewModel.vaultOnAgreement,
+                                completion = state.decisionHandler
                             )
                         }
                     }
@@ -299,9 +296,9 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     is UiState.AdditionalInfoReceived -> {
                         hideLoading()
                         when (state.additionalInfo) {
-                            is PromptPayCheckoutAdditionalInfo -> {
+                            is QrCodeCheckoutAdditionalInfo -> {
                                 AlertDialog.Builder(context)
-                                    .setMessage("PromptPay: $state.additionalInfo")
+                                    .setMessage("QrCode: ${state.additionalInfo}")
                                     .setPositiveButton("OK") { d, _ -> d.dismiss() }.show()
                                 Log.d(
                                     TAG,
@@ -318,15 +315,14 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     }
 
                     is UiState.BeforePaymentCreateReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
+                        /* no-op */
                     }
 
                     is UiState.BeforeClientSessionUpdateReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_CLIENT_SESSION_UPDATED)
+                        /* no-op */
                     }
 
                     is UiState.ClientSessionUpdatedReceived -> {
-                        callbacks.add(PrimerHeadlessCallbacks.ON_CLIENT_SESSION_UPDATED)
                         val format = NumberFormat.getCurrencyInstance()
                         val clientSession = state.clientSession
                         val currency =
@@ -347,7 +343,6 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     is UiState.ShowError -> {
                         checkoutDataWithError =
                             CheckoutDataWithError(state.payment, state.error.toMappedError())
-                        callbacks.add(PrimerHeadlessCallbacks.ON_FAILED_WITH_CHECKOUT_DATA)
                         hideLoading()
                         navigateToResultScreen()
                     }
@@ -355,7 +350,6 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                     is UiState.CheckoutCompleted -> {
                         checkoutDataWithError =
                             CheckoutDataWithError(state.checkoutData.payment)
-                        callbacks.add(PrimerHeadlessCallbacks.ON_CHECKOUT_COMPLETED)
                         hideLoading()
                         navigateToResultScreen()
                     }
@@ -480,7 +474,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 ).editText?.text.toString().trim(),
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.CARDHOLDER_NAME
-                ).editText?.text.toString().trim(),
+                )?.editText?.text.toString().trim(),
                 (cardNumberInputBinding.cardNetworksSelectionView.let { cardNetworkBinding ->
                     cardNetworkBinding.children.firstOrNull { child ->
                         child.id == cardNetworkBinding.checkedRadioButtonId
@@ -512,7 +506,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 ).editText?.text.toString()
             )
 
-            "ADYEN_BLIK" -> PrimerOtpCodeData(
+            "ADYEN_BLIK" -> PrimerOtpData(
                 binding.pmView.findViewWithTag<TextInputLayout>(
                     PrimerInputElementType.OTP_CODE
                 ).editText?.text.toString()
@@ -631,7 +625,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 )
                 putStringArrayList(
                     MerchantResultFragment.INVOKED_CALLBACKS_KEY,
-                    callbacks
+                    ArrayList(callbacks)
                 )
                 putString(
                     MerchantResultFragment.PAYMENT_RESPONSE_KEY,
