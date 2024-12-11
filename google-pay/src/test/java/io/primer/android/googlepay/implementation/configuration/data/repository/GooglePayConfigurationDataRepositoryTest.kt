@@ -14,6 +14,7 @@ import io.primer.android.configuration.data.model.OrderDataResponse
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.configuration.data.model.PaymentMethodRemoteConfigOptions
 import io.primer.android.configuration.domain.model.CheckoutModule
+import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.errors.data.exception.IllegalValueException
 import io.primer.android.googlepay.GooglePayFacade
 import io.primer.android.googlepay.implementation.configuration.domain.model.GooglePayConfiguration
@@ -78,9 +79,9 @@ internal class GooglePayConfigurationDataRepositoryTest {
         every { settings.paymentMethodOptions.googlePayOptions.merchantName } returns "Test Merchant"
         every { settings.paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
         every { settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
-        // val sap = mockk<PrimerGoogleShippingAddressParameters>()
-        // TODO re-enable after this is exposed publicly
-        // every { settings.paymentMethodOptions.googlePayOptions.shippingAddressParameters } returns sap
+        val shippingAddressParameters = mockk<PrimerGoogleShippingAddressParameters>()
+        every { settings.paymentMethodOptions.googlePayOptions.shippingAddressParameters } returns
+            shippingAddressParameters
 
         mockkObject(PaymentUtils)
         every { PaymentUtils.minorToAmount(any<Int>(), any<Currency>()) } returns 10.00
@@ -101,7 +102,7 @@ internal class GooglePayConfigurationDataRepositoryTest {
             billingAddressRequired = true,
             existingPaymentMethodRequired = false,
             shippingOptions = shippingOptions,
-            shippingAddressParameters = null,
+            shippingAddressParameters = shippingAddressParameters,
             requireShippingMethod = false,
             emailAddressRequired = false
         )
@@ -151,9 +152,9 @@ internal class GooglePayConfigurationDataRepositoryTest {
         every { settings.paymentMethodOptions.googlePayOptions.merchantName } returns "Test Merchant"
         every { settings.paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
         every { settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
-        // val sap = mockk<PrimerGoogleShippingAddressParameters>()
-        // TODO re-enable after this is exposed publicly
-        // every { settings.paymentMethodOptions.googlePayOptions.shippingAddressParameters } returns sap
+        val shippingAddressParameters = mockk<PrimerGoogleShippingAddressParameters>()
+        every { settings.paymentMethodOptions.googlePayOptions.shippingAddressParameters } returns
+            shippingAddressParameters
 
         mockkObject(PaymentUtils)
         every { PaymentUtils.minorToAmount(any<Int>(), any<Currency>()) } returns 10.00
@@ -174,7 +175,7 @@ internal class GooglePayConfigurationDataRepositoryTest {
             billingAddressRequired = true,
             existingPaymentMethodRequired = false,
             shippingOptions = shippingOptions,
-            shippingAddressParameters = null,
+            shippingAddressParameters = shippingAddressParameters,
             requireShippingMethod = false,
             emailAddressRequired = false
         )
