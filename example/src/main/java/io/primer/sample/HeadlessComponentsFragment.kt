@@ -355,14 +355,14 @@ class HeadlessComponentsFragment : Fragment() {
                     owner = LocalViewModelStoreOwner.current ?: error("...")
                 )
 
-                Column {
+                Column(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier
                             .animateContentSize()
                             .fillMaxWidth()
                     ) {
                         PaymentFlowContainer("sss") {
-                            Column {
+                            Column() {
                                 Text(text = "Flaviu")
                                 TextField(value = "test", onValueChange = {})
                                 PaymentMethods(
@@ -388,17 +388,31 @@ class HeadlessComponentsFragment : Fragment() {
 
                                 paymentState.selectedMethod?.let {
                                     ModalBottomSheet(onDismissRequest = { /*TODO*/ }) {
-                                        Text(text = "Please select to pay with Klarna")
+                                        var dynamicPaymentState by
+                                            remember { mutableStateOf<PaymentFlowScopeY.PaymentMethodScope?>(null) }
+
+                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Rendered) {
+                                            Text(text = "Please select to pay with Klarna")
+                                        }
+
                                         DynamicPaymentMethodUI(
                                             modifier = Modifier.fillMaxWidth(),
                                             method = it,
-                                            onStateChanged = { state ->
-                                                when(state) {
-                                                    PaymentFlowScopeY.PaymentMethodScope.Initializing -> CircularProgressIndicator()
-                                                    PaymentFlowScopeY.PaymentMethodScope.Rendered -> {}
-                                                    is PaymentFlowScopeY.PaymentMethodScope.ValidationState -> TODO()
-                                                }
+                                            onStateChanged = { state, validationState ->
+                                                dynamicPaymentState = state
                                             })
+
+                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Initializing) {
+                                            CircularProgressIndicator()
+                                        }
+
+                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Rendered) {
+                                            Button(onClick = {
+
+                                            }) {
+                                                Text(text = "Let me tell you how to pay")
+                                            }
+                                        }
                                     }
                                 }
                             }

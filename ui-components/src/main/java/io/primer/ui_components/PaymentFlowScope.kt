@@ -76,14 +76,16 @@ interface PaymentFlowScopeY {
     sealed interface PaymentMethodScope {
         data object Initializing : PaymentMethodScope
         data object Rendered : PaymentMethodScope
-        data class ValidationState(val isValid: Boolean) : PaymentMethodScope
     }
+
+    data class ValidationState(val isValid: Boolean)
+
 
     @Composable
     fun DynamicPaymentMethodUI(
         modifier: Modifier,
         method: PrimerHeadlessUniversalCheckoutPaymentMethod,
-        onStateChanged: @Composable (PaymentMethodScope) -> Unit
+        onStateChanged: @Composable (PaymentMethodScope, ValidationState) -> Unit
     )
 
     @Composable
@@ -200,7 +202,7 @@ fun PaymentFlowContainer(
         override fun DynamicPaymentMethodUI(
             modifier: Modifier,
             method: PrimerHeadlessUniversalCheckoutPaymentMethod,
-            onStateChanged: @Composable (PaymentFlowScopeY.PaymentMethodScope) -> Unit
+            onStateChanged: @Composable (PaymentFlowScopeY.PaymentMethodScope, PaymentFlowScopeY.ValidationState) -> Unit
         ) {
             if (paymentState.selectedMethod != null) {
                 PrimerPaymentMethodDynamicComponent(modifier = modifier, viewModel, onStateChanged)

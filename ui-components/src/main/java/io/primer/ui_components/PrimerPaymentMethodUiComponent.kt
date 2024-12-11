@@ -51,7 +51,7 @@ fun PrimerHeadlessUniversalCheckoutPaymentMethod.hasCustomUi() = this.paymentMet
 fun PrimerPaymentMethodDynamicComponent(
     modifier: Modifier = Modifier,
     flowController: PaymentFlowViewModel,
-    onStateChanged: @Composable (PaymentFlowScopeY.PaymentMethodScope) -> Unit
+    onStateChanged: @Composable (PaymentFlowScopeY.PaymentMethodScope, PaymentFlowScopeY.ValidationState) -> Unit
 ) {
 
     val component: KlarnaComponent = PrimerHeadlessUniversalCheckoutKlarnaManager(
@@ -73,14 +73,16 @@ fun PrimerPaymentMethodDynamicComponent(
         println("semirz")
     }
 
-
     Column {
         when (val step = steps) {
             is KlarnaPaymentStep.PaymentSessionAuthorized ->
-                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Initializing)
+                onStateChanged(
+                    PaymentFlowScopeY.PaymentMethodScope.Initializing,
+                    PaymentFlowScopeY.ValidationState(true)
+                )
 
             is KlarnaPaymentStep.PaymentSessionCreated -> {
-                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Rendered)
+                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Rendered, PaymentFlowScopeY.ValidationState(false))
                 RadioGroupExample(
                     options = step.paymentCategories.map { it.name },
                     modifier = modifier
@@ -99,7 +101,7 @@ fun PrimerPaymentMethodDynamicComponent(
 
             KlarnaPaymentStep.PaymentSessionFinalized -> flowController.updateState(false)
             is KlarnaPaymentStep.PaymentViewLoaded -> {
-                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Rendered)
+                onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Rendered, PaymentFlowScopeY.ValidationState(true))
                 RadioGroupExample(options = paymentCategories.map { it.name }, modifier = modifier) { selected ->
                     component.updateCollectedData(
                         KlarnaPaymentCollectableData.PaymentOptions(
@@ -112,7 +114,10 @@ fun PrimerPaymentMethodDynamicComponent(
                 CustomViewInComposable(step.paymentView)
             }
 
-            null -> onStateChanged(PaymentFlowScopeY.PaymentMethodScope.Initializing)
+            null -> onStateChanged(
+                PaymentFlowScopeY.PaymentMethodScope.Initializing,
+                PaymentFlowScopeY.ValidationState(false)
+            )
         }
     }
 }
