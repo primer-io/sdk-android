@@ -55,12 +55,11 @@ internal class GooglePayConfigurationDataRepository(
                 allowedCardAuthMethods = allowedCardAuthMethods,
                 billingAddressRequired = googlePayOptions.captureBillingAddress,
                 existingPaymentMethodRequired =
-                settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired,
+                googlePayOptions.existingPaymentMethodRequired,
                 shippingOptions = shippingOptions,
-                // TODO provide mapping after this is exposed publicly
-                shippingAddressParameters = null,
-                requireShippingMethod = false,
-                emailAddressRequired = false
+                shippingAddressParameters = googlePayOptions.shippingAddressParameters,
+                requireShippingMethod = googlePayOptions.requireShippingMethod,
+                emailAddressRequired = googlePayOptions.emailAddressRequired
             )
         }
 
