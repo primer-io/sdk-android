@@ -12,26 +12,39 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,6 +93,7 @@ import io.primer.ui_components.PaymentEvent
 import io.primer.ui_components.PaymentFlowContainer
 import io.primer.ui_components.PaymentFlowScopeY
 import io.primer.ui_components.PaymentStateX
+import io.primer.ui_components.PrimerCheckout
 import io.primer.ui_components.PrimerPaymentFlowController
 import io.primer.ui_components.PrimerPaymentMethodButtonComponent
 import io.primer.ui_components.PrimerPaymentMethodComponent
@@ -351,82 +365,78 @@ class HeadlessComponentsFragment : Fragment() {
 //                    }
 //                }
 
-                val flowController: PrimerPaymentFlowController = PrimerPaymentFlowController.provideInstance(
-                    owner = LocalViewModelStoreOwner.current ?: error("...")
-                )
-
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Box(
-                        modifier = Modifier
-                            .animateContentSize()
-                            .fillMaxWidth()
-                    ) {
-                        PaymentFlowContainer("sss") {
-                            Column() {
-                                Text(text = "Flaviu")
-                                TextField(value = "test", onValueChange = {})
-                                PaymentMethods(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    parentLayout = { methods, content ->
-                                        LazyRow(modifier = Modifier.fillMaxWidth()) {
-                                            items(methods) { method ->
-                                                content(method)
-                                            }
-                                        }
-                                    },
-                                    paymentMethodContent = { method ->
-                                        Column {
-                                            Row(modifier = Modifier.fillMaxWidth()) {
-                                                RadioButton(
-                                                    selected = false,
-                                                    onClick = { selectPaymentMethod(method) })
-                                                Text(text = method.paymentMethodName.orEmpty())
-                                            }
-                                        }
-                                    })
-
-
-                                paymentState.selectedMethod?.let {
-                                    ModalBottomSheet(onDismissRequest = { /*TODO*/ }) {
-                                        var dynamicPaymentState by
-                                            remember { mutableStateOf<PaymentFlowScopeY.PaymentMethodScope?>(null) }
-
-                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Rendered) {
-                                            Text(text = "Please select to pay with Klarna")
-                                        }
-
-                                        DynamicPaymentMethodUI(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            method = it,
-                                            onStateChanged = { state, validationState ->
-                                                dynamicPaymentState = state
-                                            })
-
-                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Initializing) {
-                                            CircularProgressIndicator()
-                                        }
-
-                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Rendered) {
-                                            Button(onClick = {
-
-                                            }) {
-                                                Text(text = "Let me tell you how to pay")
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (globalState.isLoading) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(Color.Black.copy(alpha = 0.6f))
-                                        .matchParentSize()
-                                        .animateContentSize()
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
+//                Column(modifier = Modifier.fillMaxSize()) {
+//                    Box(
+//                        modifier = Modifier
+//                            .animateContentSize()
+//                            .fillMaxWidth()
+//                    ) {
+//                        PaymentFlowContainer("sss") {
+//                            Column() {
+//                                Text(text = "Flaviu")
+//                                TextField(value = "test", onValueChange = {})
+//                                PaymentMethods(
+//                                    modifier = Modifier.fillMaxWidth(),
+//                                    parentLayout = { methods, content ->
+//                                        LazyRow(modifier = Modifier.fillMaxWidth()) {
+//                                            items(methods) { method ->
+//                                                content(method)
+//                                            }
+//                                        }
+//                                    },
+//                                    paymentMethodContent = { method ->
+//                                        Column {
+//                                            Row(modifier = Modifier.fillMaxWidth()) {
+//                                                RadioButton(
+//                                                    selected = false,
+//                                                    onClick = { selectPaymentMethod(method) })
+//                                                Text(text = method.paymentMethodName.orEmpty())
+//                                            }
+//                                        }
+//                                    })
+//
+//
+//                                paymentState.selectedMethod?.let {
+//                                    ModalBottomSheet(onDismissRequest = { /*TODO*/ }) {
+//                                        var dynamicPaymentState by
+//                                            remember { mutableStateOf<PaymentFlowScopeY.PaymentMethodScope?>(null) }
+//
+//                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Rendered) {
+//                                            Text(text = "Please select to pay with Klarna")
+//                                        }
+//
+//                                        DynamicPaymentMethodUI(
+//                                            modifier = Modifier.fillMaxWidth(),
+//                                            method = it,
+//                                            onStateChanged = { state, validationState ->
+//                                                dynamicPaymentState = state
+//                                            })
+//
+//                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Initializing) {
+//                                            CircularProgressIndicator()
+//                                        }
+//
+//                                        if (dynamicPaymentState is PaymentFlowScopeY.PaymentMethodScope.Rendered) {
+//                                            Button(onClick = {
+//
+//                                            }) {
+//                                                Text(text = "Let me tell you how to pay")
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            if (globalState.isLoading) {
+//                                Box(
+//                                    modifier = Modifier
+//                                        .background(Color.Black.copy(alpha = 0.6f))
+//                                        .matchParentSize()
+//                                        .animateContentSize()
+//                                ) {
+//                                    CircularProgressIndicator()
+//                                }
+//                            }
 
 
 //                    PaymentMethods(modifier = Modifier
@@ -459,6 +469,97 @@ class HeadlessComponentsFragment : Fragment() {
 //                            }
 //                        }
 //                    })
+                    //    }
+                   // }
+               // }
+
+
+                TabLayoutCheckout()
+            }
+        }
+    }
+
+    @Composable
+    fun TabLayoutCheckout() {
+        PrimerCheckout(
+            clientToken = "token",
+            onPaymentCompleted = { /* Handle completion */ }
+        ) {  // This is a PaymentFlowScope receiver
+            val methods by paymentMethods.collectAsState()
+            var selectedTabIndex by remember { mutableStateOf(0) }
+            val selectedMethod by selectedMethod.collectAsState()
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Custom tabs
+                ScrollableTabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.primary
+                ) {
+                    methods.filter { it.paymentMethodType != "PAYPAL" }.forEachIndexed { index, method ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = {
+                                selectedTabIndex = index
+                                selectPaymentMethod(method)
+                            }
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                PrimerPaymentMethodButtonComponent(paymentMethod = method) {
+
+                                }
+                                Spacer(Modifier.height(8.dp))
+                                Text(method.paymentMethodName.orEmpty())
+                            }
+                        }
+                    }
+                }
+
+                // Content below tabs
+                selectedMethod?.let { method ->
+                    PaymentMethodContent(method) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+
+                                val coroutine = rememberCoroutineScope()
+                                // Payment form
+                                
+                                var input = remember {
+                                    mutableStateOf("")
+                                }
+                                Text(text = "mate")
+                                DefaultContent()
+
+                                Spacer(Modifier.height(16.dp))
+
+                                // Payment button
+                                val contentState by state.collectAsState()
+                                Button(
+                                    onClick = {
+                                        coroutine.launch { submit() }
+                                    },
+                                    enabled = contentState.validationState.isValid,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                    )
+                                ) {
+                                    
+                                    Text("Pay with ${method.paymentMethodName.orEmpty()}")
+                                }
+                            }
                         }
                     }
                 }

@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+apply("$rootDir/tooling/android-common.gradle")
+
+
 android {
     namespace = "io.primer.ui_components"
     compileSdk = 34
@@ -21,13 +24,6 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 

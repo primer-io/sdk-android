@@ -205,7 +205,7 @@ fun PaymentFlowContainer(
             onStateChanged: @Composable (PaymentFlowScopeY.PaymentMethodScope, PaymentFlowScopeY.ValidationState) -> Unit
         ) {
             if (paymentState.selectedMethod != null) {
-                PrimerPaymentMethodDynamicComponent(modifier = modifier, viewModel, onStateChanged)
+              //  PrimerPaymentMethodDynamicComponent(modifier = modifier, viewModel, onStateChanged)
             }
         }
 
