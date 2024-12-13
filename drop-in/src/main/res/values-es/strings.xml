@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">El nombre es obligatorio</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Nombre</string>
+    <string name="form_error_card_holder_name_length">El nombre debe tener entre 2 y 45 caracteres</string>
     <string name="form_error_card_type_not_supported">Tipo de tarjeta no admitido</string>
     <string name="form_error_invalid">%1$s no es válido</string>
     <string name="form_error_required">%1$s es obligatorio</string>

@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Απαιτείται όνομα</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Όνομα</string>
+    <string name="form_error_card_holder_name_length">Το όνομα πρέπει να είναι μεταξύ 2 και 45 χαρακτήρες</string>
     <string name="form_error_card_type_not_supported">Μη υποστηριζόμενος τύπος κάρτας</string>
     <string name="form_error_invalid">Το %1$s δεν είναι έγκυρο</string>
     <string name="form_error_required">Το %1$s απαιτείται</string>

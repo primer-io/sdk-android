@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">이름은 필수입니다</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">이름</string>
+    <string name="form_error_card_holder_name_length">이름은 2~45자 사이여야 합니다</string>
     <string name="form_error_card_type_not_supported">지원되지 않는 카드 종류입니다</string>
     <string name="form_error_invalid">%1$s은(는) 유효하지 않습니다</string>
     <string name="form_error_required">%1$s은(는) 필수입니다</string>

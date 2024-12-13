@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">שם פרטי נדרש</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">שם פרטי</string>
+    <string name="form_error_card_holder_name_length">השם חייב להכיל בין 2 ל-45 תווים</string>
     <string name="form_error_card_type_not_supported">סוג כרטיס לא נתמך</string>
     <string name="form_error_invalid">נדרש - %1$s</string>
     <string name="form_error_required">נדרש - %1$s</string>

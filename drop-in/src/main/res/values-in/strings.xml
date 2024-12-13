@@ -79,6 +79,7 @@ mendebet rekening Anda dan (B) bank Anda untuk
     <string name="firstNameErrorRequired">Nama depan harus diisi</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Nama depan</string>
+    <string name="form_error_card_holder_name_length">Nama harus terdiri dari antara 2 hingga 45 karakter</string>
     <string name="form_error_card_type_not_supported">Jenis kartu tidak didukung</string>
     <string name="form_error_invalid">%1$s tidak valid</string>
     <string name="form_error_required">%1$s wajib diisi</string>

@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Förnamn krävs</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Förnamn</string>
+    <string name="form_error_card_holder_name_length">Namnet måste vara mellan 2 och 45 tecken</string>
     <string name="form_error_card_type_not_supported">Korttypen stöds inte</string>
     <string name="form_error_invalid">%1$s ogiltigt</string>
     <string name="form_error_required">%1$s krävs</string>

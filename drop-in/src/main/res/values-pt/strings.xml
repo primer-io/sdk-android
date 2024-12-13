@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">É necessário o primeiro nome</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Primeiro nome</string>
+    <string name="form_error_card_holder_name_length">O nome tem de ter entre 2 e 45 carateres</string>
     <string name="form_error_card_type_not_supported">Tipo de cartão não suportado</string>
     <string name="form_error_invalid">%1$s é inválido</string>
     <string name="form_error_required">%1$s é obrigatório</string>

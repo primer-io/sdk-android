@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">İsim gerekli</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">İsim</string>
+    <string name="form_error_card_holder_name_length">Ad 2 ile 45 karakter arasında olmalıdır</string>
     <string name="form_error_card_type_not_supported">Desteklenmeyen kart türü</string>
     <string name="form_error_invalid">%1$s geçersiz</string>
     <string name="form_error_required">%1$s gereklidir</string>

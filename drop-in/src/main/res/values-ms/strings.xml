@@ -78,6 +78,7 @@ mendebitkan akaun anda mengikut arahan daripada %1$s.
     <string name="firstNameErrorRequired">Nama pertama diperlukan</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Nama pertama</string>
+    <string name="form_error_card_holder_name_length">Nama hendaklah diantara 2 hingga 45 aksara</string>
     <string name="form_error_card_type_not_supported">Jenis kad tidak disokong</string>
     <string name="form_error_invalid">%1$s tidak sah</string>
     <string name="form_error_required">%1$s diperlukan</string>

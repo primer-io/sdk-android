@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Vardas yra privalomas</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Vardas</string>
+    <string name="form_error_card_holder_name_length">Vardą turi sudaryti nuo 2 iki 45 simbolių</string>
     <string name="form_error_card_type_not_supported">Nepalaikomas kortelės tipas</string>
     <string name="form_error_invalid">%1$s yra neteisingas</string>
     <string name="form_error_required">%1$s yra privalomas</string>

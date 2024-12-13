@@ -78,6 +78,7 @@ faci aquests càrrecs conforme a les instruccions que doni %1$s.
     <string name="firstNameErrorRequired">El nom és obligatori</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Nom</string>
+    <string name="form_error_card_holder_name_length">El nom ha de tenir entre 2 i 45 caràcters</string>
     <string name="form_error_card_type_not_supported">Tipus de targeta no admès</string>
     <string name="form_error_invalid">%1$s no és vàlid</string>
     <string name="form_error_required">Cal %1$s</string>

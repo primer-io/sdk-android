@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Etunimi on pakollinen</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Etunimi</string>
+    <string name="form_error_card_holder_name_length">Nimen on oltava 2–45 merkin pituinen</string>
     <string name="form_error_card_type_not_supported">Tukematon korttityyppi</string>
     <string name="form_error_invalid">%1$s on virheellinen</string>
     <string name="form_error_required">%1$s vaaditaan</string>

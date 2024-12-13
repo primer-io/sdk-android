@@ -136,7 +136,7 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
     "invalid-expiry-date" -> SyncValidationError(
         inputElementType = inputElementType,
         errorId = errorId,
-        errorFormatId = if (cardData?.cvv.isNullOrBlank()) {
+        errorFormatId = if (cardData?.expiryDate.isNullOrBlank()) {
             R.string.form_error_required
         } else {
             R.string.form_error_invalid
@@ -147,10 +147,10 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
     "invalid-cardholder-name" -> SyncValidationError(
         inputElementType = inputElementType,
         errorId = errorId,
-        errorFormatId = if (cardData?.cvv.isNullOrBlank()) {
+        errorFormatId = if (cardData?.cardHolderName.isNullOrBlank()) {
             R.string.form_error_required
         } else {
-            R.string.form_error_invalid
+            R.string.form_error_card_holder_name_length
         },
         fieldId = R.string.card_holder_name
     )

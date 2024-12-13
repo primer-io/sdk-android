@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Ime je obvezno</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Ime</string>
+    <string name="form_error_card_holder_name_length">Ime mora imeti od 2 do 45 znakov.</string>
     <string name="form_error_card_type_not_supported">Nepodprta vrsta kartice</string>
     <string name="form_error_invalid">%1$s ni pravilno</string>
     <string name="form_error_required">%1$s je obvezno</string>

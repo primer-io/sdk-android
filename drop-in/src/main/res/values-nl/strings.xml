@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Voornaam is verplicht</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Voornaam</string>
+    <string name="form_error_card_holder_name_length">Naam moet tussen de 2 en 45 tekens lang zijn</string>
     <string name="form_error_card_type_not_supported">Kaarttype niet ondersteund</string>
     <string name="form_error_invalid">%1$s is ongeldig</string>
     <string name="form_error_required">%1$s is vereist</string>

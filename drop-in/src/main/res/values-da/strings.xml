@@ -78,6 +78,7 @@ opkræve din konto ud fra instrukserne fra %1$s.
     <string name="firstNameErrorRequired">Fornavn er påkrævet</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Fornavn</string>
+    <string name="form_error_card_holder_name_length">Navn skal være mellem 2 og 45 tegn</string>
     <string name="form_error_card_type_not_supported">Ikke-understøttet korttype</string>
     <string name="form_error_invalid">%1$s er ugyldig</string>
     <string name="form_error_required">%1$s er påkrævet</string>

@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Ім\'я обов\'язкове</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Ім\'я</string>
+    <string name="form_error_card_holder_name_length">Назва має містити від 2 до 45 символів</string>
     <string name="form_error_card_type_not_supported">Непідтримуваний тип карти</string>
     <string name="form_error_invalid">%1$s є недійсним</string>
     <string name="form_error_required">%1$s є обов\'язковим</string>

@@ -75,6 +75,7 @@
     <string name="firstNameErrorRequired">必須填寫名字</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">名字</string>
+    <string name="form_error_card_holder_name_length">名稱必須介於 2 到 45 個字元</string>
     <string name="form_error_card_type_not_supported">不支援此卡類型</string>
     <string name="form_error_invalid">%1$s 無效</string>
     <string name="form_error_required">必須填寫%1$s</string>

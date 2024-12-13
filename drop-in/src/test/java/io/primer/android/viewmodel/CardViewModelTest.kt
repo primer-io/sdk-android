@@ -3,9 +3,9 @@ package io.primer.android.viewmodel
 import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.R
-import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.error.PrimerInputValidationError
+import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -88,8 +88,8 @@ class CardViewModelTest {
     }
 
     @Test
-    fun `toSyncValidationError maps invalid-expiry-date correctly when cvv is blank`() {
-        every { primerCardData.cvv } returns ""
+    fun `toSyncValidationError maps invalid-expiry-date correctly when expiration is blank`() {
+        every { primerCardData.expiryDate } returns ""
         val error = PrimerInputValidationError(
             inputElementType = PrimerInputElementType.EXPIRY_DATE,
             description = "",
@@ -105,8 +105,8 @@ class CardViewModelTest {
     }
 
     @Test
-    fun `toSyncValidationError maps invalid-expiry-date correctly when cvv is not blank`() {
-        every { primerCardData.cvv } returns "123"
+    fun `toSyncValidationError maps invalid-expiry-date correctly when expiration is not blank`() {
+        every { primerCardData.expiryDate } returns "13/37"
         val error = PrimerInputValidationError(
             inputElementType = PrimerInputElementType.EXPIRY_DATE,
             description = "",
@@ -122,8 +122,8 @@ class CardViewModelTest {
     }
 
     @Test
-    fun `toSyncValidationError maps invalid-cardholder-name correctly when cvv is blank`() {
-        every { primerCardData.cvv } returns ""
+    fun `toSyncValidationError maps invalid-cardholder-name correctly when name is blank`() {
+        every { primerCardData.cardHolderName } returns ""
         val error = PrimerInputValidationError(
             inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
             description = "",
@@ -139,8 +139,8 @@ class CardViewModelTest {
     }
 
     @Test
-    fun `toSyncValidationError maps invalid-cardholder-name correctly when cvv is not blank`() {
-        every { primerCardData.cvv } returns "123"
+    fun `toSyncValidationError maps invalid-cardholder-name correctly when name is too short`() {
+        every { primerCardData.cardHolderName } returns "J"
         val error = PrimerInputValidationError(
             inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
             description = "",
@@ -151,7 +151,24 @@ class CardViewModelTest {
 
         assertEquals(PrimerInputElementType.CARDHOLDER_NAME, syncError.inputElementType)
         assertEquals("invalid-cardholder-name", syncError.errorId)
-        assertEquals(R.string.form_error_invalid, syncError.errorFormatId)
+        assertEquals(R.string.form_error_card_holder_name_length, syncError.errorFormatId)
+        assertEquals(R.string.card_holder_name, syncError.fieldId)
+    }
+
+    @Test
+    fun `toSyncValidationError maps invalid-cardholder-name correctly when name is too long`() {
+        every { primerCardData.cardHolderName } returns "J".repeat(46)
+        val error = PrimerInputValidationError(
+            inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
+            description = "",
+            errorId = "invalid-cardholder-name"
+        )
+
+        val syncError = error.toSyncValidationError(primerCardData)
+
+        assertEquals(PrimerInputElementType.CARDHOLDER_NAME, syncError.inputElementType)
+        assertEquals("invalid-cardholder-name", syncError.errorId)
+        assertEquals(R.string.form_error_card_holder_name_length, syncError.errorFormatId)
         assertEquals(R.string.card_holder_name, syncError.fieldId)
     }
 

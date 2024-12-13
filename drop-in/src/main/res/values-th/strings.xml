@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">จำเป็นต้องมีชื่อจริง</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">ชื่อจริง</string>
+    <string name="form_error_card_holder_name_length">ชื่อต้องมีความยาวระหว่าง 2 ถึง 45 อักขระ</string>
     <string name="form_error_card_type_not_supported">ไม่รองรับประเภทบัตรนี้</string>
     <string name="form_error_invalid">%1$s ไม่ถูกต้อง</string>
     <string name="form_error_required">จำเป็นต้องมี %1$s</string>

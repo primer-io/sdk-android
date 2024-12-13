@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">名字为必需</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">名字</string>
+    <string name="form_error_card_holder_name_length">名称长度为 2 ~ 45 个字符</string>
     <string name="form_error_card_type_not_supported">不支持的卡类型</string>
     <string name="form_error_invalid">%1$s 无效</string>
     <string name="form_error_required">%1$s 为必填</string>

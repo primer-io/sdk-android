@@ -78,6 +78,7 @@
     <string name="firstNameErrorRequired">Neophodno je uneti lično ime</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Lično ime</string>
+    <string name="form_error_card_holder_name_length">Ime mora da sadrži između 2 i 45 znakova</string>
     <string name="form_error_card_type_not_supported">Nepodržan tip kartice</string>
     <string name="form_error_invalid">%1$s nije validan</string>
     <string name="form_error_required">Neophodno je uneti %1$s</string>
