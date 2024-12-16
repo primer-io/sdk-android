@@ -101,12 +101,13 @@ dependencies {
     implementation libs.android.lifecycle.livedata.ktx
     implementation libs.android.lifecycle.viewmodel.ktx
     implementation "io.github.pilgr:paperdb:2.7.2"
-
+    implementation "androidx.navigation:navigation-compose:2.8.4"
     implementation libs.primer.klarna
     implementation libs.primer.ipay88
     implementation libs.primer.nol.pay
     implementation libs.primer.stripe
     implementation project(':ui-components')
+    implementation libs.androidx.navigation.compose
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
     testImplementation "junit:junit:4.13.2"

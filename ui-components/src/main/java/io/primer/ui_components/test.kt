@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import io.primer.android.PrimerSessionIntent
@@ -70,7 +72,6 @@ sealed interface PaymentMethodState {
     data class RedirectState(
         override val validationState: PaymentValidationState = PaymentValidationState(isValid = true),
         override val isLoading: Boolean = false,
-        val redirectUrl: String? = null
     ) : PaymentMethodState
 
     data class FormState(
@@ -86,7 +87,6 @@ interface PaymentFlowScopeZ {
     val selectedMethod: StateFlow<PrimerHeadlessUniversalCheckoutPaymentMethod?>
 
     fun selectPaymentMethod(method: PrimerHeadlessUniversalCheckoutPaymentMethod?)
-    fun getMethodState(method: PrimerHeadlessUniversalCheckoutPaymentMethod): StateFlow<PaymentMethodState>
 
     @Composable
     fun PaymentMethodContent(
@@ -99,7 +99,7 @@ interface PaymentMethodContentScope {
     val method: PrimerHeadlessUniversalCheckoutPaymentMethod
     val state: StateFlow<PaymentMethodState>
 
-    suspend fun submit(): Result<PaymentResult>
+    fun submit(): Result<PaymentResult>
 
     @Composable
     fun DefaultContent()
@@ -114,9 +114,6 @@ class PaymentFlowViewModelZ(
 
     private val _selectedMethod = MutableStateFlow<PrimerHeadlessUniversalCheckoutPaymentMethod?>(null)
     val selectedMethod = _selectedMethod.asStateFlow()
-
-    private val _methodStates = MutableStateFlow<Map<String, PaymentMethodState>>(emptyMap())
-    val methodStates = _methodStates.asStateFlow()
 
     init {
         initialize()
@@ -149,14 +146,6 @@ class PaymentFlowViewModelZ(
                 )
             )
             _paymentMethods.value = paymentMethods
-
-            // Initialize states
-            _methodStates.value = paymentMethods.associate { method ->
-                method.paymentMethodType to when (method.paymentMethodManagerCategories.any { it == PrimerPaymentMethodManagerCategory.NATIVE_UI }) {
-                    true -> PaymentMethodState.RedirectState()
-                    false -> PaymentMethodState.FormState()
-                }
-            }
         } catch (e: Exception) {
             // Handle loading error
         }
@@ -164,11 +153,6 @@ class PaymentFlowViewModelZ(
 
     fun selectMethod(method: PrimerHeadlessUniversalCheckoutPaymentMethod?) {
         _selectedMethod.value = method
-    }
-
-    fun getMethodState(methodId: String): StateFlow<PaymentMethodState> {
-        return methodStates.map { it[methodId] ?: PaymentMethodState.FormState() }
-            .stateIn(viewModelScope, SharingStarted.Lazily, PaymentMethodState.FormState())
     }
 }
 
@@ -191,9 +175,6 @@ fun PrimerCheckout(
             override fun selectPaymentMethod(method: PrimerHeadlessUniversalCheckoutPaymentMethod?) {
                 viewModel.selectMethod(method)
             }
-
-            override fun getMethodState(method: PrimerHeadlessUniversalCheckoutPaymentMethod) =
-                viewModel.getMethodState(method.paymentMethodType)
 
             @Composable
             override fun PaymentMethodContent(
@@ -222,11 +203,11 @@ fun PrimerCheckout(
                             )
                         }.stateIn(
                             viewModel.viewModelScope,
-                            SharingStarted.Lazily,
+                            SharingStarted.Eagerly,
                             PaymentMethodState.FormState(isLoading = true)
                         )
 
-                        override suspend fun submit(): Result<PaymentResult> {
+                        override fun submit(): Result<PaymentResult> {
                             return methodViewModel.submit().runSuspendCatching {
                                 PaymentResult(status = PaymentStatus.COMPLETED)
                             }
@@ -284,9 +265,8 @@ private fun DefaultCheckoutContent(
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
                         }
 
+                        val methodState by state.collectAsStateWithLifecycle()
                         DefaultContent()
-
-                        val methodState by state.collectAsState()
                         Button(
                             onClick = {
                                 coroutineScope.launch {

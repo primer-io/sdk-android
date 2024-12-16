@@ -41,6 +41,7 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 activityKtx = "1.9.2"
 secretsGradlePlugin = "2.0.1"
+navigationCompose = "2.8.4"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
@@ -88,6 +89,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version = "2.7.0" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
