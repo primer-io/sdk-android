@@ -10,9 +10,11 @@ import android.util.TypedValue
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputLayout
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
+import io.primer.android.core.di.extensions.resolve
+import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.ui.settings.PrimerTheme
 
 internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     TextInputLayout(ctx, attrs),
@@ -23,7 +25,9 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     private val theme: PrimerTheme by
     if (isInEditMode) {
         lazy { PrimerTheme.build() }
-    } else { inject() }
+    } else {
+        inject()
+    }
 
     init {
         val colors = intArrayOf(
@@ -64,6 +68,7 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
             PrimerTheme.InputMode.OUTLINED -> {
                 BOX_BACKGROUND_OUTLINE
             }
+
             PrimerTheme.InputMode.UNDERLINED -> {
                 boxBackgroundColor = theme.input.backgroundColor.getColor(context, theme.isDarkMode)
                 BOX_BACKGROUND_FILLED
@@ -140,20 +145,26 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                 cursorErrorColor = it
             }
         } else {
-            val cursorDrawableRes = TextInputWidget::class.java.getDeclaredField("mCursorDrawableRes")
-            cursorDrawableRes.isAccessible = true
-            val drawableResId = cursorDrawableRes.getInt(this)
+            runCatching {
+                val cursorDrawableRes = TextInputWidget::class.java.getDeclaredField("mCursorDrawableRes")
+                cursorDrawableRes.isAccessible = true
+                val drawableResId = cursorDrawableRes.getInt(this)
 
-            val editorField = TextInputWidget::class.java.getDeclaredField("mEditor")
-            editorField.isAccessible = true
-            val editor = editorField.get(this)
+                val editorField = TextInputWidget::class.java.getDeclaredField("mEditor")
+                editorField.isAccessible = true
+                val editor = editorField.get(this)
 
-            val drawable = AppCompatResources.getDrawable(context, drawableResId)
-            drawable?.setTint(color)
+                val drawable = AppCompatResources.getDrawable(context, drawableResId)
+                drawable?.setTint(color)
 
-            val cursorDrawable = editor.javaClass.getDeclaredField("mCursorDrawable")
-            cursorDrawable.isAccessible = true
-            cursorDrawable.set(editor, arrayOf(drawable, drawable))
+                val cursorDrawable = editor.javaClass.getDeclaredField("mCursorDrawable")
+                cursorDrawable.isAccessible = true
+                cursorDrawable.set(editor, arrayOf(drawable, drawable))
+            }
+                .onFailure {
+                    resolve<LogReporter>()
+                        .error("Failed to set TextInputWidget cursor color, unsupported Android version.")
+                }
         }
     }
 
