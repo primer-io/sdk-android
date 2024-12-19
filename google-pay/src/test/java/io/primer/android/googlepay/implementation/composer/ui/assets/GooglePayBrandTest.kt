@@ -1,16 +1,25 @@
 package io.primer.android.googlepay.implementation.composer.ui.assets
 
+import io.mockk.mockk
 import io.primer.android.data.settings.GooglePayButtonStyle
+import io.primer.android.data.settings.PrimerGooglePayOptions
 import io.primer.android.googlepay.R
+import io.primer.android.googlepay.implementation.configuration.domain.GooglePayConfigurationRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import kotlin.test.assertNotNull
 
 internal class GooglePayBrandTest {
 
     @Test
     fun `iconResId should return correct resource ID`() {
         // Given
-        val brand = GooglePayBrand(GooglePayButtonStyle.BLACK)
+        val brand = GooglePayBrand(
+            PrimerGooglePayOptions(
+                buttonStyle = GooglePayButtonStyle.BLACK
+            ),
+            mockk<GooglePayConfigurationRepository>()
+        )
 
         // When
         val iconResId = brand.iconResId
@@ -22,7 +31,12 @@ internal class GooglePayBrandTest {
     @Test
     fun `logoResId should return correct resource ID when GooglePayButtonStyle is BLACK`() {
         // Given
-        val brand = GooglePayBrand(GooglePayButtonStyle.BLACK)
+        val brand = GooglePayBrand(
+            PrimerGooglePayOptions(
+                buttonStyle = GooglePayButtonStyle.BLACK
+            ),
+            mockk<GooglePayConfigurationRepository>()
+        )
 
         // When
         val logoResId = brand.logoResId
@@ -34,7 +48,12 @@ internal class GooglePayBrandTest {
     @Test
     fun `logoResId should return correct resource ID when GooglePayButtonStyle is WHITE`() {
         // Given
-        val brand = GooglePayBrand(GooglePayButtonStyle.WHITE)
+        val brand = GooglePayBrand(
+            PrimerGooglePayOptions(
+                buttonStyle = GooglePayButtonStyle.WHITE
+            ),
+            mockk<GooglePayConfigurationRepository>()
+        )
 
         // When
         val logoResId = brand.logoResId
@@ -46,12 +65,34 @@ internal class GooglePayBrandTest {
     @Test
     fun `iconLightResId should return correct resource ID`() {
         // Given
-        val brand = GooglePayBrand(GooglePayButtonStyle.BLACK)
+        val brand = GooglePayBrand(
+            PrimerGooglePayOptions(
+                buttonStyle = GooglePayButtonStyle.BLACK
+            ),
+            mockk<GooglePayConfigurationRepository>()
+        )
 
         // When
         val iconLightResId = brand.iconLightResId
 
         // Then
         assertEquals(R.drawable.ic_logo_googlepay_light, iconLightResId)
+    }
+
+    @Test
+    fun `viewProvider is defined`() {
+        // Given
+        val brand = GooglePayBrand(
+            PrimerGooglePayOptions(
+                buttonStyle = GooglePayButtonStyle.BLACK
+            ),
+            mockk<GooglePayConfigurationRepository>()
+        )
+
+        // When
+        val viewProvider = brand.viewProvider()
+
+        // Then
+        assertNotNull(viewProvider)
     }
 }

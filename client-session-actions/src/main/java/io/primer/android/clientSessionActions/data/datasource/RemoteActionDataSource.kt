@@ -21,6 +21,6 @@ internal class RemoteActionDataSource(private val httpClient: PrimerHttpClient) 
 
     private companion object {
 
-        const val CLIENT_SESSION_ACTIONS_VERSION = "2.2"
+        const val CLIENT_SESSION_ACTIONS_VERSION = "2.3"
     }
 }

@@ -20,7 +20,7 @@ dependencies {
     implementation(libs.android.material)
     implementation(project(":configuration"))
     implementation(project(":paypal"))
-    implementation(project(":google-pay"))
+    api(project(":google-pay"))
     implementation(project(":web-redirect"))
     implementation(project(":ipay88"))
     implementation(project(":web-redirect-shared"))

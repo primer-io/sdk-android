@@ -17,6 +17,6 @@ internal class RemoteConfigurationDataSource(private val httpClient: PrimerHttpC
 
     private companion object {
 
-        const val CONFIGURATION_VERSION = "2.2"
+        const val CONFIGURATION_VERSION = "2.3"
     }
 }

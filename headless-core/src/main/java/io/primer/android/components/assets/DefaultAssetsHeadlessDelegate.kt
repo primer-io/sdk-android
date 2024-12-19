@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.assets.ui.model.ViewProvider
 import io.primer.android.assets.ui.model.getImageAsset
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
@@ -42,6 +43,8 @@ internal interface AssetsHeadlessDelegate {
     ): Drawable?
 
     fun getPaymentMethodName(paymentMethodType: String): String
+
+    fun getPaymentMethodViewProvider(context: Context, paymentMethodType: String): ViewProvider
 
     @DrawableRes
     fun getCardNetworkImage(cardNetwork: CardNetwork.Type): Int
@@ -121,6 +124,11 @@ internal class DefaultAssetsHeadlessDelegate(
         checkIfInitialized()
         return paymentMethodsImplementationInteractor.execute(None)
             .find { it.paymentMethodType == paymentMethodType }?.name.orEmpty()
+    }
+
+    override fun getPaymentMethodViewProvider(context: Context, paymentMethodType: String): ViewProvider {
+        checkIfInitialized()
+        return brandRegistry.getBrand(paymentMethodType = paymentMethodType).viewProvider()
     }
 
     override fun getCardNetworkImage(

@@ -7,7 +7,7 @@ import io.primer.android.googlepay.DefaultGooglePayFacadeFactory
 import io.primer.android.googlepay.GooglePayFacadeFactory
 import io.primer.android.googlepay.implementation.configuration.data.repository.GooglePayConfigurationDataRepository
 import io.primer.android.googlepay.implementation.configuration.domain.GooglePayConfigurationInteractor
-import io.primer.android.googlepay.implementation.configuration.domain.model.GooglePayConfiguration
+import io.primer.android.googlepay.implementation.configuration.domain.GooglePayConfigurationRepository
 import io.primer.android.googlepay.implementation.payment.delegate.GooglePayPaymentDelegate
 import io.primer.android.googlepay.implementation.payment.resume.clientToken.data.GooglePayClientTokenParser
 import io.primer.android.googlepay.implementation.payment.resume.handler.GooglePayResumeHandler
@@ -23,16 +23,13 @@ import io.primer.android.googlepay.implementation.validation.GooglePayShippingMe
 import io.primer.android.googlepay.implementation.validation.GooglePayValidPaymentDataMethodRule
 import io.primer.android.googlepay.implementation.validation.GooglePayValidationRulesResolver
 import io.primer.android.paymentmethods.core.configuration.domain.PaymentMethodConfigurationInteractor
-import io.primer.android.paymentmethods.core.configuration.domain.model.NoOpPaymentMethodConfigurationParams
-import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 
 internal class GooglePayContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
 
     override fun registerInitialDependencies() {
-        registerFactory<
-            PaymentMethodConfigurationRepository<GooglePayConfiguration, NoOpPaymentMethodConfigurationParams>>(
+        registerFactory<GooglePayConfigurationRepository>(
             name = paymentMethodType
         ) {
             GooglePayConfigurationDataRepository(

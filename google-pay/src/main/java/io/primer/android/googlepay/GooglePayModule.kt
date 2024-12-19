@@ -14,6 +14,7 @@ import io.primer.android.googlepay.implementation.composer.presentation.provider
 import io.primer.android.googlepay.implementation.composer.presentation.provider.VaultedGooglePayComposerFactory
 import io.primer.android.googlepay.implementation.composer.ui.assets.GooglePayBrand
 import io.primer.android.googlepay.implementation.composer.ui.navigation.provider.GooglePayNavigatorProviderFactory
+import io.primer.android.googlepay.implementation.configuration.domain.GooglePayConfigurationRepository
 import io.primer.android.googlepay.implementation.errors.data.mapper.GooglePayErrorMapper
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import io.primer.android.paymentmethods.PaymentMethodDescriptorFactoryRegistry
@@ -108,7 +109,8 @@ internal class GooglePayModule(
         brandRegistry.register(
             paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
             brand = GooglePayBrand(
-                resolve<PrimerSettings>().paymentMethodOptions.googlePayOptions.buttonStyle
+                resolve<PrimerSettings>().paymentMethodOptions.googlePayOptions,
+                resolve<GooglePayConfigurationRepository>(name = PaymentMethodType.GOOGLE_PAY.name)
             )
         )
     }

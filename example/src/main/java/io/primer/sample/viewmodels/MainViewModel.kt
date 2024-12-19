@@ -11,8 +11,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.wallet.button.ButtonConstants
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
+import io.primer.android.data.settings.GooglePayButtonOptions
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
 import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
@@ -53,8 +55,7 @@ class MainViewModel(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,
     private val apiKeyDataSource: ApiKeyDataSource,
-    private val savedStateHandle: SavedStateHandle,
-    private val application: Application
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val clientSessionRepository = ClientSessionRepository(apiKeyDataSource)
@@ -209,7 +210,8 @@ class MainViewModel(
                         phoneNumberRequired = true
                     ),
                     emailAddressRequired = true,
-                    requireShippingMethod = false
+                    requireShippingMethod = false,
+                    buttonOptions = GooglePayButtonOptions(buttonType = ButtonConstants.ButtonType.PAY)
                 ),
                 threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
                 stripeOptions = PrimerStripeOptions(

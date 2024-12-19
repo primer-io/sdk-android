@@ -1,7 +1,11 @@
 package io.primer.android.assets.ui.model
 
+import android.content.Context
+import android.view.View
 import androidx.annotation.DrawableRes
 import io.primer.android.displayMetadata.domain.model.ImageColor
+
+typealias ViewProvider = ((Context) -> View)?
 
 interface Brand {
     @get:DrawableRes
@@ -18,6 +22,8 @@ interface Brand {
     @get:DrawableRes
     val iconDarkResId: Int
         get() = iconResId
+
+    fun viewProvider(): ViewProvider = null
 }
 
 internal object UnknownBrand : Brand {

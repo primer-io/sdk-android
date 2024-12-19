@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource, application),
+            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource),
         )[MainViewModel::class.java]
 
         settingsViewModel = ViewModelProvider(

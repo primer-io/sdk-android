@@ -1,0 +1,8 @@
+package io.primer.android.googlepay.implementation.configuration.domain
+
+import io.primer.android.googlepay.implementation.configuration.domain.model.GooglePayConfiguration
+import io.primer.android.paymentmethods.core.configuration.domain.model.NoOpPaymentMethodConfigurationParams
+import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
+
+internal typealias GooglePayConfigurationRepository =
+    PaymentMethodConfigurationRepository<GooglePayConfiguration, NoOpPaymentMethodConfigurationParams>

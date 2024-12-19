@@ -11,6 +11,7 @@ import com.google.android.gms.wallet.PaymentsClient
 import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.configuration.domain.model.CheckoutModule
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.googlepay.implementation.utils.GooglePayPayloadUtils
 import org.jetbrains.annotations.VisibleForTesting
 import org.json.JSONArray
 import org.json.JSONObject
@@ -53,7 +54,7 @@ internal class GooglePayFacade(
         billingAddressRequired: Boolean,
         existingPaymentMethodRequired: Boolean
     ): JSONObject {
-        val baseCardPaymentMethods = baseCardPaymentMethod(
+        val baseCardPaymentMethods = GooglePayPayloadUtils.baseCardPaymentMethod(
             allowedCardNetworks,
             allowedCardAuthMethods,
             billingAddressRequired
@@ -62,31 +63,6 @@ internal class GooglePayFacade(
         return baseRequest.apply {
             put("allowedPaymentMethods", JSONArray().put(baseCardPaymentMethods))
             put("existingPaymentMethodRequired", existingPaymentMethodRequired)
-        }
-    }
-
-    private fun baseCardPaymentMethod(
-        allowedCardNetworks: List<String>,
-        allowedCardAuthMethods: List<String>,
-        billingAddressRequired: Boolean
-    ): JSONObject {
-        return JSONObject().apply {
-            val parameters = JSONObject().apply {
-                put("allowedAuthMethods", JSONArray(allowedCardAuthMethods))
-                put("allowedCardNetworks", JSONArray(allowedCardNetworks))
-                put("billingAddressRequired", billingAddressRequired)
-                if (billingAddressRequired) {
-                    put(
-                        "billingAddressParameters",
-                        JSONObject().apply {
-                            put("format", "FULL")
-                        }
-                    )
-                }
-            }
-
-            put("type", "CARD")
-            put("parameters", parameters)
         }
     }
 
@@ -180,7 +156,7 @@ internal class GooglePayFacade(
             put("parameters", gatewayParams)
         }
 
-        val cardPaymentMethod = baseCardPaymentMethod(
+        val cardPaymentMethod = GooglePayPayloadUtils.baseCardPaymentMethod(
             allowedCardNetworks,
             allowedCardAuthMethods,
             billingAddressRequired

@@ -2,8 +2,10 @@ package io.primer.android.data.settings
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.android.gms.wallet.button.ButtonConstants
 import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
+import io.primer.android.core.data.serialization.json.JSONSerializationUtils.serialize
 import io.primer.android.core.extensions.readParcelable
 import org.json.JSONArray
 import org.json.JSONObject
@@ -11,6 +13,51 @@ import org.json.JSONObject
 enum class GooglePayButtonStyle {
     WHITE,
     BLACK
+}
+
+data class GooglePayButtonOptions(
+    val buttonTheme: Int = ButtonConstants.ButtonTheme.DARK,
+    val buttonType: Int = ButtonConstants.ButtonType.PAY
+) : Parcelable, JSONObjectSerializable {
+
+    constructor(parcel: Parcel) : this(
+        buttonTheme = parcel.readInt(),
+        buttonType = parcel.readInt()
+    )
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(buttonTheme)
+        dest.writeInt(buttonType)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    internal companion object {
+
+        private const val BUTTON_THEME_FIELD = "buttonTheme"
+        private const val BUTTON_TYPE_FIELD = "buttonType"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<GooglePayButtonOptions> { t ->
+            JSONObject().apply {
+                put(BUTTON_THEME_FIELD, t.buttonTheme)
+                put(BUTTON_TYPE_FIELD, t.buttonType)
+            }
+        }
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<GooglePayButtonOptions> {
+            override fun createFromParcel(parcel: Parcel): GooglePayButtonOptions {
+                return GooglePayButtonOptions(parcel)
+            }
+
+            override fun newArray(size: Int): Array<GooglePayButtonOptions?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 }
 
 data class PrimerGooglePayOptions @JvmOverloads constructor(
@@ -28,7 +75,8 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
     val existingPaymentMethodRequired: Boolean = false,
     val shippingAddressParameters: PrimerGoogleShippingAddressParameters? = null,
     val requireShippingMethod: Boolean = false,
-    val emailAddressRequired: Boolean = false
+    val emailAddressRequired: Boolean = false,
+    val buttonOptions: GooglePayButtonOptions = GooglePayButtonOptions()
 ) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(
         merchantName = parcel.readString(),
@@ -38,7 +86,8 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         existingPaymentMethodRequired = parcel.readByte() != 0.toByte(),
         shippingAddressParameters = parcel.readParcelable<PrimerGoogleShippingAddressParameters>(),
         requireShippingMethod = parcel.readByte() != 0.toByte(),
-        emailAddressRequired = parcel.readByte() != 0.toByte()
+        emailAddressRequired = parcel.readByte() != 0.toByte(),
+        buttonOptions = parcel.readParcelable<GooglePayButtonOptions>() ?: GooglePayButtonOptions()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -50,6 +99,7 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         parcel.writeParcelable(shippingAddressParameters, flags)
         parcel.writeByte(if (requireShippingMethod) 1 else 0)
         parcel.writeByte(if (emailAddressRequired) 1 else 0)
+        parcel.writeParcelable(buttonOptions, flags)
     }
 
     override fun describeContents(): Int {
@@ -80,6 +130,10 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
         private const val BUTTON_STYLE_FIELD = "buttonStyle"
         private const val CAPTURE_BILLING_ADDRESS_FIELD = "captureBillingAddress"
         private const val EXISTING_PAYMENT_METHOD_REQUIRED_FIELD = "existingPaymentMethodRequired"
+        private const val SHIPPING_ADDRESS_PARAMS_FIELD = "shippingAddressParameters"
+        private const val REQUIRE_SHIPPING_METHOD_FIELD = "requireShippingMethod"
+        private const val EMAIL_ADDRESS_REQUIRED_FIELD = "emailAddressRequired"
+        private const val BUTTON_OPTIONS_FIELD = "buttonOptions"
 
         @JvmField
         val serializer = JSONObjectSerializer<PrimerGooglePayOptions> { t ->
@@ -89,6 +143,10 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
                 put(BUTTON_STYLE_FIELD, t.buttonStyle.name)
                 put(CAPTURE_BILLING_ADDRESS_FIELD, t.captureBillingAddress)
                 put(EXISTING_PAYMENT_METHOD_REQUIRED_FIELD, t.existingPaymentMethodRequired)
+                put(SHIPPING_ADDRESS_PARAMS_FIELD, t.shippingAddressParameters?.serialize())
+                put(REQUIRE_SHIPPING_METHOD_FIELD, t.requireShippingMethod)
+                put(EMAIL_ADDRESS_REQUIRED_FIELD, t.emailAddressRequired)
+                put(BUTTON_OPTIONS_FIELD, t.buttonOptions.serialize())
             }
         }
     }
@@ -96,7 +154,7 @@ data class PrimerGooglePayOptions @JvmOverloads constructor(
 
 data class PrimerGoogleShippingAddressParameters(
     val phoneNumberRequired: Boolean = false
-) : Parcelable {
+) : Parcelable, JSONObjectSerializable {
 
     constructor(parcel: Parcel) : this(
         phoneNumberRequired = parcel.readByte() != 0.toByte()
@@ -111,6 +169,15 @@ data class PrimerGoogleShippingAddressParameters(
     }
 
     internal companion object {
+
+        private const val PHONE_NUMBER_REQUIRED_FIELD = "phoneNumberRequired"
+
+        @JvmField
+        val serializer = JSONObjectSerializer<PrimerGoogleShippingAddressParameters> { t ->
+            JSONObject().apply {
+                put(PHONE_NUMBER_REQUIRED_FIELD, t.phoneNumberRequired)
+            }
+        }
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<PrimerGoogleShippingAddressParameters> {

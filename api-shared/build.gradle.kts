@@ -13,6 +13,7 @@ android {
 dependencies {
     api(project(":analytics"))
     implementation(project(":configuration"))
+    compileOnly(libs.play.services.wallet)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

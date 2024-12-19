@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 
-class PrimerPaymentMethodOptionsTest {
+class PrimerPaymentMethodButtonOptionsTest {
 
     @Test
     fun `should write options to parcel when writeToParcel() is called`() {

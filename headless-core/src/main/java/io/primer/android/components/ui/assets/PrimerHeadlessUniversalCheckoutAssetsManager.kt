@@ -19,6 +19,13 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
     }
 
     @Throws(SdkUninitializedException::class)
+    internal fun getPaymentMethodResources(context: Context): List<PrimerPaymentMethodResource> {
+        return getAssetsDelegate().getCurrentPaymentMethods().map {
+            this.getPaymentMethodResource(context, it)
+        }
+    }
+
+    @Throws(SdkUninitializedException::class)
     internal fun getPaymentMethodAsset(
         context: Context,
         paymentMethodType: String
@@ -50,6 +57,21 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
                 delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.DARK)
             )
         )
+    }
+
+    @Throws(SdkUninitializedException::class)
+    internal fun getPaymentMethodResource(
+        context: Context,
+        paymentMethodType: String
+    ): PrimerPaymentMethodResource {
+        val delegate = getAssetsDelegate()
+        return delegate.getPaymentMethodViewProvider(context = context, paymentMethodType)?.let { viewProvider ->
+            PrimerPaymentMethodNativeView(
+                paymentMethodType,
+                delegate.getPaymentMethodName(paymentMethodType),
+                viewProvider
+            )
+        } ?: getPaymentMethodAsset(context, paymentMethodType)
     }
 
     @DrawableRes
@@ -85,21 +107,71 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
          * Returns all [PrimerPaymentMethodAsset] tied to current client session.
          * @throws SdkUninitializedException
          */
+        @Deprecated(
+            message = "This method is deprecated.",
+            replaceWith = ReplaceWith("getPaymentMethodResources(context)")
+        )
         @Throws(SdkUninitializedException::class)
         @JvmStatic
         fun getPaymentMethodAssets(context: Context): List<PrimerPaymentMethodAsset> =
             assetManager.getPaymentMethodAssets(context)
 
         /**
+         * Returns all [PrimerPaymentMethodResource] tied to current client session.
+         * @throws SdkUninitializedException
+         */
+        @Throws(SdkUninitializedException::class)
+        @JvmStatic
+        fun getPaymentMethodResources(context: Context): List<PrimerPaymentMethodResource> =
+            assetManager.getPaymentMethodResources(context)
+
+        /**
          * Returns [PrimerPaymentMethodAsset] for a given [paymentMethodType].
          * @throws SdkUninitializedException
          */
+        @Deprecated(
+            message = "This method is deprecated.",
+            replaceWith = ReplaceWith("getPaymentMethodResource(context, paymentMethodType)")
+        )
         @Throws(SdkUninitializedException::class)
         @JvmStatic
         fun getPaymentMethodAsset(
             context: Context,
             paymentMethodType: String
         ): PrimerPaymentMethodAsset = assetManager.getPaymentMethodAsset(context, paymentMethodType)
+
+        /**
+         * Returns a [PrimerPaymentMethodResource] for the specified payment method type.
+         *
+         * This method returns either:
+         * - [PrimerPaymentMethodAsset] containing styling resources (logo, colors) for regular payment methods
+         * - [PrimerPaymentMethodNativeView] containing a custom view creator for special payment methods (e.g. Google Pay)
+         *
+         * Example:
+         * ```kotlin
+         * val resource = getPaymentMethodResource(context, paymentMethodType)
+         * when (resource) {
+         *     is PrimerPaymentMethodAsset -> {
+         *         setBackgroundColor(resource.paymentMethodBackgroundColor.colored)
+         *         setImage(resource.paymentMethodLogo.colored)
+         *     }
+         *     is PrimerPaymentMethodNativeView -> {
+         *         addView(resource.createView(context))
+         *     }
+         * }
+         * ```
+         *
+         * @param context Android context
+         * @param paymentMethodType Type identifier of the payment method (e.g. "GOOGLE_PAY")
+         * @return [PrimerPaymentMethodResource] containing either styling resources or view creation capability
+         * @throws SdkUninitializedException if SDK is not initialized
+         */
+        @Throws(SdkUninitializedException::class)
+        @JvmStatic
+        fun getPaymentMethodResource(
+            context: Context,
+            paymentMethodType: String
+        ): PrimerPaymentMethodResource = assetManager.getPaymentMethodResource(context, paymentMethodType)
 
         @Deprecated(
             message = "This method is deprecated.",

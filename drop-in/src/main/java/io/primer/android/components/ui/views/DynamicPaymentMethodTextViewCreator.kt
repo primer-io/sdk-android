@@ -7,17 +7,18 @@ import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
+import io.primer.android.components.ui.extensions.get
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.configuration.data.model.IconPosition
 import io.primer.android.databinding.PrimerPaymentMethodTextButtonBinding
 import io.primer.android.payment.config.TextDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
-import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
 
 internal class DynamicPaymentMethodTextViewCreator(
     private val theme: PrimerTheme,
     private val displayMetadata: TextDisplayMetadata,
-    private val assetsManager: AssetsManager
+    private val paymentMethodAsset: PrimerPaymentMethodAsset
 ) : PaymentMethodViewCreator {
 
     override fun create(context: Context, container: ViewGroup?): View {
@@ -36,19 +37,17 @@ internal class DynamicPaymentMethodTextViewCreator(
             paymentMethodParent.contentDescription = displayMetadata.name
             paymentMethodButtonText.text = displayMetadata.text
             paymentMethodButtonText.setTextColor(Color.parseColor(displayMetadata.textColor))
-            val paymentMethodAsset = displayMetadata.imageColor?.let { imageColor ->
-                assetsManager.getPaymentMethodImage(
-                    context = context,
-                    paymentMethodType = displayMetadata.paymentMethodType,
+            val paymentMethodLogo = displayMetadata.imageColor?.let { imageColor ->
+                paymentMethodAsset.paymentMethodLogo.get(
                     imageColor = imageColor
                 )
             }
             displayMetadata.iconPosition?.apply {
                 paymentMethodButtonText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    if (this == IconPosition.START) paymentMethodAsset else null,
-                    if (this == IconPosition.ABOVE) paymentMethodAsset else null,
-                    if (this == IconPosition.END) paymentMethodAsset else null,
-                    if (this == IconPosition.BELOW) paymentMethodAsset else null
+                    if (this == IconPosition.START) paymentMethodLogo else null,
+                    if (this == IconPosition.ABOVE) paymentMethodLogo else null,
+                    if (this == IconPosition.END) paymentMethodLogo else null,
+                    if (this == IconPosition.BELOW) paymentMethodLogo else null
                 )
             }
         }

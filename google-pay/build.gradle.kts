@@ -12,7 +12,7 @@ android {
 
 dependencies {
 
-    implementation(libs.play.services.wallet)
+    api(libs.play.services.wallet)
     implementation(project(":payment-methods-core"))
     implementation(project(":errors-core"))
     implementation(project(":api-shared"))

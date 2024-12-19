@@ -67,14 +67,16 @@ internal class PaymentMethodButtonGroupFactory(
                         matchingSurcharges += descriptors.count { getSurcharge(it) == 0 }
                     }
 
-                    if (box.childCount < matchingSurcharges || surcharges.count() == 0) {
+                    if (box.childCount < matchingSurcharges || surcharges.isEmpty()) {
                         button.layoutParams = button.layoutParams.apply {
                             val layoutParams = this as LinearLayout.LayoutParams
                             layoutParams.bottomMargin = 20
                         }
                     }
 
-                    button.setOnClickListener { onClick(d) }
+                    button.setOnClickListener {
+                        onClick(d)
+                    }
                     box.addView(button)
                     surchargeMapping[key] = box
                 }

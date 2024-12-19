@@ -7,16 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
+import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
+import io.primer.android.components.ui.extensions.get
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.databinding.PrimerPaymentMethodImageButtonBinding
 import io.primer.android.payment.config.ImageDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
-import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
 
 internal class DynamicPaymentMethodImageViewCreator(
     private val theme: PrimerTheme,
     private val displayMetadata: ImageDisplayMetadata,
-    private val assetsManager: AssetsManager
+    private val paymentMethodAsset: PrimerPaymentMethodAsset
 ) : PaymentMethodViewCreator {
 
     override fun create(context: Context, container: ViewGroup?): View {
@@ -25,10 +26,8 @@ internal class DynamicPaymentMethodImageViewCreator(
             container,
             false
         )
-        val paymentMethodAsset = displayMetadata.imageColor?.let { imageColor ->
-            assetsManager.getPaymentMethodImage(
-                context = context,
-                paymentMethodType = displayMetadata.paymentMethodType,
+        val paymentMethodLogo = displayMetadata.imageColor?.let { imageColor ->
+            paymentMethodAsset.paymentMethodLogo.get(
                 imageColor = imageColor
             )
         }
@@ -44,7 +43,7 @@ internal class DynamicPaymentMethodImageViewCreator(
                 R.string.primer_payment_method_button_content_description,
                 displayMetadata.name
             )
-            paymentMethodIcon.setImageDrawable(paymentMethodAsset)
+            paymentMethodIcon.setImageDrawable(paymentMethodLogo)
         }
         return binding.root
     }

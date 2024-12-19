@@ -8,18 +8,18 @@ import io.primer.android.configuration.domain.model.findFirstInstance
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.errors.utils.requireNotNullCheck
 import io.primer.android.googlepay.GooglePayFacade
+import io.primer.android.googlepay.implementation.configuration.domain.GooglePayConfigurationRepository
 import io.primer.android.googlepay.implementation.configuration.domain.model.GooglePayConfiguration
 import io.primer.android.googlepay.implementation.errors.data.exception.GooglePayIllegalValueKey
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.configuration.domain.model.NoOpPaymentMethodConfigurationParams
-import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.utils.PaymentUtils
 import java.util.Currency
 
 internal class GooglePayConfigurationDataRepository(
     private val configurationDataSource: CacheConfigurationDataSource,
     private val settings: PrimerSettings
-) : PaymentMethodConfigurationRepository<GooglePayConfiguration, NoOpPaymentMethodConfigurationParams> {
+) : GooglePayConfigurationRepository {
 
     override fun getPaymentMethodConfiguration(params: NoOpPaymentMethodConfigurationParams) =
         runSuspendCatching {

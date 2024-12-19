@@ -21,6 +21,8 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
+import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
+import io.primer.android.components.ui.assets.PrimerPaymentMethodNativeView
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
 import io.primer.android.stripe.ach.api.additionalInfo.AchAdditionalInfo
@@ -266,25 +268,30 @@ class HeadlessComponentsFragment : Fragment() {
         managerCategories: List<PrimerPaymentMethodManagerCategory>
     ) {
         val pmViewGroup = (binding.pmView as ViewGroup)
-        pmViewGroup.addView(ImageButton(context).apply {
-            minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
-            val paymentMethodAsset = try {
-                PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
-                    requireContext(),
-                    paymentMethodType
-                )
-            } catch (e: SdkUninitializedException) {
-                null
-            }
-            paymentMethodAsset?.paymentMethodBackgroundColor?.colored?.let {
-                setBackgroundColor(it)
+        val asset = PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodResource(
+            requireContext(),
+            paymentMethodType
+        )
+        pmViewGroup.addView(when (asset) {
+            is PrimerPaymentMethodAsset -> {
+                ImageButton(context).apply {
+                    asset.paymentMethodBackgroundColor.colored?.let {
+                        setBackgroundColor(it)
+                    }
+
+                    setImageDrawable(
+                        asset.paymentMethodLogo.colored
+                    )
+
+                    contentDescription = "Pay with ${asset.paymentMethodName}"
+                }
             }
 
-            setImageDrawable(
-                paymentMethodAsset?.paymentMethodLogo?.colored
+            is PrimerPaymentMethodNativeView -> asset.createView(
+                requireContext()
             )
-
-            contentDescription = "Pay with ${paymentMethodAsset?.paymentMethodName}"
+        }.apply {
+            minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
 
             setOnClickListener {
                 when {
