@@ -91,6 +91,10 @@ internal class DefaultPrimerHeadlessRepository(
                         )
                     }
 
+                    override fun onTokenizationStarted(paymentMethodType: String) {
+                        externalEvents.tryEmit(PrimerEvent.DisableDismiss)
+                    }
+
                     override fun onTokenizeSuccess(
                         paymentMethodTokenData: PrimerPaymentMethodTokenData,
                         decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler

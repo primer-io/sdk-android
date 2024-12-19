@@ -4,12 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.ComponentDialog
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -18,10 +17,10 @@ import androidx.fragment.app.commit
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.di.extension.activityViewModel
+import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
@@ -116,31 +115,27 @@ internal class CheckoutSheetFragment :
         }
     }
 
+    private val disableBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            // Do nothing
+        }
+    }
+
     fun disableDismiss(disabled: Boolean) {
+        (dialog as? ComponentDialog)?.apply {
+            if (disabled) {
+                onBackPressedDispatcher.addCallback(
+                    this,
+                    disableBackPressedCallback
+                )
+            } else {
+                disableBackPressedCallback.remove()
+            }
+        }
+
         dialog?.apply {
             setCancelable(!disabled)
             setCanceledOnTouchOutside(!disabled)
-
-            setOnKeyListener(
-                if (disabled) {
-                    { _, keyCode, event ->
-                        keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP
-                    }
-                } else {
-                    null
-                }
-            )
-
-            window?.apply {
-                if (disabled) {
-                    setFlags(
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                    )
-                } else {
-                    clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                }
-            }
         }
     }
 }

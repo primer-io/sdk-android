@@ -16,4 +16,6 @@ internal sealed interface PrimerEvent {
     data class CheckoutCompleted(val checkoutData: PrimerCheckoutData?, val successType: SuccessType) : PrimerEvent
 
     data object Dismiss : PrimerEvent
+
+    data object DisableDismiss : PrimerEvent
 }

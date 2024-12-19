@@ -28,4 +28,6 @@ internal sealed interface ViewStatus {
     ) : ViewStatus
 
     data object Dismiss : ViewStatus
+
+    data object DisableDismiss : ViewStatus
 }

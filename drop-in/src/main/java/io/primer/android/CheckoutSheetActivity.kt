@@ -84,13 +84,16 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                 VaultedPaymentMethodsCvvRecaptureFragment.newInstance()
             }
 
-            viewStatus is ViewStatus.ShowError ->
+            viewStatus is ViewStatus.ShowError -> {
+                sheet.disableDismiss(false)
                 SessionCompleteFragment.newInstance(
                     delay = viewStatus.delay,
                     viewType = SessionCompleteViewType.Error(viewStatus.errorType, viewStatus.message)
                 )
+            }
 
             viewStatus is ViewStatus.ShowSuccess -> {
+                sheet.disableDismiss(false)
                 val behaviour = (
                     primerViewModel.selectedPaymentMethod.value
                         ?: primerViewModel.selectedSavedPaymentMethodDescriptor
@@ -119,6 +122,11 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
             viewStatus is ViewStatus.Dismiss -> {
                 onExit()
                 null
+            }
+
+            viewStatus is ViewStatus.DisableDismiss -> {
+                sheet.disableDismiss(true)
+                return@Observer
             }
 
             else -> null

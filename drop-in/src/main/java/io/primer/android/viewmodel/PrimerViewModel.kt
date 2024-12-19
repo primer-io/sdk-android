@@ -342,6 +342,10 @@ internal class PrimerViewModel(
                         )
 
                         PrimerEvent.Dismiss -> _viewStatus.postValue(ViewStatus.Dismiss)
+
+                        is PrimerEvent.DisableDismiss -> _viewStatus.postValue(
+                            ViewStatus.DisableDismiss
+                        )
                     }
                 }
             }
