@@ -268,66 +268,69 @@ class HeadlessComponentsFragment : Fragment() {
         managerCategories: List<PrimerPaymentMethodManagerCategory>
     ) {
         val pmViewGroup = (binding.pmView as ViewGroup)
-        val asset = PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodResource(
-            requireContext(),
-            paymentMethodType
-        )
-        pmViewGroup.addView(when (asset) {
-            is PrimerPaymentMethodAsset -> {
-                ImageButton(context).apply {
-                    asset.paymentMethodBackgroundColor.colored?.let {
-                        setBackgroundColor(it)
-                    }
-
-                    setImageDrawable(
-                        asset.paymentMethodLogo.colored
-                    )
-
-                    contentDescription = "Pay with ${asset.paymentMethodName}"
-                }
-            }
-
-            is PrimerPaymentMethodNativeView -> asset.createView(
-                requireContext()
+        runCatching {
+            PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodResource(
+                requireContext(),
+                paymentMethodType
             )
-        }.apply {
-            minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
+        }.fold(onSuccess = { asset ->
+            pmViewGroup.addView(when (asset) {
+                is PrimerPaymentMethodAsset -> {
+                    ImageButton(context).apply {
+                        asset.paymentMethodBackgroundColor.colored?.let {
+                            setBackgroundColor(it)
+                        }
 
-            setOnClickListener {
-                when {
-                    paymentMethodType == "NOL_PAY" ->
-                        findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_NolPayFragment)
-
-                    managerCategories.contains(PrimerPaymentMethodManagerCategory.RAW_DATA) ->
-                        findNavController().navigate(
-                            R.id.action_HeadlessComponentsFragment_to_HeadlessRawFragment,
-                            Bundle().apply {
-                                putString(
-                                    HeadlessRawFragment.PAYMENT_METHOD_TYPE_EXTRA,
-                                    paymentMethodType
-                                )
-                            }
+                        setImageDrawable(
+                            asset.paymentMethodLogo.colored
                         )
 
-                    paymentMethodType == "ADYEN_IDEAL" || paymentMethodType == "ADYEN_DOTPAY" ->
-                        findNavController().navigate(
-                            R.id.action_HeadlessComponentsFragment_to_AdyenBankSelectionFragment,
-                            bundleOf("paymentMethodType" to paymentMethodType)
-                        )
-
-                    paymentMethodType == "KLARNA" ->
-                        findNavController().navigate(
-                            R.id.action_HeadlessComponentsFragment_to_KlarnaFragment,
-                            bundleOf(PRIMER_SESSION_INTENT_ARG to getPrimerSessionIntent())
-                        )
-
-                    paymentMethodType == "STRIPE_ACH" ->
-                        findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_StripeAchFragment)
-
-                    else -> onPaymentMethodSelected(paymentMethodType)
+                        contentDescription = "Pay with ${asset.paymentMethodName}"
+                    }
                 }
-            }
-        })
+
+                is PrimerPaymentMethodNativeView -> asset.createView(
+                    requireContext()
+                )
+            }.apply {
+                minimumHeight = resources.getDimensionPixelSize(R.dimen.pay_button_height)
+
+                setOnClickListener {
+                    when {
+                        paymentMethodType == "NOL_PAY" ->
+                            findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_NolPayFragment)
+
+                        managerCategories.contains(PrimerPaymentMethodManagerCategory.RAW_DATA) ->
+                            findNavController().navigate(
+                                R.id.action_HeadlessComponentsFragment_to_HeadlessRawFragment,
+                                Bundle().apply {
+                                    putString(
+                                        HeadlessRawFragment.PAYMENT_METHOD_TYPE_EXTRA,
+                                        paymentMethodType
+                                    )
+                                }
+                            )
+
+                        paymentMethodType == "ADYEN_IDEAL" || paymentMethodType == "ADYEN_DOTPAY" ->
+                            findNavController().navigate(
+                                R.id.action_HeadlessComponentsFragment_to_AdyenBankSelectionFragment,
+                                bundleOf("paymentMethodType" to paymentMethodType)
+                            )
+
+                        paymentMethodType == "KLARNA" ->
+                            findNavController().navigate(
+                                R.id.action_HeadlessComponentsFragment_to_KlarnaFragment,
+                                bundleOf(PRIMER_SESSION_INTENT_ARG to getPrimerSessionIntent())
+                            )
+
+                        paymentMethodType == "STRIPE_ACH" ->
+                            findNavController().navigate(R.id.action_HeadlessComponentsFragment_to_StripeAchFragment)
+
+                        else -> onPaymentMethodSelected(paymentMethodType)
+                    }
+                }
+            })
+        }, onFailure = { Log.e(TAG, it.message.orEmpty()) })
     }
 
     private fun showLoading(message: String? = null) {

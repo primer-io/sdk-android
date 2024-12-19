@@ -1,3 +1,16 @@
+## 2.33.0 (2024-12-12)
+
+### Feat
+
+- **google-pay**: enable data collection options
+- modular SDK (#585)
+
+### Fix
+
+- update Stripe wrapper
+- align cardholder name validation with backend
+- 3DS locale issues
+
 ## 2.32.4 (2024-11-26)
 
 ### Fix
