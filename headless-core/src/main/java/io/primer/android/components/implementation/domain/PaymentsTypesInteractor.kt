@@ -55,7 +55,7 @@ internal class PaymentsTypesInteractor(
         const val CONFIGURATION_ERROR =
             "Failed to initialise due to a configuration missing. Please ensure" +
                 " that you have called PrimerHeadlessUniversalCheckout start method" +
-                " and you have received onClientSessionSetupSuccessfully callback before" +
+                " and you have received onAvailablePaymentMethodsLoaded callback before" +
                 " calling this method."
     }
 }

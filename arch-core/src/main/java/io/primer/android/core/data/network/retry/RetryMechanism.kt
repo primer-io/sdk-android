@@ -3,7 +3,7 @@ package io.primer.android.core.data.network.retry
 import io.primer.android.core.data.network.helpers.MessageLog
 import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
 import io.primer.android.core.data.network.helpers.MessageTypeHelper
-import io.primer.android.core.data.network.helpers.Severity
+import io.primer.android.core.data.network.helpers.SeverityHelper
 import io.primer.android.core.utils.EventFlowProvider
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
@@ -76,12 +76,12 @@ suspend fun retry(
         val message =
             "Retry attempt ${config.retries}/${config.maxRetries} due to $reason. " +
                 "Waiting for ${delayTime}ms before next attempt."
-        logProvider.getEventProvider().emit(MessageLog(message = message, severity = Severity.WARN))
+        logProvider.getEventProvider().emit(MessageLog(message = message, severity = SeverityHelper.WARN))
         messagePropertiesEventProvider.getEventProvider().tryEmit(
             MessagePropertiesHelper(
                 MessageTypeHelper.RETRY,
                 message,
-                Severity.WARN
+                SeverityHelper.WARN
             )
         )
         delay(delayTime)

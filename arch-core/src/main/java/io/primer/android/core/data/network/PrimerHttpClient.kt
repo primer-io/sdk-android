@@ -10,7 +10,7 @@ import io.primer.android.core.data.network.extensions.containsError
 import io.primer.android.core.data.network.helpers.MessageLog
 import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
 import io.primer.android.core.data.network.helpers.MessageTypeHelper
-import io.primer.android.core.data.network.helpers.Severity
+import io.primer.android.core.data.network.helpers.SeverityHelper
 import io.primer.android.core.data.network.retry.NETWORK_EXCEPTION_ERROR_CODE
 import io.primer.android.core.data.network.retry.RetryConfig
 import io.primer.android.core.data.network.retry.SERVER_ERRORS
@@ -264,23 +264,23 @@ class PrimerHttpClient(
     }
 
     suspend fun logRetrySuccessAttempt(message: String) {
-        logProvider.getEventProvider().emit(MessageLog(message = message, severity = Severity.INFO))
+        logProvider.getEventProvider().emit(MessageLog(message = message, severity = SeverityHelper.INFO))
         messagePropertiesEventProvider.getEventProvider().tryEmit(
             MessagePropertiesHelper(
                 MessageTypeHelper.RETRY_SUCCESS,
                 message,
-                Severity.INFO
+                SeverityHelper.INFO
             )
         )
     }
 
     suspend fun logRetryFailedAttempt(message: String) {
-        logProvider.getEventProvider().emit(MessageLog(message = message, severity = Severity.ERROR))
+        logProvider.getEventProvider().emit(MessageLog(message = message, severity = SeverityHelper.ERROR))
         messagePropertiesEventProvider.getEventProvider().tryEmit(
             MessagePropertiesHelper(
                 MessageTypeHelper.RETRY_FAILED,
                 message,
-                Severity.ERROR
+                SeverityHelper.ERROR
             )
         )
     }

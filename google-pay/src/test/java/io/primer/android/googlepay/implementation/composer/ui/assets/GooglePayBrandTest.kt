@@ -3,6 +3,8 @@ package io.primer.android.googlepay.implementation.composer.ui.assets
 import io.mockk.mockk
 import io.primer.android.data.settings.GooglePayButtonStyle
 import io.primer.android.data.settings.PrimerGooglePayOptions
+import io.primer.android.data.settings.PrimerPaymentMethodOptions
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.googlepay.R
 import io.primer.android.googlepay.implementation.configuration.domain.GooglePayConfigurationRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,8 +17,12 @@ internal class GooglePayBrandTest {
     fun `iconResId should return correct resource ID`() {
         // Given
         val brand = GooglePayBrand(
-            PrimerGooglePayOptions(
-                buttonStyle = GooglePayButtonStyle.BLACK
+            PrimerSettings(
+                paymentMethodOptions = PrimerPaymentMethodOptions(
+                    googlePayOptions = PrimerGooglePayOptions(
+                        buttonStyle = GooglePayButtonStyle.BLACK
+                    )
+                )
             ),
             mockk<GooglePayConfigurationRepository>()
         )
@@ -32,8 +38,12 @@ internal class GooglePayBrandTest {
     fun `logoResId should return correct resource ID when GooglePayButtonStyle is BLACK`() {
         // Given
         val brand = GooglePayBrand(
-            PrimerGooglePayOptions(
-                buttonStyle = GooglePayButtonStyle.BLACK
+            PrimerSettings(
+                paymentMethodOptions = PrimerPaymentMethodOptions(
+                    googlePayOptions = PrimerGooglePayOptions(
+                        buttonStyle = GooglePayButtonStyle.BLACK
+                    )
+                )
             ),
             mockk<GooglePayConfigurationRepository>()
         )
@@ -49,8 +59,12 @@ internal class GooglePayBrandTest {
     fun `logoResId should return correct resource ID when GooglePayButtonStyle is WHITE`() {
         // Given
         val brand = GooglePayBrand(
-            PrimerGooglePayOptions(
-                buttonStyle = GooglePayButtonStyle.WHITE
+            PrimerSettings(
+                paymentMethodOptions = PrimerPaymentMethodOptions(
+                    googlePayOptions = PrimerGooglePayOptions(
+                        buttonStyle = GooglePayButtonStyle.WHITE
+                    )
+                )
             ),
             mockk<GooglePayConfigurationRepository>()
         )
@@ -66,8 +80,12 @@ internal class GooglePayBrandTest {
     fun `iconLightResId should return correct resource ID`() {
         // Given
         val brand = GooglePayBrand(
-            PrimerGooglePayOptions(
-                buttonStyle = GooglePayButtonStyle.BLACK
+            PrimerSettings(
+                paymentMethodOptions = PrimerPaymentMethodOptions(
+                    googlePayOptions = PrimerGooglePayOptions(
+                        buttonStyle = GooglePayButtonStyle.BLACK
+                    )
+                )
             ),
             mockk<GooglePayConfigurationRepository>()
         )
@@ -83,8 +101,12 @@ internal class GooglePayBrandTest {
     fun `viewProvider is defined`() {
         // Given
         val brand = GooglePayBrand(
-            PrimerGooglePayOptions(
-                buttonStyle = GooglePayButtonStyle.BLACK
+            PrimerSettings(
+                paymentMethodOptions = PrimerPaymentMethodOptions(
+                    googlePayOptions = PrimerGooglePayOptions(
+                        buttonStyle = GooglePayButtonStyle.BLACK
+                    )
+                )
             ),
             mockk<GooglePayConfigurationRepository>()
         )

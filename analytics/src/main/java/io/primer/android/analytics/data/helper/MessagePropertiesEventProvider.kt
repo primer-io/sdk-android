@@ -1,11 +1,11 @@
 package io.primer.android.analytics.data.helper
 
-import io.primer.android.analytics.data.models.MessageProperties
+import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
 import io.primer.android.core.utils.EventFlowProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 
-internal class MessagePropertiesEventProvider : EventFlowProvider<MessageProperties> {
-    private val sharedFlow = MutableStateFlow<MessageProperties?>(null)
+internal class MessagePropertiesEventProvider : EventFlowProvider<MessagePropertiesHelper> {
+    private val sharedFlow = MutableStateFlow<MessagePropertiesHelper?>(null)
 
-    override fun getEventProvider(): MutableStateFlow<MessageProperties?> = sharedFlow
+    override fun getEventProvider(): MutableStateFlow<MessagePropertiesHelper?> = sharedFlow
 }

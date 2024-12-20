@@ -9,5 +9,5 @@ enum class MessageTypeHelper {
 data class MessagePropertiesHelper(
     val messageTypeHelper: MessageTypeHelper,
     val message: String,
-    val severity: Severity
+    val severity: SeverityHelper
 )

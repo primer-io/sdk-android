@@ -99,7 +99,7 @@ data class OrderDataResponse(
         val methodDescription: String? = null
     ) : JSONDeserializable {
 
-        fun toShippingData() = PrimerShipping(
+        fun toShipping() = PrimerShipping(
             amount = this.amount,
             methodId = this.methodId,
             methodName = this.methodName,
@@ -124,7 +124,7 @@ data class OrderDataResponse(
         }
     }
 
-    fun toOrder() = PrimerOrder(countryCode)
+    fun toOrder() = PrimerOrder(countryCode = countryCode, shipping = shipping?.toShipping())
 
     fun toFees() = fees.map { PrimerFee(type = it.type, amount = it.amount) }
 

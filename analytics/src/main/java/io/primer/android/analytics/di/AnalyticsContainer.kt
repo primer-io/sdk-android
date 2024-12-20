@@ -12,7 +12,6 @@ import io.primer.android.analytics.data.helper.TimerEventProvider
 import io.primer.android.analytics.data.interceptors.HttpAnalyticsInterceptor
 import io.primer.android.analytics.data.models.AnalyticsData
 import io.primer.android.analytics.data.models.AnalyticsProviderData
-import io.primer.android.analytics.data.models.MessageProperties
 import io.primer.android.analytics.data.models.TimerProperties
 import io.primer.android.analytics.data.network.HttpClientFactory
 import io.primer.android.analytics.data.repository.AnalyticsDataRepository
@@ -30,6 +29,7 @@ import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.analytics.utils.Constants
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.helpers.MessageLog
+import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.BaseDataProvider
@@ -55,7 +55,7 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
             EventFlowProvider { MutableStateFlow(null) }
         }
 
-        registerSingleton<EventFlowProvider<MessageProperties>>(MESSAGE_PROPERTIES_PROVIDER_DI_KEY) {
+        registerSingleton<EventFlowProvider<MessagePropertiesHelper>>(MESSAGE_PROPERTIES_PROVIDER_DI_KEY) {
             MessagePropertiesEventProvider()
         }
 
