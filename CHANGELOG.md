@@ -1,3 +1,9 @@
+## 2.33.1 (2024-12-20)
+
+### Fix
+
+- fixed crash when queueing retry messages. Added PrimerShipping back. Use theme defaults for native views corner radius (#810)
+
 ## 2.33.0 (2024-12-12)
 
 ### Feat
