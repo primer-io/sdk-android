@@ -85,4 +85,10 @@
     <!-- Processor test actions -->
     <dimen name="primer_decision_radio_button_height">48dp</dimen>
 
+    <!-- Custom dimens for co-badged items -->
+    <dimen name="primer_card_network_separator_height">24dp</dimen>
+    <dimen name="primer_card_network_icon_width">28dp</dimen>
+    <dimen name="primer_card_network_check_icon">24dp</dimen>
+    <dimen name="primer_card_network_popup_offset">4dp</dimen>
+
 </resources>

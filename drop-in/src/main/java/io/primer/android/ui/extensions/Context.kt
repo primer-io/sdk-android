@@ -3,6 +3,7 @@ package io.primer.android.ui.extensions
 import android.content.Context
 import android.graphics.Point
 import android.view.WindowManager
+import androidx.annotation.DimenRes
 
 private const val DISPLAY_RATIO = 9 / 16
 
@@ -25,3 +26,10 @@ private fun Context.getDisplaySize() =
             .defaultDisplay
             .getSize(point)
     }
+
+internal fun Context.getDimensionAsPx(@DimenRes dimenResId: Int): Int {
+    val dpi = resources.displayMetrics.densityDpi
+    val dp = resources.getDimension(dimenResId)
+    val px = dp * (dpi / 160)
+    return px.toInt()
+}

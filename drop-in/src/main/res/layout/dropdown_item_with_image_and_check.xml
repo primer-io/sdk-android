@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingTop="@dimen/medium_vertical_margin2"
+    android:paddingBottom="@dimen/medium_vertical_margin2">
+
+    <LinearLayout
+        android:id="@+id/linear_layout_card_network_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_vertical_margin2"
+        android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/image_view_card_network_logo"
+        android:layout_width="@dimen/primer_card_network_icon_width"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/medium_vertical_margin2"
+        tools:src="@drawable/ic_visa_card_colored"/>
+
+    <TextView
+        android:id="@+id/text_view_card_network_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        tools:text="Cartes Blacaire"/>
+
+    <ImageView
+        android:id="@+id/image_view_checkmark"
+        android:layout_width="@dimen/primer_card_network_check_icon"
+        android:layout_height="@dimen/primer_card_network_check_icon"
+        android:src="@drawable/ic_check_black"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    </LinearLayout>
+</LinearLayout>

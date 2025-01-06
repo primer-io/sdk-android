@@ -11,12 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asFlow
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerSessionIntent
@@ -45,19 +46,24 @@ import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.TextInputMask
+import io.primer.android.ui.components.CardPopupMenuAdapter
 import io.primer.android.ui.components.TextInputWidget
 import io.primer.android.ui.extensions.autoCleaned
+import io.primer.android.ui.extensions.getDimensionAsPx
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.ui.utils.setMarginBottomForError
 import io.primer.android.utils.hideKeyboard
+import io.primer.android.viewmodel.CardNetworksState
 import io.primer.android.viewmodel.CardViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.cardShared.extension.isCardHolderNameEnabled
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.EnumMap
 import java.util.TreeMap
 
@@ -73,13 +79,12 @@ internal class CardFormFragment : BaseFragment() {
     private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
-    private val tokenizationViewModel: CardViewModel by viewModels()
+    private val cardViewModel: CardViewModel by viewModels()
     private val assetsManager: AssetsManager by inject()
 
     private val localConfig: PrimerConfig by inject()
     private val dirtyMap: MutableMap<PrimerInputElementType, Boolean> = EnumMap(PrimerInputElementType::class.java)
     private var firstMount: Boolean = true
-    private var network: CardNetwork.Descriptor? = null
 
     private var isBeingDismissed: Boolean = false
 
@@ -108,7 +113,7 @@ internal class CardFormFragment : BaseFragment() {
         bindViewComponents()
         configureTokenizationObservers()
         addListenerAndSetState()
-        tokenizationViewModel.initialize()
+        cardViewModel.initialize()
         primerViewModel.keyboardVisible.observe(viewLifecycleOwner, ::onKeyboardVisibilityChanged)
 
         primerViewModel.showBillingFields.observe(viewLifecycleOwner) { billingFields ->
@@ -135,6 +140,11 @@ internal class CardFormFragment : BaseFragment() {
             binding.billingAddressForm.onSelectCountry(country)
         }
 
+        cardViewModel.cardNetworksState
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach { onCardNetworkStateChanged(it) }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         renderTitle()
         renderCardDetailsTitle()
         renderCancelButton()
@@ -146,7 +156,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun validateAndShowErrorFields() {
         val billingAddressErrors = primerViewModel.validateBillingAddress()
-        tokenizationViewModel.updateValidationErrors(
+        cardViewModel.updateValidationErrors(
             billingAddressErrors
         )
     }
@@ -186,31 +196,16 @@ internal class CardFormFragment : BaseFragment() {
         )
     }
 
-    /*
-    *
-    * title
-    *
-    */
-
     private fun renderTitle() {
         val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         binding.tvTitle.setTextColor(textColor)
     }
 
-    /**
-     * Card detail title, display with caps
-     */
     private fun renderCardDetailsTitle() {
         val textColor = theme.subtitleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         binding.tvCardDetailTitle.setTextColor(textColor)
         binding.billingAddressDivider.setBackgroundColor(textColor)
     }
-
-    /*
-    *
-    * cancel button
-    *
-    */
 
     private fun renderCancelButton() {
         binding.ivBack.apply {
@@ -239,12 +234,6 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    /*
-    *
-    * input fields
-    *
-    */
-
     private fun renderInputFields() {
         cardInputFields.values.forEach { inputFieldView ->
             val fontSize = theme.input.text.fontSize.getDimension(requireContext())
@@ -269,34 +258,93 @@ internal class CardFormFragment : BaseFragment() {
     private fun renderCardNumberInput() {
         val cardNumberInput = cardInputFields[PrimerInputElementType.CARD_NUMBER]
         cardNumberInput?.editText?.addTextChangedListener(TextInputMask.CardNumber())
-        cardNumberInput?.editText?.addTextChangedListener(afterTextChanged = ::onCardNumberInput)
-        updateCardNumberInputIcon()
+        cardNumberInput?.editText?.addTextChangedListener(afterTextChanged = { showSurchargeIfNeeded() })
     }
 
-    private fun onCardNumberInput(content: Editable?) {
-        val newNetwork = CardNetwork.lookup(content.toString().sanitizedCardNumber())
-        val isSameNetwork = network?.type?.equals(newNetwork.type) ?: false
-        if (isSameNetwork) {
-            return
+    private fun onCardNetworkStateChanged(state: CardNetworksState?) {
+        if (state != null) {
+            updateCardNetworkViews(
+                state.networks.map { it.network },
+                state.selectedNetwork
+            ) { network ->
+                cardViewModel.setSelectedNetwork(network)
+            }
+        } else {
+            updateCardNetworkViews(emptyList(), null) { }
         }
+        showSurchargeIfNeeded()
+    }
 
-        network = newNetwork
-
-        updateCardNumberInputIcon()
-
-        if (!primerViewModel.surchargeDisabled) {
-            updateCardNumberInputSuffix()
-            emitCardNetworkAction()
+    private fun updateCardNetworkViews(
+        networks: List<CardNetwork.Type>,
+        selectedNetwork: CardNetwork.Type?,
+        onNetworkSelected: (CardNetwork.Type) -> Unit
+    ) {
+        when (networks.size) {
+            0 -> showSingleCard(null)
+            1 -> showSingleCard(networks[0])
+            else -> showCoBadgeCardDropdown(networks, selectedNetwork ?: networks[0], onNetworkSelected)
         }
     }
 
-    private fun emitCardNetworkAction() {
-        val actionParams = if (network == null || network?.type == CardNetwork.Type.OTHER) {
+    private fun showSingleCard(networkType: CardNetwork.Type?) {
+        with(binding) {
+            cardNetworkContainer.setOnClickListener(null)
+            imageViewCardNetwork.setImageDrawable(getCardNetworkDrawable(networkType))
+            imageViewCardNetworkCaret.isVisible = false
+        }
+    }
+
+    private fun showCoBadgeCardDropdown(
+        networks: List<CardNetwork.Type>,
+        selectedNetwork: CardNetwork.Type,
+        onNetworkSelected: (CardNetwork.Type) -> Unit
+    ) {
+        with(binding) {
+            cardNetworkContainer.setOnClickListener {
+                showCardSelectPopup(networks, selectedNetwork, onNetworkSelected)
+            }
+            imageViewCardNetwork.setImageDrawable(getCardNetworkDrawable(selectedNetwork))
+            imageViewCardNetworkCaret.isVisible = true
+        }
+    }
+
+    private fun showCardSelectPopup(
+        networks: List<CardNetwork.Type>,
+        selectedNetwork: CardNetwork.Type,
+        onNetworkSelected: (CardNetwork.Type) -> Unit
+    ) {
+        val offset = requireContext().getDimensionAsPx(R.dimen.primer_card_network_popup_offset)
+        ListPopupWindow(requireContext()).apply {
+            setAdapter(CardPopupMenuAdapter(requireContext(), networks, selectedNetwork))
+            anchorView = binding.cardFormCardNumber
+            width = ViewGroup.LayoutParams.WRAP_CONTENT
+            height = ViewGroup.LayoutParams.WRAP_CONTENT
+            setBackgroundDrawable(
+                AppCompatResources.getDrawable(requireContext(), R.drawable.background_card_select_menu)
+            )
+            verticalOffset = offset
+            setOnItemClickListener { _, _, position, _ ->
+                onNetworkSelected(networks[position])
+                dismiss()
+            }
+            view?.id = R.id.co_badge_popup
+            show()
+        }
+    }
+
+    private fun getCardNetworkDrawable(type: CardNetwork.Type?) =
+        type?.let {
+            assetsManager.getCardNetworkImage(requireContext(), it)
+        } ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_generic_card)
+
+    private fun emitCardNetworkAction(cardType: CardNetwork.Type?) {
+        val actionParams = if (cardType == null || cardType == CardNetwork.Type.OTHER) {
             ActionUpdateUnselectPaymentMethodParams
         } else {
             ActionUpdateSelectPaymentMethodParams(
                 PaymentMethodType.PAYMENT_CARD.name,
-                network?.type?.name
+                cardType.name
             )
         }
 
@@ -315,26 +363,26 @@ internal class CardFormFragment : BaseFragment() {
         view.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
-    private fun updateCardNumberInputIcon() {
-        val resource =
-            network?.type?.let {
-                assetsManager.getCardNetworkImage(
-                    requireContext(),
-                    it
-                )
-            } ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_generic_card)
-        val input = cardInputFields[PrimerInputElementType.CARD_NUMBER] ?: return
-        input.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, null, null, null)
+    private fun showSurchargeIfNeeded() {
+        val cardType = cardViewModel.cardNetworksState.value.selectedNetwork
+        val surchargeAmount = primerViewModel.findSurchargeAmount(PaymentMethodType.PAYMENT_CARD.name, cardType?.name)
+
+        if (!primerViewModel.surchargeDisabled && cardType != null && surchargeAmount > 0) {
+            showSurcharge(surchargeAmount)
+            emitCardNetworkAction(cardType)
+        } else {
+            binding.textViewSurcharge.visibility = View.GONE
+        }
     }
 
-    private fun updateCardNumberInputSuffix() {
+    private fun showSurcharge(surchargeAmount: Int) {
         val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        binding.cardFormCardNumber.setSuffixTextColor(ColorStateList.valueOf(textColor))
-        val inputFrame = binding.cardFormCardNumber
-        val surcharge = primerViewModel.findSurchargeAmount("PAYMENT_CARD", network?.type?.name)
-        val amountText = "+" + primerViewModel.getAmountFormatted(amount = surcharge)
-        val surchargeText = if (surcharge > 0) amountText else ""
-        inputFrame.suffixText = surchargeText
+        val surchargeText = "+" + primerViewModel.getAmountFormatted(amount = surchargeAmount)
+        with(binding.textViewSurcharge) {
+            setTextColor(ColorStateList.valueOf(textColor))
+            text = surchargeText
+            visibility = View.VISIBLE
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -388,9 +436,6 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    /**
-     * Submit button
-     */
     private fun renderSubmitButton() {
         val uxMode = localConfig.paymentMethodIntent
         val context = requireContext()
@@ -398,25 +443,19 @@ internal class CardFormFragment : BaseFragment() {
         binding.btnSubmitForm.text = when (uxMode) {
             PrimerSessionIntent.VAULT -> context.getString(R.string.add_card)
             PrimerSessionIntent.CHECKOUT -> {
-                String
-                    .format(
-                        getString(R.string.pay_specific_amount),
-                        primerViewModel.getTotalAmountFormatted()
-                    )
+                String.format(getString(R.string.pay_specific_amount), primerViewModel.getTotalAmountFormatted())
             }
         }
 
-        binding.btnSubmitForm.setOnClickListener {
-            onSubmitButtonPressed()
-        }
+        binding.btnSubmitForm.setOnClickListener { onSubmitButtonPressed() }
     }
 
     private fun onSubmitButtonPressed() {
-        if (!tokenizationViewModel.isValid()) return
-        tokenizationViewModel.tokenizationStatus.postValue(TokenizationStatus.LOADING)
+        if (!cardViewModel.isValid()) return
+        cardViewModel.tokenizationStatus.tryEmit(TokenizationStatus.LOADING)
         primerViewModel.emitBillingAddress { error ->
             if (error != null) {
-                tokenizationViewModel.tokenizationStatus.postValue(TokenizationStatus.ERROR)
+                cardViewModel.tokenizationStatus.tryEmit(TokenizationStatus.ERROR)
                 return@emitBillingAddress
             }
             primerViewModel.addAnalyticsEvent(
@@ -427,7 +466,7 @@ internal class CardFormFragment : BaseFragment() {
                     ObjectId.PAY
                 )
             )
-            tokenizationViewModel.submit()
+            cardViewModel.submit()
         }
         view?.hideKeyboard()
     }
@@ -441,26 +480,29 @@ internal class CardFormFragment : BaseFragment() {
         binding.btnSubmitForm.text = getString(R.string.pay_specific_amount, amountString)
     }
 
-    // other configuration
-
     private fun configureTokenizationObservers() {
         // submit button loading status
-        tokenizationViewModel.tokenizationStatus.observe(viewLifecycleOwner) { status ->
-            when (status) {
-                TokenizationStatus.LOADING, TokenizationStatus.SUCCESS -> toggleLoading(true)
-                else -> toggleLoading(false)
+        cardViewModel.tokenizationStatus
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach { status ->
+                when (status) {
+                    TokenizationStatus.LOADING, TokenizationStatus.SUCCESS -> toggleLoading(true)
+                    else -> toggleLoading(false)
+                }
             }
-        }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        tokenizationViewModel.cardValidationErrors.observe(viewLifecycleOwner) {
-            setValidationErrors()
-        }
+        cardViewModel.cardValidationErrors
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach { setValidationErrors() }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        tokenizationViewModel.billingAddressValidationErrors.observe(viewLifecycleOwner) {
-            setValidationErrors()
-        }
+        cardViewModel.billingAddressValidationErrors
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach { setValidationErrors() }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        tokenizationViewModel.autoFocusFields.observe(viewLifecycleOwner) {
+        cardViewModel.autoFocusFields.observe(viewLifecycleOwner) {
             findNextFocusIfNeeded(it)
         }
     }
@@ -499,7 +541,7 @@ internal class CardFormFragment : BaseFragment() {
             ) = Unit
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                tokenizationViewModel.onCardDataChanged(
+                cardViewModel.onCardDataChanged(
                     PrimerCardData(
                         cardNumber = cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText?.text.toString()
                             .sanitizedCardNumber(),
@@ -573,13 +615,12 @@ internal class CardFormFragment : BaseFragment() {
         FieldFocuser.focus(cardInputFields[PrimerInputElementType.CARDHOLDER_NAME])
 
     private fun setValidationErrors() {
-        val tokenizationStatus = tokenizationViewModel.tokenizationStatus.value
-        val errors = tokenizationViewModel.cardValidationErrors.value.orEmpty()
-            .plus(tokenizationViewModel.billingAddressValidationErrors.value.orEmpty())
+        val errors = cardViewModel.cardValidationErrors.value
+            .plus(cardViewModel.billingAddressValidationErrors.value)
 
-        binding.btnSubmitForm.isEnabled = tokenizationViewModel.isValid()
+        binding.btnSubmitForm.isEnabled = cardViewModel.isValid()
 
-        val showAll = tokenizationViewModel.submitted.value == true
+        val showAll = cardViewModel.submitted
 
         cardInputFields.plus(binding.billingAddressForm.fieldsMap()).entries.forEach {
             val dirty = getIsDirty(it.key)
@@ -595,11 +636,12 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
+    // TODO log validation errors
     private suspend fun logValidationErrors() {
         var lastValidationErrors = emptySet<SyncValidationError>()
-        tokenizationViewModel.cardValidationErrors.asFlow()
+        cardViewModel.cardValidationErrors
             .combine(
-                tokenizationViewModel.billingAddressValidationErrors.asFlow()
+                cardViewModel.billingAddressValidationErrors
             ) { cardValidationErrors, billingAddressValidationErrors ->
                 val validationErrors = cardValidationErrors.plus(billingAddressValidationErrors)
                 val validationErrorsDiff = validationErrors.minus(lastValidationErrors)

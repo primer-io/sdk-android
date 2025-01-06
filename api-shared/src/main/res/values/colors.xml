@@ -17,6 +17,9 @@
     <color name="primer_button_primary_disabled">#F1F1F4</color>
     <color name="primer_secondary">@android:color/black</color>
 
+    <color name="primer_gray_100">#F1F1F4</color>
+    <color name="primer_gray_200">#E5E5EA</color>
+
     <color name="bank_transfer">#0054A6</color>
 
     <!--  PRIMER THEME  -->

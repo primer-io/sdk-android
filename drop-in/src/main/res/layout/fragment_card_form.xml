@@ -51,30 +51,83 @@
             android:text="@string/card_details"
             tools:textColor="@android:color/black" />
 
-        <io.primer.android.ui.components.TextInputWidget
-            android:id="@+id/card_form_card_number"
-            style="@style/Primer.FormInput.Outbox"
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/primer_input_spacing_vert"
-            android:hint="@string/card_number"
-            app:errorEnabled="false"
-            app:errorIconDrawable="@null"
-            app:suffixTextColor="@android:color/black">
+            android:layout_marginBottom="@dimen/primer_input_spacing_vert">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/card_form_card_number_input"
-                style="@style/Primer.FormInput.Outbox.Input"
+            <io.primer.android.ui.components.TextInputWidget
+                android:id="@+id/card_form_card_number"
+                style="@style/Primer.FormInput.Outbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="0123456789 "
-                android:drawablePadding="10dp"
-                android:imeOptions="actionNext"
-                android:inputType="number|textNoSuggestions"
-                tools:ignore="TouchTargetSizeCheck"
-                tools:text="1234123412341234"
-                tools:textColor="@android:color/black" />
-        </io.primer.android.ui.components.TextInputWidget>
+                android:hint="@string/card_number"
+                app:errorEnabled="false"
+                app:errorIconDrawable="@null">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/card_form_card_number_input"
+                    style="@style/Primer.FormInput.Outbox.Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789 "
+                    android:drawablePadding="10dp"
+                    android:imeOptions="actionNext"
+                    android:inputType="number|textNoSuggestions"
+                    tools:ignore="TouchTargetSizeCheck"
+                    tools:text="1234123412341234"
+                    tools:textColor="@android:color/black" />
+            </io.primer.android.ui.components.TextInputWidget>
+
+            <LinearLayout
+                android:id="@+id/card_network_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/medium_vertical_margin2"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/text_view_surcharge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/medium_vertical_margin2"
+                    android:paddingStart="@dimen/medium_vertical_margin"
+                    android:paddingEnd="@dimen/medium_vertical_margin"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:background="@drawable/background_rounded_corners"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="+ $5.00"/>
+
+                <View
+                    android:id="@+id/card_network_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/primer_card_network_separator_height"
+                    android:background="@color/primer_gray_200" />
+
+                <ImageView
+                    android:id="@+id/image_view_card_network"
+                    android:layout_width="@dimen/primer_card_network_icon_width"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/medium_vertical_margin2"
+                    android:src="@drawable/ic_generic_card" />
+
+                <ImageView
+                    android:id="@+id/image_view_card_network_caret"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_chevron_down" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
